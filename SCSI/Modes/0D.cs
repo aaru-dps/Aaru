@@ -42,26 +42,26 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x0D: CD-ROM parameteres page
         /// <summary>
-        /// CD-ROM parameteres page
-        /// Page code 0x0D
-        /// 8 bytes in SCSI-2, MMC-1, MMC-2, MMC-3
+        ///     CD-ROM parameteres page
+        ///     Page code 0x0D
+        ///     8 bytes in SCSI-2, MMC-1, MMC-2, MMC-3
         /// </summary>
         public struct ModePage_0D
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Time the drive shall remain in hold track state after seek or read
+            ///     Time the drive shall remain in hold track state after seek or read
             /// </summary>
             public byte InactivityTimerMultiplier;
             /// <summary>
-            /// Seconds per Minute
+            ///     Seconds per Minute
             /// </summary>
             public ushort SecondsPerMinute;
             /// <summary>
-            /// Frames per Second
+            ///     Frames per Second
             /// </summary>
             public ushort FramesPerSecond;
         }

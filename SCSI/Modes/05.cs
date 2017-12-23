@@ -42,115 +42,115 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x05: Flexible disk page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x05
-        /// 32 bytes in SCSI-2, SBC-1
+        ///     Disconnect-reconnect page
+        ///     Page code 0x05
+        ///     32 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_05
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Data rate of peripheral device on kbit/s
+            ///     Data rate of peripheral device on kbit/s
             /// </summary>
             public ushort TransferRate;
             /// <summary>
-            /// Heads for reading and/or writing
+            ///     Heads for reading and/or writing
             /// </summary>
             public byte Heads;
             /// <summary>
-            /// Sectors per revolution per head
+            ///     Sectors per revolution per head
             /// </summary>
             public byte SectorsPerTrack;
             /// <summary>
-            /// Bytes of data per sector
+            ///     Bytes of data per sector
             /// </summary>
             public ushort BytesPerSector;
             /// <summary>
-            /// Cylinders used for data storage
+            ///     Cylinders used for data storage
             /// </summary>
             public ushort Cylinders;
             /// <summary>
-            /// Cylinder where write precompensation starts
+            ///     Cylinder where write precompensation starts
             /// </summary>
             public ushort WritePrecompCylinder;
             /// <summary>
-            /// Cylinder where write current reduction starts
+            ///     Cylinder where write current reduction starts
             /// </summary>
             public ushort WriteReduceCylinder;
             /// <summary>
-            /// Step rate in 100 μs units
+            ///     Step rate in 100 μs units
             /// </summary>
             public ushort DriveStepRate;
             /// <summary>
-            /// Width of step pulse in μs
+            ///     Width of step pulse in μs
             /// </summary>
             public byte DriveStepPulse;
             /// <summary>
-            /// Head settle time in 100 μs units
+            ///     Head settle time in 100 μs units
             /// </summary>
             public ushort HeadSettleDelay;
             /// <summary>
-            /// If <see cref="TRDY"/> is <c>true</c>, specified in 1/10s of a
-            /// second the time waiting for read status before aborting medium
-            /// access. Otherwise, indicates time to way before medimum access
-            /// after motor on signal is asserted.
+            ///     If <see cref="TRDY" /> is <c>true</c>, specified in 1/10s of a
+            ///     second the time waiting for read status before aborting medium
+            ///     access. Otherwise, indicates time to way before medimum access
+            ///     after motor on signal is asserted.
             /// </summary>
             public byte MotorOnDelay;
             /// <summary>
-            /// Time in 1/10s of a second to wait before releasing the motor on
-            /// signal after an idle condition. 0xFF means to never release the
-            /// signal
+            ///     Time in 1/10s of a second to wait before releasing the motor on
+            ///     signal after an idle condition. 0xFF means to never release the
+            ///     signal
             /// </summary>
             public byte MotorOffDelay;
             /// <summary>
-            /// Specifies if a signal indicates that the medium is ready to be accessed
+            ///     Specifies if a signal indicates that the medium is ready to be accessed
             /// </summary>
             public bool TRDY;
             /// <summary>
-            /// If <c>true</c> sectors start with one. Otherwise, they start with zero.
+            ///     If <c>true</c> sectors start with one. Otherwise, they start with zero.
             /// </summary>
             public bool SSN;
             /// <summary>
-            /// If <c>true</c> specifies that motor on shall remain released.
+            ///     If <c>true</c> specifies that motor on shall remain released.
             /// </summary>
             public bool MO;
             /// <summary>
-            /// Number of additional step pulses per cylinder.
+            ///     Number of additional step pulses per cylinder.
             /// </summary>
             public byte SPC;
             /// <summary>
-            /// Write compensation value
+            ///     Write compensation value
             /// </summary>
             public byte WriteCompensation;
             /// <summary>
-            /// Head loading time in ms.
+            ///     Head loading time in ms.
             /// </summary>
             public byte HeadLoadDelay;
             /// <summary>
-            /// Head unloading time in ms.
+            ///     Head unloading time in ms.
             /// </summary>
             public byte HeadUnloadDelay;
             /// <summary>
-            /// Description of shugart's bus pin 34 usage
+            ///     Description of shugart's bus pin 34 usage
             /// </summary>
             public byte Pin34;
             /// <summary>
-            /// Description of shugart's bus pin 2 usage
+            ///     Description of shugart's bus pin 2 usage
             /// </summary>
             public byte Pin2;
             /// <summary>
-            /// Description of shugart's bus pin 4 usage
+            ///     Description of shugart's bus pin 4 usage
             /// </summary>
             public byte Pin4;
             /// <summary>
-            /// Description of shugart's bus pin 1 usage
+            ///     Description of shugart's bus pin 1 usage
             /// </summary>
             public byte Pin1;
             /// <summary>
-            /// Medium speed in rpm
+            ///     Medium speed in rpm
             /// </summary>
             public ushort MediumRotationRate;
         }

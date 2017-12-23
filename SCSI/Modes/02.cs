@@ -42,59 +42,60 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x02: Disconnect-reconnect page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x02
-        /// 16 bytes in SCSI-2, SPC-1, SPC-2, SPC-3, SPC-4, SPC-5
+        ///     Disconnect-reconnect page
+        ///     Page code 0x02
+        ///     16 bytes in SCSI-2, SPC-1, SPC-2, SPC-3, SPC-4, SPC-5
         /// </summary>
         public struct ModePage_02
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// How full should be the buffer prior to attempting a reselection
+            ///     How full should be the buffer prior to attempting a reselection
             /// </summary>
             public byte BufferFullRatio;
             /// <summary>
-            /// How empty should be the buffer prior to attempting a reselection
+            ///     How empty should be the buffer prior to attempting a reselection
             /// </summary>
             public byte BufferEmptyRatio;
             /// <summary>
-            /// Max. time in 100 µs increments that the target is permitted to assert BSY without a REQ/ACK
+            ///     Max. time in 100 µs increments that the target is permitted to assert BSY without a REQ/ACK
             /// </summary>
             public ushort BusInactivityLimit;
             /// <summary>
-            /// Min. time in 100 µs increments to wait after releasing the bus before attempting reselection
+            ///     Min. time in 100 µs increments to wait after releasing the bus before attempting reselection
             /// </summary>
             public ushort DisconnectTimeLimit;
             /// <summary>
-            /// Max. time in 100 µs increments allowed to use the bus before disconnecting, if granted the privilege and not restricted by <see cref="DTDC"/>
+            ///     Max. time in 100 µs increments allowed to use the bus before disconnecting, if granted the privilege and not
+            ///     restricted by <see cref="DTDC" />
             /// </summary>
             public ushort ConnectTimeLimit;
             /// <summary>
-            /// Maximum amount of data before disconnecting in 512 bytes increments
+            ///     Maximum amount of data before disconnecting in 512 bytes increments
             /// </summary>
             public ushort MaxBurstSize;
             /// <summary>
-            /// Data transfer disconnect control
+            ///     Data transfer disconnect control
             /// </summary>
             public byte DTDC;
 
             /// <summary>
-            /// Target shall not transfer data for a command during the same interconnect tenancy
+            ///     Target shall not transfer data for a command during the same interconnect tenancy
             /// </summary>
             public bool DIMM;
             /// <summary>
-            /// Wether to use fair or unfair arbitration when requesting an interconnect tenancy
+            ///     Wether to use fair or unfair arbitration when requesting an interconnect tenancy
             /// </summary>
             public byte FairArbitration;
             /// <summary>
-            /// Max. ammount of data in 512 bytes increments that may be transferred for a command along with the command
+            ///     Max. ammount of data in 512 bytes increments that may be transferred for a command along with the command
             /// </summary>
             public ushort FirstBurstSize;
             /// <summary>
-            /// Target is allowed to re-order the data transfer
+            ///     Target is allowed to re-order the data transfer
             /// </summary>
             public bool EMDP;
         }

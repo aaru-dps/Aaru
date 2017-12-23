@@ -44,7 +44,7 @@ namespace DiscImageChef.Decoders.SCSI
         public struct Certance_ModePage_21
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             public byte OperatingSystemsSupport;

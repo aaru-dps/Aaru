@@ -38,19 +38,19 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.Bluray
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -137,58 +137,58 @@ namespace DiscImageChef.Decoders.Bluray
         public struct CartridgeStatus
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Always 6
+            ///     Bytes 0 to 1
+            ///     Always 6
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Byte 4, bit 7
-            /// Medium is inserted in a cartridge
+            ///     Byte 4, bit 7
+            ///     Medium is inserted in a cartridge
             /// </summary>
             public bool Cartridge;
             /// <summary>
-            /// Byte 4, bit 6
-            /// Medium taken out / put in a cartridge
+            ///     Byte 4, bit 6
+            ///     Medium taken out / put in a cartridge
             /// </summary>
             public bool OUT;
             /// <summary>
-            /// Byte 4, bits 5 to 3
-            /// Reserved
+            ///     Byte 4, bits 5 to 3
+            ///     Reserved
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Byte 4, bit 2
-            /// Cartridge sets write protection
+            ///     Byte 4, bit 2
+            ///     Cartridge sets write protection
             /// </summary>
             public bool CWP;
             /// <summary>
-            /// Byte 4, bits 1 to 0
-            /// Reserved
+            ///     Byte 4, bits 1 to 0
+            ///     Reserved
             /// </summary>
             public byte Reserved4;
             /// <summary>
-            /// Byte 5
-            /// Reserved
+            ///     Byte 5
+            ///     Reserved
             /// </summary>
             public byte Reserved5;
             /// <summary>
-            /// Byte 6
-            /// Reserved
+            ///     Byte 6
+            ///     Reserved
             /// </summary>
             public byte Reserved6;
             /// <summary>
-            /// Byte 7
-            /// Reserved
+            ///     Byte 7
+            ///     Reserved
             /// </summary>
             public byte Reserved7;
         }

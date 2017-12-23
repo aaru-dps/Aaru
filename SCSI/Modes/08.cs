@@ -42,96 +42,96 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x08: Caching page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x08
-        /// 12 bytes in SCSI-2
-        /// 20 bytes in SBC-1, SBC-2, SBC-3
+        ///     Disconnect-reconnect page
+        ///     Page code 0x08
+        ///     12 bytes in SCSI-2
+        ///     20 bytes in SBC-1, SBC-2, SBC-3
         /// </summary>
         public struct ModePage_08
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// <c>true</c> if write cache is enabled
+            ///     <c>true</c> if write cache is enabled
             /// </summary>
             public bool WCE;
             /// <summary>
-            /// Multiplication factor
+            ///     Multiplication factor
             /// </summary>
             public bool MF;
             /// <summary>
-            /// <c>true</c> if read cache is enabled
+            ///     <c>true</c> if read cache is enabled
             /// </summary>
             public bool RCD;
             /// <summary>
-            /// Advices on reading-cache retention priority
+            ///     Advices on reading-cache retention priority
             /// </summary>
             public byte DemandReadRetentionPrio;
             /// <summary>
-            /// Advices on writing-cache retention priority
+            ///     Advices on writing-cache retention priority
             /// </summary>
             public byte WriteRetentionPriority;
             /// <summary>
-            /// If requested read blocks are more than this, no pre-fetch is done
+            ///     If requested read blocks are more than this, no pre-fetch is done
             /// </summary>
             public ushort DisablePreFetch;
             /// <summary>
-            /// Minimum pre-fetch
+            ///     Minimum pre-fetch
             /// </summary>
             public ushort MinimumPreFetch;
             /// <summary>
-            /// Maximum pre-fetch
+            ///     Maximum pre-fetch
             /// </summary>
             public ushort MaximumPreFetch;
             /// <summary>
-            /// Upper limit on maximum pre-fetch value
+            ///     Upper limit on maximum pre-fetch value
             /// </summary>
             public ushort MaximumPreFetchCeiling;
 
             /// <summary>
-            /// Manual cache controlling
+            ///     Manual cache controlling
             /// </summary>
             public bool IC;
             /// <summary>
-            /// Abort pre-fetch
+            ///     Abort pre-fetch
             /// </summary>
             public bool ABPF;
             /// <summary>
-            /// Caching analysis permitted
+            ///     Caching analysis permitted
             /// </summary>
             public bool CAP;
             /// <summary>
-            /// Pre-fetch over discontinuities
+            ///     Pre-fetch over discontinuities
             /// </summary>
             public bool Disc;
             /// <summary>
-            /// <see cref="CacheSegmentSize"/> is to be used to control caching segmentation
+            ///     <see cref="CacheSegmentSize" /> is to be used to control caching segmentation
             /// </summary>
             public bool Size;
             /// <summary>
-            /// Force sequential write
+            ///     Force sequential write
             /// </summary>
             public bool FSW;
             /// <summary>
-            /// Logical block cache segment size
+            ///     Logical block cache segment size
             /// </summary>
             public bool LBCSS;
             /// <summary>
-            /// Disable read-ahead
+            ///     Disable read-ahead
             /// </summary>
             public bool DRA;
             /// <summary>
-            /// How many segments should the cache be divided upon
+            ///     How many segments should the cache be divided upon
             /// </summary>
             public byte CacheSegments;
             /// <summary>
-            /// How many bytes should the cache be divided upon
+            ///     How many bytes should the cache be divided upon
             /// </summary>
             public ushort CacheSegmentSize;
             /// <summary>
-            /// How many bytes should be used as a buffer when all other cached data cannot be evicted
+            ///     How many bytes should be used as a buffer when all other cached data cannot be evicted
             /// </summary>
             public uint NonCacheSegmentSize;
 

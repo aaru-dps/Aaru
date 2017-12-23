@@ -40,113 +40,113 @@ namespace DiscImageChef.Decoders.SCSI
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
-         #region Mode Page 0x10: Device configuration page
+        #region Mode Page 0x10: Device configuration page
         /// <summary>
-        /// Device configuration page
-        /// Page code 0x10
-        /// 16 bytes in SCSI-2, SSC-1, SSC-2, SSC-3
+        ///     Device configuration page
+        ///     Page code 0x10
+        ///     16 bytes in SCSI-2, SSC-1, SSC-2, SSC-3
         /// </summary>
         public struct ModePage_10_SSC
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Used in mode select to change partition to one specified in <see cref="ActivePartition"/>
+            ///     Used in mode select to change partition to one specified in <see cref="ActivePartition" />
             /// </summary>
             public bool CAP;
             /// <summary>
-            /// Used in mode select to change format to one specified in <see cref="ActiveFormat"/>
+            ///     Used in mode select to change format to one specified in <see cref="ActiveFormat" />
             /// </summary>
             public bool CAF;
             /// <summary>
-            /// Active format, vendor-specific
+            ///     Active format, vendor-specific
             /// </summary>
             public byte ActiveFormat;
             /// <summary>
-            /// Current logical partition
+            ///     Current logical partition
             /// </summary>
             public byte ActivePartition;
             /// <summary>
-            /// How full the buffer shall be before writing to medium
+            ///     How full the buffer shall be before writing to medium
             /// </summary>
             public byte WriteBufferFullRatio;
             /// <summary>
-            /// How empty the buffer shall be before reading more data from the medium
+            ///     How empty the buffer shall be before reading more data from the medium
             /// </summary>
             public byte ReadBufferEmptyRatio;
             /// <summary>
-            /// Delay in 100 ms before buffered data is forcefully written to the medium even before buffer is full
+            ///     Delay in 100 ms before buffered data is forcefully written to the medium even before buffer is full
             /// </summary>
             public ushort WriteDelayTime;
             /// <summary>
-            /// Drive supports recovering data from buffer
+            ///     Drive supports recovering data from buffer
             /// </summary>
             public bool DBR;
             /// <summary>
-            /// Medium has block IDs
+            ///     Medium has block IDs
             /// </summary>
             public bool BIS;
             /// <summary>
-            /// Drive recognizes and reports setmarks
+            ///     Drive recognizes and reports setmarks
             /// </summary>
             public bool RSmk;
             /// <summary>
-            /// Drive selects best speed
+            ///     Drive selects best speed
             /// </summary>
             public bool AVC;
             /// <summary>
-            /// If drive should stop pre-reading on filemarks
+            ///     If drive should stop pre-reading on filemarks
             /// </summary>
             public byte SOCF;
             /// <summary>
-            /// If set, recovered buffer data is LIFO, otherwise, FIFO
+            ///     If set, recovered buffer data is LIFO, otherwise, FIFO
             /// </summary>
             public bool RBO;
             /// <summary>
-            /// Report early warnings
+            ///     Report early warnings
             /// </summary>
             public bool REW;
             /// <summary>
-            /// Inter-block gap
+            ///     Inter-block gap
             /// </summary>
             public byte GapSize;
             /// <summary>
-            /// End-of-Data format
+            ///     End-of-Data format
             /// </summary>
             public byte EODDefined;
             /// <summary>
-            /// EOD generation enabled
+            ///     EOD generation enabled
             /// </summary>
             public bool EEG;
             /// <summary>
-            /// Synchronize data to medium on early warning
+            ///     Synchronize data to medium on early warning
             /// </summary>
             public bool SEW;
             /// <summary>
-            /// Bytes to reduce buffer size on early warning
+            ///     Bytes to reduce buffer size on early warning
             /// </summary>
             public uint BufferSizeEarlyWarning;
             /// <summary>
-            /// Selected data compression algorithm
+            ///     Selected data compression algorithm
             /// </summary>
             public byte SelectedCompression;
 
             /// <summary>
-            /// Soft write protect
+            ///     Soft write protect
             /// </summary>
             public bool SWP;
             /// <summary>
-            /// Associated write protect
+            ///     Associated write protect
             /// </summary>
             public bool ASOCWP;
             /// <summary>
-            /// Persistent write protect
+            ///     Persistent write protect
             /// </summary>
             public bool PERSWP;
             /// <summary>
-            /// Permanent write protect
+            ///     Permanent write protect
             /// </summary>
             public bool PRMWP;
 
@@ -155,11 +155,11 @@ namespace DiscImageChef.Decoders.SCSI
             public byte RewindOnReset;
 
             /// <summary>
-            /// How drive shall respond to detection of compromised WORM medium integrity
+            ///     How drive shall respond to detection of compromised WORM medium integrity
             /// </summary>
             public byte WTRE;
             /// <summary>
-            /// Respond to commands only if a reservation exists
+            ///     Respond to commands only if a reservation exists
             /// </summary>
             public bool OIR;
         }

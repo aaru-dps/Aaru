@@ -38,19 +38,19 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.CD
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -61,67 +61,67 @@ namespace DiscImageChef.Decoders.CD
         public enum PackTypeIndicator : byte
         {
             /// <summary>
-            /// Title of the track (or album if track == 0)
+            ///     Title of the track (or album if track == 0)
             /// </summary>
             Title = 0x80,
             /// <summary>
-            /// Performer
+            ///     Performer
             /// </summary>
             Performer = 0x81,
             /// <summary>
-            /// Songwriter
+            ///     Songwriter
             /// </summary>
             Songwriter = 0x82,
             /// <summary>
-            /// Composer
+            ///     Composer
             /// </summary>
             Composer = 0x83,
             /// <summary>
-            /// Arranger
+            ///     Arranger
             /// </summary>
             Arranger = 0x84,
             /// <summary>
-            /// Message from the content provider or artist
+            ///     Message from the content provider or artist
             /// </summary>
             Message = 0x85,
             /// <summary>
-            /// Disc identification information
+            ///     Disc identification information
             /// </summary>
             DiscIdentification = 0x86,
             /// <summary>
-            /// Genre identification
+            ///     Genre identification
             /// </summary>
             GenreIdentification = 0x87,
             /// <summary>
-            /// Table of content information
+            ///     Table of content information
             /// </summary>
             TOCInformation = 0x88,
             /// <summary>
-            /// Second table of content information
+            ///     Second table of content information
             /// </summary>
             SecondTOCInformation = 0x89,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved1 = 0x8A,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved2 = 0x8B,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved3 = 0x8C,
             /// <summary>
-            /// Reserved for content provider only
+            ///     Reserved for content provider only
             /// </summary>
             ReservedForContentProvider = 0x8D,
             /// <summary>
-            /// UPC of album or ISRC of track
+            ///     UPC of album or ISRC of track
             /// </summary>
             UPCorISRC = 0x8E,
             /// <summary>
-            /// Size information of the block
+            ///     Size information of the block
             /// </summary>
             BlockSizeInformation = 0x8F
         }
@@ -129,19 +129,19 @@ namespace DiscImageChef.Decoders.CD
         public struct CDText
         {
             /// <summary>
-            /// Total size of returned CD-Text information minus this field
+            ///     Total size of returned CD-Text information minus this field
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// CD-Text data packs
+            ///     CD-Text data packs
             /// </summary>
             public CDTextPack[] DataPacks;
         }
@@ -149,43 +149,43 @@ namespace DiscImageChef.Decoders.CD
         public struct CDTextPack
         {
             /// <summary>
-            /// Byte 0
-            /// Pack ID1 (Pack Type)
+            ///     Byte 0
+            ///     Pack ID1 (Pack Type)
             /// </summary>
             public byte HeaderID1;
             /// <summary>
-            /// Byte 1
-            /// Pack ID2 (Track number)
+            ///     Byte 1
+            ///     Pack ID2 (Track number)
             /// </summary>
             public byte HeaderID2;
             /// <summary>
-            /// Byte 2
-            /// Pack ID3
+            ///     Byte 2
+            ///     Pack ID3
             /// </summary>
             public byte HeaderID3;
             /// <summary>
-            /// Byte 3, bit 7
-            /// Double Byte Character Code
+            ///     Byte 3, bit 7
+            ///     Double Byte Character Code
             /// </summary>
             public bool DBCC;
             /// <summary>
-            /// Byte 3, bits 6 to 4
-            /// Block number
+            ///     Byte 3, bits 6 to 4
+            ///     Block number
             /// </summary>
             public byte BlockNumber;
             /// <summary>
-            /// Byte 3, bits 3 to 0
-            /// Character position
+            ///     Byte 3, bits 3 to 0
+            ///     Character position
             /// </summary>
             public byte CharacterPosition;
             /// <summary>
-            /// Bytes 4 to 15
-            /// Text data
+            ///     Bytes 4 to 15
+            ///     Text data
             /// </summary>
             public byte[] TextDataField;
             /// <summary>
-            /// Bytes 16 to 17
-            /// CRC16
+            ///     Bytes 16 to 17
+            ///     CRC16
             /// </summary>
             public ushort CRC;
         }

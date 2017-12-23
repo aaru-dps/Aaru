@@ -38,19 +38,19 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.Bluray
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -60,7 +60,7 @@ namespace DiscImageChef.Decoders.Bluray
     {
         #region Private constants
         /// <summary>
-        /// Disc Definition Structure Identifier "DS"
+        ///     Disc Definition Structure Identifier "DS"
         /// </summary>
         const ushort DDSIdentifier = 0x4453;
         #endregion Private constants
@@ -162,128 +162,128 @@ namespace DiscImageChef.Decoders.Bluray
         public struct DiscDefinitionStructure
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data Length
+            ///     Bytes 0 to 1
+            ///     Data Length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to 5
-            /// "DS"
+            ///     Bytes 4 to 5
+            ///     "DS"
             /// </summary>
             public ushort Signature;
             /// <summary>
-            /// Byte 6
-            /// DDS format
+            ///     Byte 6
+            ///     DDS format
             /// </summary>
             public byte Format;
             /// <summary>
-            /// Byte 7
-            /// Reserved
+            ///     Byte 7
+            ///     Reserved
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Bytes 8 to 11
-            /// DDS update count
+            ///     Bytes 8 to 11
+            ///     DDS update count
             /// </summary>
             public uint UpdateCount;
             /// <summary>
-            /// Bytes 12 to 19
-            /// Reserved
+            ///     Bytes 12 to 19
+            ///     Reserved
             /// </summary>
             public ulong Reserved4;
             /// <summary>
-            /// Bytes 20 to 23
-            /// First PSN of Drive Area
+            ///     Bytes 20 to 23
+            ///     First PSN of Drive Area
             /// </summary>
             public uint DriveAreaPSN;
             /// <summary>
-            /// Bytes 24 to 27
-            /// Reserved
+            ///     Bytes 24 to 27
+            ///     Reserved
             /// </summary>
             public uint Reserved5;
             /// <summary>
-            /// Bytes 28 to 31
-            /// First PSN of Defect List
+            ///     Bytes 28 to 31
+            ///     First PSN of Defect List
             /// </summary>
             public uint DefectListPSN;
             /// <summary>
-            /// Bytes 32 to 35
-            /// Reserved
+            ///     Bytes 32 to 35
+            ///     Reserved
             /// </summary>
             public uint Reserved6;
             /// <summary>
-            /// Bytes 36 to 39
-            /// PSN of LSN 0 of user data area
+            ///     Bytes 36 to 39
+            ///     PSN of LSN 0 of user data area
             /// </summary>
             public uint PSNofLSNZero;
             /// <summary>
-            /// Bytes 40 to 43
-            /// Last LSN of user data area
+            ///     Bytes 40 to 43
+            ///     Last LSN of user data area
             /// </summary>
             public uint LastUserAreaLSN;
             /// <summary>
-            /// Bytes 44 to 47
-            /// ISA0 size
+            ///     Bytes 44 to 47
+            ///     ISA0 size
             /// </summary>
             public uint ISA0;
             /// <summary>
-            /// Bytes 48 to 51
-            /// OSA size
+            ///     Bytes 48 to 51
+            ///     OSA size
             /// </summary>
             public uint OSA;
             /// <summary>
-            /// Bytes 52 to 55
-            /// ISA1 size
+            ///     Bytes 52 to 55
+            ///     ISA1 size
             /// </summary>
             public uint ISA1;
             /// <summary>
-            /// Byte 56
-            /// Spare Area full flags
+            ///     Byte 56
+            ///     Spare Area full flags
             /// </summary>
             public byte SpareAreaFullFlags;
             /// <summary>
-            /// Byte 57
-            /// Reserved
+            ///     Byte 57
+            ///     Reserved
             /// </summary>
             public byte Reserved7;
             /// <summary>
-            /// Byte 58
-            /// Disc type specific field
+            ///     Byte 58
+            ///     Disc type specific field
             /// </summary>
             public byte DiscTypeSpecificField1;
             /// <summary>
-            /// Byte 59
-            /// Reserved
+            ///     Byte 59
+            ///     Reserved
             /// </summary>
             public byte Reserved8;
             /// <summary>
-            /// Byte 60 to 63
-            /// Disc type specific field
+            ///     Byte 60 to 63
+            ///     Disc type specific field
             /// </summary>
             public uint DiscTypeSpecificField2;
             /// <summary>
-            /// Byte 64 to 67
-            /// Reserved
+            ///     Byte 64 to 67
+            ///     Reserved
             /// </summary>
             public uint Reserved9;
             /// <summary>
-            /// Bytes 68 to 99
-            /// Status bits of INFO1/2 and PAC1/2 on L0 and L1
+            ///     Bytes 68 to 99
+            ///     Status bits of INFO1/2 and PAC1/2 on L0 and L1
             /// </summary>
             public byte[] StatusBits;
             /// <summary>
-            /// Bytes 100 to end
-            /// Disc type specific data
+            ///     Bytes 100 to end
+            ///     Disc type specific data
             /// </summary>
             public byte[] DiscTypeSpecificData;
         }

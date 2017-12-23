@@ -42,14 +42,14 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x0B: Medium types supported page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x0B
-        /// 8 bytes in SCSI-2
+        ///     Disconnect-reconnect page
+        ///     Page code 0x0B
+        ///     8 bytes in SCSI-2
         /// </summary>
         public struct ModePage_0B
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             public MediumTypes MediumType1;

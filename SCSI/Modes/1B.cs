@@ -42,34 +42,34 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x1B: Removable Block Access Capabilities page
         /// <summary>
-        /// Removable Block Access Capabilities page
-        /// Page code 0x1B
-        /// 12 bytes in INF-8070
+        ///     Removable Block Access Capabilities page
+        ///     Page code 0x1B
+        ///     12 bytes in INF-8070
         /// </summary>
         public struct ModePage_1B
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Supports reporting progress of format
+            ///     Supports reporting progress of format
             /// </summary>
             public bool SRFP;
             /// <summary>
-            /// Non-CD Optical Device
+            ///     Non-CD Optical Device
             /// </summary>
             public bool NCD;
             /// <summary>
-            /// Phase change dual device supporting a CD and a Non-CD Optical devices
+            ///     Phase change dual device supporting a CD and a Non-CD Optical devices
             /// </summary>
             public bool SML;
             /// <summary>
-            /// Total number of LUNs
+            ///     Total number of LUNs
             /// </summary>
             public byte TLUN;
             /// <summary>
-            /// System Floppy Type device
+            ///     System Floppy Type device
             /// </summary>
             public bool SFLP;
         }

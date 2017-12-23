@@ -74,36 +74,36 @@ namespace DiscImageChef.Decoders.Xbox
         public struct XboxDMI
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
 
             /// <summary>
-            /// Bytes 4 to 7
-            /// 0x01 in XGD
+            ///     Bytes 4 to 7
+            ///     0x01 in XGD
             /// </summary>
             public uint Version;
 
             /// <summary>
-            /// Bytes 12 to 16
-            /// Catalogue number in XX-XXXXX-X
+            ///     Bytes 12 to 16
+            ///     Catalogue number in XX-XXXXX-X
             /// </summary>
             public string CatalogNumber;
 
             /// <summary>
-            /// Bytes 20 to 27
-            /// DMI timestamp
+            ///     Bytes 20 to 27
+            ///     DMI timestamp
             /// </summary>
             public long Timestamp;
         }
@@ -111,42 +111,42 @@ namespace DiscImageChef.Decoders.Xbox
         public struct Xbox360DMI
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
 
             /// <summary>
-            /// Bytes 4 to 7
-            /// 0x02 in XGD2 and XGD3
+            ///     Bytes 4 to 7
+            ///     0x02 in XGD2 and XGD3
             /// </summary>
             public uint Version;
 
             /// <summary>
-            /// Bytes 20 to 27
-            /// DMI timestamp
+            ///     Bytes 20 to 27
+            ///     DMI timestamp
             /// </summary>
             public long Timestamp;
 
             /// <summary>
-            /// Bytes 36 to 51
-            /// Media ID in hex XXXXXXXXXXXX-XXXXXXXX
+            ///     Bytes 36 to 51
+            ///     Media ID in hex XXXXXXXXXXXX-XXXXXXXX
             /// </summary>
             public byte[] MediaID;
 
             /// <summary>
-            /// Bytes 68 to 83
-            /// Catalogue number in XX-XXXX-XX-XXY-XXX, Y not always exists
+            ///     Bytes 68 to 83
+            ///     Catalogue number in XX-XXXX-XX-XXY-XXX, Y not always exists
             /// </summary>
             public string CatalogNumber;
         }
@@ -235,7 +235,8 @@ namespace DiscImageChef.Decoders.Xbox
 
             sb.Append("-");
 
-            switch(decoded.CatalogNumber.Length) {
+            switch(decoded.CatalogNumber.Length)
+            {
                 case 13:
                     for(int i = 8; i < 10; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,18 +41,18 @@ using DiscImageChef.Decoders.SCSI;
 namespace DiscImageChef.Decoders.ATA
 {
     /// <summary>
-    /// Information from following standards:
-    /// T10-791D rev. 4c (ATA)
-    /// T10-948D rev. 4c (ATA-2)
-    /// T13-1153D rev. 18 (ATA/ATAPI-4)
-    /// T13-1321D rev. 3 (ATA/ATAPI-5)
-    /// T13-1410D rev. 3b (ATA/ATAPI-6)
-    /// T13-1532D rev. 4b (ATA/ATAPI-7)
-    /// T13-1699D rev. 3f (ATA8-ACS)
-    /// T13-1699D rev. 4a (ATA8-ACS)
-    /// T13-2015D rev. 2 (ACS-2)
-    /// T13-2161D rev. 5 (ACS-3)
-    /// CF+ &amp; CF Specification rev. 1.4 (CFA)
+    ///     Information from following standards:
+    ///     T10-791D rev. 4c (ATA)
+    ///     T10-948D rev. 4c (ATA-2)
+    ///     T13-1153D rev. 18 (ATA/ATAPI-4)
+    ///     T13-1321D rev. 3 (ATA/ATAPI-5)
+    ///     T13-1410D rev. 3b (ATA/ATAPI-6)
+    ///     T13-1532D rev. 4b (ATA/ATAPI-7)
+    ///     T13-1699D rev. 3f (ATA8-ACS)
+    ///     T13-1699D rev. 4a (ATA8-ACS)
+    ///     T13-2015D rev. 2 (ACS-2)
+    ///     T13-2161D rev. 5 (ACS-3)
+    ///     CF+ &amp; CF Specification rev. 1.4 (CFA)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -62,963 +63,963 @@ namespace DiscImageChef.Decoders.ATA
         public struct IdentifyDevice
         {
             /// <summary>
-            /// Word 0
-            /// General device configuration
-            /// On ATAPI devices:
-            /// Bits 12 to 8 indicate device type as SCSI defined
-            /// Bits 6 to 5:
-            /// 0 = Device shall set DRQ within 3 ms of receiving PACKET
-            /// 1 = Device shall assert INTRQ when DRQ is set to one
-            /// 2 = Device shall set DRQ within 50 µs of receiving PACKET
-            /// Bits 1 to 0:
-            /// 0 = 12 byte command packet
-            /// 1 = 16 byte command packet
-            /// CompactFlash is 0x848A (non magnetic, removable, not MFM, hardsector, and UltraFAST)
+            ///     Word 0
+            ///     General device configuration
+            ///     On ATAPI devices:
+            ///     Bits 12 to 8 indicate device type as SCSI defined
+            ///     Bits 6 to 5:
+            ///     0 = Device shall set DRQ within 3 ms of receiving PACKET
+            ///     1 = Device shall assert INTRQ when DRQ is set to one
+            ///     2 = Device shall set DRQ within 50 µs of receiving PACKET
+            ///     Bits 1 to 0:
+            ///     0 = 12 byte command packet
+            ///     1 = 16 byte command packet
+            ///     CompactFlash is 0x848A (non magnetic, removable, not MFM, hardsector, and UltraFAST)
             /// </summary>
             public GeneralConfigurationBit GeneralConfiguration;
             /// <summary>
-            /// Word 1
-            /// Cylinders in default translation mode
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Word 1
+            ///     Cylinders in default translation mode
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             public ushort Cylinders;
             /// <summary>
-            /// Word 2
-            /// Specific configuration
+            ///     Word 2
+            ///     Specific configuration
             /// </summary>
             public SpecificConfigurationEnum SpecificConfiguration;
             /// <summary>
-            /// Word 3
-            /// Heads in default translation mode
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Word 3
+            ///     Heads in default translation mode
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             public ushort Heads;
             /// <summary>
-            /// Word 4
-            /// Unformatted bytes per track in default translation mode
-            /// Obsoleted in ATA-2
+            ///     Word 4
+            ///     Unformatted bytes per track in default translation mode
+            ///     Obsoleted in ATA-2
             /// </summary>
             public ushort UnformattedBPT;
             /// <summary>
-            /// Word 5
-            /// Unformatted bytes per sector in default translation mode
-            /// Obsoleted in ATA-2
+            ///     Word 5
+            ///     Unformatted bytes per sector in default translation mode
+            ///     Obsoleted in ATA-2
             /// </summary>
             public ushort UnformattedBPS;
             /// <summary>
-            /// Word 6
-            /// Sectors per track in default translation mode
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Word 6
+            ///     Sectors per track in default translation mode
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             public ushort SectorsPerTrack;
             /// <summary>
-            /// Words 7 to 8
-            /// CFA: Number of sectors per card
+            ///     Words 7 to 8
+            ///     CFA: Number of sectors per card
             /// </summary>
             public uint SectorsPerCard;
             /// <summary>
-            /// Word 9
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Word 9
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             public ushort VendorWord9;
             /// <summary>
-            /// Words 10 to 19
-            /// Device serial number, right justified, padded with spaces
+            ///     Words 10 to 19
+            ///     Device serial number, right justified, padded with spaces
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 20)] public string SerialNumber;
             /// <summary>
-            /// Word 20
-            /// Manufacturer defined
-            /// Obsoleted in ATA-2
-            /// 0x0001 = single ported single sector buffer
-            /// 0x0002 = dual ported multi sector buffer
-            /// 0x0003 = dual ported multi sector buffer with reading
+            ///     Word 20
+            ///     Manufacturer defined
+            ///     Obsoleted in ATA-2
+            ///     0x0001 = single ported single sector buffer
+            ///     0x0002 = dual ported multi sector buffer
+            ///     0x0003 = dual ported multi sector buffer with reading
             /// </summary>
             public ushort BufferType;
             /// <summary>
-            /// Word 21
-            /// Size of buffer in 512 byte increments
-            /// Obsoleted in ATA-2
+            ///     Word 21
+            ///     Size of buffer in 512 byte increments
+            ///     Obsoleted in ATA-2
             /// </summary>
             public ushort BufferSize;
             /// <summary>
-            /// Word 22
-            /// Bytes of ECC available in READ/WRITE LONG commands
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Word 22
+            ///     Bytes of ECC available in READ/WRITE LONG commands
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             public ushort EccBytes;
             /// <summary>
-            /// Words 23 to 26
-            /// Firmware revision, left justified, padded with spaces
+            ///     Words 23 to 26
+            ///     Firmware revision, left justified, padded with spaces
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)] public string FirmwareRevision;
             /// <summary>
-            /// Words 27 to 46
-            /// Model number, left justified, padded with spaces
+            ///     Words 27 to 46
+            ///     Model number, left justified, padded with spaces
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 40)] public string Model;
             /// <summary>
-            /// Word 47 bits 7 to 0
-            /// Maximum number of sectors that can be transferred per
-            /// interrupt on read and write multiple commands
+            ///     Word 47 bits 7 to 0
+            ///     Maximum number of sectors that can be transferred per
+            ///     interrupt on read and write multiple commands
             /// </summary>
             public byte MultipleMaxSectors;
             /// <summary>
-            /// Word 47 bits 15 to 8
-            /// Vendor unique
-            /// ATA/ATAPI-4 says it must be 0x80
+            ///     Word 47 bits 15 to 8
+            ///     Vendor unique
+            ///     ATA/ATAPI-4 says it must be 0x80
             /// </summary>
             public byte VendorWord47;
             /// <summary>
-            /// Word 48
-            /// ATA-1: Set to 1 if it can perform doubleword I/O
-            /// ATA-2 to ATA/ATAPI-7: Reserved
-            /// ATA8-ACS: Trusted Computing feature set
+            ///     Word 48
+            ///     ATA-1: Set to 1 if it can perform doubleword I/O
+            ///     ATA-2 to ATA/ATAPI-7: Reserved
+            ///     ATA8-ACS: Trusted Computing feature set
             /// </summary>
             public TrustedComputingBit TrustedComputing;
             /// <summary>
-            /// Word 49
-            /// Capabilities
+            ///     Word 49
+            ///     Capabilities
             /// </summary>
             public CapabilitiesBit Capabilities;
             /// <summary>
-            /// Word 50
-            /// Capabilities
+            ///     Word 50
+            ///     Capabilities
             /// </summary>
             public CapabilitiesBit2 Capabilities2;
             /// <summary>
-            /// Word 51 bits 7 to 0
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Word 51 bits 7 to 0
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             public byte VendorWord51;
             /// <summary>
-            /// Word 51 bits 15 to 8
-            /// Transfer timing mode in PIO
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Word 51 bits 15 to 8
+            ///     Transfer timing mode in PIO
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             public byte PIOTransferTimingMode;
             /// <summary>
-            /// Word 52 bits 7 to 0
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Word 52 bits 7 to 0
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             public byte VendorWord52;
             /// <summary>
-            /// Word 52 bits 15 to 8
-            /// Transfer timing mode in DMA
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Word 52 bits 15 to 8
+            ///     Transfer timing mode in DMA
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             public byte DMATransferTimingMode;
             /// <summary>
-            /// Word 53 bits 7 to 0
-            /// Reports if words 54 to 58 are valid
+            ///     Word 53 bits 7 to 0
+            ///     Reports if words 54 to 58 are valid
             /// </summary>
             public ExtendedIdentifyBit ExtendedIdentify;
             /// <summary>
-            /// Word 53 bits 15 to 8
-            /// Free-fall Control Sensitivity
+            ///     Word 53 bits 15 to 8
+            ///     Free-fall Control Sensitivity
             /// </summary>
             public byte FreeFallSensitivity;
             /// <summary>
-            /// Word 54
-            /// Cylinders in current translation mode
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Word 54
+            ///     Cylinders in current translation mode
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             public ushort CurrentCylinders;
             /// <summary>
-            /// Word 55
-            /// Heads in current translation mode
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Word 55
+            ///     Heads in current translation mode
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             public ushort CurrentHeads;
             /// <summary>
-            /// Word 56
-            /// Sectors per track in current translation mode
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Word 56
+            ///     Sectors per track in current translation mode
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             public ushort CurrentSectorsPerTrack;
             /// <summary>
-            /// Words 57 to 58
-            /// Total sectors currently user-addressable
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Words 57 to 58
+            ///     Total sectors currently user-addressable
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             public uint CurrentSectors;
             /// <summary>
-            /// Word 59 bits 7 to 0
-            /// Number of sectors currently set to transfer on a READ/WRITE MULTIPLE command
+            ///     Word 59 bits 7 to 0
+            ///     Number of sectors currently set to transfer on a READ/WRITE MULTIPLE command
             /// </summary>
             public byte MultipleSectorNumber;
             /// <summary>
-            /// Word 59 bits 15 to 8
-            /// Indicates if <see cref="MultipleSectorNumber"/> is valid
+            ///     Word 59 bits 15 to 8
+            ///     Indicates if <see cref="MultipleSectorNumber" /> is valid
             /// </summary>
             public CapabilitiesBit3 Capabilities3;
             /// <summary>
-            /// Words 60 to 61
-            /// If drive supports LBA, how many sectors are addressable using LBA
+            ///     Words 60 to 61
+            ///     If drive supports LBA, how many sectors are addressable using LBA
             /// </summary>
             public uint LBASectors;
             /// <summary>
-            /// Word 62 bits 7 to 0
-            /// Single word DMA modes available
-            /// Obsoleted in ATA/ATAPI-4
-            /// In ATAPI it's not obsolete, indicates UDMA mode (UDMA7 is instead MDMA0)
+            ///     Word 62 bits 7 to 0
+            ///     Single word DMA modes available
+            ///     Obsoleted in ATA/ATAPI-4
+            ///     In ATAPI it's not obsolete, indicates UDMA mode (UDMA7 is instead MDMA0)
             /// </summary>
             public TransferMode DMASupported;
             /// <summary>
-            /// Word 62 bits 15 to 8
-            /// Single word DMA mode currently active
-            /// Obsoleted in ATA/ATAPI-4
-            /// In ATAPI it's not obsolete, bits 0 and 1 indicate MDMA mode+1,
-            /// bit 10 indicates DMA is supported and bit 15 indicates DMADIR bit
-            /// in PACKET is required for DMA transfers
+            ///     Word 62 bits 15 to 8
+            ///     Single word DMA mode currently active
+            ///     Obsoleted in ATA/ATAPI-4
+            ///     In ATAPI it's not obsolete, bits 0 and 1 indicate MDMA mode+1,
+            ///     bit 10 indicates DMA is supported and bit 15 indicates DMADIR bit
+            ///     in PACKET is required for DMA transfers
             /// </summary>
             public TransferMode DMAActive;
             /// <summary>
-            /// Word 63 bits 7 to 0
-            /// Multiword DMA modes available
+            ///     Word 63 bits 7 to 0
+            ///     Multiword DMA modes available
             /// </summary>
             public TransferMode MDMASupported;
             /// <summary>
-            /// Word 63 bits 15 to 8
-            /// Multiword DMA mode currently active
+            ///     Word 63 bits 15 to 8
+            ///     Multiword DMA mode currently active
             /// </summary>
             public TransferMode MDMAActive;
 
             /// <summary>
-            /// Word 64 bits 7 to 0
-            /// Supported Advanced PIO transfer modes
+            ///     Word 64 bits 7 to 0
+            ///     Supported Advanced PIO transfer modes
             /// </summary>
             public TransferMode APIOSupported;
             /// <summary>
-            /// Word 64 bits 15 to 8
-            /// Reserved
+            ///     Word 64 bits 15 to 8
+            ///     Reserved
             /// </summary>
             public byte ReservedWord64;
             /// <summary>
-            /// Word 65
-            /// Minimum MDMA transfer cycle time per word in nanoseconds
+            ///     Word 65
+            ///     Minimum MDMA transfer cycle time per word in nanoseconds
             /// </summary>
             public ushort MinMDMACycleTime;
             /// <summary>
-            /// Word 66
-            /// Recommended MDMA transfer cycle time per word in nanoseconds
+            ///     Word 66
+            ///     Recommended MDMA transfer cycle time per word in nanoseconds
             /// </summary>
             public ushort RecMDMACycleTime;
             /// <summary>
-            /// Word 67
-            /// Minimum PIO transfer cycle time without flow control in nanoseconds
+            ///     Word 67
+            ///     Minimum PIO transfer cycle time without flow control in nanoseconds
             /// </summary>
             public ushort MinPIOCycleTimeNoFlow;
             /// <summary>
-            /// Word 68
-            /// Minimum PIO transfer cycle time with IORDY flow control in nanoseconds
+            ///     Word 68
+            ///     Minimum PIO transfer cycle time with IORDY flow control in nanoseconds
             /// </summary>
             public ushort MinPIOCycleTimeFlow;
 
             /// <summary>
-            /// Word 69
-            /// Additional supported
+            ///     Word 69
+            ///     Additional supported
             /// </summary>
             public CommandSetBit5 CommandSet5;
             /// <summary>
-            /// Word 70
-            /// Reserved
+            ///     Word 70
+            ///     Reserved
             /// </summary>
             public ushort ReservedWord70;
             /// <summary>
-            /// Word 71
-            /// ATAPI: Typical time in ns from receipt of PACKET to release bus
+            ///     Word 71
+            ///     ATAPI: Typical time in ns from receipt of PACKET to release bus
             /// </summary>
             public ushort PacketBusRelease;
             /// <summary>
-            /// Word 72
-            /// ATAPI: Typical time in ns from receipt of SERVICE to clear BSY
+            ///     Word 72
+            ///     ATAPI: Typical time in ns from receipt of SERVICE to clear BSY
             /// </summary>
             public ushort ServiceBusyClear;
             /// <summary>
-            /// Word 73
-            /// Reserved
+            ///     Word 73
+            ///     Reserved
             /// </summary>
             public ushort ReservedWord73;
             /// <summary>
-            /// Word 74
-            /// Reserved
+            ///     Word 74
+            ///     Reserved
             /// </summary>
             public ushort ReservedWord74;
 
             /// <summary>
-            /// Word 75
-            /// Maximum Queue depth
+            ///     Word 75
+            ///     Maximum Queue depth
             /// </summary>
             public ushort MaxQueueDepth;
 
             /// <summary>
-            /// Word 76
-            /// Serial ATA Capabilities
+            ///     Word 76
+            ///     Serial ATA Capabilities
             /// </summary>
             public SATACapabilitiesBit SATACapabilities;
             /// <summary>
-            /// Word 77
-            /// Serial ATA Additional Capabilities
+            ///     Word 77
+            ///     Serial ATA Additional Capabilities
             /// </summary>
             public SATACapabilitiesBit2 SATACapabilities2;
 
             /// <summary>
-            /// Word 78
-            /// Supported Serial ATA features
+            ///     Word 78
+            ///     Supported Serial ATA features
             /// </summary>
             public SATAFeaturesBit SATAFeatures;
             /// <summary>
-            /// Word 79
-            /// Enabled Serial ATA features
+            ///     Word 79
+            ///     Enabled Serial ATA features
             /// </summary>
             public SATAFeaturesBit EnabledSATAFeatures;
 
             /// <summary>
-            /// Word 80
-            /// Major version of ATA/ATAPI standard supported
+            ///     Word 80
+            ///     Major version of ATA/ATAPI standard supported
             /// </summary>
             public MajorVersionBit MajorVersion;
             /// <summary>
-            /// Word 81
-            /// Minimum version of ATA/ATAPI standard supported
+            ///     Word 81
+            ///     Minimum version of ATA/ATAPI standard supported
             /// </summary>
             public ushort MinorVersion;
 
             /// <summary>
-            /// Word 82
-            /// Supported command/feature sets
+            ///     Word 82
+            ///     Supported command/feature sets
             /// </summary>
             public CommandSetBit CommandSet;
             /// <summary>
-            /// Word 83
-            /// Supported command/feature sets
+            ///     Word 83
+            ///     Supported command/feature sets
             /// </summary>
             public CommandSetBit2 CommandSet2;
             /// <summary>
-            /// Word 84
-            /// Supported command/feature sets
+            ///     Word 84
+            ///     Supported command/feature sets
             /// </summary>
             public CommandSetBit3 CommandSet3;
 
             /// <summary>
-            /// Word 85
-            /// Enabled command/feature sets
+            ///     Word 85
+            ///     Enabled command/feature sets
             /// </summary>
             public CommandSetBit EnabledCommandSet;
             /// <summary>
-            /// Word 86
-            /// Enabled command/feature sets
+            ///     Word 86
+            ///     Enabled command/feature sets
             /// </summary>
             public CommandSetBit2 EnabledCommandSet2;
             /// <summary>
-            /// Word 87
-            /// Enabled command/feature sets
+            ///     Word 87
+            ///     Enabled command/feature sets
             /// </summary>
             public CommandSetBit3 EnabledCommandSet3;
 
             /// <summary>
-            /// Word 88 bits 7 to 0
-            /// Supported Ultra DMA transfer modes
+            ///     Word 88 bits 7 to 0
+            ///     Supported Ultra DMA transfer modes
             /// </summary>
             public TransferMode UDMASupported;
             /// <summary>
-            /// Word 88 bits 15 to 8
-            /// Selected Ultra DMA transfer modes
+            ///     Word 88 bits 15 to 8
+            ///     Selected Ultra DMA transfer modes
             /// </summary>
             public TransferMode UDMAActive;
 
             /// <summary>
-            /// Word 89
-            /// Time required for security erase completion
+            ///     Word 89
+            ///     Time required for security erase completion
             /// </summary>
             public ushort SecurityEraseTime;
             /// <summary>
-            /// Word 90
-            /// Time required for enhanced security erase completion
+            ///     Word 90
+            ///     Time required for enhanced security erase completion
             /// </summary>
             public ushort EnhancedSecurityEraseTime;
             /// <summary>
-            /// Word 91
-            /// Current advanced power management value
+            ///     Word 91
+            ///     Current advanced power management value
             /// </summary>
             public ushort CurrentAPM;
 
             /// <summary>
-            /// Word 92
-            /// Master password revision code
+            ///     Word 92
+            ///     Master password revision code
             /// </summary>
             public ushort MasterPasswordRevisionCode;
             /// <summary>
-            /// Word 93
-            /// Hardware reset result
+            ///     Word 93
+            ///     Hardware reset result
             /// </summary>
             public ushort HardwareResetResult;
 
             /// <summary>
-            /// Word 94 bits 7 to 0
-            /// Current AAM value
+            ///     Word 94 bits 7 to 0
+            ///     Current AAM value
             /// </summary>
             public byte CurrentAAM;
             /// <summary>
-            /// Word 94 bits 15 to 8
-            /// Vendor's recommended AAM value
+            ///     Word 94 bits 15 to 8
+            ///     Vendor's recommended AAM value
             /// </summary>
             public byte RecommendedAAM;
 
             /// <summary>
-            /// Word 95
-            /// Stream minimum request size
+            ///     Word 95
+            ///     Stream minimum request size
             /// </summary>
             public ushort StreamMinReqSize;
             /// <summary>
-            /// Word 96
-            /// Streaming transfer time in DMA
+            ///     Word 96
+            ///     Streaming transfer time in DMA
             /// </summary>
             public ushort StreamTransferTimeDMA;
             /// <summary>
-            /// Word 97
-            /// Streaming access latency in DMA and PIO
+            ///     Word 97
+            ///     Streaming access latency in DMA and PIO
             /// </summary>
             public ushort StreamAccessLatency;
             /// <summary>
-            /// Words 98 to 99
-            /// Streaming performance granularity
+            ///     Words 98 to 99
+            ///     Streaming performance granularity
             /// </summary>
             public uint StreamPerformanceGranularity;
 
             /// <summary>
-            /// Words 100 to 103
-            /// 48-bit LBA addressable sectors
+            ///     Words 100 to 103
+            ///     48-bit LBA addressable sectors
             /// </summary>
             public ulong LBA48Sectors;
 
             /// <summary>
-            /// Word 104
-            /// Streaming transfer time in PIO
+            ///     Word 104
+            ///     Streaming transfer time in PIO
             /// </summary>
             public ushort StreamTransferTimePIO;
 
             /// <summary>
-            /// Word 105
-            /// Maximum number of 512-byte block per DATA SET MANAGEMENT command
+            ///     Word 105
+            ///     Maximum number of 512-byte block per DATA SET MANAGEMENT command
             /// </summary>
             public ushort DataSetMgmtSize;
 
             /// <summary>
-            /// Word 106
-            /// Bit 15 should be zero
-            /// Bit 14 should be one
-            /// Bit 13 set indicates device has multiple logical sectors per physical sector
-            /// Bit 12 set indicates logical sector has more than 256 words (512 bytes)
-            /// Bits 11 to 4 are reserved
-            /// Bits 3 to 0 indicate power of two of logical sectors per physical sector
+            ///     Word 106
+            ///     Bit 15 should be zero
+            ///     Bit 14 should be one
+            ///     Bit 13 set indicates device has multiple logical sectors per physical sector
+            ///     Bit 12 set indicates logical sector has more than 256 words (512 bytes)
+            ///     Bits 11 to 4 are reserved
+            ///     Bits 3 to 0 indicate power of two of logical sectors per physical sector
             /// </summary>
             public ushort PhysLogSectorSize;
 
             /// <summary>
-            /// Word 107
-            /// Interseek delay for ISO-7779 acoustic testing, in microseconds
+            ///     Word 107
+            ///     Interseek delay for ISO-7779 acoustic testing, in microseconds
             /// </summary>
             public ushort InterseekDelay;
 
             /// <summary>
-            /// Words 108 to 111
-            /// World Wide Name
+            ///     Words 108 to 111
+            ///     World Wide Name
             /// </summary>
             public ulong WWN;
 
             /// <summary>
-            /// Words 112 to 115
-            /// Reserved for WWN extension to 128 bit
+            ///     Words 112 to 115
+            ///     Reserved for WWN extension to 128 bit
             /// </summary>
             public ulong WWNExtension;
 
             /// <summary>
-            /// Word 116
-            /// Reserved for technical report
+            ///     Word 116
+            ///     Reserved for technical report
             /// </summary>
             public ushort ReservedWord116;
 
             /// <summary>
-            /// Words 117 to 118
-            /// Words per logical sector
+            ///     Words 117 to 118
+            ///     Words per logical sector
             /// </summary>
             public uint LogicalSectorWords;
 
             /// <summary>
-            /// Word 119
-            /// Supported command/feature sets
+            ///     Word 119
+            ///     Supported command/feature sets
             /// </summary>
             public CommandSetBit4 CommandSet4;
             /// <summary>
-            /// Word 120
-            /// Supported command/feature sets
+            ///     Word 120
+            ///     Supported command/feature sets
             /// </summary>
             public CommandSetBit4 EnabledCommandSet4;
 
             /// <summary>
-            /// Words 121 to 125
-            /// Reserved
+            ///     Words 121 to 125
+            ///     Reserved
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public ushort[] ReservedWords121;
 
             /// <summary>
-            /// Word 126
-            /// ATAPI byte count limit
+            ///     Word 126
+            ///     ATAPI byte count limit
             /// </summary>
             public ushort ATAPIByteCount;
 
             /// <summary>
-            /// Word 127
-            /// Removable Media Status Notification feature set support
-            /// Bits 15 to 2 are reserved
-            /// Bits 1 to 0 must be 0 for not supported or 1 for supported. 2 and 3 are reserved.
-            /// Obsoleted in ATA8-ACS
+            ///     Word 127
+            ///     Removable Media Status Notification feature set support
+            ///     Bits 15 to 2 are reserved
+            ///     Bits 1 to 0 must be 0 for not supported or 1 for supported. 2 and 3 are reserved.
+            ///     Obsoleted in ATA8-ACS
             /// </summary>
             public ushort RemovableStatusSet;
 
             /// <summary>
-            /// Word 128
-            /// Security status
+            ///     Word 128
+            ///     Security status
             /// </summary>
             public SecurityStatusBit SecurityStatus;
 
             /// <summary>
-            /// Words 129 to 159
+            ///     Words 129 to 159
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)] public ushort[] ReservedWords129;
 
             /// <summary>
-            /// Word 160
-            /// CFA power mode
-            /// Bit 15 must be set
-            /// Bit 13 indicates mode 1 is required for one or more commands
-            /// Bit 12 indicates mode 1 is disabled
-            /// Bits 11 to 0 indicates maximum current in mA
+            ///     Word 160
+            ///     CFA power mode
+            ///     Bit 15 must be set
+            ///     Bit 13 indicates mode 1 is required for one or more commands
+            ///     Bit 12 indicates mode 1 is disabled
+            ///     Bits 11 to 0 indicates maximum current in mA
             /// </summary>
             public ushort CFAPowerMode;
 
             /// <summary>
-            /// Words 161 to 167
-            /// Reserved for CFA
+            ///     Words 161 to 167
+            ///     Reserved for CFA
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public ushort[] ReservedCFA;
 
             /// <summary>
-            /// Word 168
-            /// Bits 15 to 4, reserved
-            /// Bits 3 to 0, device nominal form factor
+            ///     Word 168
+            ///     Bits 15 to 4, reserved
+            ///     Bits 3 to 0, device nominal form factor
             /// </summary>
             public DeviceFormFactorEnum DeviceFormFactor;
             /// <summary>
-            /// Word 169
-            /// DATA SET MANAGEMENT support
+            ///     Word 169
+            ///     DATA SET MANAGEMENT support
             /// </summary>
             public DataSetMgmtBit DataSetMgmt;
             /// <summary>
-            /// Words 170 to 173
-            /// Additional product identifier
+            ///     Words 170 to 173
+            ///     Additional product identifier
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)] public string AdditionalPID;
 
             /// <summary>
-            /// Word 174
-            /// Reserved
+            ///     Word 174
+            ///     Reserved
             /// </summary>
             public ushort ReservedWord174;
             /// <summary>
-            /// Word 175
-            /// Reserved
+            ///     Word 175
+            ///     Reserved
             /// </summary>
             public ushort ReservedWord175;
 
             /// <summary>
-            /// Words 176 to 195
-            /// Current media serial number
+            ///     Words 176 to 195
+            ///     Current media serial number
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 40)] public string MediaSerial;
             /// <summary>
-            /// Words 196 to 205
-            /// Current media manufacturer
+            ///     Words 196 to 205
+            ///     Current media manufacturer
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 20)] public string MediaManufacturer;
 
             /// <summary>
-            /// Word 206
-            /// SCT Command Transport features
+            ///     Word 206
+            ///     SCT Command Transport features
             /// </summary>
             public SCTCommandTransportBit SCTCommandTransport;
 
             /// <summary>
-            /// Word 207
-            /// Reserved for CE-ATA
+            ///     Word 207
+            ///     Reserved for CE-ATA
             /// </summary>
             public ushort ReservedCEATAWord207;
             /// <summary>
-            /// Word 208
-            /// Reserved for CE-ATA
+            ///     Word 208
+            ///     Reserved for CE-ATA
             /// </summary>
             public ushort ReservedCEATAWord208;
 
             /// <summary>
-            /// Word 209
-            /// Alignment of logical block within a larger physical block
-            /// Bit 15 shall be cleared to zero
-            /// Bit 14 shall be set to one
-            /// Bits 13 to 0 indicate logical sector offset within the first physical sector
+            ///     Word 209
+            ///     Alignment of logical block within a larger physical block
+            ///     Bit 15 shall be cleared to zero
+            ///     Bit 14 shall be set to one
+            ///     Bits 13 to 0 indicate logical sector offset within the first physical sector
             /// </summary>
             public ushort LogicalAlignment;
 
             /// <summary>
-            /// Words 210 to 211
-            /// Write/Read/Verify sector count mode 3 only
+            ///     Words 210 to 211
+            ///     Write/Read/Verify sector count mode 3 only
             /// </summary>
             public uint WRVSectorCountMode3;
             /// <summary>
-            /// Words 212 to 213
-            /// Write/Read/Verify sector count mode 2 only
+            ///     Words 212 to 213
+            ///     Write/Read/Verify sector count mode 2 only
             /// </summary>
             public uint WRVSectorCountMode2;
 
             /// <summary>
-            /// Word 214
-            /// NV Cache capabilities
-            /// Bits 15 to 12 feature set version
-            /// Bits 11 to 18 power mode feature set version
-            /// Bits 7 to 5 reserved
-            /// Bit 4 feature set enabled
-            /// Bits 3 to 2 reserved
-            /// Bit 1 power mode feature set enabled
-            /// Bit 0 power mode feature set supported
+            ///     Word 214
+            ///     NV Cache capabilities
+            ///     Bits 15 to 12 feature set version
+            ///     Bits 11 to 18 power mode feature set version
+            ///     Bits 7 to 5 reserved
+            ///     Bit 4 feature set enabled
+            ///     Bits 3 to 2 reserved
+            ///     Bit 1 power mode feature set enabled
+            ///     Bit 0 power mode feature set supported
             /// </summary>
             public ushort NVCacheCaps;
             /// <summary>
-            /// Words 215 to 216
-            /// NV Cache Size in Logical BLocks
+            ///     Words 215 to 216
+            ///     NV Cache Size in Logical BLocks
             /// </summary>
             public uint NVCacheSize;
             /// <summary>
-            /// Word 217
-            /// Nominal media rotation rate
-            /// In ACS-1 meant NV Cache read speed in MB/s
+            ///     Word 217
+            ///     Nominal media rotation rate
+            ///     In ACS-1 meant NV Cache read speed in MB/s
             /// </summary>
             public ushort NominalRotationRate;
             /// <summary>
-            /// Word 218
-            /// NV Cache write speed in MB/s
-            /// Reserved since ACS-2
+            ///     Word 218
+            ///     NV Cache write speed in MB/s
+            ///     Reserved since ACS-2
             /// </summary>
             public ushort NVCacheWriteSpeed;
             /// <summary>
-            /// Word 219 bits 7 to 0
-            /// Estimated device spin up in seconds
+            ///     Word 219 bits 7 to 0
+            ///     Estimated device spin up in seconds
             /// </summary>
             public byte NVEstimatedSpinUp;
             /// <summary>
-            /// Word 219 bits 15 to 8
-            /// NV Cache reserved
+            ///     Word 219 bits 15 to 8
+            ///     NV Cache reserved
             /// </summary>
             public byte NVReserved;
 
             /// <summary>
-            /// Word 220 bits 7 to 0
-            /// Write/Read/Verify feature set current mode
+            ///     Word 220 bits 7 to 0
+            ///     Write/Read/Verify feature set current mode
             /// </summary>
             public byte WRVMode;
             /// <summary>
-            /// Word 220 bits 15 to 8
-            /// Reserved
+            ///     Word 220 bits 15 to 8
+            ///     Reserved
             /// </summary>
             public byte WRVReserved;
 
             /// <summary>
-            /// Word 221
-            /// Reserved
+            ///     Word 221
+            ///     Reserved
             /// </summary>
             public ushort ReservedWord221;
 
             /// <summary>
-            /// Word 222
-            /// Transport major revision number
-            /// Bits 15 to 12 indicate transport type. 0 parallel, 1 serial, 0xE PCIe.
-            /// Bits 11 to 0 indicate revision
+            ///     Word 222
+            ///     Transport major revision number
+            ///     Bits 15 to 12 indicate transport type. 0 parallel, 1 serial, 0xE PCIe.
+            ///     Bits 11 to 0 indicate revision
             /// </summary>
             public ushort TransportMajorVersion;
             /// <summary>
-            /// Word 223
-            /// Transport minor revision number
+            ///     Word 223
+            ///     Transport minor revision number
             /// </summary>
             public ushort TransportMinorVersion;
 
             /// <summary>
-            /// Words 224 to 229
-            /// Reserved for CE-ATA
+            ///     Words 224 to 229
+            ///     Reserved for CE-ATA
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public ushort[] ReservedCEATA224;
 
             /// <summary>
-            /// Words 230 to 233
-            /// 48-bit LBA if Word 69 bit 3 is set
+            ///     Words 230 to 233
+            ///     48-bit LBA if Word 69 bit 3 is set
             /// </summary>
             public ulong ExtendedUserSectors;
 
             /// <summary>
-            /// Word 234
-            /// Minimum number of 512 byte units per DOWNLOAD MICROCODE mode 3
+            ///     Word 234
+            ///     Minimum number of 512 byte units per DOWNLOAD MICROCODE mode 3
             /// </summary>
             public ushort MinDownloadMicroMode3;
             /// <summary>
-            /// Word 235
-            /// Maximum number of 512 byte units per DOWNLOAD MICROCODE mode 3
+            ///     Word 235
+            ///     Maximum number of 512 byte units per DOWNLOAD MICROCODE mode 3
             /// </summary>
             public ushort MaxDownloadMicroMode3;
 
             /// <summary>
-            /// Words 236 to 254
+            ///     Words 236 to 254
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)] public ushort[] ReservedWords;
 
             /// <summary>
-            /// Word 255 bits 7 to 0
-            /// Should be 0xA5
+            ///     Word 255 bits 7 to 0
+            ///     Should be 0xA5
             /// </summary>
             public byte Signature;
             /// <summary>
-            /// Word 255 bits 15 to 8
-            /// Checksum
+            ///     Word 255 bits 15 to 8
+            ///     Checksum
             /// </summary>
             public byte Checksum;
         }
 
         /// <summary>
-        /// General configuration flag bits.
+        ///     General configuration flag bits.
         /// </summary>
         [Flags]
         public enum GeneralConfigurationBit : ushort
         {
             /// <summary>
-            /// Set on ATAPI
+            ///     Set on ATAPI
             /// </summary>
             NonMagnetic = 0x8000,
             /// <summary>
-            /// Format speed tolerance gap is required
-            /// Obsoleted in ATA-2
+            ///     Format speed tolerance gap is required
+            ///     Obsoleted in ATA-2
             /// </summary>
             FormatGapReq = 0x4000,
             /// <summary>
-            /// Track offset option is available
-            /// Obsoleted in ATA-2
+            ///     Track offset option is available
+            ///     Obsoleted in ATA-2
             /// </summary>
             TrackOffset = 0x2000,
             /// <summary>
-            /// Data strobe offset option is available
-            /// Obsoleted in ATA-2
+            ///     Data strobe offset option is available
+            ///     Obsoleted in ATA-2
             /// </summary>
             DataStrobeOffset = 0x1000,
             /// <summary>
-            /// Rotational speed tolerance is higher than 0,5%
-            /// Obsoleted in ATA-2
+            ///     Rotational speed tolerance is higher than 0,5%
+            ///     Obsoleted in ATA-2
             /// </summary>
             RotationalSpeedTolerance = 0x0800,
             /// <summary>
-            /// Disk transfer rate is &gt; 10 Mb/s
-            /// Obsoleted in ATA-2
+            ///     Disk transfer rate is &gt; 10 Mb/s
+            ///     Obsoleted in ATA-2
             /// </summary>
             UltraFastIDE = 0x0400,
             /// <summary>
-            /// Disk transfer rate is  &gt; 5 Mb/s but &lt;= 10 Mb/s
-            /// Obsoleted in ATA-2
+            ///     Disk transfer rate is  &gt; 5 Mb/s but &lt;= 10 Mb/s
+            ///     Obsoleted in ATA-2
             /// </summary>
             FastIDE = 0x0200,
             /// <summary>
-            /// Disk transfer rate is &lt;= 5 Mb/s
-            /// Obsoleted in ATA-2
+            ///     Disk transfer rate is &lt;= 5 Mb/s
+            ///     Obsoleted in ATA-2
             /// </summary>
             SlowIDE = 0x0100,
             /// <summary>
-            /// Drive uses removable media
+            ///     Drive uses removable media
             /// </summary>
             Removable = 0x0080,
             /// <summary>
-            /// Drive is fixed
-            /// Obsoleted in ATA/ATAPI-6
+            ///     Drive is fixed
+            ///     Obsoleted in ATA/ATAPI-6
             /// </summary>
             Fixed = 0x0040,
             /// <summary>
-            /// Spindle motor control is implemented
-            /// Obsoleted in ATA-2
+            ///     Spindle motor control is implemented
+            ///     Obsoleted in ATA-2
             /// </summary>
             SpindleControl = 0x0020,
             /// <summary>
-            /// Head switch time is bigger than 15 µsec.
-            /// Obsoleted in ATA-2
+            ///     Head switch time is bigger than 15 µsec.
+            ///     Obsoleted in ATA-2
             /// </summary>
             HighHeadSwitch = 0x0010,
             /// <summary>
-            /// Drive is not MFM encoded
-            /// Obsoleted in ATA-2
+            ///     Drive is not MFM encoded
+            ///     Obsoleted in ATA-2
             /// </summary>
             NotMFM = 0x0008,
             /// <summary>
-            /// Drive is soft sectored
-            /// Obsoleted in ATA-2
+            ///     Drive is soft sectored
+            ///     Obsoleted in ATA-2
             /// </summary>
             SoftSector = 0x0004,
             /// <summary>
-            /// Response incomplete
-            /// Since ATA/ATAPI-5
+            ///     Response incomplete
+            ///     Since ATA/ATAPI-5
             /// </summary>
             IncompleteResponse = 0x0004,
             /// <summary>
-            /// Drive is hard sectored
-            /// Obsoleted in ATA-2
+            ///     Drive is hard sectored
+            ///     Obsoleted in ATA-2
             /// </summary>
             HardSector = 0x0002,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved = 0x0001
         }
 
         /// <summary>
-        /// Capabilities flag bits.
+        ///     Capabilities flag bits.
         /// </summary>
         [Flags]
         public enum CapabilitiesBit : ushort
         {
             /// <summary>
-            /// ATAPI: Interleaved DMA supported
+            ///     ATAPI: Interleaved DMA supported
             /// </summary>
             InterleavedDMA = 0x8000,
             /// <summary>
-            /// ATAPI: Command queueing supported
+            ///     ATAPI: Command queueing supported
             /// </summary>
             CommandQueue = 0x4000,
             /// <summary>
-            /// Standby timer values are standard
+            ///     Standby timer values are standard
             /// </summary>
             StandardStanbyTimer = 0x2000,
             /// <summary>
-            /// ATAPI: Overlap operation supported
+            ///     ATAPI: Overlap operation supported
             /// </summary>
             OverlapOperation = 0x2000,
             /// <summary>
-            /// ATAPI: ATA software reset required
-            /// Obsoleted in ATA/ATAPI-4
+            ///     ATAPI: ATA software reset required
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             RequiresATASoftReset = 0x1000,
             /// <summary>
-            /// IORDY is supported
+            ///     IORDY is supported
             /// </summary>
             IORDY = 0x0800,
             /// <summary>
-            /// IORDY can be disabled
+            ///     IORDY can be disabled
             /// </summary>
             CanDisableIORDY = 0x0400,
             /// <summary>
-            /// LBA is supported
+            ///     LBA is supported
             /// </summary>
             LBASupport = 0x0200,
             /// <summary>
-            /// DMA is supported
+            ///     DMA is supported
             /// </summary>
             DMASupport = 0x0100,
             /// <summary>
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             VendorBit7 = 0x0080,
             /// <summary>
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             VendorBit6 = 0x0040,
             /// <summary>
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             VendorBit5 = 0x0020,
             /// <summary>
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             VendorBit4 = 0x0010,
             /// <summary>
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             VendorBit3 = 0x0008,
             /// <summary>
-            /// Vendor unique
-            /// Obsoleted in ATA/ATAPI-4
+            ///     Vendor unique
+            ///     Obsoleted in ATA/ATAPI-4
             /// </summary>
             VendorBit2 = 0x0004,
             /// <summary>
-            /// Long Physical Alignment setting bit 1
+            ///     Long Physical Alignment setting bit 1
             /// </summary>
             PhysicalAlignment1 = 0x0002,
             /// <summary>
-            /// Long Physical Alignment setting bit 0
+            ///     Long Physical Alignment setting bit 0
             /// </summary>
             PhysicalAlignment0 = 0x0001
         }
 
         /// <summary>
-        /// Extended identify flag bits.
+        ///     Extended identify flag bits.
         /// </summary>
         [Flags]
         public enum ExtendedIdentifyBit : byte
         {
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved07 = 0x80,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved06 = 0x40,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved05 = 0x20,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved04 = 0x10,
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             Reserved03 = 0x08,
             /// <summary>
-            /// Identify word 88 is valid
+            ///     Identify word 88 is valid
             /// </summary>
             Word88Valid = 0x04,
             /// <summary>
-            /// Identify words 64 to 70 are valid
+            ///     Identify words 64 to 70 are valid
             /// </summary>
             Words64to70Valid = 0x02,
             /// <summary>
-            /// Identify words 54 to 58 are valid
+            ///     Identify words 54 to 58 are valid
             /// </summary>
             Words54to58Valid = 0x01
         }
 
         /// <summary>
-        /// More capabilities flag bits.
+        ///     More capabilities flag bits.
         /// </summary>
         [Flags]
         public enum CapabilitiesBit2 : ushort
         {
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             MustBeClear = 0x8000,
             /// <summary>
-            /// MUST be set
+            ///     MUST be set
             /// </summary>
             MustBeSet = 0x4000,
             Reserved13 = 0x2000,
@@ -1035,7 +1036,7 @@ namespace DiscImageChef.Decoders.ATA
             Reserved02 = 0x0004,
             Reserved01 = 0x0002,
             /// <summary>
-            /// Indicates a device specific minimum standby timer value
+            ///     Indicates a device specific minimum standby timer value
             /// </summary>
             SpecificStandbyTimer = 0x0001
         }
@@ -1054,223 +1055,223 @@ namespace DiscImageChef.Decoders.ATA
         }
 
         /// <summary>
-        /// More capabilities flag bits.
+        ///     More capabilities flag bits.
         /// </summary>
         [Flags]
         public enum CommandSetBit : ushort
         {
             /// <summary>
-            /// Already obsolete in ATA/ATAPI-4, reserved in ATA3
+            ///     Already obsolete in ATA/ATAPI-4, reserved in ATA3
             /// </summary>
             Obsolete15 = 0x8000,
             /// <summary>
-            /// NOP is supported
+            ///     NOP is supported
             /// </summary>
             Nop = 0x4000,
             /// <summary>
-            /// READ BUFFER is supported
+            ///     READ BUFFER is supported
             /// </summary>
             ReadBuffer = 0x2000,
             /// <summary>
-            /// WRITE BUFFER is supported
+            ///     WRITE BUFFER is supported
             /// </summary>
             WriteBuffer = 0x1000,
             /// <summary>
-            /// Already obsolete in ATA/ATAPI-4, reserved in ATA3
+            ///     Already obsolete in ATA/ATAPI-4, reserved in ATA3
             /// </summary>
             Obsolete11 = 0x0800,
             /// <summary>
-            /// Host Protected Area is supported
+            ///     Host Protected Area is supported
             /// </summary>
             HPA = 0x0400,
             /// <summary>
-            /// DEVICE RESET is supported
+            ///     DEVICE RESET is supported
             /// </summary>
             DeviceReset = 0x0200,
             /// <summary>
-            /// SERVICE interrupt is supported
+            ///     SERVICE interrupt is supported
             /// </summary>
             Service = 0x0100,
             /// <summary>
-            /// Release is supported
+            ///     Release is supported
             /// </summary>
             Release = 0x0080,
             /// <summary>
-            /// Look-ahead is supported
+            ///     Look-ahead is supported
             /// </summary>
             LookAhead = 0x0040,
             /// <summary>
-            /// Write cache is supported
+            ///     Write cache is supported
             /// </summary>
             WriteCache = 0x0020,
             /// <summary>
-            /// PACKET command set is supported
+            ///     PACKET command set is supported
             /// </summary>
             Packet = 0x0010,
             /// <summary>
-            /// Power Management feature set is supported
+            ///     Power Management feature set is supported
             /// </summary>
             PowerManagement = 0x0008,
             /// <summary>
-            /// Removable Media feature set is supported
+            ///     Removable Media feature set is supported
             /// </summary>
             RemovableMedia = 0x0004,
             /// <summary>
-            /// Security Mode feature set is supported
+            ///     Security Mode feature set is supported
             /// </summary>
             SecurityMode = 0x0002,
             /// <summary>
-            /// SMART feature set is supported
+            ///     SMART feature set is supported
             /// </summary>
             SMART = 0x0001
         }
 
         /// <summary>
-        /// More capabilities flag bits.
+        ///     More capabilities flag bits.
         /// </summary>
         [Flags]
         public enum CommandSetBit2 : ushort
         {
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             MustBeClear = 0x8000,
             /// <summary>
-            /// MUST BE SET
+            ///     MUST BE SET
             /// </summary>
             MustBeSet = 0x4000,
             /// <summary>
-            /// FLUSH CACHE EXT supported
+            ///     FLUSH CACHE EXT supported
             /// </summary>
             FlushCacheExt = 0x2000,
             /// <summary>
-            /// FLUSH CACHE supported
+            ///     FLUSH CACHE supported
             /// </summary>
             FlushCache = 0x1000,
             /// <summary>
-            /// Device Configuration Overlay feature set supported
+            ///     Device Configuration Overlay feature set supported
             /// </summary>
             DCO = 0x0800,
             /// <summary>
-            /// 48-bit LBA supported
+            ///     48-bit LBA supported
             /// </summary>
             LBA48 = 0x0400,
             /// <summary>
-            /// Automatic Acoustic Management supported
+            ///     Automatic Acoustic Management supported
             /// </summary>
             AAM = 0x0200,
             /// <summary>
-            /// SET MAX security extension supported
+            ///     SET MAX security extension supported
             /// </summary>
             SetMax = 0x0100,
             /// <summary>
-            /// Address Offset Reserved Area Boot NCITS TR27:2001
+            ///     Address Offset Reserved Area Boot NCITS TR27:2001
             /// </summary>
             AddressOffsetReservedAreaBoot = 0x0080,
             /// <summary>
-            /// SET FEATURES required to spin-up
+            ///     SET FEATURES required to spin-up
             /// </summary>
             SetFeaturesRequired = 0x0040,
             /// <summary>
-            /// Power-Up in standby feature set supported
+            ///     Power-Up in standby feature set supported
             /// </summary>
             PowerUpInStandby = 0x0020,
             /// <summary>
-            /// Removable Media Status Notification feature set is supported
+            ///     Removable Media Status Notification feature set is supported
             /// </summary>
             RemovableNotification = 0x0010,
             /// <summary>
-            /// Advanced Power Management feature set is supported
+            ///     Advanced Power Management feature set is supported
             /// </summary>
             APM = 0x0008,
             /// <summary>
-            /// Compact Flash feature set is supported
+            ///     Compact Flash feature set is supported
             /// </summary>
             CompactFlash = 0x0004,
             /// <summary>
-            /// READ DMA QUEUED and WRITE DMA QUEUED are supported
+            ///     READ DMA QUEUED and WRITE DMA QUEUED are supported
             /// </summary>
             RWQueuedDMA = 0x0002,
             /// <summary>
-            /// DOWNLOAD MICROCODE is supported
+            ///     DOWNLOAD MICROCODE is supported
             /// </summary>
             DownloadMicrocode = 0x0001
         }
 
         /// <summary>
-        /// More capabilities flag bits.
+        ///     More capabilities flag bits.
         /// </summary>
         [Flags]
         public enum CommandSetBit3 : ushort
         {
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             MustBeClear = 0x8000,
             /// <summary>
-            /// MUST BE SET
+            ///     MUST BE SET
             /// </summary>
             MustBeSet = 0x4000,
             /// <summary>
-            /// IDLE IMMEDIATE with UNLOAD FEATURE is supported
+            ///     IDLE IMMEDIATE with UNLOAD FEATURE is supported
             /// </summary>
             IdleImmediate = 0x2000,
             /// <summary>
-            /// Reserved for INCITS TR-37/2004
+            ///     Reserved for INCITS TR-37/2004
             /// </summary>
             Reserved12 = 0x1000,
             /// <summary>
-            /// Reserved for INCITS TR-37/2004
+            ///     Reserved for INCITS TR-37/2004
             /// </summary>
             Reserved11 = 0x0800,
             /// <summary>
-            /// URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT
+            ///     URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT
             /// </summary>
             WriteURG = 0x0400,
             /// <summary>
-            /// URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT
+            ///     URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT
             /// </summary>
             ReadURG = 0x0200,
             /// <summary>
-            /// 64-bit World Wide Name is supported
+            ///     64-bit World Wide Name is supported
             /// </summary>
             WWN = 0x0100,
             /// <summary>
-            /// WRITE DMA QUEUED FUA EXT is supported
+            ///     WRITE DMA QUEUED FUA EXT is supported
             /// </summary>
             FUAWriteQ = 0x0080,
             /// <summary>
-            /// WRITE DMA FUA EXT and WRITE MULTIPLE FUA EXT are supported
+            ///     WRITE DMA FUA EXT and WRITE MULTIPLE FUA EXT are supported
             /// </summary>
             FUAWrite = 0x0040,
             /// <summary>
-            /// General Purpose Logging feature supported
+            ///     General Purpose Logging feature supported
             /// </summary>
             GPL = 0x0020,
             /// <summary>
-            /// Sstreaming feature set is supported
+            ///     Sstreaming feature set is supported
             /// </summary>
             Streaming = 0x0010,
             /// <summary>
-            /// Media Card Pass Through command set supported
+            ///     Media Card Pass Through command set supported
             /// </summary>
             MCPT = 0x0008,
             /// <summary>
-            /// Media serial number supported
+            ///     Media serial number supported
             /// </summary>
             MediaSerial = 0x0004,
             /// <summary>
-            /// SMART self-test supported
+            ///     SMART self-test supported
             /// </summary>
             SMARTSelfTest = 0x0002,
             /// <summary>
-            /// SMART error logging supported
+            ///     SMART error logging supported
             /// </summary>
             SMARTLog = 0x0001
         }
 
         /// <summary>
-        /// More capabilities flag bits.
+        ///     More capabilities flag bits.
         /// </summary>
         [Flags]
         public enum SecurityStatusBit : ushort
@@ -1283,40 +1284,40 @@ namespace DiscImageChef.Decoders.ATA
             Reserved10 = 0x0400,
             Reserved09 = 0x0200,
             /// <summary>
-            /// Maximum security level
+            ///     Maximum security level
             /// </summary>
             Maximum = 0x0100,
             Reserved07 = 0x0080,
             Reserved06 = 0x0040,
             /// <summary>
-            /// Supports enhanced security erase
+            ///     Supports enhanced security erase
             /// </summary>
             Enhanced = 0x0020,
             /// <summary>
-            /// Security count expired
+            ///     Security count expired
             /// </summary>
             Expired = 0x0010,
             /// <summary>
-            /// Security frozen
+            ///     Security frozen
             /// </summary>
             Frozen = 0x0008,
             /// <summary>
-            /// Security locked
+            ///     Security locked
             /// </summary>
             Locked = 0x0004,
             /// <summary>
-            /// Security enabled
+            ///     Security enabled
             /// </summary>
             Enabled = 0x0002,
             /// <summary>
-            /// Security supported
+            ///     Security supported
             /// </summary>
             Supported = 0x0001
         }
 
         /// <summary>
-        /// Word 80
-        /// Major version
+        ///     Word 80
+        ///     Major version
         /// </summary>
         [Flags]
         public enum MajorVersionBit : ushort
@@ -1326,47 +1327,47 @@ namespace DiscImageChef.Decoders.ATA
             Reserved13 = 0x2000,
             Reserved12 = 0x1000,
             /// <summary>
-            /// ACS-4
+            ///     ACS-4
             /// </summary>
             ACS4 = 0x0800,
             /// <summary>
-            /// ACS-3
+            ///     ACS-3
             /// </summary>
             ACS3 = 0x0400,
             /// <summary>
-            /// ACS-2
+            ///     ACS-2
             /// </summary>
             ACS2 = 0x0200,
             /// <summary>
-            /// ATA8-ACS
+            ///     ATA8-ACS
             /// </summary>
             Ata8ACS = 0x0100,
             /// <summary>
-            /// ATA/ATAPI-7
+            ///     ATA/ATAPI-7
             /// </summary>
             AtaAtapi7 = 0x0080,
             /// <summary>
-            /// ATA/ATAPI-6
+            ///     ATA/ATAPI-6
             /// </summary>
             AtaAtapi6 = 0x0040,
             /// <summary>
-            /// ATA/ATAPI-5
+            ///     ATA/ATAPI-5
             /// </summary>
             AtaAtapi5 = 0x0020,
             /// <summary>
-            /// ATA/ATAPI-4
+            ///     ATA/ATAPI-4
             /// </summary>
             AtaAtapi4 = 0x0010,
             /// <summary>
-            /// ATA-3
+            ///     ATA-3
             /// </summary>
             Ata3 = 0x0008,
             /// <summary>
-            /// ATA-2
+            ///     ATA-2
             /// </summary>
             Ata2 = 0x0004,
             /// <summary>
-            /// ATA-1
+            ///     ATA-1
             /// </summary>
             Ata1 = 0x0002,
             Reserved00 = 0x0001
@@ -1375,23 +1376,23 @@ namespace DiscImageChef.Decoders.ATA
         public enum SpecificConfigurationEnum : ushort
         {
             /// <summary>
-            /// Device requires SET FEATURES to spin up and
-            /// IDENTIFY DEVICE response is incomplete
+            ///     Device requires SET FEATURES to spin up and
+            ///     IDENTIFY DEVICE response is incomplete
             /// </summary>
             RequiresSetIncompleteResponse = 0x37C8,
             /// <summary>
-            /// Device requires SET FEATURES to spin up and
-            /// IDENTIFY DEVICE response is complete
+            ///     Device requires SET FEATURES to spin up and
+            ///     IDENTIFY DEVICE response is complete
             /// </summary>
             RequiresSetCompleteResponse = 0x738C,
             /// <summary>
-            /// Device does not requires SET FEATURES to spin up and
-            /// IDENTIFY DEVICE response is incomplete
+            ///     Device does not requires SET FEATURES to spin up and
+            ///     IDENTIFY DEVICE response is incomplete
             /// </summary>
             NotRequiresSetIncompleteResponse = 0x8C73,
             /// <summary>
-            /// Device does not requires SET FEATURES to spin up and
-            /// IDENTIFY DEVICE response is complete
+            ///     Device does not requires SET FEATURES to spin up and
+            ///     IDENTIFY DEVICE response is complete
             /// </summary>
             NotRequiresSetCompleteResponse = 0xC837
         }
@@ -1400,11 +1401,11 @@ namespace DiscImageChef.Decoders.ATA
         public enum TrustedComputingBit : ushort
         {
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             Clear = 0x8000,
             /// <summary>
-            /// MUST be set
+            ///     MUST be set
             /// </summary>
             Set = 0x4000,
             Reserved13 = 0x2000,
@@ -1421,23 +1422,23 @@ namespace DiscImageChef.Decoders.ATA
             Reserved02 = 0x0004,
             Reserved01 = 0x0002,
             /// <summary>
-            /// Trusted Computing feature set is supported
+            ///     Trusted Computing feature set is supported
             /// </summary>
             TrustedComputing = 0x0001
         }
 
         /// <summary>
-        /// More capabilities flag bits.
+        ///     More capabilities flag bits.
         /// </summary>
         [Flags]
         public enum CommandSetBit4 : ushort
         {
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             MustBeClear = 0x8000,
             /// <summary>
-            /// MUST be set
+            ///     MUST be set
             /// </summary>
             MustBeSet = 0x4000,
             Reserved13 = 0x2000,
@@ -1445,43 +1446,43 @@ namespace DiscImageChef.Decoders.ATA
             Reserved11 = 0x0800,
             Reserved10 = 0x0400,
             /// <summary>
-            /// DSN feature set is supported
+            ///     DSN feature set is supported
             /// </summary>
             DSN = 0x0200,
             /// <summary>
-            /// Accessible Max Address Configuration is supported
+            ///     Accessible Max Address Configuration is supported
             /// </summary>
             AMAC = 0x0100,
             /// <summary>
-            /// Extended Power Conditions is supported
+            ///     Extended Power Conditions is supported
             /// </summary>
             ExtPowerCond = 0x0080,
             /// <summary>
-            /// Extended Status Reporting is supported
+            ///     Extended Status Reporting is supported
             /// </summary>
             ExtStatusReport = 0x0040,
             /// <summary>
-            /// Free-fall Control feature set is supported
+            ///     Free-fall Control feature set is supported
             /// </summary>
             FreeFallControl = 0x0020,
             /// <summary>
-            /// Supports segmented feature in DOWNLOAD MICROCODE
+            ///     Supports segmented feature in DOWNLOAD MICROCODE
             /// </summary>
             SegmentedDownloadMicrocode = 0x0010,
             /// <summary>
-            /// READ/WRITE DMA EXT GPL are supported
+            ///     READ/WRITE DMA EXT GPL are supported
             /// </summary>
             RWDMAExtGpl = 0x0008,
             /// <summary>
-            /// WRITE UNCORRECTABLE is supported
+            ///     WRITE UNCORRECTABLE is supported
             /// </summary>
             WriteUnc = 0x0004,
             /// <summary>
-            /// Write/Read/Verify is supported
+            ///     Write/Read/Verify is supported
             /// </summary>
             WRV = 0x0002,
             /// <summary>
-            /// Reserved for DT1825
+            ///     Reserved for DT1825
             /// </summary>
             DT1825 = 0x0001
         }
@@ -1500,27 +1501,27 @@ namespace DiscImageChef.Decoders.ATA
             Reserved07 = 0x0080,
             Reserved06 = 0x0040,
             /// <summary>
-            /// SCT Command Transport Data Tables supported
+            ///     SCT Command Transport Data Tables supported
             /// </summary>
             DataTables = 0x0020,
             /// <summary>
-            /// SCT Command Transport Features Control supported
+            ///     SCT Command Transport Features Control supported
             /// </summary>
             FeaturesControl = 0x0010,
             /// <summary>
-            /// SCT Command Transport Error Recovery Control supported
+            ///     SCT Command Transport Error Recovery Control supported
             /// </summary>
             ErrorRecoveryControl = 0x0008,
             /// <summary>
-            /// SCT Command Transport Write Same supported
+            ///     SCT Command Transport Write Same supported
             /// </summary>
             WriteSame = 0x0004,
             /// <summary>
-            /// SCT Command Transport Long Sector Address supported
+            ///     SCT Command Transport Long Sector Address supported
             /// </summary>
             LongSectorAccess = 0x0002,
             /// <summary>
-            /// SCT Command Transport supported
+            ///     SCT Command Transport supported
             /// </summary>
             Supported = 0x0001
         }
@@ -1529,35 +1530,35 @@ namespace DiscImageChef.Decoders.ATA
         public enum SATACapabilitiesBit : ushort
         {
             /// <summary>
-            /// Supports READ LOG DMA EXT
+            ///     Supports READ LOG DMA EXT
             /// </summary>
             ReadLogDMAExt = 0x8000,
             /// <summary>
-            /// Supports device automatic partial to slumber transitions
+            ///     Supports device automatic partial to slumber transitions
             /// </summary>
             DevSlumbTrans = 0x4000,
             /// <summary>
-            /// Supports host automatic partial to slumber transitions
+            ///     Supports host automatic partial to slumber transitions
             /// </summary>
             HostSlumbTrans = 0x2000,
             /// <summary>
-            /// Supports NCQ priroty
+            ///     Supports NCQ priroty
             /// </summary>
             NCQPriority = 0x1000,
             /// <summary>
-            /// Supports unload while NCQ commands are outstanding
+            ///     Supports unload while NCQ commands are outstanding
             /// </summary>
             UnloadNCQ = 0x0800,
             /// <summary>
-            /// Supports PHY Event Counters
+            ///     Supports PHY Event Counters
             /// </summary>
             PHYEventCounter = 0x0400,
             /// <summary>
-            /// Supports receipt of host initiated power management requests
+            ///     Supports receipt of host initiated power management requests
             /// </summary>
             PowerReceipt = 0x0200,
             /// <summary>
-            /// Supports NCQ
+            ///     Supports NCQ
             /// </summary>
             NCQ = 0x0100,
             Reserved07 = 0x0080,
@@ -1565,19 +1566,19 @@ namespace DiscImageChef.Decoders.ATA
             Reserved05 = 0x0020,
             Reserved04 = 0x0010,
             /// <summary>
-            /// Supports SATA Gen. 3 Signaling Speed (6.0Gb/s)
+            ///     Supports SATA Gen. 3 Signaling Speed (6.0Gb/s)
             /// </summary>
             Gen3Speed = 0x0008,
             /// <summary>
-            /// Supports SATA Gen. 2 Signaling Speed (3.0Gb/s)
+            ///     Supports SATA Gen. 2 Signaling Speed (3.0Gb/s)
             /// </summary>
             Gen2Speed = 0x0004,
             /// <summary>
-            /// Supports SATA Gen. 1 Signaling Speed (1.5Gb/s)
+            ///     Supports SATA Gen. 1 Signaling Speed (1.5Gb/s)
             /// </summary>
             Gen1Speed = 0x0002,
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             Clear = 0x0001
         }
@@ -1594,43 +1595,43 @@ namespace DiscImageChef.Decoders.ATA
             Reserved09 = 0x0200,
             Reserved08 = 0x0100,
             /// <summary>
-            /// Supports NCQ autosense
+            ///     Supports NCQ autosense
             /// </summary>
             NCQAutoSense = 0x0080,
             /// <summary>
-            /// Automatic Partial to Slumber transitions are enabled
+            ///     Automatic Partial to Slumber transitions are enabled
             /// </summary>
             EnabledSlumber = 0x0080,
             /// <summary>
-            /// Supports Software Settings Preservation
+            ///     Supports Software Settings Preservation
             /// </summary>
             SettingsPreserve = 0x0040,
             /// <summary>
-            /// Supports hardware feature control
+            ///     Supports hardware feature control
             /// </summary>
             HardwareFeatureControl = 0x0020,
             /// <summary>
-            /// ATAPI: Asynchronous notification
+            ///     ATAPI: Asynchronous notification
             /// </summary>
             AsyncNotification = 0x0020,
             /// <summary>
-            /// Supports in-order data delivery
+            ///     Supports in-order data delivery
             /// </summary>
             InOrderData = 0x0010,
             /// <summary>
-            /// Supports initiating power management
+            ///     Supports initiating power management
             /// </summary>
             InitPowerMgmt = 0x0008,
             /// <summary>
-            /// Supports DMA Setup auto-activation
+            ///     Supports DMA Setup auto-activation
             /// </summary>
             DMASetup = 0x0004,
             /// <summary>
-            /// Supports non-zero buffer offsets
+            ///     Supports non-zero buffer offsets
             /// </summary>
             NonZeroBufferOffset = 0x0002,
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             Clear = 0x0001
         }
@@ -1639,32 +1640,32 @@ namespace DiscImageChef.Decoders.ATA
         public enum CapabilitiesBit3 : byte
         {
             /// <summary>
-            /// BLOCK ERASE EXT supported
+            ///     BLOCK ERASE EXT supported
             /// </summary>
             BlockErase = 0x0080,
             /// <summary>
-            /// OVERWRITE EXT supported
+            ///     OVERWRITE EXT supported
             /// </summary>
             Overwrite = 0x0040,
             /// <summary>
-            /// CRYPTO SCRAMBLE EXT supported
+            ///     CRYPTO SCRAMBLE EXT supported
             /// </summary>
             CryptoScramble = 0x0020,
             /// <summary>
-            /// Sanitize feature set is supported
+            ///     Sanitize feature set is supported
             /// </summary>
             Sanitize = 0x0010,
             /// <summary>
-            /// If unset, sanitize commands are specified by ACS-2
+            ///     If unset, sanitize commands are specified by ACS-2
             /// </summary>
             SanitizeCommands = 0x0008,
             /// <summary>
-            /// SANITIZE ANTIFREEZE LOCK EXT is supported
+            ///     SANITIZE ANTIFREEZE LOCK EXT is supported
             /// </summary>
             SanitizeAntifreeze = 0x0004,
             Reserved01 = 0x0002,
             /// <summary>
-            /// Multiple logical sector setting is valid
+            ///     Multiple logical sector setting is valid
             /// </summary>
             MultipleValid = 0x0001
         }
@@ -1673,67 +1674,67 @@ namespace DiscImageChef.Decoders.ATA
         public enum CommandSetBit5 : ushort
         {
             /// <summary>
-            /// Supports CFast Specification
+            ///     Supports CFast Specification
             /// </summary>
             CFast = 0x8000,
             /// <summary>
-            /// Deterministic read after TRIM is supported
+            ///     Deterministic read after TRIM is supported
             /// </summary>
             DeterministicTrim = 0x4000,
             /// <summary>
-            /// Long physical sector alignment error reporting control is supported
+            ///     Long physical sector alignment error reporting control is supported
             /// </summary>
             LongPhysSectorAligError = 0x2000,
             /// <summary>
-            /// DEVICE CONFIGURATION IDENTIFY DMA and DEVICE CONFIGURATION SET DMA are supported
+            ///     DEVICE CONFIGURATION IDENTIFY DMA and DEVICE CONFIGURATION SET DMA are supported
             /// </summary>
             DeviceConfDMA = 0x1000,
             /// <summary>
-            /// READ BUFFER DMA is supported
+            ///     READ BUFFER DMA is supported
             /// </summary>
             ReadBufferDMA = 0x0800,
             /// <summary>
-            /// WRITE BUFFER DMA is supported
+            ///     WRITE BUFFER DMA is supported
             /// </summary>
             WriteBufferDMA = 0x0400,
             /// <summary>
-            /// SET PASSWORD DMA and SET UNLOCK DMA are supported
+            ///     SET PASSWORD DMA and SET UNLOCK DMA are supported
             /// </summary>
             SetMaxDMA = 0x0200,
             /// <summary>
-            /// DOWNLOAD MICROCODE DMA is supported
+            ///     DOWNLOAD MICROCODE DMA is supported
             /// </summary>
             DownloadMicroCodeDMA = 0x0100,
             /// <summary>
-            /// Reserved for IEEE-1667
+            ///     Reserved for IEEE-1667
             /// </summary>
             IEEE1667 = 0x0080,
             /// <summary>
-            /// Optional ATA 28-bit commands are supported
+            ///     Optional ATA 28-bit commands are supported
             /// </summary>
             Ata28 = 0x0040,
             /// <summary>
-            /// Read zero after TRIM is supported
+            ///     Read zero after TRIM is supported
             /// </summary>
             ReadZeroTrim = 0x0020,
             /// <summary>
-            /// Device encrypts all user data
+            ///     Device encrypts all user data
             /// </summary>
             Encrypted = 0x0010,
             /// <summary>
-            /// Extended number of user addressable sectors is supported
+            ///     Extended number of user addressable sectors is supported
             /// </summary>
             ExtSectors = 0x0008,
             /// <summary>
-            /// All write cache is non-volatile
+            ///     All write cache is non-volatile
             /// </summary>
             AllCacheNV = 0x0004,
             /// <summary>
-            /// Zoned capabilities bit 1
+            ///     Zoned capabilities bit 1
             /// </summary>
             ZonedBit1 = 0x0002,
             /// <summary>
-            /// Zoned capabilities bit 0
+            ///     Zoned capabilities bit 0
             /// </summary>
             ZonedBit0 = 0x0001
         }
@@ -1741,27 +1742,27 @@ namespace DiscImageChef.Decoders.ATA
         public enum DeviceFormFactorEnum : ushort
         {
             /// <summary>
-            /// Size not reported
+            ///     Size not reported
             /// </summary>
             NotReported = 0,
             /// <summary>
-            /// 5.25"
+            ///     5.25"
             /// </summary>
             FiveAndQuarter = 1,
             /// <summary>
-            /// 3.5"
+            ///     3.5"
             /// </summary>
             ThreeAndHalf = 2,
             /// <summary>
-            /// 2.5"
+            ///     2.5"
             /// </summary>
             TwoAndHalf = 3,
             /// <summary>
-            /// 1.8"
+            ///     1.8"
             /// </summary>
             OnePointEight = 4,
             /// <summary>
-            /// Less than 1.8"
+            ///     Less than 1.8"
             /// </summary>
             LessThanOnePointEight = 5
         }
@@ -1785,7 +1786,7 @@ namespace DiscImageChef.Decoders.ATA
             Reserved02 = 0x0004,
             Reserved01 = 0x0002,
             /// <summary>
-            /// TRIM is suported
+            ///     TRIM is suported
             /// </summary>
             Trim = 0x0001
         }
@@ -1803,39 +1804,39 @@ namespace DiscImageChef.Decoders.ATA
             Reserved08 = 0x0100,
             Reserved07 = 0x0080,
             /// <summary>
-            /// Supports RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED
+            ///     Supports RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED
             /// </summary>
             FPDMAQ = 0x0040,
             /// <summary>
-            /// Supports NCQ Queue Management
+            ///     Supports NCQ Queue Management
             /// </summary>
             NCQMgmt = 0x0020,
             /// <summary>
-            /// ATAPI: Supports host environment detect
+            ///     ATAPI: Supports host environment detect
             /// </summary>
             HostEnvDetect = 0x0020,
             /// <summary>
-            /// Supports NCQ streaming
+            ///     Supports NCQ streaming
             /// </summary>
             NCQStream = 0x0010,
             /// <summary>
-            /// ATAPI: Supports device attention on slimline connected devices
+            ///     ATAPI: Supports device attention on slimline connected devices
             /// </summary>
             DevAttSlimline = 0x0010,
             /// <summary>
-            /// Coded value indicating current negotiated Serial ATA signal speed
+            ///     Coded value indicating current negotiated Serial ATA signal speed
             /// </summary>
             CurrentSpeedBit2 = 0x0008,
             /// <summary>
-            /// Coded value indicating current negotiated Serial ATA signal speed
+            ///     Coded value indicating current negotiated Serial ATA signal speed
             /// </summary>
             CurrentSpeedBit1 = 0x0004,
             /// <summary>
-            /// Coded value indicating current negotiated Serial ATA signal speed
+            ///     Coded value indicating current negotiated Serial ATA signal speed
             /// </summary>
             CurrentSpeedBit0 = 0x0002,
             /// <summary>
-            /// MUST NOT be set
+            ///     MUST NOT be set
             /// </summary>
             Clear = 0x0001
         }
@@ -1888,10 +1889,8 @@ namespace DiscImageChef.Decoders.ATA
 
             IdentifyDevice ATAID = IdentifyDeviceResponse.Value;
             if(ATAID.GeneralConfiguration.HasFlag(GeneralConfigurationBit.NonMagnetic))
-                if((ushort)ATAID.GeneralConfiguration != 0x848A)
-                    atapi = true;
-                else
-                    cfa = true;
+                if((ushort)ATAID.GeneralConfiguration != 0x848A) atapi = true;
+                else cfa = true;
 
             if(atapi) sb.AppendLine("ATAPI device");
             else if(cfa) sb.AppendLine("CompactFlash device");
@@ -1914,7 +1913,8 @@ namespace DiscImageChef.Decoders.ATA
                     if(ATAID.MediaSerial != "") sb.AppendFormat("Media serial #: {0}", ATAID.MediaSerial).AppendLine();
                 }
 
-                if(ATAID.EnabledCommandSet3.HasFlag(CommandSetBit3.WWN)) sb.AppendFormat("World Wide Name: {0:X16}", ATAID.WWN).AppendLine();
+                if(ATAID.EnabledCommandSet3.HasFlag(CommandSetBit3.WWN))
+                    sb.AppendFormat("World Wide Name: {0:X16}", ATAID.WWN).AppendLine();
             }
 
             bool ata1 = false,
@@ -2381,10 +2381,7 @@ namespace DiscImageChef.Decoders.ATA
                     else logicalsectorsize = 512;
 
                     if((ATAID.PhysLogSectorSize & 0x2000) == 0x2000)
-                    {
-                        physicalsectorsize =
-                            logicalsectorsize * (uint)Math.Pow(2, ATAID.PhysLogSectorSize & 0xF);
-                    }
+                        physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, ATAID.PhysLogSectorSize & 0xF);
                     else physicalsectorsize = logicalsectorsize;
                 }
                 else
@@ -2422,9 +2419,11 @@ namespace DiscImageChef.Decoders.ATA
                                         ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack).AppendLine();
                     }
 
-                if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport)) sb.AppendFormat("{0} sectors in 28-bit LBA mode", ATAID.LBASectors).AppendLine();
+                if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport))
+                    sb.AppendFormat("{0} sectors in 28-bit LBA mode", ATAID.LBASectors).AppendLine();
 
-                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.LBA48)) sb.AppendFormat("{0} sectors in 48-bit LBA mode", ATAID.LBA48Sectors).AppendLine();
+                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.LBA48))
+                    sb.AppendFormat("{0} sectors in 48-bit LBA mode", ATAID.LBA48Sectors).AppendLine();
 
                 if(minatalevel <= 5)
                     if(ATAID.CurrentSectors > 0)
@@ -2533,8 +2532,8 @@ namespace DiscImageChef.Decoders.ATA
                 switch(ATAID.BufferType)
                 {
                     case 1:
-                        sb.AppendFormat("{0} KiB of single ported single sector buffer",
-                                        ATAID.BufferSize * 512 / 1024).AppendLine();
+                        sb.AppendFormat("{0} KiB of single ported single sector buffer", ATAID.BufferSize * 512 / 1024)
+                          .AppendLine();
                         break;
                     case 2:
                         sb.AppendFormat("{0} KiB of dual ported multi sector buffer", ATAID.BufferSize * 512 / 1024)
@@ -2758,7 +2757,8 @@ namespace DiscImageChef.Decoders.ATA
                   .AppendFormat("At minimum {0} ns. transfer cycle time per word in PIO, " + "with IORDY flow control",
                                 ATAID.MinPIOCycleTimeFlow);
 
-            if(ATAID.MaxQueueDepth != 0) sb.AppendLine().AppendFormat("{0} depth of queue maximum", ATAID.MaxQueueDepth + 1);
+            if(ATAID.MaxQueueDepth != 0)
+                sb.AppendLine().AppendFormat("{0} depth of queue maximum", ATAID.MaxQueueDepth + 1);
 
             if(atapi)
             {
@@ -2775,19 +2775,28 @@ namespace DiscImageChef.Decoders.ATA
             {
                 if(!ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
                 {
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed)) sb.AppendLine().Append("SATA 1.5Gb/s is supported");
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed)) sb.AppendLine().Append("SATA 3.0Gb/s is supported");
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed)) sb.AppendLine().Append("SATA 6.0Gb/s is supported");
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PowerReceipt)) sb.AppendLine().Append("Receipt of host initiated power management requests is supported");
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter)) sb.AppendLine().Append("PHY Event counters are supported");
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.HostSlumbTrans)) sb.AppendLine().Append("Supports host automatic partial to slumber transitions is supported");
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.DevSlumbTrans)) sb.AppendLine().Append("Supports device automatic partial to slumber transitions is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed))
+                        sb.AppendLine().Append("SATA 1.5Gb/s is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed))
+                        sb.AppendLine().Append("SATA 3.0Gb/s is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed))
+                        sb.AppendLine().Append("SATA 6.0Gb/s is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PowerReceipt))
+                        sb.AppendLine().Append("Receipt of host initiated power management requests is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter))
+                        sb.AppendLine().Append("PHY Event counters are supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.HostSlumbTrans))
+                        sb.AppendLine().Append("Supports host automatic partial to slumber transitions is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.DevSlumbTrans))
+                        sb.AppendLine().Append("Supports device automatic partial to slumber transitions is supported");
                     if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
                         sb.AppendLine().Append("NCQ is supported");
 
-                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority)) sb.AppendLine().Append("NCQ priority is supported");
-                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ)) sb.AppendLine().Append("Unload is supported with outstanding NCQ commands");
+                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority))
+                            sb.AppendLine().Append("NCQ priority is supported");
+                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ))
+                            sb.AppendLine().Append("Unload is supported with outstanding NCQ commands");
                     }
                 }
 
@@ -2796,14 +2805,18 @@ namespace DiscImageChef.Decoders.ATA
                     if(!ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear) &&
                        ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt)) sb.AppendLine().Append("NCQ queue management is supported");
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream)) sb.AppendLine().Append("NCQ streaming is supported");
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt))
+                            sb.AppendLine().Append("NCQ queue management is supported");
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream))
+                            sb.AppendLine().Append("NCQ streaming is supported");
                     }
 
                     if(atapi)
                     {
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect)) sb.AppendLine().Append("ATAPI device supports host environment detection");
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.DevAttSlimline)) sb.AppendLine().Append("ATAPI device supports attention on slimline connected devices");
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect))
+                            sb.AppendLine().Append("ATAPI device supports host environment detection");
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.DevAttSlimline))
+                            sb.AppendLine().Append("ATAPI device supports attention on slimline connected devices");
                     }
 
                     //sb.AppendFormat("Negotiated speed = {0}", ((ushort)ATAID.SATACapabilities2 & 0x000E) >> 1);
@@ -2967,7 +2980,8 @@ namespace DiscImageChef.Decoders.ATA
                     if(ATAID.EnabledCommandSet2.HasFlag(CommandSetBit2.AddressOffsetReservedAreaBoot))
                         sb.Append(" and enabled");
                 }
-                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.SetFeaturesRequired)) sb.AppendLine().Append("SET FEATURES is required before spin-up");
+                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.SetFeaturesRequired))
+                    sb.AppendLine().Append("SET FEATURES is required before spin-up");
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.PowerUpInStandby))
                 {
                     sb.AppendLine().Append("Power-up in standby is supported");
@@ -2982,7 +2996,8 @@ namespace DiscImageChef.Decoders.ATA
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.APM))
                 {
                     sb.AppendLine().Append("Advanced Power Management is supported");
-                    if(ATAID.EnabledCommandSet2.HasFlag(CommandSetBit2.APM)) sb.AppendFormat(" and enabled with value {0}", ATAID.CurrentAPM);
+                    if(ATAID.EnabledCommandSet2.HasFlag(CommandSetBit2.APM))
+                        sb.AppendFormat(" and enabled with value {0}", ATAID.CurrentAPM);
                 }
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.CompactFlash))
                 {
@@ -3028,9 +3043,12 @@ namespace DiscImageChef.Decoders.ATA
                     sb.AppendLine().Append("IDLE IMMEDIATE with UNLOAD FEATURE is supported");
                     if(ATAID.EnabledCommandSet3.HasFlag(CommandSetBit3.IdleImmediate)) sb.Append(" and enabled");
                 }
-                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WriteURG)) sb.AppendLine().Append("URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT");
-                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.ReadURG)) sb.AppendLine().Append("URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT");
-                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WWN)) sb.AppendLine().Append("Device has a World Wide Name");
+                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WriteURG))
+                    sb.AppendLine().Append("URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT");
+                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.ReadURG))
+                    sb.AppendLine().Append("URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT");
+                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WWN))
+                    sb.AppendLine().Append("Device has a World Wide Name");
                 if(ATAID.CommandSet3.HasFlag(CommandSetBit3.FUAWriteQ))
                 {
                     sb.AppendLine().Append("WRITE DMA QUEUED FUA EXT is supported");
@@ -3132,23 +3150,33 @@ namespace DiscImageChef.Decoders.ATA
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DeviceConfDMA))
                 sb.AppendLine()
                   .Append("DEVICE CONFIGURATION IDENTIFY DMA and DEVICE CONFIGURATION SET DMA are supported");
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadBufferDMA)) sb.AppendLine().Append("READ BUFFER DMA is supported");
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.WriteBufferDMA)) sb.AppendLine().Append("WRITE BUFFER DMA is supported");
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DownloadMicroCodeDMA)) sb.AppendLine().Append("DOWNLOAD MICROCODE DMA is supported");
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.SetMaxDMA)) sb.AppendLine().Append("SET PASSWORD DMA and SET UNLOCK DMA are supported");
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Ata28)) sb.AppendLine().Append("Not all 28-bit commands are supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadBufferDMA))
+                sb.AppendLine().Append("READ BUFFER DMA is supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.WriteBufferDMA))
+                sb.AppendLine().Append("WRITE BUFFER DMA is supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DownloadMicroCodeDMA))
+                sb.AppendLine().Append("DOWNLOAD MICROCODE DMA is supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.SetMaxDMA))
+                sb.AppendLine().Append("SET PASSWORD DMA and SET UNLOCK DMA are supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Ata28))
+                sb.AppendLine().Append("Not all 28-bit commands are supported");
 
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.CFast)) sb.AppendLine().Append("Device follows CFast specification");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.CFast))
+                sb.AppendLine().Append("Device follows CFast specification");
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.IEEE1667)) sb.AppendLine().Append("Device follows IEEE-1667");
 
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DeterministicTrim))
             {
                 sb.AppendLine().Append("Read after TRIM is deterministic");
-                if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadZeroTrim)) sb.AppendLine().Append("Read after TRIM returns empty data");
+                if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadZeroTrim))
+                    sb.AppendLine().Append("Read after TRIM returns empty data");
             }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.LongPhysSectorAligError)) sb.AppendLine().Append("Device supports Long Physical Sector Alignment Error Reporting Control");
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Encrypted)) sb.AppendLine().Append("Device encrypts all user data");
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.AllCacheNV)) sb.AppendLine().Append("Device's write cache is non-volatile");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.LongPhysSectorAligError))
+                sb.AppendLine().Append("Device supports Long Physical Sector Alignment Error Reporting Control");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Encrypted))
+                sb.AppendLine().Append("Device encrypts all user data");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.AllCacheNV))
+                sb.AppendLine().Append("Device's write cache is non-volatile");
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ZonedBit0) ||
                ATAID.CommandSet5.HasFlag(CommandSetBit5.ZonedBit1)) sb.AppendLine().Append("Device is zoned");
 
@@ -3223,13 +3251,17 @@ namespace DiscImageChef.Decoders.ATA
                         if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.SettingsPreserve))
                             sb.Append(" and enabled");
                     }
-                    if(ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.NCQAutoSense)) sb.AppendLine().Append("NCQ Autosense is supported");
-                    if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.EnabledSlumber)) sb.AppendLine().Append("Automatic Partial to Slumber transitions are enabled");
+                    if(ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.NCQAutoSense))
+                        sb.AppendLine().Append("NCQ Autosense is supported");
+                    if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.EnabledSlumber))
+                        sb.AppendLine().Append("Automatic Partial to Slumber transitions are enabled");
                 }
             }
-            if((ATAID.RemovableStatusSet & 0x03) > 0) sb.AppendLine().Append("Removable Media Status Notification feature set is supported");
+            if((ATAID.RemovableStatusSet & 0x03) > 0)
+                sb.AppendLine().Append("Removable Media Status Notification feature set is supported");
 
-            if(ATAID.FreeFallSensitivity != 0x00 && ATAID.FreeFallSensitivity != 0xFF) sb.AppendLine().AppendFormat("Free-fall sensitivity set to {0}", ATAID.FreeFallSensitivity);
+            if(ATAID.FreeFallSensitivity != 0x00 && ATAID.FreeFallSensitivity != 0xFF)
+                sb.AppendLine().AppendFormat("Free-fall sensitivity set to {0}", ATAID.FreeFallSensitivity);
 
             if(ATAID.DataSetMgmt.HasFlag(DataSetMgmtBit.Trim)) sb.AppendLine().Append("TRIM is supported");
             if(ATAID.DataSetMgmtSize > 0)
@@ -3386,7 +3418,7 @@ namespace DiscImageChef.Decoders.ATA
             return BitConverter.ToUInt64(qword, 0);
         }
 
-        static string DescrambleATAString(byte[] buffer, int offset, int length)
+        static string DescrambleATAString(IList<byte> buffer, int offset, int length)
         {
             byte[] outbuf = buffer[offset + length - 1] != 0x00 ? new byte[length + 1] : new byte[length];
 

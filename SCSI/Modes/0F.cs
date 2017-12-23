@@ -42,38 +42,38 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x0F: Data compression page
         /// <summary>
-        /// Data compression page
-        /// Page code 0x0F
-        /// 16 bytes in SSC-1, SSC-2, SSC-3
+        ///     Data compression page
+        ///     Page code 0x0F
+        ///     16 bytes in SSC-1, SSC-2, SSC-3
         /// </summary>
         public struct ModePage_0F
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Data compression enabled
+            ///     Data compression enabled
             /// </summary>
             public bool DCE;
             /// <summary>
-            /// Data compression capable
+            ///     Data compression capable
             /// </summary>
             public bool DCC;
             /// <summary>
-            /// Data decompression enabled
+            ///     Data decompression enabled
             /// </summary>
             public bool DDE;
             /// <summary>
-            /// Report exception on decompression
+            ///     Report exception on decompression
             /// </summary>
             public byte RED;
             /// <summary>
-            /// Compression algorithm
+            ///     Compression algorithm
             /// </summary>
             public uint CompressionAlgo;
             /// <summary>
-            /// Decompression algorithm
+            ///     Decompression algorithm
             /// </summary>
             public uint DecompressionAlgo;
         }

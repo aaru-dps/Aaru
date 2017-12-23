@@ -42,66 +42,66 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x0E: CD-ROM audio control parameters page
         /// <summary>
-        /// CD-ROM audio control parameters
-        /// Page code 0x0E
-        /// 16 bytes in SCSI-2, MMC-1, MMC-2, MMC-3
+        ///     CD-ROM audio control parameters
+        ///     Page code 0x0E
+        ///     16 bytes in SCSI-2, MMC-1, MMC-2, MMC-3
         /// </summary>
         public struct ModePage_0E
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Return status as soon as playback operation starts
+            ///     Return status as soon as playback operation starts
             /// </summary>
             public bool Immed;
             /// <summary>
-            /// Stop on track crossing
+            ///     Stop on track crossing
             /// </summary>
             public bool SOTC;
             /// <summary>
-            /// Indicates <see cref="BlocksPerSecondOfAudio"/> is valid
+            ///     Indicates <see cref="BlocksPerSecondOfAudio" /> is valid
             /// </summary>
             public bool APRVal;
             /// <summary>
-            /// Multiplier for <see cref="BlocksPerSecondOfAudio"/>
+            ///     Multiplier for <see cref="BlocksPerSecondOfAudio" />
             /// </summary>
             public byte LBAFormat;
             /// <summary>
-            /// LBAs per second of audio
+            ///     LBAs per second of audio
             /// </summary>
             public ushort BlocksPerSecondOfAudio;
             /// <summary>
-            /// Channels output on this port
+            ///     Channels output on this port
             /// </summary>
             public byte OutputPort0ChannelSelection;
             /// <summary>
-            /// Volume level for this port
+            ///     Volume level for this port
             /// </summary>
             public byte OutputPort0Volume;
             /// <summary>
-            /// Channels output on this port
+            ///     Channels output on this port
             /// </summary>
             public byte OutputPort1ChannelSelection;
             /// <summary>
-            /// Volume level for this port
+            ///     Volume level for this port
             /// </summary>
             public byte OutputPort1Volume;
             /// <summary>
-            /// Channels output on this port
+            ///     Channels output on this port
             /// </summary>
             public byte OutputPort2ChannelSelection;
             /// <summary>
-            /// Volume level for this port
+            ///     Volume level for this port
             /// </summary>
             public byte OutputPort2Volume;
             /// <summary>
-            /// Channels output on this port
+            ///     Channels output on this port
             /// </summary>
             public byte OutputPort3ChannelSelection;
             /// <summary>
-            /// Volume level for this port
+            ///     Volume level for this port
             /// </summary>
             public byte OutputPort3Volume;
         }

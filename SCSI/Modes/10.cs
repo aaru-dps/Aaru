@@ -42,34 +42,34 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x10: XOR control mode page
         /// <summary>
-        /// XOR control mode page
-        /// Page code 0x10
-        /// 24 bytes in SBC-1, SBC-2
+        ///     XOR control mode page
+        ///     Page code 0x10
+        ///     24 bytes in SBC-1, SBC-2
         /// </summary>
         public struct ModePage_10
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Disables XOR operations
+            ///     Disables XOR operations
             /// </summary>
             public bool XORDIS;
             /// <summary>
-            /// Maximum transfer length in blocks for a XOR command
+            ///     Maximum transfer length in blocks for a XOR command
             /// </summary>
             public uint MaxXorWrite;
             /// <summary>
-            /// Maximum regenerate length in blocks
+            ///     Maximum regenerate length in blocks
             /// </summary>
             public uint MaxRegenSize;
             /// <summary>
-            /// Maximum transfer length in blocks for READ during a rebuild
+            ///     Maximum transfer length in blocks for READ during a rebuild
             /// </summary>
             public uint MaxRebuildRead;
             /// <summary>
-            /// Minimum time in ms between READs during a rebuild
+            ///     Minimum time in ms between READs during a rebuild
             /// </summary>
             public ushort RebuildDelay;
         }

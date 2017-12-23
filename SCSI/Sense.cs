@@ -55,23 +55,23 @@ namespace DiscImageChef.Decoders.SCSI
     public struct StandardSense
     {
         /// <summary>
-        /// If set, <see cref="LBA"/> is valid
+        ///     If set, <see cref="LBA" /> is valid
         /// </summary>
         public bool AddressValid;
         /// <summary>
-        /// Error class, 0 to 6
+        ///     Error class, 0 to 6
         /// </summary>
         public byte ErrorClass;
         /// <summary>
-        /// Error type
+        ///     Error type
         /// </summary>
         public byte ErrorType;
         /// <summary>
-        /// Private usage
+        ///     Private usage
         /// </summary>
         public byte Private;
         /// <summary>
-        /// LBA where error happened
+        ///     LBA where error happened
         /// </summary>
         public uint LBA;
     }
@@ -79,67 +79,67 @@ namespace DiscImageChef.Decoders.SCSI
     public enum SenseKeys : byte
     {
         /// <summary>
-        /// No information to be reported, but bits should be checked
+        ///     No information to be reported, but bits should be checked
         /// </summary>
         NoSense = 0,
         /// <summary>
-        /// Target performed some recovery to successfully complete last command
+        ///     Target performed some recovery to successfully complete last command
         /// </summary>
         RecoveredError = 1,
         /// <summary>
-        /// Target is not ready
+        ///     Target is not ready
         /// </summary>
         NotReady = 2,
         /// <summary>
-        /// Non-recoverable medium error occurred
+        ///     Non-recoverable medium error occurred
         /// </summary>
         MediumError = 3,
         /// <summary>
-        /// Non-recoverable hardware error occurred
+        ///     Non-recoverable hardware error occurred
         /// </summary>
         HardwareError = 4,
         /// <summary>
-        /// Target has received an illegal request
+        ///     Target has received an illegal request
         /// </summary>
         IllegalRequest = 5,
         /// <summary>
-        /// Target requires initiator attention
+        ///     Target requires initiator attention
         /// </summary>
         UnitAttention = 6,
         /// <summary>
-        /// A protected command has been denied
+        ///     A protected command has been denied
         /// </summary>
         DataProtect = 7,
         /// <summary>
-        /// A blank block has been tried to read or a non-rewritable one to write
+        ///     A blank block has been tried to read or a non-rewritable one to write
         /// </summary>
         BlankCheck = 8,
         /// <summary>
-        /// For private/vendor usage
+        ///     For private/vendor usage
         /// </summary>
         PrivateUse = 9,
         /// <summary>
-        /// COPY command aborted
+        ///     COPY command aborted
         /// </summary>
         CopyAborted = 0xA,
         /// <summary>
-        /// Command aborted
+        ///     Command aborted
         /// </summary>
         AbortedCommand = 0xB,
         /// <summary>
-        /// SEARCH command has been satisfied
+        ///     SEARCH command has been satisfied
         /// </summary>
         Equal = 0xC,
         /// <summary>
-        /// End-of-medium reached with data remaining in buffer
+        ///     End-of-medium reached with data remaining in buffer
         /// </summary>
         VolumeOverflow = 0xD,
         /// <summary>
-        /// COMPARE failed
+        ///     COMPARE failed
         /// </summary>
         Miscompare = 0xE,
         /// <summary>
-        /// Complated
+        ///     Complated
         /// </summary>
         Completed = 0xF
     }
@@ -152,52 +152,52 @@ namespace DiscImageChef.Decoders.SCSI
     public struct FixedSense
     {
         /// <summary>
-        /// If set, <see cref="Information"/> is valid
+        ///     If set, <see cref="Information" /> is valid
         /// </summary>
         public bool InformationValid;
         /// <summary>
-        /// Contains number of current segment descriptor
+        ///     Contains number of current segment descriptor
         /// </summary>
         public byte SegmentNumber;
         /// <summary>
-        /// If set indicates current command has read a filemark or a setmark
+        ///     If set indicates current command has read a filemark or a setmark
         /// </summary>
         public bool Filemark;
         /// <summary>
-        /// If set indicates device has arrived end-of-medium
+        ///     If set indicates device has arrived end-of-medium
         /// </summary>
         public bool EOM;
         /// <summary>
-        /// Means the requested logical block length did not match the logical block length on the medium
+        ///     Means the requested logical block length did not match the logical block length on the medium
         /// </summary>
         public bool ILI;
         /// <summary>
-        /// Contains the sense key
+        ///     Contains the sense key
         /// </summary>
         public SenseKeys SenseKey;
         /// <summary>
-        /// Additional information
+        ///     Additional information
         /// </summary>
         public uint Information;
         /// <summary>
-        /// Additional sense length
+        ///     Additional sense length
         /// </summary>
         public byte AdditionalLength;
         /// <summary>
-        /// Command specific information field
+        ///     Command specific information field
         /// </summary>
         public uint CommandSpecific;
         /// <summary>
-        /// Additional sense code
+        ///     Additional sense code
         /// </summary>
         public byte ASC;
         /// <summary>
-        /// Additional sense code qualifier
+        ///     Additional sense code qualifier
         /// </summary>
         public byte ASCQ;
         public byte FieldReplaceable;
         /// <summary>
-        /// If set, <see cref="SenseKeySpecific"/> is valid
+        ///     If set, <see cref="SenseKeySpecific" /> is valid
         /// </summary>
         public bool SKSV;
         public uint SenseKeySpecific;
@@ -210,20 +210,20 @@ namespace DiscImageChef.Decoders.SCSI
     public struct DescriptorSense
     {
         /// <summary>
-        /// Contains the sense key
+        ///     Contains the sense key
         /// </summary>
         public SenseKeys SenseKey;
         /// <summary>
-        /// Additional sense code
+        ///     Additional sense code
         /// </summary>
         public byte ASC;
         /// <summary>
-        /// Additional sense code qualifier
+        ///     Additional sense code qualifier
         /// </summary>
         public byte ASCQ;
         public bool Overflow;
         /// <summary>
-        /// The descriptors, indexed by type
+        ///     The descriptors, indexed by type
         /// </summary>
         public Dictionary<byte, byte[]> Descriptors;
     }
@@ -243,7 +243,7 @@ namespace DiscImageChef.Decoders.SCSI
     public static class Sense
     {
         /// <summary>
-        /// Gets the SCSI SENSE type to help chosing the correct decoding function
+        ///     Gets the SCSI SENSE type to help chosing the correct decoding function
         /// </summary>
         /// <returns>The type.</returns>
         /// <param name="sense">Sense bytes.</param>
@@ -425,8 +425,8 @@ namespace DiscImageChef.Decoders.SCSI
 
                     if((decoded.SenseKeySpecific & 0x200000) == 0x200000)
                         sb.AppendFormat("Invalid value in bit {0} in field {1} of CDB",
-                                        (decoded.SenseKeySpecific & 0x70000) >> 16,
-                                        decoded.SenseKeySpecific & 0xFFFF).AppendLine();
+                                        (decoded.SenseKeySpecific & 0x70000) >> 16, decoded.SenseKeySpecific & 0xFFFF)
+                          .AppendLine();
                     else
                         sb.AppendFormat("Invalid value in field {0} of CDB", decoded.SenseKeySpecific & 0xFFFF)
                           .AppendLine();
@@ -471,7 +471,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         /// <summary>
-        /// Decodes the information sense data descriptor
+        ///     Decodes the information sense data descriptor
         /// </summary>
         /// <returns>The information value</returns>
         /// <param name="descriptor">Descriptor.</param>
@@ -494,7 +494,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         /// <summary>
-        /// Decodes the command-specific information sense data descriptor
+        ///     Decodes the command-specific information sense data descriptor
         /// </summary>
         /// <returns>The command-specific information sense data descriptor.</returns>
         /// <param name="descriptor">Descriptor.</param>
@@ -517,7 +517,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         /// <summary>
-        /// Decodes the sense key specific sense data descriptor
+        ///     Decodes the sense key specific sense data descriptor
         /// </summary>
         /// <returns>The sense key specific sense data descriptor.</returns>
         /// <param name="descriptor">Descriptor.</param>
@@ -531,7 +531,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         /// <summary>
-        /// Decodes the field replaceable unit sense data descriptor
+        ///     Decodes the field replaceable unit sense data descriptor
         /// </summary>
         /// <returns>The field replaceable unit sense data descriptor.</returns>
         /// <param name="descriptor">Descriptor.</param>
@@ -543,7 +543,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         /// <summary>
-        /// Decodes the another progress indication sense data descriptor
+        ///     Decodes the another progress indication sense data descriptor
         /// </summary>
         /// <returns>The another progress indication sense data descriptor.</returns>
         /// <param name="descriptor">Descriptor.</param>

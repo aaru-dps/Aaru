@@ -40,410 +40,410 @@ using System.Text;
 namespace DiscImageChef.Decoders.SCSI.MMC
 {
     /// <summary>
-    /// MMC Feature enumeration
+    ///     MMC Feature enumeration
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum FeatureNumber : ushort
     {
         /// <summary>
-        /// Lists all profiles
+        ///     Lists all profiles
         /// </summary>
         ProfileList = 0x0000,
         /// <summary>
-        /// Mandatory behaviour
+        ///     Mandatory behaviour
         /// </summary>
         Core = 0x0001,
         /// <summary>
-        /// Operational changes
+        ///     Operational changes
         /// </summary>
         Morphing = 0x0002,
         /// <summary>
-        /// Removable medium
+        ///     Removable medium
         /// </summary>
         Removable = 0x0003,
         /// <summary>
-        /// Ability to control write protection status
+        ///     Ability to control write protection status
         /// </summary>
         WriteProtect = 0x0004,
         /// <summary>
-        /// Ability to read sectors with random addressing
+        ///     Ability to read sectors with random addressing
         /// </summary>
         RandomRead = 0x0010,
         /// <summary>
-        /// Reads on OSTA Multi-Read
+        ///     Reads on OSTA Multi-Read
         /// </summary>
         MultiRead = 0x001D,
         /// <summary>
-        /// Able to read CD structures
+        ///     Able to read CD structures
         /// </summary>
         CDRead = 0x001E,
         /// <summary>
-        /// Able to read DVD structures
+        ///     Able to read DVD structures
         /// </summary>
         DVDRead = 0x001F,
         /// <summary>
-        /// Ability to write sectors with random addressing
+        ///     Ability to write sectors with random addressing
         /// </summary>
         RandomWrite = 0x0020,
         /// <summary>
-        /// Ability to sequentially write
+        ///     Ability to sequentially write
         /// </summary>
         IncrementalWrite = 0x0021,
         /// <summary>
-        /// Support for media that requires erase before write
+        ///     Support for media that requires erase before write
         /// </summary>
         SectorErasable = 0x0022,
         /// <summary>
-        /// Supports formatting media
+        ///     Supports formatting media
         /// </summary>
         Formattable = 0x0023,
         /// <summary>
-        /// Ability to provide defect-free space
+        ///     Ability to provide defect-free space
         /// </summary>
         HardwareDefectMgmt = 0x0024,
         /// <summary>
-        /// Supports for write-once media in random order
+        ///     Supports for write-once media in random order
         /// </summary>
         WriteOnce = 0x0025,
         /// <summary>
-        /// Supports for media that shall be written from blocking boundaries
+        ///     Supports for media that shall be written from blocking boundaries
         /// </summary>
         RestrictedOverwrite = 0x0026,
         /// <summary>
-        /// Supports high speed CD-RW
+        ///     Supports high speed CD-RW
         /// </summary>
         CDRWCAV = 0x0027,
         /// <summary>
-        /// Read and optionally write MRW
+        ///     Read and optionally write MRW
         /// </summary>
         MRW = 0x0028,
         /// <summary>
-        /// Ability to control RECOVERED ERROR reporting
+        ///     Ability to control RECOVERED ERROR reporting
         /// </summary>
         EnDefectReport = 0x0029,
         /// <summary>
-        /// Ability to recognize, read and optionally write DVD+RW
+        ///     Ability to recognize, read and optionally write DVD+RW
         /// </summary>
         DVDRWPlus = 0x002A,
         /// <summary>
-        /// Ability to read DVD+R
+        ///     Ability to read DVD+R
         /// </summary>
         DVDRPlus = 0x002B,
         RigidOverWrite = 0x002C,
         /// <summary>
-        /// Ability to write CD in Track-at-Once
+        ///     Ability to write CD in Track-at-Once
         /// </summary>
         CDTAO = 0x002D,
         /// <summary>
-        /// Ability to write CD in Session-at-Once or RAW
+        ///     Ability to write CD in Session-at-Once or RAW
         /// </summary>
         CDMastering = 0x002E,
         /// <summary>
-        /// Ability to write DVD structures
+        ///     Ability to write DVD structures
         /// </summary>
         DVDRWrite = 0x002F,
         /// <summary>
-        /// Ability to read DDCD
+        ///     Ability to read DDCD
         /// </summary>
         DDCD = 0x0030,
         /// <summary>
-        /// Ability to write DDCD-R
+        ///     Ability to write DDCD-R
         /// </summary>
         DDCDR = 0x0031,
         /// <summary>
-        /// Ability to write DDCD-RW
+        ///     Ability to write DDCD-RW
         /// </summary>
         DDCDRW = 0x0032,
         /// <summary>
-        /// Ability to record in layer jump mode
+        ///     Ability to record in layer jump mode
         /// </summary>
         LayerJump = 0x0033,
         /// <summary>
-        /// Ability to perform Layer Jump recording on Rigid Restricted Overwrite
+        ///     Ability to perform Layer Jump recording on Rigid Restricted Overwrite
         /// </summary>
         LJRigid = 0x0034,
         /// <summary>
-        /// Ability to stop the long immediate operation
+        ///     Ability to stop the long immediate operation
         /// </summary>
         StopLong = 0x0035,
         /// <summary>
-        /// Ability to report CD-RW media sub-types supported for write
+        ///     Ability to report CD-RW media sub-types supported for write
         /// </summary>
         CDRWMediaWrite = 0x0037,
         /// <summary>
-        /// Logical block overwrite service on BD-R formatted as SRM+POW
+        ///     Logical block overwrite service on BD-R formatted as SRM+POW
         /// </summary>
         BDRPOW = 0x0038,
         /// <summary>
-        /// Ability to read DVD+RW DL
+        ///     Ability to read DVD+RW DL
         /// </summary>
         DVDRWDLPlus = 0x003A,
         /// <summary>
-        /// Ability to read DVD+R DL
+        ///     Ability to read DVD+R DL
         /// </summary>
         DVDRDLPlus = 0x003B,
         /// <summary>
-        /// Ability to read BD discs
+        ///     Ability to read BD discs
         /// </summary>
         BDRead = 0x0040,
         /// <summary>
-        /// Ability to write BD discs
+        ///     Ability to write BD discs
         /// </summary>
         BDWrite = 0x0041,
         /// <summary>
-        /// Timely, Safe Recording
+        ///     Timely, Safe Recording
         /// </summary>
         TSR = 0x0042,
         /// <summary>
-        /// Ability to read HD DVD
+        ///     Ability to read HD DVD
         /// </summary>
         HDDVDRead = 0x0050,
         /// <summary>
-        /// Ability to write HD DVD
+        ///     Ability to write HD DVD
         /// </summary>
         HDDVDWrite = 0x0051,
         /// <summary>
-        /// Ability to write HD DVD-RW fragmented
+        ///     Ability to write HD DVD-RW fragmented
         /// </summary>
         HDDVDRWFragment = 0x0052,
         /// <summary>
-        /// Supports some Hybrid Discs
+        ///     Supports some Hybrid Discs
         /// </summary>
         Hybrid = 0x0080,
         /// <summary>
-        /// Host and device directed power management
+        ///     Host and device directed power management
         /// </summary>
         PowerMgmt = 0x0100,
         /// <summary>
-        /// Supports S.M.A.R.T.
+        ///     Supports S.M.A.R.T.
         /// </summary>
         SMART = 0x0101,
         /// <summary>
-        /// Single machanism multiple disc changer
+        ///     Single machanism multiple disc changer
         /// </summary>
         Changer = 0x0102,
         /// <summary>
-        /// Ability to play CD audio to an analogue output
+        ///     Ability to play CD audio to an analogue output
         /// </summary>
         CDAudioExt = 0x0103,
         /// <summary>
-        /// Ability to accept new microcode
+        ///     Ability to accept new microcode
         /// </summary>
         MicrocodeUpgrade = 0x0104,
         /// <summary>
-        /// Ability to respond to all commands within a specific time
+        ///     Ability to respond to all commands within a specific time
         /// </summary>
         Timeout = 0x0105,
         /// <summary>
-        /// Supports DVD CSS/CPPM
+        ///     Supports DVD CSS/CPPM
         /// </summary>
         CSS = 0x0106,
         /// <summary>
-        /// Ability to read and write using host requested performance parameters
+        ///     Ability to read and write using host requested performance parameters
         /// </summary>
         RTS = 0x0107,
         /// <summary>
-        /// Drive has a unique identifier
+        ///     Drive has a unique identifier
         /// </summary>
         DriveSerial = 0x0108,
         /// <summary>
-        /// Ability to return unique Media Serial Number
+        ///     Ability to return unique Media Serial Number
         /// </summary>
         MediaSerial = 0x0109,
         /// <summary>
-        /// Ability to read and/or write DCBs
+        ///     Ability to read and/or write DCBs
         /// </summary>
         DCBs = 0x010A,
         /// <summary>
-        /// Supports DVD CPRM
+        ///     Supports DVD CPRM
         /// </summary>
         CPRM = 0x010B,
         /// <summary>
-        /// Firmware creation date report
+        ///     Firmware creation date report
         /// </summary>
         FirmwareInfo = 0x010C,
         /// <summary>
-        /// Ability to decode and optionally encode AACS
+        ///     Ability to decode and optionally encode AACS
         /// </summary>
         AACS = 0x010D,
         /// <summary>
-        /// Ability to perform DVD CSS managed recording
+        ///     Ability to perform DVD CSS managed recording
         /// </summary>
         CSSManagedRec = 0x010E,
         /// <summary>
-        /// Ability to decode and optionally encode VCPS
+        ///     Ability to decode and optionally encode VCPS
         /// </summary>
         VCPS = 0x0110,
         /// <summary>
-        /// Supports SecurDisc
+        ///     Supports SecurDisc
         /// </summary>
         SecurDisc = 0x0113,
         /// <summary>
-        /// TCG Optical Security Subsystem Class
+        ///     TCG Optical Security Subsystem Class
         /// </summary>
         OSSC = 0x0142
     }
 
     /// <summary>
-    /// MMC Profile enumeration
+    ///     MMC Profile enumeration
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ProfileNumber : ushort
     {
         /// <summary>
-        /// Not to use
+        ///     Not to use
         /// </summary>
         Reserved = 0x0000,
         /// <summary>
-        /// Non-removable disk profile
+        ///     Non-removable disk profile
         /// </summary>
         NonRemovable = 0x0001,
         /// <summary>
-        /// Rewritable with removable media
+        ///     Rewritable with removable media
         /// </summary>
         Removable = 0x0002,
         /// <summary>
-        /// Magneto-Optical with sector erase
+        ///     Magneto-Optical with sector erase
         /// </summary>
         MOErasable = 0x0003,
         /// <summary>
-        /// Optical write once
+        ///     Optical write once
         /// </summary>
         OpticalWORM = 0x0004,
         /// <summary>
-        /// Advance Storage - Magneto-Optical
+        ///     Advance Storage - Magneto-Optical
         /// </summary>
         ASMO = 0x0005,
         /// <summary>
-        /// Read-only Compact Disc
+        ///     Read-only Compact Disc
         /// </summary>
         CDROM = 0x0008,
         /// <summary>
-        /// Write-once Compact Disc
+        ///     Write-once Compact Disc
         /// </summary>
         CDR = 0x0009,
         /// <summary>
-        /// Re-writable Compact Disc
+        ///     Re-writable Compact Disc
         /// </summary>
         CDRW = 0x000A,
         /// <summary>
-        /// Read-only DVD
+        ///     Read-only DVD
         /// </summary>
         DVDROM = 0x0010,
         /// <summary>
-        /// Write-once sequentially recorded DVD-R
+        ///     Write-once sequentially recorded DVD-R
         /// </summary>
         DVDRSeq = 0x0011,
         /// <summary>
-        /// DVD-RAM
+        ///     DVD-RAM
         /// </summary>
         DVDRAM = 0x0012,
         /// <summary>
-        /// Restricted overwrite DVD-RW
+        ///     Restricted overwrite DVD-RW
         /// </summary>
         DVDRWRes = 0x0013,
         /// <summary>
-        /// Sequential recording DVD-RW
+        ///     Sequential recording DVD-RW
         /// </summary>
         DVDRWSeq = 0x0014,
         /// <summary>
-        /// Sequential recording DVD-R DL
+        ///     Sequential recording DVD-R DL
         /// </summary>
         DVDRDLSeq = 0x0015,
         /// <summary>
-        /// Layer jump recording DVD-R DL
+        ///     Layer jump recording DVD-R DL
         /// </summary>
         DVDRDLJump = 0x0016,
         /// <summary>
-        /// DVD-RW DL
+        ///     DVD-RW DL
         /// </summary>
         DVDRWDL = 0x0017,
         /// <summary>
-        /// DVD-Download
+        ///     DVD-Download
         /// </summary>
         DVDDownload = 0x0018,
         /// <summary>
-        /// DVD+RW
+        ///     DVD+RW
         /// </summary>
         DVDRWPlus = 0x001A,
         /// <summary>
-        /// DVD+R
+        ///     DVD+R
         /// </summary>
         DVDRPlus = 0x001B,
         /// <summary>
-        /// DDCD-ROM
+        ///     DDCD-ROM
         /// </summary>
         DDCDROM = 0x0020,
         /// <summary>
-        /// DDCD-R
+        ///     DDCD-R
         /// </summary>
         DDCDR = 0x0021,
         /// <summary>
-        /// DDCD-RW
+        ///     DDCD-RW
         /// </summary>
         DDCDRW = 0x0022,
         /// <summary>
-        /// DVD+RW DL
+        ///     DVD+RW DL
         /// </summary>
         DVDRWDLPlus = 0x002A,
         /// <summary>
-        /// DVD+R DL
+        ///     DVD+R DL
         /// </summary>
         DVDRDLPlus = 0x002B,
         /// <summary>
-        /// BD-ROM
+        ///     BD-ROM
         /// </summary>
         BDROM = 0x0040,
         /// <summary>
-        /// BD-R SRM
+        ///     BD-R SRM
         /// </summary>
         BDRSeq = 0x0041,
         /// <summary>
-        /// BD-R RRM
+        ///     BD-R RRM
         /// </summary>
         BDRRdm = 0x0042,
         /// <summary>
-        /// BD-RE
+        ///     BD-RE
         /// </summary>
         BDRE = 0x0043,
         /// <summary>
-        /// HD DVD-ROM
+        ///     HD DVD-ROM
         /// </summary>
         HDDVDROM = 0x0050,
         /// <summary>
-        /// HD DVD-R
+        ///     HD DVD-R
         /// </summary>
         HDDVDR = 0x0051,
         /// <summary>
-        /// HD DVD-RAM
+        ///     HD DVD-RAM
         /// </summary>
         HDDVDRAM = 0x0052,
         /// <summary>
-        /// HD DVD-RW
+        ///     HD DVD-RW
         /// </summary>
         HDDVDRW = 0x0053,
         /// <summary>
-        /// HD DVD-R DL
+        ///     HD DVD-R DL
         /// </summary>
         HDDVDRDL = 0x0058,
         /// <summary>
-        /// HD DVD-RW DL
+        ///     HD DVD-RW DL
         /// </summary>
         HDDVDRWDL = 0x005A,
         /// <summary>
-        /// HDBurn CD-ROM
+        ///     HDBurn CD-ROM
         /// </summary>
         HDBURNROM = 0x0080,
         /// <summary>
-        /// HDBurn CD-R
+        ///     HDBurn CD-R
         /// </summary>
         HDBURNR = 0x0081,
         /// <summary>
-        /// HDBurn CD-RW
+        ///     HDBurn CD-RW
         /// </summary>
         HDBURNRW = 0x0082,
         /// <summary>
-        /// Drive does not conform to any profiles
+        ///     Drive does not conform to any profiles
         /// </summary>
         Unconforming = 0xFFFF
     }
@@ -452,43 +452,43 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public enum PhysicalInterfaces : uint
     {
         /// <summary>
-        /// Unspecified physical interface
+        ///     Unspecified physical interface
         /// </summary>
         Unspecified = 0,
         /// <summary>
-        /// SCSI
+        ///     SCSI
         /// </summary>
         SCSI = 1,
         /// <summary>
-        /// ATAPI
+        ///     ATAPI
         /// </summary>
         ATAPI = 2,
         /// <summary>
-        /// IEEE-1394/1995
+        ///     IEEE-1394/1995
         /// </summary>
         IEEE1394 = 3,
         /// <summary>
-        /// IEEE-1394A
+        ///     IEEE-1394A
         /// </summary>
         IEEE1394A = 4,
         /// <summary>
-        /// Fibre Channel
+        ///     Fibre Channel
         /// </summary>
         FC = 5,
         /// <summary>
-        /// IEEE-1394B
+        ///     IEEE-1394B
         /// </summary>
         IEEE1394B = 6,
         /// <summary>
-        /// Serial ATAPI
+        ///     Serial ATAPI
         /// </summary>
         SerialATAPI = 7,
         /// <summary>
-        /// USB
+        ///     USB
         /// </summary>
         USB = 8,
         /// <summary>
-        /// Vendor unique
+        ///     Vendor unique
         /// </summary>
         Vendor = 0xFFFF
     }
@@ -503,7 +503,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
-    /// Profile List Feature (0000h)
+    ///     Profile List Feature (0000h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -511,25 +511,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0000
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// All supported profiles
+        ///     All supported profiles
         /// </summary>
         public Profile[] Profiles;
     }
 
     /// <summary>
-    /// Core Feature (0001h)
+    ///     Core Feature (0001h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -537,33 +537,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0001
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Currently in-use physical interface standard
+        ///     Currently in-use physical interface standard
         /// </summary>
         public PhysicalInterfaces PhysicalInterfaceStandard;
         /// <summary>
-        /// Supports EVPD, Page Code and 16-bit Allocation Length as defined in SPC-3
+        ///     Supports EVPD, Page Code and 16-bit Allocation Length as defined in SPC-3
         /// </summary>
         public bool INQ2;
         /// <summary>
-        /// Supports Device Busy Event
+        ///     Supports Device Busy Event
         /// </summary>
         public bool DBE;
     }
 
     /// <summary>
-    /// Morphing Feature (0002h)
+    ///     Morphing Feature (0002h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -571,30 +571,30 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0002
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports Operational Change Request/Nofitication Class Events
-        /// of GET EVENT/STATUS NOTIFICATION
+        ///     Supports Operational Change Request/Nofitication Class Events
+        ///     of GET EVENT/STATUS NOTIFICATION
         /// </summary>
         public bool OCEvent;
         /// <summary>
-        /// Supports asynchronous GET EVENT/STATUS NOTIFICATION
+        ///     Supports asynchronous GET EVENT/STATUS NOTIFICATION
         /// </summary>
         public bool Async;
     }
 
     /// <summary>
-    /// Removable Medium Feature (0003h)
+    ///     Removable Medium Feature (0003h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -602,45 +602,45 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0003
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Mechanism type
+        ///     Mechanism type
         /// </summary>
         public byte LoadingMechanismType;
         /// <summary>
-        /// Drive is able to load the medium
+        ///     Drive is able to load the medium
         /// </summary>
         public bool Load;
         /// <summary>
-        /// Device can eject medium
+        ///     Device can eject medium
         /// </summary>
         public bool Eject;
         /// <summary>
-        /// Device starts in medium ejection/insertion allow
+        ///     Device starts in medium ejection/insertion allow
         /// </summary>
         public bool PreventJumper;
         /// <summary>
-        /// Reports Device Busy Class events during medium loading/unloading
+        ///     Reports Device Busy Class events during medium loading/unloading
         /// </summary>
         public bool DBML;
         /// <summary>
-        /// Medium is currently locked
+        ///     Medium is currently locked
         /// </summary>
         public bool Lock;
     }
 
     /// <summary>
-    /// Write Protect Feature (0004h)
+    ///     Write Protect Feature (0004h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -648,37 +648,37 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0004
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Drive can read/write Disc Write Protect PAC on BD-R/-RE media
+        ///     Drive can read/write Disc Write Protect PAC on BD-R/-RE media
         /// </summary>
         public bool DWP;
         /// <summary>
-        /// Supports reading/writing Write Inhibit DCB on DVD+RW media.
+        ///     Supports reading/writing Write Inhibit DCB on DVD+RW media.
         /// </summary>
         public bool WDCB;
         /// <summary>
-        /// Supports PWP status
+        ///     Supports PWP status
         /// </summary>
         public bool SPWP;
         /// <summary>
-        /// Supports SWPP bit of mode page 1Dh
+        ///     Supports SWPP bit of mode page 1Dh
         /// </summary>
         public bool SSWPP;
     }
 
     /// <summary>
-    /// Random Readable Feature (0010h)
+    ///     Random Readable Feature (0010h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -686,33 +686,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0010
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Bytes per logical block
+        ///     Bytes per logical block
         /// </summary>
         public uint LogicalBlockSize;
         /// <summary>
-        /// Number of logical blocks per device readable unit
+        ///     Number of logical blocks per device readable unit
         /// </summary>
         public ushort Blocking;
         /// <summary>
-        /// Read/Write Error Recovery page is present
+        ///     Read/Write Error Recovery page is present
         /// </summary>
         public bool PP;
     }
 
     /// <summary>
-    /// Multi-Read Feature (001Dh)
+    ///     Multi-Read Feature (001Dh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -720,21 +720,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_001D
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// CD Read Feature (001Eh)
+    ///     CD Read Feature (001Eh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -742,33 +742,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_001E
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports DAP bit in READ CD and READ CD MSF
+        ///     Supports DAP bit in READ CD and READ CD MSF
         /// </summary>
         public bool DAP;
         /// <summary>
-        /// Supports C2 Error Pointers
+        ///     Supports C2 Error Pointers
         /// </summary>
         public bool C2;
         /// <summary>
-        /// Can read CD-Text with READ TOC/PMA/ATIP
+        ///     Can read CD-Text with READ TOC/PMA/ATIP
         /// </summary>
         public bool CDText;
     }
 
     /// <summary>
-    /// DVD Read Feature (001Fh)
+    ///     DVD Read Feature (001Fh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -776,33 +776,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_001F
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Compliant with DVD Multi Drive Read-only specifications
+        ///     Compliant with DVD Multi Drive Read-only specifications
         /// </summary>
         public bool MULTI110;
         /// <summary>
-        /// Supports reading all DVD-RW DL
+        ///     Supports reading all DVD-RW DL
         /// </summary>
         public bool DualRW;
         /// <summary>
-        /// Supports reading all DVD-R DL including remapping
+        ///     Supports reading all DVD-R DL including remapping
         /// </summary>
         public bool DualR;
     }
 
     /// <summary>
-    /// Random Writable Feature (0020h)
+    ///     Random Writable Feature (0020h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -810,37 +810,37 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0020
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Last logical block address
+        ///     Last logical block address
         /// </summary>
         public uint LastLBA;
         /// <summary>
-        /// Bytes per logical block
+        ///     Bytes per logical block
         /// </summary>
         public uint LogicalBlockSize;
         /// <summary>
-        /// Number of logical blocks per device readable unit
+        ///     Number of logical blocks per device readable unit
         /// </summary>
         public ushort Blocking;
         /// <summary>
-        /// Read/Write Error Recovery page is present
+        ///     Read/Write Error Recovery page is present
         /// </summary>
         public bool PP;
     }
 
     /// <summary>
-    /// Incremental Streaming Writable Feature (0021h)
+    ///     Incremental Streaming Writable Feature (0021h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -848,41 +848,41 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0021
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Bitmask of supported data types
+        ///     Bitmask of supported data types
         /// </summary>
         public ushort DataTypeSupported;
         /// <summary>
-        /// Can report Track Resources Information of READ DISC INFORMATION
+        ///     Can report Track Resources Information of READ DISC INFORMATION
         /// </summary>
         public bool TRIO;
         /// <summary>
-        /// Supports Address Mode in RESERVE TRACK
+        ///     Supports Address Mode in RESERVE TRACK
         /// </summary>
         public bool ARSV;
         /// <summary>
-        /// Zero loss linking
+        ///     Zero loss linking
         /// </summary>
         public bool BUF;
         /// <summary>
-        /// Logical blocks per link
+        ///     Logical blocks per link
         /// </summary>
         public byte[] LinkSizes;
     }
 
     /// <summary>
-    /// Sector Erasable Feature (0022h)
+    ///     Sector Erasable Feature (0022h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -890,21 +890,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0022
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// Formattable Feature (0023h)
+    ///     Formattable Feature (0023h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -912,45 +912,45 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0023
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports formatting BD-RE without spare area
+        ///     Supports formatting BD-RE without spare area
         /// </summary>
         public bool RENoSA;
         /// <summary>
-        /// Supports expansion of the spare area on BD-RE
+        ///     Supports expansion of the spare area on BD-RE
         /// </summary>
         public bool Expand;
         /// <summary>
-        /// Supports FORMAT type 30h sub-type 11b
+        ///     Supports FORMAT type 30h sub-type 11b
         /// </summary>
         public bool QCert;
         /// <summary>
-        /// Supports FORMAT type 30h sub-type 10b
+        ///     Supports FORMAT type 30h sub-type 10b
         /// </summary>
         public bool Cert;
         /// <summary>
-        /// Supports FORMAT type 18h
+        ///     Supports FORMAT type 18h
         /// </summary>
         public bool FRF;
         /// <summary>
-        /// Supports FORMAT type 00h/32h sub-type 10b on BD-R
+        ///     Supports FORMAT type 00h/32h sub-type 10b on BD-R
         /// </summary>
         public bool RRM;
     }
 
     /// <summary>
-    /// Hardware Defect Management Feature (0024h)
+    ///     Hardware Defect Management Feature (0024h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -958,25 +958,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0024
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports READ DISC STRUCTURE with Format Code 0Ah (Spare Area Information)
+        ///     Supports READ DISC STRUCTURE with Format Code 0Ah (Spare Area Information)
         /// </summary>
         public bool SSA;
     }
 
     /// <summary>
-    /// Write Once Feature (0025h)
+    ///     Write Once Feature (0025h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -984,33 +984,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0025
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Bytes per logical block
+        ///     Bytes per logical block
         /// </summary>
         public uint LogicalBlockSize;
         /// <summary>
-        /// Number of logical blocks per device readable unit
+        ///     Number of logical blocks per device readable unit
         /// </summary>
         public ushort Blocking;
         /// <summary>
-        /// Read/Write Error Recovery page is present
+        ///     Read/Write Error Recovery page is present
         /// </summary>
         public bool PP;
     }
 
     /// <summary>
-    /// Restricted Overwrite Feature (0026h)
+    ///     Restricted Overwrite Feature (0026h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1018,21 +1018,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0026
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// CD-RW CAV Write Feature (0027h)
+    ///     CD-RW CAV Write Feature (0027h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1040,21 +1040,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0027
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// MRW Feature (0028h)
+    ///     MRW Feature (0028h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1062,33 +1062,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0028
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can read DVD+MRW discs
+        ///     Can read DVD+MRW discs
         /// </summary>
         public bool DVDPRead;
         /// <summary>
-        /// Can write DVD+MRW discs
+        ///     Can write DVD+MRW discs
         /// </summary>
         public bool DVDPWrite;
         /// <summary>
-        /// Can format and write to CD-MRW discs
+        ///     Can format and write to CD-MRW discs
         /// </summary>
         public bool Write;
     }
 
     /// <summary>
-    /// Enhanced Defect Reporting Feature (0029h)
+    ///     Enhanced Defect Reporting Feature (0029h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1096,33 +1096,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0029
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports DRT-DM
+        ///     Supports DRT-DM
         /// </summary>
         public bool DRTDM;
         /// <summary>
-        /// Maximum number of DBI cache zones device can handle separately
+        ///     Maximum number of DBI cache zones device can handle separately
         /// </summary>
         public byte DBICacheZones;
         /// <summary>
-        /// Number of entries in worst case to case DBI overflow
+        ///     Number of entries in worst case to case DBI overflow
         /// </summary>
         public ushort Entries;
     }
 
     /// <summary>
-    /// DVD+RW Feature (002Ah)
+    ///     DVD+RW Feature (002Ah)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1130,33 +1130,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_002A
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can format DVD+RW discs
+        ///     Can format DVD+RW discs
         /// </summary>
         public bool Write;
         /// <summary>
-        /// FORMAT UNIT supports quick start formatting
+        ///     FORMAT UNIT supports quick start formatting
         /// </summary>
         public bool QuickStart;
         /// <summary>
-        /// Drive only supports read compatibility stop
+        ///     Drive only supports read compatibility stop
         /// </summary>
         public bool CloseOnly;
     }
 
     /// <summary>
-    /// DVD+R Feature (002Bh)
+    ///     DVD+R Feature (002Bh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1164,25 +1164,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_002B
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can write DVD+R
+        ///     Can write DVD+R
         /// </summary>
         public bool Write;
     }
 
     /// <summary>
-    /// Rigid Restricted Overwrite Feature (002Ch)
+    ///     Rigid Restricted Overwrite Feature (002Ch)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1190,37 +1190,37 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_002C
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can generate Defect Status Data during formatting
+        ///     Can generate Defect Status Data during formatting
         /// </summary>
         public bool DSDG;
         /// <summary>
-        /// Can read Defect Status Data recorded on medium
+        ///     Can read Defect Status Data recorded on medium
         /// </summary>
         public bool DSDR;
         /// <summary>
-        /// Supports writing on an intermediate state Session and quick formatting
+        ///     Supports writing on an intermediate state Session and quick formatting
         /// </summary>
         public bool Intermediate;
         /// <summary>
-        /// Supports BLANK command types 00h and 01h
+        ///     Supports BLANK command types 00h and 01h
         /// </summary>
         public bool Blank;
     }
 
     /// <summary>
-    /// CD Track at Once Feature (002Dh)
+    ///     CD Track at Once Feature (002Dh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1228,49 +1228,49 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_002D
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports zero loss linking
+        ///     Supports zero loss linking
         /// </summary>
         public bool BUF;
         /// <summary>
-        /// Supports writing R-W subchannels in raw mode
+        ///     Supports writing R-W subchannels in raw mode
         /// </summary>
         public bool RWRaw;
         /// <summary>
-        /// Supports writing R-W subchannels in packed mode
+        ///     Supports writing R-W subchannels in packed mode
         /// </summary>
         public bool RWPack;
         /// <summary>
-        /// Can perform test writes
+        ///     Can perform test writes
         /// </summary>
         public bool TestWrite;
         /// <summary>
-        /// Supports overwriting a TAO track with another
+        ///     Supports overwriting a TAO track with another
         /// </summary>
         public bool CDRW;
         /// <summary>
-        /// Can write R-W subchannels with user provided data
+        ///     Can write R-W subchannels with user provided data
         /// </summary>
         public bool RWSubchannel;
         /// <summary>
-        /// Bitmask of supported data types
+        ///     Bitmask of supported data types
         /// </summary>
         public ushort DataTypeSupported;
     }
 
     /// <summary>
-    /// CD Mastering (Session at Once) Feature (002Eh)
+    ///     CD Mastering (Session at Once) Feature (002Eh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1278,53 +1278,53 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_002E
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports zero loss linking
+        ///     Supports zero loss linking
         /// </summary>
         public bool BUF;
         /// <summary>
-        /// Can write in Session at Once
+        ///     Can write in Session at Once
         /// </summary>
         public bool SAO;
         /// <summary>
-        /// Can write multi-session in RAW
+        ///     Can write multi-session in RAW
         /// </summary>
         public bool RAWMS;
         /// <summary>
-        /// Can write in RAW
+        ///     Can write in RAW
         /// </summary>
         public bool RAW;
         /// <summary>
-        /// Can perform test writes
+        ///     Can perform test writes
         /// </summary>
         public bool TestWrite;
         /// <summary>
-        /// Can overwrite previously recorded data
+        ///     Can overwrite previously recorded data
         /// </summary>
         public bool CDRW;
         /// <summary>
-        /// Can write R-W subchannels with user provided data
+        ///     Can write R-W subchannels with user provided data
         /// </summary>
         public bool RW;
         /// <summary>
-        /// Maximum length of a Cue Sheet for Session at Once
+        ///     Maximum length of a Cue Sheet for Session at Once
         /// </summary>
         public uint MaxCueSheet;
     }
 
     /// <summary>
-    /// DVD-R/-RW Write Feature (002Fh)
+    ///     DVD-R/-RW Write Feature (002Fh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1332,37 +1332,37 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_002F
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Buffer Under-run protection
+        ///     Buffer Under-run protection
         /// </summary>
         public bool BUF;
         /// <summary>
-        /// Supports writing DVD-R DL
+        ///     Supports writing DVD-R DL
         /// </summary>
         public bool RDL;
         /// <summary>
-        /// Test write
+        ///     Test write
         /// </summary>
         public bool TestWrite;
         /// <summary>
-        /// Can write and erase DVD-RW
+        ///     Can write and erase DVD-RW
         /// </summary>
         public bool DVDRW;
     }
 
     /// <summary>
-    /// Double Density CD Read Feature (0030h)
+    ///     Double Density CD Read Feature (0030h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1370,21 +1370,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0030
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// Double Density CD-R Write Feature (0031h)
+    ///     Double Density CD-R Write Feature (0031h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1392,25 +1392,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0031
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Test write
+        ///     Test write
         /// </summary>
         public bool TestWrite;
     }
 
     /// <summary>
-    /// Double Density CD-RW Write Feature (0032h)
+    ///     Double Density CD-RW Write Feature (0032h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1418,29 +1418,29 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0032
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports quick formatting
+        ///     Supports quick formatting
         /// </summary>
         public bool Intermediate;
         /// <summary>
-        /// Supports BLANK command
+        ///     Supports BLANK command
         /// </summary>
         public bool Blank;
     }
 
     /// <summary>
-    /// Layer Jump Recording Feature (0033h)
+    ///     Layer Jump Recording Feature (0033h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1448,22 +1448,22 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0033
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         public byte[] LinkSizes;
     }
 
     /// <summary>
-    /// Stop Long Operation Feature (0035h)
+    ///     Stop Long Operation Feature (0035h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1471,21 +1471,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0035
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// CD-RW Media Write Support Feature (0037h)
+    ///     CD-RW Media Write Support Feature (0037h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1493,25 +1493,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0037
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Bitmask of supported CD-RW media sub-types
+        ///     Bitmask of supported CD-RW media sub-types
         /// </summary>
         public byte SubtypeSupport;
     }
 
     /// <summary>
-    /// BD-R Pseudo-Overwrite (POW) Feature (0038h)
+    ///     BD-R Pseudo-Overwrite (POW) Feature (0038h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1519,21 +1519,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0038
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// DVD+RW Dual Layer Feature (003Ah)
+    ///     DVD+RW Dual Layer Feature (003Ah)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1541,33 +1541,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_003A
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can format DVD+RW DL discs
+        ///     Can format DVD+RW DL discs
         /// </summary>
         public bool Write;
         /// <summary>
-        /// FORMAT UNIT supports quick start formatting
+        ///     FORMAT UNIT supports quick start formatting
         /// </summary>
         public bool QuickStart;
         /// <summary>
-        /// Drive only supports read compatibility stop
+        ///     Drive only supports read compatibility stop
         /// </summary>
         public bool CloseOnly;
     }
 
     /// <summary>
-    /// DVD+R Dual Layer Feature (003Bh)
+    ///     DVD+R Dual Layer Feature (003Bh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1575,33 +1575,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_003B
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can format DVD+R DL discs
+        ///     Can format DVD+R DL discs
         /// </summary>
         public bool Write;
         /// <summary>
-        /// FORMAT UNIT supports quick start formatting
+        ///     FORMAT UNIT supports quick start formatting
         /// </summary>
         public bool QuickStart;
         /// <summary>
-        /// Drive only supports read compatibility stop
+        ///     Drive only supports read compatibility stop
         /// </summary>
         public bool CloseOnly;
     }
 
     /// <summary>
-    /// BD Read Feature (0040h)
+    ///     BD Read Feature (0040h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1609,53 +1609,53 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0040
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can read BCA
+        ///     Can read BCA
         /// </summary>
         public bool BCA;
         /// <summary>
-        /// Supports reading BD-RE Ver.2
+        ///     Supports reading BD-RE Ver.2
         /// </summary>
         public bool RE2;
         /// <summary>
-        /// Supports reading BD-RE Ver.1
+        ///     Supports reading BD-RE Ver.1
         /// </summary>
         public bool RE1;
         /// <summary>
-        /// Obsolete
+        ///     Obsolete
         /// </summary>
         public bool OldRE;
         /// <summary>
-        /// Supports reading BD-R Ver.1
+        ///     Supports reading BD-R Ver.1
         /// </summary>
         public bool R;
         /// <summary>
-        /// Obsolete
+        ///     Obsolete
         /// </summary>
         public bool OldR;
         /// <summary>
-        /// Supports reading BD-ROM Ver.1
+        ///     Supports reading BD-ROM Ver.1
         /// </summary>
         public bool ROM;
         /// <summary>
-        /// Obsolete
+        ///     Obsolete
         /// </summary>
         public bool OldROM;
     }
 
     /// <summary>
-    /// BD Write Feature (0041h)
+    ///     BD Write Feature (0041h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1663,45 +1663,45 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0041
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports verify not required
+        ///     Supports verify not required
         /// </summary>
         public bool SVNR;
         /// <summary>
-        /// Supports writing BD-RE Ver.2
+        ///     Supports writing BD-RE Ver.2
         /// </summary>
         public bool RE2;
         /// <summary>
-        /// Supports writing BD-RE Ver.1
+        ///     Supports writing BD-RE Ver.1
         /// </summary>
         public bool RE1;
         /// <summary>
-        /// Obsolete
+        ///     Obsolete
         /// </summary>
         public bool OldRE;
         /// <summary>
-        /// Supports writing BD-R Ver.1
+        ///     Supports writing BD-R Ver.1
         /// </summary>
         public bool R;
         /// <summary>
-        /// Obsolete
+        ///     Obsolete
         /// </summary>
         public bool OldR;
     }
 
     /// <summary>
-    /// TSR Feature (0042h)
+    ///     TSR Feature (0042h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1709,21 +1709,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0042
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// HD DVD Read Feature (0050h)
+    ///     HD DVD Read Feature (0050h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1731,29 +1731,29 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0050
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can read HD DVD-R
+        ///     Can read HD DVD-R
         /// </summary>
         public bool HDDVDR;
         /// <summary>
-        /// Can read HD DVD-RAM
+        ///     Can read HD DVD-RAM
         /// </summary>
         public bool HDDVDRAM;
     }
 
     /// <summary>
-    /// HD DVD Write Feature (0051h)
+    ///     HD DVD Write Feature (0051h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1761,29 +1761,29 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0051
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can write HD DVD-R
+        ///     Can write HD DVD-R
         /// </summary>
         public bool HDDVDR;
         /// <summary>
-        /// Can write HD DVD-RAM
+        ///     Can write HD DVD-RAM
         /// </summary>
         public bool HDDVDRAM;
     }
 
     /// <summary>
-    /// Hybrid Disc Feature (0080h)
+    ///     Hybrid Disc Feature (0080h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1791,25 +1791,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0080
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Reset immunity
+        ///     Reset immunity
         /// </summary>
         public bool RI;
     }
 
     /// <summary>
-    /// Power Management Feature (0100h)
+    ///     Power Management Feature (0100h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1817,21 +1817,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0100
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// S.M.A.R.T. Feature (0101h)
+    ///     S.M.A.R.T. Feature (0101h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1839,25 +1839,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0101
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Mode Page 1Ch is present
+        ///     Mode Page 1Ch is present
         /// </summary>
         public bool PP;
     }
 
     /// <summary>
-    /// Embedded Changer Feature (0102h)
+    ///     Embedded Changer Feature (0102h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1865,33 +1865,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0102
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Side change capable
+        ///     Side change capable
         /// </summary>
         public bool SCC;
         /// <summary>
-        /// Supports Disc Present
+        ///     Supports Disc Present
         /// </summary>
         public bool SDP;
         /// <summary>
-        /// Number of slots - 1
+        ///     Number of slots - 1
         /// </summary>
         public byte HighestSlotNumber;
     }
 
     /// <summary>
-    /// CD Audio External Play Feature (0103h)
+    ///     CD Audio External Play Feature (0103h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1899,37 +1899,37 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0103
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports SCAN command
+        ///     Supports SCAN command
         /// </summary>
         public bool Scan;
         /// <summary>
-        /// Separate Channel Mute
+        ///     Separate Channel Mute
         /// </summary>
         public bool SCM;
         /// <summary>
-        /// Separate Volume
+        ///     Separate Volume
         /// </summary>
         public bool SV;
         /// <summary>
-        /// Number of volume levels
+        ///     Number of volume levels
         /// </summary>
         public ushort VolumeLevels;
     }
 
     /// <summary>
-    /// Microcode Upgrade Feature (0104h)
+    ///     Microcode Upgrade Feature (0104h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1937,25 +1937,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0104
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports validating 5-bit mode field of READ BUFFER and WRITE BUFFER commands.
+        ///     Supports validating 5-bit mode field of READ BUFFER and WRITE BUFFER commands.
         /// </summary>
         public bool M5;
     }
 
     /// <summary>
-    /// Time-Out Feature (0105h)
+    ///     Time-Out Feature (0105h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1963,29 +1963,29 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0105
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports G3Enable bit and Group3 Timeout field in Mode Page 1Dh
+        ///     Supports G3Enable bit and Group3 Timeout field in Mode Page 1Dh
         /// </summary>
         public bool Group3;
         /// <summary>
-        /// Indicates a unit of block length, in sectors, corresponding to increase a unit of Group 3 time unit
+        ///     Indicates a unit of block length, in sectors, corresponding to increase a unit of Group 3 time unit
         /// </summary>
         public ushort UnitLength;
     }
 
     /// <summary>
-    /// DVD-CSS Feature (0106h)
+    ///     DVD-CSS Feature (0106h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -1993,25 +1993,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0106
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// CSS version
+        ///     CSS version
         /// </summary>
         public byte CSSVersion;
     }
 
     /// <summary>
-    /// Real Time Streaming Feature (0107h)
+    ///     Real Time Streaming Feature (0107h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2019,45 +2019,45 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0107
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports Set Minimum Performance bit in SET STREAMING
+        ///     Supports Set Minimum Performance bit in SET STREAMING
         /// </summary>
         public bool SMP;
         /// <summary>
-        /// Supports READ BUFFER CAPACITY with block bit set
+        ///     Supports READ BUFFER CAPACITY with block bit set
         /// </summary>
         public bool RBCB;
         /// <summary>
-        /// Supports SET CD SPEED
+        ///     Supports SET CD SPEED
         /// </summary>
         public bool SCS;
         /// <summary>
-        /// Has Mode Page 2Ah with Speed Performance Descriptors
+        ///     Has Mode Page 2Ah with Speed Performance Descriptors
         /// </summary>
         public bool MP2A;
         /// <summary>
-        /// Supports type 03h of GET PERFORMANCE
+        ///     Supports type 03h of GET PERFORMANCE
         /// </summary>
         public bool WSPD;
         /// <summary>
-        /// Supports stream recording
+        ///     Supports stream recording
         /// </summary>
         public bool SW;
     }
 
     /// <summary>
-    /// Drive serial number (0108h)
+    ///     Drive serial number (0108h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2065,25 +2065,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0108
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Drive serial number
+        ///     Drive serial number
         /// </summary>
         public string Serial;
     }
 
     /// <summary>
-    /// Media Serial Number Feature (0109h)
+    ///     Media Serial Number Feature (0109h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2091,21 +2091,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0109
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// Disc Control Blocks Feature (010Ah)
+    ///     Disc Control Blocks Feature (010Ah)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2113,22 +2113,22 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_010A
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         public uint[] DCBs;
     }
 
     /// <summary>
-    /// DVD CPRM Feature (010Bh)
+    ///     DVD CPRM Feature (010Bh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2136,25 +2136,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_010B
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// CPRM version
+        ///     CPRM version
         /// </summary>
         public byte CPRMVersion;
     }
 
     /// <summary>
-    /// Firmware Information Feature (010Ch)
+    ///     Firmware Information Feature (010Ch)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2162,15 +2162,15 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_010C
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         public ushort Century;
@@ -2183,7 +2183,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
-    /// AACS Feature (010Dh)
+    ///     AACS Feature (010Dh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2191,53 +2191,53 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_010D
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Drive supports reading drive certificate
+        ///     Drive supports reading drive certificate
         /// </summary>
         public bool RDC;
         /// <summary>
-        /// Drive can read media key block of CPRM
+        ///     Drive can read media key block of CPRM
         /// </summary>
         public bool RMC;
         /// <summary>
-        /// Drive can write bus encrypted blocks
+        ///     Drive can write bus encrypted blocks
         /// </summary>
         public bool WBE;
         /// <summary>
-        /// Drive supports bus encryption
+        ///     Drive supports bus encryption
         /// </summary>
         public bool BEC;
         /// <summary>
-        /// Drive supports generating the binding nonce
+        ///     Drive supports generating the binding nonce
         /// </summary>
         public bool BNG;
         /// <summary>
-        /// Blocks required to store the binding nonce for the media
+        ///     Blocks required to store the binding nonce for the media
         /// </summary>
         public byte BindNonceBlocks;
         /// <summary>
-        /// Maximum number of AGIDs supported concurrently
+        ///     Maximum number of AGIDs supported concurrently
         /// </summary>
         public byte AGIDs;
         /// <summary>
-        /// AACS version
+        ///     AACS version
         /// </summary>
         public byte AACSVersion;
     }
 
     /// <summary>
-    /// DVD CSS Managed Recording Feature (010Eh)
+    ///     DVD CSS Managed Recording Feature (010Eh)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2245,25 +2245,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_010E
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Maximum number of Scramble Extent information entries in a single SEND DISC STRUCTURE
+        ///     Maximum number of Scramble Extent information entries in a single SEND DISC STRUCTURE
         /// </summary>
         public byte MaxScrambleExtent;
     }
 
     /// <summary>
-    /// SecurDisc Feature (0113h)
+    ///     SecurDisc Feature (0113h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2271,21 +2271,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0113
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
 
     /// <summary>
-    /// OSSC Feature (0142h)
+    ///     OSSC Feature (0142h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2293,34 +2293,34 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0142
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Supports PSA updates on write-once media
+        ///     Supports PSA updates on write-once media
         /// </summary>
         public bool PSAU;
         /// <summary>
-        /// Supports linked OSPBs
+        ///     Supports linked OSPBs
         /// </summary>
         public bool LOSPB;
         /// <summary>
-        /// Restricted to recording only OSSC disc format
+        ///     Restricted to recording only OSSC disc format
         /// </summary>
         public bool ME;
         public ushort[] Profiles;
     }
 
     /// <summary>
-    /// VCPS Feature (0110h)
+    ///     VCPS Feature (0110h)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -2328,15 +2328,15 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Feature_0110
     {
         /// <summary>
-        /// Feature version
+        ///     Feature version
         /// </summary>
         public byte Version;
         /// <summary>
-        /// Feature is persistent
+        ///     Feature is persistent
         /// </summary>
         public bool Persistent;
         /// <summary>
-        /// Feature is currently in use
+        ///     Feature is currently in use
         /// </summary>
         public bool Current;
     }
@@ -5344,25 +5344,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return Prettify_0142(Decode_0142(feature));
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
-        public struct FeatureDescriptor
-        {
-            public ushort Code;
-            public byte[] Data;
-        }
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
-        public struct SeparatedFeatures
-        {
-            public uint DataLength;
-            public ushort CurrentProfile;
-            public FeatureDescriptor[] Descriptors;
-        }
-
         public static SeparatedFeatures Separate(byte[] response)
         {
             SeparatedFeatures dec = new SeparatedFeatures
@@ -5390,6 +5371,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             dec.Descriptors = descLst.ToArray();
 
             return dec;
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+        public struct FeatureDescriptor
+        {
+            public ushort Code;
+            public byte[] Data;
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+        public struct SeparatedFeatures
+        {
+            public uint DataLength;
+            public ushort CurrentProfile;
+            public FeatureDescriptor[] Descriptors;
         }
     }
 }

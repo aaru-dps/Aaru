@@ -48,7 +48,7 @@ namespace DiscImageChef.Decoders.SCSI
     public static class EVPD
     {
         /// <summary>
-        /// Decodes VPD page 0x00: Supported VPD pages
+        ///     Decodes VPD page 0x00: Supported VPD pages
         /// </summary>
         /// <returns>A byte array containing all supported VPD pages.</returns>
         /// <param name="page">Page 0x00.</param>
@@ -66,7 +66,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         /// <summary>
-        /// Decides VPD pages 0x01 to 0x7F: ASCII Information
+        ///     Decides VPD pages 0x01 to 0x7F: ASCII Information
         /// </summary>
         /// <returns>An ASCII string with the contents of the page.</returns>
         /// <param name="page">Page 0x01-0x7F.</param>
@@ -86,7 +86,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         /// <summary>
-        /// Decodes VPD page 0x80: Unit Serial Number
+        ///     Decodes VPD page 0x80: Unit Serial Number
         /// </summary>
         /// <returns>The unit serial number.</returns>
         /// <param name="page">Page 0x80.</param>
@@ -105,37 +105,37 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0x81: Implemented operating definition page
         /// <summary>
-        /// Implemented operating definition page
-        /// Page code 0x81
+        ///     Implemented operating definition page
+        ///     Page code 0x81
         /// </summary>
         public struct Page_81
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             /// <summary>
-            /// Current operating definition
+            ///     Current operating definition
             /// </summary>
             public ScsiDefinitions Current;
             /// <summary>
-            /// Default operating definition
+            ///     Default operating definition
             /// </summary>
             public ScsiDefinitions Default;
             /// <summary>
-            /// Support operating definition list
+            ///     Support operating definition list
             /// </summary>
             public ScsiDefinitions[] Supported;
         }
@@ -217,7 +217,7 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion EVPD Page 0x81: Implemented operating definition page
 
         /// <summary>
-        /// Decodes VPD page 0x82: ASCII implemented operating definition
+        ///     Decodes VPD page 0x82: ASCII implemented operating definition
         /// </summary>
         /// <returns>ASCII implemented operating definition.</returns>
         /// <param name="page">Page 0x82.</param>
@@ -238,15 +238,15 @@ namespace DiscImageChef.Decoders.SCSI
         public enum IdentificationAssociation : byte
         {
             /// <summary>
-            /// Identifier field is associated with the addressed logical unit
+            ///     Identifier field is associated with the addressed logical unit
             /// </summary>
             LogicalUnit = 0,
             /// <summary>
-            /// Identifier field is associated with the target port
+            ///     Identifier field is associated with the target port
             /// </summary>
             TargetPort = 1,
             /// <summary>
-            /// Identifier field is associated with the target device that contains the LUN
+            ///     Identifier field is associated with the target device that contains the LUN
             /// </summary>
             TargetDevice = 2
         }
@@ -254,15 +254,15 @@ namespace DiscImageChef.Decoders.SCSI
         public enum IdentificationCodeSet : byte
         {
             /// <summary>
-            /// Identifier is binary
+            ///     Identifier is binary
             /// </summary>
             Binary = 1,
             /// <summary>
-            /// Identifier is pure ASCII
+            ///     Identifier is pure ASCII
             /// </summary>
             ASCII = 2,
             /// <summary>
-            /// Identifier is in UTF-8
+            ///     Identifier is in UTF-8
             /// </summary>
             UTF8 = 3
         }
@@ -270,43 +270,43 @@ namespace DiscImageChef.Decoders.SCSI
         public enum IdentificationTypes : byte
         {
             /// <summary>
-            /// No assignment authority was used and there is no guarantee the identifier is unique
+            ///     No assignment authority was used and there is no guarantee the identifier is unique
             /// </summary>
             NoAuthority = 0,
             /// <summary>
-            /// Concatenates vendor and product identifier from INQUIRY plus unit serial number from page 80h
+            ///     Concatenates vendor and product identifier from INQUIRY plus unit serial number from page 80h
             /// </summary>
             Inquiry = 1,
             /// <summary>
-            /// Identifier is a 64-bit IEEE EUI-64, or extended
+            ///     Identifier is a 64-bit IEEE EUI-64, or extended
             /// </summary>
             EUI = 2,
             /// <summary>
-            /// Identifier is compatible with 64-bit FC-PH Name_Identifier
+            ///     Identifier is compatible with 64-bit FC-PH Name_Identifier
             /// </summary>
             NAA = 3,
             /// <summary>
-            /// Identifier to relative port in device
+            ///     Identifier to relative port in device
             /// </summary>
             Relative = 4,
             /// <summary>
-            /// Identifier to group of target ports in device
+            ///     Identifier to group of target ports in device
             /// </summary>
             TargetPortGroup = 5,
             /// <summary>
-            /// Identifier to group of target LUNs in device
+            ///     Identifier to group of target LUNs in device
             /// </summary>
             LogicalUnitGroup = 6,
             /// <summary>
-            /// MD5 of device identification values
+            ///     MD5 of device identification values
             /// </summary>
             MD5 = 7,
             /// <summary>
-            /// SCSI name string
+            ///     SCSI name string
             /// </summary>
             SCSI = 8,
             /// <summary>
-            /// Protocol specific port identifier
+            ///     Protocol specific port identifier
             /// </summary>
             ProtocolSpecific = 9
         }
@@ -314,63 +314,63 @@ namespace DiscImageChef.Decoders.SCSI
         public struct IdentificatonDescriptor
         {
             /// <summary>
-            /// Protocol identifier
+            ///     Protocol identifier
             /// </summary>
             public ProtocolIdentifiers ProtocolIdentifier;
             /// <summary>
-            /// Defines how the identifier is stored
+            ///     Defines how the identifier is stored
             /// </summary>
             public IdentificationCodeSet CodeSet;
             /// <summary>
-            /// Set if protocol identifier is valid
+            ///     Set if protocol identifier is valid
             /// </summary>
             public bool PIV;
             /// <summary>
-            /// Identifies which decide the identifier associates with
+            ///     Identifies which decide the identifier associates with
             /// </summary>
             public IdentificationAssociation Association;
             /// <summary>
-            /// Defines the type of the identifier
+            ///     Defines the type of the identifier
             /// </summary>
             public IdentificationTypes Type;
             /// <summary>
-            /// Length of the identifier
+            ///     Length of the identifier
             /// </summary>
             public byte Length;
             /// <summary>
-            /// Identifier as a string if applicable
+            ///     Identifier as a string if applicable
             /// </summary>
             public string ASCII;
             /// <summary>
-            /// Binary identifier
+            ///     Binary identifier
             /// </summary>
             public byte[] Binary;
         }
 
         /// <summary>
-        /// Device identification page
-        /// Page code 0x83
+        ///     Device identification page
+        ///     Page code 0x83
         /// </summary>
         public struct Page_83
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             /// <summary>
-            /// The descriptors.
+            ///     The descriptors.
             /// </summary>
             public IdentificatonDescriptor[] Descriptors;
         }
@@ -390,7 +390,6 @@ namespace DiscImageChef.Decoders.SCSI
                 PageLength = (byte)(pageResponse[3] + 4)
             };
 
-
             int position = 4;
             List<IdentificatonDescriptor> descriptors = new List<IdentificatonDescriptor>();
 
@@ -409,12 +408,16 @@ namespace DiscImageChef.Decoders.SCSI
                 if(descriptor.Length + position + 4 >= pageResponse.Length)
                     descriptor.Length = (byte)(pageResponse.Length - position - 4);
                 Array.Copy(pageResponse, position + 4, descriptor.Binary, 0, descriptor.Length);
-                switch(descriptor.CodeSet) {
-                    case IdentificationCodeSet.ASCII: descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
+                switch(descriptor.CodeSet)
+                {
+                    case IdentificationCodeSet.ASCII:
+                        descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
                         break;
-                    case IdentificationCodeSet.UTF8: descriptor.ASCII = Encoding.UTF8.GetString(descriptor.Binary);
+                    case IdentificationCodeSet.UTF8:
+                        descriptor.ASCII = Encoding.UTF8.GetString(descriptor.Binary);
                         break;
-                    default: descriptor.ASCII = "";
+                    default:
+                        descriptor.ASCII = "";
                         break;
                 }
 
@@ -521,9 +524,11 @@ namespace DiscImageChef.Decoders.SCSI
                 switch(descriptor.Type)
                 {
                     case IdentificationTypes.NoAuthority:
-                        switch(descriptor.CodeSet) {
+                        switch(descriptor.CodeSet)
+                        {
                             case IdentificationCodeSet.ASCII:
-                            case IdentificationCodeSet.UTF8: sb.AppendFormat("\tVendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                            case IdentificationCodeSet.UTF8:
+                                sb.AppendFormat("\tVendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
                                 break;
                             case IdentificationCodeSet.Binary:
                                 sb.AppendFormat("\tVendor descriptor contains binary data (hex): {0}",
@@ -538,9 +543,11 @@ namespace DiscImageChef.Decoders.SCSI
 
                         break;
                     case IdentificationTypes.Inquiry:
-                        switch(descriptor.CodeSet) {
+                        switch(descriptor.CodeSet)
+                        {
                             case IdentificationCodeSet.ASCII:
-                            case IdentificationCodeSet.UTF8: sb.AppendFormat("\tInquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                            case IdentificationCodeSet.UTF8:
+                                sb.AppendFormat("\tInquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
                                 break;
                             case IdentificationCodeSet.Binary:
                                 sb.AppendFormat("\tInquiry descriptor contains binary data (hex): {0}",
@@ -720,7 +727,8 @@ namespace DiscImageChef.Decoders.SCSI
 
                         break;
                     default:
-                        switch(descriptor.CodeSet) {
+                        switch(descriptor.CodeSet)
+                        {
                             case IdentificationCodeSet.ASCII:
                             case IdentificationCodeSet.UTF8:
                                 sb.AppendFormat("\tUnknown descriptor type {1} contains: {0}", descriptor.ASCII,
@@ -732,9 +740,10 @@ namespace DiscImageChef.Decoders.SCSI
                                                 (byte)descriptor.Type).AppendLine();
                                 break;
                             default:
-                                sb.AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}",
-                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                                (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
+                                sb
+                                    .AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}",
+                                                  PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                                  (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
                                 break;
                         }
 
@@ -750,35 +759,35 @@ namespace DiscImageChef.Decoders.SCSI
         public struct SoftwareIdentifier
         {
             /// <summary>
-            /// EUI-48 identifier
+            ///     EUI-48 identifier
             /// </summary>
             public byte[] Identifier;
         }
 
         /// <summary>
-        /// Software Interface Identification page
-        /// Page code 0x84
+        ///     Software Interface Identification page
+        ///     Page code 0x84
         /// </summary>
         public struct Page_84
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             /// <summary>
-            /// The descriptors.
+            ///     The descriptors.
             /// </summary>
             public SoftwareIdentifier[] Identifiers;
         }
@@ -797,7 +806,6 @@ namespace DiscImageChef.Decoders.SCSI
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
                 PageLength = (byte)(pageResponse[3] + 4)
             };
-
 
             int position = 4;
             List<SoftwareIdentifier> identifiers = new List<SoftwareIdentifier>();
@@ -864,47 +872,47 @@ namespace DiscImageChef.Decoders.SCSI
         public struct NetworkDescriptor
         {
             /// <summary>
-            /// Identifies which device the identifier associates with
+            ///     Identifies which device the identifier associates with
             /// </summary>
             public IdentificationAssociation Association;
             /// <summary>
-            /// Defines the type of the identifier
+            ///     Defines the type of the identifier
             /// </summary>
             public NetworkServiceTypes Type;
             /// <summary>
-            /// Length of the identifier
+            ///     Length of the identifier
             /// </summary>
             public ushort Length;
             /// <summary>
-            /// Binary identifier
+            ///     Binary identifier
             /// </summary>
             public byte[] Address;
         }
 
         /// <summary>
-        /// Device identification page
-        /// Page code 0x85
+        ///     Device identification page
+        ///     Page code 0x85
         /// </summary>
         public struct Page_85
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public ushort PageLength;
             /// <summary>
-            /// The descriptors.
+            ///     The descriptors.
             /// </summary>
             public NetworkDescriptor[] Descriptors;
         }
@@ -923,7 +931,6 @@ namespace DiscImageChef.Decoders.SCSI
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
                 PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4)
             };
-
 
             int position = 4;
             List<NetworkDescriptor> descriptors = new List<NetworkDescriptor>();
@@ -1035,133 +1042,133 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0x86: Extended INQUIRY data page
         /// <summary>
-        /// Device identification page
-        /// Page code 0x86
+        ///     Device identification page
+        ///     Page code 0x86
         /// </summary>
         public struct Page_86
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             /// <summary>
-            /// Indicates how a device server activates microcode
+            ///     Indicates how a device server activates microcode
             /// </summary>
             public byte ActivateMicrocode;
             /// <summary>
-            /// Protection types supported by device
+            ///     Protection types supported by device
             /// </summary>
             public byte SPT;
             /// <summary>
-            /// Checks logical block guard field
+            ///     Checks logical block guard field
             /// </summary>
             public bool GRD_CHK;
             /// <summary>
-            /// Checks logical block application tag
+            ///     Checks logical block application tag
             /// </summary>
             public bool APP_CHK;
             /// <summary>
-            /// Checks logical block reference
+            ///     Checks logical block reference
             /// </summary>
             public bool REF_CHK;
             /// <summary>
-            /// Supports unit attention condition sense key specific data
+            ///     Supports unit attention condition sense key specific data
             /// </summary>
             public bool UASK_SUP;
             /// <summary>
-            /// Supports grouping
+            ///     Supports grouping
             /// </summary>
             public bool GROUP_SUP;
             /// <summary>
-            /// Supports priority
+            ///     Supports priority
             /// </summary>
             public bool PRIOR_SUP;
             /// <summary>
-            /// Supports head of queue
+            ///     Supports head of queue
             /// </summary>
             public bool HEADSUP;
             /// <summary>
-            /// Supports ordered
+            ///     Supports ordered
             /// </summary>
             public bool ORDSUP;
             /// <summary>
-            /// Supports simple
+            ///     Supports simple
             /// </summary>
             public bool SIMPSUP;
             /// <summary>
-            /// Supports marking a block as uncorrectable
+            ///     Supports marking a block as uncorrectable
             /// </summary>
             public bool WU_SUP;
             /// <summary>
-            /// Supports disabling correction on WRITE LONG
+            ///     Supports disabling correction on WRITE LONG
             /// </summary>
             public bool CRD_SUP;
             /// <summary>
-            /// Supports a non-volatile cache
+            ///     Supports a non-volatile cache
             /// </summary>
             public bool NV_SUP;
             /// <summary>
-            /// Supports a volatile cache
+            ///     Supports a volatile cache
             /// </summary>
             public bool V_SUP;
             /// <summary>
-            /// Disable protection information checks
+            ///     Disable protection information checks
             /// </summary>
             public bool NO_PI_CHK;
             /// <summary>
-            /// Protection information interval supported
+            ///     Protection information interval supported
             /// </summary>
             public bool P_I_I_SUP;
             /// <summary>
-            /// Clears all LUNs unit attention when clearing one
+            ///     Clears all LUNs unit attention when clearing one
             /// </summary>
             public bool LUICLR;
             /// <summary>
-            /// Referrals support
+            ///     Referrals support
             /// </summary>
             public bool R_SUP;
             /// <summary>
-            /// History snapshots release effects
+            ///     History snapshots release effects
             /// </summary>
             public bool HSSRELEF;
             /// <summary>
-            /// Capability based command security
+            ///     Capability based command security
             /// </summary>
             public bool CBCS;
             /// <summary>
-            /// Indicates how it handles microcode updating with multiple nexuxes
+            ///     Indicates how it handles microcode updating with multiple nexuxes
             /// </summary>
             public byte Nexus;
             /// <summary>
-            /// Time to complete extended self-test
+            ///     Time to complete extended self-test
             /// </summary>
             public ushort ExtendedTestMinutes;
             /// <summary>
-            /// Power on activation support
+            ///     Power on activation support
             /// </summary>
             public bool POA_SUP;
             /// <summary>
-            /// Hard reset actication
+            ///     Hard reset actication
             /// </summary>
             public bool HRA_SUP;
             /// <summary>
-            /// Vendor specific activation
+            ///     Vendor specific activation
             /// </summary>
             public bool VSA_SUP;
             /// <summary>
-            /// Maximum length in bytes of sense data
+            ///     Maximum length in bytes of sense data
             /// </summary>
             public byte MaximumSenseLength;
         }
@@ -1223,7 +1230,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Extended INQUIRY Data:");
 
-            switch(page.PeripheralDeviceType) {
+            switch(page.PeripheralDeviceType)
+            {
                 case PeripheralDeviceTypes.DirectAccess:
                 case PeripheralDeviceTypes.SCSIZonedBlockDevice:
                     switch(page.SPT)
@@ -1256,7 +1264,8 @@ namespace DiscImageChef.Decoders.SCSI
                     }
 
                     break;
-                case PeripheralDeviceTypes.SequentialAccess when page.SPT == 1: sb.AppendLine("Logical unit supports logical block protection");
+                case PeripheralDeviceTypes.SequentialAccess when page.SPT == 1:
+                    sb.AppendLine("Logical unit supports logical block protection");
                     break;
             }
 
@@ -1298,49 +1307,49 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0x89: ATA Information page
         /// <summary>
-        /// ATA Information page
-        /// Page code 0x89
+        ///     ATA Information page
+        ///     Page code 0x89
         /// </summary>
         public struct Page_89
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public ushort PageLength;
             /// <summary>
-            /// Contains the SAT vendor identification
+            ///     Contains the SAT vendor identification
             /// </summary>
             public byte[] VendorIdentification;
             /// <summary>
-            /// Contains the SAT product identification
+            ///     Contains the SAT product identification
             /// </summary>
             public byte[] ProductIdentification;
             /// <summary>
-            /// Contains the SAT revision level
+            ///     Contains the SAT revision level
             /// </summary>
             public byte[] ProductRevisionLevel;
             /// <summary>
-            /// Contains the ATA device signature
+            ///     Contains the ATA device signature
             /// </summary>
             public byte[] Signature;
             /// <summary>
-            /// Contains the command code used to identify the device
+            ///     Contains the command code used to identify the device
             /// </summary>
             public byte CommandCode;
             /// <summary>
-            /// Contains the response to ATA IDENTIFY (PACKET) DEVICE
+            ///     Contains the response to ATA IDENTIFY (PACKET) DEVICE
             /// </summary>
             public byte[] IdentifyData;
         }
@@ -1436,41 +1445,41 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0xC0 (Quantum): Firmware Build Information page
         /// <summary>
-        /// Firmware Build Information page
-        /// Page code 0xC0 (Quantum)
+        ///     Firmware Build Information page
+        ///     Page code 0xC0 (Quantum)
         /// </summary>
         public struct Page_C0_Quantum
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             /// <summary>
-            /// Servo firmware checksum
+            ///     Servo firmware checksum
             /// </summary>
             public ushort ServoFirmwareChecksum;
             /// <summary>
-            /// Servo EEPROM checksum
+            ///     Servo EEPROM checksum
             /// </summary>
             public ushort ServoEEPROMChecksum;
             /// <summary>
-            /// Read/Write firmware checksum
+            ///     Read/Write firmware checksum
             /// </summary>
             public uint ReadWriteFirmwareChecksum;
             /// <summary>
-            /// Read/Write firmware build data
+            ///     Read/Write firmware build data
             /// </summary>
             public byte[] ReadWriteFirmwareBuildData;
         }
@@ -1527,25 +1536,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Pages 0xC0, 0xC1 (Certance): Drive component revision level pages
         /// <summary>
-        /// Drive component revision level pages
-        /// Page codes 0xC0, 0xC1 (Certance)
+        ///     Drive component revision level pages
+        ///     Page codes 0xC0, 0xC1 (Certance)
         /// </summary>
         public struct Page_C0_C1_Certance
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             public byte[] Component;
@@ -1608,25 +1617,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Pages 0xC2, 0xC3, 0xC4, 0xC5, 0xC6 (Certance): Drive component serial number pages
         /// <summary>
-        /// Drive component serial number pages
-        /// Page codes 0xC2, 0xC3, 0xC4, 0xC5, 0xC6 (Certance)
+        ///     Drive component serial number pages
+        ///     Page codes 0xC2, 0xC3, 0xC4, 0xC5, 0xC6 (Certance)
         /// </summary>
         public struct Page_C2_C3_C4_C5_C6_Certance
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             public byte[] SerialNumber;
@@ -1700,89 +1709,89 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0xDF (Certance): Drive status pages
         /// <summary>
-        /// Drive status pages
-        /// Page codes 0xDF (Certance)
+        ///     Drive status pages
+        ///     Page codes 0xDF (Certance)
         /// </summary>
         public struct Page_DF_Certance
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             /// <summary>
-            /// Command forwarding
+            ///     Command forwarding
             /// </summary>
             public byte CmdFwd;
             /// <summary>
-            /// Alerts
+            ///     Alerts
             /// </summary>
             public bool Alerts;
             /// <summary>
-            /// Removable prevention
+            ///     Removable prevention
             /// </summary>
             public bool NoRemov;
             /// <summary>
-            /// Unit reservation
+            ///     Unit reservation
             /// </summary>
             public bool UnitRsvd;
             /// <summary>
-            /// Needs cleaning
+            ///     Needs cleaning
             /// </summary>
             public bool Clean;
             /// <summary>
-            /// Tape threaded
+            ///     Tape threaded
             /// </summary>
             public bool Threaded;
             /// <summary>
-            /// Commands await forwarding
+            ///     Commands await forwarding
             /// </summary>
             public bool Lun1Cmd;
             /// <summary>
-            /// Autoload mode
+            ///     Autoload mode
             /// </summary>
             public byte AutoloadMode;
             /// <summary>
-            /// Cartridge type
+            ///     Cartridge type
             /// </summary>
             public byte CartridgeType;
             /// <summary>
-            /// Cartridge format
+            ///     Cartridge format
             /// </summary>
             public byte CartridgeFormat;
             /// <summary>
-            /// Cartridge capacity in 10e9 bytes
+            ///     Cartridge capacity in 10e9 bytes
             /// </summary>
             public ushort CartridgeCapacity;
             /// <summary>
-            /// Port A transport type
+            ///     Port A transport type
             /// </summary>
             public byte PortATransportType;
             /// <summary>
-            /// Port A SCSI ID
+            ///     Port A SCSI ID
             /// </summary>
             public byte PortASelectionID;
             /// <summary>
-            /// Total number of head-tape contact time
+            ///     Total number of head-tape contact time
             /// </summary>
             public uint OperatingHours;
             /// <summary>
-            /// ID that reserved the device
+            ///     ID that reserved the device
             /// </summary>
             public ulong InitiatorID;
             /// <summary>
-            /// Cartridge serial number
+            ///     Cartridge serial number
             /// </summary>
             public byte[] CartridgeSerialNumber;
         }
@@ -1813,8 +1822,9 @@ namespace DiscImageChef.Decoders.SCSI
                 CartridgeCapacity = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4),
                 PortATransportType = pageResponse[12],
                 PortASelectionID = pageResponse[15],
-                OperatingHours = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) +
-                                        pageResponse[23]),
+                OperatingHours =
+                    (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) +
+                           pageResponse[23]),
                 CartridgeSerialNumber = new byte[32]
             };
 
@@ -1954,25 +1964,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0xC0 (IBM): Drive Component Revision Levels page
         /// <summary>
-        /// Drive Component Revision Levels page
-        /// Page code 0xC0 (IBM)
+        ///     Drive Component Revision Levels page
+        ///     Page code 0xC0 (IBM)
         /// </summary>
         public struct Page_C0_IBM
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             public byte[] CodeName;
@@ -1995,8 +2005,6 @@ namespace DiscImageChef.Decoders.SCSI
                 CodeName = new byte[12],
                 Date = new byte[8]
             };
-
-
 
             Array.Copy(pageResponse, 4, decoded.CodeName, 0, 12);
             Array.Copy(pageResponse, 23, decoded.Date, 0, 8);
@@ -2027,25 +2035,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0xC1 (IBM): Drive Serial Numbers page
         /// <summary>
-        /// Drive Serial Numbers page
-        /// Page code 0xC1 (IBM)
+        ///     Drive Serial Numbers page
+        ///     Page code 0xC1 (IBM)
         /// </summary>
         public struct Page_C1_IBM
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             public byte[] ManufacturingSerial;
@@ -2100,25 +2108,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0xB0: Sequential-access device capabilities page
         /// <summary>
-        /// Sequential-access device capabilities page
-        /// Page code 0xB0
+        ///     Sequential-access device capabilities page
+        ///     Page code 0xB0
         /// </summary>
         public struct Page_B0
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public ushort PageLength;
             public bool TSMC;
@@ -2228,25 +2236,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Pages 0xC0 to 0xC5 (HP): Drive component revision level pages
         /// <summary>
-        /// Drive component revision level pages
-        /// Page codes 0xC0 to 0xC5 (HP)
+        ///     Drive component revision level pages
+        ///     Page codes 0xC0 to 0xC5 (HP)
         /// </summary>
         public struct Page_C0_to_C5_HP
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             public byte[] Component;
@@ -2291,7 +2299,8 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[4] != pageResponse[3] - 1) return null;
 
             List<byte> array = new List<byte>();
-            const string fwRegExStr = @"Firmware Rev\s+=\s+(?<fw>\d+\.\d+)\s+Build date\s+=\s+(?<date>(\w|\d|\s*.)*)\s*$";
+            const string fwRegExStr =
+                @"Firmware Rev\s+=\s+(?<fw>\d+\.\d+)\s+Build date\s+=\s+(?<date>(\w|\d|\s*.)*)\s*$";
             const string fwcRegExStr = @"FW_CONF\s+=\s+(?<value>0x[0-9A-Fa-f]{8})\s*$";
             const string servoRegExStr = @"Servo\s+Rev\s+=\s+(?<version>\d+\.\d+)\s*$";
             Regex fwRegEx = new Regex(fwRegExStr);
@@ -2314,8 +2323,7 @@ namespace DiscImageChef.Decoders.SCSI
                         decoded.Version = Encoding.ASCII.GetBytes(fwMatch.Groups["fw"].Value);
                         decoded.Date = Encoding.ASCII.GetBytes(fwMatch.Groups["date"].Value);
                     }
-                    else if(fwcMatch.Success)
-                        decoded.Variant = Encoding.ASCII.GetBytes(fwMatch.Groups["value"].Value);
+                    else if(fwcMatch.Success) decoded.Variant = Encoding.ASCII.GetBytes(fwMatch.Groups["value"].Value);
                     else if(servoMatch.Success)
                     {
                         decoded.Component = Encoding.ASCII.GetBytes("Servo");
@@ -2380,25 +2388,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0xC0 (Seagate): Firmware numbers page
         /// <summary>
-        /// Firmware numbers page
-        /// Page code 0xC0 (Seagate)
+        ///     Firmware numbers page
+        ///     Page code 0xC0 (Seagate)
         /// </summary>
         public struct Page_C0_Seagate
         {
             /// <summary>
-            /// The peripheral qualifier.
+            ///     The peripheral qualifier.
             /// </summary>
             public PeripheralQualifiers PeripheralQualifier;
             /// <summary>
-            /// The type of the peripheral device.
+            ///     The type of the peripheral device.
             /// </summary>
             public PeripheralDeviceTypes PeripheralDeviceType;
             /// <summary>
-            /// The page code.
+            ///     The page code.
             /// </summary>
             public byte PageCode;
             /// <summary>
-            /// The length of the page.
+            ///     The length of the page.
             /// </summary>
             public byte PageLength;
             public byte[] ControllerFirmware;
@@ -2424,8 +2432,6 @@ namespace DiscImageChef.Decoders.SCSI
                 BootFirmware = new byte[4],
                 ServoFirmware = new byte[4]
             };
-
-
 
             Array.Copy(pageResponse, 4, decoded.ControllerFirmware, 0, 4);
             Array.Copy(pageResponse, 8, decoded.BootFirmware, 0, 4);

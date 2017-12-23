@@ -37,21 +37,21 @@ using System.Text;
 namespace DiscImageChef.Decoders.DVD
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
-    /// ECMA 272: 120 mm DVD Rewritable Disk (DVD-RAM)
-    /// ECMA 330: 120 mm (4,7 Gbytes per side) and 80 mm (1,46 Gbytes per side) DVD Rewritable Disk (DVD-RAM)
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
+    ///     ECMA 272: 120 mm DVD Rewritable Disk (DVD-RAM)
+    ///     ECMA 330: 120 mm (4,7 Gbytes per side) and 80 mm (1,46 Gbytes per side) DVD Rewritable Disk (DVD-RAM)
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -62,110 +62,110 @@ namespace DiscImageChef.Decoders.DVD
         public struct DiscDefinitionStructure
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
 
             /// <summary>
-            /// Bytes 4 to 5
-            /// DDS Identifier = 0x0A0A
+            ///     Bytes 4 to 5
+            ///     DDS Identifier = 0x0A0A
             /// </summary>
             public ushort Identifier;
             /// <summary>
-            /// Byte 6
-            /// Reserved
+            ///     Byte 6
+            ///     Reserved
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Byte 7, bit 7
-            /// If set, formatting is in process
+            ///     Byte 7, bit 7
+            ///     If set, formatting is in process
             /// </summary>
             public bool InProcess;
             /// <summary>
-            /// Byte 7, bit 6
-            /// If set, formatting is using partial certification
-            /// Only in ECMA-272
+            ///     Byte 7, bit 6
+            ///     If set, formatting is using partial certification
+            ///     Only in ECMA-272
             /// </summary>
             public bool PartialCertification;
             /// <summary>
-            /// Byte 7, bit 5
-            /// If set, only a group is being formatted
-            /// Only in ECMA-272
+            ///     Byte 7, bit 5
+            ///     If set, only a group is being formatted
+            ///     Only in ECMA-272
             /// </summary>
             public bool FormattingOnlyAGroup;
             /// <summary>
-            /// Byte 7, bits 4 to 2
-            /// Reserved
+            ///     Byte 7, bits 4 to 2
+            ///     Reserved
             /// </summary>
             public byte Reserved4;
             /// <summary>
-            /// Byte 7, bit 1
-            /// If set, disk has been certified by a user
+            ///     Byte 7, bit 1
+            ///     If set, disk has been certified by a user
             /// </summary>
             public bool UserCertification;
             /// <summary>
-            /// Byte 7, bit 0
-            /// If set, disk has been certified by a manufacturer
+            ///     Byte 7, bit 0
+            ///     If set, disk has been certified by a manufacturer
             /// </summary>
             public bool ManufacturerCertification;
             /// <summary>
-            /// Bytes 8 to 11
-            /// How many times the DDS has been updated
+            ///     Bytes 8 to 11
+            ///     How many times the DDS has been updated
             /// </summary>
             public uint UpdateCount;
             /// <summary>
-            /// Bytes 12 to 13
-            /// How many groups the disk has
-            /// 24 for ECMA-272
-            /// 1 for ECMA-330
+            ///     Bytes 12 to 13
+            ///     How many groups the disk has
+            ///     24 for ECMA-272
+            ///     1 for ECMA-330
             /// </summary>
             public ushort Groups;
             /// <summary>
-            /// Bytes 14 to 15
-            /// How many zones the disk has
-            /// Only in ECMA-330
+            ///     Bytes 14 to 15
+            ///     How many zones the disk has
+            ///     Only in ECMA-330
             /// </summary>
             public ushort Zones;
             /// <summary>
-            /// Bytes 14 to 19 in ECMA-272
-            /// Bytes 16 to 83 in ECMA-330
-            /// Reserved
+            ///     Bytes 14 to 19 in ECMA-272
+            ///     Bytes 16 to 83 in ECMA-330
+            ///     Reserved
             /// </summary>
             public byte[] Reserved;
             /// <summary>
-            /// Bytes 20 to 43
-            /// Group certification flags
+            ///     Bytes 20 to 43
+            ///     Group certification flags
             /// </summary>
             public GroupCertificationFlag[] GroupCertificationFlags;
 
             /// <summary>
-            /// Bytes 85 to 87
-            /// Location of first sector in the Primary Spare Area
+            ///     Bytes 85 to 87
+            ///     Location of first sector in the Primary Spare Area
             /// </summary>
             public uint SpareAreaFirstPSN;
             /// <summary>
-            /// Bytes 89 to 91
-            /// Location of first sector in the Primary Spare Area
+            ///     Bytes 89 to 91
+            ///     Location of first sector in the Primary Spare Area
             /// </summary>
             public uint SpareAreaLastPSN;
             /// <summary>
-            /// Bytes 93 to 95
-            /// PSN for LSN 0
+            ///     Bytes 93 to 95
+            ///     PSN for LSN 0
             /// </summary>
             public uint LSN0Location;
             /// <summary>
-            /// The starting LSN of each zone
+            ///     The starting LSN of each zone
             /// </summary>
             public uint[] StartLSNForZone;
         }
@@ -173,28 +173,28 @@ namespace DiscImageChef.Decoders.DVD
         public struct GroupCertificationFlag
         {
             /// <summary>
-            /// Bit 7
-            /// If set, formatting of this group is in process
+            ///     Bit 7
+            ///     If set, formatting of this group is in process
             /// </summary>
             public bool InProcess;
             /// <summary>
-            /// Bit 6
-            /// If set, formatting is using partial certification
+            ///     Bit 6
+            ///     If set, formatting is using partial certification
             /// </summary>
             public bool PartialCertification;
             /// <summary>
-            /// Bits 5 to 2
-            /// Reserved
+            ///     Bits 5 to 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Bit 1
-            /// If set, this group has been certified by user
+            ///     Bit 1
+            ///     If set, this group has been certified by user
             /// </summary>
             public bool UserCertification;
             /// <summary>
-            /// Bit 0
-            /// Reserved
+            ///     Bit 0
+            ///     Reserved
             /// </summary>
             public bool Reserved2;
         }

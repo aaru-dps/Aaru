@@ -35,20 +35,20 @@ using System.Diagnostics.CodeAnalysis;
 namespace DiscImageChef.Decoders.DVD
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
-    /// ECMA 365
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
+    ///     ECMA 365
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -58,63 +58,63 @@ namespace DiscImageChef.Decoders.DVD
         public struct UniqueDiscIdentifier
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Byte 4
-            /// Reserved
+            ///     Byte 4
+            ///     Reserved
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Byte 5
-            /// Reserved
+            ///     Byte 5
+            ///     Reserved
             /// </summary>
             public byte Reserved4;
             /// <summary>
-            /// Bytes 6 to 7
-            /// Random number
+            ///     Bytes 6 to 7
+            ///     Random number
             /// </summary>
             public ushort RandomNumber;
             /// <summary>
-            /// Byte 8 to 11
-            /// Year
+            ///     Byte 8 to 11
+            ///     Year
             /// </summary>
             public uint Year;
             /// <summary>
-            /// Byte 12 to 13
-            /// Month
+            ///     Byte 12 to 13
+            ///     Month
             /// </summary>
             public ushort Month;
             /// <summary>
-            /// Byte 14 to 15
-            /// Day
+            ///     Byte 14 to 15
+            ///     Day
             /// </summary>
             public ushort Day;
             /// <summary>
-            /// Byte 16 to 17
-            /// Hour
+            ///     Byte 16 to 17
+            ///     Hour
             /// </summary>
             public ushort Hour;
             /// <summary>
-            /// Byte 18 to 19
-            /// Minute
+            ///     Byte 18 to 19
+            ///     Minute
             /// </summary>
             public ushort Minute;
             /// <summary>
-            /// Byte 20 to 21
-            /// Second
+            ///     Byte 20 to 21
+            ///     Second
             /// </summary>
             public ushort Second;
         }

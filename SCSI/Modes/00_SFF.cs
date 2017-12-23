@@ -42,30 +42,30 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x00: Drive Operation Mode page
         /// <summary>
-        /// Drive Operation Mode page
-        /// Page code 0x00
-        /// 4 bytes in INF-8070
+        ///     Drive Operation Mode page
+        ///     Page code 0x00
+        ///     4 bytes in INF-8070
         /// </summary>
         public struct ModePage_00_SFF
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Select LUN Mode
+            ///     Select LUN Mode
             /// </summary>
             public bool SLM;
             /// <summary>
-            /// Select LUN for rewritable
+            ///     Select LUN for rewritable
             /// </summary>
             public bool SLR;
             /// <summary>
-            /// Disable verify for WRITE
+            ///     Disable verify for WRITE
             /// </summary>
             public bool DVW;
             /// <summary>
-            /// Disable deferred error
+            ///     Disable deferred error
             /// </summary>
             public bool DDE;
         }

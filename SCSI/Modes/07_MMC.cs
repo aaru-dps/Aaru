@@ -42,22 +42,22 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x07: Verify error recovery page for MultiMedia Devices
         /// <summary>
-        /// Verify error recovery page for MultiMedia Devices
-        /// Page code 0x07
-        /// 8 bytes in SCSI-2, MMC-1
+        ///     Verify error recovery page for MultiMedia Devices
+        ///     Page code 0x07
+        ///     8 bytes in SCSI-2, MMC-1
         /// </summary>
         public struct ModePage_07_MMC
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Error recovery parameter
+            ///     Error recovery parameter
             /// </summary>
             public byte Parameter;
             /// <summary>
-            /// How many times to retry a verify operation
+            ///     How many times to retry a verify operation
             /// </summary>
             public byte VerifyRetryCount;
         }

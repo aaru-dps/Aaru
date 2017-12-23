@@ -42,26 +42,26 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x1C: Timer & Protect page
         /// <summary>
-        /// Timer &amp; Protect page
-        /// Page code 0x1C
-        /// 8 bytes in INF-8070
+        ///     Timer &amp; Protect page
+        ///     Page code 0x1C
+        ///     8 bytes in INF-8070
         /// </summary>
         public struct ModePage_1C_SFF
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Time the device shall remain in the current state after seek, read or write operation
+            ///     Time the device shall remain in the current state after seek, read or write operation
             /// </summary>
             public byte InactivityTimeMultiplier;
             /// <summary>
-            /// Disabled until power cycle
+            ///     Disabled until power cycle
             /// </summary>
             public bool DISP;
             /// <summary>
-            /// Software Write Protect until Power-down
+            ///     Software Write Protect until Power-down
             /// </summary>
             public bool SWPP;
         }

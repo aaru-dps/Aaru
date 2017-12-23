@@ -42,67 +42,67 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x03: Format device page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x03
-        /// 24 bytes in SCSI-2, SBC-1
+        ///     Disconnect-reconnect page
+        ///     Page code 0x03
+        ///     24 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_03
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors
+            ///     Tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors
             /// </summary>
             public ushort TracksPerZone;
             /// <summary>
-            /// Number of sectors per zone that shall be reserved for defect handling
+            ///     Number of sectors per zone that shall be reserved for defect handling
             /// </summary>
             public ushort AltSectorsPerZone;
             /// <summary>
-            /// Number of tracks per zone that shall be reserved for defect handling
+            ///     Number of tracks per zone that shall be reserved for defect handling
             /// </summary>
             public ushort AltTracksPerZone;
             /// <summary>
-            /// Number of tracks per LUN that shall be reserved for defect handling
+            ///     Number of tracks per LUN that shall be reserved for defect handling
             /// </summary>
             public ushort AltTracksPerLun;
             /// <summary>
-            /// Number of physical sectors per track
+            ///     Number of physical sectors per track
             /// </summary>
             public ushort SectorsPerTrack;
             /// <summary>
-            /// Bytes per physical sector
+            ///     Bytes per physical sector
             /// </summary>
             public ushort BytesPerSector;
             /// <summary>
-            /// Interleave value, target dependent
+            ///     Interleave value, target dependent
             /// </summary>
             public ushort Interleave;
             /// <summary>
-            /// Sectors between last block of one track and first block of the next
+            ///     Sectors between last block of one track and first block of the next
             /// </summary>
             public ushort TrackSkew;
             /// <summary>
-            /// Sectors between last block of a cylinder and first block of the next one
+            ///     Sectors between last block of a cylinder and first block of the next one
             /// </summary>
             public ushort CylinderSkew;
             /// <summary>
-            /// Soft-sectored
+            ///     Soft-sectored
             /// </summary>
             public bool SSEC;
             /// <summary>
-            /// Hard-sectored
+            ///     Hard-sectored
             /// </summary>
             public bool HSEC;
             /// <summary>
-            /// Removable
+            ///     Removable
             /// </summary>
             public bool RMB;
             /// <summary>
-            /// If set, address are allocated progressively in a surface before going to the next.
-            /// Otherwise, it goes by cylinders
+            ///     If set, address are allocated progressively in a surface before going to the next.
+            ///     Otherwise, it goes by cylinders
             /// </summary>
             public bool SURF;
         }

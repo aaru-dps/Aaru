@@ -37,19 +37,19 @@ using System.Text;
 namespace DiscImageChef.Decoders.SCSI.MMC
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -60,48 +60,48 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct RecognizedFormatLayers
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data Length
+            ///     Bytes 0 to 1
+            ///     Data Length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Byte 4
-            /// Number of format layers in hybrid disc identified by drive
+            ///     Byte 4
+            ///     Number of format layers in hybrid disc identified by drive
             /// </summary>
             public byte NumberOfLayers;
             /// <summary>
-            /// Byte 5, bits 7 to 6
-            /// Reserved
+            ///     Byte 5, bits 7 to 6
+            ///     Reserved
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Byte 5, bits 5 to 4
-            /// Layer no. used when disc is inserted
+            ///     Byte 5, bits 5 to 4
+            ///     Layer no. used when disc is inserted
             /// </summary>
             public byte DefaultFormatLayer;
             /// <summary>
-            /// Byte 5, bits 3 to 2
-            /// Reserved
+            ///     Byte 5, bits 3 to 2
+            ///     Reserved
             /// </summary>
             public byte Reserved4;
             /// <summary>
-            /// Byte 5, bits 1 to 0
-            /// Layer no. currently in use
+            ///     Byte 5, bits 1 to 0
+            ///     Layer no. currently in use
             /// </summary>
             public byte OnlineFormatLayer;
             /// <summary>
-            /// Bytes 6 to end
-            /// Recognized format layers
+            ///     Bytes 6 to end
+            ///     Recognized format layers
             /// </summary>
             public ushort[] FormatLayers;
         }
@@ -127,7 +127,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             decoded.FormatLayers = new ushort[(FormatLayersResponse.Length - 6) / 2];
 
-            for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++) decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
+            for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
+                decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
 
             return decoded;
         }

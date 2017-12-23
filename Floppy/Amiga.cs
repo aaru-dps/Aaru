@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 namespace DiscImageChef.Decoders.Floppy
 {
     /// <summary>
-    /// Methods and structures for Commodore Amiga decoding
+    ///     Methods and structures for Commodore Amiga decoding
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -46,39 +46,39 @@ namespace DiscImageChef.Decoders.Floppy
         public struct Sector
         {
             /// <summary>
-            /// Set to 0x00
+            ///     Set to 0x00
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] zero;
             /// <summary>
-            /// Set to 0xA1
+            ///     Set to 0xA1
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] sync;
             /// <summary>
-            /// Set to 0xFF
+            ///     Set to 0xFF
             /// </summary>
             public byte amiga;
             /// <summary>
-            /// Track number
+            ///     Track number
             /// </summary>
             public byte track;
             /// <summary>
-            /// Sector number
+            ///     Sector number
             /// </summary>
             public byte sector;
             /// <summary>
-            /// Remaining sectors til end of writing
+            ///     Remaining sectors til end of writing
             /// </summary>
             public byte remaining;
             /// <summary>
-            /// OS dependent tag
+            ///     OS dependent tag
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
             /// <summary>
-            /// Checksum from <see cref="amiga"/> to <see cref="label"/>
+            ///     Checksum from <see cref="amiga" /> to <see cref="label" />
             /// </summary>
             public uint headerChecksum;
             /// <summary>
-            /// Checksum from <see cref="data"/>
+            ///     Checksum from <see cref="data" />
             /// </summary>
             public uint dataChecksum;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] data;

@@ -39,15 +39,15 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.SCSI
 {
     /// <summary>
-    /// Information from the following standards:
-    /// T9/375-D revision 10l
-    /// T10/995-D revision 10
-    /// T10/1236-D revision 20
-    /// T10/1416-D revision 23
-    /// T10/1731-D revision 16
-    /// T10/502 revision 05
-    /// RFC 7144
-    /// ECMA-111
+    ///     Information from the following standards:
+    ///     T9/375-D revision 10l
+    ///     T10/995-D revision 10
+    ///     T10/1236-D revision 20
+    ///     T10/1416-D revision 23
+    ///     T10/1731-D revision 16
+    ///     T10/502 revision 05
+    ///     RFC 7144
+    ///     ECMA-111
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -227,7 +227,8 @@ namespace DiscImageChef.Decoders.SCSI
                 else descriptorsNo = (SCSIInquiryResponse.Length - 58) / 2;
 
                 decoded.VersionDescriptors = new ushort[descriptorsNo];
-                for(int i = 0; i < descriptorsNo; i++) decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
+                for(int i = 0; i < descriptorsNo; i++)
+                    decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
             }
 
             if(SCSIInquiryResponse.Length >= 75 && SCSIInquiryResponse.Length < 96)
@@ -2084,237 +2085,237 @@ namespace DiscImageChef.Decoders.SCSI
         public struct SCSIInquiry
         {
             /// <summary>
-            /// Peripheral qualifier
-            /// Byte 0, bits 7 to 5
+            ///     Peripheral qualifier
+            ///     Byte 0, bits 7 to 5
             /// </summary>
             public byte PeripheralQualifier;
             /// <summary>
-            /// Peripheral device type
-            /// Byte 0, bits 4 to 0
+            ///     Peripheral device type
+            ///     Byte 0, bits 4 to 0
             /// </summary>
             public byte PeripheralDeviceType;
             /// <summary>
-            /// Removable device
-            /// Byte 1, bit 7
+            ///     Removable device
+            ///     Byte 1, bit 7
             /// </summary>
             public bool RMB;
             /// <summary>
-            /// SCSI-1 vendor-specific qualification codes
-            /// Byte 1, bits 6 to 0
+            ///     SCSI-1 vendor-specific qualification codes
+            ///     Byte 1, bits 6 to 0
             /// </summary>
             public byte DeviceTypeModifier;
             /// <summary>
-            /// ISO/IEC SCSI Standard Version
-            /// Byte 2, bits 7 to 6, mask = 0xC0, >> 6
+            ///     ISO/IEC SCSI Standard Version
+            ///     Byte 2, bits 7 to 6, mask = 0xC0, >> 6
             /// </summary>
             public byte ISOVersion;
             /// <summary>
-            /// ECMA SCSI Standard Version
-            /// Byte 2, bits 5 to 3, mask = 0x38, >> 3
+            ///     ECMA SCSI Standard Version
+            ///     Byte 2, bits 5 to 3, mask = 0x38, >> 3
             /// </summary>
             public byte ECMAVersion;
             /// <summary>
-            /// ANSI SCSI Standard Version
-            /// Byte 2, bits 2 to 0, mask = 0x07
+            ///     ANSI SCSI Standard Version
+            ///     Byte 2, bits 2 to 0, mask = 0x07
             /// </summary>
             public byte ANSIVersion;
             /// <summary>
-            /// Asynchronous Event Reporting Capability supported
-            /// Byte 3, bit 7
+            ///     Asynchronous Event Reporting Capability supported
+            ///     Byte 3, bit 7
             /// </summary>
             public bool AERC;
             /// <summary>
-            /// Device supports TERMINATE TASK command
-            /// Byte 3, bit 6
+            ///     Device supports TERMINATE TASK command
+            ///     Byte 3, bit 6
             /// </summary>
             public bool TrmTsk;
             /// <summary>
-            /// Supports setting Normal ACA
-            /// Byte 3, bit 5
+            ///     Supports setting Normal ACA
+            ///     Byte 3, bit 5
             /// </summary>
             public bool NormACA;
             /// <summary>
-            /// Supports LUN hierarchical addressing
-            /// Byte 3, bit 4
+            ///     Supports LUN hierarchical addressing
+            ///     Byte 3, bit 4
             /// </summary>
             public bool HiSup;
             /// <summary>
-            /// Responde data format
-            /// Byte 3, bit 3 to 0
+            ///     Responde data format
+            ///     Byte 3, bit 3 to 0
             /// </summary>
             public byte ResponseDataFormat;
             /// <summary>
-            /// Lenght of total INQUIRY response minus 4
-            /// Byte 4
+            ///     Lenght of total INQUIRY response minus 4
+            ///     Byte 4
             /// </summary>
             public byte AdditionalLength;
             /// <summary>
-            /// Device contains an embedded storage array controller
-            /// Byte 5, bit 7
+            ///     Device contains an embedded storage array controller
+            ///     Byte 5, bit 7
             /// </summary>
             public bool SCCS;
             /// <summary>
-            /// Device contains an Access Control Coordinator
-            /// Byte 5, bit 6
+            ///     Device contains an Access Control Coordinator
+            ///     Byte 5, bit 6
             /// </summary>
             public bool ACC;
             /// <summary>
-            /// Supports asymetrical logical unit access
-            /// Byte 5, bits 5 to 4
+            ///     Supports asymetrical logical unit access
+            ///     Byte 5, bits 5 to 4
             /// </summary>
             public byte TPGS;
             /// <summary>
-            /// Supports third-party copy commands
-            /// Byte 5, bit 3
+            ///     Supports third-party copy commands
+            ///     Byte 5, bit 3
             /// </summary>
             public bool ThreePC;
             /// <summary>
-            /// Reserved
-            /// Byte 5, bits 2 to 1
+            ///     Reserved
+            ///     Byte 5, bits 2 to 1
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Supports protection information
-            /// Byte 5, bit 0
+            ///     Supports protection information
+            ///     Byte 5, bit 0
             /// </summary>
             public bool Protect;
             /// <summary>
-            /// Supports basic queueing
-            /// Byte 6, bit 7
+            ///     Supports basic queueing
+            ///     Byte 6, bit 7
             /// </summary>
             public bool BQue;
             /// <summary>
-            /// Device contains an embedded enclosure services component
-            /// Byte 6, bit 6
+            ///     Device contains an embedded enclosure services component
+            ///     Byte 6, bit 6
             /// </summary>
             public bool EncServ;
             /// <summary>
-            /// Vendor-specific
-            /// Byte 6, bit 5
+            ///     Vendor-specific
+            ///     Byte 6, bit 5
             /// </summary>
             public bool VS1;
             /// <summary>
-            /// Multi-port device
-            /// Byte 6, bit 4
+            ///     Multi-port device
+            ///     Byte 6, bit 4
             /// </summary>
             public bool MultiP;
             /// <summary>
-            /// Device contains or is attached to a medium changer
-            /// Byte 6, bit 3
+            ///     Device contains or is attached to a medium changer
+            ///     Byte 6, bit 3
             /// </summary>
             public bool MChngr;
             /// <summary>
-            /// Device supports request and acknowledge handshakes
-            /// Byte 6, bit 2
+            ///     Device supports request and acknowledge handshakes
+            ///     Byte 6, bit 2
             /// </summary>
             public bool ACKREQQ;
             /// <summary>
-            /// Supports 32-bit wide SCSI addresses
-            /// Byte 6, bit 1
+            ///     Supports 32-bit wide SCSI addresses
+            ///     Byte 6, bit 1
             /// </summary>
             public bool Addr32;
             /// <summary>
-            /// Supports 16-bit wide SCSI addresses
-            /// Byte 6, bit 0
+            ///     Supports 16-bit wide SCSI addresses
+            ///     Byte 6, bit 0
             /// </summary>
             public bool Addr16;
             /// <summary>
-            /// Device supports relative addressing
-            /// Byte 7, bit 7
+            ///     Device supports relative addressing
+            ///     Byte 7, bit 7
             /// </summary>
             public bool RelAddr;
             /// <summary>
-            /// Supports 32-bit wide data transfers
-            /// Byte 7, bit 6
+            ///     Supports 32-bit wide data transfers
+            ///     Byte 7, bit 6
             /// </summary>
             public bool WBus32;
             /// <summary>
-            /// Supports 16-bit wide data transfers
-            /// Byte 7, bit 5
+            ///     Supports 16-bit wide data transfers
+            ///     Byte 7, bit 5
             /// </summary>
             public bool WBus16;
             /// <summary>
-            /// Supports synchronous data transfer
-            /// Byte 7, bit 4
+            ///     Supports synchronous data transfer
+            ///     Byte 7, bit 4
             /// </summary>
             public bool Sync;
             /// <summary>
-            /// Supports linked commands
-            /// Byte 7, bit 3
+            ///     Supports linked commands
+            ///     Byte 7, bit 3
             /// </summary>
             public bool Linked;
             /// <summary>
-            /// Supports CONTINUE TASK and TARGET TRANSFER DISABLE commands
-            /// Byte 7, bit 2
+            ///     Supports CONTINUE TASK and TARGET TRANSFER DISABLE commands
+            ///     Byte 7, bit 2
             /// </summary>
             public bool TranDis;
             /// <summary>
-            /// Supports TCQ queue
-            /// Byte 7, bit 1
+            ///     Supports TCQ queue
+            ///     Byte 7, bit 1
             /// </summary>
             public bool CmdQue;
             /// <summary>
-            /// Indicates that the devices responds to RESET with soft reset
-            /// Byte 7, bit 0
+            ///     Indicates that the devices responds to RESET with soft reset
+            ///     Byte 7, bit 0
             /// </summary>
             public bool SftRe;
             /// <summary>
-            /// Vendor identification
-            /// Bytes 8 to 15
+            ///     Vendor identification
+            ///     Bytes 8 to 15
             /// </summary>
             public byte[] VendorIdentification;
             /// <summary>
-            /// Product identification
-            /// Bytes 16 to 31
+            ///     Product identification
+            ///     Bytes 16 to 31
             /// </summary>
             public byte[] ProductIdentification;
             /// <summary>
-            /// Product revision level
-            /// Bytes 32 to 35
+            ///     Product revision level
+            ///     Bytes 32 to 35
             /// </summary>
             public byte[] ProductRevisionLevel;
             /// <summary>
-            /// Vendor-specific data
-            /// Bytes 36 to 55
+            ///     Vendor-specific data
+            ///     Bytes 36 to 55
             /// </summary>
             public byte[] VendorSpecific;
             /// <summary>
-            /// Byte 56, bits 7 to 4
+            ///     Byte 56, bits 7 to 4
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Supported SPI clocking
-            /// Byte 56, bits 3 to 2
+            ///     Supported SPI clocking
+            ///     Byte 56, bits 3 to 2
             /// </summary>
             public byte Clocking;
             /// <summary>
-            /// Device supports Quick Arbitration and Selection
-            /// Byte 56, bit 1
+            ///     Device supports Quick Arbitration and Selection
+            ///     Byte 56, bit 1
             /// </summary>
             public bool QAS;
             /// <summary>
-            /// Supports information unit transfers
-            /// Byte 56, bit 0
+            ///     Supports information unit transfers
+            ///     Byte 56, bit 0
             /// </summary>
             public bool IUS;
             /// <summary>
-            /// Reserved
-            /// Byte 57
+            ///     Reserved
+            ///     Byte 57
             /// </summary>
             public byte Reserved4;
             /// <summary>
-            /// Array of version descriptors
-            /// Bytes 58 to 73
+            ///     Array of version descriptors
+            ///     Bytes 58 to 73
             /// </summary>
             public ushort[] VersionDescriptors;
             /// <summary>
-            /// Reserved
-            /// Bytes 74 to 95
+            ///     Reserved
+            ///     Bytes 74 to 95
             /// </summary>
             public byte[] Reserved5;
             /// <summary>
-            /// Reserved
-            /// Bytes 96 to end
+            ///     Reserved
+            ///     Bytes 96 to end
             /// </summary>
             public byte[] VendorSpecific2;
 
@@ -2322,191 +2323,191 @@ namespace DiscImageChef.Decoders.SCSI
 
             #region Quantum vendor unique inquiry data structure
             /// <summary>
-            /// Means that the INQUIRY response contains 56 bytes or more, so this data has been filled
+            ///     Means that the INQUIRY response contains 56 bytes or more, so this data has been filled
             /// </summary>
             public bool QuantumPresent;
             /// <summary>
-            /// The product family.
-            /// Byte 36, bits 7 to 5
+            ///     The product family.
+            ///     Byte 36, bits 7 to 5
             /// </summary>
             public byte Qt_ProductFamily;
             /// <summary>
-            /// The released firmware.
-            /// Byte 36, bits 4 to 0
+            ///     The released firmware.
+            ///     Byte 36, bits 4 to 0
             /// </summary>
             public byte Qt_ReleasedFirmware;
             /// <summary>
-            /// The firmware major version.
-            /// Byte 37
+            ///     The firmware major version.
+            ///     Byte 37
             /// </summary>
             public byte Qt_FirmwareMajorVersion;
             /// <summary>
-            /// The firmware minor version.
-            /// Byte 38
+            ///     The firmware minor version.
+            ///     Byte 38
             /// </summary>
             public byte Qt_FirmwareMinorVersion;
             /// <summary>
-            /// The EEPROM format major version.
-            /// Byte 39
+            ///     The EEPROM format major version.
+            ///     Byte 39
             /// </summary>
             public byte Qt_EEPROMFormatMajorVersion;
             /// <summary>
-            /// The EEPROM format minor version.
-            /// Byte 40
+            ///     The EEPROM format minor version.
+            ///     Byte 40
             /// </summary>
             public byte Qt_EEPROMFormatMinorVersion;
             /// <summary>
-            /// The firmware personality.
-            /// Byte 41
+            ///     The firmware personality.
+            ///     Byte 41
             /// </summary>
             public byte Qt_FirmwarePersonality;
             /// <summary>
-            /// The firmware sub personality.
-            /// Byte 42
+            ///     The firmware sub personality.
+            ///     Byte 42
             /// </summary>
             public byte Qt_FirmwareSubPersonality;
             /// <summary>
-            /// The tape directory format version.
-            /// Byte 43
+            ///     The tape directory format version.
+            ///     Byte 43
             /// </summary>
             public byte Qt_TapeDirectoryFormatVersion;
             /// <summary>
-            /// The controller hardware version.
-            /// Byte 44
+            ///     The controller hardware version.
+            ///     Byte 44
             /// </summary>
             public byte Qt_ControllerHardwareVersion;
             /// <summary>
-            /// The drive EEPROM version.
-            /// Byte 45
+            ///     The drive EEPROM version.
+            ///     Byte 45
             /// </summary>
             public byte Qt_DriveEEPROMVersion;
             /// <summary>
-            /// The drive hardware version.
-            /// Byte 46
+            ///     The drive hardware version.
+            ///     Byte 46
             /// </summary>
             public byte Qt_DriveHardwareVersion;
             /// <summary>
-            /// The media loader firmware version.
-            /// Byte 47
+            ///     The media loader firmware version.
+            ///     Byte 47
             /// </summary>
             public byte Qt_MediaLoaderFirmwareVersion;
             /// <summary>
-            /// The media loader hardware version.
-            /// Byte 48
+            ///     The media loader hardware version.
+            ///     Byte 48
             /// </summary>
             public byte Qt_MediaLoaderHardwareVersion;
             /// <summary>
-            /// The media loader mechanical version.
-            /// Byte 49
+            ///     The media loader mechanical version.
+            ///     Byte 49
             /// </summary>
             public byte Qt_MediaLoaderMechanicalVersion;
             /// <summary>
-            /// Is a media loader present?
-            /// Byte 50
+            ///     Is a media loader present?
+            ///     Byte 50
             /// </summary>
             public bool Qt_MediaLoaderPresent;
             /// <summary>
-            /// Is a library present?
-            /// Byte 51
+            ///     Is a library present?
+            ///     Byte 51
             /// </summary>
             public bool Qt_LibraryPresent;
             /// <summary>
-            /// The module revision.
-            /// Bytes 52 to 55
+            ///     The module revision.
+            ///     Bytes 52 to 55
             /// </summary>
             public byte[] Qt_ModuleRevision;
             #endregion Quantum vendor unique inquiry data structure
 
             #region IBM vendor unique inquiry data structure
             /// <summary>
-            /// Means that the INQUIRY response contains 56 bytes or more, so this data has been filled
+            ///     Means that the INQUIRY response contains 56 bytes or more, so this data has been filled
             /// </summary>
             public bool IBMPresent;
             /// <summary>
-            /// Drive is not capable of automation
-            /// Byte 36 bit 0
+            ///     Drive is not capable of automation
+            ///     Byte 36 bit 0
             /// </summary>
             public bool IBM_AutDis;
             /// <summary>
-            /// If not zero, limit in MB/s = Max * (this / 256)
-            /// Byte 37
+            ///     If not zero, limit in MB/s = Max * (this / 256)
+            ///     Byte 37
             /// </summary>
             public byte IBM_PerformanceLimit;
             /// <summary>
-            /// Byte 41
+            ///     Byte 41
             /// </summary>
             public byte IBM_OEMSpecific;
             #endregion IBM vendor unique inquiry data structure
 
             #region HP vendor unique inquiry data structure
             /// <summary>
-            /// Means that the INQUIRY response contains 49 bytes or more, so this data has been filled
+            ///     Means that the INQUIRY response contains 49 bytes or more, so this data has been filled
             /// </summary>
             public bool HPPresent;
             /// <summary>
-            /// WORM version
-            /// Byte 40 bits 7 to 1
+            ///     WORM version
+            ///     Byte 40 bits 7 to 1
             /// </summary>
             public byte HP_WORMVersion;
             /// <summary>
-            /// WORM supported
-            /// Byte 40 bit 0
+            ///     WORM supported
+            ///     Byte 40 bit 0
             /// </summary>
             public bool HP_WORM;
             /// <summary>
-            /// Bytes 43 to 48
+            ///     Bytes 43 to 48
             /// </summary>
             public byte[] HP_OBDR;
             #endregion HP vendor unique inquiry data structure
 
             #region Seagate vendor unique inquiry data structure
             /// <summary>
-            /// Means that bytes 36 to 43 are filled
+            ///     Means that bytes 36 to 43 are filled
             /// </summary>
             public bool SeagatePresent;
             /// <summary>
-            /// Drive Serial Number
-            /// Bytes 36 to 43
+            ///     Drive Serial Number
+            ///     Bytes 36 to 43
             /// </summary>
             public byte[] Seagate_DriveSerialNumber;
             /// <summary>
-            /// Means that bytes 96 to 143 are filled
+            ///     Means that bytes 96 to 143 are filled
             /// </summary>
             public bool Seagate2Present;
             /// <summary>
-            /// Contains Seagate copyright notice
-            /// Bytes 96 to 143
+            ///     Contains Seagate copyright notice
+            ///     Bytes 96 to 143
             /// </summary>
             public byte[] Seagate_Copyright;
             /// <summary>
-            /// Means that bytes 144 to 147 are filled
+            ///     Means that bytes 144 to 147 are filled
             /// </summary>
             public bool Seagate3Present;
             /// <summary>
-            /// Reserved Seagate field
-            /// Bytes 144 to 147
+            ///     Reserved Seagate field
+            ///     Bytes 144 to 147
             /// </summary>
             public byte[] Seagate_ServoPROMPartNo;
             #endregion Seagate vendor unique inquiry data structure
 
             #region Kreon vendor unique inquiry data structure
             /// <summary>
-            /// Means that firmware is Kreon
+            ///     Means that firmware is Kreon
             /// </summary>
             public bool KreonPresent;
             /// <summary>
-            /// Kreon identifier
-            /// Bytes 36 to 40
+            ///     Kreon identifier
+            ///     Bytes 36 to 40
             /// </summary>
             public byte[] KreonIdentifier;
             /// <summary>
-            /// Kreon just a 0x20
-            /// Bytes 41
+            ///     Kreon just a 0x20
+            ///     Bytes 41
             /// </summary>
             public byte KreonSpace;
             /// <summary>
-            /// Kreon version string
-            /// Bytes 42 to 46
+            ///     Kreon version string
+            ///     Bytes 42 to 46
             /// </summary>
             public byte[] KreonVersion;
             #endregion Kreon vendor unique inquiry data structure

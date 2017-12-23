@@ -36,19 +36,19 @@ using System.Text;
 namespace DiscImageChef.Decoders.DVD
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -59,68 +59,68 @@ namespace DiscImageChef.Decoders.DVD
         public struct MediumStatus
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Byte 4, bit 7
-            /// Medium is in a cartridge
+            ///     Byte 4, bit 7
+            ///     Medium is in a cartridge
             /// </summary>
             public bool Cartridge;
             /// <summary>
-            /// Byte 4, bit 6
-            /// Medium has been taken out/inserted in a cartridge
+            ///     Byte 4, bit 6
+            ///     Medium has been taken out/inserted in a cartridge
             /// </summary>
             public bool OUT;
             /// <summary>
-            /// Byte 4, bits 5 to 4
-            /// Reserved
+            ///     Byte 4, bits 5 to 4
+            ///     Reserved
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Byte 4, bit 3
-            /// Media is write protected by reason stablished in RAMSWI
+            ///     Byte 4, bit 3
+            ///     Media is write protected by reason stablished in RAMSWI
             /// </summary>
             public bool MSWI;
             /// <summary>
-            /// Byte 4, bit 2
-            /// Media is write protected by cartridge
+            ///     Byte 4, bit 2
+            ///     Media is write protected by cartridge
             /// </summary>
             public bool CWP;
             /// <summary>
-            /// Byte 4, bit 1
-            /// Media is persistently write protected
+            ///     Byte 4, bit 1
+            ///     Media is persistently write protected
             /// </summary>
             public bool PWP;
             /// <summary>
-            /// Byte 4, bit 0
-            /// Reserved
+            ///     Byte 4, bit 0
+            ///     Reserved
             /// </summary>
             public bool Reserved4;
             /// <summary>
-            /// Byte 5
-            /// Writable status depending on cartridge
+            ///     Byte 5
+            ///     Writable status depending on cartridge
             /// </summary>
             public byte DiscType;
             /// <summary>
-            /// Byte 6
-            /// Reserved
+            ///     Byte 6
+            ///     Reserved
             /// </summary>
             public byte Reserved5;
             /// <summary>
-            /// Byte 7
-            /// Reason of specific write protection, only defined 0x01 as "bare disc wp", and 0xFF as unspecified. Rest reserved.
+            ///     Byte 7
+            ///     Reason of specific write protection, only defined 0x01 as "bare disc wp", and 0xFF as unspecified. Rest reserved.
             /// </summary>
             public byte RAMSWI;
         }
@@ -188,8 +188,7 @@ namespace DiscImageChef.Decoders.DVD
                     sb.AppendLine("Disc is write inhibited for an unspecified reason");
                     break;
                 default:
-                    sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI)
-                      .AppendLine();
+                    sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI).AppendLine();
                     break;
             }
 

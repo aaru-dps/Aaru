@@ -38,27 +38,27 @@ namespace DiscImageChef.Decoders.CD
     public enum TocAdr : byte
     {
         /// <summary>
-        /// Q Sub-channel mode information not supplied
+        ///     Q Sub-channel mode information not supplied
         /// </summary>
         NoInformation = 0x00,
         /// <summary>
-        /// Q Sub-channel encodes current position data
+        ///     Q Sub-channel encodes current position data
         /// </summary>
         CurrentPosition = 0x01,
         /// <summary>
-        /// Q Sub-channel encodes the media catalog number
+        ///     Q Sub-channel encodes the media catalog number
         /// </summary>
         MediaCatalogNumber = 0x02,
         /// <summary>
-        /// Q Sub-channel encodes the ISRC
+        ///     Q Sub-channel encodes the ISRC
         /// </summary>
         ISRC = 0x03,
         /// <summary>
-        /// Q Sub-channel encodes the start of an audio/data track (if found in TOC)
+        ///     Q Sub-channel encodes the start of an audio/data track (if found in TOC)
         /// </summary>
         TrackPointer = 0x01,
         /// <summary>
-        /// Q Sub-channel encodes the start of a video track (if found in TOC) for CD-V
+        ///     Q Sub-channel encodes the start of a video track (if found in TOC) for CD-V
         /// </summary>
         VideoTrackPointer = 0x04
     }
@@ -66,35 +66,35 @@ namespace DiscImageChef.Decoders.CD
     public enum TocControl : byte
     {
         /// <summary>
-        /// Stereo audio, no pre-emphasis
+        ///     Stereo audio, no pre-emphasis
         /// </summary>
         TwoChanNoPreEmph = 0x00,
         /// <summary>
-        /// Stereo audio with pre-emphasis
+        ///     Stereo audio with pre-emphasis
         /// </summary>
         TwoChanPreEmph = 0x01,
         /// <summary>
-        /// If mask applied, track can be copied
+        ///     If mask applied, track can be copied
         /// </summary>
         CopyPermissionMask = 0x02,
         /// <summary>
-        /// Data track, recorded uninterrumpted
+        ///     Data track, recorded uninterrumpted
         /// </summary>
         DataTrack = 0x04,
         /// <summary>
-        /// Data track, recorded incrementally
+        ///     Data track, recorded incrementally
         /// </summary>
         DataTrackIncremental = 0x05,
         /// <summary>
-        /// Quadraphonic audio, no pre-emphasis
+        ///     Quadraphonic audio, no pre-emphasis
         /// </summary>
         FourChanNoPreEmph = 0x08,
         /// <summary>
-        /// Quadraphonic audio with pre-emphasis
+        ///     Quadraphonic audio with pre-emphasis
         /// </summary>
         FourChanPreEmph = 0x09,
         /// <summary>
-        /// Reserved mask
+        ///     Reserved mask
         /// </summary>
         ReservedMask = 0x0C
     }

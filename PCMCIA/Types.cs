@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DiscImageChef.Decoders.PCMCIA
 {
     /// <summary>
-    /// Basic classure of a PCMCIA tuple
+    ///     Basic classure of a PCMCIA tuple
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -48,7 +48,7 @@ namespace DiscImageChef.Decoders.PCMCIA
     }
 
     /// <summary>
-    /// Checksum tuple
+    ///     Checksum tuple
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -56,29 +56,29 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class ChecksumTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_CHECKSUM"/>
+        ///     <see cref="TupleCodes.CISTPL_CHECKSUM" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Offset to region to be checksummed
+        ///     Offset to region to be checksummed
         /// </summary>
         public short Offset;
         /// <summary>
-        /// Length of region to be checksummed
+        ///     Length of region to be checksummed
         /// </summary>
         public ushort Length;
         /// <summary>
-        /// Modulo-256 sum of region
+        ///     Modulo-256 sum of region
         /// </summary>
         public byte Checksum;
     }
 
     /// <summary>
-    /// Indirect Access PC Card Memory
+    ///     Indirect Access PC Card Memory
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -86,17 +86,17 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class IndirectTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_INDIRECT"/>
+        ///     <see cref="TupleCodes.CISTPL_INDIRECT" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
     }
 
     /// <summary>
-    /// Link target tuple
+    ///     Link target tuple
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -104,21 +104,21 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class LinkTargetTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_LINKTARGET"/>
+        ///     <see cref="TupleCodes.CISTPL_LINKTARGET" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// 'C''I''S' in ASCII
+        ///     'C''I''S' in ASCII
         /// </summary>
         public byte[] Tag;
     }
 
     /// <summary>
-    /// 16-bit PC Card Long Link Tuple
+    ///     16-bit PC Card Long Link Tuple
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -126,15 +126,16 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class LongLinkTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_LONGLINK_A"/> or <see cref="TupleCodes.CISTPL_LONGLINK_C"/> or <see cref="TupleCodes.CISTPL_LONGLINK_CB"/>
+        ///     <see cref="TupleCodes.CISTPL_LONGLINK_A" /> or <see cref="TupleCodes.CISTPL_LONGLINK_C" /> or
+        ///     <see cref="TupleCodes.CISTPL_LONGLINK_CB" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Target address
+        ///     Target address
         /// </summary>
         public uint Address;
     }
@@ -146,17 +147,17 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class ConfigurationAddress
     {
         /// <summary>
-        /// Target address space, 0 = attribute, 1 = common
+        ///     Target address space, 0 = attribute, 1 = common
         /// </summary>
         public byte TargetAddressSpace;
         /// <summary>
-        /// Target address
+        ///     Target address
         /// </summary>
         public uint Address;
     }
 
     /// <summary>
-    /// Multiple function link tuple
+    ///     Multiple function link tuple
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -164,19 +165,19 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class MultipleFunctionLinkTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_LONGLINK_MFC"/>
+        ///     <see cref="TupleCodes.CISTPL_LONGLINK_MFC" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// How many functions follow
+        ///     How many functions follow
         /// </summary>
         public byte NumberFunctions;
         /// <summary>
-        /// Link to more configuration registers
+        ///     Link to more configuration registers
         /// </summary>
         public ConfigurationAddress[] Addresses;
     }
@@ -187,11 +188,11 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class NoLinkTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_NO_LINK"/>
+        ///     <see cref="TupleCodes.CISTPL_NO_LINK" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
     }
@@ -202,15 +203,16 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class AlternateStringTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_ALTSTR"/>
+        ///     <see cref="TupleCodes.CISTPL_ALTSTR" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Array of strings. On memory they're preceded by an ISO Escape Code indicating codepage. Here they're stored as Unicode, so no need for it.
+        ///     Array of strings. On memory they're preceded by an ISO Escape Code indicating codepage. Here they're stored as
+        ///     Unicode, so no need for it.
         /// </summary>
         public string[] Strings;
     }
@@ -222,15 +224,15 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class ExtendedDeviceSpeed
     {
         /// <summary>
-        /// Another extended follows
+        ///     Another extended follows
         /// </summary>
         public bool Extended;
         /// <summary>
-        /// Speed mantisa
+        ///     Speed mantisa
         /// </summary>
         public byte Mantissa;
         /// <summary>
-        /// Speed exponent
+        ///     Speed exponent
         /// </summary>
         public byte Exponent;
     }
@@ -241,31 +243,31 @@ namespace DiscImageChef.Decoders.PCMCIA
     public struct DeviceInfo
     {
         /// <summary>
-        /// Device type code
+        ///     Device type code
         /// </summary>
         public DeviceTypeCodes Type;
         /// <summary>
-        /// Write protected
+        ///     Write protected
         /// </summary>
         public bool WPS;
         /// <summary>
-        /// Speed code
+        ///     Speed code
         /// </summary>
         public DeviceSpeedCodes Speed;
         /// <summary>
-        /// Extended speeds
+        ///     Extended speeds
         /// </summary>
         public ExtendedDeviceSpeed[] ExtendedSpeeds;
         /// <summary>
-        /// Extended types
+        ///     Extended types
         /// </summary>
         public byte[] ExtendedTypes;
         /// <summary>
-        /// Size in units - 1
+        ///     Size in units - 1
         /// </summary>
         public byte Units;
         /// <summary>
-        /// Code to define units unit
+        ///     Code to define units unit
         /// </summary>
         public byte SizeCode;
     }
@@ -276,15 +278,15 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class DeviceTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_DEVICE"/> or <see cref="TupleCodes.CISTPL_DEVICE_A"/>
+        ///     <see cref="TupleCodes.CISTPL_DEVICE" /> or <see cref="TupleCodes.CISTPL_DEVICE_A" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Array of device information bytes
+        ///     Array of device information bytes
         /// </summary>
         public DeviceInfo[] Infos;
     }
@@ -295,15 +297,15 @@ namespace DiscImageChef.Decoders.PCMCIA
     public struct OtherConditionInfo
     {
         /// <summary>
-        /// True if another other condition info follows
+        ///     True if another other condition info follows
         /// </summary>
         public bool Extended;
         /// <summary>
-        /// Vcc used
+        ///     Vcc used
         /// </summary>
         public byte VccUsed;
         /// <summary>
-        /// Supports WAIT# signal
+        ///     Supports WAIT# signal
         /// </summary>
         public bool MWAIT;
     }
@@ -314,19 +316,19 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class OtherConditionTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_DEVICE_OC"/> or <see cref="TupleCodes.CISTPL_DEVICE_OA"/>
+        ///     <see cref="TupleCodes.CISTPL_DEVICE_OC" /> or <see cref="TupleCodes.CISTPL_DEVICE_OA" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Array of other condition information bytes
+        ///     Array of other condition information bytes
         /// </summary>
         public OtherConditionInfo[] OtherConditionInfos;
         /// <summary>
-        /// Array of device information bytes
+        ///     Array of device information bytes
         /// </summary>
         public DeviceInfo[] Infos;
     }
@@ -337,31 +339,31 @@ namespace DiscImageChef.Decoders.PCMCIA
     public struct DeviceGeometry
     {
         /// <summary>
-        /// 1 &lt;&lt; n-1 bytes, 2 = 16-bit PC Card, 3 = CardBus PC Card
+        ///     1 &lt;&lt; n-1 bytes, 2 = 16-bit PC Card, 3 = CardBus PC Card
         /// </summary>
         public byte CardInterface;
         /// <summary>
-        /// Erase block size in 1 &lt;&lt; n-1 increments of <see cref="CardInterface"/> wide accesses.
-        /// If n == 4, and <see cref="CardInterface"/> == 16, erase block size = 32 * 4 = 128 bytes
+        ///     Erase block size in 1 &lt;&lt; n-1 increments of <see cref="CardInterface" /> wide accesses.
+        ///     If n == 4, and <see cref="CardInterface" /> == 16, erase block size = 32 * 4 = 128 bytes
         /// </summary>
         public byte EraseBlockSize;
         /// <summary>
-        /// Read block size in 1 &lt;&lt; n-1 increments of <see cref="CardInterface"/> wide accesses.
-        /// If n == 4, and <see cref="CardInterface"/> == 16, read block size = 32 * 4 = 128 bytes
+        ///     Read block size in 1 &lt;&lt; n-1 increments of <see cref="CardInterface" /> wide accesses.
+        ///     If n == 4, and <see cref="CardInterface" /> == 16, read block size = 32 * 4 = 128 bytes
         /// </summary>
         public byte ReadBlockSize;
         /// <summary>
-        /// Write block size in 1 &lt;&lt; n-1 increments of <see cref="CardInterface"/> wide accesses.
-        /// If n == 4, and <see cref="CardInterface"/> == 16, write block size = 32 * 4 = 128 bytes
+        ///     Write block size in 1 &lt;&lt; n-1 increments of <see cref="CardInterface" /> wide accesses.
+        ///     If n == 4, and <see cref="CardInterface" /> == 16, write block size = 32 * 4 = 128 bytes
         /// </summary>
         public byte WriteBlockSize;
         /// <summary>
-        /// Device partitioning in granularity of 1 &lt;&lt; n-1 erase blocks
-        /// If n == 4, and erase block is 128 bytes, partitions must be aligned to 32 erase block, or 4096 bytes
+        ///     Device partitioning in granularity of 1 &lt;&lt; n-1 erase blocks
+        ///     If n == 4, and erase block is 128 bytes, partitions must be aligned to 32 erase block, or 4096 bytes
         /// </summary>
         public byte Partitions;
         /// <summary>
-        /// Card employs a multiple of 1 &lt;&lt; n-1 times interleaving the entire memory arrays
+        ///     Card employs a multiple of 1 &lt;&lt; n-1 times interleaving the entire memory arrays
         /// </summary>
         public byte Interleaving;
     }
@@ -373,15 +375,15 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class DeviceGeometryTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_DEVICEGEO"/> or <see cref="TupleCodes.CISTPL_DEVICEGEO_A"/>
+        ///     <see cref="TupleCodes.CISTPL_DEVICEGEO" /> or <see cref="TupleCodes.CISTPL_DEVICEGEO_A" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Array of device geometries
+        ///     Array of device geometries
         /// </summary>
         public DeviceGeometry[] Geometries;
     }
@@ -392,23 +394,23 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class FunctionIdentificationTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_FUNCID"/>
+        ///     <see cref="TupleCodes.CISTPL_FUNCID" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Function code
+        ///     Function code
         /// </summary>
         public FunctionCodes Function;
         /// <summary>
-        /// Device contains boot ROM
+        ///     Device contains boot ROM
         /// </summary>
         public bool ROM;
         /// <summary>
-        /// Device wants to be part of power-on-self-test
+        ///     Device wants to be part of power-on-self-test
         /// </summary>
         public bool POST;
     }
@@ -420,19 +422,19 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class ManufacturerIdentificationTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_MANFID"/>
+        ///     <see cref="TupleCodes.CISTPL_MANFID" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Manufacturer ID
+        ///     Manufacturer ID
         /// </summary>
         public ushort ManufacturerID;
         /// <summary>
-        /// Card ID
+        ///     Card ID
         /// </summary>
         public ushort CardID;
     }
@@ -444,31 +446,31 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class Level1VersionTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_VERS_1"/>
+        ///     <see cref="TupleCodes.CISTPL_VERS_1" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Major version of standard compliance
+        ///     Major version of standard compliance
         /// </summary>
         public byte MajorVersion;
         /// <summary>
-        /// Minor version of standard compliance
+        ///     Minor version of standard compliance
         /// </summary>
         public byte MinorVersion;
         /// <summary>
-        /// Manufacturer string
+        ///     Manufacturer string
         /// </summary>
         public string Manufacturer;
         /// <summary>
-        /// Product string
+        ///     Product string
         /// </summary>
         public string Product;
         /// <summary>
-        /// Additional information strings
+        ///     Additional information strings
         /// </summary>
         public string[] AdditionalInformation;
     }
@@ -479,43 +481,43 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class Level2VersionTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_VERS_2"/>
+        ///     <see cref="TupleCodes.CISTPL_VERS_2" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Version of this classure
+        ///     Version of this classure
         /// </summary>
         public byte StructureVersion;
         /// <summary>
-        /// Level of compliance
+        ///     Level of compliance
         /// </summary>
         public byte Compliance;
         /// <summary>
-        /// Address of first data byte
+        ///     Address of first data byte
         /// </summary>
         public ushort Address;
         /// <summary>
-        /// Vendor-specific byte
+        ///     Vendor-specific byte
         /// </summary>
         public byte VendorSpecific1;
         /// <summary>
-        /// Vendor-specific byte
+        ///     Vendor-specific byte
         /// </summary>
         public byte VendorSpecific2;
         /// <summary>
-        /// Number of copies of CIS present
+        ///     Number of copies of CIS present
         /// </summary>
         public byte CISCopies;
         /// <summary>
-        /// Vendor of software that formatted the card
+        ///     Vendor of software that formatted the card
         /// </summary>
         public string OEM;
         /// <summary>
-        /// Informational message about the card
+        ///     Informational message about the card
         /// </summary>
         public string Information;
     }
@@ -526,23 +528,23 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class GeometryTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_GEOMETRY"/>
+        ///     <see cref="TupleCodes.CISTPL_GEOMETRY" />
         /// </summary>
         public TupleCodes Code;
         /// <summary>
-        /// Link to next tuple
+        ///     Link to next tuple
         /// </summary>
         public byte Link;
         /// <summary>
-        /// Sectors per track
+        ///     Sectors per track
         /// </summary>
         public byte SectorsPerTrack;
         /// <summary>
-        /// Tracks per cylinder
+        ///     Tracks per cylinder
         /// </summary>
         public byte TracksPerCylinder;
         /// <summary>
-        /// Cylinders
+        ///     Cylinders
         /// </summary>
         public ushort Cylinders;
     }

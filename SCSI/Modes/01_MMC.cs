@@ -42,31 +42,31 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x01: Read error recovery page for MultiMedia Devices
         /// <summary>
-        /// Read error recovery page for MultiMedia Devices
-        /// Page code 0x01
-        /// 8 bytes in SCSI-2, MMC-1
-        /// 12 bytes in MMC-2, MMC-3
+        ///     Read error recovery page for MultiMedia Devices
+        ///     Page code 0x01
+        ///     8 bytes in SCSI-2, MMC-1
+        ///     12 bytes in MMC-2, MMC-3
         /// </summary>
         public struct ModePage_01_MMC
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Error recovery parameter
+            ///     Error recovery parameter
             /// </summary>
             public byte Parameter;
             /// <summary>
-            /// How many times to retry a read operation
+            ///     How many times to retry a read operation
             /// </summary>
             public byte ReadRetryCount;
             /// <summary>
-            /// How many times to retry a write operation
+            ///     How many times to retry a write operation
             /// </summary>
             public byte WriteRetryCount;
             /// <summary>
-            /// Maximum time in ms to use in data error recovery procedures
+            ///     Maximum time in ms to use in data error recovery procedures
             /// </summary>
             public ushort RecoveryTimeLimit;
         }
@@ -195,24 +195,25 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x01: Read error recovery page for MultiMedia Devices
-    public static byte[] EncodeModePage_01_MMC(ModePage_01_MMC page)
-    {
-        byte[] pg = new byte[12];
 
-        pg[0] = 0x01;
-        pg[1] = 10;
+        public static byte[] EncodeModePage_01_MMC(ModePage_01_MMC page)
+        {
+            byte[] pg = new byte[12];
 
-        if(page.PS) pg[0] += 0x80;
-        pg[2] = page.Parameter;
-        pg[3] = page.ReadRetryCount;
+            pg[0] = 0x01;
+            pg[1] = 10;
 
-        // This is from a newer version of SCSI unknown what happen for drives expecting an 8 byte page
+            if(page.PS) pg[0] += 0x80;
+            pg[2] = page.Parameter;
+            pg[3] = page.ReadRetryCount;
 
-        pg[8] = page.WriteRetryCount;
-        pg[10] = (byte)((page.RecoveryTimeLimit & 0xFF00) << 8);
-        pg[11] = (byte)(page.RecoveryTimeLimit & 0xFF);
+            // This is from a newer version of SCSI unknown what happen for drives expecting an 8 byte page
 
-        return pg;
-    }
+            pg[8] = page.WriteRetryCount;
+            pg[10] = (byte)((page.RecoveryTimeLimit & 0xFF00) << 8);
+            pg[11] = (byte)(page.RecoveryTimeLimit & 0xFF);
+
+            return pg;
+        }
     }
 }

@@ -42,56 +42,56 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x1C: Informational exceptions control page
         /// <summary>
-        /// Informational exceptions control page
-        /// Page code 0x1C
-        /// 12 bytes in SPC-1, SPC-2, SPC-3, SPC-4
+        ///     Informational exceptions control page
+        ///     Page code 0x1C
+        ///     12 bytes in SPC-1, SPC-2, SPC-3, SPC-4
         /// </summary>
         public struct ModePage_1C
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Informational exception operations should not affect performance
+            ///     Informational exception operations should not affect performance
             /// </summary>
             public bool Perf;
             /// <summary>
-            /// Disable informational exception operations
+            ///     Disable informational exception operations
             /// </summary>
             public bool DExcpt;
             /// <summary>
-            /// Create a test device failure at next interval time
+            ///     Create a test device failure at next interval time
             /// </summary>
             public bool Test;
             /// <summary>
-            /// Log informational exception conditions
+            ///     Log informational exception conditions
             /// </summary>
             public bool LogErr;
             /// <summary>
-            /// Method of reporting informational exceptions
+            ///     Method of reporting informational exceptions
             /// </summary>
             public byte MRIE;
             /// <summary>
-            /// 100 ms period to report an informational exception condition
+            ///     100 ms period to report an informational exception condition
             /// </summary>
             public uint IntervalTimer;
             /// <summary>
-            /// How many times to report informational exceptions
+            ///     How many times to report informational exceptions
             /// </summary>
             public uint ReportCount;
 
             /// <summary>
-            /// Enable background functions
+            ///     Enable background functions
             /// </summary>
             public bool EBF;
             /// <summary>
-            /// Warning reporting enabled
+            ///     Warning reporting enabled
             /// </summary>
             public bool EWasc;
 
             /// <summary>
-            /// Enable reporting of background self-test errors
+            ///     Enable reporting of background self-test errors
             /// </summary>
             public bool EBACKERR;
         }
@@ -204,47 +204,47 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region Mode Page 0x1C subpage 0x01: Background Control mode page
         /// <summary>
-        /// Background Control mode page
-        /// Page code 0x1A
-        /// Subpage code 0x01
-        /// 16 bytes in SPC-5
+        ///     Background Control mode page
+        ///     Page code 0x1A
+        ///     Subpage code 0x01
+        ///     16 bytes in SPC-5
         /// </summary>
         public struct ModePage_1C_S01
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Suspend on log full
+            ///     Suspend on log full
             /// </summary>
             public bool S_L_Full;
             /// <summary>
-            /// Log only when intervention required
+            ///     Log only when intervention required
             /// </summary>
             public bool LOWIR;
             /// <summary>
-            /// Enable background medium scan
+            ///     Enable background medium scan
             /// </summary>
             public bool En_Bms;
             /// <summary>
-            /// Enable background pre-scan
+            ///     Enable background pre-scan
             /// </summary>
             public bool En_Ps;
             /// <summary>
-            /// Time in hours between background medium scans
+            ///     Time in hours between background medium scans
             /// </summary>
             public ushort BackgroundScanInterval;
             /// <summary>
-            /// Maximum time in hours for a background pre-scan to complete
+            ///     Maximum time in hours for a background pre-scan to complete
             /// </summary>
             public ushort BackgroundPrescanTimeLimit;
             /// <summary>
-            /// Minimum time in ms being idle before resuming a background scan
+            ///     Minimum time in ms being idle before resuming a background scan
             /// </summary>
             public ushort MinIdleBeforeBgScan;
             /// <summary>
-            /// Maximum time in ms to start processing commands while performing a background scan
+            ///     Maximum time in ms to start processing commands while performing a background scan
             /// </summary>
             public ushort MaxTimeSuspendBgScan;
         }

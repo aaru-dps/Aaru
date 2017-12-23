@@ -39,19 +39,19 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.Bluray
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -65,7 +65,7 @@ namespace DiscImageChef.Decoders.Bluray
         const string DiscTypeBDR = "BDR";
 
         /// <summary>
-        /// Disc Information Unit Identifier "DI"
+        ///     Disc Information Unit Identifier "DI"
         /// </summary>
         const ushort DIUIdentifier = 0x4449;
         #endregion Private constants
@@ -204,23 +204,23 @@ namespace DiscImageChef.Decoders.Bluray
         public struct DiscInformation
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Always 4098
+            ///     Bytes 0 to 1
+            ///     Always 4098
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Byte 4 to 4099
-            /// Disc information units
+            ///     Byte 4 to 4099
+            ///     Disc information units
             /// </summary>
             public DiscInformationUnits[] Units;
         }
@@ -228,73 +228,73 @@ namespace DiscImageChef.Decoders.Bluray
         public struct DiscInformationUnits
         {
             /// <summary>
-            /// Byte 0
-            /// "DI"
+            ///     Byte 0
+            ///     "DI"
             /// </summary>
             public ushort Signature;
             /// <summary>
-            /// Byte 2
-            /// Disc information format
+            ///     Byte 2
+            ///     Disc information format
             /// </summary>
             public byte Format;
             /// <summary>
-            /// Byte 3
-            /// Number of DI units per block
+            ///     Byte 3
+            ///     Number of DI units per block
             /// </summary>
             public byte UnitsPerBlock;
             /// <summary>
-            /// Byte 4
-            /// Reserved for BD-ROM, legacy information for BD-R/-RE
+            ///     Byte 4
+            ///     Reserved for BD-ROM, legacy information for BD-R/-RE
             /// </summary>
             public byte Legacy;
             /// <summary>
-            /// Byte 5
-            /// Sequence number for this DI unit
+            ///     Byte 5
+            ///     Sequence number for this DI unit
             /// </summary>
             public byte Sequence;
             /// <summary>
-            /// Byte 6
-            /// Number of bytes used by this DI unit, should be 64 for BD-ROM and 112 for BD-R/-RE
+            ///     Byte 6
+            ///     Number of bytes used by this DI unit, should be 64 for BD-ROM and 112 for BD-R/-RE
             /// </summary>
             public byte Length;
             /// <summary>
-            /// Byte 7
-            /// Reserved
+            ///     Byte 7
+            ///     Reserved
             /// </summary>
             public byte Reserved;
             /// <summary>
-            /// Bytes 8 to 10
-            /// Disc type identifier
+            ///     Bytes 8 to 10
+            ///     Disc type identifier
             /// </summary>
             public byte[] DiscTypeIdentifier;
             /// <summary>
-            /// Byte 11
-            /// Disc size/class/version
+            ///     Byte 11
+            ///     Disc size/class/version
             /// </summary>
             public byte DiscSizeClassVersion;
             /// <summary>
-            /// Bytes 12 to 63 for BD-ROM, bytes 12 to 99 for BD-R/-RE
-            /// Format dependent contents, disclosed in private blu-ray specifications
+            ///     Bytes 12 to 63 for BD-ROM, bytes 12 to 99 for BD-R/-RE
+            ///     Format dependent contents, disclosed in private blu-ray specifications
             /// </summary>
             public byte[] FormatDependentContents;
             /// <summary>
-            /// Bytes 100 to 105, BD-R/-RE only
-            /// Manufacturer ID
+            ///     Bytes 100 to 105, BD-R/-RE only
+            ///     Manufacturer ID
             /// </summary>
             public byte[] ManufacturerID;
             /// <summary>
-            /// Bytes 106 to 108, BD-R/-RE only
-            /// Media type ID
+            ///     Bytes 106 to 108, BD-R/-RE only
+            ///     Media type ID
             /// </summary>
             public byte[] MediaTypeID;
             /// <summary>
-            /// Bytes 109 to 110, BD-R/-RE only
-            /// Timestamp
+            ///     Bytes 109 to 110, BD-R/-RE only
+            ///     Timestamp
             /// </summary>
             public ushort TimeStamp;
             /// <summary>
-            /// Byte 111
-            /// Product revision number
+            ///     Byte 111
+            ///     Product revision number
             /// </summary>
             public byte ProductRevisionNumber;
         }

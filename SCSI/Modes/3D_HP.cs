@@ -44,7 +44,7 @@ namespace DiscImageChef.Decoders.SCSI
         public struct HP_ModePage_3D
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             public byte ResetBehaviour;

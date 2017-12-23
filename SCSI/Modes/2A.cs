@@ -44,106 +44,106 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x2A: CD-ROM capabilities page
         /// <summary>
-        /// CD-ROM capabilities page
-        /// Page code 0x2A
-        /// 16 bytes in OB-U0077C
-        /// 20 bytes in SFF-8020i
-        /// 22 bytes in MMC-1
-        /// 26 bytes in MMC-2
-        /// Variable bytes in MMC-3
+        ///     CD-ROM capabilities page
+        ///     Page code 0x2A
+        ///     16 bytes in OB-U0077C
+        ///     20 bytes in SFF-8020i
+        ///     22 bytes in MMC-1
+        ///     26 bytes in MMC-2
+        ///     Variable bytes in MMC-3
         /// </summary>
         public struct ModePage_2A
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Drive supports multi-session and/or Photo-CD
+            ///     Drive supports multi-session and/or Photo-CD
             /// </summary>
             public bool MultiSession;
             /// <summary>
-            /// Drive is capable of reading sectors in Mode 2 Form 2 format
+            ///     Drive is capable of reading sectors in Mode 2 Form 2 format
             /// </summary>
             public bool Mode2Form2;
             /// <summary>
-            /// Drive is capable of reading sectors in Mode 2 Form 1 format
+            ///     Drive is capable of reading sectors in Mode 2 Form 1 format
             /// </summary>
             public bool Mode2Form1;
             /// <summary>
-            /// Drive is capable of playing audio
+            ///     Drive is capable of playing audio
             /// </summary>
             public bool AudioPlay;
             /// <summary>
-            /// Drive can return the ISRC
+            ///     Drive can return the ISRC
             /// </summary>
             public bool ISRC;
             /// <summary>
-            /// Drive can return the media catalogue number
+            ///     Drive can return the media catalogue number
             /// </summary>
             public bool UPC;
             /// <summary>
-            /// Drive can return C2 pointers
+            ///     Drive can return C2 pointers
             /// </summary>
             public bool C2Pointer;
             /// <summary>
-            /// Drive can read, deinterlave and correct R-W subchannels
+            ///     Drive can read, deinterlave and correct R-W subchannels
             /// </summary>
             public bool DeinterlaveSubchannel;
             /// <summary>
-            /// Drive can read interleaved and uncorrected R-W subchannels
+            ///     Drive can read interleaved and uncorrected R-W subchannels
             /// </summary>
             public bool Subchannel;
             /// <summary>
-            /// Drive can continue from a loss of streaming on audio reading
+            ///     Drive can continue from a loss of streaming on audio reading
             /// </summary>
             public bool AccurateCDDA;
             /// <summary>
-            /// Audio can be read as digital data
+            ///     Audio can be read as digital data
             /// </summary>
             public bool CDDACommand;
             /// <summary>
-            /// Loading Mechanism Type
+            ///     Loading Mechanism Type
             /// </summary>
             public byte LoadingMechanism;
             /// <summary>
-            /// Drive can eject discs
+            ///     Drive can eject discs
             /// </summary>
             public bool Eject;
             /// <summary>
-            /// Drive's optional prevent jumper status
+            ///     Drive's optional prevent jumper status
             /// </summary>
             public bool PreventJumper;
             /// <summary>
-            /// Current lock status
+            ///     Current lock status
             /// </summary>
             public bool LockState;
             /// <summary>
-            /// Drive can lock media
+            ///     Drive can lock media
             /// </summary>
             public bool Lock;
             /// <summary>
-            /// Each channel can be muted independently
+            ///     Each channel can be muted independently
             /// </summary>
             public bool SeparateChannelMute;
             /// <summary>
-            /// Each channel's volume can be controlled independently
+            ///     Each channel's volume can be controlled independently
             /// </summary>
             public bool SeparateChannelVolume;
             /// <summary>
-            /// Maximum drive speed in Kbytes/second
+            ///     Maximum drive speed in Kbytes/second
             /// </summary>
             public ushort MaximumSpeed;
             /// <summary>
-            /// Supported volume levels
+            ///     Supported volume levels
             /// </summary>
             public ushort SupportedVolumeLevels;
             /// <summary>
-            /// Buffer size in Kbytes
+            ///     Buffer size in Kbytes
             /// </summary>
             public ushort BufferSize;
             /// <summary>
-            /// Current drive speed in Kbytes/second
+            ///     Current drive speed in Kbytes/second
             /// </summary>
             public ushort CurrentSpeed;
 
@@ -283,13 +283,11 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.WriteSpeedPerformanceDescriptors = new ModePage_2A_WriteDescriptor[descriptors];
 
             for(int i = 0; i < descriptors; i++)
-            {
                 decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor
- {
+                {
                     RotationControl = (byte)(pageResponse[1 + 32 + i * 4] & 0x07),
                     WriteSpeed = (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4])
                 };
-            }
 
             return decoded;
         }
@@ -355,11 +353,9 @@ namespace DiscImageChef.Decoders.SCSI
                                   : "\tDrive is not locked, media can be ejected and inserted");
             }
             else
-            {
                 sb.AppendLine(page.LockState
                                   ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
                                   : "\tDrive is not locked, media can be ejected and inserted");
-            }
             if(page.Eject) sb.AppendLine("\tDrive can eject media");
 
             if(page.SeparateChannelMute) sb.AppendLine("\tEach channel can be muted independently");
@@ -414,9 +410,11 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.WriteSpeedPerformanceDescriptors != null)
-                foreach(ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0)) if(descriptor.RotationControl == 0)
-                        sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode",
-                                        descriptor.WriteSpeed).AppendLine();
+                foreach(ModePage_2A_WriteDescriptor descriptor in
+                    page.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
+                    if(descriptor.RotationControl == 0)
+                        sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed)
+                          .AppendLine();
                     else if(descriptor.RotationControl == 1)
                         sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode",
                                         descriptor.WriteSpeed).AppendLine();

@@ -38,19 +38,19 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.CD
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -61,163 +61,163 @@ namespace DiscImageChef.Decoders.CD
         public struct CDATIP
         {
             /// <summary>
-            /// Bytes 1 to 0
-            /// Total size of returned session information minus this field
+            ///     Bytes 1 to 0
+            ///     Total size of returned session information minus this field
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Byte 4, bits 7 to 4
-            /// Indicative target writing power
+            ///     Byte 4, bits 7 to 4
+            ///     Indicative target writing power
             /// </summary>
             public byte ITWP;
             /// <summary>
-            /// Byte 4, bit 3
-            /// Set if DDCD
+            ///     Byte 4, bit 3
+            ///     Set if DDCD
             /// </summary>
             public bool DDCD;
             /// <summary>
-            /// Byte 4, bits 2 to 0
-            /// Reference speed
+            ///     Byte 4, bits 2 to 0
+            ///     Reference speed
             /// </summary>
             public byte ReferenceSpeed;
             /// <summary>
-            /// Byte 5, bit 7
-            /// Always unset
+            ///     Byte 5, bit 7
+            ///     Always unset
             /// </summary>
             public bool AlwaysZero;
             /// <summary>
-            /// Byte 5, bit 6
-            /// Unrestricted media
+            ///     Byte 5, bit 6
+            ///     Unrestricted media
             /// </summary>
             public bool URU;
             /// <summary>
-            /// Byte 5, bits 5 to 0
-            /// Reserved
+            ///     Byte 5, bits 5 to 0
+            ///     Reserved
             /// </summary>
             public byte Reserved3;
             /// <summary>
-            /// Byte 6, bit 7
-            /// Always set
+            ///     Byte 6, bit 7
+            ///     Always set
             /// </summary>
             public bool AlwaysOne;
             /// <summary>
-            /// Byte 6, bit 6
-            /// Set if rewritable (CD-RW or DDCD-RW)
+            ///     Byte 6, bit 6
+            ///     Set if rewritable (CD-RW or DDCD-RW)
             /// </summary>
             public bool DiscType;
             /// <summary>
-            /// Byte 6, bits 5 to 3
-            /// Disc subtype
+            ///     Byte 6, bits 5 to 3
+            ///     Disc subtype
             /// </summary>
             public byte DiscSubType;
             /// <summary>
-            /// Byte 6, bit 2
-            /// A1 values are valid
+            ///     Byte 6, bit 2
+            ///     A1 values are valid
             /// </summary>
             public bool A1Valid;
             /// <summary>
-            /// Byte 6, bit 1
-            /// A2 values are valid
+            ///     Byte 6, bit 1
+            ///     A2 values are valid
             /// </summary>
             public bool A2Valid;
             /// <summary>
-            /// Byte 6, bit 0
-            /// A3 values are valid
+            ///     Byte 6, bit 0
+            ///     A3 values are valid
             /// </summary>
             public bool A3Valid;
             /// <summary>
-            /// Byte 7
-            /// Reserved
+            ///     Byte 7
+            ///     Reserved
             /// </summary>
             public byte Reserved4;
             /// <summary>
-            /// Byte 8
-            /// ATIP Start time of Lead-In (Minute)
+            ///     Byte 8
+            ///     ATIP Start time of Lead-In (Minute)
             /// </summary>
             public byte LeadInStartMin;
             /// <summary>
-            /// Byte 9
-            /// ATIP Start time of Lead-In (Second)
+            ///     Byte 9
+            ///     ATIP Start time of Lead-In (Second)
             /// </summary>
             public byte LeadInStartSec;
             /// <summary>
-            /// Byte 10
-            /// ATIP Start time of Lead-In (Frame)
+            ///     Byte 10
+            ///     ATIP Start time of Lead-In (Frame)
             /// </summary>
             public byte LeadInStartFrame;
             /// <summary>
-            /// Byte 11
-            /// Reserved
+            ///     Byte 11
+            ///     Reserved
             /// </summary>
             public byte Reserved5;
             /// <summary>
-            /// Byte 12
-            /// ATIP Last possible start time of Lead-Out (Minute)
+            ///     Byte 12
+            ///     ATIP Last possible start time of Lead-Out (Minute)
             /// </summary>
             public byte LeadOutStartMin;
             /// <summary>
-            /// Byte 13
-            /// ATIP Last possible start time of Lead-Out (Second)
+            ///     Byte 13
+            ///     ATIP Last possible start time of Lead-Out (Second)
             /// </summary>
             public byte LeadOutStartSec;
             /// <summary>
-            /// Byte 14
-            /// ATIP Last possible start time of Lead-Out (Frame)
+            ///     Byte 14
+            ///     ATIP Last possible start time of Lead-Out (Frame)
             /// </summary>
             public byte LeadOutStartFrame;
             /// <summary>
-            /// Byte 15
-            /// Reserved
+            ///     Byte 15
+            ///     Reserved
             /// </summary>
             public byte Reserved6;
             /// <summary>
-            /// Bytes 16 to 18
-            /// A1 values
+            ///     Bytes 16 to 18
+            ///     A1 values
             /// </summary>
             public byte[] A1Values;
             /// <summary>
-            /// Byte 19
-            /// Reserved
+            ///     Byte 19
+            ///     Reserved
             /// </summary>
             public byte Reserved7;
             /// <summary>
-            /// Bytes 20 to 22
-            /// A2 values
+            ///     Bytes 20 to 22
+            ///     A2 values
             /// </summary>
             public byte[] A2Values;
             /// <summary>
-            /// Byte 23
-            /// Reserved
+            ///     Byte 23
+            ///     Reserved
             /// </summary>
             public byte Reserved8;
             /// <summary>
-            /// Bytes 24 to 26
-            /// A3 values
+            ///     Bytes 24 to 26
+            ///     A3 values
             /// </summary>
             public byte[] A3Values;
             /// <summary>
-            /// Byte 27
-            /// Reserved
+            ///     Byte 27
+            ///     Reserved
             /// </summary>
             public byte Reserved9;
             /// <summary>
-            /// Bytes 28 to 30
-            /// S4 values
+            ///     Bytes 28 to 30
+            ///     S4 values
             /// </summary>
             public byte[] S4Values;
             /// <summary>
-            /// Byte 31
-            /// Reserved
+            ///     Byte 31
+            ///     Reserved
             /// </summary>
             public byte Reserved10;
         }
@@ -434,11 +434,9 @@ namespace DiscImageChef.Decoders.CD
 
             if(response.DiscType) sb.AppendLine("Disc uses phase change");
             else
-            {
                 sb.AppendLine(type < 5
                                   ? "Disc uses long strategy type dye (Cyanine, AZO, etc...)"
                                   : "Disc uses short strategy type dye (Phthalocyanine, etc...)");
-            }
 
             string manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
 
@@ -458,7 +456,8 @@ namespace DiscImageChef.Decoders.CD
             switch(sec)
             {
                 case 15:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "TDK Corporation";
                         case 10: return "Ritek Co.";
                         case 20: return "Mitsubishi Chemical Corporation";
@@ -467,7 +466,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 16:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 20: return "Shenzen SG&Gast Digital Optical Discs";
                         case 30: return "Grand Advance Technology Ltd.";
                     }
@@ -478,7 +478,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 18:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 10: return "Wealth Fair Investment Ltd.";
                         case 60: return "Taroko International Co. Ltd.";
                     }
@@ -489,7 +490,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 21:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 10: return "Grupo Condor S.L.";
                         case 30: return "Bestdisc Technology Corporation";
                         case 40: return "Optical Disc Manufacturing Equipment";
@@ -498,7 +500,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 22:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Woongjin Media Corp.";
                         case 10: return "Seantram Technology Inc.";
                         case 20: return "Advanced Digital Media";
@@ -510,7 +513,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 23:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Matsushita Electric Industrial Co., Ltd.";
                         case 10: return "Doremi Media Co., Ltd.";
                         case 20: return "Nacar Media s.r.l.";
@@ -522,7 +526,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 24:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Taiyo Yuden Company Ltd.";
                         case 10: return "SONY Corporation";
                         case 20: return "Computer Support Italy s.r.l.";
@@ -534,7 +539,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 25:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "MPO";
                         case 20: return "Hitachi Maxell, Ltd.";
                         case 30: return "Infodisc Technology Co. Ltd.";
@@ -545,7 +551,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 26:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Fornet International Pte Ltd.";
                         case 10: return "POSTECH Corporation";
                         case 20: return "SKC Co., Ltd.";
@@ -557,7 +564,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 27:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Digital Storage Technology Co., Ltd.";
                         case 10: return "Plasmon Data systems Ltd.";
                         case 20: return "Princo Corporation";
@@ -569,7 +577,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 28:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Opti.Me.S. S.p.A.";
                         case 10: return "Gigastore Corporation";
                         case 20: return "Multi Media Masters & Machinary SA";
@@ -581,7 +590,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 29:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Taeil Media Co., Ltd.";
                         case 10: return "Vanguard Disc Inc.";
                         case 20: return "Unidisc Technology Co., Ltd.";
@@ -596,14 +606,16 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 31:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Ritek Co.";
                         case 30: return "Grand Advance Technology Ltd.";
                     }
 
                     break;
                 case 32:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "TDK Corporation";
                         case 10: return "Prodisc Technology Inc.";
                     }
@@ -618,7 +630,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 45:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Fornet International Pte Ltd.";
                         case 10: return "Unitech Japan Inc.";
                         case 20: return "Acer Media Technology, Inc.";
@@ -629,7 +642,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 46:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Taiyo Yuden Company Ltd.";
                         case 10: return "Hong Kong Digital Technology Co., Ltd.";
                         case 20: return "Multi Media Masters & Machinary SA";
@@ -641,7 +655,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 47:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 10: return "Hitachi Maxell, Ltd.";
                         case 20: return "Princo Corporation";
                         case 40: return "POSTECH Corporation";
@@ -651,7 +666,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 48:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "Ricoh Company Ltd.";
                         case 10: return "Kodak Japan Ltd.";
                         case 20: return "Plasmon Data systems Ltd.";
@@ -663,7 +679,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 49:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 00: return "TDK Corporation";
                         case 10: return "Gigastore Corporation";
                         case 20: return "King Pro Mediatek Inc.";
@@ -674,7 +691,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 50:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 10: return "Vanguard Disc Inc.";
                         case 20: return "Mitsubishi Chemical Corporation";
                         case 30: return "CDA Datenträger Albrechts GmbH";
@@ -682,7 +700,8 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 51:
-                    switch(frm) {
+                    switch(frm)
+                    {
                         case 10: return "Grand Advance Technology Ltd.";
                         case 20: return "Infodisc Technology Co. Ltd.";
                         case 50: return "Hile Optical Disc Technology Corp.";
