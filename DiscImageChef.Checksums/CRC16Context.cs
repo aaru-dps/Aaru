@@ -37,18 +37,18 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Implements a CRC16-CCITT algorithm
+    ///     Implements a CRC16-CCITT algorithm
     /// </summary>
     public class Crc16Context
     {
         const ushort CRC16_POLY = 0xA001;
         const ushort CRC16_SEED = 0x0000;
-
-        ushort[] table;
         ushort hashInt;
 
+        ushort[] table;
+
         /// <summary>
-        /// Initializes the CRC16 table and seed
+        ///     Initializes the CRC16 table and seed
         /// </summary>
         public void Init()
         {
@@ -67,7 +67,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -77,7 +77,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data)
@@ -86,7 +86,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a byte array of the hash value.
+        ///     Returns a byte array of the hash value.
         /// </summary>
         public byte[] Final()
         {
@@ -96,7 +96,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a hexadecimal representation of the hash value.
+        ///     Returns a hexadecimal representation of the hash value.
         /// </summary>
         public string End()
         {
@@ -104,13 +104,14 @@ namespace DiscImageChef.Checksums
             StringBuilder crc16Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++) crc16Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++)
+                crc16Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
 
             return crc16Output.ToString();
         }
 
         /// <summary>
-        /// Gets the hash of a file
+        ///     Gets the hash of a file
         /// </summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
@@ -120,7 +121,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of a file in hexadecimal and as a byte array.
+        ///     Gets the hash of a file in hexadecimal and as a byte array.
         /// </summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
@@ -143,7 +144,8 @@ namespace DiscImageChef.Checksums
             }
 
             for(int i = 0; i < fileStream.Length; i++)
-                localhashInt = (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)]);
+                localhashInt =
+                    (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)]);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             hash = BigEndianBitConverter.GetBytes(localhashInt);
@@ -158,7 +160,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
@@ -169,7 +171,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
@@ -207,7 +209,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>

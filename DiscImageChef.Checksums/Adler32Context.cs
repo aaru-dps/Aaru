@@ -37,15 +37,15 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Implements the Adler-32 algorithm
+    ///     Implements the Adler-32 algorithm
     /// </summary>
     public class Adler32Context
     {
-        ushort sum1, sum2;
         const ushort ADLER_MODULE = 65521;
+        ushort sum1, sum2;
 
         /// <summary>
-        /// Initializes the Adler-32 sums
+        ///     Initializes the Adler-32 sums
         /// </summary>
         public void Init()
         {
@@ -54,7 +54,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -68,7 +68,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data)
@@ -77,7 +77,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a byte array of the hash value.
+        ///     Returns a byte array of the hash value.
         /// </summary>
         public byte[] Final()
         {
@@ -87,7 +87,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a hexadecimal representation of the hash value.
+        ///     Returns a hexadecimal representation of the hash value.
         /// </summary>
         public string End()
         {
@@ -95,13 +95,14 @@ namespace DiscImageChef.Checksums
             StringBuilder adlerOutput = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++) adlerOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
+                adlerOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
 
             return adlerOutput.ToString();
         }
 
         /// <summary>
-        /// Gets the hash of a file
+        ///     Gets the hash of a file
         /// </summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
@@ -111,7 +112,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of a file in hexadecimal and as a byte array.
+        ///     Gets the hash of a file in hexadecimal and as a byte array.
         /// </summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
@@ -145,7 +146,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
@@ -177,7 +178,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>

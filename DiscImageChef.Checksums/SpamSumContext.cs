@@ -45,7 +45,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Implements the SpamSum fuzzy hashing algorithm.
+    ///     Implements the SpamSum fuzzy hashing algorithm.
     /// </summary>
     public class SpamSumContext
     {
@@ -65,41 +65,6 @@ namespace DiscImageChef.Checksums
             0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2B, 0x2F
         };
 
-        struct RollState
-        {
-            public byte[] Window;
-            // ROLLING_WINDOW
-            public uint H1;
-            public uint H2;
-            public uint H3;
-            public uint N;
-        }
-
-        /* A blockhash contains a signature state for a specific (implicit) blocksize.
-         * The blocksize is given by SSDEEP_BS(index). The h and halfh members are the
-         * FNV hashes, where halfh stops to be reset after digest is SPAMSUM_LENGTH/2
-         * long. The halfh hash is needed be able to truncate digest for the second
-         * output hash to stay compatible with ssdeep output. */
-        struct BlockhashContext
-        {
-            public uint H;
-            public uint Halfh;
-            public byte[] Digest;
-            // SPAMSUM_LENGTH
-            public byte Halfdigest;
-            public uint Dlen;
-        }
-
-        struct FuzzyState
-        {
-            public uint Bhstart;
-            public uint Bhend;
-            public BlockhashContext[] Bh;
-            //NUM_BLOCKHASHES
-            public ulong TotalSize;
-            public RollState Roll;
-        }
-
         FuzzyState self;
 
         void roll_init()
@@ -108,7 +73,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Initializes the SpamSum structures
+        ///     Initializes the SpamSum structures
         /// </summary>
         public void Init()
         {
@@ -254,7 +219,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -265,7 +230,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data)
@@ -323,8 +288,8 @@ namespace DiscImageChef.Checksums
                 if(remain <= 0) throw new Exception("Assertion failed");
 
                 result[resultOff] = b64[self.Bh[bi].H % 64];
-                if(i < 3 || result[resultOff] != result[resultOff - 1] ||
-                   result[resultOff] != result[resultOff - 2] || result[resultOff] != result[resultOff - 3])
+                if(i < 3 || result[resultOff] != result[resultOff - 1] || result[resultOff] != result[resultOff - 2] ||
+                   result[resultOff] != result[resultOff - 3])
                 {
                     ++resultOff;
                     --remain;
@@ -335,8 +300,8 @@ namespace DiscImageChef.Checksums
                 if(remain <= 0) throw new Exception("Assertion failed");
 
                 result[resultOff] = self.Bh[bi].Digest[i];
-                if(i < 3 || result[resultOff] != result[resultOff - 1] ||
-                   result[resultOff] != result[resultOff - 2] || result[resultOff] != result[resultOff - 3])
+                if(i < 3 || result[resultOff] != result[resultOff - 1] || result[resultOff] != result[resultOff - 2] ||
+                   result[resultOff] != result[resultOff - 3])
                 {
                     ++resultOff;
                     --remain;
@@ -403,7 +368,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a byte array of the hash value.
+        ///     Returns a byte array of the hash value.
         /// </summary>
         public byte[] Final()
         {
@@ -412,7 +377,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a base64 representation of the hash value.
+        ///     Returns a base64 representation of the hash value.
         /// </summary>
         public string End()
         {
@@ -422,7 +387,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of a file
+        ///     Gets the hash of a file
         /// </summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
@@ -432,7 +397,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of a file in hexadecimal and as a byte array.
+        ///     Gets the hash of a file in hexadecimal and as a byte array.
         /// </summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
@@ -443,7 +408,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
@@ -462,7 +427,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">null</param>
@@ -485,6 +450,41 @@ namespace DiscImageChef.Checksums
             }
 
             return sb.ToString();
+        }
+
+        struct RollState
+        {
+            public byte[] Window;
+            // ROLLING_WINDOW
+            public uint H1;
+            public uint H2;
+            public uint H3;
+            public uint N;
+        }
+
+        /* A blockhash contains a signature state for a specific (implicit) blocksize.
+         * The blocksize is given by SSDEEP_BS(index). The h and halfh members are the
+         * FNV hashes, where halfh stops to be reset after digest is SPAMSUM_LENGTH/2
+         * long. The halfh hash is needed be able to truncate digest for the second
+         * output hash to stay compatible with ssdeep output. */
+        struct BlockhashContext
+        {
+            public uint H;
+            public uint Halfh;
+            public byte[] Digest;
+            // SPAMSUM_LENGTH
+            public byte Halfdigest;
+            public uint Dlen;
+        }
+
+        struct FuzzyState
+        {
+            public uint Bhstart;
+            public uint Bhend;
+            public BlockhashContext[] Bh;
+            //NUM_BLOCKHASHES
+            public ulong TotalSize;
+            public RollState Roll;
         }
     }
 }
