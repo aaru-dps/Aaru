@@ -62,11 +62,9 @@ namespace DiscImageChef.Devices
 
             if(mode != FujitsuDisplayModes.Half)
                 if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
-                   !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
-                    displayLen = true;
+                   !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes)) displayLen = true;
                 else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
-                        ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
-                    halfMsg = true;
+                        ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes)) halfMsg = true;
 
             buffer[0] = (byte)((byte)mode << 5);
             if(displayLen) buffer[0] += 0x10;

@@ -41,9 +41,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device using default device timeout.
+        ///     Sends the SPC INQUIRY command to the device using default device timeout.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer)
@@ -52,9 +52,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device using default device timeout.
+        ///     Sends the SPC INQUIRY command to the device using default device timeout.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -64,9 +64,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device.
+        ///     Sends the SPC INQUIRY command to the device.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -76,9 +76,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device.
+        ///     Sends the SPC INQUIRY command to the device.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -111,9 +111,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page using default device timeout.
+        ///     Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page using default device timeout.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="page">The Extended Vital Product Data</param>
@@ -123,9 +123,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page using default device timeout.
+        ///     Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page using default device timeout.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -136,9 +136,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page.
+        ///     Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -149,9 +149,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page.
+        ///     Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -188,7 +188,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC TEST UNIT READY command to the device
+        ///     Sends the SPC TEST UNIT READY command to the device
         /// </summary>
         /// <returns><c>true</c>, if unit is NOT ready, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -210,9 +210,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-1
+        ///     Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-1
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI MODE SENSE(6) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -224,9 +224,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-2
+        ///     Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-2
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI MODE SENSE(6) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -241,9 +241,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-3 SPC-3
+        ///     Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-3 SPC-3
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI MODE SENSE(6) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -289,9 +289,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-2
+        ///     Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-2
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI MODE SENSE(10) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -307,9 +307,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-2
+        ///     Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-2
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI MODE SENSE(10) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -326,9 +326,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-3
+        ///     Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-3
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI MODE SENSE(10) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -378,9 +378,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command to prevent medium removal
+        ///     Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command to prevent medium removal
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -390,9 +390,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command to allow medium removal
+        ///     Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command to allow medium removal
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -402,9 +402,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command
+        ///     Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -420,9 +420,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command
+        ///     Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -447,9 +447,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC READ CAPACITY command
+        ///     Sends the SPC READ CAPACITY command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ CAPACITY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -460,13 +460,13 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC READ CAPACITY command
+        ///     Sends the SPC READ CAPACITY command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ CAPACITY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="relAddr">Indicates that <paramref name="address"/> is relative to current medium position</param>
-        /// <param name="address">Address where information is requested from, only valid if <paramref name="pmi"/> is set</param>
+        /// <param name="relAddr">Indicates that <paramref name="address" /> is relative to current medium position</param>
+        /// <param name="address">Address where information is requested from, only valid if <paramref name="pmi" /> is set</param>
         /// <param name="pmi">If set, it is requesting partial media capacity</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -500,9 +500,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC READ CAPACITY(16) command
+        ///     Sends the SPC READ CAPACITY(16) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ CAPACITY(16) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -513,12 +513,12 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC READ CAPACITY(16) command
+        ///     Sends the SPC READ CAPACITY(16) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ CAPACITY(16) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="address">Address where information is requested from, only valid if <paramref name="pmi"/> is set</param>
+        /// <param name="address">Address where information is requested from, only valid if <paramref name="pmi" /> is set</param>
         /// <param name="pmi">If set, it is requesting partial media capacity</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -561,9 +561,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC READ MEDIA SERIAL NUMBER command
+        ///     Sends the SPC READ MEDIA SERIAL NUMBER command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ MEDIA SERIAL NUMBER response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -587,8 +587,7 @@ namespace DiscImageChef.Devices
 
             if(sense) return true;
 
-            uint strctLength = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) +
-                                      buffer[3] + 4);
+            uint strctLength = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3] + 4);
             buffer = new byte[strctLength];
             cdb[6] = (byte)((buffer.Length & 0xFF000000) >> 24);
             cdb[7] = (byte)((buffer.Length & 0xFF0000) >> 16);
@@ -606,11 +605,11 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads an attribute from the medium auxiliary memory
+        ///     Reads an attribute from the medium auxiliary memory
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction" />.</param>
         /// <param name="partition">Partition number.</param>
         /// <param name="firstAttribute">First attribute identifier.</param>
         /// <param name="cache">If set to <c>true</c> device can return cached data.</param>
@@ -624,11 +623,11 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads an attribute from the medium auxiliary memory
+        ///     Reads an attribute from the medium auxiliary memory
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction" />.</param>
         /// <param name="firstAttribute">First attribute identifier.</param>
         /// <param name="cache">If set to <c>true</c> device can return cached data.</param>
         /// <param name="timeout">Timeout.</param>
@@ -641,11 +640,11 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads an attribute from the medium auxiliary memory
+        ///     Reads an attribute from the medium auxiliary memory
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction" />.</param>
         /// <param name="partition">Partition number.</param>
         /// <param name="firstAttribute">First attribute identifier.</param>
         /// <param name="timeout">Timeout.</param>
@@ -658,11 +657,11 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads an attribute from the medium auxiliary memory
+        ///     Reads an attribute from the medium auxiliary memory
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction" />.</param>
         /// <param name="firstAttribute">First attribute identifier.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
@@ -674,11 +673,11 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads an attribute from the medium auxiliary memory
+        ///     Reads an attribute from the medium auxiliary memory
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction" />.</param>
         /// <param name="volume">Volume number.</param>
         /// <param name="partition">Partition number.</param>
         /// <param name="firstAttribute">First attribute identifier.</param>
@@ -692,11 +691,11 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads an attribute from the medium auxiliary memory
+        ///     Reads an attribute from the medium auxiliary memory
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction" />.</param>
         /// <param name="volume">Volume number.</param>
         /// <param name="partition">Partition number.</param>
         /// <param name="firstAttribute">First attribute identifier.</param>
@@ -711,9 +710,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SELECT(6) command
+        ///     Sends the SPC MODE SELECT(6) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer with the data to be sent to the device</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="savePages">Set to save pages between resets.</param>
@@ -730,8 +729,7 @@ namespace DiscImageChef.Devices
             {
                 if(PlatformId != PlatformID.Win32NT && PlatformId != PlatformID.Win32S &&
                    PlatformId != PlatformID.Win32Windows && PlatformId != PlatformID.WinCE &&
-                   PlatformId != PlatformID.WindowsPhone &&
-                   PlatformId != PlatformID.Xbox) LastError = 75;
+                   PlatformId != PlatformID.WindowsPhone && PlatformId != PlatformID.Xbox) LastError = 75;
                 else LastError = 111;
                 Error = true;
                 duration = 0;
@@ -755,9 +753,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SPC MODE SELECT(10) command
+        ///     Sends the SPC MODE SELECT(10) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer with the data to be sent to the device</param>
         /// <param name="savePages">Set to save pages between resets.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -774,8 +772,7 @@ namespace DiscImageChef.Devices
             {
                 if(PlatformId != PlatformID.Win32NT && PlatformId != PlatformID.Win32S &&
                    PlatformId != PlatformID.Win32Windows && PlatformId != PlatformID.WinCE &&
-                   PlatformId != PlatformID.WindowsPhone &&
-                   PlatformId != PlatformID.Xbox) LastError = 75;
+                   PlatformId != PlatformID.WindowsPhone && PlatformId != PlatformID.Xbox) LastError = 75;
                 else LastError = 111;
                 Error = true;
                 duration = 0;

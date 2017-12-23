@@ -37,9 +37,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the HP READ LONG vendor command
+        ///     Sends the HP READ LONG vendor command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ LONG response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="relAddr">If set to <c>true</c> address contain two's complement offset from last read address.</param>
@@ -56,9 +56,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the HP READ LONG vendor command
+        ///     Sends the HP READ LONG vendor command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ LONG response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="relAddr">If set to <c>true</c> address contain two's complement offset from last read address.</param>
@@ -66,7 +66,10 @@ namespace DiscImageChef.Devices
         /// <param name="transferLen">How many blocks/bytes to read.</param>
         /// <param name="blockBytes">How many bytes per block.</param>
         /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
-        /// <param name="sectorCount">If set to <c>true</c> <paramref name="transferLen"/> is a count of secors to read. Otherwise it will be ignored</param>
+        /// <param name="sectorCount">
+        ///     If set to <c>true</c> <paramref name="transferLen" /> is a count of secors to read. Otherwise
+        ///     it will be ignored
+        /// </param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,

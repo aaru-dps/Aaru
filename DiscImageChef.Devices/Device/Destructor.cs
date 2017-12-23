@@ -40,8 +40,8 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Releases unmanaged resources and performs other cleanup operations before the
-        /// <see cref="Device"/> is reclaimed by garbage collection.
+        ///     Releases unmanaged resources and performs other cleanup operations before the
+        ///     <see cref="Device" /> is reclaimed by garbage collection.
         /// </summary>
         ~Device()
         {

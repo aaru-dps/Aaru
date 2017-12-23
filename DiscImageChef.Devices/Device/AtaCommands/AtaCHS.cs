@@ -38,9 +38,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout
+        ///     Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters)
@@ -49,9 +49,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout
+        ///     Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="duration">Duration.</param>
@@ -61,9 +61,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the ATA IDENTIFY DEVICE command to the device
+        ///     Sends the ATA IDENTIFY DEVICE command to the device
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
@@ -73,9 +73,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the ATA IDENTIFY DEVICE command to the device
+        ///     Sends the ATA IDENTIFY DEVICE command to the device
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
@@ -85,7 +85,6 @@ namespace DiscImageChef.Devices
         {
             buffer = new byte[512];
             AtaRegistersChs registers = new AtaRegistersChs {Command = (byte)AtaCommands.IdentifyDevice};
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -117,7 +116,6 @@ namespace DiscImageChef.Devices
                 Command = retry ? (byte)AtaCommands.ReadDmaRetry : (byte)AtaCommands.ReadDma
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
                                        ref buffer, timeout, true, out duration, out bool sense);
             Error = LastError != 0;
@@ -140,7 +138,6 @@ namespace DiscImageChef.Devices
                 DeviceHead = (byte)(head & 0x0F),
                 Sector = sector
             };
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
@@ -171,7 +168,6 @@ namespace DiscImageChef.Devices
                 DeviceHead = (byte)(head & 0x0F),
                 Sector = sector
             };
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
@@ -204,7 +200,6 @@ namespace DiscImageChef.Devices
                 Sector = sector
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out bool sense);
@@ -227,7 +222,6 @@ namespace DiscImageChef.Devices
                 DeviceHead = (byte)(head & 0x0F),
                 Sector = sector
             };
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,

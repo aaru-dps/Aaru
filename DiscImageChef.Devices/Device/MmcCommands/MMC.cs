@@ -97,8 +97,8 @@ namespace DiscImageChef.Devices
             byte[] buffer = new byte[0];
 
             LastError = SendMmcCommand(MmcCommands.SetBlocklen, false, false,
-                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length, 0,
-                                       0, ref buffer, out response, out duration, out bool sense, timeout);
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length, 0, 0,
+                                       ref buffer, out response, out duration, out bool sense, timeout);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("MMC Device", "SET_BLOCKLEN took {0} ms.", duration);
@@ -118,8 +118,8 @@ namespace DiscImageChef.Devices
 
             LastError = SendMmcCommand(command, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                       blockSize, transferLength, ref buffer, out response, out duration, out bool sense,
-                                       timeout);
+                                       blockSize, transferLength, ref buffer, out response, out duration,
+                                       out bool sense, timeout);
             Error = LastError != 0;
 
             if(transferLength > 1)

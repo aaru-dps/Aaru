@@ -48,7 +48,6 @@ namespace DiscImageChef.Devices
                 LbaMid = 0x4F
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
@@ -72,7 +71,6 @@ namespace DiscImageChef.Devices
                 SectorCount = 0xF1
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
@@ -95,7 +93,6 @@ namespace DiscImageChef.Devices
                 LbaMid = 0x4F
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
@@ -116,7 +113,6 @@ namespace DiscImageChef.Devices
                 LbaHigh = 0xC2,
                 LbaMid = 0x4F
             };
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -141,7 +137,6 @@ namespace DiscImageChef.Devices
                 LbaLow = subcommand
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
@@ -163,7 +158,6 @@ namespace DiscImageChef.Devices
                 LbaHigh = 0xC2,
                 LbaMid = 0x4F
             };
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -188,7 +182,6 @@ namespace DiscImageChef.Devices
                 LbaLow = logAddress
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
@@ -209,7 +202,6 @@ namespace DiscImageChef.Devices
                 LbaHigh = 0xC2,
                 LbaMid = 0x4F
             };
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,

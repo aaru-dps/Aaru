@@ -68,51 +68,51 @@ namespace DiscImageChef.Devices.Windows
     struct AtaPassThroughDirect
     {
         /// <summary>
-        /// Length in bytes of this structure
+        ///     Length in bytes of this structure
         /// </summary>
         public ushort Length;
         /// <summary>
-        /// Indicates transfer direction and kind of operation
+        ///     Indicates transfer direction and kind of operation
         /// </summary>
         [MarshalAs(UnmanagedType.U2)] public AtaFlags AtaFlags;
         /// <summary>
-        /// Indicates IDE port or bus, set by driver
+        ///     Indicates IDE port or bus, set by driver
         /// </summary>
         public byte PathId;
         /// <summary>
-        /// Indicates target device on bus, set by driver
+        ///     Indicates target device on bus, set by driver
         /// </summary>
         public byte TargetId;
         /// <summary>
-        /// Indicates logical unit number of device, set by driver
+        ///     Indicates logical unit number of device, set by driver
         /// </summary>
         public byte Lun;
         /// <summary>
-        /// Reserved
+        ///     Reserved
         /// </summary>
         public byte ReservedAsUchar;
         /// <summary>
-        /// Data transfer length in bytes
+        ///     Data transfer length in bytes
         /// </summary>
         public uint DataTransferLength;
         /// <summary>
-        /// Timeout value in seconds
+        ///     Timeout value in seconds
         /// </summary>
         public uint TimeOutValue;
         /// <summary>
-        /// Reserved
+        ///     Reserved
         /// </summary>
         public uint ReservedAsUlong;
         /// <summary>
-        /// Pointer to data buffer relative to start of this structure
+        ///     Pointer to data buffer relative to start of this structure
         /// </summary>
         public IntPtr DataBuffer;
         /// <summary>
-        /// Previous ATA registers, for LBA48
+        ///     Previous ATA registers, for LBA48
         /// </summary>
         public AtaTaskFile PreviousTaskFile;
         /// <summary>
-        /// ATA registers
+        ///     ATA registers
         /// </summary>
         public AtaTaskFile CurrentTaskFile;
     }
@@ -185,15 +185,15 @@ namespace DiscImageChef.Devices.Windows
     struct IdePassThroughDirect
     {
         /// <summary>
-        /// ATA registers
+        ///     ATA registers
         /// </summary>
         public AtaTaskFile CurrentTaskFile;
         /// <summary>
-        /// Size of data buffer
+        ///     Size of data buffer
         /// </summary>
         public uint DataBufferSize;
         /// <summary>
-        /// Data buffer
+        ///     Data buffer
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] DataBuffer;
     }

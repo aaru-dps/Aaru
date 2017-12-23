@@ -37,9 +37,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the SyQuest READ (6) command
+        ///     Sends the SyQuest READ (6) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -53,9 +53,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SyQuest READ LONG (6) command
+        ///     Sends the SyQuest READ LONG (6) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -69,9 +69,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SyQuest READ (6) command
+        ///     Sends the SyQuest READ (6) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -120,7 +120,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Requests the usage, seek and error counters, and resets them
+        ///     Requests the usage, seek and error counters, and resets them
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -133,9 +133,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SyQuest READ LONG (10) command
+        ///     Sends the SyQuest READ LONG (10) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -149,9 +149,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SyQuest READ (10) command
+        ///     Sends the SyQuest READ (10) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>

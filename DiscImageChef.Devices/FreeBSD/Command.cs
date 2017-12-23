@@ -46,7 +46,7 @@ namespace DiscImageChef.Devices.FreeBSD
         const int CAM_MAX_CDBLEN = 16;
 
         /// <summary>
-        /// Sends a SCSI command (64-bit arch)
+        ///     Sends a SCSI command (64-bit arch)
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
@@ -56,7 +56,10 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
+        ///     sense
+        /// </param>
         internal static int SendScsiCommand64(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                               uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
@@ -151,7 +154,7 @@ namespace DiscImageChef.Devices.FreeBSD
         }
 
         /// <summary>
-        /// Sends a SCSI command (32-bit arch)
+        ///     Sends a SCSI command (32-bit arch)
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
@@ -161,7 +164,10 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
+        ///     sense
+        /// </param>
         internal static int SendScsiCommand(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                             uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
@@ -256,7 +262,7 @@ namespace DiscImageChef.Devices.FreeBSD
         }
 
         /// <summary>
-        /// Converts ATA protocol to CAM flags
+        ///     Converts ATA protocol to CAM flags
         /// </summary>
         /// <param name="protocol">ATA protocol</param>
         /// <returns>CAM flags</returns>
@@ -279,7 +285,7 @@ namespace DiscImageChef.Devices.FreeBSD
         }
 
         /// <summary>
-        /// Sends an ATA command in CHS mode
+        ///     Sends an ATA command in CHS mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
@@ -377,7 +383,7 @@ namespace DiscImageChef.Devices.FreeBSD
         }
 
         /// <summary>
-        /// Sends an ATA command in 28-bit LBA mode
+        ///     Sends an ATA command in 28-bit LBA mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
@@ -475,7 +481,7 @@ namespace DiscImageChef.Devices.FreeBSD
         }
 
         /// <summary>
-        /// Sends an ATA command in 48-bit mode
+        ///     Sends an ATA command in 48-bit mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>

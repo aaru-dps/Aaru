@@ -38,9 +38,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the MMC GET CONFIGURATION command for all Features
+        ///     Sends the MMC GET CONFIGURATION command for all Features
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -52,9 +52,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC GET CONFIGURATION command for all Features starting with specified one
+        ///     Sends the MMC GET CONFIGURATION command for all Features starting with specified one
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="startingFeatureNumber">Feature number where the feature list should start from</param>
@@ -68,15 +68,15 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC GET CONFIGURATION command
+        ///     Sends the MMC GET CONFIGURATION command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="startingFeatureNumber">Starting Feature number.</param>
-        /// <param name="rt">Return type, <see cref="MmcGetConfigurationRt"/>.</param>
+        /// <param name="rt">Return type, <see cref="MmcGetConfigurationRt" />.</param>
         public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber,
                                      MmcGetConfigurationRt rt, uint timeout, out double duration)
         {
@@ -114,9 +114,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ DISC STRUCTURE command
+        ///     Sends the MMC READ DISC STRUCTURE command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ DISC STRUCTURE response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="mediaType">Medium type for requested disc structure</param>
@@ -168,9 +168,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get formatted TOC from disc, in MM:SS:FF format
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get formatted TOC from disc, in MM:SS:FF format
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="track">Start TOC from this track</param>
@@ -182,9 +182,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get formatted TOC from disc
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get formatted TOC from disc
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="msf">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
@@ -198,9 +198,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get multi-session information, in MM:SS:FF format
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get multi-session information, in MM:SS:FF format
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -211,9 +211,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get multi-session information
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get multi-session information
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="msf">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
@@ -226,9 +226,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get raw TOC subchannels
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get raw TOC subchannels
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sessionNumber">Session which TOC to get</param>
@@ -241,9 +241,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get PMA
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get PMA
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -254,9 +254,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get ATIP
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get ATIP
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -267,9 +267,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command to get Lead-In CD-TEXT
+        ///     Sends the MMC READ TOC/PMA/ATIP command to get Lead-In CD-TEXT
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -280,9 +280,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ TOC/PMA/ATIP command
+        ///     Sends the MMC READ TOC/PMA/ATIP command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="msf">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
@@ -331,9 +331,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ DISC INFORMATION command
+        ///     Sends the MMC READ DISC INFORMATION command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ DISC INFORMATION response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -345,9 +345,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ DISC INFORMATION command
+        ///     Sends the MMC READ DISC INFORMATION command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ DISC INFORMATION response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="dataType">Which disc information to read</param>
@@ -379,9 +379,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ CD command
+        ///     Sends the MMC READ CD command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the MMC READ CD response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -436,9 +436,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the MMC READ CD MSF command
+        ///     Sends the MMC READ CD MSF command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the MMC READ CD MSF response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>

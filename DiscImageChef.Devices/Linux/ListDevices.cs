@@ -41,7 +41,7 @@ namespace DiscImageChef.Devices.Linux
         const string PATH_SYS_DEVBLOCK = "/sys/block/";
 
         /// <summary>
-        /// Gets a list of all known storage devices on Linux
+        ///     Gets a list of all known storage devices on Linux
         /// </summary>
         /// <returns>List of devices</returns>
         internal static DeviceInfo[] GetList()
@@ -65,8 +65,8 @@ namespace DiscImageChef.Devices.Linux
 
                 if(hasUdev)
                 {
-                    IntPtr udevDev = Extern.udev_device_new_from_subsystem_sysname(udev, "block",
-                                                                                   Path.GetFileName(sysdevs[i]));
+                    IntPtr udevDev =
+                        Extern.udev_device_new_from_subsystem_sysname(udev, "block", Path.GetFileName(sysdevs[i]));
                     devices[i].Vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
                     devices[i].Model = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
                     if(!string.IsNullOrEmpty(devices[i].Model)) devices[i].Model = devices[i].Model.Replace('_', ' ');

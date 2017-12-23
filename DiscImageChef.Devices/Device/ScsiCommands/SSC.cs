@@ -38,7 +38,7 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Prepares the medium for reading
+        ///     Prepares the medium for reading
         /// </summary>
         /// <returns><c>true</c>, if load was successful, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -50,7 +50,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Prepares the medium for ejection
+        ///     Prepares the medium for ejection
         /// </summary>
         /// <returns><c>true</c>, if unload was successful, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -62,7 +62,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Prepares the medium for reading or ejection
+        ///     Prepares the medium for reading or ejection
         /// </summary>
         /// <returns><c>true</c>, if load/unload was successful, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -70,7 +70,10 @@ namespace DiscImageChef.Devices
         /// <param name="load">If set to <c>true</c> load the medium for reading.</param>
         /// <param name="retense">If set to <c>true</c> retense the tape.</param>
         /// <param name="endOfTape">If set to <c>true</c> move the medium to the EOT mark.</param>
-        /// <param name="hold">If set to <c>true</c> and <paramref name="load"/> is also set to <c>true</c>, moves the medium to the drive but does not prepare it for reading.</param>
+        /// <param name="hold">
+        ///     If set to <c>true</c> and <paramref name="load" /> is also set to <c>true</c>, moves the medium to
+        ///     the drive but does not prepare it for reading.
+        /// </param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool LoadUnload(out byte[] senseBuffer, bool immediate, bool load, bool retense, bool endOfTape,
@@ -97,7 +100,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the current partition
+        ///     Positions the medium to the specified block in the current partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">Logical block address.</param>
@@ -109,7 +112,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the specified partition
+        ///     Positions the medium to the specified block in the specified partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="partition">Partition to position to.</param>
@@ -122,7 +125,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the current partition
+        ///     Positions the medium to the specified block in the current partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
@@ -135,7 +138,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the specified partition
+        ///     Positions the medium to the specified block in the specified partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
@@ -150,7 +153,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified object identifier
+        ///     Positions the medium to the specified object identifier
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
@@ -187,7 +190,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the current partition
+        ///     Positions the medium to the specified block in the current partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">Logical block address.</param>
@@ -200,7 +203,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the specified partition
+        ///     Positions the medium to the specified block in the specified partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="partition">Partition to position to.</param>
@@ -214,7 +217,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the current partition
+        ///     Positions the medium to the specified block in the current partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
@@ -228,7 +231,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified block in the specified partition
+        ///     Positions the medium to the specified block in the specified partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
@@ -244,7 +247,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the medium to the specified object identifier
+        ///     Positions the medium to the specified object identifier
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
@@ -303,7 +306,7 @@ namespace DiscImageChef.Devices
         }*/
 
         /// <summary>
-        /// Reads the specified number of bytes or of blocks from the medium
+        ///     Reads the specified number of bytes or of blocks from the medium
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -319,13 +322,19 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the specified number of bytes or of blocks from the medium
+        ///     Reads the specified number of bytes or of blocks from the medium
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while <paramref name="fixedLen"/> is set also.</param>
-        /// <param name="fixedLen">If set to <c>true</c> <paramref name="transferLen"/> indicates how many blocks to read of a fixed size.</param>
-        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen"/> status.</param>
+        /// <param name="sili">
+        ///     If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while
+        ///     <paramref name="fixedLen" /> is set also.
+        /// </param>
+        /// <param name="fixedLen">
+        ///     If set to <c>true</c> <paramref name="transferLen" /> indicates how many blocks to read of a
+        ///     fixed size.
+        /// </param>
+        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen" /> status.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
@@ -353,7 +362,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified object
+        ///     Reads a number of fixed-length blocks starting at specified object
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -371,7 +380,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified block from the specified partition
+        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -390,7 +399,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified object
+        ///     Reads a number of fixed-length blocks starting at specified object
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -407,7 +416,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified block from the specified partition
+        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -425,15 +434,21 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of bytes or objects starting at specified object from the specified partition
+        ///     Reads a number of bytes or objects starting at specified object from the specified partition
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while <paramref name="fixedLen"/> is set also.</param>
-        /// <param name="fixedLen">If set to <c>true</c> <paramref name="transferLen"/> indicates how many blocks to read of a fixed size.</param>
+        /// <param name="sili">
+        ///     If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while
+        ///     <paramref name="fixedLen" /> is set also.
+        /// </param>
+        /// <param name="fixedLen">
+        ///     If set to <c>true</c> <paramref name="transferLen" /> indicates how many blocks to read of a
+        ///     fixed size.
+        /// </param>
         /// <param name="partition">Partition to read object from.</param>
         /// <param name="objectId">Object identifier.</param>
-        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen"/> status.</param>
+        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen" /> status.</param>
         /// <param name="objectSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
@@ -471,7 +486,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Requests the drive the maximum and minimum block size
+        ///     Requests the drive the maximum and minimum block size
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -495,7 +510,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reports current reading/writing elements position on the medium
+        ///     Reports current reading/writing elements position on the medium
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -507,7 +522,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reports current reading/writing elements position on the medium using 32 bytes response
+        ///     Reports current reading/writing elements position on the medium using 32 bytes response
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -519,7 +534,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reports current reading/writing elements position on the medium
+        ///     Reports current reading/writing elements position on the medium
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -540,7 +555,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reports current reading/writing elements position on the medium
+        ///     Reports current reading/writing elements position on the medium
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -591,7 +606,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the specified number of blocks from the medium, backwards
+        ///     Reads the specified number of blocks from the medium, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -607,7 +622,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the specified number of bytes or of blocks from the medium, backwards
+        ///     Reads the specified number of bytes or of blocks from the medium, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -624,14 +639,20 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the specified number of bytes or of blocks from the medium, backwards
+        ///     Reads the specified number of bytes or of blocks from the medium, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="byteOrder">If set to <c>true</c> drive should un-reverse the blocks and bytes</param>
-        /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while <paramref name="fixedLen"/> is set also.</param>
-        /// <param name="fixedLen">If set to <c>true</c> <paramref name="transferLen"/> indicates how many blocks to read of a fixed size.</param>
-        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen"/> status.</param>
+        /// <param name="sili">
+        ///     If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while
+        ///     <paramref name="fixedLen" /> is set also.
+        /// </param>
+        /// <param name="fixedLen">
+        ///     If set to <c>true</c> <paramref name="transferLen" /> indicates how many blocks to read of a
+        ///     fixed size.
+        /// </param>
+        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen" /> status.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
@@ -660,7 +681,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified object, backwards
+        ///     Reads a number of fixed-length blocks starting at specified object, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -678,7 +699,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
+        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -697,7 +718,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified object, backwards
+        ///     Reads a number of fixed-length blocks starting at specified object, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -714,7 +735,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
+        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -732,16 +753,22 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a number of bytes or objects starting at specified object from the specified partition, backwards
+        ///     Reads a number of bytes or objects starting at specified object from the specified partition, backwards
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="byteOrder">If set to <c>true</c> drive should un-reverse the blocks and bytes</param>
-        /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while <paramref name="fixedLen"/> is set also.</param>
-        /// <param name="fixedLen">If set to <c>true</c> <paramref name="transferLen"/> indicates how many blocks to read of a fixed size.</param>
+        /// <param name="sili">
+        ///     If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while
+        ///     <paramref name="fixedLen" /> is set also.
+        /// </param>
+        /// <param name="fixedLen">
+        ///     If set to <c>true</c> <paramref name="transferLen" /> indicates how many blocks to read of a
+        ///     fixed size.
+        /// </param>
         /// <param name="partition">Partition to read object from.</param>
         /// <param name="objectId">Object identifier.</param>
-        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen"/> status.</param>
+        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen" /> status.</param>
         /// <param name="objectSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
@@ -781,7 +808,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the specified number of blocks from the device's buffer
+        ///     Reads the specified number of blocks from the device's buffer
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -797,7 +824,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the specified number of bytes or of blocks from the device's buffer
+        ///     Reads the specified number of bytes or of blocks from the device's buffer
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -814,13 +841,19 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the specified number of bytes or of blocks from the device's buffer
+        ///     Reads the specified number of bytes or of blocks from the device's buffer
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while <paramref name="fixedLen"/> is set also.</param>
-        /// <param name="fixedLen">If set to <c>true</c> <paramref name="transferLen"/> indicates how many blocks to read of a fixed size.</param>
-        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen"/> status.</param>
+        /// <param name="sili">
+        ///     If set to <c>true</c> suppress the incorrect-length indication. Cannot be set while
+        ///     <paramref name="fixedLen" /> is set also.
+        /// </param>
+        /// <param name="fixedLen">
+        ///     If set to <c>true</c> <paramref name="transferLen" /> indicates how many blocks to read of a
+        ///     fixed size.
+        /// </param>
+        /// <param name="transferLen">Transfer length in blocks or bytes depending of <paramref name="fixedLen" /> status.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
@@ -848,7 +881,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Requests the device to return descriptors for supported densities or medium types
+        ///     Requests the device to return descriptors for supported densities or medium types
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -860,7 +893,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Requests the device to return descriptors for supported densities or medium types
+        ///     Requests the device to return descriptors for supported densities or medium types
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -874,7 +907,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Requests the device to return descriptors for supported densities or medium types
+        ///     Requests the device to return descriptors for supported densities or medium types
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -917,7 +950,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the reading/writing element to the beginning of current partition
+        ///     Positions the reading/writing element to the beginning of current partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -928,7 +961,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the reading/writing element to the beginning of current partition
+        ///     Positions the reading/writing element to the beginning of current partition
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c> return from the command immediately.</param>
@@ -953,7 +986,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Selects the specified track
+        ///     Selects the specified track
         /// </summary>
         /// <returns><c>true</c>, if select was tracked, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>

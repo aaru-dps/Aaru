@@ -38,9 +38,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the Plextor READ CD-DA command
+        ///     Sends the Plextor READ CD-DA command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Plextor READ CD-DA response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -79,9 +79,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a "raw" sector from DVD on Plextor drives. Does it reading drive's cache.
+        ///     Reads a "raw" sector from DVD on Plextor drives. Does it reading drive's cache.
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Plextor READ DVD (RAW) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -114,7 +114,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the statistics EEPROM from Plextor CD recorders
+        ///     Reads the statistics EEPROM from Plextor CD recorders
         /// </summary>
         /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -140,7 +140,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads the statistics EEPROM from Plextor PX-708 and PX-712 recorders
+        ///     Reads the statistics EEPROM from Plextor PX-708 and PX-712 recorders
         /// </summary>
         /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -166,7 +166,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads a block from the statistics EEPROM from Plextor DVD recorders
+        ///     Reads a block from the statistics EEPROM from Plextor DVD recorders
         /// </summary>
         /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -198,7 +198,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets speeds set by Plextor PoweRec
+        ///     Gets speeds set by Plextor PoweRec
         /// </summary>
         /// <returns><c>true</c>, if speeds were got correctly, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -238,7 +238,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor PoweRec status
+        ///     Gets the Plextor PoweRec status
         /// </summary>
         /// <returns><c>true</c>, if PoweRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -276,7 +276,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor SilentMode status
+        ///     Gets the Plextor SilentMode status
         /// </summary>
         /// <returns><c>true</c>, if SilentMode is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -305,7 +305,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor GigaRec status
+        ///     Gets the Plextor GigaRec status
         /// </summary>
         /// <returns><c>true</c>, if GigaRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -333,7 +333,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor VariRec status
+        ///     Gets the Plextor VariRec status
         /// </summary>
         /// <returns><c>true</c>, if VariRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -366,7 +366,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor SecuRec status
+        ///     Gets the Plextor SecuRec status
         /// </summary>
         /// <returns><c>true</c>, if SecuRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -393,7 +393,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor SpeedRead status
+        ///     Gets the Plextor SpeedRead status
         /// </summary>
         /// <returns><c>true</c>, if SpeedRead is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -421,7 +421,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor CD-R and multi-session hiding status
+        ///     Gets the Plextor CD-R and multi-session hiding status
         /// </summary>
         /// <returns><c>true</c>, if CD-R and multi-session hiding is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -449,7 +449,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor DVD+ book bitsetting status
+        ///     Gets the Plextor DVD+ book bitsetting status
         /// </summary>
         /// <returns><c>true</c>, if DVD+ book bitsetting is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
@@ -482,7 +482,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the Plextor DVD+ test writing status
+        ///     Gets the Plextor DVD+ test writing status
         /// </summary>
         /// <returns><c>true</c>, if DVD+ test writing is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>

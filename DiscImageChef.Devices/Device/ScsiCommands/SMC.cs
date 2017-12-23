@@ -37,11 +37,11 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Reads an attribute from the medium auxiliary memory, or reports which elements in the changer contain one
+        ///     Reads an attribute from the medium auxiliary memory, or reports which elements in the changer contain one
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction" />.</param>
         /// <param name="element">Element address.</param>
         /// <param name="elementType">Element type.</param>
         /// <param name="volume">Volume number.</param>
@@ -79,8 +79,7 @@ namespace DiscImageChef.Devices
 
             if(sense) return true;
 
-            uint attrLen = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3] +
-                                  4);
+            uint attrLen = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3] + 4);
             buffer = new byte[attrLen];
             cdb[10] = (byte)((buffer.Length & 0xFF000000) >> 24);
             cdb[11] = (byte)((buffer.Length & 0xFF0000) >> 16);

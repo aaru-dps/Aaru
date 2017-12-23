@@ -75,7 +75,6 @@ namespace DiscImageChef.Devices
                 DeviceHead = (byte)(head & 0x0F)
             };
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
@@ -91,7 +90,6 @@ namespace DiscImageChef.Devices
         {
             byte[] buffer = new byte[0];
             AtaRegistersLba28 registers = new AtaRegistersLba28 {Command = (byte)AtaCommands.RequestSense};
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,

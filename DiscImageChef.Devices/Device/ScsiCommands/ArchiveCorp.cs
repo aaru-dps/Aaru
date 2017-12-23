@@ -37,7 +37,7 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
+        ///     Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -67,7 +67,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
+        ///     Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">Logical Block Address, starting from 1.</param>
@@ -79,7 +79,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Positions the tape at the specified block address
+        ///     Positions the tape at the specified block address
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>

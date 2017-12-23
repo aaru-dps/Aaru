@@ -43,12 +43,17 @@ namespace DiscImageChef.Devices.Windows
     // 
     // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
     /// <summary>
-    /// Implements functions for getting and accesing information from the USB bus
+    ///     Implements functions for getting and accesing information from the USB bus
     /// </summary>
     static partial class Usb
     {
+        const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
+        internal const string GuidDevinterfaceDisk = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceCdrom = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceFloppy = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+
         /// <summary>
-        /// Get a list of all connected devices
+        ///     Get a list of all connected devices
         /// </summary>
         /// <returns>List of usb devices</returns>
         internal static List<UsbDevice> GetConnectedDevices()
@@ -61,7 +66,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// private routine for enumerating a hub
+        ///     private routine for enumerating a hub
         /// </summary>
         /// <param name="hub">Hub</param>
         /// <param name="devList">Device list</param>
@@ -73,7 +78,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Find a device based upon it's DriverKeyName
+        ///     Find a device based upon it's DriverKeyName
         /// </summary>
         /// <param name="driverKeyName">DriverKeyName</param>
         /// <returns>USB device</returns>
@@ -91,7 +96,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Finds a device connected to a specified hub by it's DriverKeyName
+        ///     Finds a device connected to a specified hub by it's DriverKeyName
         /// </summary>
         /// <param name="hub">Hub</param>
         /// <param name="foundDevice">UsbDevice</param>
@@ -113,7 +118,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Find a device based upon it's Instance ID
+        ///     Find a device based upon it's Instance ID
         /// </summary>
         /// <param name="instanceId">Device instance ID</param>
         /// <returns>USB device</returns>
@@ -131,7 +136,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// private routine for enumerating a hub
+        ///     private routine for enumerating a hub
         /// </summary>
         /// <param name="hub">Hub</param>
         /// <param name="foundDevice">USB device</param>
@@ -152,19 +157,6 @@ namespace DiscImageChef.Devices.Windows
                 }
         }
 
-        const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-        internal const string GuidDevinterfaceDisk = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GuidDevinterfaceCdrom = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GuidDevinterfaceFloppy = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct StorageDeviceNumber
-        {
-            internal int DeviceType;
-            internal int DeviceNumber;
-            internal int PartitionNumber;
-        }
-
         [DllImport("setupapi.dll")]
         static extern int CM_Get_Parent(out IntPtr pdnDevInst, IntPtr dnDevInst, int ulFlags);
 
@@ -172,7 +164,7 @@ namespace DiscImageChef.Devices.Windows
         static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
 
         /// <summary>
-        /// Find a device based upon a Drive Letter
+        ///     Find a device based upon a Drive Letter
         /// </summary>
         /// <param name="driveLetter">Drive letter</param>
         /// <param name="deviceGuid">Device GUID</param>
@@ -187,7 +179,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Find a device based upon a Drive Path
+        ///     Find a device based upon a Drive Path
         /// </summary>
         /// <param name="drivePath">Drive path</param>
         /// <param name="deviceGuid">Device GUID</param>
@@ -202,7 +194,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Find a device based upon a Device Number
+        ///     Find a device based upon a Device Number
         /// </summary>
         /// <param name="devNum">Device Number</param>
         /// <param name="deviceGuid">Device GUID</param>
@@ -267,12 +259,13 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // Did we find an InterfaceID of a USB device?
-            if(instanceId?.StartsWith("USB\\", StringComparison.Ordinal) == true) foundDevice = FindDeviceByInstanceId(instanceId);
+            if(instanceId?.StartsWith("USB\\", StringComparison.Ordinal) == true)
+                foundDevice = FindDeviceByInstanceId(instanceId);
             return foundDevice;
         }
 
         /// <summary>
-        /// return a unique device number for the given device path
+        ///     return a unique device number for the given device path
         /// </summary>
         /// <param name="devicePath">Device path</param>
         /// <returns>Device number</returns>
@@ -287,8 +280,7 @@ namespace DiscImageChef.Devices.Windows
             int nBytes = Marshal.SizeOf(sdn);
             IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
 
-            if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out _,
-                               IntPtr.Zero))
+            if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out _, IntPtr.Zero))
             {
                 sdn = (StorageDeviceNumber)Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber));
                 // just my way of combining the relevant parts of the
@@ -298,6 +290,14 @@ namespace DiscImageChef.Devices.Windows
             Marshal.FreeHGlobal(ptrSdn);
             CloseHandle(h);
             return ans;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct StorageDeviceNumber
+        {
+            internal int DeviceType;
+            internal int DeviceNumber;
+            internal int PartitionNumber;
         }
     }
 }

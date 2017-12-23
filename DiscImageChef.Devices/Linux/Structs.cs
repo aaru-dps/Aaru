@@ -42,7 +42,7 @@ namespace DiscImageChef.Devices.Linux
     struct SgIoHdrT
     {
         /// <summary>
-        /// Always 'S' for SG v3
+        ///     Always 'S' for SG v3
         /// </summary>
         public int interface_id; /* [i] 'S' (required) */
         public ScsiIoctlDirection dxfer_direction; /* [i] */
@@ -73,54 +73,54 @@ namespace DiscImageChef.Devices.Linux
     struct MmcIocCmd
     {
         /// <summary>
-        /// Implies direction of data. true = write, false = read
+        ///     Implies direction of data. true = write, false = read
         /// </summary>
         public bool write_flag;
         /// <summary>
-        /// Application-specific command. true = precede with CMD55
+        ///     Application-specific command. true = precede with CMD55
         /// </summary>
         public bool is_ascmd;
         public uint opcode;
         public uint arg;
         /// <summary>
-        /// CMD response
+        ///     CMD response
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] response;
         public MmcFlags flags;
         public uint blksz;
         public uint blocks;
         /// <summary>
-        /// Sleep at least <see cref="postsleep_min_us"/> useconds, and at most
-        /// <see cref="postsleep_max_us"/> useconds *after* issuing command.Needed for
-        /// some read commands for which cards have no other way of indicating
-        /// they're ready for the next command (i.e. there is no equivalent of
-        /// a "busy" indicator for read operations).
+        ///     Sleep at least <see cref="postsleep_min_us" /> useconds, and at most
+        ///     <see cref="postsleep_max_us" /> useconds *after* issuing command.Needed for
+        ///     some read commands for which cards have no other way of indicating
+        ///     they're ready for the next command (i.e. there is no equivalent of
+        ///     a "busy" indicator for read operations).
         /// </summary>
         public uint postsleep_min_us;
         /// <summary>
-        /// Sleep at least <see cref="postsleep_min_us"/> useconds, and at most
-        /// <see cref="postsleep_max_us"/> useconds *after* issuing command.Needed for
-        /// some read commands for which cards have no other way of indicating
-        /// they're ready for the next command (i.e. there is no equivalent of
-        /// a "busy" indicator for read operations).
+        ///     Sleep at least <see cref="postsleep_min_us" /> useconds, and at most
+        ///     <see cref="postsleep_max_us" /> useconds *after* issuing command.Needed for
+        ///     some read commands for which cards have no other way of indicating
+        ///     they're ready for the next command (i.e. there is no equivalent of
+        ///     a "busy" indicator for read operations).
         /// </summary>
         public uint postsleep_max_us;
         /// <summary>
-        /// Override driver-computed timeouts.
+        ///     Override driver-computed timeouts.
         /// </summary>
         public uint data_timeout_ns;
         /// <summary>
-        /// Override driver-computed timeouts.
+        ///     Override driver-computed timeouts.
         /// </summary>
         public uint cmd_timeout_ms;
         /// <summary>
-        /// For 64-bit machines <see cref="data_ptr"/> , wants to
-        /// be 8-byte aligned.Make sure this struct is the same size when
-        /// built for 32-bit.
+        ///     For 64-bit machines <see cref="data_ptr" /> , wants to
+        ///     be 8-byte aligned.Make sure this struct is the same size when
+        ///     built for 32-bit.
         /// </summary>
         public uint __pad;
         /// <summary>
-        /// DAT buffer
+        ///     DAT buffer
         /// </summary>
         public ulong data_ptr;
     }

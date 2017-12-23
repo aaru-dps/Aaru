@@ -38,9 +38,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the SBC READ (6) command
+        ///     Sends the SBC READ (6) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -54,9 +54,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SBC READ (6) command
+        ///     Sends the SBC READ (6) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -89,17 +89,23 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SBC READ (10) command
+        ///     Sends the SBC READ (10) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="rdprotect">Instructs the drive how to check for protection information on the medium.</param>
-        /// <param name="dpo">If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache fetch/retain.</param>
+        /// <param name="dpo">
+        ///     If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache
+        ///     fetch/retain.
+        /// </param>
         /// <param name="fua">If set to <c>true</c> requested blocks MUST bu read from medium and not the cache.</param>
-        /// <param name="fuaNv">If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not present they shall be stored there.</param>
+        /// <param name="fuaNv">
+        ///     If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not
+        ///     present they shall be stored there.
+        /// </param>
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
@@ -138,17 +144,23 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SBC READ (12) command
+        ///     Sends the SBC READ (12) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="rdprotect">Instructs the drive how to check for protection information on the medium.</param>
-        /// <param name="dpo">If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache fetch/retain.</param>
+        /// <param name="dpo">
+        ///     If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache
+        ///     fetch/retain.
+        /// </param>
         /// <param name="fua">If set to <c>true</c> requested blocks MUST bu read from medium and not the cache.</param>
-        /// <param name="fuaNv">If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not present they shall be stored there.</param>
+        /// <param name="fuaNv">
+        ///     If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not
+        ///     present they shall be stored there.
+        /// </param>
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
@@ -191,17 +203,23 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SBC READ (16) command
+        ///     Sends the SBC READ (16) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="rdprotect">Instructs the drive how to check for protection information on the medium.</param>
-        /// <param name="dpo">If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache fetch/retain.</param>
+        /// <param name="dpo">
+        ///     If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache
+        ///     fetch/retain.
+        /// </param>
         /// <param name="fua">If set to <c>true</c> requested blocks MUST bu read from medium and not the cache.</param>
-        /// <param name="fuaNv">If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not present they shall be stored there.</param>
+        /// <param name="fuaNv">
+        ///     If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not
+        ///     present they shall be stored there.
+        /// </param>
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
@@ -247,17 +265,20 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SBC READ LONG (10) command
+        ///     Sends the SBC READ LONG (10) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ LONG response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
-        /// <param name = "relAddr"></param>
+        /// <param name="relAddr"></param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="correct">If set to <c>true</c> ask the drive to try to correct errors in the sector.</param>
         /// <param name="lba">LBA to read.</param>
-        /// <param name="transferBytes">How many bytes to read. If the number is not exactly the drive's size, the command will fail and incidate a delta of the size in SENSE.</param>
+        /// <param name="transferBytes">
+        ///     How many bytes to read. If the number is not exactly the drive's size, the command will
+        ///     fail and incidate a delta of the size in SENSE.
+        /// </param>
         public bool ReadLong10(out byte[] buffer, out byte[] senseBuffer, bool correct, bool relAddr, uint lba,
                                ushort transferBytes, uint timeout, out double duration)
         {
@@ -286,16 +307,19 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the SBC READ LONG (16) command
+        ///     Sends the SBC READ LONG (16) command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ LONG response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="correct">If set to <c>true</c> ask the drive to try to correct errors in the sector.</param>
         /// <param name="lba">LBA to read.</param>
-        /// <param name="transferBytes">How many bytes to read. If the number is not exactly the drive's size, the command will fail and incidate a delta of the size in SENSE.</param>
+        /// <param name="transferBytes">
+        ///     How many bytes to read. If the number is not exactly the drive's size, the command will
+        ///     fail and incidate a delta of the size in SENSE.
+        /// </param>
         public bool ReadLong16(out byte[] buffer, out byte[] senseBuffer, bool correct, ulong lba, uint transferBytes,
                                uint timeout, out double duration)
         {
@@ -329,7 +353,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Moves the device reading element to the specified block address
+        ///     Moves the device reading element to the specified block address
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">LBA.</param>
@@ -356,7 +380,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Moves the device reading element to the specified block address
+        ///     Moves the device reading element to the specified block address
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">LBA.</param>

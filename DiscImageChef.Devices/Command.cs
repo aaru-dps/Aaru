@@ -43,7 +43,7 @@ namespace DiscImageChef.Devices
     static class Command
     {
         /// <summary>
-        /// Sends a SCSI command
+        ///     Sends a SCSI command
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -53,10 +53,13 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
+        ///     sense
+        /// </param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
-                                          uint timeout, ScsiDirection direction, out double duration, out bool sense)
+                                            uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
@@ -65,7 +68,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends a SCSI command
+        ///     Sends a SCSI command
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
@@ -76,11 +79,14 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
+        ///     sense
+        /// </param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendScsiCommand(PlatformID ptId, object fd, byte[] cdb, ref byte[] buffer,
-                                          out byte[] senseBuffer, uint timeout, ScsiDirection direction,
-                                          out double duration, out bool sense)
+                                            out byte[] senseBuffer, uint timeout, ScsiDirection direction,
+                                            out double duration, out bool sense)
         {
             switch(ptId)
             {
@@ -161,7 +167,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends an ATA command in CHS format
+        ///     Sends an ATA command in CHS format
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -175,9 +181,10 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(object fd, AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-                                         AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                                         uint timeout, bool transferBlocks, out double duration, out bool sense)
+        internal static int SendAtaCommand(object fd, AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
@@ -186,7 +193,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends an ATA command in CHS format
+        ///     Sends an ATA command in CHS format
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
@@ -202,9 +209,9 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersChs registers,
-                                         out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                         bool transferBlocks, out double duration, out bool sense)
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptId)
             {
@@ -212,8 +219,8 @@ namespace DiscImageChef.Devices
                 {
                     if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
                        (Environment.OSVersion.ServicePack == "Service Pack 1" ||
-                        Environment.OSVersion.ServicePack == "") || Environment.OSVersion.Version.Major == 5 &&
-                       Environment.OSVersion.Version.Minor == 0)
+                        Environment.OSVersion.ServicePack == "") ||
+                       Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                         return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
@@ -239,7 +246,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends an ATA command in CHS format
+        ///     Sends an ATA command in CHS format
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -254,9 +261,9 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersLba28 registers,
-                                         out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                         bool transferBlocks, out double duration, out bool sense)
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
@@ -265,7 +272,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends an ATA command in 28-bit LBA format
+        ///     Sends an ATA command in 28-bit LBA format
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
@@ -281,9 +288,9 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba28 registers,
-                                         out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                         bool transferBlocks, out double duration, out bool sense)
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptId)
             {
@@ -291,8 +298,8 @@ namespace DiscImageChef.Devices
                 {
                     if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
                        (Environment.OSVersion.ServicePack == "Service Pack 1" ||
-                        Environment.OSVersion.ServicePack == "") || Environment.OSVersion.Version.Major == 5 &&
-                       Environment.OSVersion.Version.Minor == 0)
+                        Environment.OSVersion.ServicePack == "") ||
+                       Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                         return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
@@ -318,7 +325,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends an ATA command in 48-bit LBA format
+        ///     Sends an ATA command in 48-bit LBA format
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -333,9 +340,9 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersLba48 registers,
-                                         out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                         bool transferBlocks, out double duration, out bool sense)
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
@@ -344,7 +351,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends an ATA command in 48-bit format
+        ///     Sends an ATA command in 48-bit format
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
@@ -360,9 +367,9 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba48 registers,
-                                         out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                         bool transferBlocks, out double duration, out bool sense)
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptId)
             {
@@ -388,7 +395,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends a MMC/SD command
+        ///     Sends a MMC/SD command
         /// </summary>
         /// <returns>The result of the command.</returns>
         /// <param name="fd">File handle</param>
@@ -405,9 +412,10 @@ namespace DiscImageChef.Devices
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-                                         uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                         out uint[] response, out double duration, out bool sense, uint timeout = 0)
+        internal static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication,
+                                           MmcFlags flags, uint argument, uint blockSize, uint blocks,
+                                           ref byte[] buffer, out uint[] response, out double duration, out bool sense,
+                                           uint timeout = 0)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
@@ -416,7 +424,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends a MMC/SD command
+        ///     Sends a MMC/SD command
         /// </summary>
         /// <returns>The result of the command.</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
@@ -435,9 +443,9 @@ namespace DiscImageChef.Devices
         /// <param name="blockSize">Size of block in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendMmcCommand(PlatformID ptId, object fd, MmcCommands command, bool write,
-                                         bool isApplication, MmcFlags flags, uint argument, uint blockSize, uint blocks,
-                                         ref byte[] buffer, out uint[] response, out double duration, out bool sense,
-                                         uint timeout = 0)
+                                           bool isApplication, MmcFlags flags, uint argument, uint blockSize,
+                                           uint blocks, ref byte[] buffer, out uint[] response, out double duration,
+                                           out bool sense, uint timeout = 0)
         {
             switch(ptId)
             {

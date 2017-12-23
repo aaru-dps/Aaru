@@ -39,7 +39,7 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
+        ///     Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -53,7 +53,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
+        ///     Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -84,7 +84,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sets the error threshold
+        ///     Sets the error threshold
         /// </summary>
         /// <returns><c>true</c>, if set error threshold was adapteced, <c>false</c> otherwise.</returns>
         /// <param name="threshold">Threshold. 0 to disable error reporting.</param>
@@ -97,7 +97,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sets the error threshold
+        ///     Sets the error threshold
         /// </summary>
         /// <returns><c>true</c>, if set error threshold was adapteced, <c>false</c> otherwise.</returns>
         /// <param name="threshold">Threshold. 0 to disable error reporting.</param>
@@ -127,7 +127,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Requests the usage, seek and error counters, and resets them
+        ///     Requests the usage, seek and error counters, and resets them
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -140,7 +140,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Requests the usage, seek and error counters, and resets them
+        ///     Requests the usage, seek and error counters, and resets them
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -168,7 +168,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Fills the Adaptec controller RAM with 1K bytes of data
+        ///     Fills the Adaptec controller RAM with 1K bytes of data
         /// </summary>
         /// <param name="buffer">Data to fill the buffer with.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -194,7 +194,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Reads 1K bytes of data from the Adaptec controller RAM
+        ///     Reads 1K bytes of data from the Adaptec controller RAM
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>

@@ -44,7 +44,7 @@ namespace DiscImageChef.Devices.FreeBSD
     static class ListDevices
     {
         /// <summary>
-        /// Gets a list of all known storage devices on FreeBSD
+        ///     Gets a list of all known storage devices on FreeBSD
         /// </summary>
         /// <returns>List of devices</returns>
         internal static DeviceInfo[] GetList()

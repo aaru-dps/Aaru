@@ -42,7 +42,7 @@ namespace DiscImageChef.Devices.Linux
     static class Command
     {
         /// <summary>
-        /// Sends a SCSI command
+        ///     Sends a SCSI command
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -52,7 +52,10 @@ namespace DiscImageChef.Devices.Linux
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
+        ///     sense
+        /// </param>
         internal static int SendScsiCommand(int fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                             ScsiIoctlDirection direction, out double duration, out bool sense)
         {
@@ -102,7 +105,7 @@ namespace DiscImageChef.Devices.Linux
         }
 
         /// <summary>
-        /// Converts ATA protocol to SG_IO direction
+        ///     Converts ATA protocol to SG_IO direction
         /// </summary>
         /// <param name="protocol">ATA protocol</param>
         /// <returns>SG_IO direction</returns>
@@ -125,7 +128,7 @@ namespace DiscImageChef.Devices.Linux
         }
 
         /// <summary>
-        /// Sends an ATA command in CHS mode
+        ///     Sends an ATA command in CHS mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -200,7 +203,7 @@ namespace DiscImageChef.Devices.Linux
         }
 
         /// <summary>
-        /// Sends an ATA command in 28-bit LBA mode
+        ///     Sends an ATA command in 28-bit LBA mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -275,7 +278,7 @@ namespace DiscImageChef.Devices.Linux
         }
 
         /// <summary>
-        /// Sends an ATA command in 48-bit LBA mode
+        ///     Sends an ATA command in 48-bit LBA mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -358,7 +361,7 @@ namespace DiscImageChef.Devices.Linux
         }
 
         /// <summary>
-        /// Sends a MMC/SD command
+        ///     Sends a MMC/SD command
         /// </summary>
         /// <returns>The result of the command.</returns>
         /// <param name="fd">File handle</param>
@@ -423,7 +426,7 @@ namespace DiscImageChef.Devices.Linux
         }
 
         /// <summary>
-        /// Reads the contents of a symbolic link
+        ///     Reads the contents of a symbolic link
         /// </summary>
         /// <param name="path">Path to the symbolic link</param>
         /// <returns>Contents of the symbolic link</returns>

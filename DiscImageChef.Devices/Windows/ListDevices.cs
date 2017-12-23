@@ -44,7 +44,7 @@ namespace DiscImageChef.Devices.Windows
     static class ListDevices
     {
         /// <summary>
-        /// Converts a hex dump string to the ASCII string it represents
+        ///     Converts a hex dump string to the ASCII string it represents
         /// </summary>
         /// <param name="hex">Hex dump</param>
         /// <returns>Decoded string</returns>
@@ -53,13 +53,14 @@ namespace DiscImageChef.Devices.Windows
             StringBuilder result = new StringBuilder();
             const string HEXTABLE = "0123456789abcdef";
 
-            for(int i = 0; i < hex.Length / 2; i++) result.Append((char)(16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
+            for(int i = 0; i < hex.Length / 2; i++)
+                result.Append((char)(16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
 
             return result.ToString();
         }
 
         /// <summary>
-        /// Gets a list of all known storage devices on Windows
+        ///     Gets a list of all known storage devices on Windows
         /// </summary>
         /// <returns>List of devices</returns>
         [SuppressMessage("ReSharper", "RedundantCatchClause")]
@@ -159,12 +160,11 @@ namespace DiscImageChef.Devices.Windows
                 if(descriptor.SerialNumberOffset > 0)
                 {
                     info.Serial =
-                        StringHandlers.CToString(descriptorB, Encoding.ASCII,
-                                                 start: descriptor.SerialNumberOffset);
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.SerialNumberOffset);
 
                     // fix any serial numbers that are returned as hex-strings
-                    if(Array.TrueForAll(info.Serial.ToCharArray(), c => "0123456789abcdef".IndexOf(c) >= 0)
-                        && info.Serial.Length == 40) info.Serial = HexStringToString(info.Serial).Trim();
+                    if(Array.TrueForAll(info.Serial.ToCharArray(), c => "0123456789abcdef".IndexOf(c) >= 0) &&
+                       info.Serial.Length == 40) info.Serial = HexStringToString(info.Serial).Trim();
                 }
 
                 if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")

@@ -44,7 +44,7 @@ namespace DiscImageChef.Devices.Windows
     static class Command
     {
         /// <summary>
-        /// Sends a SCSI command
+        ///     Sends a SCSI command
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -54,7 +54,10 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
+        ///     sense
+        /// </param>
         internal static int SendScsiCommand(SafeFileHandle fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                             uint timeout, ScsiIoctlDirection direction, out double duration,
                                             out bool sense)
@@ -111,7 +114,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Sends an ATA command in CHS mode
+        ///     Sends an ATA command in CHS mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -157,13 +160,16 @@ namespace DiscImageChef.Devices.Windows
                 dataBuffer = new byte[64 * 512]
             };
 
-            switch(protocol) {
+            switch(protocol)
+            {
                 case AtaProtocol.PioIn:
                 case AtaProtocol.UDmaIn:
-                case AtaProtocol.Dma: aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                case AtaProtocol.Dma:
+                    aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
                     break;
                 case AtaProtocol.PioOut:
-                case AtaProtocol.UDmaOut: aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                case AtaProtocol.UDmaOut:
+                    aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
                     break;
             }
 
@@ -212,7 +218,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Sends an ATA command in 28-bit LBA mode
+        ///     Sends an ATA command in 28-bit LBA mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -258,13 +264,16 @@ namespace DiscImageChef.Devices.Windows
                 dataBuffer = new byte[64 * 512]
             };
 
-            switch(protocol) {
+            switch(protocol)
+            {
                 case AtaProtocol.PioIn:
                 case AtaProtocol.UDmaIn:
-                case AtaProtocol.Dma: aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                case AtaProtocol.Dma:
+                    aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
                     break;
                 case AtaProtocol.PioOut:
-                case AtaProtocol.UDmaOut: aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                case AtaProtocol.UDmaOut:
+                    aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
                     break;
             }
 
@@ -313,7 +322,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Sends an ATA command in 48-bit LBA mode
+        ///     Sends an ATA command in 48-bit LBA mode
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -367,13 +376,16 @@ namespace DiscImageChef.Devices.Windows
                 dataBuffer = new byte[64 * 512]
             };
 
-            switch(protocol) {
+            switch(protocol)
+            {
                 case AtaProtocol.PioIn:
                 case AtaProtocol.UDmaIn:
-                case AtaProtocol.Dma: aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                case AtaProtocol.Dma:
+                    aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
                     break;
                 case AtaProtocol.PioOut:
-                case AtaProtocol.UDmaOut: aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                case AtaProtocol.UDmaOut:
+                    aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
                     break;
             }
 
@@ -426,7 +438,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Sends an ATA command in CHS mode using undocumented Windows XP ioctl
+        ///     Sends an ATA command in CHS mode using undocumented Windows XP ioctl
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -495,7 +507,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Sends an ATA command in 28-bit LBA mode using undocumented Windows XP ioctl
+        ///     Sends an ATA command in 28-bit LBA mode using undocumented Windows XP ioctl
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
@@ -564,7 +576,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Gets the device number for a specified handle
+        ///     Gets the device number for a specified handle
         /// </summary>
         /// <param name="deviceHandle">Device handle</param>
         /// <returns>Device number</returns>
@@ -580,7 +592,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Gets the internal device path for a specified handle
+        ///     Gets the internal device path for a specified handle
         /// </summary>
         /// <param name="fd">Device handle</param>
         /// <returns>Device path</returns>
@@ -658,7 +670,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Returns true if the specified handle is controlled by a SFFDISK (aka SDHCI) driver
+        ///     Returns true if the specified handle is controlled by a SFFDISK (aka SDHCI) driver
         /// </summary>
         /// <param name="fd">Device handle</param>
         /// <returns><c>true</c> if SDHCI, false otherwise</returns>
@@ -672,7 +684,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         /// <summary>
-        /// Sends a MMC/SD command
+        ///     Sends a MMC/SD command
         /// </summary>
         /// <returns>The result of the command.</returns>
         /// <param name="fd">File handle</param>
@@ -722,7 +734,7 @@ namespace DiscImageChef.Devices.Windows
             if(flags.HasFlag(MmcFlags.ResponseR6)) commandDescriptor.responseType = SdResponseType.R6;
 
             byte[] commandB = new byte[commandData.size + commandData.protocolArgumentSize +
-                                        commandData.deviceDataBufferSize];
+                                       commandData.deviceDataBufferSize];
             IntPtr hBuf = Marshal.AllocHGlobal(commandB.Length);
             Marshal.StructureToPtr(commandData, hBuf, true);
             IntPtr descriptorOffset = new IntPtr(hBuf.ToInt32() + commandData.size);
@@ -732,9 +744,8 @@ namespace DiscImageChef.Devices.Windows
 
             int error = 0;
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
-                                            (uint)commandB.Length, commandB, (uint)commandB.Length,
-                                            out _, IntPtr.Zero);
+            sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB, (uint)commandB.Length,
+                                            commandB, (uint)commandB.Length, out _, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
             if(sense) error = Marshal.GetLastWin32Error();

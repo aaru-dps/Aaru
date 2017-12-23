@@ -45,7 +45,6 @@ namespace DiscImageChef.Devices
             AtaRegistersLba48 registers =
                 new AtaRegistersLba48 {Command = (byte)AtaCommands.NativeMaxAddress, Feature = 0x0000};
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);

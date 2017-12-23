@@ -40,7 +40,7 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends a SCSI command to this device
+        ///     Sends a SCSI command to this device
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="cdb">SCSI CDB</param>
@@ -49,7 +49,10 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <param name="sense"><c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer" /> contains
+        ///     SCSI sense
+        /// </param>
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                    ScsiDirection direction, out double duration, out bool sense)
         {
@@ -58,7 +61,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends an ATA/ATAPI command to this device using CHS addressing
+        ///     Sends an ATA/ATAPI command to this device using CHS addressing
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="registers">ATA registers.</param>
@@ -67,19 +70,23 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">Indicates which register indicates the transfer length</param>
         /// <param name="buffer">Buffer for ATA/ATAPI command response</param>
         /// <param name="timeout">Timeout in seconds</param>
-        /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
+        /// <param name="transferBlocks">
+        ///     If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in
+        ///     bytes.
+        /// </param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
-                                          ref buffer, timeout, transferBlocks, out duration, out sense);
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
+                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
+                                          out sense);
         }
 
         /// <summary>
-        /// Sends an ATA/ATAPI command to this device using 28-bit LBA addressing
+        ///     Sends an ATA/ATAPI command to this device using 28-bit LBA addressing
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="registers">ATA registers.</param>
@@ -88,19 +95,23 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">Indicates which register indicates the transfer length</param>
         /// <param name="buffer">Buffer for ATA/ATAPI command response</param>
         /// <param name="timeout">Timeout in seconds</param>
-        /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
+        /// <param name="transferBlocks">
+        ///     If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in
+        ///     bytes.
+        /// </param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
-                                          ref buffer, timeout, transferBlocks, out duration, out sense);
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
+                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
+                                          out sense);
         }
 
         /// <summary>
-        /// Sends an ATA/ATAPI command to this device using 48-bit LBA addressing
+        ///     Sends an ATA/ATAPI command to this device using 48-bit LBA addressing
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="registers">ATA registers.</param>
@@ -109,19 +120,23 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">Indicates which register indicates the transfer length</param>
         /// <param name="buffer">Buffer for ATA/ATAPI command response</param>
         /// <param name="timeout">Timeout in seconds</param>
-        /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
+        /// <param name="transferBlocks">
+        ///     If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in
+        ///     bytes.
+        /// </param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
-                                          ref buffer, timeout, transferBlocks, out duration, out sense);
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
+                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
+                                          out sense);
         }
 
         /// <summary>
-        /// Sends a MMC/SD command to this device
+        ///     Sends a MMC/SD command to this device
         /// </summary>
         /// <returns>The result of the command.</returns>
         /// <param name="command">MMC/SD opcode</param>
@@ -140,7 +155,8 @@ namespace DiscImageChef.Devices
                                   uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
                                   out double duration, out bool sense, uint timeout = 0)
         {
-            switch(command) {
+            switch(command)
+            {
                 case MmcCommands.SendCid when cachedCid != null:
                 {
                     DateTime start = DateTime.Now;
@@ -176,10 +192,11 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if((command != (MmcCommands)SecureDigitalCommands.SendOperatingCondition &&
-                command != MmcCommands.SendOpCond) || cachedOcr == null)
-                return Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument, blockSize,
-                                              blocks, ref buffer, out response, out duration, out sense, timeout);
+            if(command != (MmcCommands)SecureDigitalCommands.SendOperatingCondition &&
+               command != MmcCommands.SendOpCond || cachedOcr == null)
+                return Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument,
+                                              blockSize, blocks, ref buffer, out response, out duration, out sense,
+                                              timeout);
 
             {
                 DateTime start = DateTime.Now;

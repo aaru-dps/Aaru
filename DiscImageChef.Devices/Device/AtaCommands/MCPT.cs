@@ -56,7 +56,6 @@ namespace DiscImageChef.Devices
             AtaRegistersChs registers =
                 new AtaRegistersChs {Command = (byte)AtaCommands.CheckMediaCardType, Feature = feature};
 
-
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);

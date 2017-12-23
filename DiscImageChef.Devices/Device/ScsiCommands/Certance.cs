@@ -39,7 +39,7 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Parks the load arm in preparation for transport
+        ///     Parks the load arm in preparation for transport
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -50,7 +50,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Unparks the load arm prior to operation
+        ///     Unparks the load arm prior to operation
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -61,7 +61,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Parks the load arm in preparation for transport or unparks it prior to operation
+        ///     Parks the load arm in preparation for transport or unparks it prior to operation
         /// </summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="park">If set to <c>true</c>, parks the load arm</param>

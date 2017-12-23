@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+
 // ReSharper disable MemberCanBeInternal
 // ReSharper disable InconsistentNaming
 
@@ -49,615 +50,618 @@ namespace DiscImageChef.Devices
 
     #region ATA Commands
     /// <summary>
-    /// All known ATA commands
+    ///     All known ATA commands
     /// </summary>
     public enum AtaCommands : byte
     {
         #region Commands defined on Western Digital WD1000 Winchester Disk Controller
         /// <summary>
-        /// Formats a track
+        ///     Formats a track
         /// </summary>
         FormatTrack = 0x50,
         /// <summary>
-        /// Reads sectors
+        ///     Reads sectors
         /// </summary>
         ReadOld = 0x20,
         /// <summary>
-        /// Reads sectors using DMA
+        ///     Reads sectors using DMA
         /// </summary>
         ReadDmaOld = 0x28,
         /// <summary>
-        /// Calibrates the position of the heads
-        /// Includes all commands from 0x10 to 0x1F
+        ///     Calibrates the position of the heads
+        ///     Includes all commands from 0x10 to 0x1F
         /// </summary>
         Restore = 0x10,
         /// <summary>
-        /// Seeks to a certain cylinder
+        ///     Seeks to a certain cylinder
         /// </summary>
         Seek = 0x70,
         /// <summary>
-        /// Writes sectors
+        ///     Writes sectors
         /// </summary>
         WriteOld = 0x30,
         #endregion Commands defined on Western Digital WD1000 Winchester Disk Controller
 
         #region Commands defined on ATA rev. 4c
         /// <summary>
-        /// Acknowledges media change
+        ///     Acknowledges media change
         /// </summary>
         AckMediaChange = 0xDB,
         /// <summary>
-        /// Sends vendor-specific information that may be required in order to pass diagnostics
+        ///     Sends vendor-specific information that may be required in order to pass diagnostics
         /// </summary>
         PostBoot = 0xDC,
         /// <summary>
-        /// Prepares a removable drive to respond to boot
+        ///     Prepares a removable drive to respond to boot
         /// </summary>
         PreBoot = 0xDD,
         /// <summary>
-        /// Checks drive power mode
+        ///     Checks drive power mode
         /// </summary>
         CheckPowerMode = 0xE5,
         /// <summary>
-        /// Checks drive power mode
+        ///     Checks drive power mode
         /// </summary>
         CheckPowerModeAlternate = 0x98,
         /// <summary>
-        /// Locks the door of the drive
+        ///     Locks the door of the drive
         /// </summary>
         DoorLock = 0xDE,
         /// <summary>
-        /// Unlocks the door of the drive
+        ///     Unlocks the door of the drive
         /// </summary>
         DoorUnLock = 0xDF,
         /// <summary>
-        /// Executes internal drive diagnostics
+        ///     Executes internal drive diagnostics
         /// </summary>
         ExecuteDriveDiagnostic = 0x90,
         /// <summary>
-        /// Gets a sector containing drive identification and capabilities
+        ///     Gets a sector containing drive identification and capabilities
         /// </summary>
         IdentifyDrive = 0xEC,
         /// <summary>
-        /// Requests the drive to enter idle status
+        ///     Requests the drive to enter idle status
         /// </summary>
         Idle = 0xE3,
         /// <summary>
-        /// Requests the drive to enter idle status
+        ///     Requests the drive to enter idle status
         /// </summary>
         IdleAlternate = 0x97,
         /// <summary>
-        /// Requests the drive to enter idle status immediately
+        ///     Requests the drive to enter idle status immediately
         /// </summary>
         IdleImmediate = 0xE1,
         /// <summary>
-        /// Requests the drive to enter idle status immediately
+        ///     Requests the drive to enter idle status immediately
         /// </summary>
         IdleImmediateAlternate = 0x95,
         /// <summary>
-        /// Changes heads and sectors per cylinder for the drive
+        ///     Changes heads and sectors per cylinder for the drive
         /// </summary>
         InitializeDriveParameters = 0x91,
         /// <summary>
-        /// Does nothing
+        ///     Does nothing
         /// </summary>
         Nop = 0x00,
         /// <summary>
-        /// Reads sectors using PIO transfer
+        ///     Reads sectors using PIO transfer
         /// </summary>
         Read = 0x21,
         /// <summary>
-        /// Reads the content of the drive's buffer
+        ///     Reads the content of the drive's buffer
         /// </summary>
         ReadBuffer = 0xE4,
         /// <summary>
-        /// Reads sectors using DMA transfer
+        ///     Reads sectors using DMA transfer
         /// </summary>
         ReadDma = 0xC9,
         /// <summary>
-        /// Reads sectors using DMA transfer, retrying on error
+        ///     Reads sectors using DMA transfer, retrying on error
         /// </summary>
         ReadDmaRetry = 0xC8,
         /// <summary>
-        /// Reads a sector including ECC bytes without checking them
+        ///     Reads a sector including ECC bytes without checking them
         /// </summary>
         ReadLong = 0x23,
         /// <summary>
-        /// Reads a sector including ECC bytes without checking them, retrying on error
+        ///     Reads a sector including ECC bytes without checking them, retrying on error
         /// </summary>
         ReadLongRetry = 0x22,
         /// <summary>
-        /// Reads multiple sectors generating interrupts at block transfers
+        ///     Reads multiple sectors generating interrupts at block transfers
         /// </summary>
         ReadMultiple = 0xC4,
         /// <summary>
-        /// Reads sectors using PIO transfer, retrying on error
+        ///     Reads sectors using PIO transfer, retrying on error
         /// </summary>
         ReadRetry = 0x20,
         /// <summary>
-        /// Verifies sectors readability without transferring them
+        ///     Verifies sectors readability without transferring them
         /// </summary>
         ReadVerify = 0x41,
         /// <summary>
-        /// Verifies sectors readability without transferring them, retrying on error
+        ///     Verifies sectors readability without transferring them, retrying on error
         /// </summary>
         ReadVerifyRetry = 0x40,
         /// <summary>
-        /// Moves the heads to cylinder 0
+        ///     Moves the heads to cylinder 0
         /// </summary>
         Recalibrate = Restore,
         /// <summary>
-        /// Sets drive parameters
+        ///     Sets drive parameters
         /// </summary>
         SetFeatures = 0xEF,
         /// <summary>
-        /// Enables <see cref="ReadMultiple"/> and <see cref="WriteMultiple"/> and sets the block length for these commands
+        ///     Enables <see cref="ReadMultiple" /> and <see cref="WriteMultiple" /> and sets the block length for these commands
         /// </summary>
         SetMultipleMode = 0xC6,
         /// <summary>
-        /// Causes the drive to stop and sleep until a hardware or software reset
+        ///     Causes the drive to stop and sleep until a hardware or software reset
         /// </summary>
         Sleep = 0xE6,
         /// <summary>
-        /// Causes the drive to stop and sleep until a hardware or software reset
+        ///     Causes the drive to stop and sleep until a hardware or software reset
         /// </summary>
         SleepAlternate = 0x99,
         /// <summary>
-        /// Sets the drive to enter Standby mode
+        ///     Sets the drive to enter Standby mode
         /// </summary>
         Standby = 0xE2,
         /// <summary>
-        /// Sets the drive to enter Standby mode
+        ///     Sets the drive to enter Standby mode
         /// </summary>
         StandbyAlternate = 0x96,
         /// <summary>
-        /// Sets the drive to enter Standby mode, immediately
+        ///     Sets the drive to enter Standby mode, immediately
         /// </summary>
         StandbyImmediate = 0xE0,
         /// <summary>
-        /// Sets the drive to enter Standby mode, immediately
+        ///     Sets the drive to enter Standby mode, immediately
         /// </summary>
         StandbyImmediateAlternate = 0x94,
         /// <summary>
-        /// Writes sectors using PIO transfer
+        ///     Writes sectors using PIO transfer
         /// </summary>
         Write = 0x31,
         /// <summary>
-        /// Writes data to the drive's sector buffer
+        ///     Writes data to the drive's sector buffer
         /// </summary>
         WriteBuffer = 0xE8,
         /// <summary>
-        /// Writes sectors using DMA transfer
+        ///     Writes sectors using DMA transfer
         /// </summary>
         WriteDma = 0xCB,
         /// <summary>
-        /// Writes sectors using DMA transfer, retrying on error
+        ///     Writes sectors using DMA transfer, retrying on error
         /// </summary>
         WriteDmaRetry = 0xCA,
         /// <summary>
-        /// Writes sectors with custom ECC
+        ///     Writes sectors with custom ECC
         /// </summary>
         WriteLong = 0x33,
         /// <summary>
-        /// Writes sectors with custom ECC, retrying on error
+        ///     Writes sectors with custom ECC, retrying on error
         /// </summary>
         WriteLongRetry = 0x32,
         /// <summary>
-        /// Writes several sectors at once setting interrupts on end of block
+        ///     Writes several sectors at once setting interrupts on end of block
         /// </summary>
         WriteMultiple = 0xC5,
         /// <summary>
-        /// Writes the same data to several sector
+        ///     Writes the same data to several sector
         /// </summary>
         WriteSame = 0xE9,
         /// <summary>
-        /// Writes sectors using PIO transfer, retrying on error
+        ///     Writes sectors using PIO transfer, retrying on error
         /// </summary>
         WriteRetry = 0x30,
         /// <summary>
-        /// Writes sectors verifying them immediately after write
+        ///     Writes sectors verifying them immediately after write
         /// </summary>
         WriteVerify = 0x3C,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         Vendor_8X = 0x80,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         Vendor_9A = 0x9A,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorC0 = 0xC0,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorC1 = 0xC1,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorC2 = 0xC2,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorC3 = 0xC3,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF0 = 0xF0,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF1 = 0xF1,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF2 = 0xF2,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF3 = 0xF3,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF4 = 0xF4,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF5 = 0xF5,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF6 = 0xF6,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF7 = 0xF7,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF8 = 0xF8,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorF9 = 0xF9,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorFa = 0xFA,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorFb = 0xFB,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorFc = 0xFC,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorFd = 0xFD,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorFe = 0xFE,
         /// <summary>
-        /// Unknown vendor command
+        ///     Unknown vendor command
         /// </summary>
         VendorFf = 0xFF,
         #endregion Commands defined on ATA rev. 4c
 
         #region Commands defined on ATA-2 rev. 4c
         /// <summary>
-        /// Alters the device microcode
+        ///     Alters the device microcode
         /// </summary>
         DownloadMicrocode = 0x92,
         /// <summary>
-        /// Ejects the removable medium on the device
+        ///     Ejects the removable medium on the device
         /// </summary>
         MediaEject = 0xED,
         #endregion Commands defined on ATA-2 rev. 4c
 
         #region Commands defined on ATA-3 rev. 7b
         /// <summary>
-        /// Gets a sector containing drive identification and capabilities
+        ///     Gets a sector containing drive identification and capabilities
         /// </summary>
         IdentifyDriveDma = 0xEE,
         /// <summary>
-        /// Disables the security lock
+        ///     Disables the security lock
         /// </summary>
         SecurityDisablePassword = 0xF6,
         /// <summary>
-        /// Enables usage of <see cref="SecurityEraseUnit"/> command
+        ///     Enables usage of <see cref="SecurityEraseUnit" /> command
         /// </summary>
         SecurityErasePrepare = 0xF3,
         /// <summary>
-        /// Erases all user data and isables the security lock
+        ///     Erases all user data and isables the security lock
         /// </summary>
         SecurityEraseUnit = 0xF4,
         /// <summary>
-        /// Sets the security freeze lock preventing any security command from working until hardware reset
+        ///     Sets the security freeze lock preventing any security command from working until hardware reset
         /// </summary>
         SecurityFreezeLock = 0xF5,
         /// <summary>
-        /// Sets the device user or master password
+        ///     Sets the device user or master password
         /// </summary>
         SecuritySetPassword = 0xF1,
         /// <summary>
-        /// Unlocks device
+        ///     Unlocks device
         /// </summary>
         SecurityUnlock = 0xF2,
         /// <summary>
-        /// SMART operations
+        ///     SMART operations
         /// </summary>
         Smart = 0xB0,
         #endregion Commands defined on ATA-3 rev. 7b
 
         #region Commands defined on CompactFlash Specification
         /// <summary>
-        /// Pre-erases and conditions data sectors
+        ///     Pre-erases and conditions data sectors
         /// </summary>
         EraseSectors = 0xC0,
         /// <summary>
-        /// Requests extended error information
+        ///     Requests extended error information
         /// </summary>
         RequestSense = 0x03,
         /// <summary>
-        /// Provides a way to determine the exact number of times a sector has been erases and programmed
+        ///     Provides a way to determine the exact number of times a sector has been erases and programmed
         /// </summary>
         TranslateSector = 0x87,
         /// <summary>
-        /// For CompactFlash cards that do not support security mode, this commands is equal to <see cref="Nop"/>
-        /// For those that do, this command is equal to <see cref="SecurityFreezeLock"/>
+        ///     For CompactFlash cards that do not support security mode, this commands is equal to <see cref="Nop" />
+        ///     For those that do, this command is equal to <see cref="SecurityFreezeLock" />
         /// </summary>
         WearLevel = 0xF5,
         /// <summary>
-        /// Writes a block of sectors without erasing them previously
+        ///     Writes a block of sectors without erasing them previously
         /// </summary>
         WriteMultipleWithoutErase = 0xCD,
         /// <summary>
-        /// Writes sectors without erasing them previously
+        ///     Writes sectors without erasing them previously
         /// </summary>
         WriteWithoutErase = 0x38,
         #endregion Commands defined on CompactFlash Specification
 
         #region Commands defined on ATA/ATAPI-4 rev. 18
         /// <summary>
-        /// Resets a device
+        ///     Resets a device
         /// </summary>
         DeviceReset = 0x08,
         /// <summary>
-        /// Requests the device to flush the write cache and write it to the media
+        ///     Requests the device to flush the write cache and write it to the media
         /// </summary>
         FlushCache = 0xE7,
         /// <summary>
-        /// Gets media status
+        ///     Gets media status
         /// </summary>
         GetMediaStatus = 0xDA,
         /// <summary>
-        /// Gets a sector containing drive identification and capabilities, for ATA devices
+        ///     Gets a sector containing drive identification and capabilities, for ATA devices
         /// </summary>
         IdentifyDevice = IdentifyDrive,
         /// <summary>
-        /// Gets a sector containing drive identification and capabilities, for ATAPI devices
+        ///     Gets a sector containing drive identification and capabilities, for ATAPI devices
         /// </summary>
         IdentifyPacketDevice = 0xA1,
         /// <summary>
-        /// Locks the media on the device
+        ///     Locks the media on the device
         /// </summary>
         MediaLock = DoorLock,
         /// <summary>
-        /// Unlocks the media on the device
+        ///     Unlocks the media on the device
         /// </summary>
         MediaUnLock = DoorUnLock,
         /// <summary>
-        /// Sends a command packet
+        ///     Sends a command packet
         /// </summary>
         Packet = 0xA0,
         /// <summary>
-        /// Queues a read of sectors
+        ///     Queues a read of sectors
         /// </summary>
         ReadDmaQueued = 0xC7,
         /// <summary>
-        /// Returns the native maximum address in factory default condition
+        ///     Returns the native maximum address in factory default condition
         /// </summary>
         ReadNativeMaxAddress = 0xF8,
         /// <summary>
-        /// Used to provide data transfer and/or status of a previous command (queue or packet)
+        ///     Used to provide data transfer and/or status of a previous command (queue or packet)
         /// </summary>
         Service = 0xA2,
         /// <summary>
-        /// Redefines the maximum user-accessible address space
+        ///     Redefines the maximum user-accessible address space
         /// </summary>
         SetMaxAddress = 0xF9,
         /// <summary>
-        /// Queues a write of sectors
+        ///     Queues a write of sectors
         /// </summary>
         WriteDmaQueued = 0xCC,
         #endregion Commands defined on ATA/ATAPI-4 rev. 18
 
         #region Commands defined on ATA/ATAPI-6 rev. 3b
         /// <summary>
-        /// Determines if the device supports the Media Card Pass Through Command feature set
+        ///     Determines if the device supports the Media Card Pass Through Command feature set
         /// </summary>
         CheckMediaCardType = 0xD1,
         /// <summary>
-        /// Device Configuration Overlay feature set
+        ///     Device Configuration Overlay feature set
         /// </summary>
         DevideConfiguration = 0xB1,
         /// <summary>
-        /// Requests the device to flush the write cache and write it to the media (48-bit)
+        ///     Requests the device to flush the write cache and write it to the media (48-bit)
         /// </summary>
         FlushCacheExt = 0xEA,
         /// <summary>
-        /// Reads sectors using DMA transfer, retrying on error (48-bit)
+        ///     Reads sectors using DMA transfer, retrying on error (48-bit)
         /// </summary>
         ReadDmaExt = 0x25,
-        /// <summary> (48-bit)
-        /// Queues a read of sectors
+        /// <summary>
+        ///     (48-bit)
+        ///     Queues a read of sectors
         /// </summary>
         ReadDmaQueuedExt = 0x26,
         /// <summary>
-        /// Reads sectors using PIO transfer, retrying on error (48-bit)
+        ///     Reads sectors using PIO transfer, retrying on error (48-bit)
         /// </summary>
         ReadExt = 0x24,
         /// <summary>
-        /// Returns the indicated log to the host (48-bit)
+        ///     Returns the indicated log to the host (48-bit)
         /// </summary>
         ReadLogExt = 0x2F,
         /// <summary>
-        /// Reads multiple sectors generating interrupts at block transfers (48-bit)
+        ///     Reads multiple sectors generating interrupts at block transfers (48-bit)
         /// </summary>
         ReadMultipleExt = 0x29,
         /// <summary>
-        /// Returns the native maximum address in factory default condition (48-bit)
+        ///     Returns the native maximum address in factory default condition (48-bit)
         /// </summary>
         ReadNativeMaxAddressExt = 0x27,
         /// <summary>
-        /// Verifies sectors readability without transferring them, retrying on error (48-bit)
+        ///     Verifies sectors readability without transferring them, retrying on error (48-bit)
         /// </summary>
         ReadVerifyExt = 0x42,
         /// <summary>
-        /// Sends a SET MAX subcommand, <see cref="AtaSetMaxSubCommands"/>
+        ///     Sends a SET MAX subcommand, <see cref="AtaSetMaxSubCommands" />
         /// </summary>
         SetMaxCommands = 0xF9,
         /// <summary>
-        /// Redefines the maximum user-accessible address space (48-bit)
+        ///     Redefines the maximum user-accessible address space (48-bit)
         /// </summary>
         SetMaxAddressExt = 0x37,
         /// <summary>
-        /// Writes sectors using DMA transfer, retrying on error (48-bit)
+        ///     Writes sectors using DMA transfer, retrying on error (48-bit)
         /// </summary>
         WriteDmaExt = 0x35,
         /// <summary>
-        /// Queues a write of sectors (48-bit)
+        ///     Queues a write of sectors (48-bit)
         /// </summary>
         WriteDmaQueuedExt = 0x36,
         /// <summary>
-        /// Writes sectors using PIO transfer, retrying on error (48-bit)
+        ///     Writes sectors using PIO transfer, retrying on error (48-bit)
         /// </summary>
         WriteExt = 0x34,
         /// <summary>
-        /// Writes data to the indicated log (48-bit)
+        ///     Writes data to the indicated log (48-bit)
         /// </summary>
         WriteLogExt = 0x3F,
         /// <summary>
-        /// Writes several sectors at once setting interrupts on end of block (48-bit)
+        ///     Writes several sectors at once setting interrupts on end of block (48-bit)
         /// </summary>
         WriteMultipleExt = 0x39,
         #endregion Commands defined on ATA/ATAPI-6 rev. 3b
 
         #region Commands defined on ATA/ATAPI-7 rev. 4b
         /// <summary>
-        /// Configurates the operating parameters for a stream
+        ///     Configurates the operating parameters for a stream
         /// </summary>
         ConfigureStream = 0x51,
         /// <summary>
-        /// Reads data on an alloted time using DMA
+        ///     Reads data on an alloted time using DMA
         /// </summary>
         ReadStreamDmaExt = 0x2A,
         /// <summary>
-        /// Reads data on an alloted time using PIO
+        ///     Reads data on an alloted time using PIO
         /// </summary>
         ReadStreamExt = 0x2B,
         /// <summary>
-        /// Writes data on an alloted time using DMA
+        ///     Writes data on an alloted time using DMA
         /// </summary>
         WriteStreamDmaExt = 0x3A,
         /// <summary>
-        /// Writes data on an alloted time using PIO
+        ///     Writes data on an alloted time using PIO
         /// </summary>
         WriteStreamExt = 0x3B,
         #endregion Commands defined on ATA/ATAPI-7 rev. 4b
 
         #region Commands defined on ATA/ATAPI-8 rev. 3f
         /// <summary>
-        /// Sends a Non Volatile Cache subcommand. <see cref="AtaNonVolatileCacheSubCommands"/>
+        ///     Sends a Non Volatile Cache subcommand. <see cref="AtaNonVolatileCacheSubCommands" />
         /// </summary>
         NonVolatileCacheCommand = 0xB6,
         /// <summary>
-        /// Retrieves security protocol information or the results from <see cref="TrustedSend"/> commands
+        ///     Retrieves security protocol information or the results from <see cref="TrustedSend" /> commands
         /// </summary>
         TrustedReceive = 0x5C,
         /// <summary>
-        /// Retrieves security protocol information or the results from <see cref="TrustedSend"/> commands, using DMA transfers
+        ///     Retrieves security protocol information or the results from <see cref="TrustedSend" /> commands, using DMA
+        ///     transfers
         /// </summary>
         TrustedReceiveDma = 0x5D,
         /// <summary>
-        /// Sends one or more Security Protocol commands
+        ///     Sends one or more Security Protocol commands
         /// </summary>
         TrustedSend = 0x5E,
         /// <summary>
-        /// Sends one or more Security Protocol commands, using DMA transfers
+        ///     Sends one or more Security Protocol commands, using DMA transfers
         /// </summary>
         TrustedSendDma = 0x5F,
         /// <summary>
-        /// Writes sectors using DMA transfer, retrying on error (48-bit), not returning until the operation is complete
+        ///     Writes sectors using DMA transfer, retrying on error (48-bit), not returning until the operation is complete
         /// </summary>
         WriteDmaFuaExt = 0x3D,
         /// <summary>
-        /// Queues a write of sectors (48-bit), not returning until the operation is complete
+        ///     Queues a write of sectors (48-bit), not returning until the operation is complete
         /// </summary>
         WriteDmaQueuedFuaExt = 0x3E,
         /// <summary>
-        /// Writes several sectors at once setting interrupts on end of block (48-bit), not returning until the operation is complete
+        ///     Writes several sectors at once setting interrupts on end of block (48-bit), not returning until the operation is
+        ///     complete
         /// </summary>
         WriteMultipleFuaExt = 0xCE,
         /// <summary>
-        /// Writes a sector that will give an uncorrectable error on any read operation
+        ///     Writes a sector that will give an uncorrectable error on any read operation
         /// </summary>
         WriteUncorrectableExt = 0x45,
         #endregion Commands defined on ATA/ATAPI-8 rev. 3f
 
         #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
         /// <summary>
-        /// Provides information for device optimization
-        /// In SSDs, this contains trimming
+        ///     Provides information for device optimization
+        ///     In SSDs, this contains trimming
         /// </summary>
         DataSetManagement = 0x06,
         /// <summary>
-        /// Alters the device microcode, using DMA transfers
+        ///     Alters the device microcode, using DMA transfers
         /// </summary>
         DownloadMicrocodeDma = 0x93,
         /// <summary>
-        /// Reads the content of the drive's buffer, using DMA transfers
+        ///     Reads the content of the drive's buffer, using DMA transfers
         /// </summary>
         ReadBufferDma = 0xE9,
         /// <summary>
-        /// Reads sectors using NCQ
+        ///     Reads sectors using NCQ
         /// </summary>
         ReadFpDmaQueued = 0x60,
         /// <summary>
-        /// Returns the indicated log to the host (48-bit)
+        ///     Returns the indicated log to the host (48-bit)
         /// </summary>
         ReadLogDmaExt = 0x47,
         /// <summary>
-        /// Requests SPC-4 style error data
+        ///     Requests SPC-4 style error data
         /// </summary>
         RequestSenseDataExt = 0x0B,
         SanitizeCommands = 0xB4,
         /// <summary>
-        /// Executes a Security Protocol command that does not require a transfer of data
+        ///     Executes a Security Protocol command that does not require a transfer of data
         /// </summary>
         TrustedNonData = 0x5B,
         /// <summary>
-        /// Writes data to the drive's sector buffer, using DMA transfers
+        ///     Writes data to the drive's sector buffer, using DMA transfers
         /// </summary>
         WriteBufferDma = 0xE8,
         /// <summary>
-        /// Writes sectors using NCQ
+        ///     Writes sectors using NCQ
         /// </summary>
         WriteFpDmaQueued = 0x61,
         #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
 
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
         /// <summary>
-        /// Sends <see cref="AtaNcqQueueManagementSubcommands"/>
+        ///     Sends <see cref="AtaNcqQueueManagementSubcommands" />
         /// </summary>
         NcqQueueManagement = 0x63,
         /// <summary>
-        /// Sets the device date and time
+        ///     Sets the device date and time
         /// </summary>
         SetDateAndTimeExt = 0x77,
         #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
@@ -670,59 +674,59 @@ namespace DiscImageChef.Devices
 
     #region ATA SMART SubCommands
     /// <summary>
-    /// All known ATA SMART sub-commands
+    ///     All known ATA SMART sub-commands
     /// </summary>
     public enum AtaSmartSubCommands : byte
     {
         #region Commands defined on ATA-3 rev. 7b
         /// <summary>
-        /// Disables all SMART capabilities
+        ///     Disables all SMART capabilities
         /// </summary>
         Disable = 0xD9,
         /// <summary>
-        /// Enables/disables SMART attribute autosaving
+        ///     Enables/disables SMART attribute autosaving
         /// </summary>
         EnableDisableAttributeAutosave = 0xD2,
         /// <summary>
-        /// Enables all SMART capabilities
+        ///     Enables all SMART capabilities
         /// </summary>
         Enable = 0xD8,
         /// <summary>
-        /// Returns the device's SMART attributes thresholds
+        ///     Returns the device's SMART attributes thresholds
         /// </summary>
         ReadAttributeThresholds = 0xD1,
         /// <summary>
-        /// Returns the device's SMART attributes values
+        ///     Returns the device's SMART attributes values
         /// </summary>
         ReadAttributeValues = 0xD0,
         /// <summary>
-        /// Communicates device reliability status
+        ///     Communicates device reliability status
         /// </summary>
         ReturnStatus = 0xDA,
         /// <summary>
-        /// Saves any attribute values immediately
+        ///     Saves any attribute values immediately
         /// </summary>
         SaveAttributeValues = 0xD3,
         #endregion Commands defined on ATA-3 rev. 7b
 
         #region Commands defined on ATA/ATAPI-4 rev. 18
         /// <summary>
-        /// Causes the device to immediately initiate a SMART data collection and saves it to the device
+        ///     Causes the device to immediately initiate a SMART data collection and saves it to the device
         /// </summary>
         ExecuteOfflineImmediate = 0xD4,
         /// <summary>
-        /// Returns the device's SMART attributes values
+        ///     Returns the device's SMART attributes values
         /// </summary>
         ReadData = ReadAttributeValues,
         #endregion Commands defined on ATA/ATAPI-4 rev. 18
 
         #region Commands defined on ATA/ATAPI-5 rev. 3
         /// <summary>
-        /// Returns the indicated log to the host
+        ///     Returns the indicated log to the host
         /// </summary>
         ReadLog = 0xD5,
         /// <summary>
-        /// Writes data to the indicated log
+        ///     Writes data to the indicated log
         /// </summary>
         WriteLog = 0xD6
         #endregion Commands defined on ATA/ATAPI-5 rev. 3
@@ -731,25 +735,25 @@ namespace DiscImageChef.Devices
 
     #region ATA Device Configuration Overlay SubCommands
     /// <summary>
-    /// All known ATA DEVICE CONFIGURATION sub-commands
+    ///     All known ATA DEVICE CONFIGURATION sub-commands
     /// </summary>
     public enum AtaDeviceConfigurationSubCommands : byte
     {
         #region Commands defined on ATA/ATAPI-6 rev. 3b
         /// <summary>
-        /// Disables any change made by <see cref="Set"/>
+        ///     Disables any change made by <see cref="Set" />
         /// </summary>
         Restore = 0xC0,
         /// <summary>
-        /// Prevents any <see cref="AtaDeviceConfigurationSubCommands"/> from working until a power down cycle.
+        ///     Prevents any <see cref="AtaDeviceConfigurationSubCommands" /> from working until a power down cycle.
         /// </summary>
         FreezeLock = 0xC1,
         /// <summary>
-        /// Indicates the selectable commands, modes, and feature sets the device supports
+        ///     Indicates the selectable commands, modes, and feature sets the device supports
         /// </summary>
         Identify = 0xC2,
         /// <summary>
-        /// Modifies the commands, modes and features sets the device will obey to
+        ///     Modifies the commands, modes and features sets the device will obey to
         /// </summary>
         Set = 0xC3
         #endregion Commands defined on ATA/ATAPI-6 rev. 3b
@@ -758,29 +762,30 @@ namespace DiscImageChef.Devices
 
     #region ATA SET MAX SubCommands
     /// <summary>
-    /// All known ATA SET MAX sub-commands
+    ///     All known ATA SET MAX sub-commands
     /// </summary>
     public enum AtaSetMaxSubCommands : byte
     {
         #region Commands defined on ATA/ATAPI-6 rev. 3b
         /// <summary>
-        /// Redefines the maximum user-accessible address space
+        ///     Redefines the maximum user-accessible address space
         /// </summary>
         Address = 0x00,
         /// <summary>
-        /// Disables any other <see cref="AtaSetMaxSubCommands"/> until power cycle
+        ///     Disables any other <see cref="AtaSetMaxSubCommands" /> until power cycle
         /// </summary>
         FreezeLock = 0x04,
         /// <summary>
-        /// Disables any other <see cref="AtaSetMaxSubCommands"/> except <see cref="UnLock"/> and <see cref="FreezeLock"/> until power cycle
+        ///     Disables any other <see cref="AtaSetMaxSubCommands" /> except <see cref="UnLock" /> and <see cref="FreezeLock" />
+        ///     until power cycle
         /// </summary>
         Lock = 0x02,
         /// <summary>
-        /// Sets the device password
+        ///     Sets the device password
         /// </summary>
         SetPassword = 0x01,
         /// <summary>
-        /// Disables <see cref="Lock"/>
+        ///     Disables <see cref="Lock" />
         /// </summary>
         UnLock = 0x03,
         #endregion Commands defined on ATA/ATAPI-6 rev. 3b
@@ -789,38 +794,38 @@ namespace DiscImageChef.Devices
 
     #region ATA Non Volatile Cache SubCommands
     /// <summary>
-    /// All known ATA NV CACHE sub-commands
+    ///     All known ATA NV CACHE sub-commands
     /// </summary>
     public enum AtaNonVolatileCacheSubCommands : byte
     {
         #region Commands defined on ATA/ATAPI-8 rev. 3f
         /// <summary>
-        /// Adds the specified LBA to the Non Volatile Cache
+        ///     Adds the specified LBA to the Non Volatile Cache
         /// </summary>
         AddLbaToNvCache = 0x10,
         /// <summary>
-        /// Ensures there is enough free space in the Non Volatile Cache
+        ///     Ensures there is enough free space in the Non Volatile Cache
         /// </summary>
         FlushNvCache = 0x14,
         /// <summary>
-        /// Requests a list of LBAs actually stored in the Non Volatile Cache
+        ///     Requests a list of LBAs actually stored in the Non Volatile Cache
         /// </summary>
         QueryNvCachePinnedSet = 0x12,
         /// <summary>
-        /// Requests a list of LBAs accessed but not in the Non Volatile Cache
+        ///     Requests a list of LBAs accessed but not in the Non Volatile Cache
         /// </summary>
         QueryNvCacheMisses = 0x13,
         /// <summary>
-        /// Removes the specified LBA from the Non Volatile Cache Pinned Set
+        ///     Removes the specified LBA from the Non Volatile Cache Pinned Set
         /// </summary>
         RemoveLbaFromNvCache = 0x11,
         /// <summary>
-        /// Disables the Non Volatile Cache Power Mode
-        /// <see cref="SetNvCachePowerMode"/>
+        ///     Disables the Non Volatile Cache Power Mode
+        ///     <see cref="SetNvCachePowerMode" />
         /// </summary>
         ReturnFromNvCachePowerMode = 0x01,
         /// <summary>
-        /// Enables the Non Volatile Cache Power Mode, so the device tries to serve all accesses from the Non Volatile Cache
+        ///     Enables the Non Volatile Cache Power Mode, so the device tries to serve all accesses from the Non Volatile Cache
         /// </summary>
         SetNvCachePowerMode = 0x00
         #endregion Commands defined on ATA/ATAPI-8 rev. 3f
@@ -829,36 +834,36 @@ namespace DiscImageChef.Devices
 
     #region ATA Sanitize SubCommands
     /// <summary>
-    /// All known ATA SANITIZE sub-commands
+    ///     All known ATA SANITIZE sub-commands
     /// </summary>
     public enum AtaSanitizeSubCommands : ushort
     {
         #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
         /// <summary>
-        /// Causes a block erase on all user data
+        ///     Causes a block erase on all user data
         /// </summary>
         BlockEraseExt = 0x0012,
         /// <summary>
-        /// Changes the internal encryption keys. Renders user data unusable
+        ///     Changes the internal encryption keys. Renders user data unusable
         /// </summary>
         CryptoScrambleExt = 0x0011,
         /// <summary>
-        /// Fills user data with specified pattern
+        ///     Fills user data with specified pattern
         /// </summary>
         OverwriteExt = 0x0014,
         /// <summary>
-        /// Disables all <see cref="AtaSanitizeSubCommands"/> except <see cref="Status"/>
+        ///     Disables all <see cref="AtaSanitizeSubCommands" /> except <see cref="Status" />
         /// </summary>
         FreezeLockExt = 0x0020,
         /// <summary>
-        /// Gets the status of the sanitizing
+        ///     Gets the status of the sanitizing
         /// </summary>
         Status = 0x0000,
         #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
 
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
         /// <summary>
-        /// Disables the <see cref="FreezeLockExt"/> command
+        ///     Disables the <see cref="FreezeLockExt" /> command
         /// </summary>
         AntiFreezeLockExt = 0x0040
         #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
@@ -867,17 +872,17 @@ namespace DiscImageChef.Devices
 
     #region ATA NCQ Queue Management SubCommands
     /// <summary>
-    /// All known ATA NCQ QUEUE MANAGEMENT sub-commands
+    ///     All known ATA NCQ QUEUE MANAGEMENT sub-commands
     /// </summary>
     public enum AtaNcqQueueManagementSubcommands : byte
     {
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
         /// <summary>
-        /// Aborts pending NCQ commands
+        ///     Aborts pending NCQ commands
         /// </summary>
         AbortNcqQueue = 0x00,
         /// <summary>
-        /// Controls how NCQ Streaming commands are processed by the device
+        ///     Controls how NCQ Streaming commands are processed by the device
         /// </summary>
         DeadlineHandling = 0x01,
         #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
@@ -885,11 +890,11 @@ namespace DiscImageChef.Devices
     #endregion ATA NCQ Queue Management SubCommands
 
     /// <summary>
-    /// All known SASI commands
-    /// Commands 0x00 to 0x1F are 6-byte
-    /// Commands 0x20 to 0x3F are 10-byte
-    /// Commands 0x40 to 0x5F are 8-byte
-    /// Commands 0xA0 to 0xBF are 12-byte
+    ///     All known SASI commands
+    ///     Commands 0x00 to 0x1F are 6-byte
+    ///     Commands 0x20 to 0x3F are 10-byte
+    ///     Commands 0x40 to 0x5F are 8-byte
+    ///     Commands 0xA0 to 0xBF are 12-byte
     /// </summary>
 
     #region SASI Commands
@@ -897,451 +902,451 @@ namespace DiscImageChef.Devices
     {
         #region SASI Class 0 commands
         /// <summary>
-        /// Returns zero status if requested unit is on and ready.
-        /// SASI rev. 0a
+        ///     Returns zero status if requested unit is on and ready.
+        ///     SASI rev. 0a
         /// </summary>
         TestUnitReady = 0x00,
         /// <summary>
-        /// Sets the unit to a specific known state.
-        /// SASI rev. 0a
+        ///     Sets the unit to a specific known state.
+        ///     SASI rev. 0a
         /// </summary>
         RezeroUnit = 0x01,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         RequestSyndrome = 0x02,
         /// <summary>
-        /// Returns unit sense.
-        /// SASI rev. 0a
+        ///     Returns unit sense.
+        ///     SASI rev. 0a
         /// </summary>
         RequestSense = 0x03,
         /// <summary>
-        /// Formats the entire media.
-        /// SASI rev. 0a
+        ///     Formats the entire media.
+        ///     SASI rev. 0a
         /// </summary>
         FormatUnit = 0x04,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         CheckTrackFormat = 0x05,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         FormatTrack = 0x06,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         FormatBadTrack = 0x06,
         /// <summary>
-        /// Reads a block from the device.
-        /// SASI rev. 0a
+        ///     Reads a block from the device.
+        ///     SASI rev. 0a
         /// </summary>
         Read = 0x08,
         /// <summary>
-        /// SASI rev. 0a
-        /// Unknown
+        ///     SASI rev. 0a
+        ///     Unknown
         /// </summary>
         WriteProtectSector = 0x09,
         /// <summary>
-        /// Writes a block to the device.
-        /// SASI rev. 0a
+        ///     Writes a block to the device.
+        ///     SASI rev. 0a
         /// </summary>
         Write = 0x0A,
         /// <summary>
-        /// Moves the device reading mechanism to the specified block.
-        /// SASI rev. 0a
+        ///     Moves the device reading mechanism to the specified block.
+        ///     SASI rev. 0a
         /// </summary>
         Seek = 0x0B,
         /// <summary>
-        /// Found on a vendor source code
+        ///     Found on a vendor source code
         /// </summary>
         InitDriveCharacteristics = 0x0C,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         VerifyRestore = 0x0D,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         AssignAlternateDiskTrack = 0x0E,
         /// <summary>
-        /// Writes a File Mark on the device.
-        /// SASI rev. 0c
+        ///     Writes a File Mark on the device.
+        ///     SASI rev. 0c
         /// </summary>
         WriteFileMark = 0x0F,
         /// <summary>
-        /// Reserves the device for use by the iniator.
-        /// SASI rev. 0a
+        ///     Reserves the device for use by the iniator.
+        ///     SASI rev. 0a
         /// </summary>
         ReserveUnitOld = 0x12,
         /// <summary>
-        /// Gets information about a device
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Gets information about a device
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         Inquiry = 0x12,
         /// <summary>
-        /// Release the device from the reservation.
-        /// SASI rev. 0a
+        ///     Release the device from the reservation.
+        ///     SASI rev. 0a
         /// </summary>
         ReleaseUnitOld = 0x13,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         WriteProtectDrive = 0x14,
         /// <summary>
-        /// Writes and verifies blocks to the device.
-        /// SASI rev. 0c
+        ///     Writes and verifies blocks to the device.
+        ///     SASI rev. 0c
         /// </summary>
         WriteAndVerifyOld = 0x14,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         ReleaseWriteProtect = 0x15,
         /// <summary>
-        /// Verifies blocks.
-        /// SASI rev. 0c
+        ///     Verifies blocks.
+        ///     SASI rev. 0c
         /// </summary>
         VerifyOld = 0x15,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         ReadNoSeek = 0x16,
         /// <summary>
-        /// Gets the number of blocks in device.
-        /// SASI rev. 0c
+        ///     Gets the number of blocks in device.
+        ///     SASI rev. 0c
         /// </summary>
         ReadCapacityOld = 0x16,
         /// <summary>
-        /// Reserves the device for use by the iniator.
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Reserves the device for use by the iniator.
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         ReserveUnit = 0x16,
         /// <summary>
-        /// Release the device from the reservation.
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Release the device from the reservation.
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         ReleaseUnit = 0x17,
         /// <summary>
-        /// Searches data on blocks
-        /// SASI rev. 0a
+        ///     Searches data on blocks
+        ///     SASI rev. 0a
         /// </summary>
         SearchDataEqualOld = 0x17,
         /// <summary>
-        /// Searches data on blocks using major than or equal comparison
-        /// SASI rev. 0a
+        ///     Searches data on blocks using major than or equal comparison
+        ///     SASI rev. 0a
         /// </summary>
         SearchDataHighOld = 0x18,
         /// <summary>
-        /// Searches data on blocks using minor than or equal comparison
-        /// SASI rev. 0a
+        ///     Searches data on blocks using minor than or equal comparison
+        ///     SASI rev. 0a
         /// </summary>
         SearchDataLowOld = 0x19,
         /// <summary>
-        /// Reads analysis data from a device
-        /// SASI rev. 0a
+        ///     Reads analysis data from a device
+        ///     SASI rev. 0a
         /// </summary>
         ReadDiagnosticOld = 0x1A,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         VerifyData = 0x1B,
         /// <summary>
-        /// Requests a device to run a diagnostic
-        /// SASI rev. 0c
+        ///     Requests a device to run a diagnostic
+        ///     SASI rev. 0c
         /// </summary>
         WriteDiagnosticOld = 0x1B,
         /// <summary>
-        /// Requests the data after completion of a <see cref="WriteDiagnostic"/>
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Requests the data after completion of a <see cref="WriteDiagnostic" />
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         ReadDiagnostic = 0x1C,
         /// <summary>
-        /// Requests the device to perform diagnostics
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Requests the device to perform diagnostics
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         WriteDiagnostic = 0x1D,
         /// <summary>
-        /// Gets information about a device
-        /// SASI rev. 0c
+        ///     Gets information about a device
+        ///     SASI rev. 0c
         /// </summary>
         InquiryOld = 0x1F,
         #endregion SASI Class 0 commands
 
         #region SASI Class 1 commands
         /// <summary>
-        /// SASI rev. 0a
-        /// Unknown
+        ///     SASI rev. 0a
+        ///     Unknown
         /// </summary>
         Copy = 0x20,
         /// <summary>
-        /// SASI rev. 0a
-        /// Unknown
+        ///     SASI rev. 0a
+        ///     Unknown
         /// </summary>
         Restore = 0x21,
         /// <summary>
-        /// SASI rev. 0a
-        /// Unknown
+        ///     SASI rev. 0a
+        ///     Unknown
         /// </summary>
         Backup = 0x22,
         /// <summary>
-        /// SASI rev. 0a
-        /// Unknown
+        ///     SASI rev. 0a
+        ///     Unknown
         /// </summary>
         SetBlockLimitsOlder = 0x26,
         /// <summary>
-        /// Sets write or read limits from a specified block
-        /// SASI rev. 0c
+        ///     Sets write or read limits from a specified block
+        ///     SASI rev. 0c
         /// </summary>
         SetBlockLimitsOld = 0x28,
         /// <summary>
-        /// Reads blocks from device
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Reads blocks from device
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         ExtendedAddressRead = 0x28,
         /// <summary>
-        /// Writes blocks to the device
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Writes blocks to the device
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         ExtendedAddressWrite = 0x2A,
         /// <summary>
-        /// Writes blocks to the device and then verifies them
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Writes blocks to the device and then verifies them
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         WriteAndVerify = 0x2E,
         /// <summary>
-        /// Verifies blocks on the device
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Verifies blocks on the device
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         Verify = 0x2F,
         /// <summary>
-        /// Searches data on blocks
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Searches data on blocks
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         SearchDataEqual = 0x31,
         /// <summary>
-        /// Searches data on blocks using major than or equal comparison
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Searches data on blocks using major than or equal comparison
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         SearchDataHigh = 0x30,
         /// <summary>
-        /// Searches data on blocks using minor than or equal comparison
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Searches data on blocks using minor than or equal comparison
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         SearchDataLow = 0x32,
         #endregion SASI Class 1 commands
 
         #region SASI Class 2 commands
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         Load = 0x40,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         Unload = 0x41,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         Rewind = 0x42,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         SpaceForward = 0x43,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         SpaceForwardFileMark = 0x44,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         SpaceReverse = 0x45,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         SpaceReverseFileMark = 0x46,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         TrackSelect = 0x47,
         /// <summary>
-        /// Reads blocks from device
-        /// SASI rev. 0a
+        ///     Reads blocks from device
+        ///     SASI rev. 0a
         /// </summary>
         Read8 = 0x48,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         ReadVerify = 0x49,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         ReadDiagnosticClass2 = 0x4A,
         /// <summary>
-        /// Writes blocks to device
-        /// SASI rev. 0a
+        ///     Writes blocks to device
+        ///     SASI rev. 0a
         /// </summary>
         Write8 = 0x4B,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         WriteFileMarkClass2 = 0x4C,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         WriteExtended = 0x4D,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         WriteExtendedFileMark = 0x4E,
         /// <summary>
-        /// Unknown
-        /// SASI rev. 0a
+        ///     Unknown
+        ///     SASI rev. 0a
         /// </summary>
         WriteErase = 0x4F,
         /// <summary>
-        /// Writes and verifies blocks to the device.
-        /// SASI rev. 0c
+        ///     Writes and verifies blocks to the device.
+        ///     SASI rev. 0c
         /// </summary>
         WriteVerify8 = 0x54,
         /// <summary>
-        /// Verifies blocks.
-        /// SASI rev. 0c
+        ///     Verifies blocks.
+        ///     SASI rev. 0c
         /// </summary>
         Verify8 = 0x55,
         /// <summary>
-        /// Searches data on blocks using major than or equal comparison
-        /// SASI rev. 0c
+        ///     Searches data on blocks using major than or equal comparison
+        ///     SASI rev. 0c
         /// </summary>
         SearchDataHigh8 = 0x57,
         /// <summary>
-        /// Searches data on blocks
-        /// SASI rev. 0c
+        ///     Searches data on blocks
+        ///     SASI rev. 0c
         /// </summary>
         SearchDataEqual8 = 0x58,
         /// <summary>
-        /// Searches data on blocks using minor than or equal comparison
-        /// SASI rev. 0c
+        ///     Searches data on blocks using minor than or equal comparison
+        ///     SASI rev. 0c
         /// </summary>
         SearchDataLow8 = 0x59,
         #endregion SASI Class 2 commands
 
         #region SASI Class 3 commands
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         Skip = 0x60,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         Space = 0x61,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         Return = 0x62,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         Tab = 0x63,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         ReadControl = 0x64,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         Write3 = 0x65,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         WriteControl = 0x66,
         #endregion SASI Class 3 commands
 
         #region SASI Class 5 commands
         /// <summary>
-        /// Gets the number of blocks in device.
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Gets the number of blocks in device.
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         ReadCapacity = 0xA5,
         /// <summary>
-        /// Sets write or read limits from a specified block
-        /// ANSI X3T9.3 No. 185 (SASI)
+        ///     Sets write or read limits from a specified block
+        ///     ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         SetBlockLimits = 0xA9,
         #endregion SASI Class 5 commands
 
         #region SASI Class 6 commands
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         DefineFloppyDiskTrackFormat = 0xC0,
         /// <summary>
-        /// Unknown vendor command in X68000
+        ///     Unknown vendor command in X68000
         /// </summary>
         Specify = 0xC2,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         FormatDriveErrorMap = 0xC4,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         ReadErrorMap = 0xC5,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         ReadDriveType = 0xC6,
         #endregion SASI Class 6 commands
 
         #region SASI Class 7 commands
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         RamDiagnostic = 0xE0,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         WriteEcc = 0xE1,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         ReadId = 0xE2,
         /// <summary>
-        /// SASI rev. 0a
+        ///     SASI rev. 0a
         /// </summary>
         DriveDiagnostic = 0xE3,
         /// <summary>
-        /// Found on a vendor source code
+        ///     Found on a vendor source code
         /// </summary>
         ControllerDiagnostic = 0xE4,
         /// <summary>
-        /// Found on a vendor document
+        ///     Found on a vendor document
         /// </summary>
         ReadLong = 0xE5,
         /// <summary>
-        /// Found on a vendor document
+        ///     Found on a vendor document
         /// </summary>
         WriteLong = 0xE6
         #endregion SASI Class 7 commands
@@ -1350,1042 +1355,1043 @@ namespace DiscImageChef.Devices
 
     #region SCSI Commands
     /// <summary>
-    /// All known SCSI and ATAPI commands
+    ///     All known SCSI and ATAPI commands
     /// </summary>
     public enum ScsiCommands : byte
     {
         #region SCSI Primary Commands (SPC)
         /// <summary>
-        /// Commands used to obtain information about the access controls that are active
-        /// SPC-4 rev. 16
+        ///     Commands used to obtain information about the access controls that are active
+        ///     SPC-4 rev. 16
         /// </summary>
         AccessControlIn = 0x86,
         /// <summary>
-        /// Commands used to limit or grant access to LUNs
-        /// SPC-4 rev. 16
+        ///     Commands used to limit or grant access to LUNs
+        ///     SPC-4 rev. 16
         /// </summary>
         AccessControlOut = 0x87,
         /// <summary>
-        /// Modifies the operating definition of the device with respect to commmands.
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Modifies the operating definition of the device with respect to commmands.
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ChangeDefinition = 0x40,
         /// <summary>
-        /// Compares data between two devices
-        /// ECMA-111 (SCSI-1)
+        ///     Compares data between two devices
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Compare = 0x39,
         /// <summary>
-        /// Copies data between two devices
-        /// ECMA-111 (SCSI-1)
+        ///     Copies data between two devices
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Copy = 0x18,
         /// <summary>
-        /// Copies data between two devices and verifies the copy is correct.
-        /// ECMA-111 (SCSI-1)
+        ///     Copies data between two devices and verifies the copy is correct.
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         CopyAndVerify = 0x3A,
         /// <summary>
-        /// Copies data between two devices
-        /// SPC-2 rev. 20
+        ///     Copies data between two devices
+        ///     SPC-2 rev. 20
         /// </summary>
         ExtendedCopy = 0x83,
         /// <summary>
-        /// Requests information about the device
-        /// ECMA-111 (SCSI-1)
+        ///     Requests information about the device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Inquiry = SasiCommands.Inquiry,
         /// <summary>
-        /// Manages device statistics
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Manages device statistics
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         LogSelect = 0x4C,
         /// <summary>
-        /// Gets device statistics
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets device statistics
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         LogSense = 0x4D,
         /// <summary>
-        /// Retrieves management protocol information
-        /// SPC-2 rev. 20
+        ///     Retrieves management protocol information
+        ///     SPC-2 rev. 20
         /// </summary>
         ManagementProtocolIn = 0xA3,
         /// <summary>
-        /// Transfers management protocol information
-        /// SPC-2 rev. 20
+        ///     Transfers management protocol information
+        ///     SPC-2 rev. 20
         /// </summary>
         ManagementProtocolOut = 0xA4,
         /// <summary>
-        /// Sets device parameters
-        /// ECMA-111 (SCSI-1)
+        ///     Sets device parameters
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         ModeSelect = 0x15,
         /// <summary>
-        /// Sets device parameters
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Sets device parameters
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ModeSelect10 = 0x55,
         /// <summary>
-        /// Gets device parameters
-        /// ECMA-111 (SCSI-1)
+        ///     Gets device parameters
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         ModeSense = 0x1A,
         /// <summary>
-        /// Gets device parameters
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets device parameters
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ModeSense10 = 0x5A,
         /// <summary>
-        /// Obtains information about persistent reservations and reservation keys
-        /// SPC-1 rev. 10
+        ///     Obtains information about persistent reservations and reservation keys
+        ///     SPC-1 rev. 10
         /// </summary>
         PersistentReserveIn = 0x5E,
         /// <summary>
-        /// Reserves a LUN or an extent within a LUN for exclusive or shared use
-        /// SPC-1 rev. 10
+        ///     Reserves a LUN or an extent within a LUN for exclusive or shared use
+        ///     SPC-1 rev. 10
         /// </summary>
         PersistentReserveOut = 0x5F,
         /// <summary>
-        /// Requests the device to disable or enable the removal of the medium inside it
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device to disable or enable the removal of the medium inside it
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         PreventAllowMediumRemoval = 0x1E,
         /// <summary>
-        /// Reads attribute values from medium auxiliary memory
-        /// SPC-3 rev. 21b
+        ///     Reads attribute values from medium auxiliary memory
+        ///     SPC-3 rev. 21b
         /// </summary>
         ReadAttribute = 0x8C,
         /// <summary>
-        /// Reads the device buffer
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Reads the device buffer
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadBuffer = 0x3C,
         /// <summary>
-        /// Reads the media serial number
-        /// SPC-3 rev. 21b
+        ///     Reads the media serial number
+        ///     SPC-3 rev. 21b
         /// </summary>
         ReadSerialNumber = 0xAB,
         /// <summary>
-        /// Receives information about a previous or current <see cref="ExtendedCopy"/>
-        /// SPC-2 rev. 20
+        ///     Receives information about a previous or current <see cref="ExtendedCopy" />
+        ///     SPC-2 rev. 20
         /// </summary>
         ReceiveCopyResults = 0x84,
         /// <summary>
-        /// Requests the data after completion of a <see cref="SendDiagnostic"/>
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the data after completion of a <see cref="SendDiagnostic" />
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         ReceiveDiagnostic = SasiCommands.ReadDiagnostic,
         /// <summary>
-        /// Releases a previously reserved LUN or extents
-        /// ECMA-111 (SCSI-1)
+        ///     Releases a previously reserved LUN or extents
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Release = SasiCommands.ReleaseUnit,
         /// <summary>
-        /// Releases a previously reserved LUN or extents
-        /// SPC-1 rev. 10
+        ///     Releases a previously reserved LUN or extents
+        ///     SPC-1 rev. 10
         /// </summary>
         Release10 = 0x57,
         /// <summary>
-        /// Requests the LUNs that are present on the device
-        /// SPC-1 rev. 10
+        ///     Requests the LUNs that are present on the device
+        ///     SPC-1 rev. 10
         /// </summary>
         ReportLuns = 0xA0,
         /// <summary>
-        /// Requests the device's sense
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device's sense
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         RequestSense = SasiCommands.RequestSense,
         /// <summary>
-        /// Reserves a LUN or extent
-        /// ECMA-111 (SCSI-1)
+        ///     Reserves a LUN or extent
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Reserve = SasiCommands.ReserveUnit,
         /// <summary>
-        /// Reserves a LUN or extent
-        /// SPC-1 rev. 10
+        ///     Reserves a LUN or extent
+        ///     SPC-1 rev. 10
         /// </summary>
         Reserve10 = 0x56,
         /// <summary>
-        /// Retrieves security protocol information
-        /// SPC-4 rev. 16
+        ///     Retrieves security protocol information
+        ///     SPC-4 rev. 16
         /// </summary>
         SecurityProtocolIn = 0xA2,
         /// <summary>
-        /// Transfers security protocol information
-        /// SPC-4 rev. 16
+        ///     Transfers security protocol information
+        ///     SPC-4 rev. 16
         /// </summary>
         SecurityProtocolOut = 0xB5,
         /// <summary>
-        /// Requests the device to perform diagnostics
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device to perform diagnostics
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         SendDiagnostic = SasiCommands.WriteDiagnostic,
         /// <summary>
-        /// Extended commands
-        /// SPC-4
+        ///     Extended commands
+        ///     SPC-4
         /// </summary>
         ServiceActionIn = 0x9E,
         /// <summary>
-        /// Extended commands
-        /// SPC-4
+        ///     Extended commands
+        ///     SPC-4
         /// </summary>
         ServiceActionOut = 0x9F,
         /// <summary>
-        /// Checks if a LUN is ready to access its medium
-        /// ECMA-111 (SCSI-1)
+        ///     Checks if a LUN is ready to access its medium
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         TestUnitReady = SasiCommands.TestUnitReady,
         /// <summary>
-        /// Writes attribute values to medium auxiliary memory
-        /// SPC-3 rev. 21b
+        ///     Writes attribute values to medium auxiliary memory
+        ///     SPC-3 rev. 21b
         /// </summary>
         WriteAttribute = 0x8D,
         /// <summary>
-        /// Writes to the device's buffer
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Writes to the device's buffer
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         WriteBuffer = 0x3B,
         #endregion SCSI Primary Commands (SPC)
 
         #region SCSI Block Commands (SBC)
         /// <summary>
-        /// Compares blocks with sent data, and if equal, writes those block to device, atomically
-        /// SBC-3 rev. 25
+        ///     Compares blocks with sent data, and if equal, writes those block to device, atomically
+        ///     SBC-3 rev. 25
         /// </summary>
         CompareAndWrite = 0x89,
         /// <summary>
-        /// Formats the medium into addressable logical blocks
-        /// ECMA-111 (SCSI-1)
+        ///     Formats the medium into addressable logical blocks
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         FormatUnit = SasiCommands.FormatUnit,
         /// <summary>
-        /// Locks blocks from eviction of device's cache
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Locks blocks from eviction of device's cache
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         LockUnlockCache = 0x36,
         /// <summary>
-        /// Locks blocks from eviction of device's cache
-        /// SBC-2 rev. 4
+        ///     Locks blocks from eviction of device's cache
+        ///     SBC-2 rev. 4
         /// </summary>
         LockUnlockCache16 = 0x92,
         /// <summary>
-        /// Requests the device to perform the following uninterrupted series of actions:
-        /// 1.- Read the specified blocks
-        /// 2.- Transfer blocks from the data out buffer
-        /// 3.- Perform an OR operation between the read blocks and the buffer
-        /// 4.- Write the buffer to the blocks
-        /// SBC-3 rev. 16
+        ///     Requests the device to perform the following uninterrupted series of actions:
+        ///     1.- Read the specified blocks
+        ///     2.- Transfer blocks from the data out buffer
+        ///     3.- Perform an OR operation between the read blocks and the buffer
+        ///     4.- Write the buffer to the blocks
+        ///     SBC-3 rev. 16
         /// </summary>
         OrWrite = 0x8B,
         /// <summary>
-        /// Transfers requested blocks to devices' cache
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Transfers requested blocks to devices' cache
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PreFetch = 0x34,
         /// <summary>
-        /// Transfers requested blocks to devices' cache
-        /// SBC-3 rev. 16
+        ///     Transfers requested blocks to devices' cache
+        ///     SBC-3 rev. 16
         /// </summary>
         PreFetch16 = 0x90,
         /// <summary>
-        /// Reads blocks from device
-        /// ECMA-111 (SCSI-1)
+        ///     Reads blocks from device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Read = SasiCommands.Read,
         /// <summary>
-        /// Reads blocks from device
-        /// ECMA-111 (SCSI-1)
+        ///     Reads blocks from device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Read10 = SasiCommands.ExtendedAddressRead,
         /// <summary>
-        /// Reads blocks from device
-        /// SBC-2 rev. 4
+        ///     Reads blocks from device
+        ///     SBC-2 rev. 4
         /// </summary>
         Read16 = 0x88,
         /// <summary>
-        /// Gets device capacity
-        /// ECMA-111 (SCSI-1)
+        ///     Gets device capacity
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         ReadCapacity = 0x25,
         /// <summary>
-        /// Gets device's defect data
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets device's defect data
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadDefectData = 0x37,
         /// <summary>
-        /// Reads blocks from device in a vendor-specific way that should include the ECC alongside the data
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Reads blocks from device in a vendor-specific way that should include the ECC alongside the data
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadLong = 0x3E,
         /// <summary>
-        /// Requests the device to reassign the defective blocks to another area of the medium
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device to reassign the defective blocks to another area of the medium
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         ReassignBlocks = 0x07,
         /// <summary>
-        /// Requests the target write to the medium the XOR data generated from the specified source devices
-        /// SBC-1 rev. 8c
+        ///     Requests the target write to the medium the XOR data generated from the specified source devices
+        ///     SBC-1 rev. 8c
         /// </summary>
         Rebuild = 0x81,
         /// <summary>
-        /// Requests the target write to the buffer the XOR data from its own medium and the specified source devices
-        /// SBC-1 rev. 8c
+        ///     Requests the target write to the buffer the XOR data from its own medium and the specified source devices
+        ///     SBC-1 rev. 8c
         /// </summary>
         Regenerate = 0x82,
         /// <summary>
-        /// Requests the device to set the LUN in a vendor specific state
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device to set the LUN in a vendor specific state
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         RezeroUnit = SasiCommands.RezeroUnit,
         /// <summary>
-        /// Searches data on blocks
-        /// ECMA-111 (SCSI-1)
+        ///     Searches data on blocks
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         SearchDataEqual = SasiCommands.SearchDataEqual,
         /// <summary>
-        /// Searches data on blocks using major than or equal comparison
-        /// ECMA-111 (SCSI-1)
+        ///     Searches data on blocks using major than or equal comparison
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         SearchDataHigh = SasiCommands.SearchDataHigh,
         /// <summary>
-        /// Searches data on blocks using minor than or equal comparison
-        /// ECMA-111 (SCSI-1)
+        ///     Searches data on blocks using minor than or equal comparison
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         SearchDataLow = SasiCommands.SearchDataLow,
         /// <summary>
-        /// Requests the device to seek to a specified blocks
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device to seek to a specified blocks
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Seek = SasiCommands.Seek,
         /// <summary>
-        /// Requests the device to seek to a specified blocks
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device to seek to a specified blocks
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Seek10 = 0x2B,
         /// <summary>
-        /// Defines the range within which subsequent linked commands may operate
-        /// ECMA-111 (SCSI-1)
+        ///     Defines the range within which subsequent linked commands may operate
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         SetLimits = 0x33,
         /// <summary>
-        /// Requests the device to enable or disable the LUN for media access operations
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the device to enable or disable the LUN for media access operations
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         StartStopUnit = 0x1B,
         /// <summary>
-        /// Ensures that the blocks in the cache are written to the medium
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Ensures that the blocks in the cache are written to the medium
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SynchronizeCache = 0x35,
         /// <summary>
-        /// Ensures that the blocks in the cache are written to the medium
-        /// SBC-2 rev. 4
+        ///     Ensures that the blocks in the cache are written to the medium
+        ///     SBC-2 rev. 4
         /// </summary>
         SynchronizeCache16 = 0x91,
         /// <summary>
-        /// Unmaps one or more LBAs
-        /// In SSDs, this is trimming
-        /// SBC-3 rev. 25
+        ///     Unmaps one or more LBAs
+        ///     In SSDs, this is trimming
+        ///     SBC-3 rev. 25
         /// </summary>
         Unmap = 0x42,
         /// <summary>
-        /// Verifies blocks on the device
-        /// ECMA-111 (SCSI-1)
+        ///     Verifies blocks on the device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Verify10 = SasiCommands.Verify,
         /// <summary>
-        /// Verifies blocks on the device
-        /// SBC-2 rev. 4
+        ///     Verifies blocks on the device
+        ///     SBC-2 rev. 4
         /// </summary>
         Verify16 = 0x8F,
         /// <summary>
-        /// Writes blocks to the device
-        /// ECMA-111 (SCSI-1)
+        ///     Writes blocks to the device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Write = SasiCommands.Write,
         /// <summary>
-        /// Writes blocks to the device
-        /// ECMA-111 (SCSI-1)
+        ///     Writes blocks to the device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Write10 = SasiCommands.ExtendedAddressWrite,
         /// <summary>
-        /// Writes blocks to the device
-        /// SBC-2 rev. 4
+        ///     Writes blocks to the device
+        ///     SBC-2 rev. 4
         /// </summary>
         Write16 = 0x8A,
         /// <summary>
-        /// Writes blocks to the device and then verifies them
-        /// ECMA-111 (SCSI-1)
+        ///     Writes blocks to the device and then verifies them
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         WriteAndVerify = SasiCommands.WriteAndVerify,
         /// <summary>
-        /// Writes blocks to the device and then verifies them
-        /// SBC-2 rev. 4
+        ///     Writes blocks to the device and then verifies them
+        ///     SBC-2 rev. 4
         /// </summary>
         WriteAndVerify16 = 0x8E,
         /// <summary>
-        /// Writes blocks to the device with a vendor specified format that shall include the ECC alongside the data
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Writes blocks to the device with a vendor specified format that shall include the ECC alongside the data
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         WriteLong = 0x3F,
         /// <summary>
-        /// Writes a single block several times
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Writes a single block several times
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         WriteSame = 0x41,
         /// <summary>
-        /// Writes a single block several times
-        /// SBC-2 rev. 4
+        ///     Writes a single block several times
+        ///     SBC-2 rev. 4
         /// </summary>
         WriteSame16 = 0x93,
         /// <summary>
-        /// Requets XOR data generated by an <see cref="XdWrite"/> or <see cref="Regenerate"/> command
-        /// SBC-1 rev. 8c
+        ///     Requets XOR data generated by an <see cref="XdWrite" /> or <see cref="Regenerate" /> command
+        ///     SBC-1 rev. 8c
         /// </summary>
         XdRead = 0x52,
         /// <summary>
-        /// XORs the data sent with data on the medium and stores it until an <see cref="XdRead"/> is issued
-        /// SBC-1 rev. 8c
+        ///     XORs the data sent with data on the medium and stores it until an <see cref="XdRead" /> is issued
+        ///     SBC-1 rev. 8c
         /// </summary>
         XdWrite = 0x50,
         /// <summary>
-        /// XORs the data sent with data on the medium and stores it until an <see cref="XdRead"/> is issued
-        /// SBC-1 rev. 8c
+        ///     XORs the data sent with data on the medium and stores it until an <see cref="XdRead" /> is issued
+        ///     SBC-1 rev. 8c
         /// </summary>
         XdWrite16 = 0x80,
         /// <summary>
-        /// Requets the target to XOR the sent data with the data on the medium and return the results
+        ///     Requets the target to XOR the sent data with the data on the medium and return the results
         /// </summary>
         XdWriteRead = 0x53,
         /// <summary>
-        /// Requests the target to XOR the data transferred with the data on the medium and writes it to the medium
-        /// SBC-1 rev. 8c
+        ///     Requests the target to XOR the data transferred with the data on the medium and writes it to the medium
+        ///     SBC-1 rev. 8c
         /// </summary>
         XpWrite = 0x51,
         #endregion SCSI Block Commands (SBC)
 
         #region SCSI Streaming Commands (SSC)
         /// <summary>
-        /// Prepares the medium for use by the LUN
-        /// SSC-1 rev. 22
+        ///     Prepares the medium for use by the LUN
+        ///     SSC-1 rev. 22
         /// </summary>
         FormatMedium = 0x04,
         /// <summary>
-        /// Erases part of all of the medium from the current position
-        /// ECMA-111 (SCSI-1)
+        ///     Erases part of all of the medium from the current position
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Erase = 0x19,
         /// <summary>
-        /// Enables or disables the LUN for further operations
-        /// ECMA-111 (SCSI-1)
+        ///     Enables or disables the LUN for further operations
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         LoadUnload = 0x1B,
         /// <summary>
-        /// Positions the LUN to a specified block in a specified partition
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Positions the LUN to a specified block in a specified partition
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         Locate = 0x2B,
         /// <summary>
-        /// Positions the LUN to a specified block in a specified partition
-        /// SSC-2 rev. 09
+        ///     Positions the LUN to a specified block in a specified partition
+        ///     SSC-2 rev. 09
         /// </summary>
         Locate16 = 0x92,
         /// <summary>
-        /// Requests the block length limits capability
-        /// ECMA-111 (SCSI-1)
+        ///     Requests the block length limits capability
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         ReadBlockLimits = 0x05,
         /// <summary>
-        /// Reads the current position
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Reads the current position
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadPosition = 0x34,
         /// <summary>
-        /// Reads blocks from the device, in reverse order
-        /// ECMA-111 (SCSI-1)
+        ///     Reads blocks from the device, in reverse order
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         ReadReverse = 0x0F,
         /// <summary>
-        /// Retrieves data from the device buffer that has not been successfully written to the medium (or printed)
-        /// ECMA-111 (SCSI-1)
+        ///     Retrieves data from the device buffer that has not been successfully written to the medium (or printed)
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         RecoverBufferedData = 0x14,
         /// <summary>
-        /// Requests information regarding the supported densities for the logical unit
-        /// SSC-1 rev. 22
+        ///     Requests information regarding the supported densities for the logical unit
+        ///     SSC-1 rev. 22
         /// </summary>
         ReportDensitySupport = 0x44,
         /// <summary>
-        /// Seeks the medium to the beginning of partition in current partition
-        /// ECMA-111 (SCSI-1)
+        ///     Seeks the medium to the beginning of partition in current partition
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Rewind = 0x01,
         /// <summary>
-        /// A variety of positioning functions
-        /// ECMA-111 (SCSI-1)
+        ///     A variety of positioning functions
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Space = 0x11,
         /// <summary>
-        /// A variety of positioning functions
-        /// SSC-2 rev. 09
+        ///     A variety of positioning functions
+        ///     SSC-2 rev. 09
         /// </summary>
         Space16 = 0x91,
         /// <summary>
-        /// Selects the specified track
-        /// ECMA-111 (SCSI-1)
+        ///     Selects the specified track
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         TrackSelect = 0x0B,
         /// <summary>
-        /// Verifies one or more blocks from the next one
-        /// ECMA-111 (SCSI-1)
+        ///     Verifies one or more blocks from the next one
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Verify = 0x13,
         /// <summary>
-        /// Writes the specified number of filemarks or setmarks in the current position
-        /// ECMA-111 (SCSI-1)
+        ///     Writes the specified number of filemarks or setmarks in the current position
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         WriteFileMarks = 0x10,
         #endregion SCSI Streaming Commands (SSC)
 
         #region SCSI Streaming Commands for Printers (SSC)
         /// <summary>
-        /// Assures that the data in the buffer has been printed, or, for other devices, written to media
-        /// ECMA-111 (SCSI-1)
+        ///     Assures that the data in the buffer has been printed, or, for other devices, written to media
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         FlushBuffer = 0x10,
         /// <summary>
-        /// Specifies forms or fronts
-        /// ECMA-111 (SCSI-1)
+        ///     Specifies forms or fronts
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Format = 0x04,
         /// <summary>
-        /// Transfers data to be printed
-        /// ECMA-111 (SCSI-1)
+        ///     Transfers data to be printed
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Print = 0x0A,
         /// <summary>
-        /// Transfers data to be printed with a slew value
-        /// ECMA-111 (SCSI-1)
+        ///     Transfers data to be printed with a slew value
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         SlewAndPrint = 0x0B,
         /// <summary>
-        /// Halts printing
-        /// ECMA-111 (SCSI-1)
+        ///     Halts printing
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         StopPrint = 0x1B,
         /// <summary>
-        /// Assures that the data in the buffer has been printed, or, for other devices, written to media
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Assures that the data in the buffer has been printed, or, for other devices, written to media
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SynchronizeBuffer = FlushBuffer,
         #endregion SCSI Streaming Commands for Printers (SSC)
 
         #region SCSI Processor Commands
         /// <summary>
-        /// Transfers data from the device
-        /// ECMA-111 (SCSI-1)
+        ///     Transfers data from the device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Receive = 0x08,
         /// <summary>
-        /// Sends data to the device
-        /// ECMA-111 (SCSI-1)
+        ///     Sends data to the device
+        ///     ECMA-111 (SCSI-1)
         /// </summary>
         Send = 0x0A,
         #endregion SCSI Processor Commands
 
         #region SCSI Multimedia Commands (MMC)
         /// <summary>
-        /// Erases any part of a CD-RW
-        /// MMC-1 rev. 9
+        ///     Erases any part of a CD-RW
+        ///     MMC-1 rev. 9
         /// </summary>
         Blank = 0xA1,
         /// <summary>
-        /// Closes a track or session
-        /// MMC-1 rev. 9
+        ///     Closes a track or session
+        ///     MMC-1 rev. 9
         /// </summary>
         CloseTrackSession = 0x5B,
         /// <summary>
-        /// Gets information about the overall capabilities of the device and the current capabilities of the device
-        /// MMC-2 rev. 11a
+        ///     Gets information about the overall capabilities of the device and the current capabilities of the device
+        ///     MMC-2 rev. 11a
         /// </summary>
         GetConfiguration = 0x46,
         /// <summary>
-        /// Requests the LUN to report events and statuses
-        /// MMC-2 rev. 11a
+        ///     Requests the LUN to report events and statuses
+        ///     MMC-2 rev. 11a
         /// </summary>
         GetEventStatusNotification = 0x4A,
         /// <summary>
-        /// Provides a mehotd to profile the performance of the drive
-        /// MMC-2 rev. 11a
+        ///     Provides a mehotd to profile the performance of the drive
+        ///     MMC-2 rev. 11a
         /// </summary>
         GetPerformance = 0xAC,
         /// <summary>
-        /// Requests the device changer to load or unload a disc
-        /// MMC-1 rev. 9
+        ///     Requests the device changer to load or unload a disc
+        ///     MMC-1 rev. 9
         /// </summary>
         LoadUnloadCd = 0xA6,
         /// <summary>
-        /// Requests the device changer to load or unload a disc
-        /// MMC-2 rev. 11a
+        ///     Requests the device changer to load or unload a disc
+        ///     MMC-2 rev. 11a
         /// </summary>
         LoadUnloadMedium = 0xA6,
         /// <summary>
-        /// Requests information about the current status of the CD device, including any changer mechanism
-        /// MMC-1 rev. 9
+        ///     Requests information about the current status of the CD device, including any changer mechanism
+        ///     MMC-1 rev. 9
         /// </summary>
         MechanicalStatus = 0xBD,
         /// <summary>
-        /// Requests the device to start or stop an audio play operation
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Requests the device to start or stop an audio play operation
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PauseResume = 0x4B,
         /// <summary>
-        /// Begins an audio playback
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Begins an audio playback
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PlayAudio = 0x45,
         /// <summary>
-        /// Begins an audio playback
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Begins an audio playback
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PlayAudio12 = 0xA5,
         /// <summary>
-        /// Begins an audio playback using MSF addressing
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Begins an audio playback using MSF addressing
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PlayAudioMsf = 0x47,
         /// <summary>
-        /// Begins an audio playback from the specified index of the specified track
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Begins an audio playback from the specified index of the specified track
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PlayAudioTrackIndex = 0x48,
         /// <summary>
-        /// Begins an audio playback from the position relative of a track
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Begins an audio playback from the position relative of a track
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PlayTrackRelative = 0x49,
         /// <summary>
-        /// Begins an audio playback from the position relative of a track
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Begins an audio playback from the position relative of a track
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PlayTrackRelative12 = 0xA9,
         /// <summary>
-        /// Reports the total and blank area of the device buffer
-        /// MMC-1 rev. 9
+        ///     Reports the total and blank area of the device buffer
+        ///     MMC-1 rev. 9
         /// </summary>
         ReadBufferCapacity = 0x5C,
         /// <summary>
-        /// Reads a block from a CD with any of the requested CD data streams
-        /// MMC-1 rev. 9
+        ///     Reads a block from a CD with any of the requested CD data streams
+        ///     MMC-1 rev. 9
         /// </summary>
         ReadCd = 0xBE,
         /// <summary>
-        /// Reads a block from a CD with any of the requested CD data streams using MSF addressing
-        /// MMC-1 rev. 9
+        ///     Reads a block from a CD with any of the requested CD data streams using MSF addressing
+        ///     MMC-1 rev. 9
         /// </summary>
         ReadCdMsf = 0xB9,
         /// <summary>
-        /// Returns the recorded size of the CD
-        /// MMC-1 rev. 9
+        ///     Returns the recorded size of the CD
+        ///     MMC-1 rev. 9
         /// </summary>
         ReadCdRecordedCapacity = 0x25,
         /// <summary>
-        /// Gets informationn about all discs: CD-ROM, CD-R and CD-RW
-        /// MMC-1 rev. 9
+        ///     Gets informationn about all discs: CD-ROM, CD-R and CD-RW
+        ///     MMC-1 rev. 9
         /// </summary>
         ReadDiscInformation = 0x51,
         /// <summary>
-        /// Reads areas from the DVD or BD media
-        /// MMC-5 rev. 2c
+        ///     Reads areas from the DVD or BD media
+        ///     MMC-5 rev. 2c
         /// </summary>
         ReadDiscStructure = 0xAD,
         /// <summary>
-        /// Reads areas from the DVD media
-        /// MMC-2 rev. 11a
+        ///     Reads areas from the DVD media
+        ///     MMC-2 rev. 11a
         /// </summary>
         ReadDvdStructure = 0xAD,
         /// <summary>
-        /// Requests a list of the possible format capacities for an installed random-writable media
-        /// MMC-2 rev. 11a
+        ///     Requests a list of the possible format capacities for an installed random-writable media
+        ///     MMC-2 rev. 11a
         /// </summary>
         ReadFormatCapacities = 0x23,
         /// <summary>
-        /// Reads the data block header of the specified CD-ROM block
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Reads the data block header of the specified CD-ROM block
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadHeader = 0x44,
         /// <summary>
-        /// Reads the mastering information from a Master CD.
-        /// MMC-1 rev. 9
+        ///     Reads the mastering information from a Master CD.
+        ///     MMC-1 rev. 9
         /// </summary>
         ReadMasterCue = 0x59,
         /// <summary>
-        /// Requests the Q subchannel and the current audio playback status
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Requests the Q subchannel and the current audio playback status
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadSubChannel = 0x42,
         /// <summary>
-        /// Requests the medium TOC, PMA or ATIP from the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Requests the medium TOC, PMA or ATIP from the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadTocPmaAtip = 0x43,
         /// <summary>
-        /// Gets information about a track regardless of its status
-        /// MMC-1 rev. 9
+        ///     Gets information about a track regardless of its status
+        ///     MMC-1 rev. 9
         /// </summary>
         ReadTrackInformation = 0x52,
         /// <summary>
-        /// Repairs an incomplete ECC block at the end of an RZone
-        /// Mt. Fuji ver. 7 rev. 1.21
+        ///     Repairs an incomplete ECC block at the end of an RZone
+        ///     Mt. Fuji ver. 7 rev. 1.21
         /// </summary>
         RepairRZone = 0x58,
         /// <summary>
-        /// Repairs an incomplete packet at the end of a packet writing track
-        /// MMC-1 rev. 9
+        ///     Repairs an incomplete packet at the end of a packet writing track
+        ///     MMC-1 rev. 9
         /// </summary>
         RepairTrack = 0x58,
         /// <summary>
-        /// Requests the start of the authentication process and provides data necessary for authentication and for generating a Bus Key
-        /// MMC-2 rev. 11a
+        ///     Requests the start of the authentication process and provides data necessary for authentication and for generating
+        ///     a Bus Key
+        ///     MMC-2 rev. 11a
         /// </summary>
         ReportKey = 0xA4,
         /// <summary>
-        /// Reserves disc space for a track
-        /// MMC-1 rev. 9
+        ///     Reserves disc space for a track
+        ///     MMC-1 rev. 9
         /// </summary>
         ReserveTrack = 0x53,
         /// <summary>
-        /// Fast-forwards or fast-reverses the audio playback to the specified block. Stops if it encounters a data track
-        /// MMC-1 rev. 9
+        ///     Fast-forwards or fast-reverses the audio playback to the specified block. Stops if it encounters a data track
+        ///     MMC-1 rev. 9
         /// </summary>
         ScanMmc = 0xBA,
         /// <summary>
-        /// Sends a cue sheet for session-at-once recording
-        /// MMC-1 rev. 9
+        ///     Sends a cue sheet for session-at-once recording
+        ///     MMC-1 rev. 9
         /// </summary>
         SendCueSheet = 0x5D,
         /// <summary>
-        /// Transfer a DVD or BD structure for media writing
-        /// MMC-5 rev. 2c
+        ///     Transfer a DVD or BD structure for media writing
+        ///     MMC-5 rev. 2c
         /// </summary>
         SendDiscStructure = 0xAD,
         /// <summary>
-        /// Transfer a DVD structure for media writing
-        /// MMC-2 rev. 11a
+        ///     Transfer a DVD structure for media writing
+        ///     MMC-2 rev. 11a
         /// </summary>
         SendDvdStructure = 0xAD,
         /// <summary>
-        /// Requests the LUN to process an event
-        /// MMC-2 rev. 11a
+        ///     Requests the LUN to process an event
+        ///     MMC-2 rev. 11a
         /// </summary>
         SendEvent = 0xA2,
         /// <summary>
-        /// Provides data necessary for authentication and for generating a Bus Key
-        /// MMC-2 rev. 11a
+        ///     Provides data necessary for authentication and for generating a Bus Key
+        ///     MMC-2 rev. 11a
         /// </summary>
         SendKey = 0xA3,
         /// <summary>
-        /// Restores the Optimum Power Calibration values to the drive for a specific disc
-        /// MMC-1 rev. 9
+        ///     Restores the Optimum Power Calibration values to the drive for a specific disc
+        ///     MMC-1 rev. 9
         /// </summary>
         SendOpcInformation = 0x54,
         /// <summary>
-        /// Sets the spindle speed to be used while reading/writing data to a CD
-        /// MMC-1 rev. 9
+        ///     Sets the spindle speed to be used while reading/writing data to a CD
+        ///     MMC-1 rev. 9
         /// </summary>
         SetCdRomSpeed = 0xBB,
         /// <summary>
-        /// Requests the LUN to perform read ahead caching operations from the specified block
-        /// MMC-2 rev. 11a
+        ///     Requests the LUN to perform read ahead caching operations from the specified block
+        ///     MMC-2 rev. 11a
         /// </summary>
         SetReadAhead = 0xA7,
         /// <summary>
-        /// Indicates the LUN to try to achieve a specified performance
-        /// MMC-2 rev. 11a
+        ///     Indicates the LUN to try to achieve a specified performance
+        ///     MMC-2 rev. 11a
         /// </summary>
         SetStreaming = 0xB6,
         /// <summary>
-        /// Stops a scan and continues audio playback from current scanning position
-        /// MMC-1 rev. 9
+        ///     Stops a scan and continues audio playback from current scanning position
+        ///     MMC-1 rev. 9
         /// </summary>
         StopPlayScan = 0x4E,
         #endregion SCSI Multimedia Commands (MMC)
 
         #region SCSI Scanner Commands
         /// <summary>
-        /// Gets information about the data buffer
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets information about the data buffer
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         GetDataBufferStatus = 0x34,
         /// <summary>
-        /// Gets information about previously defined windows
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets information about previously defined windows
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         GetWindow = 0x25,
         /// <summary>
-        /// Provides positioning functions
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Provides positioning functions
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ObjectPosition = 0x31,
         /// <summary>
-        /// Begins a scan operation
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Begins a scan operation
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         Scan = 0x1B,
         /// <summary>
-        /// Specifies one or more windows within the device's scanning range
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Specifies one or more windows within the device's scanning range
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SetWindow = 0x24,
         /// <summary>
-        /// Sends data to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Sends data to the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         Send10 = 0x2A,
         #endregion SCSI Scanner Commands
 
         #region SCSI Block Commands for Optical Media (SBC)
         /// <summary>
-        /// Erases the specified number of blocks
+        ///     Erases the specified number of blocks
         /// </summary>
         Erase10 = 0x2C,
         /// <summary>
-        /// Erases the specified number of blocks
+        ///     Erases the specified number of blocks
         /// </summary>
         Erase12 = 0xAC,
         /// <summary>
-        /// Searches the medium for a contiguos set of written or blank blocks
+        ///     Searches the medium for a contiguos set of written or blank blocks
         /// </summary>
         MediumScan = 0x38,
         /// <summary>
-        /// Reads blocks from device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Reads blocks from device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         Read12 = 0xA8,
         /// <summary>
-        /// Gets medium's defect data
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets medium's defect data
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadDefectData12 = 0xB7,
         /// <summary>
-        /// Gets the maxium generation address for the specified block
+        ///     Gets the maxium generation address for the specified block
         /// </summary>
         ReadGeneration = 0x29,
         /// <summary>
-        /// Reads a specified generation of a specified block
+        ///     Reads a specified generation of a specified block
         /// </summary>
         ReadUpdatedBlock = 0x2D,
         /// <summary>
-        /// Searches data on blocks
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Searches data on blocks
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SearchDataEqual12 = 0xB1,
         /// <summary>
-        /// Searches data on blocks using major than or equal comparison
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Searches data on blocks using major than or equal comparison
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SearchDataHigh12 = 0xB0,
         /// <summary>
-        /// Searches data on blocks using minor than or equal comparison
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Searches data on blocks using minor than or equal comparison
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SearchDataLow12 = 0xB2,
         /// <summary>
-        /// Defines the range within which subsequent linked commands may operate
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Defines the range within which subsequent linked commands may operate
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SetLimits12 = 0xB3,
         /// <summary>
-        /// Replaces a block with data
+        ///     Replaces a block with data
         /// </summary>
         UpdateBlock = 0x3D,
         /// <summary>
-        /// Verifies blocks on the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Verifies blocks on the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         Verify12 = 0xAF,
         /// <summary>
-        /// Writes blocks to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Writes blocks to the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         Write12 = 0xAA,
         /// <summary>
-        /// Writes blocks to the device and then verifies them
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Writes blocks to the device and then verifies them
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         WriteAndVerify12 = 0xAE,
         #endregion SCSI Block Commands for Optical Media (SBC)
 
         #region SCSI Medium Changer Commands (SMC)
         /// <summary>
-        /// Provides a means to exchange the medium in the source element with the medium at destination element
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Provides a means to exchange the medium in the source element with the medium at destination element
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ExchangeMedium = 0xA6,
         /// <summary>
-        /// Checks all elements for medium and any other relevant status
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Checks all elements for medium and any other relevant status
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         InitializeElementStatus = 0x07,
         /// <summary>
-        /// Checks all elements for medium and any other relevant status in the specified range of elements
-        /// SMC-2 rev. 7
+        ///     Checks all elements for medium and any other relevant status in the specified range of elements
+        ///     SMC-2 rev. 7
         /// </summary>
         InitializeElementStatusWithRange = 0x37,
         /// <summary>
-        /// Moves a medium from an element to another
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Moves a medium from an element to another
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         MoveMedium = 0xA5,
         /// <summary>
-        /// Moves a medium that's currently attached to another element
-        /// SPC-1 rev. 10
+        ///     Moves a medium that's currently attached to another element
+        ///     SPC-1 rev. 10
         /// </summary>
         MoveMediumAttached = 0xA7,
         /// <summary>
-        /// Provides a method to change the open/closed state of the specified import/export element
-        /// SMC-3 rev. 12
+        ///     Provides a method to change the open/closed state of the specified import/export element
+        ///     SMC-3 rev. 12
         /// </summary>
         OpenCloseImportExportElement = 0x1B,
         /// <summary>
-        /// Positions the transport element in front of the destination element
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Positions the transport element in front of the destination element
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         PositionToElement = 0x2B,
         /// <summary>
-        /// Requests the status of the elements
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Requests the status of the elements
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReadElementStatus = 0xB8,
         /// <summary>
-        /// Requests the status of the attached element
-        /// SPC-1 rev. 10
+        ///     Requests the status of the attached element
+        ///     SPC-1 rev. 10
         /// </summary>
         ReadElementStatusAttached = 0xB4,
         /// <summary>
-        /// Releases a reserved LUN
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Releases a reserved LUN
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReleaseElement = 0x17,
         /// <summary>
-        /// Releases a reserved LUN
-        /// SMC-1 rev. 10a
+        ///     Releases a reserved LUN
+        ///     SMC-1 rev. 10a
         /// </summary>
         ReleaseElement10 = 0x57,
         /// <summary>
-        /// Requests information regarding the supported volume types for the device
-        /// SMC-3 rev. 12
+        ///     Requests information regarding the supported volume types for the device
+        ///     SMC-3 rev. 12
         /// </summary>
         ReportVolumeTypesSupported = 0x44,
         /// <summary>
-        /// Gets the results of <see cref="SendVolumeTag"/>
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets the results of <see cref="SendVolumeTag" />
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         RequestVolumeElementAddress = 0xB5,
         /// <summary>
-        /// Reserves a LUN
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Reserves a LUN
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         ReserveElement = 0x16,
         /// <summary>
-        /// Reserves a LUN
-        /// SMC-1 rev. 10a
+        ///     Reserves a LUN
+        ///     SMC-1 rev. 10a
         /// </summary>
         ReserveElement10 = 0x56,
         /// <summary>
-        /// Transfers a volume tag template to be searched or new volume tag information for one or more elements
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Transfers a volume tag template to be searched or new volume tag information for one or more elements
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SendVolumeTag = 0xB6,
         #endregion SCSI Medium Changer Commands (SMC)
 
         #region SCSI Communication Commands
         /// <summary>
-        /// Gets data from the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets data from the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         GetMessage = 0x08,
         /// <summary>
-        /// Gets data from the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets data from the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         GetMessage10 = 0x28,
         /// <summary>
-        /// Gets data from the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Gets data from the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         GetMessage12 = 0xA8,
         /// <summary>
-        /// Sends data to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Sends data to the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SendMessage = 0x0A,
         /// <summary>
-        /// Sends data to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Sends data to the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SendMessage10 = 0x2A,
         /// <summary>
-        /// Sends data to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        ///     Sends data to the device
+        ///     SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         SendMessage12 = 0xAA,
         #endregion SCSI Communication Commands
 
         #region SCSI Controller Commands
         /// <summary>
-        /// Commands that get information about redundancy groups
-        /// SCC-2 rev. 4
+        ///     Commands that get information about redundancy groups
+        ///     SCC-2 rev. 4
         /// </summary>
         RedundancyGroupIn = 0xBA,
         /// <summary>
-        /// Commands that set information about redundancy groups
-        /// SCC-2 rev. 4
+        ///     Commands that set information about redundancy groups
+        ///     SCC-2 rev. 4
         /// </summary>
         RedundancyGroupOut = 0xBB,
         /// <summary>
-        /// Commands that get information about volume sets
-        /// SCC-2 rev. 4
+        ///     Commands that get information about volume sets
+        ///     SCC-2 rev. 4
         /// </summary>
         VolumeSetIn = 0xBE,
         /// <summary>
-        /// Commands that set information about volume sets
-        /// SCC-2 rev. 4
+        ///     Commands that set information about volume sets
+        ///     SCC-2 rev. 4
         /// </summary>
         VolumeSetOut = 0xBF,
         #endregion SCSI Controller Commands
 
         #region Pioneer CD-ROM SCSI-2 Command Set
         /// <summary>
-        /// Scans for a block playing a block on each track cross
+        ///     Scans for a block playing a block on each track cross
         /// </summary>
         AudioScan = 0xCD,
         /// <summary>
-        /// Requests the drive the status from the previous WriteCDP command.
+        ///     Requests the drive the status from the previous WriteCDP command.
         /// </summary>
         ReadCdp = 0xE4,
         /// <summary>
-        /// Requests status from the drive
+        ///     Requests status from the drive
         /// </summary>
         ReadDriveStatus = 0xE0,
         /// <summary>
-        /// Reads CD-DA data and/or subcode data
+        ///     Reads CD-DA data and/or subcode data
         /// </summary>
         ReadCdDa = 0xD8,
         /// <summary>
-        /// Reads CD-DA data and/or subcode data using MSF addressing
+        ///     Reads CD-DA data and/or subcode data using MSF addressing
         /// </summary>
         ReadCdDaMsf = 0xD9,
         /// <summary>
-        /// Reads CD-XA data
+        ///     Reads CD-XA data
         /// </summary>
         ReadCdXa = 0xDB,
         /// <summary>
-        /// Reads all subcode data
+        ///     Reads all subcode data
         /// </summary>
         ReadAllSubCode = 0xDF,
         /// <summary>
-        /// Sets the spindle speed to be used while reading/writing data to a CD
+        ///     Sets the spindle speed to be used while reading/writing data to a CD
         /// </summary>
         SetCdSpeed = 0xDA,
         WriteCdp = 0xE3,
@@ -2393,14 +2399,14 @@ namespace DiscImageChef.Devices
 
         #region ATA Command Pass-Through
         /// <summary>
-        /// Sends a 24-bit ATA command to the device
-        /// Clashes with <see cref="Blank"/>
-        /// ATA CPT rev. 8a
+        ///     Sends a 24-bit ATA command to the device
+        ///     Clashes with <see cref="Blank" />
+        ///     ATA CPT rev. 8a
         /// </summary>
         AtaPassThrough = 0xA1,
         /// <summary>
-        /// Sends a 48-bit ATA command to the device
-        /// ATA CPT rev. 8a
+        ///     Sends a 48-bit ATA command to the device
+        ///     ATA CPT rev. 8a
         /// </summary>
         AtaPassThrough16 = 0x85,
         #endregion ATA Command Pass-Through
@@ -2415,11 +2421,11 @@ namespace DiscImageChef.Devices
 
         #region SCSI Zoned Block Commands
         /// <summary>
-        /// ZBC commands with host->device information
+        ///     ZBC commands with host->device information
         /// </summary>
         ZbcOut = 0x94,
         /// <summary>
-        /// ZBC commands with device->host information
+        ///     ZBC commands with device->host information
         /// </summary>
         ZbcIn = 0x95,
         #endregion
@@ -2442,201 +2448,201 @@ namespace DiscImageChef.Devices
 
         #region SEGA Packet Interface (all are 12-byte CDB)
         /// <summary>
-        /// Verifies that the device can be accessed
-        /// Sega SPI ver. 1.30
+        ///     Verifies that the device can be accessed
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaTestUnit = TestUnitReady,
         /// <summary>
-        /// Gets current CD status
-        /// Sega SPI ver. 1.30
+        ///     Gets current CD status
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaRequestStatus = 0x10,
         /// <summary>
-        /// Gets CD block mode info
-        /// Sega SPI ver. 1.30
+        ///     Gets CD block mode info
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaRequestMode = 0x11,
         /// <summary>
-        /// Sets CD block mode
-        /// Sega SPI ver. 1.30
+        ///     Sets CD block mode
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaSetMode = 0x12,
         /// <summary>
-        /// Requests device error info
-        /// Sega SPI ver. 1.30
+        ///     Requests device error info
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaRequestError = 0x13,
         /// <summary>
-        /// Gets disc TOC
-        /// Sega SPI ver. 1.30
+        ///     Gets disc TOC
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaGetToc = 0x14,
         /// <summary>
-        /// Gets specified session data
-        /// Sega SPI ver. 1.30
+        ///     Gets specified session data
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaRequestSession = 0x15,
         /// <summary>
-        /// Stops the drive and opens the drive tray, or, on manual trays, stays busy until it is opened
-        /// Sega SPI ver. 1.30
+        ///     Stops the drive and opens the drive tray, or, on manual trays, stays busy until it is opened
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaOpenTray = 0x16,
         /// <summary>
-        /// Starts audio playback
-        /// Sega SPI ver. 1.30
+        ///     Starts audio playback
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaPlayCd = 0x20,
         /// <summary>
-        /// Moves drive pickup to specified block
-        /// Sega SPI ver. 1.30
+        ///     Moves drive pickup to specified block
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaSeek = 0x21,
         /// <summary>
-        /// Fast-forwards or fast-reverses until Lead-In or Lead-Out arrive, or until another command is issued
-        /// Sega SPI ver. 1.30
+        ///     Fast-forwards or fast-reverses until Lead-In or Lead-Out arrive, or until another command is issued
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaScan = 0x22,
         /// <summary>
-        /// Reads blocks from the disc
-        /// Sega SPI ver. 1.30
+        ///     Reads blocks from the disc
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaRead = 0x30,
         /// <summary>
-        /// Reads blocks from the disc seeking to another position at end
-        /// Sega SPI ver. 1.30
+        ///     Reads blocks from the disc seeking to another position at end
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaRead2 = 0x31,
         /// <summary>
-        /// Reads disc subcode
-        /// Sega SPI ver. 1.30
+        ///     Reads disc subcode
+        ///     Sega SPI ver. 1.30
         /// </summary>
         SegaGetSubcode = 0x40,
         #endregion SEGA Packet Interface (all are 12-byte CDB)
 
         /// <summary>
-        /// Variable sized Command Description Block
-        /// SPC-4 rev. 16
+        ///     Variable sized Command Description Block
+        ///     SPC-4 rev. 16
         /// </summary>
         VariableSizedCdb = 0x7F,
 
         #region Plextor vendor commands
         /// <summary>
-        /// Sends extended commands (like SpeedRead) to Plextor drives
+        ///     Sends extended commands (like SpeedRead) to Plextor drives
         /// </summary>
         PlextorExtend = 0xE9,
         /// <summary>
-        /// Command for Plextor PoweRec
+        ///     Command for Plextor PoweRec
         /// </summary>
         PlextorPoweRec = 0xEB,
         /// <summary>
-        /// Sends extended commands (like PoweRec) to Plextor drives
+        ///     Sends extended commands (like PoweRec) to Plextor drives
         /// </summary>
         PlextorExtend2 = 0xED,
         /// <summary>
-        /// Resets Plextor drives
+        ///     Resets Plextor drives
         /// </summary>
         PlextorReset = 0xEE,
         /// <summary>
-        /// Reads drive statistics from Plextor drives EEPROM
+        ///     Reads drive statistics from Plextor drives EEPROM
         /// </summary>
         PlextorReadEeprom = 0xF1,
         #endregion Plextor vendor commands
 
         #region HL-DT-ST vendor commands
         /// <summary>
-        /// Sends debugging commands to HL-DT-ST DVD drives
+        ///     Sends debugging commands to HL-DT-ST DVD drives
         /// </summary>
         HlDtStVendor = 0xE7,
         #endregion HL-DT-ST vendor commands
 
         #region NEC vendor commands
         /// <summary>
-        /// Reads CD-DA data
+        ///     Reads CD-DA data
         /// </summary>
         NecReadCdDa = 0xD4,
         #endregion NEC vendor commands
 
         #region Adaptec vendor commands
         /// <summary>
-        /// Translates a SCSI LBA to a drive's CHS
+        ///     Translates a SCSI LBA to a drive's CHS
         /// </summary>
         AdaptecTranslate = 0x0F,
         /// <summary>
-        /// Configures Adaptec controller error threshold
+        ///     Configures Adaptec controller error threshold
         /// </summary>
         AdaptecSetErrorThreshold = 0x10,
         /// <summary>
-        /// Reads and resets error and statistical counters
+        ///     Reads and resets error and statistical counters
         /// </summary>
         AdaptecReadCounters = 0x11,
         /// <summary>
-        /// Writes to controller's RAM
+        ///     Writes to controller's RAM
         /// </summary>
         AdaptecWriteBuffer = 0x13,
         /// <summary>
-        /// Reads controller's RAM
+        ///     Reads controller's RAM
         /// </summary>
         AdaptecReadBuffer = 0x14,
         #endregion Adaptec vendor commands
 
         #region Archive Corp. vendor commands
         /// <summary>
-        /// Gets current position's block address
+        ///     Gets current position's block address
         /// </summary>
         ArchiveRequestBlockAddress = 0x02,
         /// <summary>
-        /// Seeks to specified block address
+        ///     Seeks to specified block address
         /// </summary>
         ArchiveSeekBlock = 0x0C,
         #endregion Archive Corp. vendor commands
 
         #region Certance vendor commands
         /// <summary>
-        /// Parks the load arm in preparation for transport
+        ///     Parks the load arm in preparation for transport
         /// </summary>
         CertanceParkUnpark = 0x06,
         #endregion Certance vendor commands
 
         #region Fujitsu vendor commands
         /// <summary>
-        /// Used to check the controller's data and control path
+        ///     Used to check the controller's data and control path
         /// </summary>
         FujitsuLoopWriteToRead = 0xC1,
         /// <summary>
-        /// Used to display a message on the operator panel
+        ///     Used to display a message on the operator panel
         /// </summary>
         FujitsuDisplay = 0xCF,
         #endregion Fujitsu vendor commands
 
         #region M-Systems vendor commands
         /// <summary>
-        /// Securely erases all flash blocks, including defective, spared and unused
+        ///     Securely erases all flash blocks, including defective, spared and unused
         /// </summary>
         MSystemsSecurityErase = 0xFF,
         /// <summary>
-        /// Securely erases all flash blocks, including defective, spared and unused
+        ///     Securely erases all flash blocks, including defective, spared and unused
         /// </summary>
         MSystemsSecurityEraseOld = 0xDF,
         #endregion M-Systems vendor commands
 
         #region Plasmon vendor commands
         /// <summary>
-        /// Retrieves sector address
+        ///     Retrieves sector address
         /// </summary>
         PlasmonReadSectorLocation = 0xE6,
         /// <summary>
-        /// Makes a Compliant WORM block completely unreadable
+        ///     Makes a Compliant WORM block completely unreadable
         /// </summary>
         PlasmonShred = 0xEE,
         #endregion Plasmon vendor commands
 
         #region Kreon vendor commands
         /// <summary>
-        /// Most Kreon commands start with this
+        ///     Most Kreon commands start with this
         /// </summary>
         KreonCommand = 0xFF,
         /// <summary>
-        /// Kreon extract Security Sectors command start with this
+        ///     Kreon extract Security Sectors command start with this
         /// </summary>
         KreonSsCommand = 0xAD
         #endregion Kreon vendor commands
@@ -2644,28 +2650,28 @@ namespace DiscImageChef.Devices
     #endregion SCSI Commands
 
     /// <summary>
-    /// SCSI command transfer direction
+    ///     SCSI command transfer direction
     /// </summary>
     public enum ScsiDirection
     {
         /// <summary>
-        /// No data transfer happens
+        ///     No data transfer happens
         /// </summary>
         None,
         /// <summary>
-        /// From host to device
+        ///     From host to device
         /// </summary>
         Out,
         /// <summary>
-        /// From device to host
+        ///     From device to host
         /// </summary>
         In,
         /// <summary>
-        /// Bidirectional device/host
+        ///     Bidirectional device/host
         /// </summary>
         Bidirectional,
         /// <summary>
-        /// Unspecified
+        ///     Unspecified
         /// </summary>
         Unspecified
     }
@@ -2674,130 +2680,130 @@ namespace DiscImageChef.Devices
     public enum AtaProtocol : byte
     {
         /// <summary>
-        /// Requests a device hard reset (pin 1)
+        ///     Requests a device hard reset (pin 1)
         /// </summary>
         HardReset = 0,
         /// <summary>
-        /// Requests a device soft reset (COMRESET issue)
+        ///     Requests a device soft reset (COMRESET issue)
         /// </summary>
         SoftReset = 1,
         /// <summary>
-        /// No data is to be transfered
+        ///     No data is to be transfered
         /// </summary>
         NonData = 3,
         /// <summary>
-        /// Requests a device->host transfer using PIO
+        ///     Requests a device->host transfer using PIO
         /// </summary>
         PioIn = 4,
         /// <summary>
-        /// Requests a host->device transfer using PIO
+        ///     Requests a host->device transfer using PIO
         /// </summary>
         PioOut = 5,
         /// <summary>
-        /// Requests a DMA transfer
+        ///     Requests a DMA transfer
         /// </summary>
         Dma = 6,
         /// <summary>
-        /// Requests to queue a DMA transfer
+        ///     Requests to queue a DMA transfer
         /// </summary>
         DmaQueued = 7,
         /// <summary>
-        /// Requests device diagnostics
+        ///     Requests device diagnostics
         /// </summary>
         DeviceDiagnostic = 8,
         /// <summary>
-        /// Requets device reset
+        ///     Requets device reset
         /// </summary>
         DeviceReset = 9,
         /// <summary>
-        /// Requests a device->host transfer using UltraDMA
+        ///     Requests a device->host transfer using UltraDMA
         /// </summary>
         UDmaIn = 10,
         /// <summary>
-        /// Requests a host->device transfer using UltraDMA
+        ///     Requests a host->device transfer using UltraDMA
         /// </summary>
         UDmaOut = 11,
         /// <summary>
-        /// Unknown Serial ATA
+        ///     Unknown Serial ATA
         /// </summary>
         FpDma = 12,
         /// <summary>
-        /// Requests the Extended ATA Status Return Descriptor
+        ///     Requests the Extended ATA Status Return Descriptor
         /// </summary>
         ReturnResponse = 15
     }
 
     /// <summary>
-    /// Indicates the STL which ATA register contains the length of data to
-    /// be transfered
+    ///     Indicates the STL which ATA register contains the length of data to
+    ///     be transfered
     /// </summary>
     public enum AtaTransferRegister : byte
     {
         /// <summary>
-        /// There is no transfer
+        ///     There is no transfer
         /// </summary>
         NoTransfer = 0,
         /// <summary>
-        /// FEATURE register contains the data length
+        ///     FEATURE register contains the data length
         /// </summary>
         Feature = 1,
         /// <summary>
-        /// SECTOR_COUNT register contains the data length
+        ///     SECTOR_COUNT register contains the data length
         /// </summary>
         SectorCount = 2,
         /// <summary>
-        /// The STPSIU contains the data length
+        ///     The STPSIU contains the data length
         /// </summary>
         Sptsiu = 3
     }
     #endregion SCSI's ATA Command Pass-Through
 
     /// <summary>
-    /// ZBC sub-commands, mask 0x1F
+    ///     ZBC sub-commands, mask 0x1F
     /// </summary>
     public enum ZbcSubCommands : byte
     {
         /// <summary>
-        /// Returns list with zones of specified types
+        ///     Returns list with zones of specified types
         /// </summary>
         ReportZones = 0x00,
         /// <summary>
-        /// Closes a zone
+        ///     Closes a zone
         /// </summary>
         CloseZone = 0x01,
         /// <summary>
-        /// Finishes a zone
+        ///     Finishes a zone
         /// </summary>
         FinishZone = 0x02,
         /// <summary>
-        /// Opens a zone
+        ///     Opens a zone
         /// </summary>
         OpenZone = 0x03,
         /// <summary>
-        /// Resets zone's write pointer to zone start
+        ///     Resets zone's write pointer to zone start
         /// </summary>
         ResetWritePointer = 0x04
     }
 
     /// <summary>
-    /// MODE SENSE page control, mask 0xC0
+    ///     MODE SENSE page control, mask 0xC0
     /// </summary>
     public enum ScsiModeSensePageControl : byte
     {
         /// <summary>
-        /// Current values
+        ///     Current values
         /// </summary>
         Current = 0x00,
         /// <summary>
-        /// Changeable values
+        ///     Changeable values
         /// </summary>
         Changeable = 0x40,
         /// <summary>
-        /// Default values
+        ///     Default values
         /// </summary>
         Default = 0x80,
         /// <summary>
-        /// Saved values
+        ///     Saved values
         /// </summary>
         Saved = 0xC0
     }
@@ -2805,19 +2811,19 @@ namespace DiscImageChef.Devices
     public enum ScsiPreventAllowMode : byte
     {
         /// <summary>
-        /// Allows medium removal from data transport and from medium changer
+        ///     Allows medium removal from data transport and from medium changer
         /// </summary>
         Allow = 0x00,
         /// <summary>
-        /// Prevents medium removal from data transport but allows it from medium changer
+        ///     Prevents medium removal from data transport but allows it from medium changer
         /// </summary>
         Prevent = 0x01,
         /// <summary>
-        /// Allows medium removal from data transport but prevents it from medium changer
+        ///     Allows medium removal from data transport but prevents it from medium changer
         /// </summary>
         PreventChanger = 0x02,
         /// <summary>
-        /// Prevents medium removal from both data transport and medium changer
+        ///     Prevents medium removal from both data transport and medium changer
         /// </summary>
         PreventAll = 0x03
     }
@@ -2825,15 +2831,15 @@ namespace DiscImageChef.Devices
     public enum MmcGetConfigurationRt : byte
     {
         /// <summary>
-        /// Drive shall return the Feature Header and all Feature Descriptors
+        ///     Drive shall return the Feature Header and all Feature Descriptors
         /// </summary>
         All = 0x00,
         /// <summary>
-        /// Drive shall return the Feature Header and current Feature Descriptors
+        ///     Drive shall return the Feature Header and current Feature Descriptors
         /// </summary>
         Current = 0x01,
         /// <summary>
-        /// Drive shall return only the Feature Header with the chosen Feature Descriptor
+        ///     Drive shall return only the Feature Header with the chosen Feature Descriptor
         /// </summary>
         Single = 0x02,
         Reserved = 0x03
@@ -2842,11 +2848,11 @@ namespace DiscImageChef.Devices
     public enum MmcDiscStructureMediaType : byte
     {
         /// <summary>
-        /// Disc Structures for DVD and HD DVD
+        ///     Disc Structures for DVD and HD DVD
         /// </summary>
         Dvd = 0x00,
         /// <summary>
-        /// Disc Structures for BD
+        ///     Disc Structures for BD
         /// </summary>
         Bd = 0x01
     }
@@ -2856,187 +2862,187 @@ namespace DiscImageChef.Devices
         // Generic Format Codes
 
         /// <summary>
-        /// AACS Volume Identifier
+        ///     AACS Volume Identifier
         /// </summary>
         AacsVolId = 0x80,
         /// <summary>
-        /// AACS Pre-recorded Media Serial Number
+        ///     AACS Pre-recorded Media Serial Number
         /// </summary>
         AacsMediaSerial = 0x81,
         /// <summary>
-        /// AACS Media Identifier
+        ///     AACS Media Identifier
         /// </summary>
         AacsMediaId = 0x82,
         /// <summary>
-        /// AACS Lead-in Media Key Block
+        ///     AACS Lead-in Media Key Block
         /// </summary>
         Aacsmkb = 0x83,
         /// <summary>
-        /// AACS Data Keys
+        ///     AACS Data Keys
         /// </summary>
         AacsDataKeys = 0x84,
         /// <summary>
-        /// AACS LBA extents
+        ///     AACS LBA extents
         /// </summary>
         AacslbaExtents = 0x85,
         /// <summary>
-        /// CPRM Media Key Block specified by AACS
+        ///     CPRM Media Key Block specified by AACS
         /// </summary>
         Aacsmkbcprm = 0x86,
         /// <summary>
-        /// Recognized format layers
+        ///     Recognized format layers
         /// </summary>
         RecognizedFormatLayers = 0x90,
         /// <summary>
-        /// Write protection status
+        ///     Write protection status
         /// </summary>
         WriteProtectionStatus = 0xC0,
         /// <summary>
-        /// READ/SEND DISC STRUCTURE capability list
+        ///     READ/SEND DISC STRUCTURE capability list
         /// </summary>
         CapabilityList = 0xFF,
 
         // DVD Disc Structures
         /// <summary>
-        /// DVD Lead-in Physical Information
+        ///     DVD Lead-in Physical Information
         /// </summary>
         PhysicalInformation = 0x00,
         /// <summary>
-        /// DVD Lead-in Copyright Information
+        ///     DVD Lead-in Copyright Information
         /// </summary>
         CopyrightInformation = 0x01,
         /// <summary>
-        /// CSS/CPPM Disc key
+        ///     CSS/CPPM Disc key
         /// </summary>
         DiscKey = 0x02,
         /// <summary>
-        /// DVD Burst Cutting Area
+        ///     DVD Burst Cutting Area
         /// </summary>
         BurstCuttingArea = 0x03,
         /// <summary>
-        /// DVD Lead-in Disc Manufacturing Information
+        ///     DVD Lead-in Disc Manufacturing Information
         /// </summary>
         DiscManufacturingInformation = 0x04,
         /// <summary>
-        /// DVD Copyright Information from specified sector
+        ///     DVD Copyright Information from specified sector
         /// </summary>
         SectorCopyrightInformation = 0x05,
         /// <summary>
-        /// CSS/CPPM Media Identifier
+        ///     CSS/CPPM Media Identifier
         /// </summary>
         MediaIdentifier = 0x06,
         /// <summary>
-        /// CSS/CPPM Media Key Block
+        ///     CSS/CPPM Media Key Block
         /// </summary>
         MediaKeyBlock = 0x07,
         /// <summary>
-        /// DDS from DVD-RAM
+        ///     DDS from DVD-RAM
         /// </summary>
         DvdramDds = 0x08,
         /// <summary>
-        /// DVD-RAM Medium Status
+        ///     DVD-RAM Medium Status
         /// </summary>
         DvdramMediumStatus = 0x09,
         /// <summary>
-        /// DVD-RAM Spare Area Information
+        ///     DVD-RAM Spare Area Information
         /// </summary>
         DvdramSpareAreaInformation = 0x0A,
         /// <summary>
-        /// DVD-RAM Recording Type Information
+        ///     DVD-RAM Recording Type Information
         /// </summary>
         DvdramRecordingType = 0x0B,
         /// <summary>
-        /// DVD-R/-RW RMD in last Border-out
+        ///     DVD-R/-RW RMD in last Border-out
         /// </summary>
         LastBorderOutRmd = 0x0C,
         /// <summary>
-        /// Specified RMD from last recorded Border-out
+        ///     Specified RMD from last recorded Border-out
         /// </summary>
         SpecifiedRmd = 0x0D,
         /// <summary>
-        /// DVD-R/-RW Lead-in pre-recorded information
+        ///     DVD-R/-RW Lead-in pre-recorded information
         /// </summary>
         PreRecordedInfo = 0x0E,
         /// <summary>
-        /// DVD-R/-RW Media Identifier
+        ///     DVD-R/-RW Media Identifier
         /// </summary>
         DvdrMediaIdentifier = 0x0F,
         /// <summary>
-        /// DVD-R/-RW Physical Format Information
+        ///     DVD-R/-RW Physical Format Information
         /// </summary>
         DvdrPhysicalInformation = 0x10,
         /// <summary>
-        /// ADIP
+        ///     ADIP
         /// </summary>
         Adip = 0x11,
         /// <summary>
-        /// HD DVD Lead-in Copyright Protection Information
+        ///     HD DVD Lead-in Copyright Protection Information
         /// </summary>
         HddvdCopyrightInformation = 0x12,
         /// <summary>
-        /// AACS Lead-in Copyright Data Section
+        ///     AACS Lead-in Copyright Data Section
         /// </summary>
         DvdAacs = 0x15,
         /// <summary>
-        /// HD DVD-R Medium Status
+        ///     HD DVD-R Medium Status
         /// </summary>
         HddvdrMediumStatus = 0x19,
         /// <summary>
-        /// HD DVD-R Last recorded RMD in the latest RMZ
+        ///     HD DVD-R Last recorded RMD in the latest RMZ
         /// </summary>
         HddvdrLastRmd = 0x1A,
         /// <summary>
-        /// DVD+/-R DL and DVD-Download DL layer capacity
+        ///     DVD+/-R DL and DVD-Download DL layer capacity
         /// </summary>
         DvdrLayerCapacity = 0x20,
         /// <summary>
-        /// DVD-R DL Middle Zone start address
+        ///     DVD-R DL Middle Zone start address
         /// </summary>
         MiddleZoneStart = 0x21,
         /// <summary>
-        /// DVD-R DL Jump Interval Size
+        ///     DVD-R DL Jump Interval Size
         /// </summary>
         JumpIntervalSize = 0x22,
         /// <summary>
-        /// DVD-R DL Start LBA of the manual layer jump
+        ///     DVD-R DL Start LBA of the manual layer jump
         /// </summary>
         ManualLayerJumpStartLba = 0x23,
         /// <summary>
-        /// DVD-R DL Remapping information of the specified Anchor Point
+        ///     DVD-R DL Remapping information of the specified Anchor Point
         /// </summary>
         RemapAnchorPoint = 0x24,
         /// <summary>
-        /// Disc Control Block
+        ///     Disc Control Block
         /// </summary>
         Dcb = 0x30,
 
         // BD Disc Structures
         /// <summary>
-        /// Blu-ray Disc Information
+        ///     Blu-ray Disc Information
         /// </summary>
         DiscInformation = 0x00,
         /// <summary>
-        /// Blu-ray Burst Cutting Area
+        ///     Blu-ray Burst Cutting Area
         /// </summary>
         BdBurstCuttingArea = 0x03,
         /// <summary>
-        /// Blu-ray DDS
+        ///     Blu-ray DDS
         /// </summary>
         BdDds = 0x08,
         /// <summary>
-        /// Blu-ray Cartridge Status
+        ///     Blu-ray Cartridge Status
         /// </summary>
         CartridgeStatus = 0x09,
         /// <summary>
-        /// Blu-ray Spare Area Information
+        ///     Blu-ray Spare Area Information
         /// </summary>
         BdSpareAreaInformation = 0x0A,
         /// <summary>
-        /// Unmodified DFL
+        ///     Unmodified DFL
         /// </summary>
         RawDfl = 0x12,
         /// <summary>
-        /// Physical Access Control
+        ///     Physical Access Control
         /// </summary>
         Pac = 0x30
     }
@@ -3046,31 +3052,31 @@ namespace DiscImageChef.Devices
         // SERVICE ACTION IN
 
         /// <summary>
-        /// Requests parameter data describing provisioning status for the specified LBA
-        /// SBC-3 rev. 25
+        ///     Requests parameter data describing provisioning status for the specified LBA
+        ///     SBC-3 rev. 25
         /// </summary>
         GetLbaStatus = 0x12,
         /// <summary>
-        /// Gets device capacity
-        /// SBC-2 rev. 4
+        ///     Gets device capacity
+        ///     SBC-2 rev. 4
         /// </summary>
         ReadCapacity16 = 0x10,
         /// <summary>
-        /// Reads blocks from device in a vendor-specific way that should include the ECC alongside the data
-        /// SBC-2 rev. 4
+        ///     Reads blocks from device in a vendor-specific way that should include the ECC alongside the data
+        ///     SBC-2 rev. 4
         /// </summary>
         ReadLong16 = 0x11,
         /// <summary>
-        /// Requests information indicating the user data segments on the ports and LUNs to access them
-        /// SBC-3 rev. 25
+        ///     Requests information indicating the user data segments on the ports and LUNs to access them
+        ///     SBC-3 rev. 25
         /// </summary>
         ReportReferrals = 0x13,
 
         // SERVICE ACTION OUT
 
         /// <summary>
-        /// Writes blocks to the device with a vendor specified format that shall include the ECC alongside the data
-        /// SBC-2 rev. 4
+        ///     Writes blocks to the device with a vendor specified format that shall include the ECC alongside the data
+        ///     SBC-2 rev. 4
         /// </summary>
         WriteLong16 = ReadLong16
     }
@@ -3078,15 +3084,15 @@ namespace DiscImageChef.Devices
     public enum MmcDiscInformationDataTypes : byte
     {
         /// <summary>
-        /// Standard Disc Information
+        ///     Standard Disc Information
         /// </summary>
         DiscInformation = 0x00,
         /// <summary>
-        /// Track Resources Information
+        ///     Track Resources Information
         /// </summary>
         TrackResources = 0x01,
         /// <summary>
-        /// POW Resources Information
+        ///     POW Resources Information
         /// </summary>
         PowResources = 0x02
     }
@@ -3094,27 +3100,27 @@ namespace DiscImageChef.Devices
     public enum MmcSectorTypes : byte
     {
         /// <summary>
-        /// No checking of data type is performed
+        ///     No checking of data type is performed
         /// </summary>
         AllTypes = 0x00,
         /// <summary>
-        /// Only CD-DA sectors shall be returned
+        ///     Only CD-DA sectors shall be returned
         /// </summary>
         Cdda = 0x01,
         /// <summary>
-        /// Only Mode 1 sectors shall be returned
+        ///     Only Mode 1 sectors shall be returned
         /// </summary>
         Mode1 = 0x02,
         /// <summary>
-        /// Only Mode 2 formless sectors shall be returned
+        ///     Only Mode 2 formless sectors shall be returned
         /// </summary>
         Mode2 = 0x03,
         /// <summary>
-        /// Only Mode 2 Form 1 sectors shall be returned
+        ///     Only Mode 2 Form 1 sectors shall be returned
         /// </summary>
         Mode2Form1 = 0x04,
         /// <summary>
-        /// Only Mode 2 Form 2 sectors shall be returned
+        ///     Only Mode 2 Form 2 sectors shall be returned
         /// </summary>
         Mode2Form2 = 0x05
     }
@@ -3122,19 +3128,19 @@ namespace DiscImageChef.Devices
     public enum MmcHeaderCodes : byte
     {
         /// <summary>
-        /// No header information shall be returned
+        ///     No header information shall be returned
         /// </summary>
         None = 0x00,
         /// <summary>
-        /// Only the four byte header shall be returned
+        ///     Only the four byte header shall be returned
         /// </summary>
         HeaderOnly = 0x01,
         /// <summary>
-        /// Only the mode 2 form x subheader shall be returned
+        ///     Only the mode 2 form x subheader shall be returned
         /// </summary>
         SubHeaderOnly = 0x02,
         /// <summary>
-        /// Return both header and subheader
+        ///     Return both header and subheader
         /// </summary>
         AllHeaders = 0x03
     }
@@ -3142,15 +3148,15 @@ namespace DiscImageChef.Devices
     public enum MmcErrorField : byte
     {
         /// <summary>
-        /// No error information is returned
+        ///     No error information is returned
         /// </summary>
         None = 0x00,
         /// <summary>
-        /// The C2 pointer bits will be included
+        ///     The C2 pointer bits will be included
         /// </summary>
         C2Pointers = 0x01,
         /// <summary>
-        /// The C2 pointer bits will be included as well as the block error byte with a padding byte
+        ///     The C2 pointer bits will be included as well as the block error byte with a padding byte
         /// </summary>
         C2PointersAndBlock = 0x02
     }
@@ -3158,19 +3164,19 @@ namespace DiscImageChef.Devices
     public enum MmcSubchannel : byte
     {
         /// <summary>
-        /// No subchannel shall be returned
+        ///     No subchannel shall be returned
         /// </summary>
         None = 0x00,
         /// <summary>
-        /// The raw P to W subchannel data shall be transferred
+        ///     The raw P to W subchannel data shall be transferred
         /// </summary>
         Raw = 0x01,
         /// <summary>
-        /// Q data shall be transferred
+        ///     Q data shall be transferred
         /// </summary>
         Q16 = 0x02,
         /// <summary>
-        /// De-interleaved and error-corrected R to W subchannel data shall be transferred
+        ///     De-interleaved and error-corrected R to W subchannel data shall be transferred
         /// </summary>
         Rw = 0x04
     }
@@ -3178,19 +3184,19 @@ namespace DiscImageChef.Devices
     public enum PioneerSubchannel : byte
     {
         /// <summary>
-        /// No subchannel shall be returned
+        ///     No subchannel shall be returned
         /// </summary>
         None = 0x00,
         /// <summary>
-        /// Q data shall be transferred
+        ///     Q data shall be transferred
         /// </summary>
         Q16 = 0x01,
         /// <summary>
-        /// The raw P to W subchannel data shall be transferred
+        ///     The raw P to W subchannel data shall be transferred
         /// </summary>
         All = 0x02,
         /// <summary>
-        /// The raw P to W subchannel data shall be transferred WITHOUT user data
+        ///     The raw P to W subchannel data shall be transferred WITHOUT user data
         /// </summary>
         Only = 0x03
     }
@@ -3198,23 +3204,23 @@ namespace DiscImageChef.Devices
     public enum PlextorSubchannel : byte
     {
         /// <summary>
-        /// No subchannel shall be returned
+        ///     No subchannel shall be returned
         /// </summary>
         None = 0x00,
         /// <summary>
-        /// Q data shall be transferred
+        ///     Q data shall be transferred
         /// </summary>
         Q16 = 0x01,
         /// <summary>
-        /// The packed and corrected P to W subchannel data shall be transferred
+        ///     The packed and corrected P to W subchannel data shall be transferred
         /// </summary>
         Pack = 0x02,
         /// <summary>
-        /// The raw P to W subchannel data shall be transferred
+        ///     The raw P to W subchannel data shall be transferred
         /// </summary>
         All = 0x03,
         /// <summary>
-        /// The raw P to W subchannel data, plus C2 error data shall be transferred
+        ///     The raw P to W subchannel data, plus C2 error data shall be transferred
         /// </summary>
         RawC2 = 0x08
     }
@@ -3222,61 +3228,61 @@ namespace DiscImageChef.Devices
     public enum PlextorSubCommands : byte
     {
         /// <summary>
-        /// Gets Plextor mode
+        ///     Gets Plextor mode
         /// </summary>
         GetMode = 0x00,
         /// <summary>
-        /// Sets Plextor mode
+        ///     Sets Plextor mode
         /// </summary>
         SetMode = 0x10,
 
         /// <summary>
-        /// Plextor force single session or hide CD-R
+        ///     Plextor force single session or hide CD-R
         /// </summary>
         SessionHide = 0x01,
         /// <summary>
-        /// Plextor VariRec
+        ///     Plextor VariRec
         /// </summary>
         VariRec = 0x02,
         /// <summary>
-        /// Plextor GigaRec
+        ///     Plextor GigaRec
         /// </summary>
         GigaRec = 0x04,
         /// <summary>
-        /// Plextor accoustic management (disc related)
+        ///     Plextor accoustic management (disc related)
         /// </summary>
         SilentDisc = 0x06,
         /// <summary>
-        /// Plextor accoustic management (tra related)
+        ///     Plextor accoustic management (tra related)
         /// </summary>
         SilentTray = 0x07,
         /// <summary>
-        /// Plextor accoustic management
+        ///     Plextor accoustic management
         /// </summary>
         Silent = 0x08,
         /// <summary>
-        /// Plextor test write DVD+
+        ///     Plextor test write DVD+
         /// </summary>
         TestWriteDvdPlus = 0x21,
         /// <summary>
-        /// Plextor book setting
+        ///     Plextor book setting
         /// </summary>
         BitSet = 0x22,
         /// <summary>
-        /// Plextor SecuRec
+        ///     Plextor SecuRec
         /// </summary>
         SecuRec = 0xD5,
 
         /// <summary>
-        /// Book setting for DVD+R
+        ///     Book setting for DVD+R
         /// </summary>
         BitSetR = 0x0A,
         /// <summary>
-        /// Book setting for DVD+R DL
+        ///     Book setting for DVD+R DL
         /// </summary>
         BitSetRdl = 0x0E,
         /// <summary>
-        /// Plextor SpeedRead
+        ///     Plextor SpeedRead
         /// </summary>
         SpeedRead = 0xBB
     }
@@ -3284,19 +3290,19 @@ namespace DiscImageChef.Devices
     public enum SscLogicalIdTypes : byte
     {
         /// <summary>
-        /// Logical object identifier
+        ///     Logical object identifier
         /// </summary>
         ObjectId = 0,
         /// <summary>
-        /// Logical file identifier
+        ///     Logical file identifier
         /// </summary>
         FileId = 1,
         /// <summary>
-        /// Logical set identifier
+        ///     Logical set identifier
         /// </summary>
         SetId = 2,
         /// <summary>
-        /// Reserved
+        ///     Reserved
         /// </summary>
         Reserved = 3
     }
@@ -3304,39 +3310,39 @@ namespace DiscImageChef.Devices
     public enum SscPositionForms : byte
     {
         /// <summary>
-        /// 20 bytes using logical block addresses
+        ///     20 bytes using logical block addresses
         /// </summary>
         Short = 0,
         /// <summary>
-        /// 20 bytes using vendor-specified values
+        ///     20 bytes using vendor-specified values
         /// </summary>
         VendorShort = 1,
         /// <summary>
-        /// Equivalent to <see cref="Long"/> on SSC-1
+        ///     Equivalent to <see cref="Long" /> on SSC-1
         /// </summary>
         OldLong = 2,
         /// <summary>
-        /// Invalid: Equivalent to LONG + BT on SSC-1
+        ///     Invalid: Equivalent to LONG + BT on SSC-1
         /// </summary>
         OldLongVendor = 3,
         /// <summary>
-        /// Invalid: Equivalent to TCLP on SSC-1
+        ///     Invalid: Equivalent to TCLP on SSC-1
         /// </summary>
         OldTclp = 4,
         /// <summary>
-        /// Invalid: Equivalent to TCLP + BT on SSC-1
+        ///     Invalid: Equivalent to TCLP + BT on SSC-1
         /// </summary>
         OldTclpVendor = 5,
         /// <summary>
-        /// 32 bytes
+        ///     32 bytes
         /// </summary>
         Long = 6,
         /// <summary>
-        /// Invalid: Equivalent to TCLP + LONG + BT on SSC-1
+        ///     Invalid: Equivalent to TCLP + LONG + BT on SSC-1
         /// </summary>
         OldLongTclpVendor = 7,
         /// <summary>
-        /// From 28 bytes to allocation length
+        ///     From 28 bytes to allocation length
         /// </summary>
         Extended = 8
     }
@@ -3344,27 +3350,27 @@ namespace DiscImageChef.Devices
     public enum ScsiAttributeAction : byte
     {
         /// <summary>
-        /// Return attribute values
+        ///     Return attribute values
         /// </summary>
         Values = 0,
         /// <summary>
-        /// Return a list of available attributes
+        ///     Return a list of available attributes
         /// </summary>
         List = 1,
         /// <summary>
-        /// Returns a list of known logical volume numbers
+        ///     Returns a list of known logical volume numbers
         /// </summary>
         VolumeList = 2,
         /// <summary>
-        /// Returns a list of known partition numbers
+        ///     Returns a list of known partition numbers
         /// </summary>
         PartitionList = 3,
         /// <summary>
-        /// Returns a list of elements containing volumes with MAM
+        ///     Returns a list of elements containing volumes with MAM
         /// </summary>
         ElementList = 4,
         /// <summary>
-        /// Returns a list of supported attribute identifiers
+        ///     Returns a list of supported attribute identifiers
         /// </summary>
         Supported = 5
     }
@@ -3372,23 +3378,23 @@ namespace DiscImageChef.Devices
     public enum FujitsuDisplayModes : byte
     {
         /// <summary>
-        /// Message is displayed until next tape operation starts
+        ///     Message is displayed until next tape operation starts
         /// </summary>
         Idle = 0,
         /// <summary>
-        /// Message is displayed only if a cartridge is inserted, until its removal
+        ///     Message is displayed only if a cartridge is inserted, until its removal
         /// </summary>
         Cart = 1,
         /// <summary>
-        /// Message is only displayed when drive is ready
+        ///     Message is only displayed when drive is ready
         /// </summary>
         Ready = 2,
         /// <summary>
-        /// Cancels current display
+        ///     Cancels current display
         /// </summary>
         Cancel = 3,
         /// <summary>
-        /// Message is displayed only if a cartridge is inserted. When removed, only second half of the message is displayed.
+        ///     Message is displayed only if a cartridge is inserted. When removed, only second half of the message is displayed.
         /// </summary>
         Half = 7
     }
@@ -3397,19 +3403,19 @@ namespace DiscImageChef.Devices
     public enum SscSpaceCodes : byte
     {
         /// <summary>
-        /// Logical blocks
+        ///     Logical blocks
         /// </summary>
         LogicalBlock = 0,
         /// <summary>
-        /// Filemarks
+        ///     Filemarks
         /// </summary>
         Filemark = 1,
         /// <summary>
-        /// Sequential filemarks
+        ///     Sequential filemarks
         /// </summary>
         SequentialFilemark = 2,
         /// <summary>
-        /// End-of-data
+        ///     End-of-data
         /// </summary>
         EndOfData = 3,
         Obsolete1 = 4,
@@ -3417,85 +3423,86 @@ namespace DiscImageChef.Devices
     }
 
     /// <summary>
-    /// MMC / SecureDigital commands
+    ///     MMC / SecureDigital commands
     /// </summary>
     public enum MmcCommands : byte
     {
         #region Class 1 MMC Commands (Basic and read-stream)
         /// <summary>
-        /// Resets device to idle (BC)
+        ///     Resets device to idle (BC)
         /// </summary>
         GoIdle = 0,
         /// <summary>
-        /// Resets the device to pre-idle (BC)
+        ///     Resets the device to pre-idle (BC)
         /// </summary>
         GoPreIdleState = 0,
         /// <summary>
-        /// Initiate alternative boot operation
+        ///     Initiate alternative boot operation
         /// </summary>
         BootInitiation = 0,
         /// <summary>
-        /// Asks device in idle state to send their operation conditions in response (BCR, R3)
+        ///     Asks device in idle state to send their operation conditions in response (BCR, R3)
         /// </summary>
         SendOpCond = 1,
         /// <summary>
-        /// Asks device to send their CID numbers (BCR, R2)
+        ///     Asks device to send their CID numbers (BCR, R2)
         /// </summary>
         AllSendCid = 2,
         /// <summary>
-        /// Assigns a relative address to the device (AC, R1)
+        ///     Assigns a relative address to the device (AC, R1)
         /// </summary>
         SetRelativeAddress = 3,
         /// <summary>
-        /// Programs the DSR of the device (BC)
+        ///     Programs the DSR of the device (BC)
         /// </summary>
         SetDsr = 4,
         /// <summary>
-        /// Toggles the device between sleep and standby (AC, R1b)
+        ///     Toggles the device between sleep and standby (AC, R1b)
         /// </summary>
         SleepAwake = 5,
         /// <summary>
-        /// Switches device mode of operation (AC, R1b)
+        ///     Switches device mode of operation (AC, R1b)
         /// </summary>
         Switch = 6,
         /// <summary>
-        /// Toggles a device between the stand-by and transfer stats or between the programming and disconnect states (AC, R1b)
+        ///     Toggles a device between the stand-by and transfer stats or between the programming and disconnect states (AC, R1b)
         /// </summary>
         SelectCard = 7,
         /// <summary>
-        /// Asks device to send its extended card-specific data (ExtCSD) (ADTC, R1)
+        ///     Asks device to send its extended card-specific data (ExtCSD) (ADTC, R1)
         /// </summary>
         SendExtCsd = 8,
         /// <summary>
-        /// Asks device to send its card-specific data (CSD) (AC, R2)
+        ///     Asks device to send its card-specific data (CSD) (AC, R2)
         /// </summary>
         SendCsd = 9,
         /// <summary>
-        /// Asks device to send its card identification (CID) (AC, R2)
+        ///     Asks device to send its card identification (CID) (AC, R2)
         /// </summary>
         SendCid = 10,
         /// <summary>
-        /// Reads data stream from device, starting at given address, until a <see cref="StopTransmission"/> follows (ADTC, R1)
+        ///     Reads data stream from device, starting at given address, until a <see cref="StopTransmission" /> follows (ADTC,
+        ///     R1)
         /// </summary>
         [Obsolete] ReadDatUntilStop = 11,
         /// <summary>
-        /// Terminates a read/write stream/multiple block operation (AC, R1 / R1b)
+        ///     Terminates a read/write stream/multiple block operation (AC, R1 / R1b)
         /// </summary>
         StopTransmission = 12,
         /// <summary>
-        /// Asks device to send its status register (AC, R1)
+        ///     Asks device to send its status register (AC, R1)
         /// </summary>
         SendStatus = 13,
         /// <summary>
-        /// The host reads the reversed bus testing data pattern from a device (ADTC, R1)
+        ///     The host reads the reversed bus testing data pattern from a device (ADTC, R1)
         /// </summary>
         BusTestRead = 14,
         /// <summary>
-        /// Sets the card to inactive state (AC)
+        ///     Sets the card to inactive state (AC)
         /// </summary>
         GoInactiveState = 15,
         /// <summary>
-        /// The host sends the bus testing data pattern to a device (ADTC, R1)
+        ///     The host sends the bus testing data pattern to a device (ADTC, R1)
         /// </summary>
         BusTestWrite = 19,
         SpiReadOcr = 58,
@@ -3504,227 +3511,229 @@ namespace DiscImageChef.Devices
 
         #region Class 2 MMC Commands (Block-oriented read)
         /// <summary>
-        /// Sets the block length in bytes (AC, R1)
+        ///     Sets the block length in bytes (AC, R1)
         /// </summary>
         SetBlocklen = 16,
         /// <summary>
-        /// Reads a block (ADTC, R1)
+        ///     Reads a block (ADTC, R1)
         /// </summary>
         ReadSingleBlock = 17,
         /// <summary>
-        /// Transfers data blocks from card to host until interrupted (ADTC, R1)
+        ///     Transfers data blocks from card to host until interrupted (ADTC, R1)
         /// </summary>
         ReadMultipleBlock = 18,
         /// <summary>
-        /// 128 blocks of tuning pattern is sent for HS200 optimal sampling point detection (ADTC, R1)
+        ///     128 blocks of tuning pattern is sent for HS200 optimal sampling point detection (ADTC, R1)
         /// </summary>
         SendTuningBlockHs200 = 21,
         #endregion Class 2 MMC Commands (Block-oriented read)
 
         #region Class 3 MMC Commands (Stream write)
         /// <summary>
-        /// Writes data stream from host until a <see cref="StopTransmission"/> follows (ADTC, R1)
+        ///     Writes data stream from host until a <see cref="StopTransmission" /> follows (ADTC, R1)
         /// </summary>
         [Obsolete] WriteDatUntilStop = 20,
         #endregion Class 3 MMC Commands (Stream write)
 
         #region Class 4 MMC Commands (Block-oriented write)
         /// <summary>
-        /// Defines the number of blocks which are going to be transferred in the immediately succeeding multiple block command (AC, R1)
+        ///     Defines the number of blocks which are going to be transferred in the immediately succeeding multiple block command
+        ///     (AC, R1)
         /// </summary>
         SetBlockCount = 23,
         /// <summary>
-        /// Writes a block (ADTC, R1)
+        ///     Writes a block (ADTC, R1)
         /// </summary>
         WriteBlock = 24,
         /// <summary>
-        /// Continuosly writes blocks until interrupted (ADTC, R1)
+        ///     Continuosly writes blocks until interrupted (ADTC, R1)
         /// </summary>
         WriteMultipleBlock = 25,
         /// <summary>
-        /// Programs the Card Information register (ADTC, R1)
+        ///     Programs the Card Information register (ADTC, R1)
         /// </summary>
         ProgramCid = 26,
         /// <summary>
-        /// Programs the programmable bits of the CSD (ADTC, R1)
+        ///     Programs the programmable bits of the CSD (ADTC, R1)
         /// </summary>
         ProgramCsd = 27,
         /// <summary>
-        /// Sets the real time clock according to information in block (ADTC, R1)
+        ///     Sets the real time clock according to information in block (ADTC, R1)
         /// </summary>
         SetTime = 49,
         #endregion Class 4 MMC Commands (Block-oriented write)
 
         #region Class 5 MMC Commands (Erase)
         /// <summary>
-        /// Sets the address of the first erase group (AC, R1)
+        ///     Sets the address of the first erase group (AC, R1)
         /// </summary>
         EraseGroupStart = 35,
         /// <summary>
-        /// Sets the address of the last erase group (AC, R1)
+        ///     Sets the address of the last erase group (AC, R1)
         /// </summary>
         EraseGroupEnd = 36,
         /// <summary>
-        /// Erases previously selected write blocks (AC, R1b)
+        ///     Erases previously selected write blocks (AC, R1b)
         /// </summary>
         Erase = 38,
         #endregion Class 5 MMC Commands (Erase)
 
         #region Class 6 MMC Commands (Block-oriented write protection)
         /// <summary>
-        /// Sets the write protection bit (AC, R1b)
+        ///     Sets the write protection bit (AC, R1b)
         /// </summary>
         SetWriteProtect = 28,
         /// <summary>
-        /// Clears the write protection bit (AC, R1b)
+        ///     Clears the write protection bit (AC, R1b)
         /// </summary>
         ClearWriteProtect = 29,
         /// <summary>
-        /// Asks the device to send the status of the write protection bit (ADTC, R1)
+        ///     Asks the device to send the status of the write protection bit (ADTC, R1)
         /// </summary>
         SendWriteProtect = 30,
         /// <summary>
-        /// Sends the type of write protection that is set for the different write protection groups (ADTC, R1)
+        ///     Sends the type of write protection that is set for the different write protection groups (ADTC, R1)
         /// </summary>
         SentWriteProtectType = 31,
         #endregion Class 6 MMC Commands (Block-oriented write protection)
 
         #region Class 7 MMC Commands (Lock)
         /// <summary>
-        /// Used to set/reset the password or lock/unlock the card (ADTC, R1b)
+        ///     Used to set/reset the password or lock/unlock the card (ADTC, R1b)
         /// </summary>
         LockUnlock = 42,
         #endregion Class 7 MMC Commands (Lock)
 
         #region Class 8 MMC Commands (Application-specific)
         /// <summary>
-        /// Indicates the card that the next command is an application specific command (AC, R1)
+        ///     Indicates the card that the next command is an application specific command (AC, R1)
         /// </summary>
         ApplicationCommand = 55,
         /// <summary>
-        /// Transfers a data block to/from the card for general purpose / application specific commands (ADTC, R1b)
+        ///     Transfers a data block to/from the card for general purpose / application specific commands (ADTC, R1b)
         /// </summary>
         GenericCommand = 56,
         #endregion Class 8 MMC Commands (Application-specific)
 
         #region Class 9 MMC Commands (I/O mode)
         /// <summary>
-        /// Used to write and read 8 bit data field, used to access application dependent registers not defined in MMC standard (AC, R4)
+        ///     Used to write and read 8 bit data field, used to access application dependent registers not defined in MMC standard
+        ///     (AC, R4)
         /// </summary>
         FastIo = 39,
         /// <summary>
-        /// Sets the system into interrupt mode (BCR, R5)
+        ///     Sets the system into interrupt mode (BCR, R5)
         /// </summary>
         GoIrqState = 40,
         #endregion Class 9 MMC Commands (I/O mode)
 
         #region Class 10 MMC Commands (Security Protocols)
         /// <summary>
-        /// Reads data blocks (ADTC, R1)
+        ///     Reads data blocks (ADTC, R1)
         /// </summary>
         ProtocolRead = 53,
         /// <summary>
-        /// Writes data blocks (ADTC, R1)
+        ///     Writes data blocks (ADTC, R1)
         /// </summary>
         ProtocolWrite = 54,
         #endregion Class 10 MMC Commands (Security Protocols)
 
         #region Class 11 MMC Commands (Command Queue)
         /// <summary>
-        /// Defines data direction, priority, task ID and block count of queued task (AC, R1)
+        ///     Defines data direction, priority, task ID and block count of queued task (AC, R1)
         /// </summary>
         QueuedTaskParameters = 44,
         /// <summary>
-        /// Defines the block address of queued task (AC, R1)
+        ///     Defines the block address of queued task (AC, R1)
         /// </summary>
         QueuedTaskAddress = 45,
         /// <summary>
-        /// Executes the task queue for reading (ADTC, R1)
+        ///     Executes the task queue for reading (ADTC, R1)
         /// </summary>
         ExecuteTaskRead = 46,
         /// <summary>
-        /// Executes the task queue for writing (ADTC, R1)
+        ///     Executes the task queue for writing (ADTC, R1)
         /// </summary>
         ExecuteTaskWrite = 47,
         /// <summary>
-        /// Manages queues and tasks (AC, R1b)
+        ///     Manages queues and tasks (AC, R1b)
         /// </summary>
         CmdQTaskManagement = 48,
         #endregion Class 11 MMC Commands (Command Queue)
 
         #region Class 1 SecureDigital Commands (Basic)
         /// <summary>
-        /// Sends SD interface condition (BCR, R7)
+        ///     Sends SD interface condition (BCR, R7)
         /// </summary>
         SendInterfaceCondition = 8,
         /// <summary>
-        /// Switch to 1.8V bus signaling level (AC, R1)
+        ///     Switch to 1.8V bus signaling level (AC, R1)
         /// </summary>
         VoltageSwitch = 11,
         #endregion Class 1 SecureDigital Commands (Basic)
 
         #region Class 2 SecureDigital Commands (Block-oriented read)
         /// <summary>
-        /// 64 bytes of tuning pattern is sent for SDR50 and SDR104 optinal sampling point detection (ADTC, R1)
+        ///     64 bytes of tuning pattern is sent for SDR50 and SDR104 optinal sampling point detection (ADTC, R1)
         /// </summary>
         SendTuningBlock = 19,
         /// <summary>
-        /// Speed class control command (AC, R1b)
+        ///     Speed class control command (AC, R1b)
         /// </summary>
         SpeedClassControl = 20,
         #endregion Class 2 SecureDigital Commands (Block-oriented read)
 
         #region Class 11 SecureDigital Commands (Function Extension)
         /// <summary>
-        /// Single block read type (ADTC, R1)
+        ///     Single block read type (ADTC, R1)
         /// </summary>
         ReadExtraSingle = 48,
         /// <summary>
-        /// Single block write type (ADTC, R1)
+        ///     Single block write type (ADTC, R1)
         /// </summary>
         WriteExtraSingle = 49,
         /// <summary>
-        /// Multiple block read type (ADTC, R1)
+        ///     Multiple block read type (ADTC, R1)
         /// </summary>
         ReadExtraMulti = 58,
         /// <summary>
-        /// Multiple block write type (ADTC, R1)
+        ///     Multiple block write type (ADTC, R1)
         /// </summary>
         WriteExtraMulti = 59,
         #endregion Class 11 SecureDigital Commands (Function Extension)
     }
 
     /// <summary>
-    /// SecureDigital application-specific commands
+    ///     SecureDigital application-specific commands
     /// </summary>
     public enum SecureDigitalCommands : byte
     {
         /// <summary>
-        /// Defines the data bus width to be used for data transfer (AC, R1)
+        ///     Defines the data bus width to be used for data transfer (AC, R1)
         /// </summary>
         SetBusWidth = 6,
         /// <summary>
-        /// Sends the SD status register (ADTC, R1)
+        ///     Sends the SD status register (ADTC, R1)
         /// </summary>
         SendStatus = 13,
         /// <summary>
-        /// Send the number of the written write blocks (ADTC, R1)
+        ///     Send the number of the written write blocks (ADTC, R1)
         /// </summary>
         SendNumWriteBlocks = 22,
         /// <summary>
-        /// Set the number of write blocks to be pre-erased before writing (AC, R1)
+        ///     Set the number of write blocks to be pre-erased before writing (AC, R1)
         /// </summary>
         SetWriteBlockEraseCount = 23,
         /// <summary>
-        /// Sends host capacity support information and asks the card to send its operating condition register (BCR, R3)
+        ///     Sends host capacity support information and asks the card to send its operating condition register (BCR, R3)
         /// </summary>
         SendOperatingCondition = 41,
         /// <summary>
-        /// Connects/Disconnects the 50 kOhm pull-up resistor on CD/DAT3 pin of card (AC, R1)
+        ///     Connects/Disconnects the 50 kOhm pull-up resistor on CD/DAT3 pin of card (AC, R1)
         /// </summary>
         SetClearCardDetect = 42,
         /// <summary>
-        /// Reads the SD Configuration Register SCR (ADTC, R1)
+        ///     Reads the SD Configuration Register SCR (ADTC, R1)
         /// </summary>
         SendScr = 51
     }
@@ -3768,43 +3777,43 @@ namespace DiscImageChef.Devices
     public enum KreonFeatures
     {
         /// <summary>
-        /// Drive can set the xtreme unlock state with Xbox 360 discs
+        ///     Drive can set the xtreme unlock state with Xbox 360 discs
         /// </summary>
         XtremeUnlock360,
         /// <summary>
-        /// Drive can set the wxripper unlock state with Xbox 360 discs
+        ///     Drive can set the wxripper unlock state with Xbox 360 discs
         /// </summary>
         WxripperUnlock360,
         /// <summary>
-        /// Drive can read and decrypt the SS from Xbox 360 discs
+        ///     Drive can read and decrypt the SS from Xbox 360 discs
         /// </summary>
         DecryptSs360,
         /// <summary>
-        /// Drive has full challenge response capabilities with Xbox 360 discs
+        ///     Drive has full challenge response capabilities with Xbox 360 discs
         /// </summary>
         ChallengeResponse360,
         /// <summary>
-        /// Drive can set the xtreme unlock state with Xbox discs
+        ///     Drive can set the xtreme unlock state with Xbox discs
         /// </summary>
         XtremeUnlock,
         /// <summary>
-        /// Drive can set the wxripper unlock state with Xbox discs
+        ///     Drive can set the wxripper unlock state with Xbox discs
         /// </summary>
         WxripperUnlock,
         /// <summary>
-        /// Drive can read and decrypt the SS from Xbox discs
+        ///     Drive can read and decrypt the SS from Xbox discs
         /// </summary>
         DecryptSs,
         /// <summary>
-        /// Drive has full challenge response capabilities with Xbox discs
+        ///     Drive has full challenge response capabilities with Xbox discs
         /// </summary>
         ChallengeResponse,
         /// <summary>
-        /// Drive supports the locked state
+        ///     Drive supports the locked state
         /// </summary>
         Lock,
         /// <summary>
-        /// Drive supports skipping read errors
+        ///     Drive supports skipping read errors
         /// </summary>
         ErrorSkipping
     }

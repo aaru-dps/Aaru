@@ -39,80 +39,80 @@ namespace DiscImageChef.Devices.FreeBSD
     enum FileFlags
     {
         /// <summary>
-        /// O_RDONLY
-        ///</summary>
+        ///     O_RDONLY
+        /// </summary>
         ReadOnly = 0x00000000,
         /// <summary>
-        /// O_WRONLY
-        ///</summary>
+        ///     O_WRONLY
+        /// </summary>
         WriteOnly = 0x00000001,
         /// <summary>
-        /// O_RDWR
-        ///</summary>
+        ///     O_RDWR
+        /// </summary>
         ReadWrite = 0x00000002,
         /// <summary>
-        /// O_NONBLOCK
-        ///</summary>
+        ///     O_NONBLOCK
+        /// </summary>
         NonBlocking = 0x00000004,
         /// <summary>
-        /// O_APPEND
-        ///</summary>
+        ///     O_APPEND
+        /// </summary>
         Append = 0x00000008,
         /// <summary>
-        /// O_SHLOCK
-        ///</summary>
+        ///     O_SHLOCK
+        /// </summary>
         SharedLock = 0x00000010,
         /// <summary>
-        /// O_EXLOCK
-        ///</summary>
+        ///     O_EXLOCK
+        /// </summary>
         ExclusiveLock = 0x00000020,
         /// <summary>
-        /// O_ASYNC
-        ///</summary>
+        ///     O_ASYNC
+        /// </summary>
         Async = 0x00000040,
         /// <summary>
-        /// O_FSYNC
-        ///</summary>
+        ///     O_FSYNC
+        /// </summary>
         SyncWrites = 0x00000080,
         /// <summary>
-        /// O_NOFOLLOW
-        ///</summary>
+        ///     O_NOFOLLOW
+        /// </summary>
         NoFollowSymlink = 0x00000100,
         /// <summary>
-        /// O_CREAT
-        ///</summary>
+        ///     O_CREAT
+        /// </summary>
         OpenOrCreate = 0x00000200,
         /// <summary>
-        /// O_TRUNC
-        ///</summary>
+        ///     O_TRUNC
+        /// </summary>
         Truncate = 0x00000400,
         /// <summary>
-        /// O_EXCL
-        ///</summary>
+        ///     O_EXCL
+        /// </summary>
         CreateNew = 0x00000800,
         /// <summary>
-        /// O_NOCTTY
-        ///</summary>
+        ///     O_NOCTTY
+        /// </summary>
         NoControlTty = 0x00008000,
         /// <summary>
-        /// O_DIRECT
-        ///</summary>
+        ///     O_DIRECT
+        /// </summary>
         Direct = 0x00010000,
         /// <summary>
-        /// O_DIRECTORY
-        ///</summary>
+        ///     O_DIRECTORY
+        /// </summary>
         Directory = 0x00020000,
         /// <summary>
-        /// O_EXEC
-        ///</summary>
+        ///     O_EXEC
+        /// </summary>
         Execute = 0x00040000,
         /// <summary>
-        /// O_TTY_INIT
-        ///</summary>
+        ///     O_TTY_INIT
+        /// </summary>
         InitializeTty = 0x00080000,
         /// <summary>
-        /// O_CLOEXEC
-        ///</summary>
+        ///     O_CLOEXEC
+        /// </summary>
         CloseOnExec = 0x00100000
     }
 
@@ -120,24 +120,24 @@ namespace DiscImageChef.Devices.FreeBSD
     enum CamAtaIoFlags : byte
     {
         /// <summary>
-        /// 48-bit command
-        ///</summary>
+        ///     48-bit command
+        /// </summary>
         ExtendedCommand = 0x01,
         /// <summary>
-        /// FPDMA command
-        ///</summary>
+        ///     FPDMA command
+        /// </summary>
         Fpdma = 0x02,
         /// <summary>
-        /// Control, not a command
-        ///</summary>
+        ///     Control, not a command
+        /// </summary>
         Control = 0x04,
         /// <summary>
-        /// Needs result
-        ///</summary>
+        ///     Needs result
+        /// </summary>
         NeedResult = 0x08,
         /// <summary>
-        /// DMA command
-        ///</summary>
+        ///     DMA command
+        /// </summary>
         Dma = 0x10
     }
 
@@ -314,37 +314,37 @@ namespace DiscImageChef.Devices.FreeBSD
         ProtoUnspecified,
 
         /// <summary>
-        /// Small Computer System Interface
+        ///     Small Computer System Interface
         /// </summary>
         ProtoScsi,
 
         /// <summary>
-        /// AT Attachment
+        ///     AT Attachment
         /// </summary>
         ProtoAta,
 
         /// <summary>
-        /// AT Attachment Packetized Interface
+        ///     AT Attachment Packetized Interface
         /// </summary>
         ProtoAtapi,
 
         /// <summary>
-        /// SATA Port Multiplier
+        ///     SATA Port Multiplier
         /// </summary>
         ProtoSatapm,
 
         /// <summary>
-        /// SATA Enclosure Management Bridge
+        ///     SATA Enclosure Management Bridge
         /// </summary>
         ProtoSemb,
 
         /// <summary>
-        /// NVMe
+        ///     NVMe
         /// </summary>
         ProtoNvme,
 
         /// <summary>
-        /// MMC, SD, SDIO
+        ///     MMC, SD, SDIO
         /// </summary>
         ProtoMmcsd
     }
@@ -391,170 +391,170 @@ namespace DiscImageChef.Devices.FreeBSD
     enum CcbFlags : uint
     {
         /// <summary>
-        /// The CDB field is a pointer
+        ///     The CDB field is a pointer
         /// </summary>
         CamCdbPointer = 0x00000001,
         /// <summary>
-        /// SIM queue actions are enabled
+        ///     SIM queue actions are enabled
         /// </summary>
         CamQueueEnable = 0x00000002,
         /// <summary>
-        /// CCB contains a linked CDB
+        ///     CCB contains a linked CDB
         /// </summary>
         CamCdbLinked = 0x00000004,
         /// <summary>
-        /// Perform transport negotiation with this command.
+        ///     Perform transport negotiation with this command.
         /// </summary>
         CamNegotiate = 0x00000008,
         /// <summary>
-        /// Data type with physical addrs
+        ///     Data type with physical addrs
         /// </summary>
         CamDataIsphys = 0x00000010,
         /// <summary>
-        /// Disable autosense feature
+        ///     Disable autosense feature
         /// </summary>
         CamDisAutosense = 0x00000020,
         /// <summary>
-        /// Data direction (00:IN/OUT)
+        ///     Data direction (00:IN/OUT)
         /// </summary>
         CamDirBoth = 0x00000000,
         /// <summary>
-        /// Data direction (01:DATA IN)
+        ///     Data direction (01:DATA IN)
         /// </summary>
         CamDirIn = 0x00000040,
         /// <summary>
-        /// Data direction (10:DATA OUT)
+        ///     Data direction (10:DATA OUT)
         /// </summary>
         CamDirOut = 0x00000080,
         /// <summary>
-        /// Data direction (11:no data)
+        ///     Data direction (11:no data)
         /// </summary>
         CamDirNone = 0x000000C0,
         /// <summary>
-        /// Data type (000:Virtual)
+        ///     Data type (000:Virtual)
         /// </summary>
         CamDataVaddr = 0x00000000,
         /// <summary>
-        /// Data type (001:Physical)
+        ///     Data type (001:Physical)
         /// </summary>
         CamDataPaddr = 0x00000010,
         /// <summary>
-        /// Data type (010:sglist)
+        ///     Data type (010:sglist)
         /// </summary>
         CamDataSg = 0x00040000,
         /// <summary>
-        /// Data type (011:sglist phys)
+        ///     Data type (011:sglist phys)
         /// </summary>
         CamDataSgPaddr = 0x00040010,
         /// <summary>
-        /// Data type (100:bio)
+        ///     Data type (100:bio)
         /// </summary>
         CamDataBio = 0x00200000,
         /// <summary>
-        /// Use Soft reset alternative
+        ///     Use Soft reset alternative
         /// </summary>
         CamSoftRstOp = 0x00000100,
         /// <summary>
-        /// Flush resid bytes on complete
+        ///     Flush resid bytes on complete
         /// </summary>
         CamEngSync = 0x00000200,
         /// <summary>
-        /// Disable DEV Q freezing
+        ///     Disable DEV Q freezing
         /// </summary>
         CamDevQfrzdis = 0x00000400,
         /// <summary>
-        /// Freeze DEV Q on execution
+        ///     Freeze DEV Q on execution
         /// </summary>
         CamDevQfreeze = 0x00000800,
         /// <summary>
-        /// Command takes a lot of power
+        ///     Command takes a lot of power
         /// </summary>
         CamHighPower = 0x00001000,
         /// <summary>
-        /// Sense data is a pointer
+        ///     Sense data is a pointer
         /// </summary>
         CamSensePtr = 0x00002000,
         /// <summary>
-        /// Sense pointer is physical addr
+        ///     Sense pointer is physical addr
         /// </summary>
         CamSensePhys = 0x00004000,
         /// <summary>
-        /// Use the tag action in this ccb
+        ///     Use the tag action in this ccb
         /// </summary>
         CamTagActionValid = 0x00008000,
         /// <summary>
-        /// Pass driver does err. recovery
+        ///     Pass driver does err. recovery
         /// </summary>
         CamPassErrRecover = 0x00010000,
         /// <summary>
-        /// Disable disconnect
+        ///     Disable disconnect
         /// </summary>
         CamDisDisconnect = 0x00020000,
         /// <summary>
-        /// Message buffer ptr is physical
+        ///     Message buffer ptr is physical
         /// </summary>
         CamMsgBufPhys = 0x00080000,
         /// <summary>
-        /// Autosense data ptr is physical
+        ///     Autosense data ptr is physical
         /// </summary>
         CamSnsBufPhys = 0x00100000,
         /// <summary>
-        /// CDB poiner is physical
+        ///     CDB poiner is physical
         /// </summary>
         CamCdbPhys = 0x00400000,
         /// <summary>
-        /// SG list is for the HBA engine
+        ///     SG list is for the HBA engine
         /// </summary>
         CamEngSglist = 0x00800000,
 
         /* Phase cognizant mode flags */
         /// <summary>
-        /// Disable autosave/restore ptrs
+        ///     Disable autosave/restore ptrs
         /// </summary>
         CamDisAutosrp = 0x01000000,
         /// <summary>
-        /// Disable auto disconnect
+        ///     Disable auto disconnect
         /// </summary>
         CamDisAutodisc = 0x02000000,
         /// <summary>
-        /// Target CCB available
+        ///     Target CCB available
         /// </summary>
         CamTgtCcbAvail = 0x04000000,
         /// <summary>
-        /// The SIM runs in phase mode
+        ///     The SIM runs in phase mode
         /// </summary>
         CamTgtPhaseMode = 0x08000000,
         /// <summary>
-        /// Message buffer valid
+        ///     Message buffer valid
         /// </summary>
         CamMsgbValid = 0x10000000,
         /// <summary>
-        /// Status buffer valid
+        ///     Status buffer valid
         /// </summary>
         CamStatusValid = 0x20000000,
         /// <summary>
-        /// Data buffer valid
+        ///     Data buffer valid
         /// </summary>
         CamDatabValid = 0x40000000,
         /* Host target Mode flags */
         /// <summary>
-        /// Send sense data with status
+        ///     Send sense data with status
         /// </summary>
         CamSendSense = 0x08000000,
         /// <summary>
-        /// Terminate I/O Message sup.
+        ///     Terminate I/O Message sup.
         /// </summary>
         CamTermIo = 0x10000000,
         /// <summary>
-        /// Disconnects are mandatory
+        ///     Disconnects are mandatory
         /// </summary>
         CamDisconnect = 0x20000000,
         /// <summary>
-        /// Send status after data phase
+        ///     Send status after data phase
         /// </summary>
         CamSendStatus = 0x40000000,
         /// <summary>
-        /// Call callback without lock.
+        ///     Call callback without lock.
         /// </summary>
         CamUnlocked = 0x80000000
     }
@@ -642,7 +642,11 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Request was too large for this host</summary>
         CamReqTooBig = 0x1a,
 
-        /// <summary>This request should be requeued to preserve transaction ordering. This typically occurs when the SIM recognizes an error that should freeze the queue and must place additional requests for the target at the sim level back into the XPT queue.</summary>
+        /// <summary>
+        ///     This request should be requeued to preserve transaction ordering. This typically occurs when the SIM
+        ///     recognizes an error that should freeze the queue and must place additional requests for the target at the sim level
+        ///     back into the XPT queue.
+        /// </summary>
         CamRequeueReq = 0x1b,
 
         /// <summary>ATA error, look at error code in CCB</summary>

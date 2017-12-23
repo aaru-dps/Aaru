@@ -38,9 +38,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout
+        ///     Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters)
@@ -49,9 +49,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout
+        ///     Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="duration">Duration.</param>
@@ -61,9 +61,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the ATA IDENTIFY PACKET DEVICE command to the device
+        ///     Sends the ATA IDENTIFY PACKET DEVICE command to the device
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
@@ -73,9 +73,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the ATA IDENTIFY PACKET DEVICE command to the device
+        ///     Sends the ATA IDENTIFY PACKET DEVICE command to the device
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
@@ -85,7 +85,6 @@ namespace DiscImageChef.Devices
         {
             buffer = new byte[512];
             AtaRegistersChs registers = new AtaRegistersChs {Command = (byte)AtaCommands.IdentifyPacketDevice};
-
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,

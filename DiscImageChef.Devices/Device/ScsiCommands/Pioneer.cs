@@ -37,9 +37,9 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         /// <summary>
-        /// Sends the Pioneer READ CD-DA command
+        ///     Sends the Pioneer READ CD-DA command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Pioneer READ CD-DA response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -77,9 +77,9 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the Pioneer READ CD-DA MSF command
+        ///     Sends the Pioneer READ CD-DA MSF command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Pioneer READ CD-DA MSF response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -116,14 +116,17 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Sends the Pioneer READ CD-XA command
+        ///     Sends the Pioneer READ CD-XA command
         /// </summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Pioneer READ CD-XA response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="errorFlags">If set to <c>true</c>, returns all sector data with 294 bytes of error flags. Superseedes <paramref name="wholeSector"/></param>
+        /// <param name="errorFlags">
+        ///     If set to <c>true</c>, returns all sector data with 294 bytes of error flags. Superseedes
+        ///     <paramref name="wholeSector" />
+        /// </param>
         /// <param name="wholeSector">If set to <c>true</c>, returns all 2352 bytes of sector data.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
