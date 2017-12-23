@@ -36,22 +36,39 @@ using System.Linq;
 
 namespace Extents
 {
+    /// <summary>
+    /// Implements extents for <see cref="sbyte"/>
+    /// </summary>
     public class ExtentsSByte
     {
         List<Tuple<sbyte, sbyte>> backend;
 
+        /// <summary>
+        /// Initialize an empty list of extents
+        /// </summary>
         public ExtentsSByte()
         {
             backend = new List<Tuple<sbyte, sbyte>>();
         }
 
+        /// <summary>
+        /// Initializes extents with an specific list
+        /// </summary>
+        /// <param name="list">List of extents as tuples "start, end"</param>
         public ExtentsSByte(IEnumerable<Tuple<sbyte, sbyte>> list)
         {
             backend = list.OrderBy(t => t.Item1).ToList();
         }
 
+        /// <summary>
+        /// Gets a count of how many extents are stored
+        /// </summary>
         public int Count => backend.Count;
 
+        /// <summary>
+        /// Adds the specified number to the corresponding extent, or creates a new one
+        /// </summary>
+        /// <param name="item"></param>
         public void Add(sbyte item)
         {
             Tuple<sbyte, sbyte> removeOne = null;
@@ -105,6 +122,12 @@ namespace Extents
             backend = backend.OrderBy(t => t.Item1).ToList();
         }
 
+        /// <summary>
+        /// Adds a new extent
+        /// </summary>
+        /// <param name="start">First element of the extent</param>
+        /// <param name="end">Last element of the extent or if <see cref="run"/> is <c>true</c> how many elements the extent runs for</param>
+        /// <param name="run">If set to <c>true</c>, <see cref="end"/> indicates how many elements the extent runs for</param>
         public void Add(sbyte start, sbyte end, bool run = false)
         {
             sbyte realEnd;
@@ -115,16 +138,29 @@ namespace Extents
             for(sbyte t = start; t <= realEnd; t++) Add(t);
         }
 
+        /// <summary>
+        /// Checks if the specified item is contained by an extent on this instance
+        /// </summary>
+        /// <param name="item">Item to seach for</param>
+        /// <returns><c>true</c> if any of the extents on this instance contains the item</returns>
         public bool Contains(sbyte item)
         {
             return backend.Any(extent => item >= extent.Item1 && item <= extent.Item2);
         }
 
+        /// <summary>
+        /// Removes all extents from this instance
+        /// </summary>
         public void Clear()
         {
             backend.Clear();
         }
 
+        /// <summary>
+        /// Removes an item from the extents in this instance
+        /// </summary>
+        /// <param name="item">Item to remove</param>
+        /// <returns><c>true</c> if the item was contained in a known extent and removed, false otherwise</returns>
         public bool Remove(sbyte item)
         {
             Tuple<sbyte, sbyte> toRemove = null;
@@ -178,11 +214,21 @@ namespace Extents
             return true;
         }
 
+        /// <summary>
+        /// Converts the list of extents to an array of <see cref="Tuple"/> where T1 is first element of the extent and T2 is last element
+        /// </summary>
+        /// <returns>Array of <see cref="Tuple"/></returns>
         public Tuple<sbyte, sbyte>[] ToArray()
         {
             return backend.ToArray();
         }
 
+        /// <summary>
+        /// Gets the first element of the extent that contains the specified item
+        /// </summary>
+        /// <param name="item">Item</param>
+        /// <param name="start">First element of extent</param>
+        /// <returns><c>true</c> if item was found in an extent, false otherwise</returns>
         public bool GetStart(sbyte item, out sbyte start)
         {
             start = 0;

@@ -46,41 +46,82 @@ namespace DiscImageChef
         static readonly DateTime AmigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
         static readonly DateTime AppleDoubleEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
 
+        /// <summary>
+        /// Converts a Macintosh timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="MacTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime MacToDateTime(ulong MacTimeStamp)
         {
             return MacEpoch.AddTicks((long)(MacTimeStamp * 10000000));
         }
 
+        /// <summary>
+        /// Converts a Lisa timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="LisaTimeStamp">Lisa timestamp (seconds since 1st Jan. 1901)</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime LisaToDateTime(uint LisaTimeStamp)
         {
             return LisaEpoch.AddSeconds(LisaTimeStamp);
         }
 
+        /// <summary>
+        /// Converts a UNIX timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime UNIXToDateTime(int UNIXTimeStamp)
         {
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
+        /// <summary>
+        /// Converts a UNIX timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime UNIXToDateTime(long UNIXTimeStamp)
         {
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
+        /// <summary>
+        /// Converts a UNIX timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime UNIXUnsignedToDateTime(uint UNIXTimeStamp)
         {
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
+        /// <summary>
+        /// Converts a UNIX timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="seconds">Seconds since 1st Jan. 1970)</param>
+        /// <param name="nanoseconds">Nanoseconds</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime UNIXUnsignedToDateTime(uint seconds, uint nanoseconds)
         {
             return UNIXEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
         }
 
+        /// <summary>
+        /// Converts a UNIX timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime UNIXUnsignedToDateTime(ulong UNIXTimeStamp)
         {
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
+        /// <summary>
+        /// Converts a High Sierra Format timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="VDDateTime">High Sierra Format timestamp</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime HighSierraToDateTime(byte[] VDDateTime)
         {
             byte[] isotime = new byte[17];
@@ -89,6 +130,11 @@ namespace DiscImageChef
         }
 
         // TODO: Timezone
+        /// <summary>
+        /// Converts an ISO9660 timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="VDDateTime">ISO9660 timestamp</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime ISO9660ToDateTime(byte[] VDDateTime)
         {
             int year, month, day, hour, minute, second, hundredths;
@@ -155,13 +201,25 @@ namespace DiscImageChef
             return decodedDT;
         }
 
-        // C# works in UTC, VMS on Julian Date, some displacement may occur on disks created outside UTC
+        /// <summary>
+        /// Converts a VMS timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="vmsDate">VMS timestamp (tenths of microseconds since day 0 of the Julian Date)</param>
+        /// <returns>.NET DateTime</returns>
+        /// <remarks>C# works in UTC, VMS on Julian Date, some displacement may occur on disks created outside UTC</remarks>
         public static DateTime VMSToDateTime(ulong vmsDate)
         {
             double delta = vmsDate * 0.0001; // Tenths of microseconds to milliseconds, will lose some detail
             return JulianEpoch.AddMilliseconds(delta);
         }
 
+        /// <summary>
+        /// Converts an Amiga timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="days">Days since the 1st Jan. 1978</param>
+        /// <param name="minutes">Minutes since o'clock</param>
+        /// <param name="ticks">Ticks</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime AmigaToDateTime(uint days, uint minutes, uint ticks)
         {
             DateTime temp = AmigaEpoch.AddDays(days);
@@ -169,6 +227,11 @@ namespace DiscImageChef
             return temp.AddMilliseconds(ticks * 20);
         }
 
+        /// <summary>
+        /// Converts an UCSD Pascal timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="dateRecord">UCSD Pascal timestamp</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime UCSDPascalToDateTime(short dateRecord)
         {
             int year = ((dateRecord & 0xFE00) >> 9) + 1900;
@@ -181,6 +244,12 @@ namespace DiscImageChef
             return new DateTime(year, month, day);
         }
 
+        /// <summary>
+        /// Converts a DOS timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="date">Date</param>
+        /// <param name="time">Time</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime DOSToDateTime(ushort date, ushort time)
         {
             int year = ((date & 0xFE00) >> 9) + 1980;
@@ -203,6 +272,11 @@ namespace DiscImageChef
             return dosdate;
         }
 
+        /// <summary>
+        /// Converts a CP/M timestamp to .NET DateTime
+        /// </summary>
+        /// <param name="timestamp">CP/M timestamp</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime CPMToDateTime(byte[] timestamp)
         {
             ushort days = BitConverter.ToUInt16(timestamp, 0);
@@ -216,11 +290,26 @@ namespace DiscImageChef
             return temp;
         }
 
+        // TODO: This is unix
         public static DateTime AppleDoubleToDateTime(ulong AppleDoubleTimeStamp)
         {
             return AppleDoubleEpoch.AddSeconds(AppleDoubleTimeStamp);
         }
 
+        /// <summary>
+        /// Converts an ECMA timestamp to a .NET DateTime
+        /// </summary>
+        /// <param name="typeAndTimeZone">Timezone</param>
+        /// <param name="year">Year</param>
+        /// <param name="month">Month</param>
+        /// <param name="day">Day</param>
+        /// <param name="hour">Hour</param>
+        /// <param name="minute">Minute</param>
+        /// <param name="second">Second</param>
+        /// <param name="centiseconds">Centiseconds</param>
+        /// <param name="hundredsOfMicroseconds">Hundreds of microseconds</param>
+        /// <param name="microseconds">Microseconds</param>
+        /// <returns></returns>
         public static DateTime ECMAToDateTime(ushort typeAndTimeZone, short year, byte month, byte day, byte hour,
                                               byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds,
                                               byte microseconds)
@@ -245,11 +334,21 @@ namespace DiscImageChef
                 .AddTicks(ticks).DateTime;
         }
 
+        /// <summary>
+        /// Convers a Solaris high resolution timestamp to .NET DateTime
+        /// </summary>
+        /// <param name="HRTimeStamp">Solaris high resolution timestamp</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime UNIXHrTimeToDateTime(ulong HRTimeStamp)
         {
             return UNIXEpoch.AddTicks((long)(HRTimeStamp / 100));
         }
 
+        /// <summary>
+        /// Converts an OS-9 timestamp to .NET DateTime
+        /// </summary>
+        /// <param name="date">OS-9 timestamp</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime OS9ToDateTime(byte[] date)
         {
             if(date == null || date.Length != 3 && date.Length != 5) return DateTime.MinValue;
@@ -267,6 +366,11 @@ namespace DiscImageChef
             return os9date;
         }
 
+        /// <summary>
+        /// Converts a LIF timestamp to .NET DateTime
+        /// </summary>
+        /// <param name="date">LIF timestamp</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime LifToDateTime(byte[] date)
         {
             if(date == null || date.Length != 6) return new DateTime(1970, 1, 1, 0, 0, 0);
@@ -274,6 +378,16 @@ namespace DiscImageChef
             return LifToDateTime(date[0], date[1], date[2], date[3], date[4], date[5]);
         }
 
+        /// <summary>
+        /// Converts a LIF timestamp to .NET DateTime
+        /// </summary>
+        /// <param name="year">Yer</param>
+        /// <param name="month">Month</param>
+        /// <param name="day">Day</param>
+        /// <param name="hour">Hour</param>
+        /// <param name="minute">Minute</param>
+        /// <param name="second">Second</param>
+        /// <returns>.NET DateTime</returns>
         public static DateTime LifToDateTime(byte year, byte month, byte day, byte hour, byte minute, byte second)
         {
             try

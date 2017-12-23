@@ -34,6 +34,11 @@ namespace DiscImageChef.Helpers
 {
     public static class CountBits
     {
+        /// <summary>
+        /// Counts the number of bits set to <c>true</c> in a number
+        /// </summary>
+        /// <param name="number">Number</param>
+        /// <returns>Bits set to <c>true</c></returns>
         public static int Count(uint number)
         {
             number = number - ((number >> 1) & 0x55555555);
