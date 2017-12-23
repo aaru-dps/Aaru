@@ -176,7 +176,6 @@ namespace DiscImageChef.Commands
                                                   errorRegisters.CylinderLow);
                         DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
                                                   errorRegisters.DeviceHead);
-                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.Command);
                         DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
                         break;
                     }
@@ -241,7 +240,6 @@ namespace DiscImageChef.Commands
                                                   errorRegisters.CylinderLow);
                         DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
                                                   errorRegisters.DeviceHead);
-                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.Command);
                         DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
                         break;
                     }

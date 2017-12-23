@@ -186,7 +186,6 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.Command = aptdBuf.aptd.CurrentTaskFile.Command;
             errorRegisters.CylinderHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
             errorRegisters.CylinderLow = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
             errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
@@ -276,7 +275,6 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.Command = aptdBuf.aptd.CurrentTaskFile.Command;
             errorRegisters.LbaHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
             errorRegisters.LbaMid = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
             errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
@@ -382,7 +380,6 @@ namespace DiscImageChef.Devices.Windows
                                              aptdBuf.aptd.CurrentTaskFile.CylinderLow);
             errorRegisters.LbaHigh = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderHigh << 8) +
                                               aptdBuf.aptd.CurrentTaskFile.CylinderHigh);
-            errorRegisters.Command = aptdBuf.aptd.CurrentTaskFile.Command;
             errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
             errorRegisters.Error = aptdBuf.aptd.CurrentTaskFile.Error;
             errorRegisters.Status = aptdBuf.aptd.CurrentTaskFile.Status;
@@ -436,7 +433,6 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.Command = iptd.CurrentTaskFile.Command;
             errorRegisters.CylinderHigh = iptd.CurrentTaskFile.CylinderHigh;
             errorRegisters.CylinderLow = iptd.CurrentTaskFile.CylinderLow;
             errorRegisters.DeviceHead = iptd.CurrentTaskFile.DeviceHead;
@@ -494,7 +490,6 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.Command = iptd.CurrentTaskFile.Command;
             errorRegisters.LbaHigh = iptd.CurrentTaskFile.CylinderHigh;
             errorRegisters.LbaMid = iptd.CurrentTaskFile.CylinderLow;
             errorRegisters.DeviceHead = iptd.CurrentTaskFile.DeviceHead;
