@@ -48,6 +48,9 @@ namespace DiscImageChef.Console
 
     public delegate void DebugWriteHandler(string format, params object[] arg);
 
+    /// <summary>
+    /// Implements a console abstraction that defines four level of messages that can be routed to different consoles: standard, error, verbose and debug.
+    /// </summary>
     public static class DicConsole
     {
         public static event WriteLineHandler WriteLineEvent;
