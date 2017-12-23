@@ -1,11 +1,22 @@
-# [4.0.0.0-beta] - 2017-11-29
+# [4.0.0.0] - 2017-12-25
 ## Added
+### - Advanced Disc Filing System
+- Added support for ADFS-S, ADFS-M, ADFS-L, ADFS-D, ADFS-E, ADFS-E+, ADFS-F, ADFS-F+ and ADFS-G.
+
+### - Apple Partition Map
+- Added support for decoding Driver Description Map.
+- Added support for maps without Driver Description Map.
+- Added support for old partition table.
+
 ### - Commands
 - Added separate application to debug commands sent to devices.
 - list-devices: Lists devices that can be used for device dependent commands.
 - list-encodings: Lists supported character encodings.
 
 ### - Create Sidecar command
+- Added support for hashing DiscFerret flux images.
+- Added support for hashing KryoFlux STREAM flux images.
+- Added support for hashing SuperCardPro flux images.
 - Added support for tape dumps where each tape-file is a separate dumped file.
 - Calculate checksum of contents not only of image file.
 - Consider each optical disc track as a separate partition.
@@ -14,13 +25,20 @@
 - Use dump drive information from images that support it.
 
 ### - Decoders
-- Xbox DMI
+- Xbox DMI.
+- Xbox Security Sectors.
 
 ### - Devices
-- MMC
-- PCMCIA block devices
-- SCSI Streaming Devices (aka "tapes")
-- SecureDigital
+- MMC.
+- PCMCIA block devices.
+- SCSI Streaming Devices (aka "tapes").
+- SecureDigital.
+
+### - Device commands
+- Add ATA and SCSI commands support for FreeBSD.
+- Add ATA commands support for Windows.
+- Add retrieval of USB information on Windows.
+- Add SecureDigital/MMC commands support for Windows.
 
 ### - Disc images.
 - Alcohol 120%.
@@ -42,6 +60,7 @@
 - D81.
 - Digital Research's DiskCopy.
 - DiscJuggler.
+- HD-Copy.
 - IBM SaveDskF.
 - IMD.
 - MAME Compressed Hunks of Data (aka CHD).
@@ -62,13 +81,28 @@
 - X68k .DIM.
 
 ### - DiskCopy 4.2 disk image
+- Added support for invalid images that use little-endian values.
+- Added support for images created by macOS that don't have a format byte set.
 - Use resource fork to get DiskCopy version used to create them.
 
 ### - Dumping
 - Added the ability to resume a partially done dump, even on a separate drive.
+- Added the ability to skip dumping the Lead-in.
 - Allow creation of a separate subchannel file.
-- Raw dump of DVD with Matshita recorders
-- XGD with Kreon drives
+- Create dump log.
+- Dumping optical media creates an Alcohol 120% descriptor file.
+- Raw dump of DVD with Matshita recorders.
+- XGD with Kreon drives.
+
+### - ext2/3/4 filesystem
+- Added new superblock fields.
+- Added support for devices with sectors bigger than 512 bytes.
+
+### - FAT filesystem
+- Added DEC Rainbow's hard-wired BPB.
+- Added support for volumes with 256 bytes/sector.
+- Added support for ACT Apricot BPB.
+- Gets volume label, creation time and modification time from root directory if available.
 
 ### - Filesystems
 - Apple DOS.
@@ -111,20 +145,29 @@
 - UCSD Pascal.
 
 ### - Filters
-- AppleDouble
-- Apple PCExchange
-- AppleSingle
-- BZIP2
-- GZIP
-- LZIP
-- MacBinary
-- XZ
+- AppleDouble.
+- Apple PCExchange.
+- AppleSingle.
+- BZIP2.
+- GZIP.
+- LZIP.
+- MacBinary.
+- XZ.
 
 ### - GUID Partition Table
 - New type GUIDs.
 
+### - ISO9660 filesystem
+- Added detection of AAIP extensions.
+- Added detection of Apple extensions.
+- Added detection of EFI Platform ID for El Torito.
+- Added detection of RRIP extensions.
+- Added detection of SUSP extensions.
+- Added detection of XA extensions.
+- Added detection of ziso extensions.
+
 ### - Lisa filesystem
-- Full read-only support 
+- Full read-only support. 
 
 ### - Media types
 - DDS, DDS-2, DDS-3, DDS-4.
@@ -153,13 +196,37 @@
 - UNIX VTOC.
 - XENIX partition table.
 
+### - SCSI decoding
+- Handling of EVPDs smaller than length field.
+- Handling of modes 02h, 04h and 1Ch smaller than expected.
+- Prettyfying of mode 0Bh.
+
+### - SmartFileSystem
+- Added support for version 2.
+
 ### - Statistics
 - Added version and operating system statistics.
 
-## Fixes
-### - Advanced Disc Filing System
-- Added support for ADFS-S, ADFS-M, ADFS-L, ADFS-D, ADFS-E, ADFS-E+, ADFS-F, ADFS-F+ and ADFS-G.
+### - Sun disklabel
+- Added bound checks.
+- Added support for 16-entries VTOC.
+- Added support for pre-VTOC disklabels.
+- Corrected structures for 8-entries VTOC.
 
+### - System V filesystem
+- Added COHERENT offsets.
+- Check for it starting on second cylinder.
+- Corrected cluster size calculation.
+- Corrected detection between Release 2 and Release 4.
+- Corrected Release 2 superblock parameters.
+- Enlarged NICFREE for Version 7.
+
+### TeleDisk images
+- Added support for Advanced Compression.
+- Added support for floppy lead-out.
+- Added variable sectors per track support.
+
+## Fixes
 ### - AmigaDOS filesystem
 - Corrected checksum calculation.
 - Corrected cluster size calculation.
@@ -185,27 +252,26 @@
 ### - CDRWin
 - CD-Text detection.
 - CD+G data return.
+- Fixed composer parsing.
 - Prevent reading binary files.
 
 ### - CP/M filesystem
 - Corrected cluster count calculation.
 - Corrected directory location on CP/M-86.
 - Corrected sector reading.
+- Skip media types that were never used as a CP/M disk.
 
 ### - Create Sidecar command
 - Corrected creation when path is absolute.
 
 ### - Device commands
-- Add ATA commands support for Windows.
 - Do not send SCSI INQUIRY to non-SCSI paths on Linux.
 
 ### - Device reports
-- Call ATA READ LONG last, as it confuses some drives
-- Try SCSI READ LONG (10) until max block size (65535)
+- Call ATA READ LONG last, as it confuses some drives.
+- Try SCSI READ LONG (10) until max block size (65535).
 
 ### - DiskCopy 4.2
-- Added support for invalid images that use little-endian values.
-- Added support for images created by macOS that don't have a format byte set.
 - Corrected track order for Lisa and Macintosh Twiggy.
 
 ### - Dreamcast GDI images
@@ -213,28 +279,20 @@
 
 ### - Dumping
 - Calculation of streaming device dumping speed.
-- Create dump log.
 - Corrected dumping CD-R and CD-RW.
-- Dumping optical media creates an Alcohol 120% descriptor file.
 - Optical media with 2048 bytes/sector now get ".iso" file extension.
 - Retry when SCSI devices return reset status.
 - Streaming Devices now store block size changes in metadata sidecar.
 - Wait for SCSI devices to exit ASC 28h (MEDIUM CHANGE) status.
 
 ### - ext2/3/4 filesystem
-- Added new superblock fields.
-- Added support for devices with sectors bigger than 512 bytes.
 - Use os type as XML system identifier.
 
 ### - FAT filesystem
-- Added DEC Rainbow's hard-wired BPB.
-- Added support for volumes with 256 bytes/sector.
-- Added support for ACT Apricot BPB.
 - Behaviour with some non-compliant media descriptors.
 - Corrected 5.25" MD1DD detection.
 - Corrected boot code detection.
 - Corrected misaligned volumes on optical media.
-- Gets volume label, creation time and modification time from root directory if available.
 - Rewritten to better detect Atari, MSX, *-DOS and ANDOS variants.
 - Use OEM name as XML system identifier.
 
@@ -262,13 +320,6 @@
 ### - ISO9660 filesystem
 - Complete rewrite.
 - Check that date fields start with a number.
-- Added detection of AAIP extensions.
-- Added detection of Apple extensions.
-- Added detection of EFI Platform ID for El Torito.
-- Added detection of RRIP extensions.
-- Added detection of SUSP extensions.
-- Added detection of XA extensions.
-- Added detection of ziso extensions.
 
 ### - Master Boot Record partitioning scheme
 - Check real presence of a GPT.
@@ -283,12 +334,13 @@
 - Corrected misaligned volumes on optical media.
 
 ### - Nero Burning ROM
-- Corrected track handling
-- Disc types
-- Do not identify positively if footer version is unknown
-- Lead-In handling
-- Mode2 RAW sectors
-- Session count
+- Corrected track handling.
+- Corrected typo on parsing v2 images.
+- Disc types.
+- Do not identify positively if footer version is unknown.
+- Lead-In handling.
+- Mode2 RAW sectors.
+- Session count.
 
 ### - NeXT partition table
 - Added missing fields.
@@ -310,7 +362,6 @@
 ### - SCSI decoding
 - Handling of EVPDs smaller than length field.
 - Handling of modes 02h, 04h and 1Ch smaller than expected.
-- Prettyfying of mode 0Bh.
 - Prevented overflow on MMC FEATURES decoding.
 - Prevented overflow on SCSI MODE PAGE decoding.
 
@@ -319,22 +370,14 @@
 
 ### - Sun disklabel
 - Added bound checks.
-- Added support for 16-entries VTOC.
-- Added support for pre-VTOC disklabels.
 - Corrected structures for 8-entries VTOC.
 
 ### - System V filesystem
-- Added COHERENT offsets.
 - Check for it starting on second cylinder.
 - Corrected cluster size calculation.
 - Corrected detection between Release 2 and Release 4.
 - Corrected Release 2 superblock parameters.
 - Enlarged NICFREE for Version 7.
-
-### TeleDisk images
-- Added support for Advanced Compression.
-- Added support for floppy lead-out.
-- Added variable sectors per track support.
 
 ### - UFS filesystem
 - Corrected superblock locations.
@@ -342,6 +385,7 @@
 
 ## Changes
 - Added a public changelog.
+- Added a side application to create device reports under Linux without a .NET environment.
 - Added operating system version statistics.
 - Added partitioning scheme name to partition structures.
 - Added several internal tests to prevent regression on changes.
