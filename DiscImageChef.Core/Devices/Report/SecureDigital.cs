@@ -37,12 +37,12 @@ using DiscImageChef.Metadata;
 namespace DiscImageChef.Core.Devices.Report
 {
     /// <summary>
-    /// Implements creating a device report for a SecureDigital or MultiMediaCard flash card
+    ///     Implements creating a device report for a SecureDigital or MultiMediaCard flash card
     /// </summary>
     public static class SecureDigital
     {
         /// <summary>
-        /// Creates a device report for a SecureDigital or MultiMediaCard flash card
+        ///     Creates a device report for a SecureDigital or MultiMediaCard flash card
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
@@ -50,10 +50,13 @@ namespace DiscImageChef.Core.Devices.Report
         {
             if(report == null) return;
 
-            switch(dev.Type) {
-                case DeviceType.MMC: report.MultiMediaCard = new mmcsdType();
+            switch(dev.Type)
+            {
+                case DeviceType.MMC:
+                    report.MultiMediaCard = new mmcsdType();
                     break;
-                case DeviceType.SecureDigital: report.SecureDigital = new mmcsdType();
+                case DeviceType.SecureDigital:
+                    report.SecureDigital = new mmcsdType();
                     break;
             }
 
@@ -64,7 +67,8 @@ namespace DiscImageChef.Core.Devices.Report
             {
                 DicConsole.WriteLine("CID obtained correctly...");
 
-                switch(dev.Type) {
+                switch(dev.Type)
+                {
                     case DeviceType.SecureDigital:
                         // Clear serial number and manufacturing date
                         cid[9] = 0;
@@ -95,16 +99,20 @@ namespace DiscImageChef.Core.Devices.Report
             {
                 DicConsole.WriteLine("CSD obtained correctly...");
 
-                switch(dev.Type) {
-                    case DeviceType.MMC: report.MultiMediaCard.CSD = csd;
+                switch(dev.Type)
+                {
+                    case DeviceType.MMC:
+                        report.MultiMediaCard.CSD = csd;
                         break;
-                    case DeviceType.SecureDigital: report.SecureDigital.CSD = csd;
+                    case DeviceType.SecureDigital:
+                        report.SecureDigital.CSD = csd;
                         break;
                 }
             }
             else DicConsole.WriteLine("Could not read CSD...");
 
-            switch(dev.Type) {
+            switch(dev.Type)
+            {
                 case DeviceType.MMC:
                 {
                     DicConsole.WriteLine("Trying to get OCR...");

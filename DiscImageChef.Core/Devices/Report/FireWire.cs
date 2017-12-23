@@ -38,12 +38,12 @@ using DiscImageChef.Metadata;
 namespace DiscImageChef.Core.Devices.Report
 {
     /// <summary>
-    /// Implements creating a report for a FireWire device
+    ///     Implements creating a report for a FireWire device
     /// </summary>
     static class FireWire
-    {        
+    {
         /// <summary>
-        /// Fills a device report with parameters specific to a FireWire device
+        ///     Fills a device report with parameters specific to a FireWire device
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>

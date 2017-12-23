@@ -44,120 +44,16 @@ namespace DiscImageChef.Core.Devices.Dumping
     // TODO: For >4.0, this class must disappear
     class Alcohol120
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholHeader
-        {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] version;
-            public AlcoholMediumType type;
-            public ushort sessions;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ushort[] unknown1;
-            public ushort bcaLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown2;
-            public uint bcaOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public uint[] unknown3;
-            public uint structuresOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown4;
-            public uint sessionOffset;
-            public uint dpmOffset;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholSession
-        {
-            public int sessionStart;
-            public int sessionEnd;
-            public ushort sessionSequence;
-            public byte allBlocks;
-            public byte nonTrackBlocks;
-            public ushort firstTrack;
-            public ushort lastTrack;
-            public uint unknown;
-            public uint trackOffset;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholTrack
-        {
-            public AlcoholTrackMode mode;
-            public AlcoholSubchannelMode subMode;
-            public byte adrCtl;
-            public byte tno;
-            public byte point;
-            public byte min;
-            public byte sec;
-            public byte frame;
-            public byte zero;
-            public byte pmin;
-            public byte psec;
-            public byte pframe;
-            public uint extraOffset;
-            public ushort sectorSize;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown;
-            public uint startLba;
-            public ulong startOffset;
-            public uint files;
-            public uint footerOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] unknown2;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholTrackExtra
-        {
-            public uint pregap;
-            public uint sectors;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholFooter
-        {
-            public uint filenameOffset;
-            public uint widechar;
-            public uint unknown1;
-            public uint unknown2;
-        }
-        #endregion Internal Structures
-
-        #region Internal enumerations
-        enum AlcoholMediumType : ushort
-        {
-            Cd = 0x00,
-            Cdr = 0x01,
-            Cdrw = 0x02,
-            Dvd = 0x10,
-            Dvdr = 0x12
-        }
-
-        enum AlcoholTrackMode : byte
-        {
-            NoData = 0x00,
-            Dvd = 0x02,
-            Audio = 0xA9,
-            Mode1 = 0xAA,
-            Mode2 = 0xAB,
-            Mode2F1 = 0xAC,
-            Mode2F2 = 0xAD
-        }
-
-        enum AlcoholSubchannelMode : byte
-        {
-            None = 0x00,
-            Interleaved = 0x08
-        }
-        #endregion Internal enumerations
-
-        string outputPrefix;
-        string extension;
-
         byte[] bca;
-        byte[] pfi;
         byte[] dmi;
+        string extension;
+        AlcoholFooter footer;
         AlcoholHeader header;
-        List<AlcoholTrack> tracks;
+        string outputPrefix;
+        byte[] pfi;
         List<AlcoholSession> sessions;
         Dictionary<byte, uint> trackLengths;
-        AlcoholFooter footer;
+        List<AlcoholTrack> tracks;
 
         internal Alcohol120(string outputPrefix)
         {
@@ -382,7 +278,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 firstTrack = (ushort)cdSession.StartTrack,
                 lastTrack = (ushort)cdSession.EndTrack,
                 sessionSequence = cdSession.SessionSequence
-            })) { sessions.Add(session); }
+            })) sessions.Add(session);
         }
 
         internal void SetTrackTypes(byte point, TrackType mode, TrackSubchannelType subMode)
@@ -470,7 +366,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         }
 
         internal void AddTrack(byte adrCtl, byte tno, byte point, byte min, byte sec, byte frame, byte zero, byte pmin,
-                             byte psec, byte pframe, byte session)
+                               byte psec, byte pframe, byte session)
         {
             AlcoholTrack trk = new AlcoholTrack
             {
@@ -531,5 +427,108 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             this.extension = extension;
         }
+
+        #region Internal Structures
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholHeader
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] version;
+            public AlcoholMediumType type;
+            public ushort sessions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ushort[] unknown1;
+            public ushort bcaLength;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown2;
+            public uint bcaOffset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public uint[] unknown3;
+            public uint structuresOffset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown4;
+            public uint sessionOffset;
+            public uint dpmOffset;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholSession
+        {
+            public int sessionStart;
+            public int sessionEnd;
+            public ushort sessionSequence;
+            public byte allBlocks;
+            public byte nonTrackBlocks;
+            public ushort firstTrack;
+            public ushort lastTrack;
+            public uint unknown;
+            public uint trackOffset;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholTrack
+        {
+            public AlcoholTrackMode mode;
+            public AlcoholSubchannelMode subMode;
+            public byte adrCtl;
+            public byte tno;
+            public byte point;
+            public byte min;
+            public byte sec;
+            public byte frame;
+            public byte zero;
+            public byte pmin;
+            public byte psec;
+            public byte pframe;
+            public uint extraOffset;
+            public ushort sectorSize;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown;
+            public uint startLba;
+            public ulong startOffset;
+            public uint files;
+            public uint footerOffset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] unknown2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholTrackExtra
+        {
+            public uint pregap;
+            public uint sectors;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholFooter
+        {
+            public uint filenameOffset;
+            public uint widechar;
+            public uint unknown1;
+            public uint unknown2;
+        }
+        #endregion Internal Structures
+
+        #region Internal enumerations
+        enum AlcoholMediumType : ushort
+        {
+            Cd = 0x00,
+            Cdr = 0x01,
+            Cdrw = 0x02,
+            Dvd = 0x10,
+            Dvdr = 0x12
+        }
+
+        enum AlcoholTrackMode : byte
+        {
+            NoData = 0x00,
+            Dvd = 0x02,
+            Audio = 0xA9,
+            Mode1 = 0xAA,
+            Mode2 = 0xAB,
+            Mode2F1 = 0xAC,
+            Mode2F2 = 0xAD
+        }
+
+        enum AlcoholSubchannelMode : byte
+        {
+            None = 0x00,
+            Interleaved = 0x08
+        }
+        #endregion Internal enumerations
     }
 }

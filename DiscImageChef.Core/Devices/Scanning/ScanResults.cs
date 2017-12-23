@@ -35,80 +35,80 @@ using System.Collections.Generic;
 namespace DiscImageChef.Core.Devices.Scanning
 {
     /// <summary>
-    /// Contains the results of a media scan
+    ///     Contains the results of a media scan
     /// </summary>
     public struct ScanResults
     {
         /// <summary>
-        /// Total time spent scanning
+        ///     Total time spent scanning
         /// </summary>
         public double TotalTime;
         /// <summary>
-        /// Total time spent by the device processing commands
+        ///     Total time spent by the device processing commands
         /// </summary>
         public double ProcessingTime;
         /// <summary>
-        /// Average scan speed
+        ///     Average scan speed
         /// </summary>
         public double AvgSpeed;
         /// <summary>
-        /// Maximum scan speed burst
+        ///     Maximum scan speed burst
         /// </summary>
         public double MaxSpeed;
         /// <summary>
-        /// Minimum scan speed
+        ///     Minimum scan speed
         /// </summary>
         public double MinSpeed;
         /// <summary>
-        /// Sectors that took less than 3 milliseconds to be processed
+        ///     Sectors that took less than 3 milliseconds to be processed
         /// </summary>
         public ulong A;
         /// <summary>
-        /// Sectors that took less than 10 milliseconds but more than 3 milliseconds to be processed
+        ///     Sectors that took less than 10 milliseconds but more than 3 milliseconds to be processed
         /// </summary>
         public ulong B;
         /// <summary>
-        /// Sectors that took less than 50 milliseconds but more than 10 milliseconds to be processed
+        ///     Sectors that took less than 50 milliseconds but more than 10 milliseconds to be processed
         /// </summary>
         public ulong C;
         /// <summary>
-        /// Sectors that took less than 150 milliseconds but more than 50 milliseconds to be processed
+        ///     Sectors that took less than 150 milliseconds but more than 50 milliseconds to be processed
         /// </summary>
         public ulong D;
         /// <summary>
-        /// Sectors that took less than 500 milliseconds but more than 150 milliseconds to be processed
+        ///     Sectors that took less than 500 milliseconds but more than 150 milliseconds to be processed
         /// </summary>
         public ulong E;
         /// <summary>
-        /// Sectors that took more than 500 milliseconds to be processed
+        ///     Sectors that took more than 500 milliseconds to be processed
         /// </summary>
         public ulong F;
         /// <summary>
-        /// List of sectors that could not be read
+        ///     List of sectors that could not be read
         /// </summary>
         public List<ulong> UnreadableSectors;
         /// <summary>
-        /// Slowest seek
+        ///     Slowest seek
         /// </summary>
         public double SeekMax;
         /// <summary>
-        /// Fastest seek
+        ///     Fastest seek
         /// </summary>
         public double SeekMin;
         /// <summary>
-        /// Total time spent seeking
+        ///     Total time spent seeking
         /// </summary>
         public double SeekTotal;
         /// <summary>
-        /// How many seeks have been done
+        ///     How many seeks have been done
         /// </summary>
         public int SeekTimes;
         /// <summary>
-        /// How many blocks were scanned
+        ///     How many blocks were scanned
         /// </summary>
         public ulong Blocks;
         /// <summary>
-        /// How many blocks could not be read
+        ///     How many blocks could not be read
         /// </summary>
         public ulong Errored;
     }

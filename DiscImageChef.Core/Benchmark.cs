@@ -62,7 +62,7 @@ namespace DiscImageChef.Core
     }
 
     /// <summary>
-    /// Benchmarks the speed at which we can do checksums
+    ///     Benchmarks the speed at which we can do checksums
     /// </summary>
     public static class Benchmark
     {
@@ -518,7 +518,8 @@ namespace DiscImageChef.Core
             }
 
             EndProgress();
-            double entropy = entTable.Select(l => (double)l / (double)bufferSize).Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
+            double entropy = entTable.Select(l => (double)l / (double)bufferSize)
+                                     .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);

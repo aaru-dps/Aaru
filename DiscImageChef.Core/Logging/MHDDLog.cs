@@ -39,15 +39,15 @@ using DiscImageChef.Devices;
 namespace DiscImageChef.Core.Logging
 {
     /// <summary>
-    /// Implements a log in the format used by MHDD
+    ///     Implements a log in the format used by MHDD
     /// </summary>
     class MhddLog
     {
-        MemoryStream mhddFs;
         string logFile;
+        MemoryStream mhddFs;
 
         /// <summary>
-        /// Initializes the MHDD log
+        ///     Initializes the MHDD log
         /// </summary>
         /// <param name="outputFile">Log file</param>
         /// <param name="dev">Device</param>
@@ -60,7 +60,7 @@ namespace DiscImageChef.Core.Logging
 
             mhddFs = new MemoryStream();
             logFile = outputFile;
-            
+
             string mode;
 
             switch(dev.Type)
@@ -90,10 +90,9 @@ namespace DiscImageChef.Core.Logging
             string fw = $"F/W: {dev.Revision}";
             string sn = $"S/N: {dev.Serial}";
             string sectors = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-            string sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes",
-                                              blockSize);
-            string scanblocksize = string.Format(new CultureInfo("en-US"),
-                                                 "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
+            string sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
+            string scanblocksize =
+                string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
             const string MHDD_VER = "VER:2 ";
 
             byte[] deviceBytes = Encoding.ASCII.GetBytes(device);
@@ -135,7 +134,7 @@ namespace DiscImageChef.Core.Logging
         }
 
         /// <summary>
-        /// Logs a new read
+        ///     Logs a new read
         /// </summary>
         /// <param name="sector">Starting sector</param>
         /// <param name="duration">Duration in milliseconds</param>
@@ -151,7 +150,7 @@ namespace DiscImageChef.Core.Logging
         }
 
         /// <summary>
-        /// Closes and writes to file the MHDD log
+        ///     Closes and writes to file the MHDD log
         /// </summary>
         internal void Close()
         {

@@ -37,22 +37,12 @@ using DiscImageChef.Devices;
 namespace DiscImageChef.Core.Devices
 {
     /// <summary>
-    /// Reduces common code used for scanning and dumping
+    ///     Reduces common code used for scanning and dumping
     /// </summary>
     partial class Reader
     {
         Device dev;
         uint timeout;
-
-        internal string ErrorMessage { get; private set; }
-        internal ulong Blocks { get; private set; }
-        internal uint BlocksToRead { get; private set; }
-        internal uint LogicalBlockSize { get; private set; }
-        internal uint PhysicalBlockSize { get; private set; }
-        internal uint LongBlockSize { get; private set; }
-        internal bool CanReadRaw { get; private set; }
-        internal bool CanSeek => ataSeek || seek6 || seek10;
-        internal bool CanSeekLba => ataSeekLba || seek6 || seek10;
 
         internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
         {
@@ -70,6 +60,16 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
             }
         }
+
+        internal string ErrorMessage { get; private set; }
+        internal ulong Blocks { get; private set; }
+        internal uint BlocksToRead { get; private set; }
+        internal uint LogicalBlockSize { get; private set; }
+        internal uint PhysicalBlockSize { get; private set; }
+        internal uint LongBlockSize { get; private set; }
+        internal bool CanReadRaw { get; private set; }
+        internal bool CanSeek => ataSeek || seek6 || seek10;
+        internal bool CanSeekLba => ataSeekLba || seek6 || seek10;
 
         internal ulong GetDeviceBlocks()
         {

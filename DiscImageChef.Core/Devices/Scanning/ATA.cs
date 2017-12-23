@@ -40,12 +40,12 @@ using DiscImageChef.Devices;
 namespace DiscImageChef.Core.Devices.Scanning
 {
     /// <summary>
-    /// Implements scanning the media from an ATA device
+    ///     Implements scanning the media from an ATA device
     /// </summary>
     public static class Ata
     {
         /// <summary>
-        /// Scans the media from an ATA device
+        ///     Scans the media from an ATA device
         /// </summary>
         /// <param name="mhddLogPath">Path to a MHDD log file</param>
         /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
@@ -176,8 +176,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     DicConsole.WriteLine();
                     mhddLog.Close();
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 blockSize * (double)(results.Blocks + 1) / 1024 /
-                                 (results.ProcessingTime / 1000), devicePath);
+                                 blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                                 devicePath);
 
                     if(ataReader.CanSeekLba)
                         for(int i = 0; i < SEEK_TIMES; i++)
@@ -260,8 +260,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     DicConsole.WriteLine();
                     mhddLog.Close();
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 blockSize * (double)(results.Blocks + 1) / 1024 /
-                                 (results.ProcessingTime / 1000), devicePath);
+                                 blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                                 devicePath);
 
                     if(ataReader.CanSeek)
                         for(int i = 0; i < SEEK_TIMES; i++)
@@ -291,8 +291,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 results.ProcessingTime /= 1000;
                 results.TotalTime = (end - start).TotalSeconds;
-                results.AvgSpeed = blockSize * (double)(results.Blocks + 1) / 1048576 /
-                                   results.ProcessingTime;
+                results.AvgSpeed = blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
                 results.SeekTimes = SEEK_TIMES;
 
                 return results;

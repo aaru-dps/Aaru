@@ -40,14 +40,14 @@ using PlatformID = DiscImageChef.Interop.PlatformID;
 namespace DiscImageChef.Core.Logging
 {
     /// <summary>
-    /// Creates a dump log
+    ///     Creates a dump log
     /// </summary>
     public class DumpLog
     {
         readonly StreamWriter logSw;
 
         /// <summary>
-        /// Initializes the dump log
+        ///     Initializes the dump log
         /// </summary>
         /// <param name="outputFile">Output log file</param>
         /// <param name="dev">Device</param>
@@ -122,7 +122,7 @@ namespace DiscImageChef.Core.Logging
         }
 
         /// <summary>
-        /// Adds a new line to the dump log
+        ///     Adds a new line to the dump log
         /// </summary>
         /// <param name="format">Format string</param>
         /// <param name="args">Arguments</param>
@@ -136,7 +136,7 @@ namespace DiscImageChef.Core.Logging
         }
 
         /// <summary>
-        /// Finishes and closes the dump log
+        ///     Finishes and closes the dump log
         /// </summary>
         public void Close()
         {

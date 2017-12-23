@@ -49,12 +49,12 @@ using Spare = DiscImageChef.Decoders.DVD.Spare;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>
-    /// Implement dumping optical discs from MultiMedia devices
+    ///     Implement dumping optical discs from MultiMedia devices
     /// </summary>
     static class Mmc
     {
         /// <summary>
-        /// Dumps an optical disc
+        ///     Dumps an optical disc
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -204,7 +204,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
 
             #region Nintendo
-            switch(dskType) {
+            switch(dskType)
+            {
                 case MediaType.Unknown when blocks > 0:
                     dumpLog.WriteLine("Reading Physical Format Information");
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -333,8 +334,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             sense = dev.ScsiInquiry(out byte[] inqBuf, out _);
 
-                            if(sense || !Inquiry.Decode(inqBuf).HasValue ||
-                               Inquiry.Decode(inqBuf).HasValue &&
+                            if(sense || !Inquiry.Decode(inqBuf).HasValue || Inquiry.Decode(inqBuf).HasValue &&
                                !Inquiry.Decode(inqBuf).Value.KreonPresent)
                             {
                                 dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
@@ -381,8 +381,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 dumpLog.WriteLine("Reading Lead-in Copyright Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                              MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout,
-                                              out _);
+                                              MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out _);
                 if(!sense)
                     if(CSS_CPRM.DecodeLeadInCopyright(cmdBuf).HasValue)
                     {
@@ -396,15 +395,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                         };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].CMI.Image, tmpBuf);
 
-                        CSS_CPRM.LeadInCopyright cpy =
-                            CSS_CPRM.DecodeLeadInCopyright(cmdBuf).Value;
+                        CSS_CPRM.LeadInCopyright cpy = CSS_CPRM.DecodeLeadInCopyright(cmdBuf).Value;
                         if(cpy.CopyrightType != CopyrightType.NoProtection)
                             sidecar.OpticalDisc[0].CopyProtection = cpy.CopyrightType.ToString();
                     }
             }
             #endregion DVD-ROM
 
-            switch(dskType) {
+            switch(dskType)
+            {
                 #region DVD-ROM and HD DVD-ROM
                 case MediaType.DVDDownload:
                 case MediaType.DVDROM:
@@ -427,6 +426,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     break;
                 #endregion DVD-ROM and HD DVD-ROM
+
                 #region DVD-RAM and HD DVD-RAM
                 case MediaType.DVDRAM:
                 case MediaType.HDDVDRAM:
@@ -466,6 +466,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     break;
                 #endregion DVD-RAM and HD DVD-RAM
+
                 #region DVD-R and DVD-RW
                 case MediaType.DVDR:
                 case MediaType.DVDRW:
@@ -488,15 +489,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                 #endregion DVD-R and DVD-RW
             }
 
-            switch(dskType) {
+            switch(dskType)
+            {
                 #region DVD-R, DVD-RW and HD DVD-R
                 case MediaType.DVDR:
                 case MediaType.DVDRW:
                 case MediaType.HDDVDR:
                     dumpLog.WriteLine("Reading Media Identifier.");
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                  MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout,
-                                                  out _);
+                                                  MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout, out _);
                     if(!sense)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
@@ -528,6 +529,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     break;
                 #endregion DVD-R, DVD-RW and HD DVD-R
+
                 #region All DVD+
                 case MediaType.DVDPR:
                 case MediaType.DVDPRDL:
@@ -566,6 +568,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     break;
                 #endregion All DVD+
+
                 #region HD DVD-ROM
                 case MediaType.HDDVDROM:
                     dumpLog.WriteLine("Reading Lead-in Copyright Information.");
@@ -586,6 +589,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     break;
                 #endregion HD DVD-ROM
+
                 #region All Blu-ray
                 case MediaType.BDR:
                 case MediaType.BDRE:
@@ -628,7 +632,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 #endregion All Blu-ray
             }
 
-            switch(dskType) {
+            switch(dskType)
+            {
                 #region BD-ROM only
                 case MediaType.BDROM:
                     dumpLog.WriteLine("Reading Burst Cutting Area.");
@@ -649,6 +654,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     break;
                 #endregion BD-ROM only
+
                 #region Writable Blu-ray only
                 case MediaType.BDR:
                 case MediaType.BDRE:
@@ -672,8 +678,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Reading Spare Area Information.");
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
-                                                  MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout,
-                                                  out _);
+                                                  MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout, out _);
                     if(!sense)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];

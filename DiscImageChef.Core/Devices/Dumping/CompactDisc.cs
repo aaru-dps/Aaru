@@ -53,12 +53,12 @@ using TrackType = Schemas.TrackType;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>
-    /// Implement dumping Compact Discs
+    ///     Implement dumping Compact Discs
     /// </summary>
     class CompactDisc
     {
         /// <summary>
-        /// Dumps a compact disc
+        ///     Dumps a compact disc
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -147,12 +147,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Reading Disc Information");
                     sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf,
-                                                    MmcDiscInformationDataTypes.DiscInformation, dev.Timeout,
-                                                    out _);
+                                                    MmcDiscInformationDataTypes.DiscInformation, dev.Timeout, out _);
                     if(!sense)
                     {
-                        DiscInformation.StandardDiscInformation? discInfo =
-                            DiscInformation.Decode000b(cmdBuf);
+                        DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
                         if(discInfo.HasValue)
                             if(dskType == MediaType.CD)
                                 switch(discInfo.Value.DiscType)
@@ -191,8 +189,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
                         {
                             if(track.TNO == 1 && ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                                  (TocControl)(track.CONTROL & 0x0D) ==
-                                                  TocControl.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
+                                                  (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
+                            ) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
 
                             if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
                                (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
@@ -265,7 +263,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sessionsForAlcohol[i].SessionSequence = (ushort)(i + 1);
                 sessionsForAlcohol[i].StartTrack = ushort.MaxValue;
             }
-            foreach(FullTOC.TrackDataDescriptor trk in toc.Value.TrackDescriptors.Where(trk => trk.POINT > 0 && trk.POINT < 0xA0 && trk.SessionNumber <= sessionsForAlcohol.Length)) {
+            foreach(FullTOC.TrackDataDescriptor trk in
+                toc.Value.TrackDescriptors.Where(trk => trk.POINT > 0 && trk.POINT < 0xA0 &&
+                                                        trk.SessionNumber <= sessionsForAlcohol.Length))
+            {
                 if(trk.POINT < sessionsForAlcohol[trk.SessionNumber - 1].StartTrack)
                     sessionsForAlcohol[trk.SessionNumber - 1].StartTrack = trk.POINT;
                 if(trk.POINT > sessionsForAlcohol[trk.SessionNumber - 1].EndTrack)
@@ -283,7 +284,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             List<TrackType> trackList = new List<TrackType>();
             long lastSector = 0;
             string lastMsf = null;
-            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4)) if(trk.POINT >= 0x01 && trk.POINT <= 0x63)
+            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                if(trk.POINT >= 0x01 && trk.POINT <= 0x63)
                 {
                     TrackType track = new TrackType
                     {
@@ -294,11 +296,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                         track.TrackType1 = TrackTypeTrackType.mode1;
                     else track.TrackType1 = TrackTypeTrackType.audio;
                     if(trk.PHOUR > 0)
-                        track.StartMSF = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC,
-                                                       trk.PFRAME, trk.PHOUR);
+                        track.StartMSF = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC, trk.PFRAME,
+                                                       trk.PHOUR);
                     else track.StartMSF = $"{trk.PMIN:D2}:{trk.PSEC:D2}:{trk.PFRAME:D2}";
-                    track.StartSector = trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME -
-                                        150;
+                    track.StartSector = trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150;
                     trackList.Add(track);
                 }
                 else if(trk.POINT == 0xA2)
@@ -338,7 +339,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                         phour = trk.PHOUR;
                     }
 
-                    lastMsf = phour > 0 ? $"{phour:D2}:{pmin:D2}:{psec:D2}:{pframe:D2}" : $"{pmin:D2}:{psec:D2}:{pframe:D2}";
+                    lastMsf = phour > 0
+                                  ? $"{phour:D2}:{pmin:D2}:{psec:D2}:{pframe:D2}"
+                                  : $"{pmin:D2}:{psec:D2}:{pframe:D2}";
                     lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                 }
 
@@ -365,7 +368,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     pframe -= psec * 75;
                 }
 
-                tracks[t - 1].EndMSF = phour > 0 ? $"{phour:D2}:{pmin:D2}:{psec:D2}:{pframe:D2}" : $"{pmin:D2}:{psec:D2}:{pframe:D2}";
+                tracks[t - 1].EndMSF = phour > 0
+                                           ? $"{phour:D2}:{pmin:D2}:{psec:D2}:{pframe:D2}"
+                                           : $"{pmin:D2}:{psec:D2}:{pframe:D2}";
             }
 
             tracks[tracks.Length - 1].EndMSF = lastMsf;
@@ -608,8 +613,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         for(ulong b = i; b < i + blocksToRead; b++) resume.BadBlocks.Add(b);
 
-                        DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}",
-                                                  Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
                         mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                         ibgLog.Write(i, 0);
@@ -715,7 +719,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, blocksToRead,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                           true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout, out double cmdDuration);
+                                           true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
+                                           out double cmdDuration);
                         totalDuration += cmdDuration;
                     }
 
@@ -891,8 +896,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                XmlSerializer xmlSer =
-                    new XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
                 alcohol.Close();

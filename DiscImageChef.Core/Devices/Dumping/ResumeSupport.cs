@@ -40,12 +40,12 @@ using PlatformID = DiscImageChef.Interop.PlatformID;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>
-    /// Implements resume support
+    ///     Implements resume support
     /// </summary>
     static class ResumeSupport
     {
         /// <summary>
-        /// Process resume
+        ///     Process resume
         /// </summary>
         /// <param name="isLba">If drive is LBA</param>
         /// <param name="removable">If media is removable from device</param>
@@ -57,11 +57,14 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="resume">Previous resume, or null</param>
         /// <param name="currentTry">Current dumping hardware</param>
         /// <param name="extents">Dumped extents</param>
-        /// <exception cref="NotImplementedException">If device uses CHS addressing</exception>
-        /// <exception cref="InvalidOperationException">If the provided resume does not correspond with the current in progress dump</exception>
+        /// <exception cref="System.NotImplementedException">If device uses CHS addressing</exception>
+        /// <exception cref="System.InvalidOperationException">
+        ///     If the provided resume does not correspond with the current in
+        ///     progress dump
+        /// </exception>
         internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
-                                   string serial, PlatformID platform, ref Resume resume,
-                                   ref DumpHardwareType currentTry, ref ExtentsULong extents)
+                                     string serial, PlatformID platform, ref Resume resume,
+                                     ref DumpHardwareType currentTry, ref ExtentsULong extents)
         {
             if(resume != null)
             {
@@ -92,7 +95,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 InvalidOperationException($"Resume file specifies a device with serial {oldtry.Serial} but you're requesting to dump one with serial {serial}, not continuing...");
                     }
 
-                    if(oldtry.Software == null) throw new InvalidOperationException("Found corrupt resume file, cannot continue...");
+                    if(oldtry.Software == null)
+                        throw new InvalidOperationException("Found corrupt resume file, cannot continue...");
 
                     if(oldtry.Software.Name != "DiscImageChef" ||
                        oldtry.Software.OperatingSystem != platform.ToString() ||

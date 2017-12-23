@@ -40,12 +40,12 @@ using DiscImageChef.Partitions;
 namespace DiscImageChef.Core
 {
     /// <summary>
-    /// Implements methods for handling partitions
+    ///     Implements methods for handling partitions
     /// </summary>
     public static class Partitions
     {
         /// <summary>
-        /// Gets a list of all partitions present in the specified image
+        ///     Gets a list of all partitions present in the specified image
         /// </summary>
         /// <param name="image">Image</param>
         /// <returns>List of found partitions</returns>
@@ -97,9 +97,10 @@ namespace DiscImageChef.Core
 
                 foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
                 {
-                    DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name, foundPartitions[0].Start);
-                    if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
-                        continue;
+                    DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name,
+                                              foundPartitions[0].Start);
+                    if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start)
+                    ) continue;
 
                     DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
                                               foundPartitions[0].Start);
@@ -131,9 +132,12 @@ namespace DiscImageChef.Core
             // Be sure that device partitions are not excluded if not mapped by any scheme...
             if(image.ImageInfo.ImageHasPartitions)
             {
-                List<ulong> startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
+                List<ulong> startLocations =
+                    childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
-                childPartitions.AddRange(image.GetPartitions().Where(imagePartition => !startLocations.Contains(imagePartition.Start)));
+                childPartitions.AddRange(image.GetPartitions()
+                                              .Where(imagePartition =>
+                                                         !startLocations.Contains(imagePartition.Start)));
             }
 
             Partition[] childArray = childPartitions
@@ -145,7 +149,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Adds all partition schemes from the specified list of partitions to statistics
+        ///     Adds all partition schemes from the specified list of partitions to statistics
         /// </summary>
         /// <param name="partitions">List of partitions</param>
         public static void AddSchemesToStats(List<Partition> partitions)
@@ -154,7 +158,8 @@ namespace DiscImageChef.Core
 
             List<string> schemes = new List<string>();
 
-            foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme))) schemes.Add(part.Scheme);
+            foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme)))
+                schemes.Add(part.Scheme);
 
             foreach(string scheme in schemes) Statistics.AddPartition(scheme);
         }

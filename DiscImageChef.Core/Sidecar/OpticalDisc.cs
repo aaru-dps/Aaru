@@ -48,7 +48,7 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         /// <summary>
-        /// Creates a metadata sidecar for an optical disc (e.g. CD, DVD, GD, BD, XGD, GOD) 
+        ///     Creates a metadata sidecar for an optical disc (e.g. CD, DVD, GD, BD, XGD, GOD)
         /// </summary>
         /// <param name="image">Image</param>
         /// <param name="filterId">Filter uuid</param>
@@ -57,8 +57,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void OpticalDisc(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi,
-                                PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void OpticalDisc(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
             sidecar.OpticalDisc = new[]
             {
@@ -99,8 +99,7 @@ namespace DiscImageChef.Core
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.CD_ATIP).Length
                         };
-                        ATIP.CDATIP?
-                            atip = ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
+                        ATIP.CDATIP? atip = ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
                         if(atip.HasValue)
                             if(atip.Value.DDCD) dskType = atip.Value.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
                             else dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
@@ -165,8 +164,7 @@ namespace DiscImageChef.Core
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.DVD_PFI).Length
                         };
-                        PFI.PhysicalFormatInformation? pfi =
-                            PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
+                        PFI.PhysicalFormatInformation? pfi = PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
                         if(pfi.HasValue)
                             if(dskType != MediaType.XGD && dskType != MediaType.XGD2 && dskType != MediaType.XGD3)
                             {
@@ -224,12 +222,16 @@ namespace DiscImageChef.Core
 
                                 sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
                                 if(dskType == MediaType.UMD) sidecar.OpticalDisc[0].Dimensions.Diameter = 60;
-                                else switch(pfi.Value.DiscSize) {
-                                    case DVDSize.Eighty: sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
-                                        break;
-                                    case DVDSize.OneTwenty: sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
-                                        break;
-                                }
+                                else
+                                    switch(pfi.Value.DiscSize)
+                                    {
+                                        case DVDSize.Eighty:
+                                            sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
+                                            break;
+                                        case DVDSize.OneTwenty:
+                                            sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                                            break;
+                                    }
                             }
 
                         break;
@@ -307,9 +309,11 @@ namespace DiscImageChef.Core
                 xmlTrk.StartSector = (long)trk.TrackStartSector;
                 xmlTrk.EndSector = (long)trk.TrackEndSector;
 
-                if(trk.Indexes != null && trk.Indexes.ContainsKey(0)) if(trk.Indexes.TryGetValue(0, out ulong idx0)) xmlTrk.StartSector = (long)idx0;
+                if(trk.Indexes != null && trk.Indexes.ContainsKey(0))
+                    if(trk.Indexes.TryGetValue(0, out ulong idx0)) xmlTrk.StartSector = (long)idx0;
 
-                switch(sidecar.OpticalDisc[0].DiscType) {
+                switch(sidecar.OpticalDisc[0].DiscType)
+                {
                     case "CD":
                     case "GD":
                         xmlTrk.StartMSF = LbaToMsf(xmlTrk.StartSector);
@@ -341,7 +345,8 @@ namespace DiscImageChef.Core
                    // Only if filter is none...
                    (filterId == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") ||
                     // ...or AppleDouble
-                    filterId == new Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d"))) xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
+                    filterId == new Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d")))
+                    xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                 else
                 {
                     UpdateProgress("Track {0} of {1}", trk.TrackSequence, tracks.Count);
@@ -487,14 +492,19 @@ namespace DiscImageChef.Core
                                 lstFs.Add(plugin.XmlFSType);
                                 Statistics.AddFilesystem(plugin.XmlFSType.Type);
 
-                                switch(plugin.XmlFSType.Type) {
-                                    case "Opera": dskType = MediaType.ThreeDO;
+                                switch(plugin.XmlFSType.Type)
+                                {
+                                    case "Opera":
+                                        dskType = MediaType.ThreeDO;
                                         break;
-                                    case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                    case "PC Engine filesystem":
+                                        dskType = MediaType.SuperCDROM2;
                                         break;
-                                    case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                    case "Nintendo Wii filesystem":
+                                        dskType = MediaType.WOD;
                                         break;
-                                    case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                    case "Nintendo Gamecube filesystem":
+                                        dskType = MediaType.GOD;
                                         break;
                                 }
                             }
@@ -534,14 +544,19 @@ namespace DiscImageChef.Core
                             lstFs.Add(plugin.XmlFSType);
                             Statistics.AddFilesystem(plugin.XmlFSType.Type);
 
-                            switch(plugin.XmlFSType.Type) {
-                                case "Opera": dskType = MediaType.ThreeDO;
+                            switch(plugin.XmlFSType.Type)
+                            {
+                                case "Opera":
+                                    dskType = MediaType.ThreeDO;
                                     break;
-                                case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                case "PC Engine filesystem":
+                                    dskType = MediaType.SuperCDROM2;
                                     break;
-                                case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                case "Nintendo Wii filesystem":
+                                    dskType = MediaType.WOD;
                                     break;
-                                case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                case "Nintendo Gamecube filesystem":
+                                    dskType = MediaType.GOD;
                                     break;
                             }
                         }

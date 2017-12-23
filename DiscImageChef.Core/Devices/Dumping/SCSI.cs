@@ -44,13 +44,13 @@ using MediaType = DiscImageChef.CommonTypes.MediaType;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>
-    /// Implements dumping SCSI and ATAPI devices
+    ///     Implements dumping SCSI and ATAPI devices
     /// </summary>
     public class Scsi
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
         /// <summary>
-        /// Dumps a SCSI Block Commands device or a Reduced Block Commands devices
+        ///     Dumps a SCSI Block Commands device or a Reduced Block Commands devices
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -193,7 +193,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             CICMMetadataType sidecar = new CICMMetadataType();
 
-            switch(dev.ScsiType) {
+            switch(dev.ScsiType)
+            {
                 case PeripheralDeviceTypes.SequentialAccess:
                     if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
 
@@ -201,11 +202,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     Mmc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
-                             ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn, encoding);
+                             ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn,
+                             encoding);
                     return;
                 default:
-                    Sbc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar,
-                             ref dskType, false, ref resume, ref dumpLog, encoding);
+                    Sbc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
+                             ref sidecar, ref dskType, false, ref resume, ref dumpLog, encoding);
                     break;
             }
         }

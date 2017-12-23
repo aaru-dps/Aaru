@@ -42,7 +42,7 @@ namespace DiscImageChef.Core
     {
         // TODO: Complete it
         /// <summary>
-        /// Creates a metadata sidecar for an audio media (e.g. cassette) 
+        ///     Creates a metadata sidecar for an audio media (e.g. cassette)
         /// </summary>
         /// <param name="image">Image</param>
         /// <param name="filterId">Filter uuid</param>
@@ -51,8 +51,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void AudioMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi,
-                               PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void AudioMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
             sidecar.AudioMedia = new[]
             {

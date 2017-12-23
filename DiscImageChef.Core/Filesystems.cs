@@ -40,7 +40,8 @@ namespace DiscImageChef.Core
     public static class Filesystems
     {
         /// <summary>
-        /// Traverses all known filesystems and outputs a list of all that recognized what is in the specified image and partition
+        ///     Traverses all known filesystems and outputs a list of all that recognized what is in the specified image and
+        ///     partition
         /// </summary>
         /// <param name="imagePlugin">Media image</param>
         /// <param name="idPlugins">List of plugins recognizing the filesystem</param>
@@ -50,7 +51,9 @@ namespace DiscImageChef.Core
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
-            idPlugins = (from plugin in plugins.PluginsList.Values where plugin.Identify(imagePlugin, partition) select plugin.Name.ToLower()).ToList();
+            idPlugins = (from plugin in plugins.PluginsList.Values
+                         where plugin.Identify(imagePlugin, partition)
+                         select plugin.Name.ToLower()).ToList();
         }
     }
 }

@@ -38,7 +38,7 @@ namespace DiscImageChef.Core
     static class Version
     {
         /// <summary>
-        /// Gets XML software type for the running version
+        ///     Gets XML software type for the running version
         /// </summary>
         /// <param name="platform">Platform we are running in</param>
         /// <returns>XML software type</returns>
@@ -54,7 +54,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Gets version string
+        ///     Gets version string
         /// </summary>
         /// <returns>Version</returns>
         internal static string GetVersion()

@@ -54,12 +54,12 @@ using TrackType = Schemas.TrackType;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>
-    /// Implements dumping an Xbox Game Disc using a Kreon drive 
+    ///     Implements dumping an Xbox Game Disc using a Kreon drive
     /// </summary>
     static class Xgd
     {
         /// <summary>
-        /// Dumps an Xbox Game Disc using a Kreon drive 
+        ///     Dumps an Xbox Game Disc using a Kreon drive
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -74,11 +74,13 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="encoding">Encoding to use when analyzing dump</param>
         /// <param name="sidecar">Partially filled initialized sidecar</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        /// <exception cref="InvalidOperationException">If the provided resume does not correspond with the current in progress dump</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     If the provided resume does not correspond with the current in progress
+        ///     dump
+        /// </exception>
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
-                                  ref MediaType dskType, ref Resume resume, ref DumpLog dumpLog,
-                                  Encoding encoding)
+                                  ref MediaType dskType, ref Resume resume, ref DumpLog dumpLog, Encoding encoding)
         {
             bool sense;
             ulong blocks;
@@ -176,8 +178,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             };
             DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PFI.Image, tmpBuf, "Locked PFI", true);
             DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
-            l0Video = PFI.Decode(readBuffer).Value.Layer0EndPSN -
-                      PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1;
+            l0Video = PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1;
             l1Video = totalSize - l0Video + 1;
             dumpLog.WriteLine("Reading Disc Manufacturing Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -256,8 +257,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
             blocks = totalSize + 1;
-            middleZone = totalSize - (PFI.Decode(readBuffer).Value.Layer0EndPSN -
-                                      PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1) - gameSize + 1;
+            middleZone =
+                totalSize - (PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN +
+                             1) - gameSize + 1;
 
             tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
@@ -438,15 +440,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         for(ulong b = i; b < i + blocksToRead; b++) resume.BadBlocks.Add(b);
 
-                        DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}",
-                                                  Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
                         mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                         ibgLog.Write(i, 0);
 
                         dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
                         string[] senseLines = Sense.PrettifySense(senseBuf).Split(new[] {Environment.NewLine},
-                                                                      StringSplitOptions.RemoveEmptyEntries);
+                                                                                  StringSplitOptions
+                                                                                      .RemoveEmptyEntries);
                         foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
                     }
 
@@ -567,15 +569,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // TODO: Handle errors in video partition
                     //errored += blocksToRead;
                     //resume.BadBlocks.Add(l1);
-                    DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}",
-                                              Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
                     mhddLog.Write(l1, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(l1, 0);
                     dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, l1);
                     string[] senseLines = Sense.PrettifySense(senseBuf).Split(new[] {Environment.NewLine},
-                                                                                            StringSplitOptions
-                                                                                                .RemoveEmptyEntries);
+                                                                              StringSplitOptions.RemoveEmptyEntries);
                     foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
                 }
 
@@ -672,12 +672,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         Modes.ModePage_01_MMC pgMmc =
-                            new Modes.ModePage_01_MMC
-                            {
-                                PS = false,
-                                ReadRetryCount = 255,
-                                Parameter = 0x20
-                            };
+                            new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
                         Modes.DecodedMode md = new Modes.DecodedMode
                         {
                             Header = new Modes.ModeHeader(),
@@ -851,14 +846,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 Statistics.AddFilesystem(plugin.XmlFSType.Type);
                                 dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                switch(plugin.XmlFSType.Type) {
-                                    case "Opera": dskType = MediaType.ThreeDO;
+                                switch(plugin.XmlFSType.Type)
+                                {
+                                    case "Opera":
+                                        dskType = MediaType.ThreeDO;
                                         break;
-                                    case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                    case "PC Engine filesystem":
+                                        dskType = MediaType.SuperCDROM2;
                                         break;
-                                    case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                    case "Nintendo Wii filesystem":
+                                        dskType = MediaType.WOD;
                                         break;
-                                    case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                    case "Nintendo Gamecube filesystem":
+                                        dskType = MediaType.GOD;
                                         break;
                                 }
                             }
@@ -892,14 +892,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Statistics.AddFilesystem(plugin.XmlFSType.Type);
                             dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                            switch(plugin.XmlFSType.Type) {
-                                case "Opera": dskType = MediaType.ThreeDO;
+                            switch(plugin.XmlFSType.Type)
+                            {
+                                case "Opera":
+                                    dskType = MediaType.ThreeDO;
                                     break;
-                                case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                case "PC Engine filesystem":
+                                    dskType = MediaType.SuperCDROM2;
                                     break;
-                                case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                case "Nintendo Wii filesystem":
+                                    dskType = MediaType.WOD;
                                     break;
-                                case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                case "Nintendo Gamecube filesystem":
+                                    dskType = MediaType.GOD;
                                     break;
                             }
                         }
@@ -961,8 +966,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                XmlSerializer xmlSer =
-                    new XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
             }

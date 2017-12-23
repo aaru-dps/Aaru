@@ -39,19 +39,19 @@ namespace DiscImageChef.Core.Devices
     partial class Reader
     {
         // TODO: Raw reading
-        bool read6;
+        bool hldtstReadRaw;
+        bool plextorReadRaw;
         bool read10;
         bool read12;
         bool read16;
+        bool read6;
         bool readLong10;
         bool readLong16;
-        bool hldtstReadRaw;
         bool readLongDvd;
-        bool plextorReadRaw;
-        bool syqReadLong6;
-        bool syqReadLong10;
-        bool seek6;
         bool seek10;
+        bool seek6;
+        bool syqReadLong10;
+        bool syqReadLong6;
 
         ulong ScsiGetBlocks()
         {
@@ -62,14 +62,14 @@ namespace DiscImageChef.Core.Devices
         {
             read6 = !dev.Read6(out _, out byte[] senseBuf, 0, LogicalBlockSize, timeout, out _);
 
-            read10 = !dev.Read10(out _, out senseBuf, 0, false, true, false, false, 0, LogicalBlockSize, 0, 1,
-                                 timeout, out _);
+            read10 = !dev.Read10(out _, out senseBuf, 0, false, true, false, false, 0, LogicalBlockSize, 0, 1, timeout,
+                                 out _);
 
             read12 = !dev.Read12(out _, out senseBuf, 0, false, true, false, false, 0, LogicalBlockSize, 0, 1, false,
                                  timeout, out _);
 
-            read16 = !dev.Read16(out _, out senseBuf, 0, false, true, false, 0, LogicalBlockSize, 0, 1, false,
-                                 timeout, out _);
+            read16 = !dev.Read16(out _, out senseBuf, 0, false, true, false, 0, LogicalBlockSize, 0, 1, false, timeout,
+                                 out _);
 
             seek6 = !dev.Seek6(out senseBuf, 0, timeout, out _);
 
@@ -121,15 +121,14 @@ namespace DiscImageChef.Core.Devices
                         }
                     }*/
 
-                    testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 0xFFFF, timeout,
-                                               out _);
+                    testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 0xFFFF, timeout, out _);
                     FixedSense? decSense;
                     if(testSense && !dev.Error)
                     {
                         decSense = Sense.DecodeFixed(senseBuf);
                         if(decSense.HasValue)
-                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                               decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
+                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest && decSense.Value.ASC == 0x24 &&
+                               decSense.Value.ASCQ == 0x00)
                             {
                                 CanReadRaw = true;
                                 if(decSense.Value.InformationValid && decSense.Value.ILI)
@@ -153,8 +152,7 @@ namespace DiscImageChef.Core.Devices
                                 600, 610, 630
                             })
                             {
-                                testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout,
-                                                           out _);
+                                testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout, out _);
                                 if(!testSense && !dev.Error)
                                 {
                                     readLong16 = true;
@@ -163,8 +161,8 @@ namespace DiscImageChef.Core.Devices
                                     break;
                                 }
 
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize,
-                                                           timeout, out _);
+                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, timeout,
+                                                           out _);
                                 if(testSense || dev.Error) continue;
 
                                 readLong10 = true;
@@ -181,8 +179,7 @@ namespace DiscImageChef.Core.Devices
                                 1200
                             })
                             {
-                                testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout,
-                                                           out _);
+                                testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout, out _);
                                 if(!testSense && !dev.Error)
                                 {
                                     readLong16 = true;
@@ -191,8 +188,8 @@ namespace DiscImageChef.Core.Devices
                                     break;
                                 }
 
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize,
-                                                           timeout, out _);
+                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, timeout,
+                                                           out _);
                                 if(testSense || dev.Error) continue;
 
                                 readLong10 = true;
@@ -202,8 +199,7 @@ namespace DiscImageChef.Core.Devices
                             }
                         else if(LogicalBlockSize == 2048)
                         {
-                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 2380, timeout,
-                                                       out _);
+                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 2380, timeout, out _);
                             if(!testSense && !dev.Error)
                             {
                                 readLong16 = true;
@@ -212,8 +208,7 @@ namespace DiscImageChef.Core.Devices
                             }
                             else
                             {
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, timeout,
-                                                           out _);
+                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, timeout, out _);
                                 if(!testSense && !dev.Error)
                                 {
                                     readLong10 = true;
@@ -224,8 +219,7 @@ namespace DiscImageChef.Core.Devices
                         }
                         else if(LogicalBlockSize == 4096)
                         {
-                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 4760, timeout,
-                                                       out _);
+                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 4760, timeout, out _);
                             if(!testSense && !dev.Error)
                             {
                                 readLong16 = true;
@@ -234,8 +228,7 @@ namespace DiscImageChef.Core.Devices
                             }
                             else
                             {
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, timeout,
-                                                           out _);
+                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, timeout, out _);
                                 if(!testSense && !dev.Error)
                                 {
                                     readLong10 = true;
@@ -246,8 +239,7 @@ namespace DiscImageChef.Core.Devices
                         }
                         else if(LogicalBlockSize == 8192)
                         {
-                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 9424, timeout,
-                                                       out _);
+                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 9424, timeout, out _);
                             if(!testSense && !dev.Error)
                             {
                                 readLong16 = true;
@@ -256,8 +248,7 @@ namespace DiscImageChef.Core.Devices
                             }
                             else
                             {
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, timeout,
-                                                           out _);
+                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, timeout, out _);
                                 if(!testSense && !dev.Error)
                                 {
                                     readLong10 = true;
@@ -269,28 +260,26 @@ namespace DiscImageChef.Core.Devices
 
                     if(!CanReadRaw && dev.Manufacturer == "SYQUEST")
                     {
-                        testSense = dev.SyQuestReadLong10(out _, out senseBuf, 0, 0xFFFF, timeout,
-                                                          out _);
+                        testSense = dev.SyQuestReadLong10(out _, out senseBuf, 0, 0xFFFF, timeout, out _);
                         if(testSense)
                         {
                             decSense = Sense.DecodeFixed(senseBuf);
                             if(decSense.HasValue)
-                                if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                                   decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
+                                if(decSense.Value.SenseKey == SenseKeys.IllegalRequest && decSense.Value.ASC == 0x24 &&
+                                   decSense.Value.ASCQ == 0x00)
                                 {
                                     CanReadRaw = true;
                                     if(decSense.Value.InformationValid && decSense.Value.ILI)
                                     {
                                         LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                         syqReadLong10 =
-                                            !dev.SyQuestReadLong10(out _, out senseBuf, 0, LongBlockSize,
-                                                                   timeout, out _);
+                                            !dev.SyQuestReadLong10(out _, out senseBuf, 0, LongBlockSize, timeout,
+                                                                   out _);
                                     }
                                 }
                                 else
                                 {
-                                    testSense = dev.SyQuestReadLong6(out _, out senseBuf, 0, 0xFFFF, timeout,
-                                                                     out _);
+                                    testSense = dev.SyQuestReadLong6(out _, out senseBuf, 0, 0xFFFF, timeout, out _);
                                     if(testSense)
                                     {
                                         decSense = Sense.DecodeFixed(senseBuf);
@@ -303,8 +292,8 @@ namespace DiscImageChef.Core.Devices
                                                 {
                                                     LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                                     syqReadLong6 =
-                                                        !dev.SyQuestReadLong6(out _, out senseBuf, 0,
-                                                                              LongBlockSize, timeout, out _);
+                                                        !dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize,
+                                                                              timeout, out _);
                                                 }
                                             }
                                     }
@@ -313,8 +302,7 @@ namespace DiscImageChef.Core.Devices
 
                         if(!CanReadRaw && LogicalBlockSize == 256)
                         {
-                            testSense = dev.SyQuestReadLong6(out _, out senseBuf, 0, 262, timeout,
-                                                             out _);
+                            testSense = dev.SyQuestReadLong6(out _, out senseBuf, 0, 262, timeout, out _);
                             if(!testSense && !dev.Error)
                             {
                                 syqReadLong6 = true;
@@ -326,14 +314,13 @@ namespace DiscImageChef.Core.Devices
                 }
                 else
                 {
-                    switch(dev.Manufacturer) {
+                    switch(dev.Manufacturer)
+                    {
                         case "HL-DT-ST":
-                            hldtstReadRaw =
-                                !dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
+                            hldtstReadRaw = !dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
                             break;
                         case "PLEXTOR":
-                            plextorReadRaw =
-                                !dev.PlextorReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
+                            plextorReadRaw = !dev.PlextorReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
                             break;
                     }
 
@@ -346,8 +333,7 @@ namespace DiscImageChef.Core.Devices
                     // READ LONG (10) for some DVD drives
                     if(!CanReadRaw && dev.Manufacturer == "MATSHITA")
                     {
-                        testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 37856, timeout,
-                                                   out _);
+                        testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 37856, timeout, out _);
                         if(!testSense && !dev.Error)
                         {
                             readLongDvd = true;
@@ -423,26 +409,25 @@ namespace DiscImageChef.Core.Devices
             {
                 if(read16)
                 {
-                    dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0,
-                                       BlocksToRead, false, timeout, out _);
+                    dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
+                               timeout, out _);
                     if(dev.Error) BlocksToRead /= 2;
                 }
                 else if(read12)
                 {
-                    dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0,
-                                       BlocksToRead, false, timeout, out _);
+                    dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
+                               timeout, out _);
                     if(dev.Error) BlocksToRead /= 2;
                 }
                 else if(read10)
                 {
-                    dev.Read10(out _, out _, 0, false, true, false, false, 0, LogicalBlockSize, 0,
-                                       (ushort)BlocksToRead, timeout, out _);
+                    dev.Read10(out _, out _, 0, false, true, false, false, 0, LogicalBlockSize, 0, (ushort)BlocksToRead,
+                               timeout, out _);
                     if(dev.Error) BlocksToRead /= 2;
                 }
                 else if(read6)
                 {
-                    dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, timeout,
-                                      out _);
+                    dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, timeout, out _);
                     if(dev.Error) BlocksToRead /= 2;
                 }
 
@@ -486,14 +471,14 @@ namespace DiscImageChef.Core.Devices
             else
             {
                 if(read16)
-                    sense = dev.Read16(out buffer, out senseBuf, 0, false, true, false, block, LogicalBlockSize, 0, count,
-                                       false, timeout, out duration);
+                    sense = dev.Read16(out buffer, out senseBuf, 0, false, true, false, block, LogicalBlockSize, 0,
+                                       count, false, timeout, out duration);
                 else if(read12)
-                    sense = dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block, LogicalBlockSize,
-                                       0, count, false, timeout, out duration);
+                    sense = dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
+                                       LogicalBlockSize, 0, count, false, timeout, out duration);
                 else if(read10)
-                    sense = dev.Read10(out buffer, out senseBuf, 0, false, true, false, false, (uint)block, LogicalBlockSize,
-                                       0, (ushort)count, timeout, out duration);
+                    sense = dev.Read10(out buffer, out senseBuf, 0, false, true, false, false, (uint)block,
+                                       LogicalBlockSize, 0, (ushort)count, timeout, out duration);
                 else if(read6)
                     sense = dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, timeout,
                                       out duration);
@@ -502,8 +487,7 @@ namespace DiscImageChef.Core.Devices
 
             if(!sense && !dev.Error) return false;
 
-            DicConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}",
-                                      Sense.PrettifySense(senseBuf));
+            DicConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
             return sense;
         }
 

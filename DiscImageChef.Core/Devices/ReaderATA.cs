@@ -39,20 +39,19 @@ namespace DiscImageChef.Core.Devices
 {
     partial class Reader
     {
-        bool ataReadLba;
-        bool ataReadRetryLba;
-        bool ataReadDmaLba;
-        bool ataReadDmaRetryLba;
-        bool ataReadLba48;
-        bool ataReadDmaLba48;
+        Identify.IdentifyDevice ataId;
         bool ataRead;
-        bool ataReadRetry;
         bool ataReadDma;
+        bool ataReadDmaLba;
+        bool ataReadDmaLba48;
         bool ataReadDmaRetry;
+        bool ataReadDmaRetryLba;
+        bool ataReadLba;
+        bool ataReadLba48;
+        bool ataReadRetry;
+        bool ataReadRetryLba;
         bool ataSeek;
         bool ataSeekLba;
-
-        Identify.IdentifyDevice ataId;
 
         internal bool IsLba { get; private set; }
         internal ushort Cylinders { get; private set; }
@@ -71,7 +70,7 @@ namespace DiscImageChef.Core.Devices
                 Blocks = (ulong)(Cylinders * Heads * Sectors);
             }
 
-            if((ataId.CurrentCylinders != 0 && ataId.CurrentHeads != 0 && ataId.CurrentSectorsPerTrack != 0) ||
+            if(ataId.CurrentCylinders != 0 && ataId.CurrentHeads != 0 && ataId.CurrentSectorsPerTrack != 0 ||
                ataId.Cylinders <= 0 || ataId.Heads <= 0 ||
                ataId.SectorsPerTrack <= 0) return (Cylinders, Heads, Sectors);
 
@@ -103,7 +102,8 @@ namespace DiscImageChef.Core.Devices
 
         bool AtaFindReadCommand()
         {
-            bool sense = dev.Read(out byte[] cmdBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1, timeout, out _);
+            bool sense = dev.Read(out byte[] cmdBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1, timeout,
+                                  out _);
             ataRead = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
             sense = dev.Read(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out _);
             ataReadRetry = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
@@ -183,9 +183,7 @@ namespace DiscImageChef.Core.Devices
                 else LogicalBlockSize = 512;
 
                 if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
-                {
                     PhysicalBlockSize = LogicalBlockSize * (uint)Math.Pow(2, ataId.PhysLogSectorSize & 0xF);
-                }
                 else PhysicalBlockSize = LogicalBlockSize;
             }
             else

@@ -40,7 +40,7 @@ using DiscImageChef.Devices;
 namespace DiscImageChef.Core.Devices.Scanning
 {
     /// <summary>
-    /// Implements scanning a SecureDigital or MultiMediaCard flash card
+    ///     Implements scanning a SecureDigital or MultiMediaCard flash card
     /// </summary>
     public static class SecureDigital
     {
@@ -58,7 +58,8 @@ namespace DiscImageChef.Core.Devices.Scanning
             uint blockSize = 512;
             bool byteAddressed = true;
 
-            switch(dev.Type) {
+            switch(dev.Type)
+            {
                 case DeviceType.MMC:
                 {
                     sense = dev.ReadExtendedCsd(out cmdBuf, out _, TIMEOUT, out _);
@@ -109,8 +110,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             while(true)
             {
-                sense = dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT,
-                                 out duration);
+                sense = dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT, out duration);
 
                 if(sense) blocksToRead /= 2;
 
@@ -166,8 +166,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks, currentSpeed);
 
-                bool error = dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
-                                      TIMEOUT, out duration);
+                bool error = dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed, TIMEOUT,
+                                      out duration);
 
                 if(!error)
                 {
@@ -199,8 +199,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             DicConsole.WriteLine();
             mhddLog.Close();
             ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
-                         devicePath);
+                         blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000), devicePath);
 
             for(int i = 0; i < SEEK_TIMES; i++)
             {

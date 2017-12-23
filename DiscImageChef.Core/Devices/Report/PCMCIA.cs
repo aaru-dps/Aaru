@@ -37,12 +37,12 @@ using DiscImageChef.Metadata;
 namespace DiscImageChef.Core.Devices.Report
 {
     /// <summary>
-    /// Implements creating a report for a PCMCIA device
+    ///     Implements creating a report for a PCMCIA device
     /// </summary>
     static class Pcmcia
     {
         /// <summary>
-        /// Fills a device report with parameters specific to a PCMCIA device
+        ///     Fills a device report with parameters specific to a PCMCIA device
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
@@ -53,7 +53,8 @@ namespace DiscImageChef.Core.Devices.Report
             if(tuples == null) return;
 
             foreach(Tuple tuple in tuples)
-                switch(tuple.Code) {
+                switch(tuple.Code)
+                {
                     case TupleCodes.CISTPL_MANFID:
                         ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
 

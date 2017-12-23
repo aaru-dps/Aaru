@@ -42,25 +42,25 @@ using DiscImageChef.Partitions;
 namespace DiscImageChef.Core
 {
     /// <summary>
-    /// Contain all plugins (filesystem, partition and image)
+    ///     Contain all plugins (filesystem, partition and image)
     /// </summary>
     public class PluginBase
     {
         /// <summary>
-        /// List of all filesystem plugins
+        ///     List of all media image plugins
         /// </summary>
-        public SortedDictionary<string, Filesystem> PluginsList;
+        public SortedDictionary<string, ImagePlugin> ImagePluginsList;
         /// <summary>
-        /// List of all partition plugins
+        ///     List of all partition plugins
         /// </summary>
         public SortedDictionary<string, PartitionPlugin> PartPluginsList;
         /// <summary>
-        /// List of all media image plugins
+        ///     List of all filesystem plugins
         /// </summary>
-        public SortedDictionary<string, ImagePlugin> ImagePluginsList;
+        public SortedDictionary<string, Filesystem> PluginsList;
 
         /// <summary>
-        /// Initializes the plugins lists
+        ///     Initializes the plugins lists
         /// </summary>
         public PluginBase()
         {
@@ -70,7 +70,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Fills the plugins lists
+        ///     Fills the plugins lists
         /// </summary>
         /// <param name="encoding">Which encoding to pass to plugins</param>
         public void RegisterAllPlugins(Encoding encoding = null)
@@ -94,7 +94,8 @@ namespace DiscImageChef.Core
                 {
                     if(!type.IsSubclassOf(typeof(PartitionPlugin))) continue;
 
-                    PartitionPlugin plugin = (PartitionPlugin)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                    PartitionPlugin plugin =
+                        (PartitionPlugin)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterPartPlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
@@ -108,7 +109,8 @@ namespace DiscImageChef.Core
 
                     Filesystem plugin;
                     if(encoding != null)
-                        plugin = (Filesystem)type.GetConstructor(new[] {encoding.GetType()})?.Invoke(new object[] {encoding});
+                        plugin = (Filesystem)type.GetConstructor(new[] {encoding.GetType()})
+                                                 ?.Invoke(new object[] {encoding});
                     else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterPlugin(plugin);
                 }
@@ -117,7 +119,8 @@ namespace DiscImageChef.Core
 
         void RegisterImagePlugin(ImagePlugin plugin)
         {
-            if(!ImagePluginsList.ContainsKey(plugin.Name.ToLower())) ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
+            if(!ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
+                ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
         }
 
         void RegisterPlugin(Filesystem plugin)
@@ -127,7 +130,8 @@ namespace DiscImageChef.Core
 
         void RegisterPartPlugin(PartitionPlugin partplugin)
         {
-            if(!PartPluginsList.ContainsKey(partplugin.Name.ToLower())) PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
+            if(!PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
+                PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
         }
     }
 }

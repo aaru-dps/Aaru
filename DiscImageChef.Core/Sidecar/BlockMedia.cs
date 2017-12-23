@@ -51,7 +51,7 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         /// <summary>
-        /// Creates a metadata sidecar for a block media (e.g. floppy, hard disk, flash card, usb stick) 
+        ///     Creates a metadata sidecar for a block media (e.g. floppy, hard disk, flash card, usb stick)
         /// </summary>
         /// <param name="image">Image</param>
         /// <param name="filterId">Filter uuid</param>
@@ -60,8 +60,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void BlockMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi,
-                               PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void BlockMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
             sidecar.BlockMedia = new[]
             {
@@ -125,7 +125,8 @@ namespace DiscImageChef.Core
                         Tuple[] tuples = CIS.GetTuples(cis);
                         if(tuples != null)
                             foreach(Tuple tuple in tuples)
-                                switch(tuple.Code) {
+                                switch(tuple.Code)
+                                {
                                     case TupleCodes.CISTPL_MANFID:
                                         ManufacturerIdentificationTuple manfid =
                                             CIS.DecodeManufacturerIdentificationTuple(tuple);
@@ -147,7 +148,8 @@ namespace DiscImageChef.Core
                                             sidecar.BlockMedia[0].PCMCIA.ProductName = vers.Product;
                                             sidecar.BlockMedia[0].PCMCIA.Compliance =
                                                 $"{vers.MajorVersion}.{vers.MinorVersion}";
-                                            sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                                            sidecar.BlockMedia[0].PCMCIA.AdditionalInformation =
+                                                vers.AdditionalInformation;
                                         }
                                         break;
                                 }
@@ -241,7 +243,8 @@ namespace DiscImageChef.Core
 
             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
             if(image.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
-               filterId == new Guid("12345678-AAAA-BBBB-CCCC-123456789000")) sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
+               filterId == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
             else
             {
                 Checksum contentChkWorker = new Checksum();
@@ -382,8 +385,7 @@ namespace DiscImageChef.Core
 
             if(image.ImageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
             {
-                Identify.IdentifyDevice? ataId =
-                    Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
+                Identify.IdentifyDevice? ataId = Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
                 if(ataId.HasValue)
                     if(ataId.Value.CurrentCylinders > 0 && ataId.Value.CurrentHeads > 0 &&
                        ataId.Value.CurrentSectorsPerTrack > 0)
@@ -541,8 +543,8 @@ namespace DiscImageChef.Core
                     try { scpImage.OpenImage(scpFilter); }
                     catch(NotImplementedException) { }
 
-                    if(image.ImageInfo.Heads == 2 && scpImage.Header.heads == 0 ||
-                       image.ImageInfo.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
+                    if(image.ImageInfo.Heads == 2 && scpImage.Header.heads == 0 || image.ImageInfo.Heads == 1 &&
+                       (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
                         if(scpImage.Header.end + 1 >= image.ImageInfo.Cylinders)
                         {
                             List<BlockTrackType> scpBlockTrackTypes = new List<BlockTrackType>();
@@ -577,8 +579,7 @@ namespace DiscImageChef.Core
                                 {
                                     byte[] trackContents =
                                         new byte[scpTrack.Entries.Last().dataOffset +
-                                                 scpTrack.Entries.Last().trackLength - scpImage.Header.offsets[t] +
-                                                 1];
+                                                 scpTrack.Entries.Last().trackLength - scpImage.Header.offsets[t] + 1];
                                     scpStream.Position = scpImage.Header.offsets[t];
                                     scpStream.Read(trackContents, 0, trackContents.Length);
                                     scpBlockTrackType.Size = trackContents.Length;

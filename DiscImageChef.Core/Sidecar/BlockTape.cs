@@ -39,7 +39,7 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         /// <summary>
-        /// Creates a metadata sidecar for a block tape (e.g. scsi streaming) 
+        ///     Creates a metadata sidecar for a block tape (e.g. scsi streaming)
         /// </summary>
         /// <param name="files">List of files</param>
         /// <param name="folderName">Dump path</param>

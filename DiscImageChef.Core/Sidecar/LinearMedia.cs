@@ -42,7 +42,7 @@ namespace DiscImageChef.Core
     {
         // TODO: Complete it
         /// <summary>
-        /// Creates a metadata sidecar for linear media (e.g. ROM chip) 
+        ///     Creates a metadata sidecar for linear media (e.g. ROM chip)
         /// </summary>
         /// <param name="image">Image</param>
         /// <param name="filterId">Filter uuid</param>
@@ -51,8 +51,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void LinearMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi,
-                                PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void LinearMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
             sidecar.LinearMedia = new[]
             {

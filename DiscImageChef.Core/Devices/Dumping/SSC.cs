@@ -49,7 +49,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     static class Ssc
     {
         /// <summary>
-        /// Dumps the tape from a SCSI Streaming device
+        ///     Dumps the tape from a SCSI Streaming device
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -110,8 +110,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
                 // And yet, did not rewind!
-                if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 ||
-                                        fxSense.Value.ASC != 0x00))
+                if(fxSense.HasValue &&
+                   (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
                 {
                     DicConsole.WriteLine();
                     DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
@@ -136,8 +136,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
                 if(fxSense.HasValue && (fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ != 0x00 ||
-                                        fxSense.Value.ASC != 0x20 && fxSense.Value.SenseKey !=
-                                        SenseKeys.IllegalRequest))
+                                        fxSense.Value.ASC != 0x20 && fxSense.Value.SenseKey != SenseKeys.IllegalRequest)
+                )
                 {
                     DicConsole.ErrorWriteLine("Could not get position. Sense follows...");
                     DicConsole.ErrorWriteLine("{0}", strSense);
@@ -671,8 +671,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                XmlSerializer xmlSer =
-                    new XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
             }

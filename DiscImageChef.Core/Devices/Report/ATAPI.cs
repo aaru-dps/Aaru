@@ -38,12 +38,12 @@ using DiscImageChef.Metadata;
 namespace DiscImageChef.Core.Devices.Report
 {
     /// <summary>
-    /// Implements creating a report for an ATAPI device
+    ///     Implements creating a report for an ATAPI device
     /// </summary>
     static class Atapi
     {
         /// <summary>
-        /// Fills a SCSI device report with parameters specific to an ATAPI device
+        ///     Fills a SCSI device report with parameters specific to an ATAPI device
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
@@ -61,7 +61,8 @@ namespace DiscImageChef.Core.Devices.Report
             if(!Identify.Decode(buffer).HasValue) return;
 
             Identify.IdentifyDevice? atapiIdNullable = Identify.Decode(buffer);
-            if(atapiIdNullable != null) {
+            if(atapiIdNullable != null)
+            {
                 Identify.IdentifyDevice atapiId = atapiIdNullable.Value;
 
                 report.ATAPI = new ataType();

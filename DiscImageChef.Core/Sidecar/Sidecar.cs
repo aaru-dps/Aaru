@@ -42,15 +42,14 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         /// <summary>
-        /// Implements creating a metadata sidecar
+        ///     Implements creating a metadata sidecar
         /// </summary>
         /// <param name="image">Image</param>
         /// <param name="imagePath">Path to image</param>
         /// <param name="filterId">Filter uuid</param>
         /// <param name="encoding">Encoding for analysis</param>
         /// <returns>The metadata sidecar</returns>
-        public static CICMMetadataType Create(ImagePlugin image, string imagePath, Guid filterId,
-                                              Encoding encoding)
+        public static CICMMetadataType Create(ImagePlugin image, string imagePath, Guid filterId, Encoding encoding)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
             PluginBase plugins = new PluginBase();

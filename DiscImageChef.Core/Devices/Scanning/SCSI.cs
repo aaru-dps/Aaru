@@ -43,7 +43,7 @@ using DiscImageChef.Devices;
 namespace DiscImageChef.Core.Devices.Scanning
 {
     /// <summary>
-    /// Implements scanning the media from an SCSI device
+    ///     Implements scanning the media from an SCSI device
     /// </summary>
     public static class Scsi
     {
@@ -142,7 +142,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             Reader scsiReader = null;
 
-            switch(dev.ScsiType) {
+            switch(dev.ScsiType)
+            {
                 case PeripheralDeviceTypes.DirectAccess:
                 case PeripheralDeviceTypes.MultiMediaDevice:
                 case PeripheralDeviceTypes.OCRWDevice:
@@ -183,8 +184,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                sense = dev.GetConfiguration(out byte[] cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout,
-                                             out _);
+                sense = dev.GetConfiguration(out byte[] cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current,
+                                             dev.Timeout, out _);
                 if(!sense)
                 {
                     Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
@@ -246,9 +247,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                     return results;
                 }
 
-                bool readcd = !dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false,
-                                          true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                          MmcSubchannel.None, dev.Timeout, out _);
+                bool readcd = !dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                          MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                          dev.Timeout, out _);
 
                 if(readcd) DicConsole.WriteLine("Using MMC READ CD command.");
 
@@ -258,9 +259,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                 {
                     if(readcd)
                     {
-                        sense = dev.ReadCd(out _, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes,
-                                           false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                           MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                        sense = dev.ReadCd(out _, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes, false,
+                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
                         if(dev.Error) blocksToRead /= 2;
                     }
 
@@ -295,9 +296,9 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                     if(readcd)
                     {
-                        sense = dev.ReadCd(out _, out senseBuf, (uint)i, 2352, blocksToRead,
-                                           MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                           true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out cmdDuration);
+                        sense = dev.ReadCd(out _, out senseBuf, (uint)i, 2352, blocksToRead, MmcSectorTypes.AllTypes,
+                                           false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                           MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out cmdDuration);
                         results.ProcessingTime += cmdDuration;
                     }
 
@@ -315,8 +316,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     }
                     else
                     {
-                        DicConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}",
-                                                  Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}", Sense.PrettifySense(senseBuf));
 
                         FixedSense? senseDecoded = Sense.DecodeFixed(senseBuf);
                         if(senseDecoded.HasValue)
@@ -355,8 +355,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                 DicConsole.WriteLine();
                 mhddLog.Close();
                 ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             blockSize * (double)(results.Blocks + 1) / 1024 /
-                             (results.ProcessingTime / 1000), devicePath);
+                             blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                             devicePath);
             }
             else
             {
@@ -413,8 +413,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                 DicConsole.WriteLine();
                 mhddLog.Close();
                 ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             blockSize * (double)(results.Blocks + 1) / 1024 /
-                             (results.ProcessingTime / 1000), devicePath);
+                             blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                             devicePath);
             }
 
             results.SeekMax = double.MinValue;

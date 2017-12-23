@@ -37,7 +37,7 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Core
 {
     /// <summary>
-    /// Abstracts a datafile with a block based interface
+    ///     Abstracts a datafile with a block based interface
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
     public class DataFile
@@ -45,7 +45,7 @@ namespace DiscImageChef.Core
         FileStream dataFs;
 
         /// <summary>
-        /// Opens, or create, a new file
+        ///     Opens, or create, a new file
         /// </summary>
         /// <param name="outputFile">File</param>
         public DataFile(string outputFile)
@@ -54,7 +54,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Closes the file
+        ///     Closes the file
         /// </summary>
         public void Close()
         {
@@ -62,10 +62,10 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Reads bytes at current position
+        ///     Reads bytes at current position
         /// </summary>
         /// <param name="array">Array to place read data within</param>
-        /// <param name="offset">Offset of <see cref="array"/> where data will be read</param>
+        /// <param name="offset">Offset of <see cref="array" /> where data will be read</param>
         /// <param name="count">How many bytes to read</param>
         /// <returns>How many bytes were read</returns>
         public int Read(byte[] array, int offset, int count)
@@ -74,7 +74,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Seeks to the specified block
+        ///     Seeks to the specified block
         /// </summary>
         /// <param name="block">Block to seek to</param>
         /// <param name="blockSize">Block size in bytes</param>
@@ -85,7 +85,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Seeks to specified byte position
+        ///     Seeks to specified byte position
         /// </summary>
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
@@ -96,7 +96,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Seeks to specified byte position
+        ///     Seeks to specified byte position
         /// </summary>
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
@@ -107,7 +107,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Writes data at current position
+        ///     Writes data at current position
         /// </summary>
         /// <param name="data">Data</param>
         public void Write(byte[] data)
@@ -116,7 +116,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Writes data at current position
+        ///     Writes data at current position
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="offset">Offset of data from where to start taking data to write</param>
@@ -127,7 +127,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Writes data at specified block
+        ///     Writes data at specified block
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="block">Block</param>
@@ -138,7 +138,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Writes data at specified block
+        ///     Writes data at specified block
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="block">Block</param>
@@ -152,26 +152,27 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Current file position
+        ///     Current file position
         /// </summary>
         public long Position => dataFs.Position;
 
         /// <summary>
-        /// Writes data to a newly created file
+        ///     Writes data to a newly created file
         /// </summary>
         /// <param name="who">Who asked the file to be written (class, plugin, etc.)</param>
         /// <param name="data">Data to write</param>
         /// <param name="outputPrefix">First part of the file name</param>
         /// <param name="outputSuffix">Last part of the file name</param>
         /// <param name="whatWriting">What is the data about?</param>
-        public static void WriteTo(string who, string outputPrefix, string outputSuffix, string whatWriting, byte[] data)
+        public static void WriteTo(string who, string outputPrefix, string outputSuffix, string whatWriting,
+                                   byte[] data)
         {
             if(!string.IsNullOrEmpty(outputPrefix) && !string.IsNullOrEmpty(outputSuffix))
                 WriteTo(who, outputPrefix + outputSuffix, data, whatWriting);
         }
 
         /// <summary>
-        /// Writes data to a newly created file
+        ///     Writes data to a newly created file
         /// </summary>
         /// <param name="who">Who asked the file to be written (class, plugin, etc.)</param>
         /// <param name="filename">Filename to create</param>

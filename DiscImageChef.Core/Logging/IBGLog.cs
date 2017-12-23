@@ -39,26 +39,26 @@ using DiscImageChef.Devices;
 namespace DiscImageChef.Core.Logging
 {
     /// <summary>
-    /// Implements a log in the format used by IMGBurn
+    ///     Implements a log in the format used by IMGBurn
     /// </summary>
     class IbgLog
     {
-        StringBuilder ibgSb;
-        DateTime ibgDatePoint;
         CultureInfo ibgCulture;
-        double ibgStartSpeed;
-        string ibgMediaType;
+        DateTime ibgDatePoint;
         double ibgDivider;
-        bool ibgStartSet;
-        double ibgMaxSpeed;
-        double ibgIntSpeed;
-        int ibgSnaps;
         ulong ibgIntSector;
+        double ibgIntSpeed;
+        double ibgMaxSpeed;
+        string ibgMediaType;
         int ibgSampleRate;
+        StringBuilder ibgSb;
+        int ibgSnaps;
+        bool ibgStartSet;
+        double ibgStartSpeed;
         string logFile;
 
         /// <summary>
-        /// Initializes the IMGBurn log
+        ///     Initializes the IMGBurn log
         /// </summary>
         /// <param name="outputFile">Log file</param>
         /// <param name="currentProfile">Profile as defined by SCSI MultiMedia Commands specification</param>
@@ -201,7 +201,7 @@ namespace DiscImageChef.Core.Logging
         }
 
         /// <summary>
-        /// Adds a new speed snapshot to the log
+        ///     Adds a new speed snapshot to the log
         /// </summary>
         /// <param name="sector">Sector for the snapshot</param>
         /// <param name="currentSpeed">Current speed at the snapshot</param>
@@ -221,8 +221,8 @@ namespace DiscImageChef.Core.Logging
                 ibgStartSet = true;
             }
 
-            ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector,
-                               ibgSampleRate).AppendLine();
+            ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector, ibgSampleRate)
+                 .AppendLine();
             if(ibgIntSpeed / ibgSnaps / ibgDivider > ibgMaxSpeed) ibgMaxSpeed = ibgIntSpeed / ibgDivider;
 
             ibgDatePoint = DateTime.Now;
@@ -233,7 +233,7 @@ namespace DiscImageChef.Core.Logging
         }
 
         /// <summary>
-        /// Closes the IMGBurn log
+        ///     Closes the IMGBurn log
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="blocks">Media blocks</param>
@@ -243,9 +243,10 @@ namespace DiscImageChef.Core.Logging
         /// <param name="averageSpeed">Average speed</param>
         /// <param name="devicePath">Device path</param>
         internal void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
-                          double averageSpeed, string devicePath)
+                            double averageSpeed, string devicePath)
         {
             if(logFile == null) return;
+
             FileStream ibgFs = new FileStream(logFile, FileMode.Create);
             StringBuilder ibgHeader = new StringBuilder();
             string ibgBusType;
@@ -288,8 +289,7 @@ namespace DiscImageChef.Core.Logging
             ibgHeader.AppendLine();
             ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_START={0:0.00}", ibgStartSpeed).AppendLine();
             ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / ibgDivider).AppendLine();
-            ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / ibgDivider)
-                     .AppendLine();
+            ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / ibgDivider).AppendLine();
             ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", ibgMaxSpeed).AppendLine();
             ibgHeader.AppendFormat(ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
             ibgHeader.AppendLine("[END_CONFIGURATION]");

@@ -35,7 +35,7 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         /// <summary>
-        /// Converts a LBA to MM:SS:FF string for CDs
+        ///     Converts a LBA to MM:SS:FF string for CDs
         /// </summary>
         /// <param name="lba">LBA</param>
         /// <returns>MM:SS:FF</returns>
@@ -63,7 +63,7 @@ namespace DiscImageChef.Core
         }
 
         /// <summary>
-        /// Converts a LBA to MM:SS:FF string for DDCDs
+        ///     Converts a LBA to MM:SS:FF string for DDCDs
         /// </summary>
         /// <param name="lba">LBA</param>
         /// <returns>MM:SS:FF</returns>

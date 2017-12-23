@@ -41,7 +41,7 @@ namespace DiscImageChef.Core
     public static class ImageFormat
     {
         /// <summary>
-        /// Detects the image plugin that recognizes the data inside a filter
+        ///     Detects the image plugin that recognizes the data inside a filter
         /// </summary>
         /// <param name="imageFilter">Filter</param>
         /// <returns>Detected image plugin</returns>
@@ -55,7 +55,12 @@ namespace DiscImageChef.Core
                 ImagePlugin imageFormat = null;
 
                 // Check all but RAW plugin
-                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin => imageplugin.PluginUuid != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))) try
+                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin =>
+                                                                                             imageplugin.PluginUuid !=
+                                                                                             new
+                                                                                                 Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                )
+                    try
                     {
                         DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
                         if(!imageplugin.IdentifyImage(imageFilter)) continue;
@@ -64,23 +69,32 @@ namespace DiscImageChef.Core
                         break;
                     }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    catch { // ignored
- }
+                    catch
+                    {
+                        // ignored
+                    }
 
                 if(imageFormat != null) return imageFormat;
 
                 // Check only RAW plugin
-                    foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin => imageplugin.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))) try
-                        {
-                            DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
-                            if(!imageplugin.IdentifyImage(imageFilter)) continue;
+                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin =>
+                                                                                             imageplugin.PluginUuid ==
+                                                                                             new
+                                                                                                 Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                )
+                    try
+                    {
+                        DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
+                        if(!imageplugin.IdentifyImage(imageFilter)) continue;
 
-                            imageFormat = imageplugin;
-                            break;
-                        }
+                        imageFormat = imageplugin;
+                        break;
+                    }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    catch { // ignored
- }
+                    catch
+                    {
+                        // ignored
+                    }
 
                 // Still not recognized
                 return imageFormat;

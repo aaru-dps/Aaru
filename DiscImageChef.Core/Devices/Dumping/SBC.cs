@@ -39,7 +39,6 @@ using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using DiscImageChef.DiscImages;
@@ -54,12 +53,12 @@ using TrackType = DiscImageChef.DiscImages.TrackType;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>
-    /// Implements dumping SCSI Block Commands and Reduced Block Commands devices
+    ///     Implements dumping SCSI Block Commands and Reduced Block Commands devices
     /// </summary>
     static class Sbc
     {
         /// <summary>
-        /// Dumps a SCSI Block Commands device or a Reduced Block Commands devices
+        ///     Dumps a SCSI Block Commands device or a Reduced Block Commands devices
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -79,8 +78,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
-                                  ref MediaType dskType, bool opticalDisc, ref Resume resume,
-                                  ref DumpLog dumpLog, Encoding encoding, Alcohol120 alcohol = null)
+                                  ref MediaType dskType, bool opticalDisc, ref Resume resume, ref DumpLog dumpLog,
+                                  Encoding encoding, Alcohol120 alcohol = null)
         {
             bool sense;
             ulong blocks;
@@ -230,11 +229,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
                         dumpLog.WriteLine("Requesting MODE SENSE (10).");
-                        sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
-                                                0x3F, 0xFF, 5, out _);
+                        sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                                0xFF, 5, out _);
                         if(!sense || dev.Error)
-                            sense = dev.ModeSense10(out cmdBuf, out _, false, true,
-                                                    ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
+                            sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
+                                                    0x3F, 0x00, 5, out _);
 
                         Modes.DecodedMode? decMode = null;
 
@@ -252,11 +251,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                             }
 
                         dumpLog.WriteLine("Requesting MODE SENSE (6).");
-                        sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                               0x00, 5, out _);
+                        sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                               5, out _);
                         if(sense || dev.Error)
-                            sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current,
-                                                   0x3F, 0x00, 5, out _);
+                            sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                                   0x00, 5, out _);
                         if(sense || dev.Error) sense = dev.ModeSense(out cmdBuf, out _, 5, out _);
 
                         if(!sense && !dev.Error)
@@ -279,7 +278,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                decMode.Value.Header.BlockDescriptors.Length >= 1)
                                 scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
-                            containsFloppyPage = decMode.Value.Pages.Aggregate(containsFloppyPage, (current, modePage) => current | (modePage.Page == 0x05));
+                            containsFloppyPage =
+                                decMode.Value.Pages.Aggregate(containsFloppyPage,
+                                                              (current, modePage) => current | (modePage.Page == 0x05));
                         }
                     }
                 }
@@ -288,7 +289,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumType,
                                                 scsiDensityCode, blocks, blockSize);
-
 
             dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
             dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
@@ -407,7 +407,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
                 }
 
-                double newSpeed= (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
+                double newSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
                 if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                 resume.NextBlock = i + blocksToRead;
             }
@@ -474,12 +474,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         Modes.ModePage_01_MMC pgMmc =
-                            new Modes.ModePage_01_MMC
-                            {
-                                PS = false,
-                                ReadRetryCount = 255,
-                                Parameter = 0x20
-                            };
+                            new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
                         Modes.DecodedMode md = new Modes.DecodedMode
                         {
                             Header = new Modes.ModeHeader(),
@@ -651,14 +646,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 Statistics.AddFilesystem(plugin.XmlFSType.Type);
                                 dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                switch(plugin.XmlFSType.Type) {
-                                    case "Opera": dskType = MediaType.ThreeDO;
+                                switch(plugin.XmlFSType.Type)
+                                {
+                                    case "Opera":
+                                        dskType = MediaType.ThreeDO;
                                         break;
-                                    case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                    case "PC Engine filesystem":
+                                        dskType = MediaType.SuperCDROM2;
                                         break;
-                                    case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                    case "Nintendo Wii filesystem":
+                                        dskType = MediaType.WOD;
                                         break;
-                                    case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                    case "Nintendo Gamecube filesystem":
+                                        dskType = MediaType.GOD;
                                         break;
                                 }
                             }
@@ -692,14 +692,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Statistics.AddFilesystem(plugin.XmlFSType.Type);
                             dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                            switch(plugin.XmlFSType.Type) {
-                                case "Opera": dskType = MediaType.ThreeDO;
+                            switch(plugin.XmlFSType.Type)
+                            {
+                                case "Opera":
+                                    dskType = MediaType.ThreeDO;
                                     break;
-                                case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                case "PC Engine filesystem":
+                                    dskType = MediaType.SuperCDROM2;
                                     break;
-                                case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                case "Nintendo Wii filesystem":
+                                    dskType = MediaType.WOD;
                                     break;
-                                case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                case "Nintendo Gamecube filesystem":
+                                    dskType = MediaType.GOD;
                                     break;
                             }
                         }
@@ -837,8 +842,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                XmlSerializer xmlSer =
-                    new XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
                 if(alcohol != null && !dumpRaw) alcohol.Close();

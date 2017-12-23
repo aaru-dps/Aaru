@@ -51,12 +51,12 @@ using MediaType = DiscImageChef.Metadata.MediaType;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>
-    /// Implements dumping a MultiMediaCard or SecureDigital flash card
+    ///     Implements dumping a MultiMediaCard or SecureDigital flash card
     /// </summary>
     public class SecureDigital
     {
         /// <summary>
-        /// Dumps a MultiMediaCard or SecureDigital flash card
+        ///     Dumps a MultiMediaCard or SecureDigital flash card
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -71,8 +71,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="encoding">Encoding to use when analyzing dump</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
-                                bool dumpRaw, bool persistent, bool stopOnError, ref Resume resume,
-                                ref DumpLog dumpLog, Encoding encoding)
+                                bool dumpRaw, bool persistent, bool stopOnError, ref Resume resume, ref DumpLog dumpLog,
+                                Encoding encoding)
         {
             bool aborted;
 
@@ -93,8 +93,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             const uint TIMEOUT = 5;
             double duration;
 
-            CICMMetadataType sidecar =
-                new CICMMetadataType {BlockMedia = new[] {new BlockMediaType()}};
+            CICMMetadataType sidecar = new CICMMetadataType {BlockMedia = new[] {new BlockMediaType()}};
 
             uint blocksToRead = 128;
             uint blockSize = 512;
@@ -106,7 +105,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             int physicalBlockSize = 0;
             bool byteAddressed = true;
 
-            switch(dev.Type) {
+            switch(dev.Type)
+            {
                 case DeviceType.MMC:
                 {
                     dumpLog.WriteLine("Reading Extended CSD");
@@ -237,8 +237,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].SecureDigital.SCR.Image, scr);
             }
 
-
-            switch(dev.Type) {
+            switch(dev.Type)
+            {
                 case DeviceType.MMC:
                     sidecar.BlockMedia[0].MultiMediaCard.CID = cidDump;
                     sidecar.BlockMedia[0].MultiMediaCard.CSD = csdDump;
@@ -276,8 +276,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             while(true)
             {
-                error = dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT,
-                                 out duration);
+                error = dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT, out duration);
 
                 if(error) blocksToRead /= 2;
 
@@ -549,14 +548,16 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             sidecar.BlockMedia[0].Checksums = dataChk.End().ToArray();
             string xmlDskTyp = null, xmlDskSubTyp = null;
-            switch(dev.Type) {
+            switch(dev.Type)
+            {
                 case DeviceType.MMC:
                     MediaType.MediaTypeToString(CommonTypes.MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
                     sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(CommonTypes.MediaType.MMC);
                     break;
                 case DeviceType.SecureDigital:
                     MediaType.MediaTypeToString(CommonTypes.MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
-                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(CommonTypes.MediaType.SecureDigital);
+                    sidecar.BlockMedia[0].Dimensions =
+                        Dimensions.DimensionsFromMediaType(CommonTypes.MediaType.SecureDigital);
                     break;
             }
 
@@ -568,10 +569,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 format = "Raw disk image (sector by sector copy)",
                 Value = outputPrefix + ".bin"
             };
-            switch(dev.Type) {
-                case DeviceType.MMC: sidecar.BlockMedia[0].Interface = "MultiMediaCard";
+            switch(dev.Type)
+            {
+                case DeviceType.MMC:
+                    sidecar.BlockMedia[0].Interface = "MultiMediaCard";
                     break;
-                case DeviceType.SecureDigital: sidecar.BlockMedia[0].Interface = "SecureDigital";
+                case DeviceType.SecureDigital:
+                    sidecar.BlockMedia[0].Interface = "SecureDigital";
                     break;
             }
 
@@ -602,16 +606,18 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                XmlSerializer xmlSer =
-                    new XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
             }
 
-            switch(dev.Type) {
-                case DeviceType.MMC: Statistics.AddMedia(CommonTypes.MediaType.MMC, true);
+            switch(dev.Type)
+            {
+                case DeviceType.MMC:
+                    Statistics.AddMedia(CommonTypes.MediaType.MMC, true);
                     break;
-                case DeviceType.SecureDigital: Statistics.AddMedia(CommonTypes.MediaType.SecureDigital, true);
+                case DeviceType.SecureDigital:
+                    Statistics.AddMedia(CommonTypes.MediaType.SecureDigital, true);
                     break;
             }
         }

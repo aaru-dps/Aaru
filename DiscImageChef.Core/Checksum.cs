@@ -56,47 +56,44 @@ namespace DiscImageChef.Core
     }
 
     /// <summary>
-    /// Checksums and hashes data, with different algorithms multithreaded 
+    ///     Checksums and hashes data, with different algorithms multithreaded
     /// </summary>
     public class Checksum
     {
         Adler32Context adler32Ctx;
-        Crc16Context crc16Ctx;
-        Crc32Context crc32Ctx;
-        Crc64Context crc64Ctx;
-        Md5Context md5Ctx;
-        Ripemd160Context ripemd160Ctx;
-        Sha1Context sha1Ctx;
-        Sha256Context sha256Ctx;
-        Sha384Context sha384Ctx;
-        Sha512Context sha512Ctx;
-        SpamSumContext ssctx;
-
-        Thread adlerThread;
-        Thread crc16Thread;
-        Thread crc32Thread;
-        Thread crc64Thread;
-        Thread md5Thread;
-        Thread ripemd160Thread;
-        Thread sha1Thread;
-        Thread sha256Thread;
-        Thread sha384Thread;
-        Thread sha512Thread;
-        Thread spamsumThread;
-
         AdlerPacket adlerPkt;
+        Thread adlerThread;
+        Crc16Context crc16Ctx;
         Crc16Packet crc16Pkt;
+        Thread crc16Thread;
+        Crc32Context crc32Ctx;
         Crc32Packet crc32Pkt;
+        Thread crc32Thread;
+        Crc64Context crc64Ctx;
         Crc64Packet crc64Pkt;
-        Md5Packet md5Pkt;
-        Ripemd160Packet ripemd160Pkt;
-        Sha1Packet sha1Pkt;
-        Sha256Packet sha256Pkt;
-        Sha384Packet sha384Pkt;
-        Sha512Packet sha512Pkt;
-        SpamsumPacket spamsumPkt;
-
+        Thread crc64Thread;
         EnableChecksum enabled;
+        Md5Context md5Ctx;
+        Md5Packet md5Pkt;
+        Thread md5Thread;
+        Ripemd160Context ripemd160Ctx;
+        Ripemd160Packet ripemd160Pkt;
+        Thread ripemd160Thread;
+        Sha1Context sha1Ctx;
+        Sha1Packet sha1Pkt;
+        Thread sha1Thread;
+        Sha256Context sha256Ctx;
+        Sha256Packet sha256Pkt;
+        Thread sha256Thread;
+        Sha384Context sha384Ctx;
+        Sha384Packet sha384Pkt;
+        Thread sha384Thread;
+        Sha512Context sha512Ctx;
+        Sha512Packet sha512Pkt;
+        Thread sha512Thread;
+        SpamsumPacket spamsumPkt;
+        Thread spamsumThread;
+        SpamSumContext ssctx;
 
         public Checksum(EnableChecksum enabled = EnableChecksum.All)
         {

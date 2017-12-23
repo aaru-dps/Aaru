@@ -40,12 +40,12 @@ using DiscImageChef.Metadata;
 namespace DiscImageChef.Core
 {
     /// <summary>
-    /// Handles connections to DiscImageChef.Server
+    ///     Handles connections to DiscImageChef.Server
     /// </summary>
     public static class Remote
     {
         /// <summary>
-        /// Submits a device report
+        ///     Submits a device report
         /// </summary>
         /// <param name="report">Device report</param>
         public static void SubmitReport(DeviceReport report)
@@ -61,8 +61,7 @@ namespace DiscImageChef.Core
 #endif
 
                     MemoryStream xmlStream = new MemoryStream();
-                    XmlSerializer xmlSer =
-                        new XmlSerializer(typeof(DeviceReport));
+                    XmlSerializer xmlSer = new XmlSerializer(typeof(DeviceReport));
                     xmlSer.Serialize(xmlStream, report);
                     xmlStream.Seek(0, SeekOrigin.Begin);
                     WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreport");
