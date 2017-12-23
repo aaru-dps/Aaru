@@ -40,59 +40,61 @@ namespace DiscImageChef
     {
         static readonly DateTime LisaEpoch = new DateTime(1901, 1, 1, 0, 0, 0);
         static readonly DateTime MacEpoch = new DateTime(1904, 1, 1, 0, 0, 0);
-        static readonly DateTime UNIXEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
-        // Day 0 of Julian Date system
+        static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
+        /// <summary>
+        /// Day 0 of Julian Date system
+        /// </summary>
         static readonly DateTime JulianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
         static readonly DateTime AmigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
 
         /// <summary>
         /// Converts a Macintosh timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="MacTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
+        /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime MacToDateTime(ulong MacTimeStamp)
+        public static DateTime MacToDateTime(ulong macTimeStamp)
         {
-            return MacEpoch.AddTicks((long)(MacTimeStamp * 10000000));
+            return MacEpoch.AddTicks((long)(macTimeStamp * 10000000));
         }
 
         /// <summary>
         /// Converts a Lisa timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="LisaTimeStamp">Lisa timestamp (seconds since 1st Jan. 1901)</param>
+        /// <param name="lisaTimeStamp">Lisa timestamp (seconds since 1st Jan. 1901)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime LisaToDateTime(uint LisaTimeStamp)
+        public static DateTime LisaToDateTime(uint lisaTimeStamp)
         {
-            return LisaEpoch.AddSeconds(LisaTimeStamp);
+            return LisaEpoch.AddSeconds(lisaTimeStamp);
         }
 
         /// <summary>
         /// Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UNIXToDateTime(int UNIXTimeStamp)
+        public static DateTime UnixToDateTime(int unixTimeStamp)
         {
-            return UNIXEpoch.AddSeconds(UNIXTimeStamp);
+            return UnixEpoch.AddSeconds(unixTimeStamp);
         }
 
         /// <summary>
         /// Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UNIXToDateTime(long UNIXTimeStamp)
+        public static DateTime UnixToDateTime(long unixTimeStamp)
         {
-            return UNIXEpoch.AddSeconds(UNIXTimeStamp);
+            return UnixEpoch.AddSeconds(unixTimeStamp);
         }
 
         /// <summary>
         /// Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UNIXUnsignedToDateTime(uint UNIXTimeStamp)
+        public static DateTime UnixUnsignedToDateTime(uint unixTimeStamp)
         {
-            return UNIXEpoch.AddSeconds(UNIXTimeStamp);
+            return UnixEpoch.AddSeconds(unixTimeStamp);
         }
 
         /// <summary>
@@ -101,103 +103,95 @@ namespace DiscImageChef
         /// <param name="seconds">Seconds since 1st Jan. 1970)</param>
         /// <param name="nanoseconds">Nanoseconds</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UNIXUnsignedToDateTime(uint seconds, uint nanoseconds)
+        public static DateTime UnixUnsignedToDateTime(uint seconds, uint nanoseconds)
         {
-            return UNIXEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
+            return UnixEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
         }
 
         /// <summary>
         /// Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="UNIXTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
+        /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UNIXUnsignedToDateTime(ulong UNIXTimeStamp)
+        public static DateTime UnixUnsignedToDateTime(ulong unixTimeStamp)
         {
-            return UNIXEpoch.AddSeconds(UNIXTimeStamp);
+            return UnixEpoch.AddSeconds(unixTimeStamp);
         }
 
         /// <summary>
         /// Converts a High Sierra Format timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="VDDateTime">High Sierra Format timestamp</param>
+        /// <param name="vdDateTime">High Sierra Format timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime HighSierraToDateTime(byte[] VDDateTime)
+        public static DateTime HighSierraToDateTime(byte[] vdDateTime)
         {
             byte[] isotime = new byte[17];
-            Array.Copy(VDDateTime, 0, isotime, 0, 16);
-            return ISO9660ToDateTime(isotime);
+            Array.Copy(vdDateTime, 0, isotime, 0, 16);
+            return Iso9660ToDateTime(isotime);
         }
 
         // TODO: Timezone
         /// <summary>
         /// Converts an ISO9660 timestamp to a .NET DateTime
         /// </summary>
-        /// <param name="VDDateTime">ISO9660 timestamp</param>
+        /// <param name="vdDateTime">ISO9660 timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime ISO9660ToDateTime(byte[] VDDateTime)
+        public static DateTime Iso9660ToDateTime(byte[] vdDateTime)
         {
-            int year, month, day, hour, minute, second, hundredths;
             byte[] twocharvalue = new byte[2];
             byte[] fourcharvalue = new byte[4];
 
-            fourcharvalue[0] = VDDateTime[0];
-            fourcharvalue[1] = VDDateTime[1];
-            fourcharvalue[2] = VDDateTime[2];
-            fourcharvalue[3] = VDDateTime[3];
+            fourcharvalue[0] = vdDateTime[0];
+            fourcharvalue[1] = vdDateTime[1];
+            fourcharvalue[2] = vdDateTime[2];
+            fourcharvalue[3] = vdDateTime[3];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"",
                                       StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out year)) year = 0;
-            //			year = Convert.ToInt32(StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out int year)) year = 0;
 
-            twocharvalue[0] = VDDateTime[4];
-            twocharvalue[1] = VDDateTime[5];
+            twocharvalue[0] = vdDateTime[4];
+            twocharvalue[1] = vdDateTime[5];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out month)) month = 0;
-            //			month = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int month)) month = 0;
 
-            twocharvalue[0] = VDDateTime[6];
-            twocharvalue[1] = VDDateTime[7];
+            twocharvalue[0] = vdDateTime[6];
+            twocharvalue[1] = vdDateTime[7];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out day)) day = 0;
-            //			day = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int day)) day = 0;
 
-            twocharvalue[0] = VDDateTime[8];
-            twocharvalue[1] = VDDateTime[9];
+            twocharvalue[0] = vdDateTime[8];
+            twocharvalue[1] = vdDateTime[9];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hour)) hour = 0;
-            //			hour = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hour)) hour = 0;
 
-            twocharvalue[0] = VDDateTime[10];
-            twocharvalue[1] = VDDateTime[11];
+            twocharvalue[0] = vdDateTime[10];
+            twocharvalue[1] = vdDateTime[11];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out minute)) minute = 0;
-            //			minute = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int minute)) minute = 0;
 
-            twocharvalue[0] = VDDateTime[12];
-            twocharvalue[1] = VDDateTime[13];
+            twocharvalue[0] = vdDateTime[12];
+            twocharvalue[1] = vdDateTime[13];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out second)) second = 0;
-            //			second = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int second)) second = 0;
 
-            twocharvalue[0] = VDDateTime[14];
-            twocharvalue[1] = VDDateTime[15];
+            twocharvalue[0] = vdDateTime[14];
+            twocharvalue[1] = vdDateTime[15];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hundredths)) hundredths = 0;
-            //			hundredths = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hundredths)) hundredths = 0;
 
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler",
                                       "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
                                       year, month, day, hour, minute, second, hundredths * 10);
-            DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10,
+            DateTime decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10,
                                               DateTimeKind.Unspecified);
 
-            return decodedDT;
+            return decodedDt;
         }
 
         /// <summary>
@@ -206,7 +200,7 @@ namespace DiscImageChef
         /// <param name="vmsDate">VMS timestamp (tenths of microseconds since day 0 of the Julian Date)</param>
         /// <returns>.NET DateTime</returns>
         /// <remarks>C# works in UTC, VMS on Julian Date, some displacement may occur on disks created outside UTC</remarks>
-        public static DateTime VMSToDateTime(ulong vmsDate)
+        public static DateTime VmsToDateTime(ulong vmsDate)
         {
             double delta = vmsDate * 0.0001; // Tenths of microseconds to milliseconds, will lose some detail
             return JulianEpoch.AddMilliseconds(delta);
@@ -231,7 +225,7 @@ namespace DiscImageChef
         /// </summary>
         /// <param name="dateRecord">UCSD Pascal timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UCSDPascalToDateTime(short dateRecord)
+        public static DateTime UcsdPascalToDateTime(short dateRecord)
         {
             int year = ((dateRecord & 0xFE00) >> 9) + 1900;
             int day = (dateRecord & 0x01F0) >> 4;
@@ -249,7 +243,7 @@ namespace DiscImageChef
         /// <param name="date">Date</param>
         /// <param name="time">Time</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime DOSToDateTime(ushort date, ushort time)
+        public static DateTime DosToDateTime(ushort date, ushort time)
         {
             int year = ((date & 0xFE00) >> 9) + 1980;
             int month = (date & 0x1E0) >> 5;
@@ -276,7 +270,7 @@ namespace DiscImageChef
         /// </summary>
         /// <param name="timestamp">CP/M timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime CPMToDateTime(byte[] timestamp)
+        public static DateTime CpmToDateTime(byte[] timestamp)
         {
             ushort days = BitConverter.ToUInt16(timestamp, 0);
             int hours = timestamp[2];
@@ -303,7 +297,7 @@ namespace DiscImageChef
         /// <param name="hundredsOfMicroseconds">Hundreds of microseconds</param>
         /// <param name="microseconds">Microseconds</param>
         /// <returns></returns>
-        public static DateTime ECMAToDateTime(ushort typeAndTimeZone, short year, byte month, byte day, byte hour,
+        public static DateTime EcmaToDateTime(ushort typeAndTimeZone, short year, byte month, byte day, byte hour,
                                               byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds,
                                               byte microseconds)
         {
@@ -330,11 +324,11 @@ namespace DiscImageChef
         /// <summary>
         /// Convers a Solaris high resolution timestamp to .NET DateTime
         /// </summary>
-        /// <param name="HRTimeStamp">Solaris high resolution timestamp</param>
+        /// <param name="hrTimeStamp">Solaris high resolution timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UNIXHrTimeToDateTime(ulong HRTimeStamp)
+        public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp)
         {
-            return UNIXEpoch.AddTicks((long)(HRTimeStamp / 100));
+            return UnixEpoch.AddTicks((long)(hrTimeStamp / 100));
         }
 
         /// <summary>
@@ -342,21 +336,21 @@ namespace DiscImageChef
         /// </summary>
         /// <param name="date">OS-9 timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime OS9ToDateTime(byte[] date)
+        public static DateTime Os9ToDateTime(byte[] date)
         {
             if(date == null || date.Length != 3 && date.Length != 5) return DateTime.MinValue;
 
-            DateTime os9date;
+            DateTime os9Date;
 
             try
             {
-                os9date = date.Length == 5
+                os9Date = date.Length == 5
                               ? new DateTime(1900 + date[0], date[1], date[2], date[3], date[4], 0)
                               : new DateTime(1900 + date[0], date[1], date[2], 0, 0, 0);
             }
-            catch(ArgumentOutOfRangeException) { os9date = new DateTime(1900, 0, 0, 0, 0, 0); }
+            catch(ArgumentOutOfRangeException) { os9Date = new DateTime(1900, 0, 0, 0, 0, 0); }
 
-            return os9date;
+            return os9Date;
         }
 
         /// <summary>
