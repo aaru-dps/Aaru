@@ -79,7 +79,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public enum DiscTypeCodes : byte
     {
         /// <summary>
-        /// Also valid for CD-DA, DVD and BD
+        ///     Also valid for CD-DA, DVD and BD
         /// </summary>
         CDROM = 0x00,
         CDi = 0x10,

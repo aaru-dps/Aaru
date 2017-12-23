@@ -45,19 +45,19 @@ namespace DiscImageChef.Decoders.SCSI
         public enum PartitionSizeUnitOfMeasures : byte
         {
             /// <summary>
-            /// Partition size is measures in bytes
+            ///     Partition size is measures in bytes
             /// </summary>
             Bytes = 0,
             /// <summary>
-            /// Partition size is measures in Kilobytes
+            ///     Partition size is measures in Kilobytes
             /// </summary>
             Kilobytes = 1,
             /// <summary>
-            /// Partition size is measures in Megabytes
+            ///     Partition size is measures in Megabytes
             /// </summary>
             Megabytes = 2,
             /// <summary>
-            /// Partition size is 10eUNITS bytes
+            ///     Partition size is 10eUNITS bytes
             /// </summary>
             Exponential = 3
         }
@@ -65,67 +65,67 @@ namespace DiscImageChef.Decoders.SCSI
         public enum MediumFormatRecognitionValues : byte
         {
             /// <summary>
-            /// Logical unit is incapable of format or partition recognition
+            ///     Logical unit is incapable of format or partition recognition
             /// </summary>
             Incapable = 0,
             /// <summary>
-            /// Logical unit is capable of format recognition only
+            ///     Logical unit is capable of format recognition only
             /// </summary>
             FormatCapable = 1,
             /// <summary>
-            /// Logical unit is capable of partition recognition only
+            ///     Logical unit is capable of partition recognition only
             /// </summary>
             PartitionCapable = 2,
             /// <summary>
-            /// Logical unit is capable of both format and partition recognition
+            ///     Logical unit is capable of both format and partition recognition
             /// </summary>
             Capable = 3
         }
 
         /// <summary>
-        /// Medium partition page(1)
-        /// Page code 0x11
+        ///     Medium partition page(1)
+        ///     Page code 0x11
         /// </summary>
         public struct ModePage_11
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Maximum number of additional partitions supported
+            ///     Maximum number of additional partitions supported
             /// </summary>
             public byte MaxAdditionalPartitions;
             /// <summary>
-            /// Number of additional partitions to be defined for a volume
+            ///     Number of additional partitions to be defined for a volume
             /// </summary>
             public byte AdditionalPartitionsDefined;
             /// <summary>
-            /// Device defines partitions based on its fixed definition
+            ///     Device defines partitions based on its fixed definition
             /// </summary>
             public bool FDP;
             /// <summary>
-            /// Device should divide medium according to the additional partitions defined field using sizes defined by device
+            ///     Device should divide medium according to the additional partitions defined field using sizes defined by device
             /// </summary>
             public bool SDP;
             /// <summary>
-            /// Initiator defines number and size of partitions
+            ///     Initiator defines number and size of partitions
             /// </summary>
             public bool IDP;
             /// <summary>
-            /// Defines the unit on which the partition sizes are defined
+            ///     Defines the unit on which the partition sizes are defined
             /// </summary>
             public PartitionSizeUnitOfMeasures PSUM;
             public bool POFM;
             public bool CLEAR;
             public bool ADDP;
             /// <summary>
-            /// Defines the capabilities for the unit to recognize media partitions and format
+            ///     Defines the capabilities for the unit to recognize media partitions and format
             /// </summary>
             public MediumFormatRecognitionValues MediumFormatRecognition;
             public byte PartitionUnits;
             /// <summary>
-            /// Array of partition sizes in units defined above
+            ///     Array of partition sizes in units defined above
             /// </summary>
             public ushort[] PartitionSizes;
         }
@@ -196,8 +196,7 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("\tDevice shall erase all partitions on MODE SELECT for partitioning");
             else if(!page.CLEAR)
                 sb.AppendLine("\tDevice shall not erase any partition on MODE SELECT for partitioning");
-            else
-                sb.AppendLine("\tDevice shall erase all partitions differing on size on MODE SELECT for partitioning");
+            else sb.AppendLine("\tDevice shall erase all partitions differing on size on MODE SELECT for partitioning");
 
             string measure;
 

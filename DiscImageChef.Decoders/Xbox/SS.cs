@@ -46,148 +46,148 @@ namespace DiscImageChef.Decoders.Xbox
         public struct SecuritySector
         {
             /// <summary>
-            /// Byte 0, bits 7 to 4
-            /// Disk category field
+            ///     Byte 0, bits 7 to 4
+            ///     Disk category field
             /// </summary>
             public DiskCategory DiskCategory;
             /// <summary>
-            /// Byte 0, bits 3 to 0
-            /// Media version
+            ///     Byte 0, bits 3 to 0
+            ///     Media version
             /// </summary>
             public byte PartVersion;
             /// <summary>
-            /// Byte 1, bits 7 to 4
-            /// 120mm if 0, 80mm if 1. If UMD (60mm) 0 also. Reserved rest of values
+            ///     Byte 1, bits 7 to 4
+            ///     120mm if 0, 80mm if 1. If UMD (60mm) 0 also. Reserved rest of values
             /// </summary>
             public DVDSize DiscSize;
             /// <summary>
-            /// Byte 1, bits 3 to 0
-            /// Maximum data rate
+            ///     Byte 1, bits 3 to 0
+            ///     Maximum data rate
             /// </summary>
             public MaximumRateField MaximumRate;
             /// <summary>
-            /// Byte 2, bit 7
-            /// Reserved
+            ///     Byte 2, bit 7
+            ///     Reserved
             /// </summary>
             public bool Reserved3;
             /// <summary>
-            /// Byte 2, bits 6 to 5
-            /// Number of layers
+            ///     Byte 2, bits 6 to 5
+            ///     Number of layers
             /// </summary>
             public byte Layers;
             /// <summary>
-            /// Byte 2, bit 4
-            /// Track path
+            ///     Byte 2, bit 4
+            ///     Track path
             /// </summary>
             public bool TrackPath;
             /// <summary>
-            /// Byte 2, bits 3 to 0
-            /// Layer type
+            ///     Byte 2, bits 3 to 0
+            ///     Layer type
             /// </summary>
             public LayerTypeFieldMask LayerType;
             /// <summary>
-            /// Byte 3, bits 7 to 4
-            /// Linear density field
+            ///     Byte 3, bits 7 to 4
+            ///     Linear density field
             /// </summary>
             public LinearDensityField LinearDensity;
             /// <summary>
-            /// Byte 3, bits 3 to 0
-            /// Track density field
+            ///     Byte 3, bits 3 to 0
+            ///     Track density field
             /// </summary>
             public TrackDensityField TrackDensity;
             /// <summary>
-            /// Bytes 4 to 7
-            /// PSN where Data Area starts
+            ///     Bytes 4 to 7
+            ///     PSN where Data Area starts
             /// </summary>
             public uint DataAreaStartPSN;
             /// <summary>
-            /// Bytes 8 to 11
-            /// PSN where Data Area ends
+            ///     Bytes 8 to 11
+            ///     PSN where Data Area ends
             /// </summary>
             public uint DataAreaEndPSN;
             /// <summary>
-            /// Bytes 12 to 15
-            /// PSN where Data Area ends in Layer 0
+            ///     Bytes 12 to 15
+            ///     PSN where Data Area ends in Layer 0
             /// </summary>
             public uint Layer0EndPSN;
 
             /// <summary>
-            /// Byte 27
-            /// Always 0x06 on XGD3
+            ///     Byte 27
+            ///     Always 0x06 on XGD3
             /// </summary>
             public byte Unknown1;
             /// <summary>
-            /// Bytes 256 to 283
-            /// Unknown, XGD2 and XGD3
+            ///     Bytes 256 to 283
+            ///     Unknown, XGD2 and XGD3
             /// </summary>
             public byte[] Unknown2;
             /// <summary>
-            /// Bytes 284 to 719
-            /// Unknown, XGD3
+            ///     Bytes 284 to 719
+            ///     Unknown, XGD3
             /// </summary>
             public byte[] Unknown3;
             /// <summary>
-            /// Bytes 720 to 723
-            /// Unknown
+            ///     Bytes 720 to 723
+            ///     Unknown
             /// </summary>
             public byte[] Unknown4;
             /// <summary>
-            /// Bytes 724 to 767
-            /// Unknown, XGD3
+            ///     Bytes 724 to 767
+            ///     Unknown, XGD3
             /// </summary>
             public byte[] Unknown5;
             /// <summary>
-            /// Byte 768
-            /// Version of challenge table
+            ///     Byte 768
+            ///     Version of challenge table
             /// </summary>
             public byte ChallengeTableVersion;
             /// <summary>
-            /// Byte 769
-            /// Number of challenge entries
+            ///     Byte 769
+            ///     Number of challenge entries
             /// </summary>
             public byte NoChallengeEntries;
             /// <summary>
-            /// Bytes 770 to 1022
-            /// Unknown
+            ///     Bytes 770 to 1022
+            ///     Unknown
             /// </summary>
             public ChallengeEntry[] ChallengeEntries;
             /// <summary>
-            /// Byte 1023
-            /// Unknown
+            ///     Byte 1023
+            ///     Unknown
             /// </summary>
             public byte Unknown6;
             /// <summary>
-            /// Bytes 1052 to 1099
-            /// Unknown, XGD1 only
+            ///     Bytes 1052 to 1099
+            ///     Unknown, XGD1 only
             /// </summary>
             public byte[] Unknown7;
             /// <summary>
-            /// Bytes 1120 to 1135
-            /// Unknown, XGD2 and XGD3
+            ///     Bytes 1120 to 1135
+            ///     Unknown, XGD2 and XGD3
             /// </summary>
             public byte[] Unknown8;
             /// <summary>
-            /// Bytes 1180 to 1195
-            /// Unknown
+            ///     Bytes 1180 to 1195
+            ///     Unknown
             /// </summary>
             public byte[] Unknown9;
             /// <summary>
-            /// Bytes 1208 to 1511
-            /// Unknown
+            ///     Bytes 1208 to 1511
+            ///     Unknown
             /// </summary>
             public byte[] Unknown10;
             /// <summary>
-            /// Bytes 1528 to 1632
+            ///     Bytes 1528 to 1632
             /// </summary>
             public byte[] Unknown11;
             /// <summary>
-            /// Bytes 1633 to 1839
-            /// Security extents, 23 entries of 9 bytes
+            ///     Bytes 1633 to 1839
+            ///     Security extents, 23 entries of 9 bytes
             /// </summary>
             public SecuritySectorExtent[] Extents;
             /// <summary>
-            /// Bytes 1840 to 2047
-            /// Copy of the security extents, 23 entries of 9 bytes
+            ///     Bytes 1840 to 2047
+            ///     Copy of the security extents, 23 entries of 9 bytes
             /// </summary>
             public SecuritySectorExtent[] ExtentsCopy;
         }
@@ -195,18 +195,18 @@ namespace DiscImageChef.Decoders.Xbox
         public struct SecuritySectorExtent
         {
             /// <summary>
-            /// Bytes 0 to 2
-            /// Unknown
+            ///     Bytes 0 to 2
+            ///     Unknown
             /// </summary>
             public uint Unknown;
             /// <summary>
-            /// Bytes 3 to 5
-            /// Start PSN of this security extent
+            ///     Bytes 3 to 5
+            ///     Start PSN of this security extent
             /// </summary>
             public uint StartPSN;
             /// <summary>
-            /// Bytes 6 to 8
-            /// End PSN of this security extent
+            ///     Bytes 6 to 8
+            ///     End PSN of this security extent
             /// </summary>
             public uint EndPSN;
         }
@@ -265,9 +265,8 @@ namespace DiscImageChef.Decoders.Xbox
             Array.Copy(response, 724, ss.Unknown5, 0, 43);
 
             for(int i = 0; i < 23; i++)
-            {
                 ss.ChallengeEntries[i] = new ChallengeEntry
- {
+                {
                     Level = response[770 + i * 11 + 0],
                     ChallengeId = response[770 + i * 11 + 1],
                     ChallengeValue =
@@ -277,7 +276,6 @@ namespace DiscImageChef.Decoders.Xbox
                     ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) + (response[770 + i * 11 + 8] << 16) +
                                            (response[770 + i * 11 + 9] << 8) + response[770 + i * 11 + 10])
                 };
-            }
 
             Array.Copy(response, 1052, ss.Unknown7, 0, 48);
             Array.Copy(response, 1120, ss.Unknown8, 0, 16);
@@ -285,9 +283,8 @@ namespace DiscImageChef.Decoders.Xbox
             Array.Copy(response, 1208, ss.Unknown10, 0, 303);
             Array.Copy(response, 1528, ss.Unknown11, 0, 104);
             for(int i = 0; i < 23; i++)
-            {
                 ss.Extents[i] = new SecuritySectorExtent
- {
+                {
                     Unknown =
                         (uint)((response[1633 + i * 9 + 0] << 16) + (response[1633 + i * 9 + 1] << 8) +
                                response[1633 + i * 9 + 2]),
@@ -297,12 +294,10 @@ namespace DiscImageChef.Decoders.Xbox
                     EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) + (response[1633 + i * 9 + 7] << 8) +
                                     response[1633 + i * 9 + 8])
                 };
-            }
 
             for(int i = 0; i < 23; i++)
-            {
                 ss.ExtentsCopy[i] = new SecuritySectorExtent
- {
+                {
                     Unknown =
                         (uint)((response[1840 + i * 9 + 0] << 16) + (response[1840 + i * 9 + 1] << 8) +
                                response[1840 + i * 9 + 2]),
@@ -312,7 +307,6 @@ namespace DiscImageChef.Decoders.Xbox
                     EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) + (response[1840 + i * 9 + 7] << 8) +
                                     response[1840 + i * 9 + 8])
                 };
-            }
 
             return ss;
         }

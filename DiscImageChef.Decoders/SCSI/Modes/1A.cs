@@ -42,60 +42,60 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x1A: Power condition page
         /// <summary>
-        /// Power condition page
-        /// Page code 0x1A
-        /// 12 bytes in SPC-1, SPC-2, SPC-3, SPC-4
-        /// 40 bytes in SPC-5
+        ///     Power condition page
+        ///     Page code 0x1A
+        ///     12 bytes in SPC-1, SPC-2, SPC-3, SPC-4
+        ///     40 bytes in SPC-5
         /// </summary>
         public struct ModePage_1A
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Idle timer activated
+            ///     Idle timer activated
             /// </summary>
             public bool Idle;
             /// <summary>
-            /// Standby timer activated
+            ///     Standby timer activated
             /// </summary>
             public bool Standby;
             /// <summary>
-            /// Idle timer
+            ///     Idle timer
             /// </summary>
             public uint IdleTimer;
             /// <summary>
-            /// Standby timer
+            ///     Standby timer
             /// </summary>
             public uint StandbyTimer;
 
             /// <summary>
-            /// Interactions between background functions and power management
+            ///     Interactions between background functions and power management
             /// </summary>
             public byte PM_BG_Precedence;
             /// <summary>
-            /// Standby timer Y activated
+            ///     Standby timer Y activated
             /// </summary>
             public bool Standby_Y;
             /// <summary>
-            /// Idle timer B activated
+            ///     Idle timer B activated
             /// </summary>
             public bool Idle_B;
             /// <summary>
-            /// Idle timer C activated
+            ///     Idle timer C activated
             /// </summary>
             public bool Idle_C;
             /// <summary>
-            /// Idle timer B
+            ///     Idle timer B
             /// </summary>
             public uint IdleTimer_B;
             /// <summary>
-            /// Idle timer C
+            ///     Idle timer C
             /// </summary>
             public uint IdleTimer_C;
             /// <summary>
-            /// Standby timer Y
+            ///     Standby timer Y
             /// </summary>
             public uint StandbyTimer_Y;
             public byte CCF_Idle;
@@ -200,23 +200,23 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region Mode Page 0x1A subpage 0x01: Power Consumption mode page
         /// <summary>
-        /// Power Consumption mode page
-        /// Page code 0x1A
-        /// Subpage code 0x01
-        /// 16 bytes in SPC-5
+        ///     Power Consumption mode page
+        ///     Page code 0x1A
+        ///     Subpage code 0x01
+        ///     16 bytes in SPC-5
         /// </summary>
         public struct ModePage_1A_S01
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Active power level
+            ///     Active power level
             /// </summary>
             public byte ActiveLevel;
             /// <summary>
-            /// Power Consumption VPD identifier in use
+            ///     Power Consumption VPD identifier in use
             /// </summary>
             public byte PowerConsumptionIdentifier;
         }

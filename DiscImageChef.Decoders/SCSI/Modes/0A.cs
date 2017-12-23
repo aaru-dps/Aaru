@@ -42,123 +42,125 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x0A: Control mode page
         /// <summary>
-        /// Control mode page
-        /// Page code 0x0A
-        /// 8 bytes in SCSI-2
-        /// 12 bytes in SPC-1, SPC-2, SPC-3, SPC-4, SPC-5
+        ///     Control mode page
+        ///     Page code 0x0A
+        ///     8 bytes in SCSI-2
+        ///     12 bytes in SPC-1, SPC-2, SPC-3, SPC-4, SPC-5
         /// </summary>
         public struct ModePage_0A
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// If set, target shall report log exception conditions
+            ///     If set, target shall report log exception conditions
             /// </summary>
             public bool RLEC;
             /// <summary>
-            /// Queue algorithm modifier
+            ///     Queue algorithm modifier
             /// </summary>
             public byte QueueAlgorithm;
             /// <summary>
-            /// If set all remaining suspended I/O processes shall be aborted after the contingent allegiance condition or extended contingent allegiance condition
+            ///     If set all remaining suspended I/O processes shall be aborted after the contingent allegiance condition or extended
+            ///     contingent allegiance condition
             /// </summary>
             public byte QErr;
             /// <summary>
-            /// Tagged queuing is disabled
+            ///     Tagged queuing is disabled
             /// </summary>
             public bool DQue;
             /// <summary>
-            /// Extended Contingent Allegiance is enabled
+            ///     Extended Contingent Allegiance is enabled
             /// </summary>
             public bool EECA;
             /// <summary>
-            /// Target may issue an asynchronous event notification upon completing its initialization
+            ///     Target may issue an asynchronous event notification upon completing its initialization
             /// </summary>
             public bool RAENP;
             /// <summary>
-            /// Target may issue an asynchronous event notification instead of a unit attention condition
+            ///     Target may issue an asynchronous event notification instead of a unit attention condition
             /// </summary>
             public bool UAAENP;
             /// <summary>
-            /// Target may issue an asynchronous event notification instead of a deferred error
+            ///     Target may issue an asynchronous event notification instead of a deferred error
             /// </summary>
             public bool EAENP;
             /// <summary>
-            /// Minimum time in ms after initialization before attempting asynchronous event notifications
+            ///     Minimum time in ms after initialization before attempting asynchronous event notifications
             /// </summary>
             public ushort ReadyAENHoldOffPeriod;
 
             /// <summary>
-            /// Global logging target save disabled
+            ///     Global logging target save disabled
             /// </summary>
             public bool GLTSD;
             /// <summary>
-            /// CHECK CONDITION should be reported rather than a long busy condition
+            ///     CHECK CONDITION should be reported rather than a long busy condition
             /// </summary>
             public bool RAC;
             /// <summary>
-            /// Software write protect is active
+            ///     Software write protect is active
             /// </summary>
             public bool SWP;
             /// <summary>
-            /// Maximum time in 100 ms units allowed to remain busy. 0xFFFF == unlimited.
+            ///     Maximum time in 100 ms units allowed to remain busy. 0xFFFF == unlimited.
             /// </summary>
             public ushort BusyTimeoutPeriod;
 
             /// <summary>
-            /// Task set type
+            ///     Task set type
             /// </summary>
             public byte TST;
             /// <summary>
-            /// Tasks aborted by other initiator's actions should be terminated with TASK ABORTED
+            ///     Tasks aborted by other initiator's actions should be terminated with TASK ABORTED
             /// </summary>
             public bool TAS;
             /// <summary>
-            /// Action to be taken when a medium is inserted
+            ///     Action to be taken when a medium is inserted
             /// </summary>
             public byte AutoloadMode;
             /// <summary>
-            /// Time in seconds to complete an extended self-test
+            ///     Time in seconds to complete an extended self-test
             /// </summary>
             public byte ExtendedSelfTestCompletionTime;
 
             /// <summary>
-            /// All tasks received in nexus with ACA ACTIVE is set and an ACA condition is established shall terminate
+            ///     All tasks received in nexus with ACA ACTIVE is set and an ACA condition is established shall terminate
             /// </summary>
             public bool TMF_ONLY;
             /// <summary>
-            /// Device shall return descriptor format sense data when returning sense data in the same transactions as a CHECK CONDITION
+            ///     Device shall return descriptor format sense data when returning sense data in the same transactions as a CHECK
+            ///     CONDITION
             /// </summary>
             public bool D_SENSE;
             /// <summary>
-            /// Unit attention interlocks control
+            ///     Unit attention interlocks control
             /// </summary>
             public byte UA_INTLCK_CTRL;
             /// <summary>
-            /// LOGICAL BLOCK APPLICATION TAG should not be modified
+            ///     LOGICAL BLOCK APPLICATION TAG should not be modified
             /// </summary>
             public bool ATO;
 
             /// <summary>
-            /// Protector information checking is disabled
+            ///     Protector information checking is disabled
             /// </summary>
             public bool DPICZ;
             /// <summary>
-            /// No unit attention on release
+            ///     No unit attention on release
             /// </summary>
             public bool NUAR;
             /// <summary>
-            /// Application Tag mode page is enabled
+            ///     Application Tag mode page is enabled
             /// </summary>
             public bool ATMPE;
             /// <summary>
-            /// Abort any write command without protection information
+            ///     Abort any write command without protection information
             /// </summary>
             public bool RWWP;
             /// <summary>
-            /// Supportes block lengths and protection information
+            ///     Supportes block lengths and protection information
             /// </summary>
             public bool SBLP;
         }
@@ -355,40 +357,40 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region Mode Page 0x0A subpage 0x01: Control Extension mode page
         /// <summary>
-        /// Control Extension mode page
-        /// Page code 0x0A
-        /// Subpage code 0x01
-        /// 32 bytes in SPC-3, SPC-4, SPC-5
+        ///     Control Extension mode page
+        ///     Page code 0x0A
+        ///     Subpage code 0x01
+        ///     32 bytes in SPC-3, SPC-4, SPC-5
         /// </summary>
         public struct ModePage_0A_S01
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Timestamp outside this standard
+            ///     Timestamp outside this standard
             /// </summary>
             public bool TCMOS;
             /// <summary>
-            /// SCSI precedence
+            ///     SCSI precedence
             /// </summary>
             public bool SCSIP;
             /// <summary>
-            /// Implicit Asymmetric Logical Unit Access Enabled
+            ///     Implicit Asymmetric Logical Unit Access Enabled
             /// </summary>
             public bool IALUAE;
             /// <summary>
-            /// Initial task priority
+            ///     Initial task priority
             /// </summary>
             public byte InitialPriority;
 
             /// <summary>
-            /// Device life control disabled
+            ///     Device life control disabled
             /// </summary>
             public bool DLC;
             /// <summary>
-            /// Maximum size of SENSE data in bytes
+            ///     Maximum size of SENSE data in bytes
             /// </summary>
             public byte MaximumSenseLength;
         }
@@ -455,5 +457,5 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x0A subpage 0x01: Control Extension mode page
-   }
+    }
 }

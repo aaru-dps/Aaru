@@ -271,7 +271,8 @@ namespace DiscImageChef.Decoders.PCMCIA
             else
             {
                 sb.AppendLine("\tAdditional information:");
-                foreach(string info in tuple.AdditionalInformation.Where(info => !string.IsNullOrEmpty(info))) sb.AppendFormat("\t\t{0}", info).AppendLine();
+                foreach(string info in tuple.AdditionalInformation.Where(info => !string.IsNullOrEmpty(info)))
+                    sb.AppendFormat("\t\t{0}", info).AppendLine();
             }
 
             return sb.ToString();

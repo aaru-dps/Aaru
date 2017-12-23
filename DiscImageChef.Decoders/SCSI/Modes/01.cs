@@ -42,75 +42,75 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x01: Read-write error recovery page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x01
-        /// 12 bytes in SCSI-2, SBC-1, SBC-2
+        ///     Disconnect-reconnect page
+        ///     Page code 0x01
+        ///     12 bytes in SCSI-2, SBC-1, SBC-2
         /// </summary>
         public struct ModePage_01
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Automatic Write Reallocation Enabled
+            ///     Automatic Write Reallocation Enabled
             /// </summary>
             public bool AWRE;
             /// <summary>
-            /// Automatic Read Reallocation Enabled
+            ///     Automatic Read Reallocation Enabled
             /// </summary>
             public bool ARRE;
             /// <summary>
-            /// Transfer block
+            ///     Transfer block
             /// </summary>
             public bool TB;
             /// <summary>
-            /// Read continuous
+            ///     Read continuous
             /// </summary>
             public bool RC;
             /// <summary>
-            /// Enable early recovery
+            ///     Enable early recovery
             /// </summary>
             public bool EER;
             /// <summary>
-            /// Post error reporting
+            ///     Post error reporting
             /// </summary>
             public bool PER;
             /// <summary>
-            /// Disable transfer on error
+            ///     Disable transfer on error
             /// </summary>
             public bool DTE;
             /// <summary>
-            /// Disable correction
+            ///     Disable correction
             /// </summary>
             public bool DCR;
             /// <summary>
-            /// How many times to retry a read operation
+            ///     How many times to retry a read operation
             /// </summary>
             public byte ReadRetryCount;
             /// <summary>
-            /// How many bits of largest data burst error is maximum to apply error correction on it
+            ///     How many bits of largest data burst error is maximum to apply error correction on it
             /// </summary>
             public byte CorrectionSpan;
             /// <summary>
-            /// Offset to move the heads
+            ///     Offset to move the heads
             /// </summary>
             public sbyte HeadOffsetCount;
             /// <summary>
-            /// Incremental position to which the recovered data strobe shall be adjusted
+            ///     Incremental position to which the recovered data strobe shall be adjusted
             /// </summary>
             public sbyte DataStrobeOffsetCount;
             /// <summary>
-            /// How many times to retry a write operation
+            ///     How many times to retry a write operation
             /// </summary>
             public byte WriteRetryCount;
             /// <summary>
-            /// Maximum time in ms to use in data error recovery procedures
+            ///     Maximum time in ms to use in data error recovery procedures
             /// </summary>
             public ushort RecoveryTimeLimit;
 
             /// <summary>
-            /// Logical block provisioning error reporting is enabled
+            ///     Logical block provisioning error reporting is enabled
             /// </summary>
             public bool LBPERE;
         }
@@ -189,37 +189,38 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x01: Read-write error recovery page
-    public static byte[] EncodeModePage_01(ModePage_01 page)
-    {
-        byte[] pg = new byte[8];
 
-        pg[0] = 0x01;
-        pg[1] = 6;
+        public static byte[] EncodeModePage_01(ModePage_01 page)
+        {
+            byte[] pg = new byte[8];
 
-        if(page.PS) pg[0] += 0x80;
-        if(page.AWRE) pg[2] += 0x80;
-        if(page.ARRE) pg[2] += 0x40;
-        if(page.TB) pg[2] += 0x20;
-        if(page.RC) pg[2] += 0x10;
-        if(page.EER) pg[2] += 0x08;
-        if(page.PER) pg[2] += 0x04;
-        if(page.DTE) pg[2] += 0x02;
-        if(page.DCR) pg[2] += 0x01;
+            pg[0] = 0x01;
+            pg[1] = 6;
 
-        pg[3] = page.ReadRetryCount;
-        pg[4] = page.CorrectionSpan;
-        pg[5] = (byte)page.HeadOffsetCount;
-        pg[6] = (byte)page.DataStrobeOffsetCount;
+            if(page.PS) pg[0] += 0x80;
+            if(page.AWRE) pg[2] += 0x80;
+            if(page.ARRE) pg[2] += 0x40;
+            if(page.TB) pg[2] += 0x20;
+            if(page.RC) pg[2] += 0x10;
+            if(page.EER) pg[2] += 0x08;
+            if(page.PER) pg[2] += 0x04;
+            if(page.DTE) pg[2] += 0x02;
+            if(page.DCR) pg[2] += 0x01;
 
-        // This is from a newer version of SCSI unknown what happen for drives expecting an 8 byte page
-        /*
-        pg[8] = page.WriteRetryCount;
-        if (page.LBPERE)
-            pg[7] += 0x80;
-        pg[10] = (byte)((page.RecoveryTimeLimit & 0xFF00) << 8);
-        pg[11] = (byte)(page.RecoveryTimeLimit & 0xFF);*/
+            pg[3] = page.ReadRetryCount;
+            pg[4] = page.CorrectionSpan;
+            pg[5] = (byte)page.HeadOffsetCount;
+            pg[6] = (byte)page.DataStrobeOffsetCount;
 
-        return pg;
-    }
+            // This is from a newer version of SCSI unknown what happen for drives expecting an 8 byte page
+            /*
+            pg[8] = page.WriteRetryCount;
+            if (page.LBPERE)
+                pg[7] += 0x80;
+            pg[10] = (byte)((page.RecoveryTimeLimit & 0xFF00) << 8);
+            pg[11] = (byte)(page.RecoveryTimeLimit & 0xFF);*/
+
+            return pg;
+        }
     }
 }

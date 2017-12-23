@@ -37,19 +37,19 @@ using System.Text;
 namespace DiscImageChef.Decoders.SCSI.MMC
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -60,123 +60,123 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct StandardDiscInformation
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// 32 + OPCTablesNumber*8
+            ///     Bytes 0 to 1
+            ///     32 + OPCTablesNumber*8
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2, bits 7 to 5
-            /// 000b
+            ///     Byte 2, bits 7 to 5
+            ///     000b
             /// </summary>
             public byte DataType;
             /// <summary>
-            /// Byte 2, bit 4
-            /// If set, disc is erasable
+            ///     Byte 2, bit 4
+            ///     If set, disc is erasable
             /// </summary>
             public bool Erasable;
             /// <summary>
-            /// Byte 2, bits 3 to 2
-            /// Status of last session
+            ///     Byte 2, bits 3 to 2
+            ///     Status of last session
             /// </summary>
             public byte LastSessionStatus;
             /// <summary>
-            /// Byte 2, bits 1 to 0
-            /// Status of disc
+            ///     Byte 2, bits 1 to 0
+            ///     Status of disc
             /// </summary>
             public byte DiscStatus;
             /// <summary>
-            /// Byte 3
-            /// Number of logical track that contains LBA 0
+            ///     Byte 3
+            ///     Number of logical track that contains LBA 0
             /// </summary>
             public byte FirstTrackNumber;
             /// <summary>
-            /// Byte 9 (MSB) and byte 4 (LSB)
-            /// Number of sessions
+            ///     Byte 9 (MSB) and byte 4 (LSB)
+            ///     Number of sessions
             /// </summary>
             public ushort Sessions;
             /// <summary>
-            /// Byte 10 (MSB) and byte 5 (LSB)
-            /// Number of first track in last session
+            ///     Byte 10 (MSB) and byte 5 (LSB)
+            ///     Number of first track in last session
             /// </summary>
             public ushort FirstTrackLastSession;
             /// <summary>
-            /// Byte 11 (MSB) and byte 6 (LSB)
-            /// Number of last track in last session
+            ///     Byte 11 (MSB) and byte 6 (LSB)
+            ///     Number of last track in last session
             /// </summary>
             public ushort LastTrackLastSession;
             /// <summary>
-            /// Byte 7, bit 7
-            /// If set, DiscIdentification is valid
+            ///     Byte 7, bit 7
+            ///     If set, DiscIdentification is valid
             /// </summary>
             public bool DID_V;
             /// <summary>
-            /// Byte 7, bit 6
-            /// If set, DiscBarcode is valid
+            ///     Byte 7, bit 6
+            ///     If set, DiscBarcode is valid
             /// </summary>
             public bool DBC_V;
             /// <summary>
-            /// Byte 7, bit 5
-            /// If set, disc is unrestricted
+            ///     Byte 7, bit 5
+            ///     If set, disc is unrestricted
             /// </summary>
             public bool URU;
             /// <summary>
-            /// Byte 7, bit 4
-            /// If set DiscApplicationCode is valid
+            ///     Byte 7, bit 4
+            ///     If set DiscApplicationCode is valid
             /// </summary>
             public bool DAC_V;
             /// <summary>
-            /// Byte 7, bit 3
-            /// Reserved
+            ///     Byte 7, bit 3
+            ///     Reserved
             /// </summary>
             public bool Reserved;
             /// <summary>
-            /// Byte 7, bit 2
-            /// Copy of dirty bit from MRW status
+            ///     Byte 7, bit 2
+            ///     Copy of dirty bit from MRW status
             /// </summary>
             public bool Dbit;
             /// <summary>
-            /// Byte 7, bits 1 to 0
-            /// Background format status
+            ///     Byte 7, bits 1 to 0
+            ///     Background format status
             /// </summary>
             public byte BGFormatStatus;
             /// <summary>
-            /// Byte 8
-            /// Disc type code
+            ///     Byte 8
+            ///     Disc type code
             /// </summary>
             public byte DiscType;
             /// <summary>
-            /// Bytes 12 to 15
-            /// Disc identification number from PMA
+            ///     Bytes 12 to 15
+            ///     Disc identification number from PMA
             /// </summary>
             public uint DiscIdentification;
             /// <summary>
-            /// Bytes 16 to 19
-            /// Last Session Lead-in Start Address (MSF for CD, LBA for others)
+            ///     Bytes 16 to 19
+            ///     Last Session Lead-in Start Address (MSF for CD, LBA for others)
             /// </summary>
             public uint LastSessionLeadInStartLBA;
             /// <summary>
-            /// Bytes 20 to 23
-            /// Last Possible Lead-out Start Address (MSF for CD, LBA for others)
+            ///     Bytes 20 to 23
+            ///     Last Possible Lead-out Start Address (MSF for CD, LBA for others)
             /// </summary>
             public uint LastPossibleLeadOutStartLBA;
             /// <summary>
-            /// Bytes 24 to 31
-            /// Disc barcode
+            ///     Bytes 24 to 31
+            ///     Disc barcode
             /// </summary>
             public ulong DiscBarcode;
             /// <summary>
-            /// Byte 32
-            /// Disc application code
+            ///     Byte 32
+            ///     Disc application code
             /// </summary>
             public byte DiscApplicationCode;
             /// <summary>
-            /// Byte 33
-            /// How many OPC tables are
+            ///     Byte 33
+            ///     How many OPC tables are
             /// </summary>
             public byte OPCTablesNumber;
             /// <summary>
-            /// Bytes 34 to end
-            /// OPC tables (8 bytes each)
+            ///     Bytes 34 to end
+            ///     OPC tables (8 bytes each)
             /// </summary>
             public OPCTable[] OPCTables;
         }
@@ -184,13 +184,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct OPCTable
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// kilobytes/sec this OPC table applies to
+            ///     Bytes 0 to 1
+            ///     kilobytes/sec this OPC table applies to
             /// </summary>
             public ushort Speed;
             /// <summary>
-            /// Bytes 2 to 7
-            /// OPC values
+            ///     Bytes 2 to 7
+            ///     OPC values
             /// </summary>
             public byte[] OPCValues;
         }
@@ -198,43 +198,43 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct TrackResourcesInformation
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// 10
+            ///     Bytes 0 to 1
+            ///     10
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2, bits 7 to 5
-            /// 001b
+            ///     Byte 2, bits 7 to 5
+            ///     001b
             /// </summary>
             public byte DataType;
             /// <summary>
-            /// Byte 2, bits 4 to 0
-            /// Reserved
+            ///     Byte 2, bits 4 to 0
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to 5
-            /// Maximum possible number of the tracks on the disc
+            ///     Bytes 4 to 5
+            ///     Maximum possible number of the tracks on the disc
             /// </summary>
             public ushort MaxTracks;
             /// <summary>
-            /// Bytes 6 to 7
-            /// Number of the assigned tracks on the disc
+            ///     Bytes 6 to 7
+            ///     Number of the assigned tracks on the disc
             /// </summary>
             public ushort AssignedTracks;
             /// <summary>
-            /// Bytes 8 to 9
-            /// Maximum possible number of appendable tracks on the disc
+            ///     Bytes 8 to 9
+            ///     Maximum possible number of appendable tracks on the disc
             /// </summary>
             public ushort MaxAppendableTracks;
             /// <summary>
-            /// Bytes 10 to 11
-            /// Current number of appendable tracks on the disc
+            ///     Bytes 10 to 11
+            ///     Current number of appendable tracks on the disc
             /// </summary>
             public ushort AppendableTracks;
         }
@@ -242,38 +242,38 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct POWResourcesInformation
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// 14
+            ///     Bytes 0 to 1
+            ///     14
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2, bits 7 to 5
-            /// 010b
+            ///     Byte 2, bits 7 to 5
+            ///     010b
             /// </summary>
             public byte DataType;
             /// <summary>
-            /// Byte 2, bits 4 to 0
-            /// Reserved
+            ///     Byte 2, bits 4 to 0
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to 7
-            /// Remaining POW replacements
+            ///     Bytes 4 to 7
+            ///     Remaining POW replacements
             /// </summary>
             public uint RemainingPOWReplacements;
             /// <summary>
-            /// Bytes 8 to 11
-            /// Remaining POW reallocation map entries
+            ///     Bytes 8 to 11
+            ///     Remaining POW reallocation map entries
             /// </summary>
             public uint RemainingPOWReallocation;
             /// <summary>
-            /// Bytes 12 to 15
-            /// Number of remaining POW updates
+            ///     Bytes 12 to 15
+            ///     Number of remaining POW updates
             /// </summary>
             public uint RemainingPOWUpdates;
         }
@@ -415,8 +415,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             sb.AppendFormat("Last track in last session is track {0}", decoded.LastTrackLastSession).AppendLine();
             sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
                             decoded.LastSessionLeadInStartLBA, (decoded.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
-                            (decoded.LastSessionLeadInStartLBA & 0xFF00) >> 8,
-                            decoded.LastSessionLeadInStartLBA & 0xFF).AppendLine();
+                            (decoded.LastSessionLeadInStartLBA & 0xFF00) >> 8, decoded.LastSessionLeadInStartLBA & 0xFF)
+              .AppendLine();
             sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
                             decoded.LastPossibleLeadOutStartLBA, (decoded.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
                             (decoded.LastPossibleLeadOutStartLBA & 0xFF00) >> 8,

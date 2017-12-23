@@ -44,15 +44,15 @@ namespace DiscImageChef.Decoders.SCSI.SSC
         public struct BlockLimitsData
         {
             /// <summary>
-            /// All blocks size must be multiple of 2^<cref name="granularity"/>
+            ///     All blocks size must be multiple of 2^<cref name="granularity" />
             /// </summary>
             public byte granularity;
             /// <summary>
-            /// Maximum block length in bytes
+            ///     Maximum block length in bytes
             /// </summary>
             public uint maxBlockLen;
             /// <summary>
-            /// Minimum block length in bytes
+            ///     Minimum block length in bytes
             /// </summary>
             public ushort minBlockLen;
         }
@@ -86,8 +86,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
                 if(decoded.Value.granularity > 0)
                     sb.AppendFormat("Device's needs a block size granularity of 2^{0} ({1}) bytes",
-                                    decoded.Value.granularity, Math.Pow(2, decoded.Value.granularity))
-                      .AppendLine();
+                                    decoded.Value.granularity, Math.Pow(2, decoded.Value.granularity)).AppendLine();
             }
 
             return sb.ToString();

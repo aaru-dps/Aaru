@@ -37,19 +37,19 @@ using System.Text;
 namespace DiscImageChef.Decoders.SCSI.MMC
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -60,23 +60,23 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct AACSVolumeIdentifier
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to end
-            /// AACS volume identifier data
+            ///     Bytes 4 to end
+            ///     AACS volume identifier data
             /// </summary>
             public byte[] VolumeIdentifier;
         }
@@ -84,23 +84,23 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct AACSMediaSerialNumber
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to end
-            /// AACS media serial number
+            ///     Bytes 4 to end
+            ///     AACS media serial number
             /// </summary>
             public byte[] MediaSerialNumber;
         }
@@ -108,23 +108,23 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct AACSMediaIdentifier
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to end
-            /// AACS media identifier data
+            ///     Bytes 4 to end
+            ///     AACS media identifier data
             /// </summary>
             public byte[] MediaIdentifier;
         }
@@ -132,23 +132,23 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct AACSMediaKeyBlock
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved;
             /// <summary>
-            /// Byte 3
-            /// Number of MKB packs available to transfer
+            ///     Byte 3
+            ///     Number of MKB packs available to transfer
             /// </summary>
             public byte TotalPacks;
             /// <summary>
-            /// Bytes 4 to end
-            /// AACS media key block packs
+            ///     Bytes 4 to end
+            ///     AACS media key block packs
             /// </summary>
             public byte[] MediaKeyBlockPacks;
         }
@@ -156,23 +156,23 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct AACSDataKeys
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data length
+            ///     Bytes 0 to 1
+            ///     Data length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to end
-            /// AACS data keys
+            ///     Bytes 4 to end
+            ///     AACS data keys
             /// </summary>
             public byte[] DataKeys;
         }
@@ -180,24 +180,24 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct AACSLBAExtentsResponse
         {
             /// <summary>
-            /// Bytes 0 to 1
-            /// Data Length
+            ///     Bytes 0 to 1
+            ///     Data Length
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Byte 2
-            /// Reserved
+            ///     Byte 2
+            ///     Reserved
             /// </summary>
             public byte Reserved;
             /// <summary>
-            /// Byte 3
-            /// Number of LBA extents the drive can store.
-            /// if(MaxLBAExtents == 0 &amp;&amp; DataLength > 2), 256 extents can be stored
+            ///     Byte 3
+            ///     Number of LBA extents the drive can store.
+            ///     if(MaxLBAExtents == 0 &amp;&amp; DataLength > 2), 256 extents can be stored
             /// </summary>
             public byte MaxLBAExtents;
             /// <summary>
-            /// Bytes 4 to end
-            /// LBA Extents
+            ///     Bytes 4 to end
+            ///     LBA Extents
             /// </summary>
             public AACSLBAExtent[] Extents;
         }
@@ -205,18 +205,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public struct AACSLBAExtent
         {
             /// <summary>
-            /// Bytes 0 to 7
-            /// Reserved
+            ///     Bytes 0 to 7
+            ///     Reserved
             /// </summary>
             public byte[] Reserved;
             /// <summary>
-            /// Bytes 8 to 11
-            /// Start LBA of extent
+            ///     Bytes 8 to 11
+            ///     Start LBA of extent
             /// </summary>
             public uint StartLBA;
             /// <summary>
-            /// Bytes 12 to 15
-            /// Extent length
+            ///     Bytes 12 to 15
+            ///     Extent length
             /// </summary>
             public uint LBACount;
         }

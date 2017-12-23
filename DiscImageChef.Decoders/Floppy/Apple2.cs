@@ -41,7 +41,7 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.Floppy
 {
     /// <summary>
-    /// Methods and structures for Apple ][ floppy decoding
+    ///     Methods and structures for Apple ][ floppy decoding
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -49,99 +49,99 @@ namespace DiscImageChef.Decoders.Floppy
     public static class Apple2
     {
         /// <summary>
-        /// GCR-encoded Apple ][ GCR floppy track
+        ///     GCR-encoded Apple ][ GCR floppy track
         /// </summary>
         public class RawTrack
         {
             /// <summary>
-            /// Track preamble, set to self-sync 0xFF, between 40 and 95 bytes
+            ///     Track preamble, set to self-sync 0xFF, between 40 and 95 bytes
             /// </summary>
             public byte[] gap;
             public RawSector[] sectors;
         }
 
         /// <summary>
-        /// GCR-encoded Apple ][ GCR floppy sector
+        ///     GCR-encoded Apple ][ GCR floppy sector
         /// </summary>
         public class RawSector
         {
             /// <summary>
-            /// Address field
+            ///     Address field
             /// </summary>
             public RawAddressField addressField;
             /// <summary>
-            /// Track preamble, set to self-sync 0xFF, between 5 and 10 bytes
-            /// </summary>
-            public byte[] innerGap;
-            /// <summary>
-            /// Data field
+            ///     Data field
             /// </summary>
             public RawDataField dataField;
             /// <summary>
-            /// Track preamble, set to self-sync 0xFF, between 14 and 24 bytes
+            ///     Track preamble, set to self-sync 0xFF, between 14 and 24 bytes
             /// </summary>
             public byte[] gap;
+            /// <summary>
+            ///     Track preamble, set to self-sync 0xFF, between 5 and 10 bytes
+            /// </summary>
+            public byte[] innerGap;
         }
 
         /// <summary>
-        /// GCR-encoded Apple ][ GCR floppy sector address field
+        ///     GCR-encoded Apple ][ GCR floppy sector address field
         /// </summary>
         public class RawAddressField
         {
             /// <summary>
-            /// Always 0xD5, 0xAA, 0x96
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
-            /// <summary>
-            /// Volume number encoded as:
-            /// volume[0] = (decodedVolume >> 1) | 0xAA
-            /// volume[1] = decodedVolume | 0xAA
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] volume;
-            /// <summary>
-            /// Track number encoded as:
-            /// track[0] = (decodedTrack >> 1) | 0xAA
-            /// track[1] = decodedTrack | 0xAA
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] track;
-            /// <summary>
-            /// Sector number encoded as:
-            /// sector[0] = (decodedSector >> 1) | 0xAA
-            /// sector[1] = decodedSector | 0xAA
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] sector;
-            /// <summary>
-            /// decodedChecksum = decodedVolume ^ decodedTrack ^ decodedSector
-            /// checksum[0] = (decodedChecksum >> 1) | 0xAA
-            /// checksum[1] = decodedChecksum | 0xAA
+            ///     decodedChecksum = decodedVolume ^ decodedTrack ^ decodedSector
+            ///     checksum[0] = (decodedChecksum >> 1) | 0xAA
+            ///     checksum[1] = decodedChecksum | 0xAA
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] checksum;
             /// <summary>
-            /// Always 0xDE, 0xAA, 0xEB
+            ///     Always 0xDE, 0xAA, 0xEB
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] epilogue;
-        }
-
-        /// <summary>
-        /// GCR-encoded Apple ][ GCR floppy sector data field
-        /// </summary>
-        public class RawDataField
-        {
             /// <summary>
-            /// Always 0xD5, 0xAA, 0xAD
+            ///     Always 0xD5, 0xAA, 0x96
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
             /// <summary>
-            /// Encoded data bytes.
-            /// 410 bytes for 5to3 (aka DOS 3.2) format
-            /// 342 bytes for 6to2 (aka DOS 3.3) format
+            ///     Sector number encoded as:
+            ///     sector[0] = (decodedSector >> 1) | 0xAA
+            ///     sector[1] = decodedSector | 0xAA
             /// </summary>
-            public byte[] data;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] sector;
+            /// <summary>
+            ///     Track number encoded as:
+            ///     track[0] = (decodedTrack >> 1) | 0xAA
+            ///     track[1] = decodedTrack | 0xAA
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] track;
+            /// <summary>
+            ///     Volume number encoded as:
+            ///     volume[0] = (decodedVolume >> 1) | 0xAA
+            ///     volume[1] = decodedVolume | 0xAA
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] volume;
+        }
+
+        /// <summary>
+        ///     GCR-encoded Apple ][ GCR floppy sector data field
+        /// </summary>
+        public class RawDataField
+        {
             public byte checksum;
             /// <summary>
-            /// Always 0xDE, 0xAA, 0xEB
+            ///     Encoded data bytes.
+            ///     410 bytes for 5to3 (aka DOS 3.2) format
+            ///     342 bytes for 6to2 (aka DOS 3.3) format
+            /// </summary>
+            public byte[] data;
+            /// <summary>
+            ///     Always 0xDE, 0xAA, 0xEB
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] epilogue;
+            /// <summary>
+            ///     Always 0xD5, 0xAA, 0xAD
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
         }
 
         static readonly byte[] ReadTable5and3 =
@@ -217,7 +217,7 @@ namespace DiscImageChef.Decoders.Floppy
         };
 
         /// <summary>
-        /// Decodes the 5and3 encoded data
+        ///     Decodes the 5and3 encoded data
         /// </summary>
         /// <param name="data">5and3 encoded data.</param>
         public static byte[] Decode5and3(byte[] data)
@@ -253,7 +253,7 @@ namespace DiscImageChef.Decoders.Floppy
         }
 
         /// <summary>
-        /// Decodes the 6and2 encoded data
+        ///     Decodes the 6and2 encoded data
         /// </summary>
         /// <param name="data">6and2 encoded data.</param>
         public static byte[] Decode6and2(byte[] data)
@@ -549,8 +549,7 @@ namespace DiscImageChef.Decoders.Floppy
 
             MemoryStream raw = new MemoryStream();
             raw.Write(track.gap, 0, track.gap.Length);
-            foreach(byte[] rawSector in track.sectors.Select(MarshalSector))
-            { raw.Write(rawSector, 0, rawSector.Length); }
+            foreach(byte[] rawSector in track.sectors.Select(MarshalSector)) raw.Write(rawSector, 0, rawSector.Length);
 
             return raw.ToArray();
         }
@@ -589,7 +588,7 @@ namespace DiscImageChef.Decoders.Floppy
             if(disk == null) return null;
 
             MemoryStream raw = new MemoryStream();
-            foreach(byte[] rawTrack in disk.Select(MarshalTrack)) { raw.Write(rawTrack, 0, rawTrack.Length); }
+            foreach(byte[] rawTrack in disk.Select(MarshalTrack)) raw.Write(rawTrack, 0, rawTrack.Length);
 
             return raw.ToArray();
         }

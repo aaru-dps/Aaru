@@ -146,13 +146,12 @@ namespace DiscImageChef.Decoders.SCSI
                                 else
                                     sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks,
                                                     density, descriptor.BlockLength).AppendLine();
+                            else if(descriptor.Blocks == 0)
+                                sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
+                                  .AppendLine();
                             else
-                                if(descriptor.Blocks == 0)
-                                    sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
-                                      .AppendLine();
-                                else
-                                    sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
-                                                    descriptor.BlockLength).AppendLine();
+                                sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                descriptor.BlockLength).AppendLine();
                         }
 
                     break;
@@ -1421,28 +1420,23 @@ namespace DiscImageChef.Decoders.SCSI
                                     else
                                         sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each",
                                                         density, descriptor.BlockLength).AppendLine();
+                                else if(descriptor.BlockLength == 0)
+                                    sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length",
+                                                    descriptor.Blocks, density).AppendLine();
                                 else
-                                    if(descriptor.BlockLength == 0)
-                                        sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length",
-                                                        descriptor.Blocks, density).AppendLine();
-                                    else
-                                        sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each",
-                                                        descriptor.Blocks, density, descriptor.BlockLength)
-                                          .AppendLine();
+                                    sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each",
+                                                    descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                            else if(descriptor.Blocks == 0)
+                                if(descriptor.BlockLength == 0)
+                                    sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
+                                else
+                                    sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
+                                      .AppendLine();
+                            else if(descriptor.BlockLength == 0)
+                                sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
                             else
-                                if(descriptor.Blocks == 0)
-                                    if(descriptor.BlockLength == 0)
-                                        sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
-                                    else
-                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
-                                                        descriptor.BlockLength).AppendLine();
-                                else
-                                    if(descriptor.BlockLength == 0)
-                                        sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks)
-                                          .AppendLine();
-                                    else
-                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
-                                                        descriptor.BlockLength).AppendLine();
+                                sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                descriptor.BlockLength).AppendLine();
                         }
 
                     break;
@@ -1563,28 +1557,23 @@ namespace DiscImageChef.Decoders.SCSI
                                     else
                                         sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each",
                                                         density, descriptor.BlockLength).AppendLine();
+                                else if(descriptor.BlockLength == 0)
+                                    sb.AppendFormat("\t{0} blocks are {1} and have a variable length",
+                                                    descriptor.Blocks, density).AppendLine();
                                 else
-                                    if(descriptor.BlockLength == 0)
-                                        sb.AppendFormat("\t{0} blocks are {1} and have a variable length",
-                                                        descriptor.Blocks, density).AppendLine();
-                                    else
-                                        sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each",
-                                                        descriptor.Blocks, density, descriptor.BlockLength)
-                                          .AppendLine();
+                                    sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each", descriptor.Blocks,
+                                                    density, descriptor.BlockLength).AppendLine();
+                            else if(descriptor.Blocks == 0)
+                                if(descriptor.BlockLength == 0)
+                                    sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
+                                else
+                                    sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
+                                      .AppendLine();
+                            else if(descriptor.BlockLength == 0)
+                                sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
                             else
-                                if(descriptor.Blocks == 0)
-                                    if(descriptor.BlockLength == 0)
-                                        sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
-                                    else
-                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
-                                                        descriptor.BlockLength).AppendLine();
-                                else
-                                    if(descriptor.BlockLength == 0)
-                                        sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks)
-                                          .AppendLine();
-                                    else
-                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
-                                                        descriptor.BlockLength).AppendLine();
+                                sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                descriptor.BlockLength).AppendLine();
                         }
 
                     break;
@@ -1758,13 +1747,12 @@ namespace DiscImageChef.Decoders.SCSI
                                 else
                                     sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks,
                                                     density, descriptor.BlockLength).AppendLine();
+                            else if(descriptor.Blocks == 0)
+                                sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
+                                  .AppendLine();
                             else
-                                if(descriptor.Blocks == 0)
-                                    sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
-                                      .AppendLine();
-                                else
-                                    sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
-                                                    descriptor.BlockLength).AppendLine();
+                                sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                descriptor.BlockLength).AppendLine();
                         }
 
                     break;

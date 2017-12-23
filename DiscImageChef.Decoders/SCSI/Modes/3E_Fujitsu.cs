@@ -46,15 +46,15 @@ namespace DiscImageChef.Decoders.SCSI
         public enum Fujitsu_VerifyModes : byte
         {
             /// <summary>
-            /// Always verify after writing
+            ///     Always verify after writing
             /// </summary>
             Always = 0,
             /// <summary>
-            /// Never verify after writing
+            ///     Never verify after writing
             /// </summary>
             Never = 1,
             /// <summary>
-            /// Verify after writing depending on condition
+            ///     Verify after writing depending on condition
             /// </summary>
             Depends = 2,
             Reserved = 4
@@ -63,25 +63,25 @@ namespace DiscImageChef.Decoders.SCSI
         public struct Fujitsu_ModePage_3E
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// If set, AV data support mode is applied
+            ///     If set, AV data support mode is applied
             /// </summary>
             public bool audioVisualMode;
             /// <summary>
-            /// If set the test write operation is restricted
+            ///     If set the test write operation is restricted
             /// </summary>
             public bool streamingMode;
             public byte Reserved1;
             /// <summary>
-            /// Verify mode for WRITE commands
+            ///     Verify mode for WRITE commands
             /// </summary>
             public Fujitsu_VerifyModes verifyMode;
             public byte Reserved2;
             /// <summary>
-            /// Device type provided in response to INQUIRY
+            ///     Device type provided in response to INQUIRY
             /// </summary>
             public PeripheralDeviceTypes devType;
             public byte[] Reserved3;

@@ -34,8 +34,8 @@ namespace DiscImageChef.Decoders.SCSI
 {
     public static partial class Modes
     {
-    #region Mode Page 0x0C: Notch page
-    // TODO: Implement this page
-    #endregion Mode Page 0x0C: Notch page
+        #region Mode Page 0x0C: Notch page
+        // TODO: Implement this page
+        #endregion Mode Page 0x0C: Notch page
     }
 }

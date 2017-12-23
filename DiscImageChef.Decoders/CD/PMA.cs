@@ -38,19 +38,19 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.CD
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -60,19 +60,19 @@ namespace DiscImageChef.Decoders.CD
         public struct CDPMA
         {
             /// <summary>
-            /// Total size of returned session information minus this field
+            ///     Total size of returned session information minus this field
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Reserved
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Track descriptors
+            ///     Track descriptors
             /// </summary>
             public CDPMADescriptors[] PMADescriptors;
         }
@@ -80,58 +80,58 @@ namespace DiscImageChef.Decoders.CD
         public struct CDPMADescriptors
         {
             /// <summary>
-            /// Byte 0
-            /// Reserved
+            ///     Byte 0
+            ///     Reserved
             /// </summary>
             public byte Reserved;
             /// <summary>
-            /// Byte 1, bits 7 to 4
-            /// Type of information in Q subchannel of block where this TOC entry was found
+            ///     Byte 1, bits 7 to 4
+            ///     Type of information in Q subchannel of block where this TOC entry was found
             /// </summary>
             public byte ADR;
             /// <summary>
-            /// Byte 1, bits 3 to 0
-            /// Track attributes
+            ///     Byte 1, bits 3 to 0
+            ///     Track attributes
             /// </summary>
             public byte CONTROL;
             /// <summary>
-            /// Byte 2
+            ///     Byte 2
             /// </summary>
             public byte TNO;
             /// <summary>
-            /// Byte 3
+            ///     Byte 3
             /// </summary>
             public byte POINT;
             /// <summary>
-            /// Byte 4
+            ///     Byte 4
             /// </summary>
             public byte Min;
             /// <summary>
-            /// Byte 5
+            ///     Byte 5
             /// </summary>
             public byte Sec;
             /// <summary>
-            /// Byte 6
+            ///     Byte 6
             /// </summary>
             public byte Frame;
             /// <summary>
-            /// Byte 7, bits 7 to 4
+            ///     Byte 7, bits 7 to 4
             /// </summary>
             public byte HOUR;
             /// <summary>
-            /// Byte 7, bits 3 to 0
+            ///     Byte 7, bits 3 to 0
             /// </summary>
             public byte PHOUR;
             /// <summary>
-            /// Byte 8
+            ///     Byte 8
             /// </summary>
             public byte PMIN;
             /// <summary>
-            /// Byte 9
+            ///     Byte 9
             /// </summary>
             public byte PSEC;
             /// <summary>
-            /// Byte 10
+            ///     Byte 10
             /// </summary>
             public byte PFRAME;
         }

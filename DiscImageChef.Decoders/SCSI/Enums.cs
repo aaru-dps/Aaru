@@ -37,23 +37,23 @@ namespace DiscImageChef.Decoders.SCSI
     public enum PeripheralQualifiers : byte
     {
         /// <summary>
-        /// Peripheral qualifier: Device is connected and supported
+        ///     Peripheral qualifier: Device is connected and supported
         /// </summary>
         Supported = 0x00,
         /// <summary>
-        /// Peripheral qualifier: Device is supported but not connected
+        ///     Peripheral qualifier: Device is supported but not connected
         /// </summary>
         Unconnected = 0x01,
         /// <summary>
-        /// Peripheral qualifier: Reserved value
+        ///     Peripheral qualifier: Reserved value
         /// </summary>
         Reserved = 0x02,
         /// <summary>
-        /// Peripheral qualifier: Device is connected but unsupported
+        ///     Peripheral qualifier: Device is connected but unsupported
         /// </summary>
         Unsupported = 0x03,
         /// <summary>
-        /// Peripheral qualifier: Vendor values: 0x04, 0x05, 0x06 and 0x07
+        ///     Peripheral qualifier: Vendor values: 0x04, 0x05, 0x06 and 0x07
         /// </summary>
         VendorMask = 0x04
     }
@@ -62,95 +62,95 @@ namespace DiscImageChef.Decoders.SCSI
     public enum PeripheralDeviceTypes : byte
     {
         /// <summary>
-        /// Direct-access device
+        ///     Direct-access device
         /// </summary>
         DirectAccess = 0x00,
         /// <summary>
-        /// Sequential-access device
+        ///     Sequential-access device
         /// </summary>
         SequentialAccess = 0x01,
         /// <summary>
-        /// Printer device
+        ///     Printer device
         /// </summary>
         PrinterDevice = 0x02,
         /// <summary>
-        /// Processor device
+        ///     Processor device
         /// </summary>
         ProcessorDevice = 0x03,
         /// <summary>
-        /// Write-once device
+        ///     Write-once device
         /// </summary>
         WriteOnceDevice = 0x04,
         /// <summary>
-        /// CD-ROM/DVD/etc device
+        ///     CD-ROM/DVD/etc device
         /// </summary>
         MultiMediaDevice = 0x05,
         /// <summary>
-        /// Scanner device
+        ///     Scanner device
         /// </summary>
         ScannerDevice = 0x06,
         /// <summary>
-        /// Optical memory device
+        ///     Optical memory device
         /// </summary>
         OpticalDevice = 0x07,
         /// <summary>
-        /// Medium change device
+        ///     Medium change device
         /// </summary>
         MediumChangerDevice = 0x08,
         /// <summary>
-        /// Communications device
+        ///     Communications device
         /// </summary>
         CommsDevice = 0x09,
         /// <summary>
-        /// Graphics arts pre-press device (defined in ASC IT8)
+        ///     Graphics arts pre-press device (defined in ASC IT8)
         /// </summary>
         PrePressDevice1 = 0x0A,
         /// <summary>
-        /// Graphics arts pre-press device (defined in ASC IT8)
+        ///     Graphics arts pre-press device (defined in ASC IT8)
         /// </summary>
         PrePressDevice2 = 0x0B,
         /// <summary>
-        /// Array controller device
+        ///     Array controller device
         /// </summary>
         ArrayControllerDevice = 0x0C,
         /// <summary>
-        /// Enclosure services device
+        ///     Enclosure services device
         /// </summary>
         EnclosureServiceDevice = 0x0D,
         /// <summary>
-        /// Simplified direct-access device
+        ///     Simplified direct-access device
         /// </summary>
         SimplifiedDevice = 0x0E,
         /// <summary>
-        /// Optical card reader/writer device
+        ///     Optical card reader/writer device
         /// </summary>
         OCRWDevice = 0x0F,
         /// <summary>
-        /// Bridging Expanders
+        ///     Bridging Expanders
         /// </summary>
         BridgingExpander = 0x10,
         /// <summary>
-        /// Object-based Storage Device
+        ///     Object-based Storage Device
         /// </summary>
         ObjectDevice = 0x11,
         /// <summary>
-        /// Automation/Drive Interface
+        ///     Automation/Drive Interface
         /// </summary>
         ADCDevice = 0x12,
         /// <summary>
-        /// Security Manager Device
+        ///     Security Manager Device
         /// </summary>
         SCSISecurityManagerDevice = 0x13,
         /// <summary>
-        /// Host managed zoned block device
+        ///     Host managed zoned block device
         /// </summary>
         SCSIZonedBlockDevice = 0x14,
         /// <summary>
-        /// Well known logical unit
+        ///     Well known logical unit
         /// </summary>
         WellKnownDevice = 0x1E,
         /// <summary>
-        /// Unknown or no device type
+        ///     Unknown or no device type
         /// </summary>
         UnknownDevice = 0x1F
     }
@@ -159,31 +159,31 @@ namespace DiscImageChef.Decoders.SCSI
     public enum ANSIVersions : byte
     {
         /// <summary>
-        /// Device does not claim conformance to any ANSI version
+        ///     Device does not claim conformance to any ANSI version
         /// </summary>
         ANSINoVersion = 0x00,
         /// <summary>
-        /// Device complies with ANSI X3.131:1986
+        ///     Device complies with ANSI X3.131:1986
         /// </summary>
         ANSI1986Version = 0x01,
         /// <summary>
-        /// Device complies with ANSI X3.131:1994
+        ///     Device complies with ANSI X3.131:1994
         /// </summary>
         ANSI1994Version = 0x02,
         /// <summary>
-        /// Device complies with ANSI X3.301:1997
+        ///     Device complies with ANSI X3.301:1997
         /// </summary>
         ANSI1997Version = 0x03,
         /// <summary>
-        /// Device complies with ANSI X3.351:2001
+        ///     Device complies with ANSI X3.351:2001
         /// </summary>
         ANSI2001Version = 0x04,
         /// <summary>
-        /// Device complies with ANSI X3.408:2005.
+        ///     Device complies with ANSI X3.408:2005.
         /// </summary>
         ANSI2005Version = 0x05,
         /// <summary>
-        /// Device complies with SPC-4
+        ///     Device complies with SPC-4
         /// </summary>
         ANSI2008Version = 0x06
     }
@@ -192,11 +192,11 @@ namespace DiscImageChef.Decoders.SCSI
     public enum ECMAVersions : byte
     {
         /// <summary>
-        /// Device does not claim conformance to any ECMA version
+        ///     Device does not claim conformance to any ECMA version
         /// </summary>
         ECMANoVersion = 0x00,
         /// <summary>
-        /// Device complies with a ECMA-111 standard
+        ///     Device complies with a ECMA-111 standard
         /// </summary>
         ECMA111 = 0x01
     }
@@ -205,11 +205,11 @@ namespace DiscImageChef.Decoders.SCSI
     public enum ISOVersions : byte
     {
         /// <summary>
-        /// Device does not claim conformance to any ISO/IEC version
+        ///     Device does not claim conformance to any ISO/IEC version
         /// </summary>
         ISONoVersion = 0x00,
         /// <summary>
-        /// Device complies with ISO/IEC 9316:1995
+        ///     Device complies with ISO/IEC 9316:1995
         /// </summary>
         ISO1995Version = 0x02
     }
@@ -218,19 +218,19 @@ namespace DiscImageChef.Decoders.SCSI
     public enum SPIClocking : byte
     {
         /// <summary>
-        /// Supports only ST
+        ///     Supports only ST
         /// </summary>
         ST = 0x00,
         /// <summary>
-        /// Supports only DT
+        ///     Supports only DT
         /// </summary>
         DT = 0x01,
         /// <summary>
-        /// Reserved value
+        ///     Reserved value
         /// </summary>
         Reserved = 0x02,
         /// <summary>
-        /// Supports ST and DT
+        ///     Supports ST and DT
         /// </summary>
         STandDT = 0x03
     }
@@ -239,19 +239,19 @@ namespace DiscImageChef.Decoders.SCSI
     public enum TGPSValues : byte
     {
         /// <summary>
-        /// Assymetrical access not supported
+        ///     Assymetrical access not supported
         /// </summary>
         NotSupported = 0x00,
         /// <summary>
-        /// Only implicit assymetrical access is supported
+        ///     Only implicit assymetrical access is supported
         /// </summary>
         OnlyImplicit = 0x01,
         /// <summary>
-        /// Only explicit assymetrical access is supported
+        ///     Only explicit assymetrical access is supported
         /// </summary>
         OnlyExplicit = 0x02,
         /// <summary>
-        /// Both implicit and explicit assymetrical access are supported
+        ///     Both implicit and explicit assymetrical access are supported
         /// </summary>
         Both = 0x03
     }
@@ -260,55 +260,55 @@ namespace DiscImageChef.Decoders.SCSI
     public enum ProtocolIdentifiers : byte
     {
         /// <summary>
-        /// Fibre Channel
+        ///     Fibre Channel
         /// </summary>
         FibreChannel = 0,
         /// <summary>
-        /// Parallel SCSI
+        ///     Parallel SCSI
         /// </summary>
         SCSI = 1,
         /// <summary>
-        /// SSA
+        ///     SSA
         /// </summary>
         SSA = 2,
         /// <summary>
-        /// IEEE-1394
+        ///     IEEE-1394
         /// </summary>
         Firewire = 3,
         /// <summary>
-        /// SCSI Remote Direct Memory Access Protocol
+        ///     SCSI Remote Direct Memory Access Protocol
         /// </summary>
         RDMAP = 4,
         /// <summary>
-        /// Internet SCSI
+        ///     Internet SCSI
         /// </summary>
         iSCSI = 5,
         /// <summary>
-        /// Serial SCSI
+        ///     Serial SCSI
         /// </summary>
         SAS = 6,
         /// <summary>
-        /// Automation/Drive Interface Transport Protocol
+        ///     Automation/Drive Interface Transport Protocol
         /// </summary>
         ADT = 7,
         /// <summary>
-        /// AT Attachment Interface (ATA/ATAPI)
+        ///     AT Attachment Interface (ATA/ATAPI)
         /// </summary>
         ATA = 8,
         /// <summary>
-        /// USB Attached SCSI
+        ///     USB Attached SCSI
         /// </summary>
         UAS = 9,
         /// <summary>
-        /// SCSI over PCI Express
+        ///     SCSI over PCI Express
         /// </summary>
         SCSIe = 10,
         /// <summary>
-        /// PCI Express
+        ///     PCI Express
         /// </summary>
         PCIe = 11,
         /// <summary>
-        /// No specific protocol
+        ///     No specific protocol
         /// </summary>
         NoProtocol = 15
     }

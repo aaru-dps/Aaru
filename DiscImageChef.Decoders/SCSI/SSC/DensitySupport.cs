@@ -167,8 +167,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
                 if(descriptor.duplicate) sb.AppendLine("\tThis descriptor is duplicated");
                 if(descriptor.defaultDensity) sb.AppendLine("\tThis is the default density on the drive");
                 sb.AppendFormat("\tDensity has {0} bits per mm, with {1} tracks in a {2} mm width tape",
-                                descriptor.bpmm, descriptor.tracks, descriptor.width / (double)10)
-                  .AppendLine();
+                                descriptor.bpmm, descriptor.tracks, descriptor.width / (double)10).AppendLine();
                 sb.AppendFormat("\tDensity maximum capacity is {0} megabytes", descriptor.capacity).AppendLine();
                 sb.AppendFormat("\tDensity description: {0}", descriptor.description).AppendLine();
                 sb.AppendLine();
@@ -258,8 +257,8 @@ namespace DiscImageChef.Decoders.SCSI.SSC
                     sb.AppendLine();
                 }
 
-                sb.AppendFormat("\tMedium has a nominal length of {0} m in a {1} mm width tape",
-                                descriptor.length, descriptor.width / (double)10).AppendLine();
+                sb.AppendFormat("\tMedium has a nominal length of {0} m in a {1} mm width tape", descriptor.length,
+                                descriptor.width / (double)10).AppendLine();
                 sb.AppendFormat("\tMedium description: {0}", descriptor.description).AppendLine();
                 sb.AppendLine();
             }

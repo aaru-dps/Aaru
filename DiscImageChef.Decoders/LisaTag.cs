@@ -41,7 +41,7 @@ namespace DiscImageChef.Decoders
     public static class LisaTag
     {
         /// <summary>
-        /// LisaOS tag as stored on Apple Profile and FileWare disks (20 bytes)
+        ///     LisaOS tag as stored on Apple Profile and FileWare disks (20 bytes)
         /// </summary>
         public struct ProfileTag
         {
@@ -56,31 +56,31 @@ namespace DiscImageChef.Decoders
             /// <summary>0x04, file ID</summary>
             public short FileId;
             /// <summary>
-            /// 0x06 bit 7, checksum valid?
+            ///     0x06 bit 7, checksum valid?
             /// </summary>
             public bool ValidChk;
             /// <summary>
-            /// 0x06 bits 6 to 0, used bytes in block
+            ///     0x06 bits 6 to 0, used bytes in block
             /// </summary>
             public ushort UsedBytes;
             /// <summary>
-            /// 0x08, 3 bytes, absolute page number
+            ///     0x08, 3 bytes, absolute page number
             /// </summary>
             public uint AbsPage;
             /// <summary>
-            /// 0x0B, checksum of data
+            ///     0x0B, checksum of data
             /// </summary>
             public byte Checksum;
             /// <summary>
-            /// 0x0C, relative page number
+            ///     0x0C, relative page number
             /// </summary>
             public ushort RelPage;
             /// <summary>
-            /// 0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
+            ///     0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
             /// </summary>
             public uint NextBlock;
             /// <summary>
-            /// 0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
+            ///     0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
             /// </summary>
             public uint PrevBlock;
 
@@ -91,7 +91,7 @@ namespace DiscImageChef.Decoders
         }
 
         /// <summary>
-        /// LisaOS tag as stored on Priam DataTower disks (24 bytes)
+        ///     LisaOS tag as stored on Priam DataTower disks (24 bytes)
         /// </summary>
         public struct PriamTag
         {
@@ -106,35 +106,35 @@ namespace DiscImageChef.Decoders
             /// <summary>0x04, file ID</summary>
             public short FileId;
             /// <summary>
-            /// 0x06 bit 7, checksum valid?
+            ///     0x06 bit 7, checksum valid?
             /// </summary>
             public bool ValidChk;
             /// <summary>
-            /// 0x06 bits 6 to 0, used bytes in block
+            ///     0x06 bits 6 to 0, used bytes in block
             /// </summary>
             public ushort UsedBytes;
             /// <summary>
-            /// 0x08, 3 bytes, absolute page number
+            ///     0x08, 3 bytes, absolute page number
             /// </summary>
             public uint AbsPage;
             /// <summary>
-            /// 0x0B, checksum of data
+            ///     0x0B, checksum of data
             /// </summary>
             public byte Checksum;
             /// <summary>
-            /// 0x0C, relative page number
+            ///     0x0C, relative page number
             /// </summary>
             public ushort RelPage;
             /// <summary>
-            /// 0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
+            ///     0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
             /// </summary>
             public uint NextBlock;
             /// <summary>
-            /// 0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
+            ///     0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
             /// </summary>
             public uint PrevBlock;
             /// <summary>
-            /// 0x14, disk size
+            ///     0x14, disk size
             /// </summary>
             public uint DiskSize;
 
@@ -145,7 +145,7 @@ namespace DiscImageChef.Decoders
         }
 
         /// <summary>
-        /// LisaOS tag as stored on Apple Sony disks (12 bytes)
+        ///     LisaOS tag as stored on Apple Sony disks (12 bytes)
         /// </summary>
         public struct SonyTag
         {
@@ -160,15 +160,15 @@ namespace DiscImageChef.Decoders
             /// <summary>0x04, file ID</summary>
             public short FileId;
             /// <summary>
-            /// 0x06, relative page number
+            ///     0x06, relative page number
             /// </summary>
             public ushort RelPage;
             /// <summary>
-            /// 0x08, 3 bytes, next block, 0x7FF if it's last block, 0x8000 set if block is valid
+            ///     0x08, 3 bytes, next block, 0x7FF if it's last block, 0x8000 set if block is valid
             /// </summary>
             public ushort NextBlock;
             /// <summary>
-            /// 0x0A, 3 bytes, previous block, 0x7FF if it's first block
+            ///     0x0A, 3 bytes, previous block, 0x7FF if it's first block
             /// </summary>
             public ushort PrevBlock;
 

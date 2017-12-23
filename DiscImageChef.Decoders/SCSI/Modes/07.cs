@@ -43,42 +43,42 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x07: Verify error recovery page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x07
-        /// 12 bytes in SCSI-2, SBC-1, SBC-2
+        ///     Disconnect-reconnect page
+        ///     Page code 0x07
+        ///     12 bytes in SCSI-2, SBC-1, SBC-2
         /// </summary>
         public struct ModePage_07
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Enable early recovery
+            ///     Enable early recovery
             /// </summary>
             public bool EER;
             /// <summary>
-            /// Post error reporting
+            ///     Post error reporting
             /// </summary>
             public bool PER;
             /// <summary>
-            /// Disable transfer on error
+            ///     Disable transfer on error
             /// </summary>
             public bool DTE;
             /// <summary>
-            /// Disable correction
+            ///     Disable correction
             /// </summary>
             public bool DCR;
             /// <summary>
-            /// How many times to retry a verify operation
+            ///     How many times to retry a verify operation
             /// </summary>
             public byte VerifyRetryCount;
             /// <summary>
-            /// How many bits of largest data burst error is maximum to apply error correction on it
+            ///     How many bits of largest data burst error is maximum to apply error correction on it
             /// </summary>
             public byte CorrectionSpan;
             /// <summary>
-            /// Maximum time in ms to use in data error recovery procedures
+            ///     Maximum time in ms to use in data error recovery procedures
             /// </summary>
             public ushort RecoveryTimeLimit;
         }

@@ -38,21 +38,21 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Decoders.CD
 {
     /// <summary>
-    /// Information from the following standards:
-    /// ANSI X3.304-1997
-    /// T10/1048-D revision 9.0
-    /// T10/1048-D revision 10a
-    /// T10/1228-D revision 7.0c
-    /// T10/1228-D revision 11a
-    /// T10/1363-D revision 10g
-    /// T10/1545-D revision 1d
-    /// T10/1545-D revision 5
-    /// T10/1545-D revision 5a
-    /// T10/1675-D revision 2c
-    /// T10/1675-D revision 4
-    /// T10/1836-D revision 2g
-    /// ISO/IEC 61104: Compact disc video system - 12 cm CD-V
-    /// ISO/IEC 60908: Audio recording - Compact disc digital audio system
+    ///     Information from the following standards:
+    ///     ANSI X3.304-1997
+    ///     T10/1048-D revision 9.0
+    ///     T10/1048-D revision 10a
+    ///     T10/1228-D revision 7.0c
+    ///     T10/1228-D revision 11a
+    ///     T10/1363-D revision 10g
+    ///     T10/1545-D revision 1d
+    ///     T10/1545-D revision 5
+    ///     T10/1545-D revision 5a
+    ///     T10/1675-D revision 2c
+    ///     T10/1675-D revision 4
+    ///     T10/1836-D revision 2g
+    ///     ISO/IEC 61104: Compact disc video system - 12 cm CD-V
+    ///     ISO/IEC 60908: Audio recording - Compact disc digital audio system
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
@@ -62,19 +62,19 @@ namespace DiscImageChef.Decoders.CD
         public struct CDTOC
         {
             /// <summary>
-            /// Total size of returned TOC minus this field
+            ///     Total size of returned TOC minus this field
             /// </summary>
             public ushort DataLength;
             /// <summary>
-            /// First track number in hex
+            ///     First track number in hex
             /// </summary>
             public byte FirstTrack;
             /// <summary>
-            /// Last track number in hex
+            ///     Last track number in hex
             /// </summary>
             public byte LastTrack;
             /// <summary>
-            /// Track descriptors
+            ///     Track descriptors
             /// </summary>
             public CDTOCTrackDataDescriptor[] TrackDescriptors;
         }
@@ -82,33 +82,33 @@ namespace DiscImageChef.Decoders.CD
         public struct CDTOCTrackDataDescriptor
         {
             /// <summary>
-            /// Byte 0
-            /// Reserved
+            ///     Byte 0
+            ///     Reserved
             /// </summary>
             public byte Reserved1;
             /// <summary>
-            /// Byte 1, bits 7 to 4
-            /// Type of information in Q subchannel of block where this TOC entry was found
+            ///     Byte 1, bits 7 to 4
+            ///     Type of information in Q subchannel of block where this TOC entry was found
             /// </summary>
             public byte ADR;
             /// <summary>
-            /// Byte 1, bits 3 to 0
-            /// Track attributes
+            ///     Byte 1, bits 3 to 0
+            ///     Track attributes
             /// </summary>
             public byte CONTROL;
             /// <summary>
-            /// Byte 2
-            /// Track number
+            ///     Byte 2
+            ///     Track number
             /// </summary>
             public byte TrackNumber;
             /// <summary>
-            /// Byte 3
-            /// Reserved
+            ///     Byte 3
+            ///     Reserved
             /// </summary>
             public byte Reserved2;
             /// <summary>
-            /// Bytes 4 to 7
-            /// The track start address in LBA or in MSF
+            ///     Bytes 4 to 7
+            ///     The track start address in LBA or in MSF
             /// </summary>
             public uint TrackStartAddress;
         }

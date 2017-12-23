@@ -42,50 +42,50 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Page 0x04: Rigid disk drive geometry page
         /// <summary>
-        /// Disconnect-reconnect page
-        /// Page code 0x04
-        /// 24 bytes in SCSI-2, SBC-1
+        ///     Disconnect-reconnect page
+        ///     Page code 0x04
+        ///     24 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_04
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Cylinders used for data storage
+            ///     Cylinders used for data storage
             /// </summary>
             public uint Cylinders;
             /// <summary>
-            /// Heads for reading and/or writing
+            ///     Heads for reading and/or writing
             /// </summary>
             public byte Heads;
             /// <summary>
-            /// Cylinder where write precompensation starts
+            ///     Cylinder where write precompensation starts
             /// </summary>
             public uint WritePrecompCylinder;
             /// <summary>
-            /// Cylinder where write current reduction starts
+            ///     Cylinder where write current reduction starts
             /// </summary>
             public uint WriteReduceCylinder;
             /// <summary>
-            /// Step rate in 100 ns units
+            ///     Step rate in 100 ns units
             /// </summary>
             public ushort DriveStepRate;
             /// <summary>
-            /// Cylinder where the heads park
+            ///     Cylinder where the heads park
             /// </summary>
             public int LandingCylinder;
             /// <summary>
-            /// Rotational position locking
+            ///     Rotational position locking
             /// </summary>
             public byte RPL;
             /// <summary>
-            /// Rotational skew to apply when synchronized
+            ///     Rotational skew to apply when synchronized
             /// </summary>
             public byte RotationalOffset;
             /// <summary>
-            /// Medium speed in rpm
+            ///     Medium speed in rpm
             /// </summary>
             public ushort MediumRotationRate;
         }

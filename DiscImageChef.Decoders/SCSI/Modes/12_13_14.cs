@@ -42,17 +42,17 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
         /// <summary>
-        /// Medium partition page (2-4)
-        /// Page codes 0x12, 0x13 and 0x14
+        ///     Medium partition page (2-4)
+        ///     Page codes 0x12, 0x13 and 0x14
         /// </summary>
         public struct ModePage_12_13_14
         {
             /// <summary>
-            /// Parameters can be saved
+            ///     Parameters can be saved
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Array of partition sizes in units defined in mode page 11
+            ///     Array of partition sizes in units defined in mode page 11
             /// </summary>
             public ushort[] PartitionSizes;
         }

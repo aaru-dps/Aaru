@@ -39,60 +39,60 @@ namespace DiscImageChef.Decoders.DVD
     public enum DiskCategory : byte
     {
         /// <summary>
-        /// DVD-ROM. Version 1 is ECMA-267 and ECMA-268.
+        ///     DVD-ROM. Version 1 is ECMA-267 and ECMA-268.
         /// </summary>
         DVDROM = 0,
         /// <summary>
-        /// DVD-RAM. Version 1 is ECMA-272. Version 6 is ECMA-330.
+        ///     DVD-RAM. Version 1 is ECMA-272. Version 6 is ECMA-330.
         /// </summary>
         DVDRAM = 1,
         /// <summary>
-        /// DVD-R. Version 1 is ECMA-279. Version 5 is ECMA-359. Version 6 is ECMA-382.
+        ///     DVD-R. Version 1 is ECMA-279. Version 5 is ECMA-359. Version 6 is ECMA-382.
         /// </summary>
         DVDR = 2,
         /// <summary>
-        /// DVD-RW. Version 2 is ECMA-338. Version 3 is ECMA-384.
+        ///     DVD-RW. Version 2 is ECMA-338. Version 3 is ECMA-384.
         /// </summary>
         DVDRW = 3,
         /// <summary>
-        /// HD DVD-ROM
+        ///     HD DVD-ROM
         /// </summary>
         HDDVDROM = 4,
         /// <summary>
-        /// HD DVD-RAM
+        ///     HD DVD-RAM
         /// </summary>
         HDDVDRAM = 5,
         /// <summary>
-        /// HD DVD-R
+        ///     HD DVD-R
         /// </summary>
         HDDVDR = 6,
         /// <summary>
-        /// HD DVD-RW
+        ///     HD DVD-RW
         /// </summary>
         HDDVDRW = 7,
         /// <summary>
-        /// UMD. Version 0 is ECMA-365.
+        ///     UMD. Version 0 is ECMA-365.
         /// </summary>
         UMD = 8,
         /// <summary>
-        /// DVD+RW. Version 1 is ECMA-274. Version 2 is ECMA-337. Version 3 is ECMA-371.
+        ///     DVD+RW. Version 1 is ECMA-274. Version 2 is ECMA-337. Version 3 is ECMA-371.
         /// </summary>
         DVDPRW = 9,
         /// <summary>
-        /// DVD+R. Version 1 is ECMA-349.
+        ///     DVD+R. Version 1 is ECMA-349.
         /// </summary>
         DVDPR = 10,
         /// <summary>
-        /// DVD+RW DL. Version 1 is ECMA-374.
+        ///     DVD+RW DL. Version 1 is ECMA-374.
         /// </summary>
         DVDPRWDL = 13,
         /// <summary>
-        /// DVD+R DL. Version 1 is ECMA-364.
+        ///     DVD+R DL. Version 1 is ECMA-364.
         /// </summary>
         DVDPRDL = 14,
         /// <summary>
-        /// According to standards this value is reserved.
-        /// It's used by Nintendo GODs and WODs.
+        ///     According to standards this value is reserved.
+        ///     It's used by Nintendo GODs and WODs.
         /// </summary>
         Nintendo = 15
     }
@@ -101,23 +101,23 @@ namespace DiscImageChef.Decoders.DVD
     public enum MaximumRateField : byte
     {
         /// <summary>
-        /// 2.52 Mbps
+        ///     2.52 Mbps
         /// </summary>
         TwoMbps = 0x00,
         /// <summary>
-        /// 5.04 Mbps
+        ///     5.04 Mbps
         /// </summary>
         FiveMbps = 0x01,
         /// <summary>
-        /// 10.08 Mbps
+        ///     10.08 Mbps
         /// </summary>
         TenMbps = 0x02,
         /// <summary>
-        /// 20.16 Mbps
+        ///     20.16 Mbps
         /// </summary>
         TwentyMbps = 0x03,
         /// <summary>
-        /// 30.24 Mbps
+        ///     30.24 Mbps
         /// </summary>
         ThirtyMbps = 0x04,
         Unspecified = 0x0F
@@ -136,31 +136,31 @@ namespace DiscImageChef.Decoders.DVD
     public enum LinearDensityField : byte
     {
         /// <summary>
-        /// 0.267 μm/bit
+        ///     0.267 μm/bit
         /// </summary>
         TwoSix = 0x00,
         /// <summary>
-        /// 0.293 μm/bit
+        ///     0.293 μm/bit
         /// </summary>
         TwoNine = 0x01,
         /// <summary>
-        /// 0.409 to 0.435 μm/bit
+        ///     0.409 to 0.435 μm/bit
         /// </summary>
         FourZero = 0x02,
         /// <summary>
-        /// 0.280 to 0.291 μm/bit
+        ///     0.280 to 0.291 μm/bit
         /// </summary>
         TwoEight = 0x04,
         /// <summary>
-        /// 0.153 μm/bit
+        ///     0.153 μm/bit
         /// </summary>
         OneFive = 0x05,
         /// <summary>
-        /// 0.130 to 0.140 μm/bit
+        ///     0.130 to 0.140 μm/bit
         /// </summary>
         OneThree = 0x06,
         /// <summary>
-        /// 0.353 μm/bit
+        ///     0.353 μm/bit
         /// </summary>
         ThreeFive = 0x08
     }
@@ -169,23 +169,23 @@ namespace DiscImageChef.Decoders.DVD
     public enum TrackDensityField : byte
     {
         /// <summary>
-        /// 0.74 μm/track
+        ///     0.74 μm/track
         /// </summary>
         Seven = 0x00,
         /// <summary>
-        /// 0.80 μm/track
+        ///     0.80 μm/track
         /// </summary>
         Eight = 0x01,
         /// <summary>
-        /// 0.615 μm/track
+        ///     0.615 μm/track
         /// </summary>
         Six = 0x02,
         /// <summary>
-        /// 0.40 μm/track
+        ///     0.40 μm/track
         /// </summary>
         Four = 0x03,
         /// <summary>
-        /// 0.34 μm/track
+        ///     0.34 μm/track
         /// </summary>
         Three = 0x04
     }
@@ -194,19 +194,19 @@ namespace DiscImageChef.Decoders.DVD
     public enum CopyrightType : byte
     {
         /// <summary>
-        /// There is no copy protection
+        ///     There is no copy protection
         /// </summary>
         NoProtection = 0x00,
         /// <summary>
-        /// Copy protection is CSS/CPPM
+        ///     Copy protection is CSS/CPPM
         /// </summary>
         CSS = 0x01,
         /// <summary>
-        /// Copy protection is CPRM
+        ///     Copy protection is CPRM
         /// </summary>
         CPRM = 0x02,
         /// <summary>
-        /// Copy protection is AACS
+        ///     Copy protection is AACS
         /// </summary>
         AACS = 0x10
     }
@@ -215,11 +215,11 @@ namespace DiscImageChef.Decoders.DVD
     public enum WPDiscTypes : byte
     {
         /// <summary>
-        /// Should not write without a cartridge
+        ///     Should not write without a cartridge
         /// </summary>
         DoNotWrite = 0x00,
         /// <summary>
-        /// Can write without a cartridge
+        ///     Can write without a cartridge
         /// </summary>
         CanWrite = 0x01,
         Reserved1 = 0x02,
@@ -230,11 +230,11 @@ namespace DiscImageChef.Decoders.DVD
     public enum DVDSize
     {
         /// <summary>
-        /// 120 mm
+        ///     120 mm
         /// </summary>
         OneTwenty = 0,
         /// <summary>
-        /// 80 mm
+        ///     80 mm
         /// </summary>
         Eighty = 1
     }
@@ -243,11 +243,11 @@ namespace DiscImageChef.Decoders.DVD
     public enum DVDRAMDiscType
     {
         /// <summary>
-        /// Shall not be recorded without a case
+        ///     Shall not be recorded without a case
         /// </summary>
         Cased = 0,
         /// <summary>
-        /// May be recorded without a case or within one
+        ///     May be recorded without a case or within one
         /// </summary>
         Uncased = 1
     }

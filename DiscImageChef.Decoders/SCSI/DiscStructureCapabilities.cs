@@ -44,15 +44,15 @@ namespace DiscImageChef.Decoders.SCSI
         public struct Capability
         {
             /// <summary>
-            /// READ/SEND DISC STRUCTURE format code
+            ///     READ/SEND DISC STRUCTURE format code
             /// </summary>
             public byte FormatCode;
             /// <summary>
-            /// Supported in SEND DISC STRUCTURE
+            ///     Supported in SEND DISC STRUCTURE
             /// </summary>
             public bool SDS;
             /// <summary>
-            /// Supported in READ DISC STRUCTURE
+            ///     Supported in READ DISC STRUCTURE
             /// </summary>
             public bool RDS;
         }

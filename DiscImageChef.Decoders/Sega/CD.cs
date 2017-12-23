@@ -189,8 +189,10 @@ namespace DiscImageChef.Decoders.Sega
                                                     provider);
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch { // ignored
- }
+                catch
+                {
+                    // ignored
+                }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
