@@ -37,7 +37,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Provides a UNIX similar API to calculate CRC32.
+    /// Implements a CRC32 algorithm
     /// </summary>
     public class Crc32Context
     {

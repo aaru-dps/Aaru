@@ -62,6 +62,9 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Checksums
 {
+    /// <summary>
+    /// Implements the Reed-Solomon algorithm
+    /// </summary>
     public class ReedSolomon
     {
         /* Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A,

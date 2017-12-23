@@ -36,6 +36,9 @@ using System.Text;
 
 namespace DiscImageChef.Checksums
 {
+    /// <summary>
+    /// Implements the Adler-32 algorithm
+    /// </summary>
     public class Adler32Context
     {
         ushort sum1, sum2;

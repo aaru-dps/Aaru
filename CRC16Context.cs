@@ -37,7 +37,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Provides a UNIX similar API to calculate CRC16.
+    /// Implements a CRC16-CCITT algorithm
     /// </summary>
     public class Crc16Context
     {

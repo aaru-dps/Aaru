@@ -37,7 +37,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Provides a UNIX similar API to .NET RIPEMD160.
+    /// Wraps up .NET RIPEMD160 implementation to a Init(), Update(), Final() context.
     /// </summary>
     public class Ripemd160Context
     {

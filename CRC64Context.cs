@@ -36,7 +36,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Provides a UNIX similar API to calculate CRC64 (ECMA).
+    /// Implements a CRC64 (ECMA) algorithm
     /// </summary>
     public class Crc64Context
     {
