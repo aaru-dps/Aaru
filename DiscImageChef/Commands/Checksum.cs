@@ -155,8 +155,7 @@ namespace DiscImageChef.Commands
                                 doneSectors += sectors - doneSectors;
                             }
 
-                            if(options.WholeDisc)
-                                mediaChecksum?.Update(sector);
+                            if(options.WholeDisc) mediaChecksum?.Update(sector);
 
                             if(options.SeparatedTracks) trackChecksum?.Update(sector);
                         }

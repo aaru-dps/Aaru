@@ -50,7 +50,8 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}", options.DevicePath);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
-               char.IsLetter(options.DevicePath[0])) options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
+               char.IsLetter(options.DevicePath[0]))
+                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
 
             Device dev = new Device(options.DevicePath);
 
@@ -94,8 +95,7 @@ namespace DiscImageChef.Commands
 
             FileStream xmlFs = new FileStream(xmlFile, FileMode.Create);
 
-            XmlSerializer xmlSer =
-                new XmlSerializer(typeof(Metadata.DeviceReport));
+            XmlSerializer xmlSer = new XmlSerializer(typeof(Metadata.DeviceReport));
             xmlSer.Serialize(xmlFs, report);
             xmlFs.Close();
             Core.Statistics.AddCommand("device-report");

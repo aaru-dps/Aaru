@@ -241,14 +241,12 @@ namespace DiscImageChef.Commands
                     DicConsole.VerboseWriteLine("LBAs with error:");
                     if(failingLbas.Count == (int)inputFormat.GetSectors())
                         DicConsole.VerboseWriteLine("\tall sectors.");
-                    else
-                        foreach(ulong t in failingLbas) DicConsole.VerboseWriteLine("\t{0}", t);
+                    else foreach(ulong t in failingLbas) DicConsole.VerboseWriteLine("\t{0}", t);
 
                     DicConsole.WriteLine("LBAs without checksum:");
                     if(unknownLbas.Count == (int)inputFormat.GetSectors())
                         DicConsole.VerboseWriteLine("\tall sectors.");
-                    else
-                        foreach(ulong t in unknownLbas) DicConsole.VerboseWriteLine("\t{0}", t);
+                    else foreach(ulong t in unknownLbas) DicConsole.VerboseWriteLine("\t{0}", t);
                 }
 
                 DicConsole.WriteLine("Total sectors........... {0}", inputFormat.GetSectors());

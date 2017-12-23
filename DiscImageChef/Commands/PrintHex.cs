@@ -88,7 +88,9 @@ namespace DiscImageChef.Commands
                     }
                 }
 
-                byte[] sector = options.LongSectors ? inputFormat.ReadSectorLong(options.StartSector + i) : inputFormat.ReadSector(options.StartSector + i);
+                byte[] sector = options.LongSectors
+                                    ? inputFormat.ReadSectorLong(options.StartSector + i)
+                                    : inputFormat.ReadSector(options.StartSector + i);
 
                 DiscImageChef.PrintHex.PrintHexArray(sector, options.WidthBytes);
             }

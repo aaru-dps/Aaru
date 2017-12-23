@@ -133,8 +133,7 @@ namespace DiscImageChef.Commands
                             FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
                                        FileMode.CreateNew);
 
-                    XmlSerializer xmlSer =
-                        new XmlSerializer(typeof(CICMMetadataType));
+                    XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                     xmlSer.Serialize(xmlFs, sidecar);
                     xmlFs.Close();
 
@@ -155,7 +154,8 @@ namespace DiscImageChef.Commands
                 }
 
                 string[] contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
-                List<string> files = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0).ToList();
+                List<string> files = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0)
+                                             .ToList();
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
@@ -169,17 +169,13 @@ namespace DiscImageChef.Commands
                         FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
                                    FileMode.CreateNew);
 
-                XmlSerializer xmlSer =
-                    new XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
 
                 Core.Statistics.AddCommand("create-sidecar");
             }
-            else
-            {
-                DicConsole.ErrorWriteLine("The specified input file cannot be found.");
-            }
+            else DicConsole.ErrorWriteLine("The specified input file cannot be found.");
         }
     }
 }

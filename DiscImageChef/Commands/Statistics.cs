@@ -104,7 +104,8 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Benchmark statistics");
                 DicConsole.WriteLine("====================");
-                foreach(ChecksumStats chk in Core.Statistics.AllStats.Benchmark.Checksum) DicConsole.WriteLine("Took {0} seconds to calculate {1} algorithm", chk.Value, chk.algorithm);
+                foreach(ChecksumStats chk in Core.Statistics.AllStats.Benchmark.Checksum)
+                    DicConsole.WriteLine("Took {0} seconds to calculate {1} algorithm", chk.Value, chk.algorithm);
 
                 DicConsole.WriteLine("Took {0} seconds to calculate all algorithms sequentially",
                                      Core.Statistics.AllStats.Benchmark.Sequential);
@@ -182,8 +183,8 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Media statistics");
                 DicConsole.WriteLine("================");
                 foreach(MediaStats ms in Core.Statistics.AllStats.Medias)
-                    DicConsole.WriteLine("Media type {0} has been found {1} times in a {2} image.", ms.type,
-                                             ms.Value, ms.real ? "real" : "media");
+                    DicConsole.WriteLine("Media type {0} has been found {1} times in a {2} image.", ms.type, ms.Value,
+                                         ms.real ? "real" : "media");
 
                 DicConsole.WriteLine();
                 thereAreStats = true;

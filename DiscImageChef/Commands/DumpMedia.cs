@@ -75,7 +75,8 @@ namespace DiscImageChef.Commands
                 }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
-               char.IsLetter(options.DevicePath[0])) options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
+               char.IsLetter(options.DevicePath[0]))
+                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
 
             Device dev = new Device(options.DevicePath);
 

@@ -128,7 +128,9 @@ namespace DiscImageChef.Commands
             image1Info.ImageHasPartitions = input1Format.ImageHasPartitions();
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             try { image1Sessions = input1Format.GetSessions(); }
-            catch { // ignored
+            catch
+            {
+                // ignored
             }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             image1Info.ImageHasSessions |= image1Sessions.Count > 0;
@@ -180,16 +182,20 @@ namespace DiscImageChef.Commands
                     image1DiskTags.Add(disktag, temparray);
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch { // ignored
- }
+                catch
+                {
+                    // ignored
+                }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
             image2Info.ImageHasPartitions = input2Format.ImageHasPartitions();
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             try { image2Sessions = input2Format.GetSessions(); }
-            catch { // ignored
- }
+            catch
+            {
+                // ignored
+            }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             image2Info.ImageHasSessions |= image2Sessions.Count > 0;
             image2Info.ImageSize = input2Format.GetImageSize();
@@ -240,8 +246,10 @@ namespace DiscImageChef.Commands
                     image2DiskTags.Add(disktag, temparray);
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch { // ignored
- }
+                catch
+                {
+                    // ignored
+                }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
@@ -462,8 +470,10 @@ namespace DiscImageChef.Commands
                     }
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch { // ignored
- }
+                catch
+                {
+                    // ignored
+                }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 

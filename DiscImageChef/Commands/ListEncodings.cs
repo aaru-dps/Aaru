@@ -39,16 +39,21 @@ namespace DiscImageChef.Commands
 {
     static class ListEncodings
     {
-        struct CommonEncodingInfo
+        internal static void DoList()
         {
-            public string Name;
-            public string DisplayName;
-        }
-
-        internal static void DoList(ListEncodingsOptions encodingOptions)
-        {
-            List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo {Name = info.Name, DisplayName = info.GetEncoding().EncodingName}).ToList();
-            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new CommonEncodingInfo {Name = info.Name, DisplayName = info.DisplayName}));
+            List<CommonEncodingInfo> encodings = Encoding
+                .GetEncodings()
+                .Select(info => new CommonEncodingInfo
+                {
+                    Name = info.Name,
+                    DisplayName = info.GetEncoding().EncodingName
+                }).ToList();
+            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
+                                      .Select(info => new CommonEncodingInfo
+                                      {
+                                          Name = info.Name,
+                                          DisplayName = info.DisplayName
+                                      }));
 
             DicConsole.WriteLine("{0,-16} {1,-8}", "Name", "Description");
 
@@ -56,6 +61,12 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
 
             Core.Statistics.AddCommand("list-encodings");
+        }
+
+        struct CommonEncodingInfo
+        {
+            public string Name;
+            public string DisplayName;
         }
     }
 }

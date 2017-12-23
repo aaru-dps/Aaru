@@ -150,8 +150,7 @@ namespace DiscImageChef.Commands
                                         .GetType().GetConstructor(new[]
                                         {
                                             typeof(ImagePlugin), typeof(Partition), typeof(Encoding)
-                                        })
-                                        ?.Invoke(new object[] {imageFormat, partitions[i], null});
+                                        })?.Invoke(new object[] {imageFormat, partitions[i], null});
 
                                     if(fs == null) continue;
 
@@ -194,8 +193,7 @@ namespace DiscImageChef.Commands
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir) DicConsole.WriteLine("{0}", entry);
                                 else
-                                    DicConsole.ErrorWriteLine("Error {0} reading root directory {0}",
-                                                              error.ToString());
+                                    DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
                                 Core.Statistics.AddFilesystem(fs.XmlFSType.Type);
                             }
@@ -225,8 +223,7 @@ namespace DiscImageChef.Commands
                                 .GetType().GetConstructor(new[]
                                 {
                                     typeof(ImagePlugin), typeof(Partition), typeof(Encoding)
-                                })
-                                ?.Invoke(new object[] {imageFormat, wholePart, null});
+                                })?.Invoke(new object[] {imageFormat, wholePart, null});
                             if(fs == null) continue;
 
                             error = fs.Mount(options.Debug);
@@ -237,8 +234,7 @@ namespace DiscImageChef.Commands
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir) DicConsole.WriteLine("{0}", entry);
                                 else
-                                    DicConsole.ErrorWriteLine("Error {0} reading root directory {0}",
-                                                              error.ToString());
+                                    DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
                                 Core.Statistics.AddFilesystem(fs.XmlFSType.Type);
                             }
