@@ -63,34 +63,40 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Implements the Reed-Solomon algorithm
+    ///     Implements the Reed-Solomon algorithm
     /// </summary>
     public class ReedSolomon
     {
-        /* Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A,
-         * and  Lee & Messerschmitt, Digital Communication p. 453.
-         */
-        int[] pp;
-        /* index->polynomial form conversion table */
-        int[] alpha_to;
-        /* Polynomial->index form conversion table */
-        int[] index_of;
-        /* Generator polynomial g(x)
-         * Degree of g(x) = 2*TT
-         * has roots @**B0, @**(B0+1), ... ,@^(B0+2*TT-1)
-         */
-        int[] gg;
-        int mm, kk, nn;
-        /* No legal value in index form represents zero, so
-         * we need a special value for this purpose
-         */
-        int a0;
-        bool initialized;
-        /* Alpha exponent for the first root of the generator polynomial */
+        /// <summary>
+        ///     Alpha exponent for the first root of the generator polynomial
+        /// </summary>
         const int B0 = 1;
+        /// <summary>
+        ///     No legal value in index form represents zero, so we need a special value for this purpose
+        /// </summary>
+        int a0;
+        /// <summary>
+        ///     index->polynomial form conversion table
+        /// </summary>
+        int[] alpha_to;
+        /// <summary>
+        ///     Generator polynomial g(x) Degree of g(x) = 2*TT has roots @**B0, @**(B0+1), ... ,@^(B0+2*TT-1)
+        /// </summary>
+        int[] gg;
+        /// <summary>
+        ///     Polynomial->index form conversion table
+        /// </summary>
+        int[] index_of;
+        bool initialized;
+        int mm, kk, nn;
+        /// <summary>
+        ///     Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A, and  Lee & Messerschmitt, Digital
+        ///     Communication p. 453.
+        /// </summary>
+        int[] pp;
 
         /// <summary>
-        /// Initializes the Reed-Solomon with RS(n,k) with GF(2^m)
+        ///     Initializes the Reed-Solomon with RS(n,k) with GF(2^m)
         /// </summary>
         public void InitRs(int n, int k, int m)
         {
@@ -301,7 +307,7 @@ namespace DiscImageChef.Checksums
          * data(X)*X**(NN-KK)+ b(X)
          */
         /// <summary>
-        /// Takes the symbols in data to output parity in bb.
+        ///     Takes the symbols in data to output parity in bb.
         /// </summary>
         /// <returns>Returns -1 if an illegal symbol is found.</returns>
         /// <param name="data">Data symbols.</param>
@@ -355,7 +361,7 @@ namespace DiscImageChef.Checksums
          * in R. Blahut's "Theory ... of Error-Correcting Codes".
          */
         /// <summary>
-        /// Decodes the RS. If decoding is successful outputs corrected data symbols.
+        ///     Decodes the RS. If decoding is successful outputs corrected data symbols.
         /// </summary>
         /// <returns>Returns corrected symbols, -1 if illegal or uncorrectable</returns>
         /// <param name="data">Data symbols.</param>
@@ -395,8 +401,7 @@ namespace DiscImageChef.Checksums
             {
                 tmp = 0;
                 for(j = 0; j < nn; j++)
-                    if(recd[j] != a0) /* recd[j] in index form */
-                        tmp ^= alpha_to[Modnn(recd[j] + (B0 + i - 1) * j)];
+                    if(recd[j] != a0) /* recd[j] in index form */ tmp ^= alpha_to[Modnn(recd[j] + (B0 + i - 1) * j)];
 
                 synError |= tmp; /* set flag if non-zero syndrome =>
                      * error */
@@ -473,7 +478,8 @@ namespace DiscImageChef.Checksums
                 /* r is the step number */
                 /* Compute discrepancy at the r-th step in poly-form */
                 int discrR = 0;
-                for(i = 0; i < r; i++) if(lambda[i] != 0 && s[r - i] != a0) discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
+                for(i = 0; i < r; i++)
+                    if(lambda[i] != 0 && s[r - i] != a0) discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
 
                 discrR = index_of[discrR]; /* Index form */
                 if(discrR == a0)
@@ -560,7 +566,8 @@ namespace DiscImageChef.Checksums
             {
                 tmp = 0;
                 j = degLambda < i ? degLambda : i;
-                for(; j >= 0; j--) if(s[i + 1 - j] != a0 && lambda[j] != a0) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
+                for(; j >= 0; j--)
+                    if(s[i + 1 - j] != a0 && lambda[j] != a0) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
 
                 if(tmp != 0) degOmega = i;
                 omega[i] = index_of[tmp];
@@ -581,7 +588,8 @@ namespace DiscImageChef.Checksums
                 int den = 0;
 
                 /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
-                for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2) if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];
+                for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2)
+                    if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];
 
                 if(den == 0)
                 {

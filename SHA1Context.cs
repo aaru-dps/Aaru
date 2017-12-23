@@ -37,14 +37,14 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.
+    ///     Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.
     /// </summary>
     public class Sha1Context
     {
         SHA1 sha1Provider;
 
         /// <summary>
-        /// Initializes the SHA1 hash provider
+        ///     Initializes the SHA1 hash provider
         /// </summary>
         public void Init()
         {
@@ -52,7 +52,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -62,7 +62,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Updates the hash with data.
+        ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data)
@@ -71,7 +71,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a byte array of the hash value.
+        ///     Returns a byte array of the hash value.
         /// </summary>
         public byte[] Final()
         {
@@ -80,7 +80,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Returns a hexadecimal representation of the hash value.
+        ///     Returns a hexadecimal representation of the hash value.
         /// </summary>
         public string End()
         {
@@ -93,7 +93,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of a file
+        ///     Gets the hash of a file
         /// </summary>
         /// <param name="filename">File path.</param>
         public byte[] File(string filename)
@@ -105,7 +105,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of a file in hexadecimal and as a byte array.
+        ///     Gets the hash of a file in hexadecimal and as a byte array.
         /// </summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
@@ -123,7 +123,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
@@ -139,7 +139,7 @@ namespace DiscImageChef.Checksums
         }
 
         /// <summary>
-        /// Gets the hash of the specified data buffer.
+        ///     Gets the hash of the specified data buffer.
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>
