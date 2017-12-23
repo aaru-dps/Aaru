@@ -110,6 +110,18 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in CHS mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersChs registers,
                                            out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -199,6 +211,18 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in 28-bit LBA mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba28 registers,
                                            out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -288,6 +312,18 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in 48-bit LBA mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba48 registers,
                                            out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -389,6 +425,18 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in CHS mode using undocumented Windows XP ioctl
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersChs registers,
                                            out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -446,6 +494,18 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in 28-bit LBA mode using undocumented Windows XP ioctl
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersLba28 registers,
                                            out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -503,6 +563,11 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
+        /// <summary>
+        /// Gets the device number for a specified handle
+        /// </summary>
+        /// <param name="deviceHandle">Device handle</param>
+        /// <returns>Device number</returns>
         static uint GetDeviceNumber(SafeFileHandle deviceHandle)
         {
             StorageDeviceNumber sdn = new StorageDeviceNumber {deviceNumber = -1};
@@ -514,6 +579,11 @@ namespace DiscImageChef.Devices.Windows
             return (uint)sdn.deviceNumber;
         }
 
+        /// <summary>
+        /// Gets the internal device path for a specified handle
+        /// </summary>
+        /// <param name="fd">Device handle</param>
+        /// <returns>Device path</returns>
         internal static string GetDevicePath(SafeFileHandle fd)
         {
             uint devNumber = GetDeviceNumber(fd);
@@ -587,6 +657,11 @@ namespace DiscImageChef.Devices.Windows
             return null;
         }
 
+        /// <summary>
+        /// Returns true if the specified handle is controlled by a SFFDISK (aka SDHCI) driver
+        /// </summary>
+        /// <param name="fd">Device handle</param>
+        /// <returns><c>true</c> if SDHCI, false otherwise</returns>
         internal static bool IsSdhci(SafeFileHandle fd)
         {
             SffdiskQueryDeviceProtocolData queryData1 = new SffdiskQueryDeviceProtocolData();

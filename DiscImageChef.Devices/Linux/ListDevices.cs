@@ -40,6 +40,10 @@ namespace DiscImageChef.Devices.Linux
     {
         const string PATH_SYS_DEVBLOCK = "/sys/block/";
 
+        /// <summary>
+        /// Gets a list of all known storage devices on Linux
+        /// </summary>
+        /// <returns>List of devices</returns>
         internal static DeviceInfo[] GetList()
         {
             string[] sysdevs = Directory.GetFileSystemEntries(PATH_SYS_DEVBLOCK, "*", SearchOption.TopDirectoryOnly);

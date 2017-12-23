@@ -54,6 +54,7 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                           uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
@@ -76,6 +77,7 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendScsiCommand(PlatformID ptId, object fd, byte[] cdb, ref byte[] buffer,
                                           out byte[] senseBuffer, uint timeout, ScsiDirection direction,
                                           out double duration, out bool sense)
@@ -158,6 +160,21 @@ namespace DiscImageChef.Devices
             }
         }
 
+        /// <summary>
+        /// Sends an ATA command in CHS format
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA returned non-OK status</param>
+        /// <param name="registers">Registers to send to the device</param>
+        /// <param name="errorRegisters">Registers returned by the device</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">What register contains the transfer length</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
                                          AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                          uint timeout, bool transferBlocks, out double duration, out bool sense)
@@ -168,6 +185,22 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
+        /// <summary>
+        /// Sends an ATA command in CHS format
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="ptId">Platform ID for executing the command</param>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA returned non-OK status</param>
+        /// <param name="registers">Registers to send to the device</param>
+        /// <param name="errorRegisters">Registers returned by the device</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">What register contains the transfer length</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersChs registers,
                                          out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
@@ -205,6 +238,21 @@ namespace DiscImageChef.Devices
             }
         }
 
+        /// <summary>
+        /// Sends an ATA command in CHS format
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA returned non-OK status</param>
+        /// <param name="registers">Registers to send to the device</param>
+        /// <param name="errorRegisters">Registers returned by the device</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">What register contains the transfer length</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersLba28 registers,
                                          out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
@@ -216,6 +264,22 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
+        /// <summary>
+        /// Sends an ATA command in 28-bit LBA format
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="ptId">Platform ID for executing the command</param>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA returned non-OK status</param>
+        /// <param name="registers">Registers to send to the device</param>
+        /// <param name="errorRegisters">Registers returned by the device</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">What register contains the transfer length</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba28 registers,
                                          out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
@@ -253,6 +317,21 @@ namespace DiscImageChef.Devices
             }
         }
 
+        /// <summary>
+        /// Sends an ATA command in 48-bit LBA format
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA returned non-OK status</param>
+        /// <param name="registers">Registers to send to the device</param>
+        /// <param name="errorRegisters">Registers returned by the device</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">What register contains the transfer length</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersLba48 registers,
                                          out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
@@ -264,6 +343,22 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
+        /// <summary>
+        /// Sends an ATA command in 48-bit format
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="ptId">Platform ID for executing the command</param>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA returned non-OK status</param>
+        /// <param name="registers">Registers to send to the device</param>
+        /// <param name="errorRegisters">Registers returned by the device</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">What register contains the transfer length</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba48 registers,
                                          out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
@@ -292,6 +387,24 @@ namespace DiscImageChef.Devices
             }
         }
 
+        /// <summary>
+        /// Sends a MMC/SD command
+        /// </summary>
+        /// <returns>The result of the command.</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="command">MMC/SD opcode</param>
+        /// <param name="buffer">Buffer for MMC/SD command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
+        /// <param name="write"><c>True</c> if data is sent from host to card</param>
+        /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
+        /// <param name="flags">Flags indicating kind and place of response</param>
+        /// <param name="blocks">How many blocks to transfer</param>
+        /// <param name="argument">Command argument</param>
+        /// <param name="response">Response registers</param>
+        /// <param name="blockSize">Size of block in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags,
                                          uint argument, uint blockSize, uint blocks, ref byte[] buffer,
                                          out uint[] response, out double duration, out bool sense, uint timeout = 0)
@@ -302,6 +415,25 @@ namespace DiscImageChef.Devices
                                   ref buffer, out response, out duration, out sense, timeout);
         }
 
+        /// <summary>
+        /// Sends a MMC/SD command
+        /// </summary>
+        /// <returns>The result of the command.</returns>
+        /// <param name="ptId">Platform ID for executing the command</param>
+        /// <param name="fd">File handle</param>
+        /// <param name="command">MMC/SD opcode</param>
+        /// <param name="buffer">Buffer for MMC/SD command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
+        /// <param name="write"><c>True</c> if data is sent from host to card</param>
+        /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
+        /// <param name="flags">Flags indicating kind and place of response</param>
+        /// <param name="blocks">How many blocks to transfer</param>
+        /// <param name="argument">Command argument</param>
+        /// <param name="response">Response registers</param>
+        /// <param name="blockSize">Size of block in bytes</param>
+        /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendMmcCommand(PlatformID ptId, object fd, MmcCommands command, bool write,
                                          bool isApplication, MmcFlags flags, uint argument, uint blockSize, uint blocks,
                                          ref byte[] buffer, out uint[] response, out double duration, out bool sense,

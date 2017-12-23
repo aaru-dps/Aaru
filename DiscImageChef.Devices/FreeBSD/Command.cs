@@ -255,6 +255,11 @@ namespace DiscImageChef.Devices.FreeBSD
             return error;
         }
 
+        /// <summary>
+        /// Converts ATA protocol to CAM flags
+        /// </summary>
+        /// <param name="protocol">ATA protocol</param>
+        /// <returns>CAM flags</returns>
         static CcbFlags AtaProtocolToCamFlags(AtaProtocol protocol)
         {
             switch(protocol)
@@ -273,6 +278,18 @@ namespace DiscImageChef.Devices.FreeBSD
             }
         }
 
+        /// <summary>
+        /// Sends an ATA command in CHS mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="dev">CAM device</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendAtaCommand(IntPtr dev, AtaRegistersChs registers,
                                            out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -359,6 +376,18 @@ namespace DiscImageChef.Devices.FreeBSD
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in 28-bit LBA mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="dev">CAM device</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba28 registers,
                                            out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -445,6 +474,18 @@ namespace DiscImageChef.Devices.FreeBSD
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in 48-bit mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="dev">CAM device</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
         internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba48 registers,
                                            out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)

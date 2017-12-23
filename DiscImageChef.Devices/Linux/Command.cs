@@ -101,6 +101,11 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
+        /// <summary>
+        /// Converts ATA protocol to SG_IO direction
+        /// </summary>
+        /// <param name="protocol">ATA protocol</param>
+        /// <returns>SG_IO direction</returns>
         static ScsiIoctlDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
         {
             switch(protocol)
@@ -119,6 +124,20 @@ namespace DiscImageChef.Devices.Linux
             }
         }
 
+        /// <summary>
+        /// Sends an ATA command in CHS mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">Which register contains the transfer count</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
         internal static int SendAtaCommand(int fd, AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
                                            AtaProtocol protocol, AtaTransferRegister transferRegister,
                                            ref byte[] buffer, uint timeout, bool transferBlocks, out double duration,
@@ -180,6 +199,20 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in 28-bit LBA mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">Which register contains the transfer count</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
         internal static int SendAtaCommand(int fd, AtaRegistersLba28 registers,
                                            out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
@@ -241,6 +274,20 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
+        /// <summary>
+        /// Sends an ATA command in 48-bit LBA mode
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
+        /// <param name="registers">Registers to send to drive</param>
+        /// <param name="errorRegisters">Registers returned by drive</param>
+        /// <param name="protocol">ATA protocol to use</param>
+        /// <param name="transferRegister">Which register contains the transfer count</param>
+        /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
         internal static int SendAtaCommand(int fd, AtaRegistersLba48 registers,
                                            out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
@@ -375,7 +422,12 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
-        public static string ReadLink(string path)
+        /// <summary>
+        /// Reads the contents of a symbolic link
+        /// </summary>
+        /// <param name="path">Path to the symbolic link</param>
+        /// <returns>Contents of the symbolic link</returns>
+        internal static string ReadLink(string path)
         {
             IntPtr buf = Marshal.AllocHGlobal(4096);
             int resultSize;

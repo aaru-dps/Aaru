@@ -42,11 +42,15 @@ namespace DiscImageChef.Devices.Windows
     // You might not want to keep these in the USB class... your choice
     // 
     // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
+    /// <summary>
+    /// Implements functions for getting and accesing information from the USB bus
+    /// </summary>
     static partial class Usb
     {
-        // 
-        // Get a list of all connected devices
-        // 
+        /// <summary>
+        /// Get a list of all connected devices
+        /// </summary>
+        /// <returns>List of usb devices</returns>
         internal static List<UsbDevice> GetConnectedDevices()
         {
             List<UsbDevice> devList = new List<UsbDevice>();
@@ -56,7 +60,11 @@ namespace DiscImageChef.Devices.Windows
             return devList;
         }
 
-        // private routine for enumerating a hub
+        /// <summary>
+        /// private routine for enumerating a hub
+        /// </summary>
+        /// <param name="hub">Hub</param>
+        /// <param name="devList">Device list</param>
         static void ListHub(UsbHub hub, ICollection<UsbDevice> devList)
         {
             foreach(UsbPort port in hub.GetPorts())
@@ -64,9 +72,11 @@ namespace DiscImageChef.Devices.Windows
                 else { if(port.IsDeviceConnected) devList.Add(port.GetDevice()); }
         }
 
-        // 
-        // Find a device based upon it's DriverKeyName
-        // 
+        /// <summary>
+        /// Find a device based upon it's DriverKeyName
+        /// </summary>
+        /// <param name="driverKeyName">DriverKeyName</param>
+        /// <returns>USB device</returns>
         internal static UsbDevice FindDeviceByDriverKeyName(string driverKeyName)
         {
             UsbDevice foundDevice = null;
@@ -80,7 +90,12 @@ namespace DiscImageChef.Devices.Windows
             return foundDevice;
         }
 
-        // private routine for enumerating a hub
+        /// <summary>
+        /// Finds a device connected to a specified hub by it's DriverKeyName
+        /// </summary>
+        /// <param name="hub">Hub</param>
+        /// <param name="foundDevice">UsbDevice</param>
+        /// <param name="driverKeyName">DriverKeyName</param>
         static void SearchHubDriverKeyName(UsbHub hub, ref UsbDevice foundDevice, string driverKeyName)
         {
             foreach(UsbPort port in hub.GetPorts())
@@ -97,9 +112,11 @@ namespace DiscImageChef.Devices.Windows
                 }
         }
 
-        // 
-        // Find a device based upon it's Instance ID
-        // 
+        /// <summary>
+        /// Find a device based upon it's Instance ID
+        /// </summary>
+        /// <param name="instanceId">Device instance ID</param>
+        /// <returns>USB device</returns>
         static UsbDevice FindDeviceByInstanceId(string instanceId)
         {
             UsbDevice foundDevice = null;
@@ -113,7 +130,12 @@ namespace DiscImageChef.Devices.Windows
             return foundDevice;
         }
 
-        // private routine for enumerating a hub
+        /// <summary>
+        /// private routine for enumerating a hub
+        /// </summary>
+        /// <param name="hub">Hub</param>
+        /// <param name="foundDevice">USB device</param>
+        /// <param name="instanceId">Device instance ID</param>
         static void SearchHubInstanceId(UsbHub hub, ref UsbDevice foundDevice, string instanceId)
         {
             foreach(UsbPort port in hub.GetPorts())
@@ -135,11 +157,6 @@ namespace DiscImageChef.Devices.Windows
         internal const string GuidDevinterfaceCdrom = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
         internal const string GuidDevinterfaceFloppy = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
 
-        //typedef struct _STORAGE_DEVICE_NUMBER {
-        //  DEVICE_TYPE  DeviceType;
-        //  ULONG  DeviceNumber;
-        //  ULONG  PartitionNumber;
-        //} STORAGE_DEVICE_NUMBER, *PSTORAGE_DEVICE_NUMBER;
         [StructLayout(LayoutKind.Sequential)]
         struct StorageDeviceNumber
         {
@@ -148,26 +165,18 @@ namespace DiscImageChef.Devices.Windows
             internal int PartitionNumber;
         }
 
-        //CMAPI CONFIGRET WINAPI  CM_Get_Parent(
-        //   OUT PDEVINST  pdnDevInst,
-        //   IN DEVINST  dnDevInst,
-        //   IN ULONG  ulFlags
-        //);
         [DllImport("setupapi.dll")]
         static extern int CM_Get_Parent(out IntPtr pdnDevInst, IntPtr dnDevInst, int ulFlags);
 
-        //CMAPI CONFIGRET WINAPI  CM_Get_Device_ID(
-        //    IN DEVINST  dnDevInst,
-        //    OUT PTCHAR  Buffer,
-        //    IN ULONG  BufferLen,
-        //    IN ULONG  ulFlags
-        //);
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
         static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
 
-        // 
-        // Find a device based upon a Drive Letter
-        // 
+        /// <summary>
+        /// Find a device based upon a Drive Letter
+        /// </summary>
+        /// <param name="driveLetter">Drive letter</param>
+        /// <param name="deviceGuid">Device GUID</param>
+        /// <returns>USB device</returns>
         internal static UsbDevice FindDriveLetter(string driveLetter, string deviceGuid)
         {
             // We start by getting the unique DeviceNumber of the given
@@ -177,6 +186,12 @@ namespace DiscImageChef.Devices.Windows
             return devNum < 0 ? null : FindDeviceNumber(devNum, deviceGuid);
         }
 
+        /// <summary>
+        /// Find a device based upon a Drive Path
+        /// </summary>
+        /// <param name="drivePath">Drive path</param>
+        /// <param name="deviceGuid">Device GUID</param>
+        /// <returns>USB device</returns>
         internal static UsbDevice FindDrivePath(string drivePath, string deviceGuid)
         {
             // We start by getting the unique DeviceNumber of the given
@@ -186,9 +201,12 @@ namespace DiscImageChef.Devices.Windows
             return devNum < 0 ? null : FindDeviceNumber(devNum, deviceGuid);
         }
 
-        // 
-        // Find a device based upon a Drive Letter
-        // 
+        /// <summary>
+        /// Find a device based upon a Device Number
+        /// </summary>
+        /// <param name="devNum">Device Number</param>
+        /// <param name="deviceGuid">Device GUID</param>
+        /// <returns>USB device</returns>
         static UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
         {
             UsbDevice foundDevice = null;
@@ -253,7 +271,11 @@ namespace DiscImageChef.Devices.Windows
             return foundDevice;
         }
 
-        // return a unique device number for the given device path
+        /// <summary>
+        /// return a unique device number for the given device path
+        /// </summary>
+        /// <param name="devicePath">Device path</param>
+        /// <returns>Device number</returns>
         static int GetDeviceNumber(string devicePath)
         {
             int ans = -1;

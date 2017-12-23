@@ -43,6 +43,11 @@ namespace DiscImageChef.Devices.Windows
 {
     static class ListDevices
     {
+        /// <summary>
+        /// Converts a hex dump string to the ASCII string it represents
+        /// </summary>
+        /// <param name="hex">Hex dump</param>
+        /// <returns>Decoded string</returns>
         static string HexStringToString(string hex)
         {
             StringBuilder result = new StringBuilder();
@@ -53,6 +58,10 @@ namespace DiscImageChef.Devices.Windows
             return result.ToString();
         }
 
+        /// <summary>
+        /// Gets a list of all known storage devices on Windows
+        /// </summary>
+        /// <returns>List of devices</returns>
         [SuppressMessage("ReSharper", "RedundantCatchClause")]
         internal static DeviceInfo[] GetList()
         {
