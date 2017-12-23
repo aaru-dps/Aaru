@@ -37,11 +37,22 @@ namespace DiscImageChef
 {
     public static class PrintHex
     {
+        /// <summary>
+        /// Prints a byte array as hexadecimal values to the console
+        /// </summary>
+        /// <param name="array">Array</param>
+        /// <param name="width">Width of line</param>
         public static void PrintHexArray(byte[] array, int width)
         {
             DicConsole.WriteLine(ByteArrayToHexArrayString(array, width));
         }
 
+        /// <summary>
+        /// Prints a byte array as hexadecimal values to a string
+        /// </summary>
+        /// <param name="array">Array</param>
+        /// <param name="width">Width of line</param>
+        /// <returns>String containing hexadecimal values</returns>
         public static string ByteArrayToHexArrayString(byte[] array, int width)
         {
             StringBuilder sb = new StringBuilder();
