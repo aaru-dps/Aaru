@@ -32,10 +32,11 @@
 
 // ReSharper disable InconsistentNaming
 // TODO: Rename contents
+
 namespace DiscImageChef.CommonTypes
 {
     /// <summary>
-    /// Contains an enumeration of all known types of media.
+    ///     Contains an enumeration of all known types of media.
     /// </summary>
     public enum MediaType
     {
@@ -293,7 +294,10 @@ namespace DiscImageChef.CommonTypes
 
         #region IBM non standard floppy formats
         XDF_525,
-        /// <summary>3.5", DS, HD, 80 tracks, 4 spt, 8192 + 2048 + 1024 + 512 bytes/sector, MFMm track 0 = 19 sectors, 512 bytes/sector, falsified to DOS as 23 spt, 512 bps</summary>
+        /// <summary>
+        ///     3.5", DS, HD, 80 tracks, 4 spt, 8192 + 2048 + 1024 + 512 bytes/sector, MFMm track 0 = 19 sectors, 512
+        ///     bytes/sector, falsified to DOS as 23 spt, 512 bps
+        /// </summary>
         XDF_35,
         #endregion IBM non standard floppy formats
 
@@ -310,11 +314,20 @@ namespace DiscImageChef.CommonTypes
         IBM43FD_128,
         /// <summary>8", DS, SD, 74 tracks, 26 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector</summary>
         IBM43FD_256,
-        /// <summary>8", DS, DD, 74 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     8", DS, DD, 74 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         IBM53FD_256,
-        /// <summary>8", DS, DD, 74 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     8", DS, DD, 74 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         IBM53FD_512,
-        /// <summary>8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         IBM53FD_1024,
         #endregion IBM standard floppy formats
 
@@ -409,11 +422,20 @@ namespace DiscImageChef.CommonTypes
         #endregion SHARP standard floppy formats
 
         #region ECMA floppy standards
-        /// <summary>5,25", DS, DD, 80 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     5,25", DS, DD, 80 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track
+        ///     0 side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_99_8,
-        /// <summary>5,25", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     5,25", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track
+        ///     0 side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_99_15,
-        /// <summary>5,25", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     5,25", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track
+        ///     0 side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_99_26,
         /// <summary>3,5", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM</summary>
         ECMA_100,
@@ -427,15 +449,30 @@ namespace DiscImageChef.CommonTypes
         ECMA_59,
         /// <summary>5,25", SS, DD, 35 tracks, 9 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector</summary>
         ECMA_66,
-        /// <summary>8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_69_8,
-        /// <summary>8", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     8", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_69_15,
-        /// <summary>8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 26 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_69_26,
-        /// <summary>5,25", DS, DD, 40 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     5,25", DS, DD, 40 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 16 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_70,
-        /// <summary>5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector</summary>
+        /// <summary>
+        ///     5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0
+        ///     side 1 = 16 sectors, 256 bytes/sector
+        /// </summary>
         ECMA_78,
         /// <summary>5,25", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, FM</summary>
         ECMA_78_2,
@@ -819,59 +856,140 @@ namespace DiscImageChef.CommonTypes
         #endregion Apple Hard Disks
 
         #region DEC hard disks
-        /// <summary>2382 cylinders, 4 tracks/cylinder, 42 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 204890112 bytes</summary>
+        /// <summary>
+        ///     2382 cylinders, 4 tracks/cylinder, 42 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     204890112 bytes
+        /// </summary>
         RA60,
-        /// <summary>546 cylinders, 14 tracks/cylinder, 31 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 121325568 bytes</summary>
+        /// <summary>
+        ///     546 cylinders, 14 tracks/cylinder, 31 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     121325568 bytes
+        /// </summary>
         RA80,
-        /// <summary>1248 cylinders, 14 tracks/cylinder, 51 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 456228864 bytes</summary>
+        /// <summary>
+        ///     1248 cylinders, 14 tracks/cylinder, 51 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     456228864 bytes
+        /// </summary>
         RA81,
-        /// <summary>302 cylinders, 4 tracks/cylinder, 42 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 25976832 bytes</summary>
+        /// <summary>
+        ///     302 cylinders, 4 tracks/cylinder, 42 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 25976832
+        ///     bytes
+        /// </summary>
         RC25,
-        /// <summary>615 cylinders, 4 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 21411840 bytes</summary>
+        /// <summary>
+        ///     615 cylinders, 4 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 21411840
+        ///     bytes
+        /// </summary>
         RD31,
-        /// <summary>820 cylinders, 6 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 42823680 bytes</summary>
+        /// <summary>
+        ///     820 cylinders, 6 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 42823680
+        ///     bytes
+        /// </summary>
         RD32,
-        /// <summary>306 cylinders, 4 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 10653696 bytes</summary>
+        /// <summary>
+        ///     306 cylinders, 4 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 10653696
+        ///     bytes
+        /// </summary>
         RD51,
-        /// <summary>480 cylinders, 7 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 30965760 bytes</summary>
+        /// <summary>
+        ///     480 cylinders, 7 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 30965760
+        ///     bytes
+        /// </summary>
         RD52,
-        /// <summary>1024 cylinders, 7 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 75497472 bytes</summary>
+        /// <summary>
+        ///     1024 cylinders, 7 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     75497472 bytes
+        /// </summary>
         RD53,
-        /// <summary>1225 cylinders, 8 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 159936000 bytes</summary>
+        /// <summary>
+        ///     1225 cylinders, 8 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     159936000 bytes
+        /// </summary>
         RD54,
-        /// <summary>411 cylinders, 3 tracks/cylinder, 22 sectors/track, 256 words/sector, 16 bits/word, 512 bytes/sector, 13888512 bytes</summary>
+        /// <summary>
+        ///     411 cylinders, 3 tracks/cylinder, 22 sectors/track, 256 words/sector, 16 bits/word, 512 bytes/sector, 13888512
+        ///     bytes
+        /// </summary>
         RK06,
-        /// <summary>411 cylinders, 3 tracks/cylinder, 20 sectors/track, 256 words/sector, 18 bits/word, 576 bytes/sector, 14204160 bytes</summary>
+        /// <summary>
+        ///     411 cylinders, 3 tracks/cylinder, 20 sectors/track, 256 words/sector, 18 bits/word, 576 bytes/sector, 14204160
+        ///     bytes
+        /// </summary>
         RK06_18,
-        /// <summary>815 cylinders, 3 tracks/cylinder, 22 sectors/track, 256 words/sector, 16 bits/word, 512 bytes/sector, 27540480 bytes</summary>
+        /// <summary>
+        ///     815 cylinders, 3 tracks/cylinder, 22 sectors/track, 256 words/sector, 16 bits/word, 512 bytes/sector, 27540480
+        ///     bytes
+        /// </summary>
         RK07,
-        /// <summary>815 cylinders, 3 tracks/cylinder, 20 sectors/track, 256 words/sector, 18 bits/word, 576 bytes/sector, 28166400 bytes</summary>
+        /// <summary>
+        ///     815 cylinders, 3 tracks/cylinder, 20 sectors/track, 256 words/sector, 18 bits/word, 576 bytes/sector, 28166400
+        ///     bytes
+        /// </summary>
         RK07_18,
-        /// <summary>823 cylinders, 5 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 67420160 bytes</summary>
+        /// <summary>
+        ///     823 cylinders, 5 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 67420160
+        ///     bytes
+        /// </summary>
         RM02,
-        /// <summary>823 cylinders, 5 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 67420160 bytes</summary>
+        /// <summary>
+        ///     823 cylinders, 5 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 67420160
+        ///     bytes
+        /// </summary>
         RM03,
-        /// <summary>823 cylinders, 19 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 256196608 bytes</summary>
+        /// <summary>
+        ///     823 cylinders, 19 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     256196608 bytes
+        /// </summary>
         RM05,
-        /// <summary>203 cylinders, 10 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 22865920 bytes</summary>
+        /// <summary>
+        ///     203 cylinders, 10 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     22865920 bytes
+        /// </summary>
         RP02,
-        /// <summary>203 cylinders, 10 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 23385600 bytes</summary>
+        /// <summary>
+        ///     203 cylinders, 10 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector,
+        ///     23385600 bytes
+        /// </summary>
         RP02_18,
-        /// <summary>400 cylinders, 10 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 45056000 bytes</summary>
+        /// <summary>
+        ///     400 cylinders, 10 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     45056000 bytes
+        /// </summary>
         RP03,
-        /// <summary>400 cylinders, 10 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 46080000 bytes</summary>
+        /// <summary>
+        ///     400 cylinders, 10 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector,
+        ///     46080000 bytes
+        /// </summary>
         RP03_18,
-        /// <summary>411 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 87960576 bytes</summary>
+        /// <summary>
+        ///     411 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     87960576 bytes
+        /// </summary>
         RP04,
-        /// <summary>411 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 89959680 bytes</summary>
+        /// <summary>
+        ///     411 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector,
+        ///     89959680 bytes
+        /// </summary>
         RP04_18,
-        /// <summary>411 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 87960576 bytes</summary>
+        /// <summary>
+        ///     411 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     87960576 bytes
+        /// </summary>
         RP05,
-        /// <summary>411 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 89959680 bytes</summary>
+        /// <summary>
+        ///     411 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector,
+        ///     89959680 bytes
+        /// </summary>
         RP05_18,
-        /// <summary>815 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 174423040 bytes</summary>
+        /// <summary>
+        ///     815 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
+        ///     174423040 bytes
+        /// </summary>
         RP06,
-        /// <summary>815 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 178387200 bytes</summary>
+        /// <summary>
+        ///     815 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector,
+        ///     178387200 bytes
+        /// </summary>
         RP06_18,
         #endregion
 

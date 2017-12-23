@@ -35,7 +35,7 @@ using System;
 namespace DiscImageChef.CommonTypes
 {
     /// <summary>
-    /// Partition structure.
+    ///     Partition structure.
     /// </summary>
     public struct Partition : IEquatable<Partition>, IComparable<Partition>
     {
@@ -61,7 +61,7 @@ namespace DiscImageChef.CommonTypes
         public string Scheme;
 
         /// <summary>
-        /// Compares two partitions
+        ///     Compares two partitions
         /// </summary>
         /// <param name="other">Partition to compare with</param>
         /// <returns>0 if both partitions start and end at the same sector</returns>
@@ -83,7 +83,8 @@ namespace DiscImageChef.CommonTypes
         }
 
         /// <summary>
-        /// Compares this partition with another and returns an integer that indicates whether the current partition precedes, follows, or is in the same place as the other partition.
+        ///     Compares this partition with another and returns an integer that indicates whether the current partition precedes,
+        ///     follows, or is in the same place as the other partition.
         /// </summary>
         /// <param name="other">Partition to compare with</param>
         /// <returns>A value that indicates the relative equality of the partitions being compared.</returns>
