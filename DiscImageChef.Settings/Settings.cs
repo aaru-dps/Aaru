@@ -41,107 +41,107 @@ using PlatformID = DiscImageChef.Interop.PlatformID;
 namespace DiscImageChef.Settings
 {
     /// <summary>
-    /// Settings
+    ///     Settings
     /// </summary>
     public class DicSettings
     {
         /// <summary>
-        /// Statistics
-        /// </summary>
-        public StatsSettings Stats;
-        /// <summary>
-        /// If set to <c>true</c>, reports will be saved locally
+        ///     If set to <c>true</c>, reports will be saved locally
         /// </summary>
         public bool SaveReportsGlobally;
         /// <summary>
-        /// If set to <c>true</c>, reports will be sent to DiscImageChef.Server
+        ///     If set to <c>true</c>, reports will be sent to DiscImageChef.Server
         /// </summary>
         public bool ShareReports;
+        /// <summary>
+        ///     Statistics
+        /// </summary>
+        public StatsSettings Stats;
     }
 
     // TODO: Use this
     /// <summary>
-    /// User settings, for media dumps, completely unused
+    ///     User settings, for media dumps, completely unused
     /// </summary>
     public class UserSettings
     {
-        public string Name;
         public string Email;
+        public string Name;
     }
 
     /// <summary>
-    /// Statistics settings
+    ///     Statistics settings
     /// </summary>
     public class StatsSettings
     {
         /// <summary>
-        /// If set to <c>true</c>, statistics will be sent to DiscImageChef.Server
-        /// </summary>
-        public bool ShareStats;
-        /// <summary>
-        /// If set to <c>true</c>, benchmark statistics will be stored
+        ///     If set to <c>true</c>, benchmark statistics will be stored
         /// </summary>
         public bool BenchmarkStats;
         /// <summary>
-        /// If set to <c>true</c>, command usage statistics will be stored
+        ///     If set to <c>true</c>, command usage statistics will be stored
         /// </summary>
         public bool CommandStats;
         /// <summary>
-        /// If set to <c>true</c>, device statistics will be stored
+        ///     If set to <c>true</c>, device statistics will be stored
         /// </summary>
         public bool DeviceStats;
         /// <summary>
-        /// If set to <c>true</c>, filesystem statistics will be stored
+        ///     If set to <c>true</c>, filesystem statistics will be stored
         /// </summary>
         public bool FilesystemStats;
         /// <summary>
-        /// If set to <c>true</c>, filters statistics will be stored
+        ///     If set to <c>true</c>, filters statistics will be stored
         /// </summary>
         public bool FilterStats;
         /// <summary>
-        /// If set to <c>true</c>, dump media images statistics will be stored
+        ///     If set to <c>true</c>, dump media images statistics will be stored
         /// </summary>
         public bool MediaImageStats;
         /// <summary>
-        /// If set to <c>true</c>, media scan statistics will be stored
+        ///     If set to <c>true</c>, media scan statistics will be stored
         /// </summary>
         public bool MediaScanStats;
         /// <summary>
-        /// If set to <c>true</c>, partition schemes statistics will be stored
-        /// </summary>
-        public bool PartitionStats;
-        /// <summary>
-        /// If set to <c>true</c>, media types statistics will be stored
+        ///     If set to <c>true</c>, media types statistics will be stored
         /// </summary>
         public bool MediaStats;
         /// <summary>
-        /// If set to <c>true</c>, dump media verification statistics will be stored
+        ///     If set to <c>true</c>, partition schemes statistics will be stored
+        /// </summary>
+        public bool PartitionStats;
+        /// <summary>
+        ///     If set to <c>true</c>, statistics will be sent to DiscImageChef.Server
+        /// </summary>
+        public bool ShareStats;
+        /// <summary>
+        ///     If set to <c>true</c>, dump media verification statistics will be stored
         /// </summary>
         public bool VerifyStats;
     }
 
     /// <summary>
-    /// Manages statistics
+    ///     Manages statistics
     /// </summary>
     public static class Settings
     {
         /// <summary>
-        /// Current statistcs
+        ///     Current statistcs
         /// </summary>
         public static DicSettings Current;
 
         /// <summary>
-        /// Global path to save reports
+        ///     Global path to save reports
         /// </summary>
         static string ReportsPath { get; set; }
 
         /// <summary>
-        /// Global path to save statistics
+        ///     Global path to save statistics
         /// </summary>
         public static string StatsPath { get; private set; }
 
         /// <summary>
-        /// Loads settings
+        ///     Loads settings
         /// </summary>
         public static void LoadSettings()
         {
@@ -242,18 +242,20 @@ namespace DiscImageChef.Settings
                         NSDictionary parsedPreferences = (NSDictionary)BinaryPropertyListParser.Parse(prefsFs);
                         if(parsedPreferences != null)
                         {
-                            Current.SaveReportsGlobally = parsedPreferences.TryGetValue("SaveReportsGlobally", out NSObject obj) && ((NSNumber)obj).ToBool();
+                            Current.SaveReportsGlobally =
+                                parsedPreferences.TryGetValue("SaveReportsGlobally", out NSObject obj) &&
+                                ((NSNumber)obj).ToBool();
 
-                            Current.ShareReports = parsedPreferences.TryGetValue("ShareReports", out obj) && ((NSNumber)obj).ToBool();
+                            Current.ShareReports = parsedPreferences.TryGetValue("ShareReports", out obj) &&
+                                                   ((NSNumber)obj).ToBool();
 
                             if(parsedPreferences.TryGetValue("Stats", out obj))
                             {
                                 NSDictionary stats = (NSDictionary)obj;
 
                                 if(stats != null)
-                                {
                                     Current.Stats = new StatsSettings
- {
+                                    {
                                         ShareStats =
                                             stats.TryGetValue("ShareStats", out NSObject obj2) &&
                                             ((NSNumber)obj2).ToBool(),
@@ -278,7 +280,6 @@ namespace DiscImageChef.Settings
                                         VerifyStats =
                                             stats.TryGetValue("VerifyStats", out obj2) && ((NSNumber)obj2).ToBool()
                                     };
-                                }
                             }
                             else Current.Stats = null;
 
@@ -321,9 +322,8 @@ namespace DiscImageChef.Settings
 
                         bool stats = Convert.ToBoolean(key.GetValue("Statistics"));
                         if(stats)
-                        {
                             Current.Stats = new StatsSettings
- {
+                            {
                                 ShareStats = Convert.ToBoolean(key.GetValue("ShareStats")),
                                 BenchmarkStats = Convert.ToBoolean(key.GetValue("BenchmarkStats")),
                                 CommandStats = Convert.ToBoolean(key.GetValue("CommandStats")),
@@ -336,7 +336,6 @@ namespace DiscImageChef.Settings
                                 MediaStats = Convert.ToBoolean(key.GetValue("MediaStats")),
                                 VerifyStats = Convert.ToBoolean(key.GetValue("VerifyStats"))
                             };
-                        }
                     }
 
                         break;
@@ -483,13 +482,15 @@ namespace DiscImageChef.Settings
                 }
             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-            catch { // ignored
- }
+            catch
+            {
+                // ignored
+            }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
         }
 
         /// <summary>
-        /// Sets default settings as all statistics, share everything
+        ///     Sets default settings as all statistics, share everything
         /// </summary>
         static void SetDefaultSettings()
         {
