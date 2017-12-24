@@ -479,7 +479,7 @@ namespace DiscImageChef.DiscImages
                             string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]),
                                                                         Encoding.GetEncoding("macintosh"));
                             string dCpyRegEx =
-                                "(?<application>\\S+)\\s(?<version>\\S+)\\rData checksum=\\$(?<checksum>\\S+)$";
+                                @"(?<application>\S+)\s(?<version>\S+)\rData checksum=\$(?<checksum>\S+)$";
                             Regex dCpyEx = new Regex(dCpyRegEx);
                             Match dCpyMatch = dCpyEx.Match(dCpy);
 

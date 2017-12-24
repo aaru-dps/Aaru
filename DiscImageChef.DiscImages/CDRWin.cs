@@ -146,29 +146,29 @@ namespace DiscImageChef.DiscImages
         /// <summary>DiskType.BDRE</summary>
         const string CDRWIN_DISK_TYPE_BDREDL = "BD-RE DL";
 
-        const string REGEX_SESSION = "\\bREM\\s+SESSION\\s+(?<number>\\d+).*$";
-        const string REGEX_MEDIA_TYPE = "\\bREM\\s+ORIGINAL MEDIA-TYPE:\\s+(?<mediatype>.+)$";
-        const string REGEX_LEAD_OUT = "\\bREM\\s+LEAD-OUT\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string REGEX_SESSION = @"\bREM\s+SESSION\s+(?<number>\d+).*$";
+        const string REGEX_MEDIA_TYPE = @"\bREM\s+ORIGINAL MEDIA-TYPE:\s+(?<mediatype>.+)$";
+        const string REGEX_LEAD_OUT = @"\bREM\s+LEAD-OUT\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
         // Not checked
-        const string REGEX_LBA = "\\bREM MSF:\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)\\s+=\\s+LBA:\\s+(?<lba>[\\d]+)$";
-        const string REGEX_DISC_ID = "\\bDISC_ID\\s+(?<diskid>[\\da-f]{8})$";
-        const string REGEX_BARCODE = "\\bUPC_EAN\\s+(?<barcode>[\\d]{12,13})$";
-        const string REGEX_COMMENT = "\\bREM\\s+(?<comment>.+)$";
-        const string REGEX_CDTEXT = "\\bCDTEXTFILE\\s+(?<filename>.+)$";
-        const string REGEX_MCN = "\\bCATALOG\\s+(?<catalog>\\d{13})$";
-        const string REGEX_TITLE = "\\bTITLE\\s+(?<title>.+)$";
-        const string REGEX_GENRE = "\\bGENRE\\s+(?<genre>.+)$";
-        const string REGEX_ARRANGER = "\\bARRANGER\\s+(?<arranger>.+)$";
-        const string REGEX_COMPOSER = "\\bCOMPOSER\\s+(?<composer>.+)$";
-        const string REGEX_PERFORMER = "\\bPERFORMER\\s+(?<performer>.+)$";
-        const string REGEX_SONGWRITER = "\\bSONGWRITER\\s+(?<songwriter>.+)$";
-        const string REGEX_FILE = "\\bFILE\\s+(?<filename>.+)\\s+(?<type>\\S+)$";
-        const string REGEX_TRACK = "\\bTRACK\\s+(?<number>\\d+)\\s+(?<type>\\S+)$";
-        const string REGEX_ISRC = "\\bISRC\\s+(?<isrc>\\w{12})$";
-        const string REGEX_INDEX = "\\bINDEX\\s+(?<index>\\d+)\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string REGEX_PREGAP = "\\bPREGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string REGEX_POSTGAP = "\\bPOSTGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string REGEX_FLAGS = "\\bFLAGS\\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\\s*)+$";
+        const string REGEX_LBA = @"\bREM MSF:\s+(?<msf>[\d]+:[\d]+:[\d]+)\s+=\s+LBA:\s+(?<lba>[\d]+)$";
+        const string REGEX_DISC_ID = @"\bDISC_ID\s+(?<diskid>[\da-f]{8})$";
+        const string REGEX_BARCODE = @"\bUPC_EAN\s+(?<barcode>[\d]{12,13})$";
+        const string REGEX_COMMENT = @"\bREM\s+(?<comment>.+)$";
+        const string REGEX_CDTEXT = @"\bCDTEXTFILE\s+(?<filename>.+)$";
+        const string REGEX_MCN = @"\bCATALOG\s+(?<catalog>\d{13})$";
+        const string REGEX_TITLE = @"\bTITLE\s+(?<title>.+)$";
+        const string REGEX_GENRE = @"\bGENRE\s+(?<genre>.+)$";
+        const string REGEX_ARRANGER = @"\bARRANGER\s+(?<arranger>.+)$";
+        const string REGEX_COMPOSER = @"\bCOMPOSER\s+(?<composer>.+)$";
+        const string REGEX_PERFORMER = @"\bPERFORMER\s+(?<performer>.+)$";
+        const string REGEX_SONGWRITER = @"\bSONGWRITER\s+(?<songwriter>.+)$";
+        const string REGEX_FILE = @"\bFILE\s+(?<filename>.+)\s+(?<type>\S+)$";
+        const string REGEX_TRACK = @"\bTRACK\s+(?<number>\d+)\s+(?<type>\S+)$";
+        const string REGEX_ISRC = @"\bISRC\s+(?<isrc>\w{12})$";
+        const string REGEX_INDEX = @"\bINDEX\s+(?<index>\d+)\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
+        const string REGEX_PREGAP = @"\bPREGAP\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
+        const string REGEX_POSTGAP = @"\bPOSTGAP\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
+        const string REGEX_FLAGS = @"\bFLAGS\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\s*)+$";
 
         Filter cdrwinFilter;
         StreamReader cueStream;

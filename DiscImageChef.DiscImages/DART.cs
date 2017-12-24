@@ -322,7 +322,7 @@ namespace DiscImageChef.DiscImages
                             string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]),
                                                                         Encoding.GetEncoding("macintosh"));
                             const string DART_REGEX =
-                                "(?<version>\\S+), tag checksum=\\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\\$(?<datachk>[0123456789ABCDEF]{8})$";
+                                @"(?<version>\S+), tag checksum=\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\$(?<datachk>[0123456789ABCDEF]{8})$";
                             Regex dArtEx = new Regex(DART_REGEX);
                             Match dArtMatch = dArtEx.Match(dArt);
 

@@ -74,14 +74,14 @@ namespace DiscImageChef.DiscImages
         const uint AV_LASER_DISC_METADATA = 0x41564C44;
 
         const string REGEX_METADATA_HDD =
-            "CYLS:(?<cylinders>\\d+),HEADS:(?<heads>\\d+),SECS:(?<sectors>\\d+),BPS:(?<bps>\\d+)";
+            @"CYLS:(?<cylinders>\d+),HEADS:(?<heads>\d+),SECS:(?<sectors>\d+),BPS:(?<bps>\d+)";
         const string REGEX_METADATA_CDROM =
-            "TRACK:(?<track>\\d+) TYPE:(?<track_type>\\S+) SUBTYPE:(?<sub_type>\\S+) FRAMES:(?<frames>\\d+)";
+            @"TRACK:(?<track>\d+) TYPE:(?<track_type>\S+) SUBTYPE:(?<sub_type>\S+) FRAMES:(?<frames>\d+)";
         const string REGEX_METADATA_CDROM2 =
-                "TRACK:(?<track>\\d+) TYPE:(?<track_type>\\S+) SUBTYPE:(?<sub_type>\\S+) FRAMES:(?<frames>\\d+) PREGAP:(?<pregap>\\d+) PGTYPE:(?<pgtype>\\S+) PGSUB:(?<pgsub>\\S+) POSTGAP:(?<postgap>\\d+)"
+                @"TRACK:(?<track>\d+) TYPE:(?<track_type>\S+) SUBTYPE:(?<sub_type>\S+) FRAMES:(?<frames>\d+) PREGAP:(?<pregap>\d+) PGTYPE:(?<pgtype>\S+) PGSUB:(?<pgsub>\S+) POSTGAP:(?<postgap>\d+)"
             ;
         const string REGEX_METADATA_GDROM =
-                "TRACK:(?<track>\\d+) TYPE:(?<track_type>\\S+) SUBTYPE:(?<sub_type>\\S+) FRAMES:(?<frames>\\d+) PAD:(?<pad>\\d+) PREGAP:(?<pregap>\\d+) PGTYPE:(?<pgtype>\\S+) PGSUB:(?<pgsub>\\S+) POSTGAP:(?<postgap>\\d+)"
+                @"TRACK:(?<track>\d+) TYPE:(?<track_type>\S+) SUBTYPE:(?<sub_type>\S+) FRAMES:(?<frames>\d+) PAD:(?<pad>\d+) PREGAP:(?<pregap>\d+) PGTYPE:(?<pgtype>\S+) PGSUB:(?<pgsub>\S+) POSTGAP:(?<postgap>\d+)"
             ;
 
         const string TRACK_TYPE_MODE1 = "MODE1";

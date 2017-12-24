@@ -45,7 +45,7 @@ namespace DiscImageChef.DiscImages
     public class RayDim : ImagePlugin
     {
         const string REGEX_SIGNATURE =
-                "Disk IMage VER (?<major>\\d).(?<minor>\\d) Copyright \\(C\\) (?<year>\\d{4}) Ray Arachelian, All Rights Reserved\\."
+                @"Disk IMage VER (?<major>\d).(?<minor>\d) Copyright \(C\) (?<year>\d{4}) Ray Arachelian, All Rights Reserved\."
             ;
 
         MemoryStream disk;

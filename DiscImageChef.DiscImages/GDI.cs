@@ -47,7 +47,7 @@ namespace DiscImageChef.DiscImages
     public class Gdi : ImagePlugin
     {
         const string REGEX_TRACK =
-                "\\s?(?<track>\\d+)\\s+(?<start>\\d+)\\s(?<flags>\\d)\\s(?<type>2352|2048)\\s(?<filename>.+)\\s(?<offset>\\d+)$"
+                @"\s?(?<track>\d+)\s+(?<start>\d+)\s(?<flags>\d)\s(?<type>2352|2048)\s(?<filename>.+)\s(?<offset>\d+)$"
             ;
 
         ulong densitySeparationSectors;

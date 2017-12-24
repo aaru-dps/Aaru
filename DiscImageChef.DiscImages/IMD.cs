@@ -47,7 +47,7 @@ namespace DiscImageChef.DiscImages
         const byte SECTOR_HEAD_MAP_MASK = 0x40;
         const byte COMMENT_END = 0x1A;
         const string REGEX_HEADER =
-                "IMD (?<version>\\d.\\d+):\\s+(?<day>\\d+)\\/\\s*(?<month>\\d+)\\/(?<year>\\d+)\\s+(?<hour>\\d+):(?<minute>\\d+):(?<second>\\d+)\\r\\n"
+                @"IMD (?<version>\d.\d+):\s+(?<day>\d+)\/\s*(?<month>\d+)\/(?<year>\d+)\s+(?<hour>\d+):(?<minute>\d+):(?<second>\d+)\r\n"
             ;
 
         List<byte[]> sectorsData;

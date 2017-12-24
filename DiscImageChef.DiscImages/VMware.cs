@@ -68,21 +68,21 @@ namespace DiscImageChef.DiscImages
 
         const string DDF_MAGIC = "# Disk DescriptorFile";
 
-        const string REGEX_VERSION = "^\\s*version\\s*=\\s*(?<version>\\d+)$";
-        const string REGEX_CID = "^\\s*CID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
-        const string REGEX_CID_PARENT = "^\\s*parentCID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
+        const string REGEX_VERSION = @"^\s*version\s*=\s*(?<version>\d+)$";
+        const string REGEX_CID = @"^\s*CID\s*=\s*(?<cid>[0123456789abcdef]{8})$";
+        const string REGEX_CID_PARENT = @"^\s*parentCID\s*=\s*(?<cid>[0123456789abcdef]{8})$";
         const string REGEX_TYPE =
-                "^\\s*createType\\s*=\\s*\\\"(?<type>custom|monolithicSparse|monolithicFlat|twoGbMaxExtentSparse|twoGbMaxExtentFlat|fullDevice|partitionedDevice|vmfs|vmfsPreallocated|vmfsEagerZeroedThick|vmfsThin|vmfsSparse|vmfsRDM|vmfsRawDeviceMap|vmfsRDMP|vmfsPassthroughRawDeviceMap|vmfsRaw|streamOptimized)\\\"$"
+                @"^\s*createType\s*=\s*\""(?<type>custom|monolithicSparse|monolithicFlat|twoGbMaxExtentSparse|twoGbMaxExtentFlat|fullDevice|partitionedDevice|vmfs|vmfsPreallocated|vmfsEagerZeroedThick|vmfsThin|vmfsSparse|vmfsRDM|vmfsRawDeviceMap|vmfsRDMP|vmfsPassthroughRawDeviceMap|vmfsRaw|streamOptimized)\""$"
             ;
         const string REGEX_EXTENT =
-                "^\\s*(?<access>(RW|RDONLY|NOACCESS))\\s+(?<sectors>\\d+)\\s+(?<type>(FLAT|SPARSE|ZERO|VMFS|VMFSSPARSE|VMFSRDM|VMFSRAW))\\s+\\\"(?<filename>.+)\\\"(\\s*(?<offset>\\d+))?$"
+                @"^\s*(?<access>(RW|RDONLY|NOACCESS))\s+(?<sectors>\d+)\s+(?<type>(FLAT|SPARSE|ZERO|VMFS|VMFSSPARSE|VMFSRDM|VMFSRAW))\s+\""(?<filename>.+)\""(\s*(?<offset>\d+))?$"
             ;
         const string REGEX_DDB_TYPE =
-            "^\\s*ddb\\.adapterType\\s*=\\s*\\\"(?<type>ide|buslogic|lsilogic|legacyESX)\\\"$";
-        const string REGEX_DDB_SECTORS = "^\\s*ddb\\.geometry\\.sectors\\s*=\\s*\\\"(?<sectors>\\d+)\\\"$";
-        const string REGEX_DDB_HEADS = "^\\s*ddb\\.geometry\\.heads\\s*=\\s*\\\"(?<heads>\\d+)\\\"$";
-        const string REGEX_DDB_CYLINDERS = "^\\s*ddb\\.geometry\\.cylinders\\s*=\\s*\\\"(?<cylinders>\\d+)\\\"$";
-        const string PARENT_REGEX = "^\\s*parentFileNameHint\\s*=\\s*\\\"(?<filename>.+)\\\"$";
+            @"^\s*ddb\.adapterType\s*=\s*\""(?<type>ide|buslogic|lsilogic|legacyESX)\""$";
+        const string REGEX_DDB_SECTORS = @"^\s*ddb\.geometry\.sectors\s*=\s*\""(?<sectors>\d+)\""$";
+        const string REGEX_DDB_HEADS = @"^\s*ddb\.geometry\.heads\s*=\s*\""(?<heads>\d+)\""$";
+        const string REGEX_DDB_CYLINDERS = @"^\s*ddb\.geometry\.cylinders\s*=\s*\""(?<cylinders>\d+)\""$";
+        const string PARENT_REGEX = @"^\s*parentFileNameHint\s*=\s*\""(?<filename>.+)\""$";
 
         const uint FLAGS_VALID_NEW_LINE = 0x01;
         const uint FLAGS_USE_REDUNDANT_TABLE = 0x02;

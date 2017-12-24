@@ -44,7 +44,7 @@ namespace DiscImageChef.DiscImages
 {
     public class DriDiskCopy : ImagePlugin
     {
-        const string REGEX_DRI = "DiskImage\\s(?<version>\\d+.\\d+)\\s\\(C\\)\\s\\d+\\,*\\d*\\s+Digital Research Inc";
+        const string REGEX_DRI = @"DiskImage\s(?<version>\d+.\d+)\s\(C\)\s\d+\,*\d*\s+Digital Research Inc";
 
         /// <summary>Disk image file</summary>
         Filter driImageFilter;
