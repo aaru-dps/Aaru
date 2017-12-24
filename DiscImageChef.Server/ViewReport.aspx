@@ -179,7 +179,7 @@ DiscImageChef Report for <asp:Label id="lblManufacturer" runat="server"/> <asp:L
         Minimum block length: <asp:Label id="lblScsiSscMinBlock" runat="server"/> bytes<br/>
         <asp:Repeater ID="repScsiSscDensities" runat="server">
             <ItemTemplate>
-                <br/><b>Information for supported density with primary code <asp:Label runat="server" Text='<%# string.Format("{0:X2h}", Eval("PrimaryCode")) %>'/> and secondary code <asp:Label runat="server" Text='<%# string.Format("{0:X2h}", Eval("SecondaryCode")) %>'/></b><br/>
+                <br/><b>Information for supported density with primary code <asp:Label runat="server" Text='<%# string.Format("{0:X2}h", Eval("PrimaryCode")) %>'/> and secondary code <asp:Label runat="server" Text='<%# string.Format("{0:X2}h", Eval("SecondaryCode")) %>'/></b><br/>
                 Drive can write this density: <asp:Label runat="server" Text='<%# string.Format("{0}", Eval("Writable")) %>'/><br/>
                 Duplicate density: <asp:Label runat="server" Text='<%# string.Format("{0}", Eval("Duplicate")) %>'/><br/>
                 Default density: <asp:Label runat="server" Text='<%# string.Format("{0}", Eval("DefaultDensity")) %>'/><br/>
@@ -192,7 +192,7 @@ DiscImageChef Report for <asp:Label id="lblManufacturer" runat="server"/> <asp:L
         </asp:Repeater>
         <asp:Repeater ID="repScsiSscMedias" runat="server">
             <ItemTemplate>
-                <br/><b>Information for supported media with type code <asp:Label runat="server" Text='<%# string.Format("{0:X2h}", Eval("MediumType")) %>'/></b><br/>
+                <br/><b>Information for supported media with type code <asp:Label runat="server" Text='<%# string.Format("{0:X2}h", Eval("MediumType")) %>'/></b><br/>
                 Drive can write this density: <asp:Label runat="server" Text='<%# string.Format("{0}", Eval("Writable")) %>'/><br/>
                 Media is <asp:Label runat="server" Text='<%# Eval("Length") %>'/> meters long in a <asp:Label runat="server" Text='<%# Eval("Width") %>'/> mm width tape
                 Name: <asp:Label runat="server" Text='<%# Eval("Name") %>'/><br/>
