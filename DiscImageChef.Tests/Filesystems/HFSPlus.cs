@@ -123,6 +123,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class HfsPlusGpt
     {
@@ -176,6 +177,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     // Mising Darwin 6.0.2 wrapped
     [TestFixture]
     public class HfsPlusMbr

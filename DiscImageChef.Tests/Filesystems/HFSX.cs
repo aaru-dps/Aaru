@@ -97,6 +97,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class HfsxGpt
     {
@@ -150,7 +151,8 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
-        [TestFixture]
+
+    [TestFixture]
     public class HfsxMbr
     {
         readonly string[] testfiles =
@@ -208,5 +210,4 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
-
 }

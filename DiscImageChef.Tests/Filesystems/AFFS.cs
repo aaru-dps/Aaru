@@ -85,7 +85,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
-    
+
     [TestFixture]
     public class AffsMbr
     {
@@ -136,7 +136,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
-    
+
     [TestFixture]
     public class AffsMbrRdb
     {
@@ -187,7 +187,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
-    
+
     [TestFixture]
     public class AffsRdb
     {

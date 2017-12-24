@@ -59,8 +59,7 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024};
 
-        readonly string[] volumename =
-            {"Volume label", "Volume label", "Volume label", "Volume label", "Volume label"};
+        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label", "Volume label"};
 
         readonly string[] volumeserial = {null, null, null, null, null, null, null};
 

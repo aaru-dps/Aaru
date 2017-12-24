@@ -86,6 +86,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class MinixV1Mbr
     {
@@ -132,6 +133,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class MinixV2
     {
@@ -182,6 +184,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class MinixV2Mbr
     {
@@ -228,6 +231,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class MinixV3
     {
@@ -278,6 +282,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class MinixV3Mbr
     {

@@ -51,8 +51,7 @@ namespace DiscImageChef.Tests.Filters
         {
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.File(Path.Combine(Consts.TestFilesRoot, "filters", "pcexchange", "FINDER.DAT"),
-                                     out _);
+            string result = ctx.File(Path.Combine(Consts.TestFilesRoot, "filters", "pcexchange", "FINDER.DAT"), out _);
             Assert.AreEqual(EXPECTED_FILE, result);
         }
 

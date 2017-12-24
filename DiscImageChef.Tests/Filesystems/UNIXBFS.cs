@@ -90,6 +90,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UnixbfsMbr
     {
@@ -137,6 +138,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UnixbfsRdb
     {

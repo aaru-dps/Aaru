@@ -96,6 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UfsApm
     {
@@ -156,6 +157,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UfsMbr
     {
@@ -251,6 +253,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UfsNeXt
     {
@@ -307,6 +310,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UfsNeXtFloppy
     {
@@ -365,6 +369,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UfsRdb
     {
@@ -417,6 +422,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class UfsSuni86
     {

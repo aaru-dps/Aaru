@@ -1468,28 +1468,12 @@ namespace DiscImageChef.Tests.Partitions
             // PC-DOS 3.00
             new[]
             {
-                new Partition
-                {
-                    Description = null,
-                    Name = null,
-                    Type = "0x01",
-                    Length = 66465,
-                    Sequence = 0,
-                    Start = 63
-                }
+                new Partition {Description = null, Name = null, Type = "0x01", Length = 66465, Sequence = 0, Start = 63}
             },
             // PC-DOS 3.10
             new[]
             {
-                new Partition
-                {
-                    Description = null,
-                    Name = null,
-                    Type = "0x01",
-                    Length = 66465,
-                    Sequence = 0,
-                    Start = 63
-                }
+                new Partition {Description = null, Name = null, Type = "0x01", Length = 66465, Sequence = 0, Start = 63}
             },
             // PC-DOS 3.30
             new[]

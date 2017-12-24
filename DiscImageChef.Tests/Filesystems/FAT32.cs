@@ -89,6 +89,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat32Gpt
     {
@@ -142,6 +143,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat32Mbr
     {

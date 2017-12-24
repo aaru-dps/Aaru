@@ -81,7 +81,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
-    
+
     [TestFixture]
     public class Qnx4Mbr
     {

@@ -30,6 +30,7 @@ using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
+using DiscImageChef.Filesystems.ISO9660;
 using DiscImageChef.Filters;
 using NUnit.Framework;
 
@@ -126,7 +127,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.ISO9660.ISO9660();
+                Filesystem fs = new ISO9660();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",

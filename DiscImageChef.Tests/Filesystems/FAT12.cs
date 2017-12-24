@@ -1735,6 +1735,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat12Apm
     {
@@ -1788,6 +1789,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat12Gpt
     {
@@ -1841,6 +1843,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat12Mbr
     {

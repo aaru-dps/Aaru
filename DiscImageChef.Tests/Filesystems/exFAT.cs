@@ -86,6 +86,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class ExFatGpt
     {
@@ -136,6 +137,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class ExFatMbr
     {

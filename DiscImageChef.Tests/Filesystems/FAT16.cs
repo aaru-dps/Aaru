@@ -142,6 +142,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat16Apm
     {
@@ -195,6 +196,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat16Atari
     {
@@ -248,6 +250,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat16Gpt
     {
@@ -301,6 +304,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat16Mbr
     {
@@ -415,6 +419,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class Fat16Rdb
     {

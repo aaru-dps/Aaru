@@ -142,6 +142,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class BeFsGpt
     {
@@ -192,6 +193,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class BeFsMbr
     {

@@ -97,6 +97,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class HfsApm
     {
@@ -188,6 +189,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class HfsCdrom
     {
@@ -244,6 +246,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class HfsMbr
     {
@@ -260,8 +263,7 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly int[] clustersize = {2048, 4096, 4096, 3584, 3584};
 
-        readonly string[] volumename =
-            {"Volume label", "Volume label", "Volume label", "Volume label", "Volume label"};
+        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label", "Volume label"};
 
         readonly string[] volumeserial = {null, null, null, null, "81FE805D61458753"};
 
@@ -298,6 +300,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class HfsRdb
     {

@@ -93,6 +93,7 @@ namespace DiscImageChef.Tests.Filesystems
             }
         }
     }
+
     [TestFixture]
     public class DtfsMbr
     {
