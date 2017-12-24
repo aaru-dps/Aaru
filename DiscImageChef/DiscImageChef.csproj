@@ -167,10 +167,6 @@
     <None Include="..\.travis.yml">
       <Link>.travis.yml</Link>
     </None>
-    <None Include="..\CODING.md">
-      <Link>CODING.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="..\CONTRIBUTING.md">
       <Link>CONTRIBUTING.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -180,10 +176,6 @@
     </None>
     <None Include="..\NEEDINFO.md">
       <Link>NEEDINFO.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\TESTING.md">
-      <Link>TESTING.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -263,5 +255,12 @@
       <Link>LICENSE</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Folder>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.github\CODE_OF_CONDUCT.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.github\ISSUE_TEMPLATE.md" />
+    <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
   </ItemGroup>
 </Project>

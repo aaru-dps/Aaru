@@ -3,16 +3,31 @@
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
 
-Copyright © 2011-2017 Natalia Portillo <claunia@claunia.com>
+Copyright © 2011-2018 Natalia Portillo <claunia@claunia.com>
 
 [![Build Status](https://travis-ci.org/claunia/DiscImageChef.svg?branch=master)](https://travis-ci.org/claunia/DiscImageChef)[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
 
 You can see statistics and device reports [here](http://discimagechef.claunia.com/Statistics.aspx)
 
-If you want to donate money you can become a patron at https://www.patreon.com/DiscImageChef
-If you want to donate hardware you can see [what we need](DONATING.md), but any kind of hardware donation will be accepted, thanks.
+DiscImageChef is a fully featured media dump management solution. You usually know media dumps
+as disc images, disk images, tape images, etc.
+
+With DiscImageChef you can analyze a media dump, extract files from it (for supported
+filesystems), compare two of them, create them from real media using the appropriate drive,
+create a sidecar metadata with information about the media dump, and a lot of other features
+that commonly would require you to use separate applications.
+
 To see last changes, check the [changelog](Changelog.md).
 To see list of pending things to do, check the [TODO list](TODO.md).
+
+If you want to contribute in any way please read the [contributing guide](CONTRIBUTING.md).
+
+System requirements
+===================
+DiscImageChef should work under any operating system where there is [Mono](http://www.mono-project.com/)
+or [.NET Framework](https://www.microsoft.com/net/download).
+It has been tested using Mono 3.0 and .NET Framework 4.0. However recommended versions are
+Mono 5.0 and .NET Framework 4.6. .NET Core is untested.
 
 Usage
 =====
@@ -21,7 +36,7 @@ DiscImageChef.exe
 
 And read help.
 
-Works under any operating system where there is Mono or .NET Framework. Tested with Mono 3.0.
+Or read the [wiki](https://github.com/claunia/DiscImageChef/wiki).
 
 Features
 ========
