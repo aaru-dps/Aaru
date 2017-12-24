@@ -39,7 +39,8 @@ namespace DiscImageChef.Server.App_Start
     public static class ScsiModeSense
     {
         /// <summary>
-        /// Takes the MODE PAGEs part of a device report and prints it as a list of values and another list of key=value pairs to be sequenced by ASP.NET in the rendering
+        ///     Takes the MODE PAGEs part of a device report and prints it as a list of values and another list of key=value pairs
+        ///     to be sequenced by ASP.NET in the rendering
         /// </summary>
         /// <param name="modeSense">MODE PAGEs part of a device report</param>
         /// <param name="vendor">SCSI vendor string</param>
@@ -49,13 +50,13 @@ namespace DiscImageChef.Server.App_Start
         public static void Report(modeType modeSense, string vendor, PeripheralDeviceTypes deviceType,
                                   ref List<string> scsiOneValue, ref Dictionary<string, string> modePages)
         {
-            if(modeSense.MediumTypeSpecified)
-                scsiOneValue.Add($"Medium type is {modeSense.MediumType:X2}h");
+            if(modeSense.MediumTypeSpecified) scsiOneValue.Add($"Medium type is {modeSense.MediumType:X2}h");
             if(modeSense.WriteProtected) scsiOneValue.Add("Device is write protected.");
             if(modeSense.BlockDescriptors != null)
                 foreach(blockDescriptorType descriptor in modeSense.BlockDescriptors)
                     if(descriptor.BlocksSpecified && descriptor.BlockLengthSpecified)
-                        scsiOneValue.Add($"Density code {descriptor.Density:X2}h has {descriptor.Blocks} blocks of {descriptor.BlockLength} bytes each");
+                        scsiOneValue
+                            .Add($"Density code {descriptor.Density:X2}h has {descriptor.Blocks} blocks of {descriptor.BlockLength} bytes each");
                     else scsiOneValue.Add($"Density code {descriptor.Density:X2}h");
 
             if(modeSense.DPOandFUA) scsiOneValue.Add("Drive supports DPO and FUA bits");
@@ -85,14 +86,11 @@ namespace DiscImageChef.Server.App_Start
                     case 0x00:
                     {
                         if(deviceType == PeripheralDeviceTypes.MultiMediaDevice && page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_00_SFF(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_00_SFF(page.value));
                         else
-                        {
                             modePages
                                 .Add(page.subpage != 0 ? $"MODE page {page.page:X2}h subpage {page.subpage:X2}h" : $"MODE page {page.page:X2}h",
                                      "Unknown vendor mode page");
-                        }
                         break;
                     }
                     case 0x01:
@@ -109,8 +107,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x02:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_02(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_02(page.value));
                         else goto default;
 
                         break;
@@ -118,8 +115,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x03:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_03(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_03(page.value));
                         else goto default;
 
                         break;
@@ -127,8 +123,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x04:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_04(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_04(page.value));
                         else goto default;
 
                         break;
@@ -136,8 +131,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x05:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_05(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_05(page.value));
                         else goto default;
 
                         break;
@@ -145,8 +139,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x06:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_06(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_06(page.value));
                         else goto default;
 
                         break;
@@ -165,8 +158,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x08:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_08(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_08(page.value));
                         else goto default;
 
                         break;
@@ -174,11 +166,9 @@ namespace DiscImageChef.Server.App_Start
                     case 0x0A:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_0A(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_0A(page.value));
                         else if(page.subpage == 1)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_0A_S01(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_0A_S01(page.value));
                         else goto default;
 
                         break;
@@ -186,8 +176,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x0B:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_0B(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_0B(page.value));
                         else goto default;
 
                         break;
@@ -195,8 +184,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x0D:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_0D(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_0D(page.value));
                         else goto default;
 
                         break;
@@ -204,8 +192,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x0E:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_0E(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_0E(page.value));
                         else goto default;
 
                         break;
@@ -213,8 +200,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x0F:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_0F(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_0F(page.value));
                         else goto default;
 
                         break;
@@ -233,8 +219,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x11:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_11(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_11(page.value));
                         else goto default;
 
                         break;
@@ -244,8 +229,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x14:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_12_13_14(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_12_13_14(page.value));
                         else goto default;
 
                         break;
@@ -253,11 +237,9 @@ namespace DiscImageChef.Server.App_Start
                     case 0x1A:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_1A(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_1A(page.value));
                         else if(page.subpage == 1)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_1A_S01(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_1A_S01(page.value));
                         else goto default;
 
                         break;
@@ -265,8 +247,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x1B:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_1B(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_1B(page.value));
                         else goto default;
 
                         break;
@@ -279,8 +260,7 @@ namespace DiscImageChef.Server.App_Start
                                               ? Modes.PrettifyModePage_1C_SFF(page.value)
                                               : Modes.PrettifyModePage_1C(page.value));
                         else if(page.subpage == 1)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_1C_S01(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_1C_S01(page.value));
                         else goto default;
 
                         break;
@@ -288,8 +268,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x1D:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_1D(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_1D(page.value));
                         else goto default;
 
                         break;
@@ -297,8 +276,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x21:
                     {
                         if(vendor == "CERTANCE")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyCertanceModePage_21(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyCertanceModePage_21(page.value));
                         else goto default;
 
                         break;
@@ -306,8 +284,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x22:
                     {
                         if(vendor == "CERTANCE")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyCertanceModePage_22(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyCertanceModePage_22(page.value));
                         else goto default;
 
                         break;
@@ -315,8 +292,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x24:
                     {
                         if(vendor == "IBM")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyIBMModePage_24(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyIBMModePage_24(page.value));
                         else goto default;
 
                         break;
@@ -324,8 +300,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x2A:
                     {
                         if(page.subpage == 0)
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyModePage_2A(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_2A(page.value));
                         else goto default;
 
                         break;
@@ -333,8 +308,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x2F:
                     {
                         if(vendor == "IBM")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyIBMModePage_2F(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyIBMModePage_2F(page.value));
                         else goto default;
 
                         break;
@@ -350,8 +324,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x3B:
                     {
                         if(vendor == "HP")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyHPModePage_3B(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyHPModePage_3B(page.value));
                         else goto default;
 
                         break;
@@ -359,8 +332,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x3C:
                     {
                         if(vendor == "HP")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyHPModePage_3C(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyHPModePage_3C(page.value));
                         else goto default;
 
                         break;
@@ -368,11 +340,9 @@ namespace DiscImageChef.Server.App_Start
                     case 0x3D:
                     {
                         if(vendor == "IBM")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyIBMModePage_3D(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyIBMModePage_3D(page.value));
                         else if(vendor == "HP")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyHPModePage_3D(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyHPModePage_3D(page.value));
                         else goto default;
 
                         break;
@@ -380,11 +350,9 @@ namespace DiscImageChef.Server.App_Start
                     case 0x3E:
                     {
                         if(vendor == "FUJITSU")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyFujitsuModePage_3E(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyFujitsuModePage_3E(page.value));
                         else if(vendor == "HP")
-                            modePages.Add($"MODE page {page.page:X2}h",
-                                          Modes.PrettifyHPModePage_3E(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyHPModePage_3E(page.value));
                         else goto default;
 
                         break;

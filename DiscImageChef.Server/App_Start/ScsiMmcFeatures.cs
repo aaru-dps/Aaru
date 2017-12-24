@@ -39,7 +39,8 @@ namespace DiscImageChef.Server.App_Start
     public static class ScsiMmcFeatures
     {
         /// <summary>
-        /// Takes the MMC FEATURES part of a device report and prints it as a list of values to be sequenced by ASP.NET in the rendering
+        ///     Takes the MMC FEATURES part of a device report and prints it as a list of values to be sequenced by ASP.NET in the
+        ///     rendering
         /// </summary>
         /// <param name="ftr">FEATURES part of the report</param>
         /// <param name="mmcOneValue">List to put the values on</param>
@@ -125,8 +126,7 @@ namespace DiscImageChef.Server.App_Start
             if(ftr.CanUpgradeFirmware) mmcOneValue.Add("Drive supports Microcode Upgrade");
             if(ftr.ErrorRecoveryPage) mmcOneValue.Add("Drive shall report Read/Write Error Recovery mode page");
             if(ftr.Locked) mmcOneValue.Add("Drive can lock media");
-            if(ftr.LogicalBlockSize > 0)
-                mmcOneValue.Add($"{ftr.LogicalBlockSize} bytes per logical block");
+            if(ftr.LogicalBlockSize > 0) mmcOneValue.Add($"{ftr.LogicalBlockSize} bytes per logical block");
             if(ftr.MultiRead)
                 mmcOneValue.Add("Drive claims capability to read all CD formats according to OSTA Multi-Read Specification");
 
@@ -233,8 +233,7 @@ namespace DiscImageChef.Server.App_Start
             else if(ftr.SupportsCPRM) mmcOneValue.Add("Drive supports DVD CPRM");
             if(ftr.DBML) mmcOneValue.Add("Drive reports Device Busy Class events during medium loading/unloading");
             if(ftr.DVDMultiRead) mmcOneValue.Add("Drive conforms to DVD Multi Drive Read-only Specifications");
-            if(ftr.FirmwareDateSpecified)
-                mmcOneValue.Add($"Drive firmware is dated {ftr.FirmwareDate}");
+            if(ftr.FirmwareDateSpecified) mmcOneValue.Add($"Drive firmware is dated {ftr.FirmwareDate}");
             if(ftr.SupportsC2) mmcOneValue.Add("Drive supports C2 Error Pointers");
             if(ftr.SupportsDAP) mmcOneValue.Add("Drive supports the DAP bit in the READ CD and READ CD MSF commands");
             if(ftr.SupportsDeviceBusyEvent) mmcOneValue.Add("Drive supports Device Busy events");
@@ -271,8 +270,7 @@ namespace DiscImageChef.Server.App_Start
             if(ftr.SupportsSecurDisc) mmcOneValue.Add("Drive supports SecurDisc");
             if(ftr.SupportsSeparateVolume) mmcOneValue.Add("Drive supports separate volume per channel");
             if(ftr.SupportsVCPS) mmcOneValue.Add("Drive supports VCPS");
-            if(ftr.VolumeLevelsSpecified)
-                mmcOneValue.Add($"Drive has {ftr.VolumeLevels + 1} volume levels");
+            if(ftr.VolumeLevelsSpecified) mmcOneValue.Add($"Drive has {ftr.VolumeLevels + 1} volume levels");
             if(ftr.SupportsWriteProtectPAC)
                 mmcOneValue.Add("Drive supports reading/writing the Disc Write Protect PAC on BD-R/-RE media");
             if(ftr.SupportsWriteInhibitDCB)

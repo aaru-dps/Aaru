@@ -42,14 +42,17 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() { dataLayer.push(arguments); }
+
         gtag('js', new Date());
 
         gtag('config', 'UA-111466173-1');
     </script>
 </head>
 <body id="body" runat="server">
-<h1 align="center">Welcome to <i>
+<h1 align="center">
+    Welcome to <i>
         <a href="http://github.com/claunia/discimagechef" target="_blank">DiscImageChef</a>
     </i> Server version <asp:Label id="lblVersion" runat="server"/>
 </h1>
@@ -60,7 +63,8 @@
         <asp:Repeater id="repOperatingSystems" runat="server">
             <ItemTemplate>
                 <tr>
-                    <td>DiscImageChef has run on <i>
+                    <td>
+                        DiscImageChef has run on <i>
                             <asp:Label runat="server" Text='<%# Eval("name") %>'/>
                         </i> <asp:Label runat="server" Text='<%# Eval("Value") %>'/> times.
                     </td>
@@ -75,7 +79,8 @@
         <asp:Repeater id="repVersions" runat="server">
             <ItemTemplate>
                 <tr>
-                    <td>DiscImageChef version <i>
+                    <td>
+                        DiscImageChef version <i>
                             <asp:Label runat="server" Text='<%# Eval("name") %>'/>
                         </i> has been used <asp:Label runat="server" Text='<%# Eval("Value") %>'/> times.
                     </td>

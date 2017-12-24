@@ -47,32 +47,17 @@ using PlatformID = DiscImageChef.Interop.PlatformID;
 namespace DiscImageChef.Server
 {
     /// <summary>
-    /// Renders a page with statistics, list of media type, devices, etc
+    ///     Renders a page with statistics, list of media type, devices, etc
     /// </summary>
     public partial class Statistics : Page
     {
-        class MediaItem
-        {
-            public string Type { get; set; }
-            public string SubType { get; set; }
-            public long Count { get; set; }
-        }
-
-        class DeviceItem
-        {
-            public string Manufacturer { get; set; }
-            public string Model { get; set; }
-            public string Revision { get; set; }
-            public string Bus { get; set; }
-            public string ReportLink { get; set; }
-        }
+        List<DeviceItem> devices;
+        List<NameValueStats> operatingSystems;
+        List<MediaItem> realMedia;
 
         Stats statistics;
-        List<MediaItem> realMedia;
-        List<MediaItem> virtualMedia;
-        List<NameValueStats> operatingSystems;
-        List<DeviceItem> devices;
         List<NameValueStats> versions;
+        List<MediaItem> virtualMedia;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -80,8 +65,8 @@ namespace DiscImageChef.Server
 
             try
             {
-                if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics",
-                                             "Statistics.xml")))
+                if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                             "Statistics", "Statistics.xml")))
                 {
 #if DEBUG
                     content.InnerHtml =
@@ -253,8 +238,7 @@ namespace DiscImageChef.Server
 
                         xmlFile = xmlFile.Replace('/', '_').Replace('\\', '_').Replace('?', '_');
 
-                        if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Reports",
-                                                     xmlFile))) url = null;
+                        if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Reports", xmlFile))) url = null;
 
                         devices.Add(new DeviceItem
                         {
@@ -262,8 +246,7 @@ namespace DiscImageChef.Server
                             Model = device.Model,
                             Revision = device.Revision,
                             Bus = device.Bus,
-                            ReportLink =
-                                url == null ? "No" : $"<a href=\"{url}\" target=\"_blank\">Yes</a>"
+                            ReportLink = url == null ? "No" : $"<a href=\"{url}\" target=\"_blank\">Yes</a>"
                         });
                     }
 
@@ -301,6 +284,22 @@ namespace DiscImageChef.Server
             }
 
             return null;
+        }
+
+        class MediaItem
+        {
+            public string Type { get; set; }
+            public string SubType { get; set; }
+            public long Count { get; set; }
+        }
+
+        class DeviceItem
+        {
+            public string Manufacturer { get; set; }
+            public string Model { get; set; }
+            public string Revision { get; set; }
+            public string Bus { get; set; }
+            public string ReportLink { get; set; }
         }
     }
 }

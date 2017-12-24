@@ -1,5 +1,4 @@
 ﻿<%@ Page Language="C#" Inherits="DiscImageChef.Server.Default" %>
-<%@ Register TagPrefix="velyo" Namespace="Velyo.AspNet.Markdown" Assembly="Velyo.AspNet.Markdown" %>
 <%--
 // /***************************************************************************
 // The Disc Image Chef
@@ -43,14 +42,17 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() { dataLayer.push(arguments); }
+
         gtag('js', new Date());
 
         gtag('config', 'UA-111466173-1');
     </script>
 </head>
 <body id="body" runat="server">
-<h1 align="center">Welcome to <i>
+<h1 align="center">
+    Welcome to <i>
         <a href="http://github.com/claunia/discimagechef" target="_blank">DiscImageChef</a>
     </i> Server version <asp:Label id="lblVersion" runat="server"/>
 </h1>

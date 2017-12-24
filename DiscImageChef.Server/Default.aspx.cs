@@ -40,7 +40,7 @@ using Velyo.AspNet.Markdown;
 namespace DiscImageChef.Server
 {
     /// <summary>
-    /// Renders the README.md file
+    ///     Renders the README.md file
     /// </summary>
     public partial class Default : Page
     {
@@ -48,7 +48,8 @@ namespace DiscImageChef.Server
         {
             MarkdownContent mkdown = new MarkdownContent();
             StreamReader sr =
-                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "docs", "README.md"));
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                              "docs", "README.md"));
             string mdcontent = sr.ReadToEnd();
             sr.Close();
 

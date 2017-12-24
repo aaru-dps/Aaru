@@ -49,7 +49,7 @@ namespace DiscImageChef.Server.Controllers
     public class UploadStatsController : ApiController
     {
         /// <summary>
-        /// Receives statistics from DiscImageChef.Core, processes them and adds them to a server-side global statistics XML
+        ///     Receives statistics from DiscImageChef.Core, processes them and adds them to a server-side global statistics XML
         /// </summary>
         /// <returns>HTTP response</returns>
         [Route("api/uploadstats")]
@@ -119,7 +119,10 @@ namespace DiscImageChef.Server.Controllers
                             OsStats removeNvs = null;
                             OsStats addNvs = null;
 
-                            foreach(OsStats oldNvs in oldStats.OperatingSystems.Where(oldNvs => oldNvs.name == newNvs.name && oldNvs.version == newNvs.version)) {
+                            foreach(OsStats oldNvs in
+                                oldStats.OperatingSystems.Where(oldNvs => oldNvs.name == newNvs.name &&
+                                                                          oldNvs.version == newNvs.version))
+                            {
                                 addNvs = new OsStats
                                 {
                                     name = oldNvs.name,
@@ -140,14 +143,14 @@ namespace DiscImageChef.Server.Controllers
                 else
                 {
                     if(oldStats.OperatingSystems == null)
-                        oldStats.OperatingSystems =
-                            new List<OsStats> {new OsStats {name = "Linux", Value = 1}};
+                        oldStats.OperatingSystems = new List<OsStats> {new OsStats {name = "Linux", Value = 1}};
                     else
                     {
                         OsStats removeNvs = null;
                         OsStats addNvs = null;
 
-                        foreach(OsStats oldNvs in oldStats.OperatingSystems.Where(oldNvs => oldNvs.name == "Linux")) {
+                        foreach(OsStats oldNvs in oldStats.OperatingSystems.Where(oldNvs => oldNvs.name == "Linux"))
+                        {
                             addNvs = new OsStats
                             {
                                 name = oldNvs.name,
@@ -175,12 +178,10 @@ namespace DiscImageChef.Server.Controllers
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
-                            foreach(NameValueStats oldNvs in oldStats.Versions.Where(oldNvs => oldNvs.name == newNvs.name)) {
-                                addNvs = new NameValueStats
-                                {
-                                    name = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                            foreach(NameValueStats oldNvs in
+                                oldStats.Versions.Where(oldNvs => oldNvs.name == newNvs.name))
+                            {
+                                addNvs = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + newNvs.Value};
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -196,16 +197,14 @@ namespace DiscImageChef.Server.Controllers
                 {
                     if(oldStats.Versions == null)
                         oldStats.Versions =
-                            new List<NameValueStats>
-                            {
-                                new NameValueStats {name = "previous", Value = 1}
-                            };
+                            new List<NameValueStats> {new NameValueStats {name = "previous", Value = 1}};
                     else
                     {
                         NameValueStats removeNvs = null;
                         NameValueStats addNvs = null;
 
-                        foreach(NameValueStats oldNvs in oldStats.Versions.Where(oldNvs => oldNvs.name == "previous")) {
+                        foreach(NameValueStats oldNvs in oldStats.Versions.Where(oldNvs => oldNvs.name == "previous"))
+                        {
                             addNvs = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + 1};
                             removeNvs = oldNvs;
                             break;
@@ -228,12 +227,10 @@ namespace DiscImageChef.Server.Controllers
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
-                            foreach(NameValueStats oldNvs in oldStats.Filesystems.Where(oldNvs => oldNvs.name == newNvs.name)) {
-                                addNvs = new NameValueStats
-                                {
-                                    name = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                            foreach(NameValueStats oldNvs in
+                                oldStats.Filesystems.Where(oldNvs => oldNvs.name == newNvs.name))
+                            {
+                                addNvs = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + newNvs.Value};
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -254,12 +251,10 @@ namespace DiscImageChef.Server.Controllers
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
-                            foreach(NameValueStats oldNvs in oldStats.Partitions.Where(oldNvs => oldNvs.name == newNvs.name)) {
-                                addNvs = new NameValueStats
-                                {
-                                    name = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                            foreach(NameValueStats oldNvs in
+                                oldStats.Partitions.Where(oldNvs => oldNvs.name == newNvs.name))
+                            {
+                                addNvs = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + newNvs.Value};
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -280,12 +275,10 @@ namespace DiscImageChef.Server.Controllers
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
-                            foreach(NameValueStats oldNvs in oldStats.MediaImages.Where(oldNvs => oldNvs.name == newNvs.name)) {
-                                addNvs = new NameValueStats
-                                {
-                                    name = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                            foreach(NameValueStats oldNvs in
+                                oldStats.MediaImages.Where(oldNvs => oldNvs.name == newNvs.name))
+                            {
+                                addNvs = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + newNvs.Value};
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -306,12 +299,10 @@ namespace DiscImageChef.Server.Controllers
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
-                            foreach(NameValueStats oldNvs in oldStats.Filters.Where(oldNvs => oldNvs.name == newNvs.name)) {
-                                addNvs = new NameValueStats
-                                {
-                                    name = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                            foreach(NameValueStats oldNvs in
+                                oldStats.Filters.Where(oldNvs => oldNvs.name == newNvs.name))
+                            {
+                                addNvs = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + newNvs.Value};
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -336,7 +327,7 @@ namespace DiscImageChef.Server.Controllers
                                                                                    oldDev.Revision == newDev.Revision &&
                                                                                    oldDev.Bus == newDev.Bus)
                                                       where !found
-                                                      select newDev) { oldStats.Devices.Add(newDev); }
+                                                      select newDev) oldStats.Devices.Add(newDev);
 
                 if(newStats.Medias != null)
                     if(oldStats.Medias == null) oldStats.Medias = newStats.Medias;
@@ -346,7 +337,10 @@ namespace DiscImageChef.Server.Controllers
                             MediaStats removeMstat = null;
                             MediaStats addMstat = null;
 
-                            foreach(MediaStats oldMstat in oldStats.Medias.Where(oldMstat => oldMstat.real == newMstat.real && oldMstat.type == newMstat.type)) {
+                            foreach(MediaStats oldMstat in
+                                oldStats.Medias.Where(oldMstat => oldMstat.real == newMstat.real &&
+                                                                  oldMstat.type == newMstat.type))
+                            {
                                 addMstat = new MediaStats
                                 {
                                     real = oldMstat.real,
@@ -419,13 +413,11 @@ namespace DiscImageChef.Server.Controllers
 
                 Random rng = new Random();
                 string filename = $"BackupStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
-                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics",
-                                               filename)))
+                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", filename)))
                     filename = $"BackupStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
 
                 FileStream backup =
-                    new
-                        FileStream(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", filename),
+                    new FileStream(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", filename),
                                    FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.CopyTo(backup);

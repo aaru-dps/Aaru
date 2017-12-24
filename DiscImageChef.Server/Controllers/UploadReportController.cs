@@ -46,7 +46,7 @@ namespace DiscImageChef.Server.Controllers
     public class UploadReportController : ApiController
     {
         /// <summary>
-        /// Receives a report from DiscImageChef.Core, verifies it's in the correct format and stores it on the server
+        ///     Receives a report from DiscImageChef.Core, verifies it's in the correct format and stores it on the server
         /// </summary>
         /// <returns>HTTP response</returns>
         [Route("api/uploadreport")]
@@ -71,11 +71,13 @@ namespace DiscImageChef.Server.Controllers
 
                 Random rng = new Random();
                 string filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
-                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename))) filename =
-                    $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
+                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                               "Upload", filename)))
+                    filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
 
                 FileStream newFile =
-                    new FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),
+                    new
+                        FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),
                                    FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
                 xs.Serialize(newFile, newReport);
                 newFile.Close();

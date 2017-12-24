@@ -39,7 +39,8 @@ namespace DiscImageChef.Server.App_Start
     static class ScsiInquiry
     {
         /// <summary>
-        /// Takes the SCSI INQUIRY part of a device report and prints it as a list of values to be sequenced by ASP.NET in the rendering
+        ///     Takes the SCSI INQUIRY part of a device report and prints it as a list of values to be sequenced by ASP.NET in the
+        ///     rendering
         /// </summary>
         /// <param name="inquiry">INQUIRY part of the report</param>
         /// <returns>List of values</returns>
@@ -1026,8 +1027,7 @@ namespace DiscImageChef.Server.App_Start
                         scsiOneValue.Add("Device complies with SPI ANSI INCITS 253-1995");
                         break;
                     case 0x0ABB:
-                        scsiOneValue
-                            .Add("Device complies with SPI T10/0855-D revision 15a with SPI Amnd revision 3a");
+                        scsiOneValue.Add("Device complies with SPI T10/0855-D revision 15a with SPI Amnd revision 3a");
                         break;
                     case 0x0ABC:
                         scsiOneValue
@@ -1216,8 +1216,7 @@ namespace DiscImageChef.Server.App_Start
                         scsiOneValue.Add("Device complies with FC-AL-2 T11/1133-D revision 7.0");
                         break;
                     case 0x0D63:
-                        scsiOneValue
-                            .Add("Device complies with FC-AL-2 ANSI INCITS 332-1999 with AM1-2003 & AM2-2006");
+                        scsiOneValue.Add("Device complies with FC-AL-2 ANSI INCITS 332-1999 with AM1-2003 & AM2-2006");
                         break;
                     case 0x0D64:
                         scsiOneValue.Add("Device complies with FC-AL-2 ANSI INCITS 332-1999 with Amnd 2 AM2-2006");
@@ -1620,8 +1619,7 @@ namespace DiscImageChef.Server.App_Start
                         scsiOneValue.Add("Device complies with SPL ANSI INCITS 476-2011");
                         break;
                     case 0x20A8:
-                        scsiOneValue
-                            .Add("Device complies with SPL ANSI INCITS 476-2011 + SPL AM1 INCITS 476/AM1 2012");
+                        scsiOneValue.Add("Device complies with SPL ANSI INCITS 476-2011 + SPL AM1 INCITS 476/AM1 2012");
                         break;
                     case 0x20AA:
                         scsiOneValue.Add("Device complies with SPL ISO/IEC 14776-261:2012");

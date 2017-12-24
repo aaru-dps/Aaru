@@ -47,7 +47,7 @@ using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 namespace DiscImageChef.Server
 {
     /// <summary>
-    /// Renders the specified report from the server
+    ///     Renders the specified report from the server
     /// </summary>
     public partial class ViewReport : Page
     {
@@ -85,7 +85,8 @@ namespace DiscImageChef.Server
                 else if(!string.IsNullOrWhiteSpace(model)) xmlFile = model + ".xml";
 
                 if(xmlFile == null ||
-                   !File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Reports", xmlFile)))
+                   !File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                             "Reports", xmlFile)))
                 {
                     content.InnerHtml = "<b>Could not find the specified report</b>";
                     return;
@@ -98,8 +99,9 @@ namespace DiscImageChef.Server
                 DeviceReport report = new DeviceReport();
                 XmlSerializer xs = new XmlSerializer(report.GetType());
                 StreamReader sr =
-                    new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Reports",
-                                                  xmlFile));
+                    new
+                        StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                                  "Reports", xmlFile));
                 report = (DeviceReport)xs.Deserialize(sr);
                 sr.Close();
 
@@ -148,8 +150,7 @@ namespace DiscImageChef.Server
                                 case TupleCodes.CISTPL_VERS_1: break;
                                 case TupleCodes.CISTPL_DEVICEGEO:
                                 case TupleCodes.CISTPL_DEVICEGEO_A:
-                                    DeviceGeometryTuple geom =
-                                        CIS.DecodeDeviceGeometryTuple(tuple.Data);
+                                    DeviceGeometryTuple geom = CIS.DecodeDeviceGeometryTuple(tuple.Data);
                                     if(geom?.Geometries != null)
                                         foreach(DeviceGeometry geometry in geom.Geometries)
                                         {
@@ -260,8 +261,11 @@ namespace DiscImageChef.Server
                     Dictionary<string, string> modePages = new Dictionary<string, string>();
                     Dictionary<string, string> evpdPages = new Dictionary<string, string>();
 
-                    lblScsiVendor.Text = VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) !=
-                                         report.SCSI.Inquiry.VendorIdentification ? $"{report.SCSI.Inquiry.VendorIdentification} ({VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification)})" : report.SCSI.Inquiry.VendorIdentification;
+                    lblScsiVendor.Text =
+                        VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) !=
+                        report.SCSI.Inquiry.VendorIdentification
+                            ? $"{report.SCSI.Inquiry.VendorIdentification} ({VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification)})"
+                            : report.SCSI.Inquiry.VendorIdentification;
                     lblScsiProduct.Text = report.SCSI.Inquiry.ProductIdentification;
                     lblScsiRevision.Text = report.SCSI.Inquiry.ProductRevisionLevel;
 
@@ -328,11 +332,17 @@ namespace DiscImageChef.Server
                     {
                         divScsiSsc.Visible = true;
 
-                        lblScsiSscGranularity.Text = report.SCSI.SequentialDevice.BlockSizeGranularitySpecified ? report.SCSI.SequentialDevice.BlockSizeGranularity.ToString() : "Unspecified";
+                        lblScsiSscGranularity.Text = report.SCSI.SequentialDevice.BlockSizeGranularitySpecified
+                                                         ? report.SCSI.SequentialDevice.BlockSizeGranularity.ToString()
+                                                         : "Unspecified";
 
-                        lblScsiSscMaxBlock.Text = report.SCSI.SequentialDevice.MaxBlockLengthSpecified ? report.SCSI.SequentialDevice.MaxBlockLength.ToString() : "Unspecified";
+                        lblScsiSscMaxBlock.Text = report.SCSI.SequentialDevice.MaxBlockLengthSpecified
+                                                      ? report.SCSI.SequentialDevice.MaxBlockLength.ToString()
+                                                      : "Unspecified";
 
-                        lblScsiSscMinBlock.Text = report.SCSI.SequentialDevice.MinBlockLengthSpecified ? report.SCSI.SequentialDevice.MinBlockLength.ToString() : "Unspecified";
+                        lblScsiSscMinBlock.Text = report.SCSI.SequentialDevice.MinBlockLengthSpecified
+                                                      ? report.SCSI.SequentialDevice.MinBlockLength.ToString()
+                                                      : "Unspecified";
 
                         if(report.SCSI.SequentialDevice.SupportedDensities != null)
                         {
@@ -370,17 +380,20 @@ namespace DiscImageChef.Server
                         if(report.SCSI.ReadCapabilities.BlocksSpecified &&
                            report.SCSI.ReadCapabilities.BlockSizeSpecified)
                         {
-                            scsiOneValue.Add($"Device has {report.SCSI.ReadCapabilities.Blocks} blocks of {report.SCSI.ReadCapabilities.BlockSize} bytes each");
+                            scsiOneValue
+                                .Add($"Device has {report.SCSI.ReadCapabilities.Blocks} blocks of {report.SCSI.ReadCapabilities.BlockSize} bytes each");
 
                             if(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1024 /
                                1024 > 1000000)
-                                scsiOneValue.Add($"Device size: {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize} bytes, {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1000 / 1000 / 1000 / 1000} Tb, {(double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024 / 1024:F2} TiB");
-                            else if(
-                                report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1024 /
-                                1024 > 1000)
-                                scsiOneValue.Add($"Device size: {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize} bytes, {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1000 / 1000 / 1000} Gb, {(double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024:F2} GiB");
+                                scsiOneValue
+                                    .Add($"Device size: {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize} bytes, {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1000 / 1000 / 1000 / 1000} Tb, {(double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024 / 1024:F2} TiB");
+                            else if(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize /
+                                    1024 / 1024 > 1000)
+                                scsiOneValue
+                                    .Add($"Device size: {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize} bytes, {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1000 / 1000 / 1000} Gb, {(double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024:F2} GiB");
                             else
-                                scsiOneValue.Add($"Device size: {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize} bytes, {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1000 / 1000} Mb, {(double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024:F2} MiB");
+                                scsiOneValue
+                                    .Add($"Device size: {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize} bytes, {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1000 / 1000} Mb, {(double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024:F2} MiB");
                         }
 
                         if(report.SCSI.ReadCapabilities.MediumTypeSpecified)
@@ -518,10 +531,12 @@ namespace DiscImageChef.Server
             vendorDescription = null;
             productDescription = null;
 
-            if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "usb.ids"))) return;
+            if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                         "usb.ids"))) return;
 
             StreamReader tocStream =
-                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "usb.ids"));
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                              "usb.ids"));
             bool inManufacturer = false;
 
             while(tocStream.Peek() >= 0)

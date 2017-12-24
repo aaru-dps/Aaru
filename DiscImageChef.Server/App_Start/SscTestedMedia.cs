@@ -38,7 +38,7 @@ namespace DiscImageChef.Server.App_Start
     public static class SscTestedMedia
     {
         /// <summary>
-        /// Takes the tested media from SCSI Streaming devices of a device report and prints it as a list of values
+        ///     Takes the tested media from SCSI Streaming devices of a device report and prints it as a list of values
         /// </summary>
         /// <param name="mediaOneValue">List to put values on</param>
         /// <param name="testedMedia">List of tested media</param>
@@ -49,8 +49,7 @@ namespace DiscImageChef.Server.App_Start
                 if(!string.IsNullOrWhiteSpace(media.MediumTypeName))
                 {
                     mediaOneValue.Add($"<i>Information for medium named \"{media.MediumTypeName}\"</i>");
-                    if(media.MediumTypeSpecified)
-                        mediaOneValue.Add($"Medium type code: {media.MediumType:X2}h");
+                    if(media.MediumTypeSpecified) mediaOneValue.Add($"Medium type code: {media.MediumType:X2}h");
                 }
                 else if(media.MediumTypeSpecified)
                     mediaOneValue.Add($"<i>Information for medium type {media.MediumType:X2}h</i>");
@@ -58,11 +57,9 @@ namespace DiscImageChef.Server.App_Start
 
                 if(!string.IsNullOrWhiteSpace(media.Manufacturer))
                     mediaOneValue.Add($"Medium manufactured by: {media.Manufacturer}");
-                if(!string.IsNullOrWhiteSpace(media.Model))
-                    mediaOneValue.Add($"Medium model: {media.Model}");
+                if(!string.IsNullOrWhiteSpace(media.Model)) mediaOneValue.Add($"Medium model: {media.Model}");
 
-                if(media.DensitySpecified)
-                    mediaOneValue.Add($"Medium has density code {media.Density:X2}h");
+                if(media.DensitySpecified) mediaOneValue.Add($"Medium has density code {media.Density:X2}h");
                 if(media.CanReadMediaSerial) mediaOneValue.Add("Drive can read medium serial number.");
                 if(media.MediaIsRecognized) mediaOneValue.Add("DiscImageChef recognizes this medium.");
 

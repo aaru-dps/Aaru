@@ -39,7 +39,8 @@ namespace DiscImageChef.Server.App_Start
     public static class ScsiEvpd
     {
         /// <summary>
-        /// Takes the SCSI EVPD part of a device report and prints it as a list key=value pairs to be sequenced by ASP.NET in the rendering
+        ///     Takes the SCSI EVPD part of a device report and prints it as a list key=value pairs to be sequenced by ASP.NET in
+        ///     the rendering
         /// </summary>
         /// <param name="pages">EVPD pages</param>
         /// <param name="vendor">SCSI vendor string</param>
@@ -65,16 +66,13 @@ namespace DiscImageChef.Server.App_Start
                     decoded = EVPD.PrettifyPage_C0_Quantum(evpd.value);
                 else if(evpd.page == 0xC0 && vendor.Trim() == "seagate")
                     decoded = EVPD.PrettifyPage_C0_Seagate(evpd.value);
-                else if(evpd.page == 0xC0 && vendor.Trim() == "ibm")
-                    decoded = EVPD.PrettifyPage_C0_IBM(evpd.value);
-                else if(evpd.page == 0xC1 && vendor.Trim() == "ibm")
-                    decoded = EVPD.PrettifyPage_C1_IBM(evpd.value);
+                else if(evpd.page == 0xC0 && vendor.Trim() == "ibm") decoded = EVPD.PrettifyPage_C0_IBM(evpd.value);
+                else if(evpd.page == 0xC1 && vendor.Trim() == "ibm") decoded = EVPD.PrettifyPage_C1_IBM(evpd.value);
                 else if((evpd.page == 0xC0 || evpd.page == 0xC1) && vendor.Trim() == "certance")
                     decoded = EVPD.PrettifyPage_C0_C1_Certance(evpd.value);
                 else if((evpd.page == 0xC2 || evpd.page == 0xC3 || evpd.page == 0xC4 || evpd.page == 0xC5 ||
                          evpd.page == 0xC6) &&
-                        vendor.Trim() == "certance")
-                    decoded = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(evpd.value);
+                        vendor.Trim() == "certance") decoded = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(evpd.value);
                 else if((evpd.page == 0xC0 || evpd.page == 0xC1 || evpd.page == 0xC2 || evpd.page == 0xC3 ||
                          evpd.page == 0xC4 || evpd.page == 0xC5) &&
                         vendor.Trim() == "hp") decoded = EVPD.PrettifyPage_C0_to_C5_HP(evpd.value);

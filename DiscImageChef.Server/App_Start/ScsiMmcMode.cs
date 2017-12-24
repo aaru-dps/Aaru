@@ -40,7 +40,8 @@ namespace DiscImageChef.Server.App_Start
     public static class ScsiMmcMode
     {
         /// <summary>
-        /// Takes the MODE PAGE 2Ah part of a device report and prints it as a list of values to be sequenced by ASP.NET in the rendering
+        ///     Takes the MODE PAGE 2Ah part of a device report and prints it as a list of values to be sequenced by ASP.NET in the
+        ///     rendering
         /// </summary>
         /// <param name="mode">MODE PAGE 2Ah part of the report</param>
         /// <param name="mmcOneValue">List to put the values on</param>
@@ -91,11 +92,9 @@ namespace DiscImageChef.Server.App_Start
                                     : "Drive is not locked, media can be ejected and inserted");
             }
             else
-            {
                 mmcOneValue.Add(mode.LockStatus
                                     ? "Drive is locked, media cannot be ejected, but if empty, can be inserted"
                                     : "Drive is not locked, media can be ejected and inserted");
-            }
             if(mode.CanEject) mmcOneValue.Add("Drive can eject media");
 
             if(mode.SeparateChannelMute) mmcOneValue.Add("Each channel can be muted independently");
@@ -134,9 +133,11 @@ namespace DiscImageChef.Server.App_Start
             if(mode.CurrentWriteSpeedSelected > 0)
             {
                 if(mode.RotationControlSelected == 0)
-                    mmcOneValue.Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in CLV mode");
+                    mmcOneValue
+                        .Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in CLV mode");
                 else if(mode.RotationControlSelected == 1)
-                    mmcOneValue.Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in pure CAV mode");
+                    mmcOneValue
+                        .Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in pure CAV mode");
             }
             else
             {
@@ -147,7 +148,9 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(mode.WriteSpeedPerformanceDescriptors != null)
-                foreach(Modes.ModePage_2A_WriteDescriptor descriptor in mode.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0)) if(descriptor.RotationControl == 0)
+                foreach(Modes.ModePage_2A_WriteDescriptor descriptor in
+                    mode.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
+                    if(descriptor.RotationControl == 0)
                         mmcOneValue.Add($"Drive supports writing at {descriptor.WriteSpeed} Kbyte/sec. in CLV mode");
                     else if(descriptor.RotationControl == 1)
                         mmcOneValue
