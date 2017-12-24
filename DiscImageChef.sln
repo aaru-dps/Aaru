@@ -149,6 +149,6 @@ Global
 		$7.Rules = $8
 		$8.NamingRule = $28
 		description = The Disc Image Chef.
-		version = 3.99.6.0
+		version = 4.0.0.0
 	EndGlobalSection
 EndGlobal

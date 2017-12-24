@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Partitions</RootNamespace>
     <AssemblyName>DiscImageChef.Partitions</AssemblyName>
-    <ReleaseVersion>3.99.6.0</ReleaseVersion>
+    <ReleaseVersion>4.0.0.0</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
