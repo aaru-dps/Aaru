@@ -78,12 +78,13 @@ namespace DiscImageChef.DiscImages
     {
         readonly MediaTypeTableEntry[] mediaTypes =
         {
-            new MediaTypeTableEntry(80, 8, MediaType.DOS_35_DS_DD_8),
-            new MediaTypeTableEntry(80, 9, MediaType.DOS_35_DS_DD_9),
-            new MediaTypeTableEntry(80, 18, MediaType.DOS_35_HD), new MediaTypeTableEntry(80, 36, MediaType.DOS_35_ED),
-            new MediaTypeTableEntry(40, 8, MediaType.DOS_525_DS_DD_8),
-            new MediaTypeTableEntry(40, 9, MediaType.DOS_525_DS_DD_9),
-            new MediaTypeTableEntry(80, 15, MediaType.DOS_525_HD)
+            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 8, MediaType = MediaType.DOS_35_DS_DD_8},
+            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 9, MediaType = MediaType.DOS_35_DS_DD_9},
+            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 18, MediaType = MediaType.DOS_35_HD},
+            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 36, MediaType = MediaType.DOS_35_ED},
+            new MediaTypeTableEntry {Tracks = 40, SectorsPerTrack = 8, MediaType = MediaType.DOS_525_DS_DD_8},
+            new MediaTypeTableEntry {Tracks = 40, SectorsPerTrack = 9, MediaType = MediaType.DOS_525_DS_DD_9},
+            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 15, MediaType = MediaType.DOS_525_HD}
         };
 
         /// <summary>
@@ -593,19 +594,11 @@ namespace DiscImageChef.DiscImages
             public byte escape;
         }
 
-        // TODO: Structs don't need constructors
         struct MediaTypeTableEntry
         {
             public byte Tracks;
             public byte SectorsPerTrack;
             public MediaType MediaType;
-
-            public MediaTypeTableEntry(byte tracks, byte sectorsPerTrack, MediaType mediaType)
-            {
-                Tracks = tracks;
-                SectorsPerTrack = sectorsPerTrack;
-                MediaType = mediaType;
-            }
         }
     }
 }
