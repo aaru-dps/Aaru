@@ -32,7 +32,7 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.ATA
 {
-     static class Atapi
+    static class Atapi
     {
         internal static void Menu(string devPath, Device dev)
         {

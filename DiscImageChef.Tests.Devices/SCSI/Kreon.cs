@@ -141,8 +141,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -220,8 +219,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sending GET FEATURE LIST to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("Features: {0}.", features);
             DicConsole.WriteLine("GET FEATURE LIST decoded sense:");
@@ -369,8 +367,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sending UNLOCK to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("UNLOCK decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));

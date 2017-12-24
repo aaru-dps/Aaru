@@ -175,8 +175,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -573,8 +572,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sending PREVENT ALLOW MEDIUM REMOVAL to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("PREVENT ALLOW MEDIUM REMOVAL decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
@@ -826,8 +824,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1133,8 +1130,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1264,8 +1260,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1398,7 +1393,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
                         DicConsole.WriteLine("Format");
                         DicConsole.WriteLine("Available values:");
-                        switch(mediaType) {
+                        switch(mediaType)
+                        {
                             case MmcDiscStructureMediaType.Dvd:
                                 DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.PhysicalInformation,
                                                      MmcDiscStructureFormat.CopyrightInformation,
@@ -1417,7 +1413,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                                      MmcDiscStructureFormat.SpecifiedRmd,
                                                      MmcDiscStructureFormat.PreRecordedInfo,
                                                      MmcDiscStructureFormat.DvdrMediaIdentifier);
-                                DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdrPhysicalInformation,
+                                DicConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                     MmcDiscStructureFormat.DvdrPhysicalInformation,
                                                      MmcDiscStructureFormat.Adip,
                                                      MmcDiscStructureFormat.HddvdCopyrightInformation,
                                                      MmcDiscStructureFormat.DvdAacs);
@@ -1427,12 +1424,14 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                                      MmcDiscStructureFormat.MiddleZoneStart);
                                 DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.JumpIntervalSize,
                                                      MmcDiscStructureFormat.ManualLayerJumpStartLba,
-                                                     MmcDiscStructureFormat.RemapAnchorPoint, MmcDiscStructureFormat.Dcb);
+                                                     MmcDiscStructureFormat.RemapAnchorPoint,
+                                                     MmcDiscStructureFormat.Dcb);
                                 break;
                             case MmcDiscStructureMediaType.Bd:
                                 DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DiscInformation,
                                                      MmcDiscStructureFormat.BdBurstCuttingArea,
-                                                     MmcDiscStructureFormat.BdDds, MmcDiscStructureFormat.CartridgeStatus);
+                                                     MmcDiscStructureFormat.BdDds,
+                                                     MmcDiscStructureFormat.CartridgeStatus);
                                 DicConsole.WriteLine("\t{0} {1} {2}", MmcDiscStructureFormat.BdSpareAreaInformation,
                                                      MmcDiscStructureFormat.RawDfl, MmcDiscStructureFormat.Pac);
                                 break;
@@ -1502,8 +1501,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1663,8 +1661,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1886,8 +1883,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sending START STOP UNIT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("START STOP UNIT decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
