@@ -108,7 +108,8 @@ namespace DiscImageChef.Partitions
                 }
             }
 
-            switch(bootBlock.flags & TYPE_MASK) {
+            switch(bootBlock.flags & TYPE_MASK)
+            {
                 case TYPE_LINUX:
                 {
                     IntPtr tablePtr = Marshal.AllocHGlobal(512);

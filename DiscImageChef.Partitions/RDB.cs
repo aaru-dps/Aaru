@@ -44,234 +44,234 @@ namespace DiscImageChef.Partitions
     public class AmigaRigidDiskBlock : PartitionPlugin
     {
         /// <summary>
-        /// RDB magic number "RDSK"
+        ///     RDB magic number "RDSK"
         /// </summary>
         const uint RIGID_DISK_BLOCK_MAGIC = 0x5244534B;
         /// <summary>
-        /// Bad block list magic number "BADB"
+        ///     Bad block list magic number "BADB"
         /// </summary>
         const uint BAD_BLOCK_LIST_MAGIC = 0x42414442;
         /// <summary>
-        /// Partition entry magic number "PART"
+        ///     Partition entry magic number "PART"
         /// </summary>
         const uint PARTITION_BLOCK_MAGIC = 0x50415254;
         /// <summary>
-        /// Filesystem header magic number "FSHD"
+        ///     Filesystem header magic number "FSHD"
         /// </summary>
         const uint FILESYSTEM_HEADER_MAGIC = 0x46534844;
         /// <summary>
-        /// LoadSeg block magic number "LSEG"
+        ///     LoadSeg block magic number "LSEG"
         /// </summary>
         const uint LOAD_SEG_MAGIC = 0x4C534547;
 
         /// <summary>
-        /// Type ID for Amiga Original File System, "DOS\0"
+        ///     Type ID for Amiga Original File System, "DOS\0"
         /// </summary>
         const uint TYPEID_OFS = 0x444F5300;
         /// <summary>
-        /// Type ID for Amiga Fast File System, "DOS\1"
+        ///     Type ID for Amiga Fast File System, "DOS\1"
         /// </summary>
         const uint TYPEID_FFS = 0x444F5301;
         /// <summary>
-        /// Type ID for Amiga Original File System with international characters, "DOS\2"
+        ///     Type ID for Amiga Original File System with international characters, "DOS\2"
         /// </summary>
         const uint TYPEID_OFS_INTL = 0x444F5302;
         /// <summary>
-        /// Type ID for Amiga Fast File System with international characters, "DOS\3"
+        ///     Type ID for Amiga Fast File System with international characters, "DOS\3"
         /// </summary>
         const uint TYPEID_FFS_INTL = 0x444F5303;
         /// <summary>
-        /// Type ID for Amiga Original File System with directory cache, "DOS\4"
+        ///     Type ID for Amiga Original File System with directory cache, "DOS\4"
         /// </summary>
         const uint TYPEID_OFS_CACHE = 0x444F5304;
         /// <summary>
-        /// Type ID for Amiga Fast File System with directory cache, "DOS\5"
+        ///     Type ID for Amiga Fast File System with directory cache, "DOS\5"
         /// </summary>
         const uint TYPEID_FFS_CACHE = 0x444F5305;
         /// <summary>
-        /// Type ID for Amiga Original File System with long filenames, "DOS\6"
+        ///     Type ID for Amiga Original File System with long filenames, "DOS\6"
         /// </summary>
         const uint TYPEID_OFS2 = 0x444F5306;
         /// <summary>
-        /// Type ID for Amiga Fast File System with long filenames, "DOS\7"
+        ///     Type ID for Amiga Fast File System with long filenames, "DOS\7"
         /// </summary>
         const uint TYPEID_FFS2 = 0x444F5307;
         /// <summary>
-        /// Type ID for Amiga UNIX boot filesystem
+        ///     Type ID for Amiga UNIX boot filesystem
         /// </summary>
         const uint TYPEID_AMIX_BOOT = 0x554E4900;
         /// <summary>
-        /// Type ID for Amiga UNIX System V filesystem
+        ///     Type ID for Amiga UNIX System V filesystem
         /// </summary>
         const uint TYPEID_AMIX_SYSV = 0x554E4901;
         /// <summary>
-        /// Type ID for Amiga UNIX BSD filesystem
+        ///     Type ID for Amiga UNIX BSD filesystem
         /// </summary>
         const uint TYPEID_AMIX_FFS = 0x554E4902;
         /// <summary>
-        /// Type ID for Amiga UNIX Reserved partition (swap)
+        ///     Type ID for Amiga UNIX Reserved partition (swap)
         /// </summary>
         const uint TYPEID_AMIX_RESERVED = 0x72657376;
         /// <summary>
-        /// Type ID for ProfessionalFileSystem, "PFS\1"
+        ///     Type ID for ProfessionalFileSystem, "PFS\1"
         /// </summary>
         const uint TYPEID_PFS = 0x50465301;
         /// <summary>
-        /// Type ID for ProfessionalFileSystem, "PFS\2"
+        ///     Type ID for ProfessionalFileSystem, "PFS\2"
         /// </summary>
         const uint TYPEID_PFS2 = 0x50465302;
         /// <summary>
-        /// Type ID for ProfessionalFileSystem, "muAF"
+        ///     Type ID for ProfessionalFileSystem, "muAF"
         /// </summary>
         const uint TYPEID_PFS_MUSER = 0x6D754146;
         /// <summary>
-        /// Type ID for ProfessionalFileSystem, "AFS\1"
+        ///     Type ID for ProfessionalFileSystem, "AFS\1"
         /// </summary>
         const uint TYPEID_AFS = 0x41465301;
         /// <summary>
-        /// Type ID for SmartFileSystem v1, "SFS\0"
+        ///     Type ID for SmartFileSystem v1, "SFS\0"
         /// </summary>
         const uint TYPEID_SFS = 0x53465300;
         /// <summary>
-        /// Type ID for SmartFileSystem v2, "SFS\2"
+        ///     Type ID for SmartFileSystem v2, "SFS\2"
         /// </summary>
         const uint TYPEID_SFS2 = 0x53465302;
         /// <summary>
-        /// Type ID for JXFS, "JXF\4"
+        ///     Type ID for JXFS, "JXF\4"
         /// </summary>
         const uint TYPEID_JXFS = 0x4A584604;
         /// <summary>
-        /// Type ID for FAT, as set by CrossDOS, "MSD\0"
+        ///     Type ID for FAT, as set by CrossDOS, "MSD\0"
         /// </summary>
         const uint TYPEID_CROSS_DOS = 0x4D534400;
         /// <summary>
-        /// Type ID for HFS, as set by CrossMac, "MAC\0"
+        ///     Type ID for HFS, as set by CrossMac, "MAC\0"
         /// </summary>
         const uint TYPEID_CROSS_MAC = 0x4D414300;
         /// <summary>
-        /// Type ID for 4.2UFS, for BFFS, "BFFS"
+        ///     Type ID for 4.2UFS, for BFFS, "BFFS"
         /// </summary>
         const uint TYPEID_BFFS = 0x42464653;
         /// <summary>
-        /// Type ID for Amiga Original File System with multi-user patches, "muF\0"
+        ///     Type ID for Amiga Original File System with multi-user patches, "muF\0"
         /// </summary>
         const uint TYPEID_OFS_MUSER = 0x6D754600;
         /// <summary>
-        /// Type ID for Amiga Fast File System with multi-user patches, "muF\1"
+        ///     Type ID for Amiga Fast File System with multi-user patches, "muF\1"
         /// </summary>
         const uint TYPEID_FFS_MUSER = 0x6D754601;
         /// <summary>
-        /// Type ID for Amiga Original File System with international characters and multi-user patches, "muF\2"
+        ///     Type ID for Amiga Original File System with international characters and multi-user patches, "muF\2"
         /// </summary>
         const uint TYPEID_OFS_INTL_MUSER = 0x6D754602;
         /// <summary>
-        /// Type ID for Amiga Fast File System with international characters and multi-user patches, "muF\3"
+        ///     Type ID for Amiga Fast File System with international characters and multi-user patches, "muF\3"
         /// </summary>
         const uint TYPEID_FFS_INTL_MUSER = 0x6D754603;
         /// <summary>
-        /// Type ID for Amiga Original File System with directory cache and multi-user patches, "muF\4"
+        ///     Type ID for Amiga Original File System with directory cache and multi-user patches, "muF\4"
         /// </summary>
         const uint TYPEID_OFS_CACHE_MUSER = 0x6D754604;
         /// <summary>
-        /// Type ID for Amiga Fast File System with directory cache and multi-user patches, "muF\5"
+        ///     Type ID for Amiga Fast File System with directory cache and multi-user patches, "muF\5"
         /// </summary>
         const uint TYPEID_FFS_CACHE_MUSER = 0x6D754605;
         /// <summary>
-        /// Type ID for BSD unused, "BSD\0"
+        ///     Type ID for BSD unused, "BSD\0"
         /// </summary>
         const uint TYPEID_OLD_BSD_UNUSED = 0x42534400;
         /// <summary>
-        /// Type ID for BSD swap, "BSD\1"
+        ///     Type ID for BSD swap, "BSD\1"
         /// </summary>
         const uint TYPEID_OLD_BSD_SWAP = 0x42534401;
         /// <summary>
-        /// Type ID for BSD 4.2 FFS, "BSD\7"
+        ///     Type ID for BSD 4.2 FFS, "BSD\7"
         /// </summary>
         const uint TYPEID_OLD_BSD42_FFS = 0x42534407;
         /// <summary>
-        /// Type ID for BSD 4.4 LFS, "BSD\9"
+        ///     Type ID for BSD 4.4 LFS, "BSD\9"
         /// </summary>
         const uint TYPEID_OLD_BSD44_LFS = 0x42534409;
         /// <summary>
-        /// Type ID for NetBSD unused root partition, "NBR\0"
+        ///     Type ID for NetBSD unused root partition, "NBR\0"
         /// </summary>
         const uint TYPEID_NETBSD_ROOT_UNUSED = 0x4E425200;
         /// <summary>
-        /// Type ID for NetBSD 4.2 FFS root partition, "NBR\7"
+        ///     Type ID for NetBSD 4.2 FFS root partition, "NBR\7"
         /// </summary>
         const uint TYPEID_NETBSD_ROOT_42FFS = 0x4E425207;
         /// <summary>
-        /// Type ID for NetBSD 4.4 LFS root partition, "NBR\9"
+        ///     Type ID for NetBSD 4.4 LFS root partition, "NBR\9"
         /// </summary>
         const uint TYPEID_NETBSD_ROOT_44LFS = 0x4E425209;
         /// <summary>
-        /// Type ID for NetBSD unused user partition, "NBR\0"
+        ///     Type ID for NetBSD unused user partition, "NBR\0"
         /// </summary>
         const uint TYPEID_NETBSD_USER_UNUSED = 0x4E425500;
         /// <summary>
-        /// Type ID for NetBSD 4.2 FFS user partition, "NBR\7"
+        ///     Type ID for NetBSD 4.2 FFS user partition, "NBR\7"
         /// </summary>
         const uint TYPEID_NETBSD_USER_42FFS = 0x4E425507;
         /// <summary>
-        /// Type ID for NetBSD 4.4 LFS user partition, "NBR\9"
+        ///     Type ID for NetBSD 4.4 LFS user partition, "NBR\9"
         /// </summary>
         const uint TYPEID_NETBSD_USER_44LFS = 0x4E425509;
         /// <summary>
-        /// Type ID for NetBSD swap partition
+        ///     Type ID for NetBSD swap partition
         /// </summary>
         const uint TYPEID_NETBSD_SWAP = 0x4E425300;
         /// <summary>
-        /// Type ID for Linux filesystem partition, "LNX\0"
+        ///     Type ID for Linux filesystem partition, "LNX\0"
         /// </summary>
         const uint TYPEID_LINUX = 0x4C4E5800;
         /// <summary>
-        /// Type ID for Linux swap partition, "SWP\0"
+        ///     Type ID for Linux swap partition, "SWP\0"
         /// </summary>
         const uint TYPEID_LINUX_SWAP = 0x53575000;
         /// <summary>
-        /// Type ID for RaidFrame partition, "RAID"
+        ///     Type ID for RaidFrame partition, "RAID"
         /// </summary>
         const uint TYPEID_RAID_FRAME = 0x52414944;
         /// <summary>
-        /// Type ID for RaidFrame partition, "RAI\0"
+        ///     Type ID for RaidFrame partition, "RAI\0"
         /// </summary>
         const uint TYPEID_RAID_FRAME0 = 0x52414900;
 
         /// <summary>
-        /// No disks to be configured after this one
+        ///     No disks to be configured after this one
         /// </summary>
         const uint FLAGS_NO_DISKS = 0x00000001;
         /// <summary>
-        /// No LUNs to be configured after this one
+        ///     No LUNs to be configured after this one
         /// </summary>
         const uint FLAGS_NO_LUNS = 0x00000002;
         /// <summary>
-        /// No target IDs to be configured after this one
+        ///     No target IDs to be configured after this one
         /// </summary>
         const uint FLAGS_NO_TARGETS = 0x00000004;
         /// <summary>
-        /// Don't try to perform reselection with this drive
+        ///     Don't try to perform reselection with this drive
         /// </summary>
         const uint FLAGS_NO_RESELECTION = 0x00000008;
         /// <summary>
-        /// Disk identification is valid
+        ///     Disk identification is valid
         /// </summary>
         const uint FLAGS_VALID_DISK_ID = 0x00000010;
         /// <summary>
-        /// Controller identification is valid
+        ///     Controller identification is valid
         /// </summary>
         const uint FLAGS_VALID_CONTROLLER_ID = 0x00000020;
         /// <summary>
-        ///  Drive supports synchronous SCSI mode
+        ///     Drive supports synchronous SCSI mode
         /// </summary>
         const uint FLAGS_SYNCH_SCSI = 0x00000040;
 
         /// <summary>
-        /// Partition is bootable
+        ///     Partition is bootable
         /// </summary>
         const uint FLAGS_BOOTABLE = 0x00000001;
         /// <summary>
-        /// Partition should not be mounted automatically
+        ///     Partition should not be mounted automatically
         /// </summary>
         const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
@@ -281,620 +281,7 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
         }
 
-        /// <summary>
-        /// Amiga Rigid Disk Block, header for partitioning scheme
-        /// Can be in any sector from 0 to 15, inclusive
-        /// </summary>
-        struct RigidDiskBlock
-        {
-            /// <summary>
-            /// "RDSK"
-            /// </summary>
-            public uint Magic;
-            /// <summary>
-            /// Size in longs
-            /// </summary>
-            public uint Size;
-            /// <summary>
-            /// Checksum
-            /// </summary>
-            public int Checksum;
-            /// <summary>
-            /// SCSI target ID, 7 for non-SCSI
-            /// </summary>
-            public uint TargetId;
-            /// <summary>
-            /// Block size in bytes
-            /// </summary>
-            public uint BlockSize;
-            /// <summary>
-            /// Flags
-            /// </summary>
-            public uint Flags;
-            /// <summary>
-            /// Pointer to first BadBlockList, 0xFFFFFFFF means last block in device
-            /// </summary>
-            public uint BadblockPtr;
-            /// <summary>
-            /// Pointer to first PartitionEntry, 0xFFFFFFFF means last block in device
-            /// </summary>
-            public uint PartitionPtr;
-            /// <summary>
-            /// Pointer to first FileSystemHeader, 0xFFFFFFFF means last block in device
-            /// </summary>
-            public uint FsheaderPtr;
-            /// <summary>
-            /// Optional drive specific init code
-            /// </summary>
-            public uint Driveinitcode;
-            /// <summary>
-            /// Reserved, should be 0xFFFFFFFF
-            /// </summary>
-            public uint Reserved1;
-            /// <summary>
-            /// Reserved, should be 0xFFFFFFFF
-            /// </summary>
-            public uint Reserved2;
-            /// <summary>
-            /// Reserved, should be 0xFFFFFFFF
-            /// </summary>
-            public uint Reserved3;
-            /// <summary>
-            /// Reserved, should be 0xFFFFFFFF
-            /// </summary>
-            public uint Reserved4;
-            /// <summary>
-            /// Reserved, should be 0xFFFFFFFF
-            /// </summary>
-            public uint Reserved5;
-            /// <summary>
-            /// Reserved, should be 0xFFFFFFFF
-            /// </summary>
-            public uint Reserved6;
-            /// <summary>
-            /// Cylinders in drive
-            /// </summary>
-            public uint Cylinders;
-            /// <summary>
-            /// Sectors per track
-            /// </summary>
-            public uint Spt;
-            /// <summary>
-            /// Heads in drive
-            /// </summary>
-            public uint Heads;
-            /// <summary>
-            /// Drive interleave
-            /// </summary>
-            public uint Interleave;
-            /// <summary>
-            /// Cylinder for parking heads
-            /// </summary>
-            public uint Parking;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved7;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved8;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved9;
-            /// <summary>
-            /// Starting cylinder for write precompensation
-            /// </summary>
-            public uint Writeprecomp;
-            /// <summary>
-            /// Starting cylinder for reduced write current
-            /// </summary>
-            public uint Reducedwrite;
-            /// <summary>
-            /// Drive step rate
-            /// </summary>
-            public uint Steprate;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved10;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved11;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved12;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved13;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved14;
-            /// <summary>
-            /// Low block of RDB reserved blocks
-            /// </summary>
-            public uint RdbBlockLow;
-            /// <summary>
-            /// High block of RDB reserved blocks
-            /// </summary>
-            public uint RdbBlockHigh;
-            /// <summary>
-            /// Low cylinder for partitionable area
-            /// </summary>
-            public uint LowCylinder;
-            /// <summary>
-            /// High cylinder for partitionable area
-            /// </summary>
-            public uint HighCylinder;
-            /// <summary>
-            /// Blocks per cylinder
-            /// </summary>
-            public uint CylBlocks;
-            /// <summary>
-            /// Seconds for head autoparking
-            /// </summary>
-            public uint AutoParkSeconds;
-            /// <summary>
-            /// Highest block used by RDB
-            /// </summary>
-            public uint HighRdskBlock;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved15;
-            /// <summary>
-            /// Disk vendor, 8 bytes
-            /// </summary>
-            public string DiskVendor;
-            /// <summary>
-            /// Disk product, 16 bytes
-            /// </summary>
-            public string DiskProduct;
-            /// <summary>
-            /// Disk revision, 4 bytes
-            /// </summary>
-            public string DiskRevision;
-            /// <summary>
-            /// Controller vendor, 8 bytes
-            /// </summary>
-            public string ControllerVendor;
-            /// <summary>
-            /// Controller product, 16 bytes
-            /// </summary>
-            public string ControllerProduct;
-            /// <summary>
-            /// Controller revision, 4 bytes
-            /// </summary>
-            public string ControllerRevision;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved16;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved17;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved18;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved19;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved20;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved21;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved22;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved23;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved24;
-            /// <summary>
-            /// Reserved, should be zero
-            /// </summary>
-            public uint Reserved25;
-        }
-
-        /// <summary>
-        /// Pair for spare blocks
-        /// </summary>
-        struct BadBlockEntry
-        {
-            /// <summary>
-            /// Bad block pointer
-            /// </summary>
-            public uint BadBlock;
-            /// <summary>
-            /// Replacement block pointer
-            /// </summary>
-            public uint GoodBlock;
-        }
-
-        /// <summary>
-        /// List of bad blocks and spares
-        /// </summary>
-        struct BadBlockList
-        {
-            /// <summary>
-            /// "BADB"
-            /// </summary>
-            public uint Magic;
-            /// <summary>
-            /// Size in longs
-            /// </summary>
-            public uint Size;
-            /// <summary>
-            /// Checksum
-            /// </summary>
-            public int Checksum;
-            /// <summary>
-            /// SCSI target ID, 7 for non-SCSI
-            /// </summary>
-            public uint TargetId;
-            /// <summary>
-            /// Pointer for next BadBlockList
-            /// </summary>
-            public uint NextPtr;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved;
-            /// <summary>
-            /// Bad block entries, up to block filling, 8 bytes each
-            /// </summary>
-            public BadBlockEntry[] BlockPairs;
-        }
-
-        /// <summary>
-        /// DOSEnvVec, used by AmigaDOS
-        /// </summary>
-        struct DosEnvironmentVector
-        {
-            /// <summary>
-            /// Size in longs, should be 16, minimum 11
-            /// </summary>
-            public uint Size;
-            /// <summary>
-            /// Block size in longs
-            /// </summary>
-            public uint BlockSize;
-            /// <summary>
-            /// Unknown, 0
-            /// </summary>
-            public uint SecOrg;
-            /// <summary>
-            /// Heads in drive
-            /// </summary>
-            public uint Surfaces;
-            /// <summary>
-            /// Sectors per block
-            /// </summary>
-            public uint Spb;
-            /// <summary>
-            /// Blocks per track
-            /// </summary>
-            public uint Bpt;
-            /// <summary>
-            /// DOS reserved blocks at start of partition
-            /// </summary>
-            public uint Reservedblocks;
-            /// <summary>
-            /// DOS reserved blocks at end of partition
-            /// </summary>
-            public uint Prealloc;
-            /// <summary>
-            /// Interleave
-            /// </summary>
-            public uint Interleave;
-            /// <summary>
-            /// First cylinder of a partition, inclusive
-            /// </summary>
-            public uint LowCylinder;
-            /// <summary>
-            /// Last cylinder of a partition, inclusive
-            /// </summary>
-            public uint HighCylinder;
-            /// <summary>
-            /// Buffers, usually 30
-            /// </summary>
-            public uint NumBuffer;
-            /// <summary>
-            /// Type of memory to allocate for buffers
-            /// </summary>
-            public uint BufMemType;
-            /// <summary>
-            /// Maximum transfer, usually 0x7FFFFFFF
-            /// </summary>
-            public uint MaxTransfer;
-            /// <summary>
-            /// Address mask to block out certain memory, usually 0xFFFFFFFE
-            /// </summary>
-            public uint Mask;
-            /// <summary>
-            /// Boot priority
-            /// </summary>
-            public uint BootPriority;
-            /// <summary>
-            /// Partition type, and filesystem driver identification for AmigaDOS
-            /// </summary>
-            public uint DosType;
-            /// <summary>
-            /// Default baud rate for SER and AUX handlers
-            /// </summary>
-            public uint Baud;
-            /// <summary>
-            /// Flow control values for SER and AUX handlers
-            /// </summary>
-            public uint Control;
-            /// <summary>
-            /// Since Kickstart 2, how many boot blocks are to be loaded
-            /// </summary>
-            public uint BootBlocks;
-        }
-
-        struct PartitionEntry
-        {
-            /// <summary>
-            /// "PART"
-            /// </summary>
-            public uint Magic;
-            /// <summary>
-            /// Size in longs
-            /// </summary>
-            public uint Size;
-            /// <summary>
-            /// Checksum
-            /// </summary>
-            public int Checksum;
-            /// <summary>
-            /// SCSI target ID, 7 for non-SCSI
-            /// </summary>
-            public uint TargetId;
-            /// <summary>
-            /// Pointer to next PartitionEntry
-            /// </summary>
-            public uint NextPtr;
-            /// <summary>
-            /// Partition flags
-            /// </summary>
-            public uint Flags;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved1;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved2;
-            /// <summary>
-            /// Preferred flags for OpenDevice()
-            /// </summary>
-            public uint DevFlags;
-            /// <summary>
-            /// Length of drive name
-            /// </summary>
-            public uint DriveNameLen;
-            /// <summary>
-            /// Drive name, 31 bytes
-            /// </summary>
-            public string DriveName;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved3;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved4;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved5;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved6;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved7;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved8;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved9;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved10;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved11;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved12;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved13;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved14;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved15;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved16;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved17;
-            /// <summary>
-            /// DOSEnvVec, more information about partition
-            /// </summary>
-            public DosEnvironmentVector DosEnvVec;
-        }
-
-        /// <summary>
-        /// Device node, mostly useless, except for pointer to first LoadSegment block
-        /// </summary>
-        struct DeviceNode
-        {
-            /// <summary>
-            /// Device node type, =0
-            /// </summary>
-            public uint Type;
-            /// <summary>
-            /// DOS task field, =0
-            /// </summary>
-            public uint Task;
-            /// <summary>
-            /// Unused, =0
-            /// </summary>
-            public uint Locked;
-            /// <summary>
-            /// Filename handler to LoadSegment, =0
-            /// </summary>
-            public uint Handler;
-            /// <summary>
-            /// Stack size when starting task, =0
-            /// </summary>
-            public uint StackSize;
-            /// <summary>
-            /// Task priority, =0
-            /// </summary>
-            public uint Priority;
-            /// <summary>
-            /// Startup message, =0
-            /// </summary>
-            public uint Startup;
-            /// <summary>
-            /// Pointer to first LoadSegment block
-            /// </summary>
-            public uint SeglistPtr;
-            /// <summary>
-            /// BCPL globabl vector when starting task, =0xFFFFFFFF
-            /// </summary>
-            public uint GlobalVec;
-        }
-
-        /// <summary>
-        /// File system header
-        /// </summary>
-        struct FileSystemHeader
-        {
-            /// <summary>
-            /// "FSHD"
-            /// </summary>
-            public uint Magic;
-            /// <summary>
-            /// Size in longs, 64
-            /// </summary>
-            public uint Size;
-            /// <summary>
-            /// Checksum
-            /// </summary>
-            public int Checksum;
-            /// <summary>
-            /// SCSI target ID, 7 for non-SCSI
-            /// </summary>
-            public uint TargetId;
-            /// <summary>
-            /// Pointer to next FileSystemHeader block
-            /// </summary>
-            public uint NextPtr;
-            /// <summary>
-            /// Flags, unknown
-            /// </summary>
-            public uint Flags;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved1;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint Reserved2;
-            /// <summary>
-            /// Partition type, and filesystem driver identification for AmigaDOS
-            /// </summary>
-            public uint DosType;
-            /// <summary>
-            /// Filesystem version
-            /// Mask 0xFFFF0000, >>16, major version
-            /// Mask 0x0000FFFF, minor version
-            /// </summary>
-            public uint Version;
-            /// <summary>
-            /// Bits for DeviceNode fields that should be substituted into a standard device node
-            /// </summary>
-            public uint PatchFlags;
-            /// <summary>
-            /// Device node
-            /// </summary>
-            public DeviceNode Dnode;
-        }
-
-        /// <summary>
-        /// Filesystem code
-        /// </summary>
-        struct LoadSegment
-        {
-            /// <summary>
-            /// "LSEG"
-            /// </summary>
-            public uint Magic;
-            /// <summary>
-            /// Size in longs
-            /// </summary>
-            public uint Size;
-            /// <summary>
-            /// Checksum
-            /// </summary>
-            public int Checksum;
-            /// <summary>
-            /// SCSI target ID, 7 for non-SCSI
-            /// </summary>
-            public uint TargetId;
-            /// <summary>
-            /// Pointer to next LoadSegment
-            /// </summary>
-            public uint NextPtr;
-            /// <summary>
-            /// Executable code, with relocation hunks, til end of sector
-            /// </summary>
-            public byte[] LoadData;
-        }
-
-        public override bool GetInformation(ImagePlugin imagePlugin,
-                                            out List<Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -1380,14 +767,16 @@ namespace DiscImageChef.Partitions
                 Length =
                     (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                     rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
-                Start = rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
-                        sectorOffset,
+                Start =
+                    rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                    sectorOffset,
                 Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
                 Scheme = Name,
-                Offset = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
-                          sectorOffset) * rdb.BlockSize,
-                Size = ((rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                       rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) * rdb.BlockSize
+                Offset =
+                    (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                     sectorOffset) * rdb.BlockSize,
+                Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
+                       rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt * rdb.BlockSize
             }))
             {
                 partitions.Add(entry);
@@ -1497,9 +886,619 @@ namespace DiscImageChef.Partitions
 
             string textPartString = Encoding.ASCII.GetString(textPart);
 
-            return quoted
-                       ? $"\"{textPartString}\\{amigaDosType & 0xFF}\""
-                       : $"{textPartString}\\{amigaDosType & 0xFF}";
+            return quoted ? $"\"{textPartString}\\{amigaDosType & 0xFF}\"" : $"{textPartString}\\{amigaDosType & 0xFF}";
+        }
+
+        /// <summary>
+        ///     Amiga Rigid Disk Block, header for partitioning scheme
+        ///     Can be in any sector from 0 to 15, inclusive
+        /// </summary>
+        struct RigidDiskBlock
+        {
+            /// <summary>
+            ///     "RDSK"
+            /// </summary>
+            public uint Magic;
+            /// <summary>
+            ///     Size in longs
+            /// </summary>
+            public uint Size;
+            /// <summary>
+            ///     Checksum
+            /// </summary>
+            public int Checksum;
+            /// <summary>
+            ///     SCSI target ID, 7 for non-SCSI
+            /// </summary>
+            public uint TargetId;
+            /// <summary>
+            ///     Block size in bytes
+            /// </summary>
+            public uint BlockSize;
+            /// <summary>
+            ///     Flags
+            /// </summary>
+            public uint Flags;
+            /// <summary>
+            ///     Pointer to first BadBlockList, 0xFFFFFFFF means last block in device
+            /// </summary>
+            public uint BadblockPtr;
+            /// <summary>
+            ///     Pointer to first PartitionEntry, 0xFFFFFFFF means last block in device
+            /// </summary>
+            public uint PartitionPtr;
+            /// <summary>
+            ///     Pointer to first FileSystemHeader, 0xFFFFFFFF means last block in device
+            /// </summary>
+            public uint FsheaderPtr;
+            /// <summary>
+            ///     Optional drive specific init code
+            /// </summary>
+            public uint Driveinitcode;
+            /// <summary>
+            ///     Reserved, should be 0xFFFFFFFF
+            /// </summary>
+            public uint Reserved1;
+            /// <summary>
+            ///     Reserved, should be 0xFFFFFFFF
+            /// </summary>
+            public uint Reserved2;
+            /// <summary>
+            ///     Reserved, should be 0xFFFFFFFF
+            /// </summary>
+            public uint Reserved3;
+            /// <summary>
+            ///     Reserved, should be 0xFFFFFFFF
+            /// </summary>
+            public uint Reserved4;
+            /// <summary>
+            ///     Reserved, should be 0xFFFFFFFF
+            /// </summary>
+            public uint Reserved5;
+            /// <summary>
+            ///     Reserved, should be 0xFFFFFFFF
+            /// </summary>
+            public uint Reserved6;
+            /// <summary>
+            ///     Cylinders in drive
+            /// </summary>
+            public uint Cylinders;
+            /// <summary>
+            ///     Sectors per track
+            /// </summary>
+            public uint Spt;
+            /// <summary>
+            ///     Heads in drive
+            /// </summary>
+            public uint Heads;
+            /// <summary>
+            ///     Drive interleave
+            /// </summary>
+            public uint Interleave;
+            /// <summary>
+            ///     Cylinder for parking heads
+            /// </summary>
+            public uint Parking;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved7;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved8;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved9;
+            /// <summary>
+            ///     Starting cylinder for write precompensation
+            /// </summary>
+            public uint Writeprecomp;
+            /// <summary>
+            ///     Starting cylinder for reduced write current
+            /// </summary>
+            public uint Reducedwrite;
+            /// <summary>
+            ///     Drive step rate
+            /// </summary>
+            public uint Steprate;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved10;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved11;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved12;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved13;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved14;
+            /// <summary>
+            ///     Low block of RDB reserved blocks
+            /// </summary>
+            public uint RdbBlockLow;
+            /// <summary>
+            ///     High block of RDB reserved blocks
+            /// </summary>
+            public uint RdbBlockHigh;
+            /// <summary>
+            ///     Low cylinder for partitionable area
+            /// </summary>
+            public uint LowCylinder;
+            /// <summary>
+            ///     High cylinder for partitionable area
+            /// </summary>
+            public uint HighCylinder;
+            /// <summary>
+            ///     Blocks per cylinder
+            /// </summary>
+            public uint CylBlocks;
+            /// <summary>
+            ///     Seconds for head autoparking
+            /// </summary>
+            public uint AutoParkSeconds;
+            /// <summary>
+            ///     Highest block used by RDB
+            /// </summary>
+            public uint HighRdskBlock;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved15;
+            /// <summary>
+            ///     Disk vendor, 8 bytes
+            /// </summary>
+            public string DiskVendor;
+            /// <summary>
+            ///     Disk product, 16 bytes
+            /// </summary>
+            public string DiskProduct;
+            /// <summary>
+            ///     Disk revision, 4 bytes
+            /// </summary>
+            public string DiskRevision;
+            /// <summary>
+            ///     Controller vendor, 8 bytes
+            /// </summary>
+            public string ControllerVendor;
+            /// <summary>
+            ///     Controller product, 16 bytes
+            /// </summary>
+            public string ControllerProduct;
+            /// <summary>
+            ///     Controller revision, 4 bytes
+            /// </summary>
+            public string ControllerRevision;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved16;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved17;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved18;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved19;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved20;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved21;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved22;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved23;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved24;
+            /// <summary>
+            ///     Reserved, should be zero
+            /// </summary>
+            public uint Reserved25;
+        }
+
+        /// <summary>
+        ///     Pair for spare blocks
+        /// </summary>
+        struct BadBlockEntry
+        {
+            /// <summary>
+            ///     Bad block pointer
+            /// </summary>
+            public uint BadBlock;
+            /// <summary>
+            ///     Replacement block pointer
+            /// </summary>
+            public uint GoodBlock;
+        }
+
+        /// <summary>
+        ///     List of bad blocks and spares
+        /// </summary>
+        struct BadBlockList
+        {
+            /// <summary>
+            ///     "BADB"
+            /// </summary>
+            public uint Magic;
+            /// <summary>
+            ///     Size in longs
+            /// </summary>
+            public uint Size;
+            /// <summary>
+            ///     Checksum
+            /// </summary>
+            public int Checksum;
+            /// <summary>
+            ///     SCSI target ID, 7 for non-SCSI
+            /// </summary>
+            public uint TargetId;
+            /// <summary>
+            ///     Pointer for next BadBlockList
+            /// </summary>
+            public uint NextPtr;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved;
+            /// <summary>
+            ///     Bad block entries, up to block filling, 8 bytes each
+            /// </summary>
+            public BadBlockEntry[] BlockPairs;
+        }
+
+        /// <summary>
+        ///     DOSEnvVec, used by AmigaDOS
+        /// </summary>
+        struct DosEnvironmentVector
+        {
+            /// <summary>
+            ///     Size in longs, should be 16, minimum 11
+            /// </summary>
+            public uint Size;
+            /// <summary>
+            ///     Block size in longs
+            /// </summary>
+            public uint BlockSize;
+            /// <summary>
+            ///     Unknown, 0
+            /// </summary>
+            public uint SecOrg;
+            /// <summary>
+            ///     Heads in drive
+            /// </summary>
+            public uint Surfaces;
+            /// <summary>
+            ///     Sectors per block
+            /// </summary>
+            public uint Spb;
+            /// <summary>
+            ///     Blocks per track
+            /// </summary>
+            public uint Bpt;
+            /// <summary>
+            ///     DOS reserved blocks at start of partition
+            /// </summary>
+            public uint Reservedblocks;
+            /// <summary>
+            ///     DOS reserved blocks at end of partition
+            /// </summary>
+            public uint Prealloc;
+            /// <summary>
+            ///     Interleave
+            /// </summary>
+            public uint Interleave;
+            /// <summary>
+            ///     First cylinder of a partition, inclusive
+            /// </summary>
+            public uint LowCylinder;
+            /// <summary>
+            ///     Last cylinder of a partition, inclusive
+            /// </summary>
+            public uint HighCylinder;
+            /// <summary>
+            ///     Buffers, usually 30
+            /// </summary>
+            public uint NumBuffer;
+            /// <summary>
+            ///     Type of memory to allocate for buffers
+            /// </summary>
+            public uint BufMemType;
+            /// <summary>
+            ///     Maximum transfer, usually 0x7FFFFFFF
+            /// </summary>
+            public uint MaxTransfer;
+            /// <summary>
+            ///     Address mask to block out certain memory, usually 0xFFFFFFFE
+            /// </summary>
+            public uint Mask;
+            /// <summary>
+            ///     Boot priority
+            /// </summary>
+            public uint BootPriority;
+            /// <summary>
+            ///     Partition type, and filesystem driver identification for AmigaDOS
+            /// </summary>
+            public uint DosType;
+            /// <summary>
+            ///     Default baud rate for SER and AUX handlers
+            /// </summary>
+            public uint Baud;
+            /// <summary>
+            ///     Flow control values for SER and AUX handlers
+            /// </summary>
+            public uint Control;
+            /// <summary>
+            ///     Since Kickstart 2, how many boot blocks are to be loaded
+            /// </summary>
+            public uint BootBlocks;
+        }
+
+        struct PartitionEntry
+        {
+            /// <summary>
+            ///     "PART"
+            /// </summary>
+            public uint Magic;
+            /// <summary>
+            ///     Size in longs
+            /// </summary>
+            public uint Size;
+            /// <summary>
+            ///     Checksum
+            /// </summary>
+            public int Checksum;
+            /// <summary>
+            ///     SCSI target ID, 7 for non-SCSI
+            /// </summary>
+            public uint TargetId;
+            /// <summary>
+            ///     Pointer to next PartitionEntry
+            /// </summary>
+            public uint NextPtr;
+            /// <summary>
+            ///     Partition flags
+            /// </summary>
+            public uint Flags;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved1;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved2;
+            /// <summary>
+            ///     Preferred flags for OpenDevice()
+            /// </summary>
+            public uint DevFlags;
+            /// <summary>
+            ///     Length of drive name
+            /// </summary>
+            public uint DriveNameLen;
+            /// <summary>
+            ///     Drive name, 31 bytes
+            /// </summary>
+            public string DriveName;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved3;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved4;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved5;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved6;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved7;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved8;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved9;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved10;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved11;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved12;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved13;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved14;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved15;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved16;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved17;
+            /// <summary>
+            ///     DOSEnvVec, more information about partition
+            /// </summary>
+            public DosEnvironmentVector DosEnvVec;
+        }
+
+        /// <summary>
+        ///     Device node, mostly useless, except for pointer to first LoadSegment block
+        /// </summary>
+        struct DeviceNode
+        {
+            /// <summary>
+            ///     Device node type, =0
+            /// </summary>
+            public uint Type;
+            /// <summary>
+            ///     DOS task field, =0
+            /// </summary>
+            public uint Task;
+            /// <summary>
+            ///     Unused, =0
+            /// </summary>
+            public uint Locked;
+            /// <summary>
+            ///     Filename handler to LoadSegment, =0
+            /// </summary>
+            public uint Handler;
+            /// <summary>
+            ///     Stack size when starting task, =0
+            /// </summary>
+            public uint StackSize;
+            /// <summary>
+            ///     Task priority, =0
+            /// </summary>
+            public uint Priority;
+            /// <summary>
+            ///     Startup message, =0
+            /// </summary>
+            public uint Startup;
+            /// <summary>
+            ///     Pointer to first LoadSegment block
+            /// </summary>
+            public uint SeglistPtr;
+            /// <summary>
+            ///     BCPL globabl vector when starting task, =0xFFFFFFFF
+            /// </summary>
+            public uint GlobalVec;
+        }
+
+        /// <summary>
+        ///     File system header
+        /// </summary>
+        struct FileSystemHeader
+        {
+            /// <summary>
+            ///     "FSHD"
+            /// </summary>
+            public uint Magic;
+            /// <summary>
+            ///     Size in longs, 64
+            /// </summary>
+            public uint Size;
+            /// <summary>
+            ///     Checksum
+            /// </summary>
+            public int Checksum;
+            /// <summary>
+            ///     SCSI target ID, 7 for non-SCSI
+            /// </summary>
+            public uint TargetId;
+            /// <summary>
+            ///     Pointer to next FileSystemHeader block
+            /// </summary>
+            public uint NextPtr;
+            /// <summary>
+            ///     Flags, unknown
+            /// </summary>
+            public uint Flags;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved1;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint Reserved2;
+            /// <summary>
+            ///     Partition type, and filesystem driver identification for AmigaDOS
+            /// </summary>
+            public uint DosType;
+            /// <summary>
+            ///     Filesystem version
+            ///     Mask 0xFFFF0000, >>16, major version
+            ///     Mask 0x0000FFFF, minor version
+            /// </summary>
+            public uint Version;
+            /// <summary>
+            ///     Bits for DeviceNode fields that should be substituted into a standard device node
+            /// </summary>
+            public uint PatchFlags;
+            /// <summary>
+            ///     Device node
+            /// </summary>
+            public DeviceNode Dnode;
+        }
+
+        /// <summary>
+        ///     Filesystem code
+        /// </summary>
+        struct LoadSegment
+        {
+            /// <summary>
+            ///     "LSEG"
+            /// </summary>
+            public uint Magic;
+            /// <summary>
+            ///     Size in longs
+            /// </summary>
+            public uint Size;
+            /// <summary>
+            ///     Checksum
+            /// </summary>
+            public int Checksum;
+            /// <summary>
+            ///     SCSI target ID, 7 for non-SCSI
+            /// </summary>
+            public uint TargetId;
+            /// <summary>
+            ///     Pointer to next LoadSegment
+            /// </summary>
+            public uint NextPtr;
+            /// <summary>
+            ///     Executable code, with relocation hunks, til end of sector
+            /// </summary>
+            public byte[] LoadData;
         }
     }
 }

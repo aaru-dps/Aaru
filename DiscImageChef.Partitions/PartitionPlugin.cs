@@ -39,7 +39,7 @@ using DiscImageChef.DiscImages;
 namespace DiscImageChef.Partitions
 {
     /// <summary>
-    /// Abstract class to implement partitioning schemes interpreting plugins.
+    ///     Abstract class to implement partitioning schemes interpreting plugins.
     /// </summary>
     public abstract class PartitionPlugin
     {
@@ -49,13 +49,13 @@ namespace DiscImageChef.Partitions
         public Guid PluginUuid;
 
         /// <summary>
-        /// Interprets a partitioning scheme.
+        ///     Interprets a partitioning scheme.
         /// </summary>
         /// <returns><c>true</c>, if partitioning scheme is recognized, <c>false</c> otherwise.</returns>
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partitions">Returns list of partitions.</param>
         /// <param name="sectorOffset">At which sector to start searching for the partition scheme.</param>
-        public abstract bool GetInformation(ImagePlugin imagePlugin,
-                                            out List<Partition> partitions, ulong sectorOffset);
+        public abstract bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions,
+                                            ulong sectorOffset);
     }
 }

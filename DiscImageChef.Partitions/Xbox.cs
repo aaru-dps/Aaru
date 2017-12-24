@@ -58,17 +58,6 @@ namespace DiscImageChef.Partitions
         const long Xbox360SysExt2Len = 0x8000000;
         const long Xbox360CompatLen = 0x10000000;
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Xbox360DevKitPartitionTable
-        {
-            public uint magic;
-            public uint unknown;
-            public uint contentOff;
-            public uint contentLen;
-            public uint dashboardOff;
-            public uint dashboardLen;
-        }
-
         const uint XBOX360_DEVKIT_MAGIC = 0x00020000;
 
         public Xbox()
@@ -145,8 +134,7 @@ namespace DiscImageChef.Partitions
                     Partition dataPart = new Partition
                     {
                         Description = "Data volume",
-                        Size =
-                            imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize - MemoryUnitDataOff,
+                        Size = imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize - MemoryUnitDataOff,
                         Length = imagePlugin.ImageInfo.Sectors - sysCachePart.Length,
                         Sequence = 2,
                         Offset = MemoryUnitDataOff,
@@ -257,6 +245,17 @@ namespace DiscImageChef.Partitions
 
                 return true;
             }
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Xbox360DevKitPartitionTable
+        {
+            public uint magic;
+            public uint unknown;
+            public uint contentOff;
+            public uint contentLen;
+            public uint dashboardOff;
+            public uint dashboardLen;
         }
     }
 }

@@ -70,49 +70,13 @@ namespace DiscImageChef.Partitions
         const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456 + // sizeof(dk_vtoc16)
                                                    4 * 4 + 12 * 2 + 2 * 2);
 
-        enum SunTag : ushort
-        {
-            SunEmpty = 0x0000,
-            SunBoot = 0x0001,
-            SunRoot = 0x0002,
-            SunSwap = 0x0003,
-            SunUsr = 0x0004,
-            SunWholeDisk = 0x0005,
-            SunStand = 0x0006,
-            SunVar = 0x0007,
-            SunHome = 0x0008,
-            SunAlt = 0x0009,
-            SunCache = 0x000A,
-            SunReserved = 0x000B,
-            VxVmPublic = 0x000E,
-            VxVmPrivate = 0x000F,
-            LinuxSwap = 0x0082,
-            Linux = 0x0083,
-            LVM = 0x008E,
-            LinuxRaid = 0x00FD,
-            NetBSD = 0x00FF,
-            FreeBSD_Swap = 0x0901,
-            FreeBSD_UFS = 0x0902,
-            FreeBSD_Vinum = 0x0903,
-            FreeBSD_ZFS = 0x0904,
-            FreeBSD_NANDFS = 0x0905
-        }
-
-        [Flags]
-        enum SunFlags : ushort
-        {
-            NoMount = 0x0001,
-            ReadOnly = 0x0010
-        }
-
         public SunDisklabel()
         {
             Name = "Sun Disklabel";
             PluginUuid = new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin,
-                                            out List<Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -267,9 +231,8 @@ namespace DiscImageChef.Partitions
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
-                            Start =
-                                ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                DK_LABEL_SIZE / imagePlugin.GetSectorSize(),
+                            Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
+                                    DK_LABEL_SIZE / imagePlugin.GetSectorSize(),
                             Type = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name
                         };
@@ -336,9 +299,8 @@ namespace DiscImageChef.Partitions
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
-                            Start =
-                                ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz /
-                                imagePlugin.GetSectorSize(),
+                            Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
+                                    dkl16.dkl_vtoc.v_sectorsz / imagePlugin.GetSectorSize(),
                             Type = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name
                         };
@@ -445,6 +407,41 @@ namespace DiscImageChef.Partitions
                 case SunTag.FreeBSD_NANDFS: return "FreeBSD nandfs";
                 default: return "Unknown";
             }
+        }
+
+        enum SunTag : ushort
+        {
+            SunEmpty = 0x0000,
+            SunBoot = 0x0001,
+            SunRoot = 0x0002,
+            SunSwap = 0x0003,
+            SunUsr = 0x0004,
+            SunWholeDisk = 0x0005,
+            SunStand = 0x0006,
+            SunVar = 0x0007,
+            SunHome = 0x0008,
+            SunAlt = 0x0009,
+            SunCache = 0x000A,
+            SunReserved = 0x000B,
+            VxVmPublic = 0x000E,
+            VxVmPrivate = 0x000F,
+            LinuxSwap = 0x0082,
+            Linux = 0x0083,
+            LVM = 0x008E,
+            LinuxRaid = 0x00FD,
+            NetBSD = 0x00FF,
+            FreeBSD_Swap = 0x0901,
+            FreeBSD_UFS = 0x0902,
+            FreeBSD_Vinum = 0x0903,
+            FreeBSD_ZFS = 0x0904,
+            FreeBSD_NANDFS = 0x0905
+        }
+
+        [Flags]
+        enum SunFlags : ushort
+        {
+            NoMount = 0x0001,
+            ReadOnly = 0x0010
         }
 
         /// <summary>SunOS logical partitions</summary>

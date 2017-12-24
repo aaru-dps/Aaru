@@ -79,9 +79,9 @@ namespace DiscImageChef.Partitions
                     Name = entry.p_stor_uuid.ToString(),
                     Sequence = counter,
                     Scheme = Name,
-                    Type = (BSD.fsType) entry.p_fstype == BSD.fsType.Other
+                    Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other
                                ? entry.p_type_uuid.ToString()
-                               : BSD.fsTypeToString((BSD.fsType) entry.p_fstype)
+                               : BSD.fsTypeToString((BSD.fsType)entry.p_fstype)
                 };
 
                 if(entry.p_bsize % imagePlugin.GetSectorSize() > 0) part.Length++;

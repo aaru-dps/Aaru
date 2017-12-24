@@ -51,8 +51,7 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions,
-                                            ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -62,7 +61,9 @@ namespace DiscImageChef.Partitions
             // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
             string[] really = StringHandlers.CToString(sector).Split('\n');
 
-            foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part.Substring(0, 5) == "part ").Select(part => part.Split(' ')).TakeWhile(tokens => tokens.Length == 4)) {
+            foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part.Substring(0, 5) == "part ")
+                                             .Select(part => part.Split(' ')).TakeWhile(tokens => tokens.Length == 4))
+            {
                 if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end)) break;
 
                 Partition part = new Partition

@@ -51,8 +51,7 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin,
-                                            out List<Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -145,8 +144,10 @@ namespace DiscImageChef.Partitions
                     entries.Add(entry);
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch { // ignored
- }
+                catch
+                {
+                    // ignored
+                }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
             }
 
@@ -154,7 +155,9 @@ namespace DiscImageChef.Partitions
 
             ulong pseq = 0;
 
-            foreach(GptEntry entry in entries.Where(entry => entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty)) {
+            foreach(GptEntry entry in
+                entries.Where(entry => entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty))
+            {
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}", entry.startLBA);

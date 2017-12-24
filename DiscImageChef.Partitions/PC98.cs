@@ -92,8 +92,9 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Start = CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
-                                              imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack),
+                    Start =
+                        CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.ImageInfo.Heads,
+                                  imagePlugin.ImageInfo.SectorsPerTrack),
                     Type = DecodePC98Sid(entry.dp_sid),
                     Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                     Sequence = counter,
@@ -101,8 +102,8 @@ namespace DiscImageChef.Partitions
                 };
                 part.Offset = part.Start * imagePlugin.GetSectorSize();
                 part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
-                                                imagePlugin.ImageInfo.Heads,
-                                                imagePlugin.ImageInfo.SectorsPerTrack) - part.Start;
+                                        imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack) -
+                              part.Start;
                 part.Size = part.Length * imagePlugin.GetSectorSize();
 
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
@@ -113,9 +114,8 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
 
-                if(((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44) ||
-                   part.Start >= imagePlugin.ImageInfo.Sectors ||
-                   part.End > imagePlugin.ImageInfo.Sectors) continue;
+                if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
+                   part.Start >= imagePlugin.ImageInfo.Sectors || part.End > imagePlugin.ImageInfo.Sectors) continue;
 
                 partitions.Add(part);
                 counter++;
@@ -154,11 +154,11 @@ namespace DiscImageChef.Partitions
         struct PC98Partition
         {
             /// <summary>
-            /// Some ID, if 0x80 bit is set, it is bootable
+            ///     Some ID, if 0x80 bit is set, it is bootable
             /// </summary>
             public byte dp_mid;
             /// <summary>
-            /// Some ID, if 0x80 bit is set, it is active
+            ///     Some ID, if 0x80 bit is set, it is active
             /// </summary>
             public byte dp_sid;
             public byte dp_dum1;

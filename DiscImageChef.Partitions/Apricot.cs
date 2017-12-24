@@ -41,7 +41,7 @@ namespace DiscImageChef.Partitions
 {
     public class Apricot : PartitionPlugin
     {
-        readonly string[] operatingSystemCodes = {"Invalid", "MS-DOS", "UCSD Pascal", "CP/M", "Concurrent CP/M"};
+        readonly int[] baudRates = {50, 75, 110, 134, 150, 300, 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 19200};
         readonly string[] bootTypeCodes =
         {
             "Non-bootable", "Apricot & XI RAM BIOS", "Generic ROM BIOS", "Apricot & XI ROM BIOS",
@@ -49,12 +49,12 @@ namespace DiscImageChef.Partitions
         };
         readonly string[] diskTypeCodes =
             {"MF1DD 70-track", "MF1DD", "MF2DD", "Winchester 5M", "Winchester 10M", "Winchester 20M"};
-        readonly string[] printDevices = {"Parallel", "Serial"};
         readonly int[] lineModes = {256, 200};
         readonly int[] lineWidths = {80, 40};
-        readonly int[] baudRates = {50, 75, 110, 134, 150, 300, 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 19200};
-        readonly double[] stopBits = {1, 1.5, 2};
+        readonly string[] operatingSystemCodes = {"Invalid", "MS-DOS", "UCSD Pascal", "CP/M", "Concurrent CP/M"};
         readonly string[] parityTypes = {"None", "Odd", "Even", "Mark", "Space"};
+        readonly string[] printDevices = {"Parallel", "Serial"};
+        readonly double[] stopBits = {1, 1.5, 2};
 
         public Apricot()
         {
@@ -73,7 +73,7 @@ namespace DiscImageChef.Partitions
 
             if(sector.Length < 512) return false;
 
-                                  IntPtr lblPtr = Marshal.AllocHGlobal(512);
+            IntPtr lblPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, lblPtr, 512);
             ApricotLabel label = (ApricotLabel)Marshal.PtrToStructure(lblPtr, typeof(ApricotLabel));
             Marshal.FreeHGlobal(lblPtr);

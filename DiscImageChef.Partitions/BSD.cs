@@ -44,12 +44,12 @@ namespace DiscImageChef.Partitions
     {
         const uint DISKMAGIC = 0x82564557;
         const uint DISKCIGAM = 0x57455682;
+        /// <summary>Maximum size of a disklabel with 22 partitions</summary>
+        const uint MAX_LABEL_SIZE = 500;
         /// <summary>Known sector locations for BSD disklabel</summary>
         readonly ulong[] labelLocations = {0, 1, 2, 9};
         /// <summary>Known byte offsets for BSD disklabel</summary>
         readonly uint[] labelOffsets = {0, 9, 64, 128, 516};
-        /// <summary>Maximum size of a disklabel with 22 partitions</summary>
-        const uint MAX_LABEL_SIZE = 500;
 
         public BSD()
         {
@@ -165,6 +165,62 @@ namespace DiscImageChef.Partitions
             }
 
             return partitions.Count > 0;
+        }
+
+        internal static string fsTypeToString(fsType typ)
+        {
+            switch(typ)
+            {
+                case fsType.Unused: return "Unused entry";
+                case fsType.Swap: return "Swap partition";
+                case fsType.V6: return "UNIX 6th Edition";
+                case fsType.V7: return "UNIX 7th Edition";
+                case fsType.SystemV: return "UNIX System V";
+                case fsType.V7_1K: return "UNIX 7th Edition with 1K blocks";
+                case fsType.V8: return "UNIX 8th Edition with 4K blocks";
+                case fsType.BSDFFS: return "4.2BSD Fast File System";
+                case fsType.BSDLFS: return "4.4LFS";
+                case fsType.HPFS: return "HPFS";
+                case fsType.ISO9660: return "ISO9660";
+                case fsType.Boot:
+                case fsType.SysVBoot: return "Boot";
+                case fsType.AFFS: return "Amiga FFS";
+                case fsType.HFS: return "Apple HFS";
+                case fsType.ADVfs: return "Digital Advanced File System";
+                case fsType.LSMpublic: return "Digital LSM Public Region";
+                case fsType.LSMprivate: return "Digital LSM Private Region";
+                case fsType.LSMsimple: return "Digital LSM Simple Disk";
+                case fsType.CCD: return "Concatenated disk";
+                case fsType.JFS2: return "IBM JFS2";
+                case fsType.HAMMER: return "Hammer";
+                case fsType.HAMMER2: return "Hammer2";
+                case fsType.UDF: return "UDF";
+                case fsType.EFS: return "EFS";
+                case fsType.ZFS: return "ZFS";
+                case fsType.NANDFS: return "FreeBSD nandfs";
+                case fsType.MSDOS: return "FAT";
+                case fsType.Other: return "Other or unknown";
+                default: return "Unknown";
+            }
+        }
+
+        static DiskLabel GetDiskLabel(byte[] disklabel)
+        {
+            GCHandle handle = GCHandle.Alloc(disklabel, GCHandleType.Pinned);
+            DiskLabel dl = (DiskLabel)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskLabel));
+            handle.Free();
+            return dl;
+        }
+
+        static DiskLabel SwapDiskLabel(DiskLabel disklabel)
+        {
+            DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
+            for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
+            for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
+            for(int i = 0; i < dl.d_partitions.Length; i++)
+                dl.d_partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
+
+            return dl;
         }
 
         /// <summary>Drive type</summary>
@@ -296,7 +352,7 @@ namespace DiscImageChef.Partitions
         }
 
         /// <summary>
-        /// Drive flags
+        ///     Drive flags
         /// </summary>
         [Flags]
         enum dFlags : uint
@@ -318,9 +374,13 @@ namespace DiscImageChef.Partitions
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DiskLabel
         {
-            /// <summary><see cref="DISKMAGIC"/></summary>
+            /// <summary>
+            ///     <see cref="DISKMAGIC" />
+            /// </summary>
             public uint d_magic;
-            /// <summary><see cref="dType"/></summary>
+            /// <summary>
+            ///     <see cref="dType" />
+            /// </summary>
             public dType d_type;
             /// <summary>Disk subtype</summary>
             public ushort d_subtype;
@@ -358,13 +418,15 @@ namespace DiscImageChef.Partitions
             public uint d_headswitch;
             /// <summary>Track to track seek in microseconds</summary>
             public uint d_trkseek;
-            /// <summary><see cref="dFlags"/></summary>
+            /// <summary>
+            ///     <see cref="dFlags" />
+            /// </summary>
             public dFlags d_flags;
             /// <summary>Drive-specific information</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] d_drivedata;
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] d_spare;
-            /// <summary><see cref="DISKMAGIC"/> again</summary>
+            /// <summary><see cref="DISKMAGIC" /> again</summary>
             public uint d_magic2;
             /// <summary>XOR of data</summary>
             public ushort d_checksum;
@@ -387,68 +449,12 @@ namespace DiscImageChef.Partitions
             public uint p_offset;
             /// <summary>Fragment size</summary>
             public uint p_fsize;
-            /// <summary>Filesystem type, <see cref="fsType"/></summary>
+            /// <summary>Filesystem type, <see cref="fsType" /></summary>
             public fsType p_fstype;
             /// <summary>Fragment size</summary>
             public byte p_frag;
             /// <summary>Cylinder per group</summary>
             public ushort p_cpg;
-        }
-
-        internal static string fsTypeToString(fsType typ)
-        {
-            switch(typ)
-            {
-                case fsType.Unused: return "Unused entry";
-                case fsType.Swap: return "Swap partition";
-                case fsType.V6: return "UNIX 6th Edition";
-                case fsType.V7: return "UNIX 7th Edition";
-                case fsType.SystemV: return "UNIX System V";
-                case fsType.V7_1K: return "UNIX 7th Edition with 1K blocks";
-                case fsType.V8: return "UNIX 8th Edition with 4K blocks";
-                case fsType.BSDFFS: return "4.2BSD Fast File System";
-                case fsType.BSDLFS: return "4.4LFS";
-                case fsType.HPFS: return "HPFS";
-                case fsType.ISO9660: return "ISO9660";
-                case fsType.Boot:
-                case fsType.SysVBoot: return "Boot";
-                case fsType.AFFS: return "Amiga FFS";
-                case fsType.HFS: return "Apple HFS";
-                case fsType.ADVfs: return "Digital Advanced File System";
-                case fsType.LSMpublic: return "Digital LSM Public Region";
-                case fsType.LSMprivate: return "Digital LSM Private Region";
-                case fsType.LSMsimple: return "Digital LSM Simple Disk";
-                case fsType.CCD: return "Concatenated disk";
-                case fsType.JFS2: return "IBM JFS2";
-                case fsType.HAMMER: return "Hammer";
-                case fsType.HAMMER2: return "Hammer2";
-                case fsType.UDF: return "UDF";
-                case fsType.EFS: return "EFS";
-                case fsType.ZFS: return "ZFS";
-                case fsType.NANDFS: return "FreeBSD nandfs";
-                case fsType.MSDOS: return "FAT";
-                case fsType.Other: return "Other or unknown";
-                default: return "Unknown";
-            }
-        }
-
-        static DiskLabel GetDiskLabel(byte[] disklabel)
-        {
-            GCHandle handle = GCHandle.Alloc(disklabel, GCHandleType.Pinned);
-            DiskLabel dl = (DiskLabel)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskLabel));
-            handle.Free();
-            return dl;
-        }
-
-        static DiskLabel SwapDiskLabel(DiskLabel disklabel)
-        {
-            DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
-            for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
-            for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
-            for(int i = 0; i < dl.d_partitions.Length; i++)
-                dl.d_partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
-
-            return dl;
         }
     }
 }

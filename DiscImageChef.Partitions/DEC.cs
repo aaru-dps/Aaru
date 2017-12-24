@@ -76,7 +76,8 @@ namespace DiscImageChef.Partitions
                 Length = (ulong)(entry.pi_nblocks * sector.Length),
                 Sequence = counter,
                 Scheme = Name
-            }).Where(part => part.Size > 0)) {
+            }).Where(part => part.Size > 0))
+            {
                 partitions.Add(part);
                 counter++;
             }

@@ -59,8 +59,7 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin,
-                                            out List<Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             uint sectorSize;
 
@@ -84,7 +83,8 @@ namespace DiscImageChef.Partitions
             }
             else if(sectorSize < 256) return false;
 
-            AppleDriverDescriptorMap ddm = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
+            AppleDriverDescriptorMap ddm =
+                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
 
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}", ddm.sbSig);
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
@@ -169,7 +169,6 @@ namespace DiscImageChef.Partitions
                         Scheme = Name,
                         Type = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
                     };
-
 
                     partitions.Add(part);
 
@@ -257,8 +256,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i,
                                           entry.first_data_block);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i,
-                                          (AppleMapFlags)entry.flags);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i, (AppleMapFlags)entry.flags);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i,
                                           entry.first_boot_block);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
@@ -266,8 +264,7 @@ namespace DiscImageChef.Partitions
                                           entry.load_address);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i,
                                           entry.load_address2);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i,
-                                          entry.entry_point);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i, entry.entry_point);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i,
                                           entry.entry_point2);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
@@ -303,8 +300,8 @@ namespace DiscImageChef.Partitions
 
                 if(flags.HasFlag(AppleMapFlags.Bootable))
                 {
-                    sb.AppendFormat("First boot sector: {0}",
-                                    entry.first_boot_block * entrySize / sectorSize).AppendLine();
+                    sb.AppendFormat("First boot sector: {0}", entry.first_boot_block * entrySize / sectorSize)
+                      .AppendLine();
                     sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
                     sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
                     sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();
@@ -316,8 +313,7 @@ namespace DiscImageChef.Partitions
                 }
 
                 _partition.Description = sb.ToString();
-                if(_partition.Start < imagePlugin.ImageInfo.Sectors &&
-                   _partition.End < imagePlugin.ImageInfo.Sectors)
+                if(_partition.Start < imagePlugin.ImageInfo.Sectors && _partition.End < imagePlugin.ImageInfo.Sectors)
                 {
                     partitions.Add(_partition);
                     sequence++;
@@ -325,8 +321,7 @@ namespace DiscImageChef.Partitions
                 // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
                 else if(_partition.Start < imagePlugin.ImageInfo.Sectors)
                 {
-                    DicConsole.DebugWriteLine("AppleMap Plugin",
-                                              "Cutting last partition end ({0}) to media size ({1})",
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
                                               _partition.End, imagePlugin.ImageInfo.Sectors - 1);
                     _partition.Length = imagePlugin.ImageInfo.Sectors - _partition.Start;
                     partitions.Add(_partition);
@@ -344,7 +339,7 @@ namespace DiscImageChef.Partitions
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDriverDescriptorMap
         {
-            /// <summary>Signature <see cref="DDM_MAGIC"/></summary>
+            /// <summary>Signature <see cref="DDM_MAGIC" /></summary>
             public ushort sbSig;
             /// <summary>Byter per sector</summary>
             public ushort sbBlockSize;
@@ -376,7 +371,7 @@ namespace DiscImageChef.Partitions
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleOldDevicePartitionMap
         {
-            /// <summary>Signature <see cref="APM_MAGIC_OLD"/></summary>
+            /// <summary>Signature <see cref="APM_MAGIC_OLD" /></summary>
             public ushort pdSig;
             /// <summary>Entries of the driver descriptor</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)] public AppleMapOldPartitionEntry[] pdMap;
@@ -425,7 +420,7 @@ namespace DiscImageChef.Partitions
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleMapPartitionEntry
         {
-            /// <summary>Signature <see cref="APM_MAGIC"/></summary>
+            /// <summary>Signature <see cref="APM_MAGIC" /></summary>
             public ushort signature;
             /// <summary>Reserved</summary>
             public ushort reserved1;

@@ -61,8 +61,7 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin,
-                                            out List<Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -407,22 +406,22 @@ namespace DiscImageChef.Partitions
         }
 
         /// <summary>
-        /// Atari partition entry
+        ///     Atari partition entry
         /// </summary>
         struct AtariEntry
         {
             /// <summary>
-            /// First byte flag, three bytes type in ASCII.
-            /// Flag bit 0 = active
-            /// Flag bit 7 = bootable
+            ///     First byte flag, three bytes type in ASCII.
+            ///     Flag bit 0 = active
+            ///     Flag bit 7 = bootable
             /// </summary>
             public uint type;
             /// <summary>
-            /// Starting sector
+            ///     Starting sector
             /// </summary>
             public uint start;
             /// <summary>
-            /// Length in sectors
+            ///     Length in sectors
             /// </summary>
             public uint length;
         }
@@ -430,35 +429,35 @@ namespace DiscImageChef.Partitions
         struct AtariTable
         {
             /// <summary>
-            /// Boot code for 342 bytes
+            ///     Boot code for 342 bytes
             /// </summary>
             public byte[] boot;
             /// <summary>
-            /// 8 extra entries for ICDPro driver
+            ///     8 extra entries for ICDPro driver
             /// </summary>
             public AtariEntry[] icdEntries;
             /// <summary>
-            /// Unused, 12 bytes
+            ///     Unused, 12 bytes
             /// </summary>
             public byte[] unused;
             /// <summary>
-            /// Disk size in sectors
+            ///     Disk size in sectors
             /// </summary>
             public uint size;
             /// <summary>
-            /// 4 partition entries
+            ///     4 partition entries
             /// </summary>
             public AtariEntry[] entries;
             /// <summary>
-            /// Starting sector of bad block list
+            ///     Starting sector of bad block list
             /// </summary>
             public uint badStart;
             /// <summary>
-            /// Length in sectors of bad block list
+            ///     Length in sectors of bad block list
             /// </summary>
             public uint badLength;
             /// <summary>
-            /// Checksum for bootable disks
+            ///     Checksum for bootable disks
             /// </summary>
             public ushort checksum;
         }

@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
+
 #pragma warning disable 169
 #pragma warning disable 649
 
@@ -120,11 +121,9 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Start =
-                        dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.GetSectorSize(),
+                    Start = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.GetSectorSize(),
                     Offset = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
-                    Length =
-                        dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.GetSectorSize(),
+                    Length = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.GetSectorSize(),
                     Size = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
                     Type = TypeToString(dvh.partitions[i].type),
                     Sequence = counter,
@@ -138,6 +137,31 @@ namespace DiscImageChef.Partitions
             }
 
             return true;
+        }
+
+        static string TypeToString(SGIType typ)
+        {
+            switch(typ)
+            {
+                case SGIType.Header: return "Volume header";
+                case SGIType.TrkRepl: return "Track replacements";
+                case SGIType.SecRepl: return "Sector replacements";
+                case SGIType.Swap: return "Raw data (swap)";
+                case SGIType.Bsd: return "4.2BSD Fast File System";
+                case SGIType.SystemV: return "UNIX System V";
+                case SGIType.Volume: return "Whole device";
+                case SGIType.EFS: return "EFS";
+                case SGIType.Lvol: return "Logical volume";
+                case SGIType.Rlvol: return "Raw logical volume";
+                case SGIType.XFS: return "XFS";
+                case SGIType.Xlvol: return "XFS log device";
+                case SGIType.Rxlvol: return "XLV volume";
+                case SGIType.Xvm: return "SGI XVM";
+                case SGIType.LinuxSwap: return "Linux swap";
+                case SGIType.Linux: return "Linux";
+                case SGIType.LinuxRAID: return "Linux RAID";
+                default: return "Unknown";
+            }
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -193,31 +217,6 @@ namespace DiscImageChef.Partitions
             LinuxSwap = 0x82,
             Linux = 0x83,
             LinuxRAID = 0xFD
-        }
-
-        static string TypeToString(SGIType typ)
-        {
-            switch(typ)
-            {
-                case SGIType.Header: return "Volume header";
-                case SGIType.TrkRepl: return "Track replacements";
-                case SGIType.SecRepl: return "Sector replacements";
-                case SGIType.Swap: return "Raw data (swap)";
-                case SGIType.Bsd: return "4.2BSD Fast File System";
-                case SGIType.SystemV: return "UNIX System V";
-                case SGIType.Volume: return "Whole device";
-                case SGIType.EFS: return "EFS";
-                case SGIType.Lvol: return "Logical volume";
-                case SGIType.Rlvol: return "Raw logical volume";
-                case SGIType.XFS: return "XFS";
-                case SGIType.Xlvol: return "XFS log device";
-                case SGIType.Rxlvol: return "XLV volume";
-                case SGIType.Xvm: return "SGI XVM";
-                case SGIType.LinuxSwap: return "Linux swap";
-                case SGIType.Linux: return "Linux";
-                case SGIType.LinuxRAID: return "Linux RAID";
-                default: return "Unknown";
-            }
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

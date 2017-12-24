@@ -65,7 +65,8 @@ namespace DiscImageChef.Partitions
             bool magicFound = false;
             bool absolute = false;
 
-            foreach(ulong i in new ulong[] {0, 1, 8, 29}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors())) {
+            foreach(ulong i in new ulong[] {0, 1, 8, 29}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors()))
+            {
                 pdsector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BitConverter.ToUInt32(pdsector, 4);
                 DicConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
@@ -351,8 +352,7 @@ namespace DiscImageChef.Partitions
                     if(parts[i].p_flag.HasFlag(pFlag.V_OPEN)) info += " (open)";
                     if(parts[i].p_flag.HasFlag(pFlag.V_REMAP)) info += " (alternate sector mapping)";
                     if(parts[i].p_flag.HasFlag(pFlag.V_RONLY)) info += " (read-only)";
-                    if(timestamps[i] != 0)
-                        info += $" created on {DateHandlers.UnixToDateTime(timestamps[i])}";
+                    if(timestamps[i] != 0) info += $" created on {DateHandlers.UnixToDateTime(timestamps[i])}";
 
                     part.Description = "UNIX slice" + info + ".";
 
@@ -360,6 +360,30 @@ namespace DiscImageChef.Partitions
                 }
 
             return partitions.Count > 0;
+        }
+
+        static string decodeUNIXTAG(pTag type, bool isNew)
+        {
+            switch(type)
+            {
+                case pTag.V_UNUSED: return "Unused";
+                case pTag.V_BOOT: return "Boot";
+                case pTag.V_ROOT: return "/";
+                case pTag.V_SWAP: return "Swap";
+                case pTag.V_USER: return "/usr";
+                case pTag.V_BACKUP: return "Whole disk";
+                case pTag.V_STAND_OLD: return isNew ? "Stand" : "Alternate sector space";
+                case pTag.V_VAR_OLD: return isNew ? "/var" : "non UNIX";
+                case pTag.V_HOME_OLD: return isNew ? "/home" : "Alternate track space";
+                case pTag.V_ALTSCTR_OLD: return isNew ? "Alternate sector track" : "Stand";
+                case pTag.V_CACHE: return isNew ? "Cache" : "/var";
+                case pTag.V_RESERVED: return isNew ? "Reserved" : "/home";
+                case pTag.V_DUMP: return "dump";
+                case pTag.V_ALTSCTR: return "Alternate sector track";
+                case pTag.V_VMPUBLIC: return "volume mgt public partition";
+                case pTag.V_VMPRIVATE: return "volume mgt private partition";
+                default: return $"Unknown TAG: 0x{type:X4}";
+            }
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -522,30 +546,6 @@ namespace DiscImageChef.Partitions
             V_OPEN = 0x100, /* Partition open (for driver use) */
             V_VALID = 0x200, /* Partition is valid to use */
             V_VOMASK = 0x300 /* mask for open and valid */
-        }
-
-        static string decodeUNIXTAG(pTag type, bool isNew)
-        {
-            switch(type)
-            {
-                case pTag.V_UNUSED: return "Unused";
-                case pTag.V_BOOT: return "Boot";
-                case pTag.V_ROOT: return "/";
-                case pTag.V_SWAP: return "Swap";
-                case pTag.V_USER: return "/usr";
-                case pTag.V_BACKUP: return "Whole disk";
-                case pTag.V_STAND_OLD: return isNew ? "Stand" : "Alternate sector space";
-                case pTag.V_VAR_OLD: return isNew ? "/var" : "non UNIX";
-                case pTag.V_HOME_OLD: return isNew ? "/home" : "Alternate track space";
-                case pTag.V_ALTSCTR_OLD: return isNew ? "Alternate sector track" : "Stand";
-                case pTag.V_CACHE: return isNew ? "Cache" : "/var";
-                case pTag.V_RESERVED: return isNew ? "Reserved" : "/home";
-                case pTag.V_DUMP: return "dump";
-                case pTag.V_ALTSCTR: return "Alternate sector track";
-                case pTag.V_VMPUBLIC: return "volume mgt public partition";
-                case pTag.V_VMPRIVATE: return "volume mgt private partition";
-                default: return $"Unknown TAG: 0x{type:X4}";
-            }
         }
     }
 }

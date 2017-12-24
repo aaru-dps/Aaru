@@ -43,87 +43,6 @@ namespace DiscImageChef.Partitions
     // Currently only DEC devices used in Ultrix are added, probably it's missing a lot of entries.
     public class UNIX : PartitionPlugin
     {
-        public UNIX()
-        {
-            Name = "UNIX hardwired";
-            PluginUuid = new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
-        }
-
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
-        {
-            partitions = new List<Partition>();
-            Partition[] parts;
-
-            if(sectorOffset != 0) return false;
-
-            switch(imagePlugin.ImageInfo.MediaType)
-            {
-                case MediaType.RA60:
-                    parts = RA60;
-                    break;
-                case MediaType.RA80:
-                    parts = RA80;
-                    break;
-                case MediaType.RA81:
-                    parts = RA81;
-                    break;
-                case MediaType.RC25:
-                    parts = RC25;
-                    break;
-                case MediaType.RD31:
-                    parts = RD31;
-                    break;
-                case MediaType.RD32:
-                    parts = RD32;
-                    break;
-                case MediaType.RD51:
-                    parts = RD51;
-                    break;
-                case MediaType.RD52:
-                    parts = RD52;
-                    break;
-                case MediaType.RD53:
-                    parts = RD53;
-                    break;
-                case MediaType.RD54:
-                    parts = RD54;
-                    break;
-                case MediaType.RK06:
-                    parts = RK06;
-                    break;
-                case MediaType.RK07:
-                    parts = RK07;
-                    break;
-                case MediaType.RM02:
-                case MediaType.RM03:
-                    parts = RM02;
-                    break;
-                case MediaType.RM05:
-                    parts = RM05;
-                    break;
-                case MediaType.RP02:
-                    parts = RP02;
-                    break;
-                case MediaType.RP03:
-                    parts = RP03;
-                    break;
-                case MediaType.RP04:
-                case MediaType.RP05:
-                    parts = RP04;
-                    break;
-                case MediaType.RP06:
-                    parts = RP06;
-                    break;
-                default: return false;
-            }
-
-            for(int i = 0; i < parts.Length; i++) parts[i].Scheme = "";
-
-            partitions = parts.ToList();
-
-            return partitions.Count > 0;
-        }
-
         readonly Partition[] RA60 =
         {
             new Partition
@@ -986,6 +905,212 @@ namespace DiscImageChef.Partitions
             }
         };
 
+        readonly Partition[] RM02 =
+        {
+            new Partition
+            {
+                Description = null,
+                Name = "/",
+                Type = "data",
+                Length = 9120,
+                Start = 0,
+                Size = 4669440,
+                Offset = 0,
+                Sequence = 0
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "error log",
+                Type = "errorlog",
+                Length = 200,
+                Start = 9120,
+                Size = 102400,
+                Offset = 4669440,
+                Sequence = 1
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "swap",
+                Type = "swap",
+                Length = 5400,
+                Start = 9320,
+                Size = 2764800,
+                Offset = 2764800,
+                Sequence = 1
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "/usr",
+                Type = "data",
+                Length = 5600,
+                Start = 29120,
+                Size = 2867200,
+                Offset = 14909440,
+                Sequence = 2
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 96896,
+                Start = 34720,
+                Size = 49610752,
+                Offset = 17776640,
+                Sequence = 3
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 32160,
+                Start = 34720,
+                Size = 16465920,
+                Offset = 17776640,
+                Sequence = 4
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 32160,
+                Start = 66880,
+                Size = 16465920,
+                Offset = 34242560,
+                Sequence = 5
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 32576,
+                Start = 99040,
+                Size = 16678912,
+                Offset = 50708480,
+                Sequence = 6
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "bad sector file",
+                Type = "bad",
+                Length = 64,
+                Start = 131616,
+                Size = 32768,
+                Offset = 67387392,
+                Sequence = 8
+            }
+        };
+
+        readonly Partition[] RM05 =
+        {
+            new Partition
+            {
+                Description = null,
+                Name = "/",
+                Type = "data",
+                Length = 10336,
+                Start = 0,
+                Size = 5292032,
+                Offset = 0,
+                Sequence = 0
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "/usr",
+                Type = "data",
+                Length = 21280,
+                Start = 10336,
+                Size = 10895360,
+                Offset = 5292032,
+                Sequence = 1
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "error log",
+                Type = "errorlog",
+                Length = 200,
+                Start = 31616,
+                Size = 102400,
+                Offset = 16187392,
+                Sequence = 2
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "swap",
+                Type = "swap",
+                Length = 6388,
+                Start = 31816,
+                Size = 3270656,
+                Offset = 16289792,
+                Sequence = 2
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 462016,
+                Start = 38304,
+                Size = 236552192,
+                Offset = 19611648,
+                Sequence = 3
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 153824,
+                Start = 38304,
+                Size = 78757888,
+                Offset = 19611648,
+                Sequence = 4
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 153824,
+                Start = 192128,
+                Size = 78757888,
+                Offset = 98369536,
+                Sequence = 5
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "user",
+                Type = "data",
+                Length = 154368,
+                Start = 192128,
+                Size = 79036416,
+                Offset = 98369536,
+                Sequence = 6
+            },
+            new Partition
+            {
+                Description = null,
+                Name = "bad sector file",
+                Type = "bad",
+                Length = 64,
+                Start = 421312,
+                Size = 32768,
+                Offset = 215711744,
+                Sequence = 8
+            }
+        };
+
         readonly Partition[] RP02 =
         {
             new Partition
@@ -1244,210 +1369,85 @@ namespace DiscImageChef.Partitions
             }
         };
 
-        readonly Partition[] RM02 =
+        public UNIX()
         {
-            new Partition
-            {
-                Description = null,
-                Name = "/",
-                Type = "data",
-                Length = 9120,
-                Start = 0,
-                Size = 4669440,
-                Offset = 0,
-                Sequence = 0
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "error log",
-                Type = "errorlog",
-                Length = 200,
-                Start = 9120,
-                Size = 102400,
-                Offset = 4669440,
-                Sequence = 1
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "swap",
-                Type = "swap",
-                Length = 5400,
-                Start = 9320,
-                Size = 2764800,
-                Offset = 2764800,
-                Sequence = 1
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "/usr",
-                Type = "data",
-                Length = 5600,
-                Start = 29120,
-                Size = 2867200,
-                Offset = 14909440,
-                Sequence = 2
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 96896,
-                Start = 34720,
-                Size = 49610752,
-                Offset = 17776640,
-                Sequence = 3
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 32160,
-                Start = 34720,
-                Size = 16465920,
-                Offset = 17776640,
-                Sequence = 4
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 32160,
-                Start = 66880,
-                Size = 16465920,
-                Offset = 34242560,
-                Sequence = 5
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 32576,
-                Start = 99040,
-                Size = 16678912,
-                Offset = 50708480,
-                Sequence = 6
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "bad sector file",
-                Type = "bad",
-                Length = 64,
-                Start = 131616,
-                Size = 32768,
-                Offset = 67387392,
-                Sequence = 8
-            }
-        };
+            Name = "UNIX hardwired";
+            PluginUuid = new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
+        }
 
-        readonly Partition[] RM05 =
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
-            new Partition
+            partitions = new List<Partition>();
+            Partition[] parts;
+
+            if(sectorOffset != 0) return false;
+
+            switch(imagePlugin.ImageInfo.MediaType)
             {
-                Description = null,
-                Name = "/",
-                Type = "data",
-                Length = 10336,
-                Start = 0,
-                Size = 5292032,
-                Offset = 0,
-                Sequence = 0
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "/usr",
-                Type = "data",
-                Length = 21280,
-                Start = 10336,
-                Size = 10895360,
-                Offset = 5292032,
-                Sequence = 1
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "error log",
-                Type = "errorlog",
-                Length = 200,
-                Start = 31616,
-                Size = 102400,
-                Offset = 16187392,
-                Sequence = 2
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "swap",
-                Type = "swap",
-                Length = 6388,
-                Start = 31816,
-                Size = 3270656,
-                Offset = 16289792,
-                Sequence = 2
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 462016,
-                Start = 38304,
-                Size = 236552192,
-                Offset = 19611648,
-                Sequence = 3
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 153824,
-                Start = 38304,
-                Size = 78757888,
-                Offset = 19611648,
-                Sequence = 4
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 153824,
-                Start = 192128,
-                Size = 78757888,
-                Offset = 98369536,
-                Sequence = 5
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "user",
-                Type = "data",
-                Length = 154368,
-                Start = 192128,
-                Size = 79036416,
-                Offset = 98369536,
-                Sequence = 6
-            },
-            new Partition
-            {
-                Description = null,
-                Name = "bad sector file",
-                Type = "bad",
-                Length = 64,
-                Start = 421312,
-                Size = 32768,
-                Offset = 215711744,
-                Sequence = 8
+                case MediaType.RA60:
+                    parts = RA60;
+                    break;
+                case MediaType.RA80:
+                    parts = RA80;
+                    break;
+                case MediaType.RA81:
+                    parts = RA81;
+                    break;
+                case MediaType.RC25:
+                    parts = RC25;
+                    break;
+                case MediaType.RD31:
+                    parts = RD31;
+                    break;
+                case MediaType.RD32:
+                    parts = RD32;
+                    break;
+                case MediaType.RD51:
+                    parts = RD51;
+                    break;
+                case MediaType.RD52:
+                    parts = RD52;
+                    break;
+                case MediaType.RD53:
+                    parts = RD53;
+                    break;
+                case MediaType.RD54:
+                    parts = RD54;
+                    break;
+                case MediaType.RK06:
+                    parts = RK06;
+                    break;
+                case MediaType.RK07:
+                    parts = RK07;
+                    break;
+                case MediaType.RM02:
+                case MediaType.RM03:
+                    parts = RM02;
+                    break;
+                case MediaType.RM05:
+                    parts = RM05;
+                    break;
+                case MediaType.RP02:
+                    parts = RP02;
+                    break;
+                case MediaType.RP03:
+                    parts = RP03;
+                    break;
+                case MediaType.RP04:
+                case MediaType.RP05:
+                    parts = RP04;
+                    break;
+                case MediaType.RP06:
+                    parts = RP06;
+                    break;
+                default: return false;
             }
-        };
+
+            for(int i = 0; i < parts.Length; i++) parts[i].Scheme = "";
+
+            partitions = parts.ToList();
+
+            return partitions.Count > 0;
+        }
     }
 }
