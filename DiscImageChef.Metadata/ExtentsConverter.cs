@@ -57,7 +57,8 @@ namespace DiscImageChef.Metadata
         {
             if(extents == null) return null;
 
-            List<Tuple<ulong, ulong>> tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
+            List<Tuple<ulong, ulong>> tuples =
+                extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
 
             return new ExtentsULong(tuples);
         }

@@ -38,11 +38,11 @@ namespace DiscImageChef.Metadata
     [XmlRoot("DicStats", Namespace = "", IsNullable = false)]
     public class Stats
     {
+        public CommandsStats Commands;
         [XmlArrayItem("OperatingSystem")]
         public List<OsStats> OperatingSystems { get; set; }
         [XmlArrayItem("Version")]
         public List<NameValueStats> Versions { get; set; }
-        public CommandsStats Commands;
         [XmlArrayItem("Filesystem")]
         public List<NameValueStats> Filesystems { get; set; }
         [XmlArrayItem("Scheme")]
@@ -74,13 +74,13 @@ namespace DiscImageChef.Metadata
         public long Entropy;
         public long ExtractFiles;
         public long Formats;
+        public long ListDevices;
+        public long ListEncodings;
         public long Ls;
         public long MediaInfo;
         public long MediaScan;
         public long PrintHex;
         public long Verify;
-        public long ListDevices;
-        public long ListEncodings;
     }
 
     public class VerifiedItems
@@ -97,19 +97,19 @@ namespace DiscImageChef.Metadata
 
     public class ScannedSectors
     {
-        public long Total;
-        public long Error;
         public long Correct;
+        public long Error;
+        public long Total;
         public long Unverifiable;
     }
 
     public class TimeStats
     {
-        public long LessThan3ms;
         public long LessThan10ms;
-        public long LessThan50ms;
         public long LessThan150ms;
+        public long LessThan3ms;
         public long LessThan500ms;
+        public long LessThan50ms;
         public long MoreThan500ms;
     }
 
@@ -127,12 +127,12 @@ namespace DiscImageChef.Metadata
 
     public class BenchmarkStats
     {
+        public double All;
         [XmlElement("Checksum")] public List<ChecksumStats> Checksum;
         public double Entropy;
-        public double All;
-        public double Sequential;
         public long MaxMemory;
         public long MinMemory;
+        public double Sequential;
     }
 
     public class MediaStats
@@ -144,12 +144,11 @@ namespace DiscImageChef.Metadata
 
     public class DeviceStats
     {
+        [XmlIgnore] public bool ManufacturerSpecified;
         public string Manufacturer { get; set; }
         public string Model { get; set; }
         public string Revision { get; set; }
         public string Bus { get; set; }
-
-        [XmlIgnore] public bool ManufacturerSpecified;
     }
 
     public class NameValueStats

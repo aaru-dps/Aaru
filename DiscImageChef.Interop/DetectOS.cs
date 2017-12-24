@@ -45,34 +45,6 @@ namespace DiscImageChef.Interop
 {
     public static class DetectOS
     {
-        /// <summary>
-        /// POSIX uname structure, size from OSX, big enough to handle extra fields
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        struct utsname
-        {
-            /// <summary>
-            /// System name
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string sysname;
-            /// <summary>
-            /// Node name
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string nodename;
-            /// <summary>
-            /// Release level
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string release;
-            /// <summary>
-            /// Version level
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string version;
-            /// <summary>
-            /// Hardware level
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string machine;
-        }
-
         [DllImport("libc", SetLastError = true)]
         static extern int uname(out utsname name);
 
@@ -80,17 +52,17 @@ namespace DiscImageChef.Interop
         static extern int OSX_sysctlbyname(string name, IntPtr oldp, IntPtr oldlenp, IntPtr newp, uint newlen);
 
         /// <summary>
-        /// Gets the real platform ID, not the incomplete .NET framework one
+        ///     Gets the real platform ID, not the incomplete .NET framework one
         /// </summary>
         /// <returns>Platform ID</returns>
         /// <exception cref="Exception">Unhandled exception</exception>
         public static PlatformID GetRealPlatformID()
         {
-            if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5) return (PlatformID)(int)Environment.OSVersion.Platform;
+            if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5)
+                return (PlatformID)(int)Environment.OSVersion.Platform;
 
             int error = uname(out utsname unixname);
-            if(error != 0)
-                throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
+            if(error != 0) throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
 
             switch(unixname.sysname)
             {
@@ -134,7 +106,8 @@ namespace DiscImageChef.Interop
 
                     if(machine != null && (machine.StartsWith("iPad", StringComparison.Ordinal) ||
                                            machine.StartsWith("iPod", StringComparison.Ordinal) ||
-                                           machine.StartsWith("iPhone", StringComparison.Ordinal))) return PlatformID.iOS;
+                                           machine.StartsWith("iPhone", StringComparison.Ordinal)))
+                        return PlatformID.iOS;
 
                     return PlatformID.MacOSX;
                 }
@@ -174,7 +147,7 @@ namespace DiscImageChef.Interop
         }
 
         /// <summary>
-        /// Checks if the underlying runtime runs in 64-bit mode
+        ///     Checks if the underlying runtime runs in 64-bit mode
         /// </summary>
         public static bool Is64Bit()
         {
@@ -182,7 +155,7 @@ namespace DiscImageChef.Interop
         }
 
         /// <summary>
-        /// Checks if the underlying runtime runs in 32-bit mode
+        ///     Checks if the underlying runtime runs in 32-bit mode
         /// </summary>
         public static bool Is32Bit()
         {
@@ -190,7 +163,7 @@ namespace DiscImageChef.Interop
         }
 
         /// <summary>
-        /// Gets a string for the current operating system REAL version (handles Darwin 1.4 and Windows 10 falsifying)
+        ///     Gets a string for the current operating system REAL version (handles Darwin 1.4 and Windows 10 falsifying)
         /// </summary>
         /// <returns>Current operating system version</returns>
         public static string GetVersion()
@@ -203,7 +176,8 @@ namespace DiscImageChef.Interop
                     if(Environment.OSVersion.Version.Major != 1)
                         return $"10.{Environment.OSVersion.Version.Major - 4}.{Environment.OSVersion.Version.Minor}";
 
-                    switch(Environment.OSVersion.Version.Minor) {
+                    switch(Environment.OSVersion.Version.Minor)
+                    {
                         case 3: return "10.0";
                         case 4: return "10.1";
                     }
@@ -223,7 +197,7 @@ namespace DiscImageChef.Interop
         }
 
         /// <summary>
-        /// From a platform ID and version returns a human-readable version
+        ///     From a platform ID and version returns a human-readable version
         /// </summary>
         /// <param name="id">Platform ID</param>
         /// <param name="version">Version number</param>
@@ -300,6 +274,34 @@ namespace DiscImageChef.Interop
                 case PlatformID.zOS: return "z/OS";
                 default: return id.ToString();
             }
+        }
+
+        /// <summary>
+        ///     POSIX uname structure, size from OSX, big enough to handle extra fields
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        struct utsname
+        {
+            /// <summary>
+            ///     System name
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string sysname;
+            /// <summary>
+            ///     Node name
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string nodename;
+            /// <summary>
+            ///     Release level
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string release;
+            /// <summary>
+            ///     Version level
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string version;
+            /// <summary>
+            ///     Hardware level
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string machine;
         }
     }
 }
