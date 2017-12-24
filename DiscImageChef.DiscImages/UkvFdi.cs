@@ -43,43 +43,7 @@ namespace DiscImageChef.DiscImages
 {
     public class UkvFdi : ImagePlugin
     {
-        #region Internal enumerations
-        [Flags]
-        enum DiskFlags : byte
-        {
-            WriteProtected = 1
-        }
-
-        [Flags]
-        enum SectorFlags : byte
-        {
-            CrcOk128 = 0x01,
-            CrcOk256 = 0x02,
-            CrcOk512 = 0x04,
-            CrcOk1024 = 0x08,
-            CrcOk2048 = 0x10,
-            CrcOk4096 = 0x20,
-            Deleted = 0x80
-        }
-        #endregion
-
-        #region Internal constants
         readonly byte[] signature = {0x46, 0x44, 0x49};
-        #endregion
-
-        #region Internal structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FdiHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] magic;
-            public DiskFlags flags;
-            public ushort cylinders;
-            public ushort heads;
-            public ushort descOff;
-            public ushort dataOff;
-            public ushort addInfoLen;
-        }
-        #endregion
 
         // Cylinder by head, sector data matrix
         byte[][][][] sectorsData;
@@ -379,7 +343,6 @@ namespace DiscImageChef.DiscImages
             return (cylinder, head, sector);
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -540,6 +503,35 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [Flags]
+        enum DiskFlags : byte
+        {
+            WriteProtected = 1
+        }
+
+        [Flags]
+        enum SectorFlags : byte
+        {
+            CrcOk128 = 0x01,
+            CrcOk256 = 0x02,
+            CrcOk512 = 0x04,
+            CrcOk1024 = 0x08,
+            CrcOk2048 = 0x10,
+            CrcOk4096 = 0x20,
+            Deleted = 0x80
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct FdiHeader
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] magic;
+            public DiskFlags flags;
+            public ushort cylinders;
+            public ushort heads;
+            public ushort descOff;
+            public ushort dataOff;
+            public ushort addInfoLen;
+        }
     }
 }

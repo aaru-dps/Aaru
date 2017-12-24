@@ -45,9 +45,8 @@ namespace DiscImageChef.DiscImages
 {
     public class Cpcdsk : ImagePlugin
     {
-        #region Internal constants
         /// <summary>
-        /// Identifier for CPCEMU disk images, "MV - CPCEMU Disk-File"
+        ///     Identifier for CPCEMU disk images, "MV - CPCEMU Disk-File"
         /// </summary>
         readonly byte[] cpcdskId =
         {
@@ -55,7 +54,7 @@ namespace DiscImageChef.DiscImages
             0x69, 0x6C, 0x65
         };
         /// <summary>
-        /// Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"
+        ///     Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"
         /// </summary>
         readonly byte[] du54Id =
         {
@@ -63,7 +62,7 @@ namespace DiscImageChef.DiscImages
             0x73, 0x6B, 0x20
         };
         /// <summary>
-        /// Identifier for Extended CPCEMU disk images, "EXTENDED CPC DSK File"
+        ///     Identifier for Extended CPCEMU disk images, "EXTENDED CPC DSK File"
         /// </summary>
         readonly byte[] edskId =
         {
@@ -71,137 +70,13 @@ namespace DiscImageChef.DiscImages
             0x69, 0x6C, 0x65
         };
         /// <summary>
-        /// Identifier for track information, "Track-Info\r\n"
+        ///     Identifier for track information, "Track-Info\r\n"
         /// </summary>
         readonly byte[] trackId = {0x54, 0x72, 0x61, 0x63, 0x6B, 0x2D, 0x49, 0x6E, 0x66, 0x6F};
-        #endregion
+        Dictionary<ulong, byte[]> addressMarks;
 
-        #region Internal structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CpcDiskInfo
-        {
-            /// <summary>
-            /// Magic number, "MV - CPCEMU Disk-File" in old files, "EXTENDED CPC DSK File" in extended ones
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)] public byte[] magic;
-            /// <summary>
-            /// Second part of magic, should be "\r\nDisk-Info\r\n" in all, but some emulators write spaces instead.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] magic2;
-            /// <summary>
-            /// Creator application (can be null)
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] creator;
-            /// <summary>
-            /// Tracks
-            /// </summary>
-            public byte tracks;
-            /// <summary>
-            /// Sides
-            /// </summary>
-            public byte sides;
-            /// <summary>
-            /// Size of a track including the 256 bytes header. Unused by extended format, as this format includes a table in the next field
-            /// </summary>
-            public ushort tracksize;
-            /// <summary>
-            /// Size of each track in the extended format. 0 indicates track is not formatted and not present in image.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 204)] public byte[] tracksizeTable;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CpcTrackInfo
-        {
-            /// <summary>
-            /// Magic number, "Track-Info\r\n"
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] magic;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] carriageReturn;
-            /// <summary>
-            /// Padding
-            /// </summary>
-            public uint padding;
-            /// <summary>
-            /// Track number
-            /// </summary>
-            public byte track;
-            /// <summary>
-            /// Side number
-            /// </summary>
-            public byte side;
-            /// <summary>
-            /// Controller data rate
-            /// </summary>
-            public byte dataRate;
-            /// <summary>
-            /// Recording mode
-            /// </summary>
-            public byte recordingMode;
-            /// <summary>
-            /// Bytes per sector
-            /// </summary>
-            public IBMSectorSizeCode bps;
-            /// <summary>
-            /// How many sectors in this track
-            /// </summary>
-            public byte sectors;
-            /// <summary>
-            /// GAP#3
-            /// </summary>
-            public byte gap3;
-            /// <summary>
-            /// Filler
-            /// </summary>
-            public byte filler;
-            /// <summary>
-            /// Informatino for up to 32 sectors
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public CpcSectorInfo[] sectorsInfo;
-        }
-
-        /// <summary>
-        /// Sector information
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CpcSectorInfo
-        {
-            /// <summary>
-            /// Track number from address mark
-            /// </summary>
-            public byte track;
-            /// <summary>
-            /// Side number from address mark
-            /// </summary>
-            public byte side;
-            /// <summary>
-            /// Sector ID from address mark
-            /// </summary>
-            public byte id;
-            /// <summary>
-            /// Sector size from address mark
-            /// </summary>
-            public IBMSectorSizeCode size;
-            /// <summary>
-            /// ST1 register from controller
-            /// </summary>
-            public byte st1;
-            /// <summary>
-            /// ST2 register from controller
-            /// </summary>
-            public byte st2;
-            /// <summary>
-            /// Length in bytes of this sector size. If it is bigger than expected sector size, it's a weak sector read several times.
-            /// </summary>
-            public ushort len;
-        }
-        #endregion
-
-        #region Internal variables
         bool extended;
         Dictionary<ulong, byte[]> sectors;
-        Dictionary<ulong, byte[]> addressMarks;
-        #endregion
 
         public Cpcdsk()
         {
@@ -364,7 +239,9 @@ namespace DiscImageChef.DiscImages
                                                   trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
                         int sectLen;
-                        sectLen = extended ? trackInfo.sectorsInfo[k - 1].len : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
+                        sectLen = extended
+                                      ? trackInfo.sectorsInfo[k - 1].len
+                                      : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
 
                         byte[] sector = new byte[sectLen];
                         stream.Read(sector, 0, sectLen);
@@ -606,7 +483,6 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -757,6 +633,126 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CpcDiskInfo
+        {
+            /// <summary>
+            ///     Magic number, "MV - CPCEMU Disk-File" in old files, "EXTENDED CPC DSK File" in extended ones
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)] public byte[] magic;
+            /// <summary>
+            ///     Second part of magic, should be "\r\nDisk-Info\r\n" in all, but some emulators write spaces instead.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] magic2;
+            /// <summary>
+            ///     Creator application (can be null)
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] creator;
+            /// <summary>
+            ///     Tracks
+            /// </summary>
+            public byte tracks;
+            /// <summary>
+            ///     Sides
+            /// </summary>
+            public byte sides;
+            /// <summary>
+            ///     Size of a track including the 256 bytes header. Unused by extended format, as this format includes a table in the
+            ///     next field
+            /// </summary>
+            public ushort tracksize;
+            /// <summary>
+            ///     Size of each track in the extended format. 0 indicates track is not formatted and not present in image.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 204)] public byte[] tracksizeTable;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CpcTrackInfo
+        {
+            /// <summary>
+            ///     Magic number, "Track-Info\r\n"
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] carriageReturn;
+            /// <summary>
+            ///     Padding
+            /// </summary>
+            public uint padding;
+            /// <summary>
+            ///     Track number
+            /// </summary>
+            public byte track;
+            /// <summary>
+            ///     Side number
+            /// </summary>
+            public byte side;
+            /// <summary>
+            ///     Controller data rate
+            /// </summary>
+            public byte dataRate;
+            /// <summary>
+            ///     Recording mode
+            /// </summary>
+            public byte recordingMode;
+            /// <summary>
+            ///     Bytes per sector
+            /// </summary>
+            public IBMSectorSizeCode bps;
+            /// <summary>
+            ///     How many sectors in this track
+            /// </summary>
+            public byte sectors;
+            /// <summary>
+            ///     GAP#3
+            /// </summary>
+            public byte gap3;
+            /// <summary>
+            ///     Filler
+            /// </summary>
+            public byte filler;
+            /// <summary>
+            ///     Informatino for up to 32 sectors
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public CpcSectorInfo[] sectorsInfo;
+        }
+
+        /// <summary>
+        ///     Sector information
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CpcSectorInfo
+        {
+            /// <summary>
+            ///     Track number from address mark
+            /// </summary>
+            public byte track;
+            /// <summary>
+            ///     Side number from address mark
+            /// </summary>
+            public byte side;
+            /// <summary>
+            ///     Sector ID from address mark
+            /// </summary>
+            public byte id;
+            /// <summary>
+            ///     Sector size from address mark
+            /// </summary>
+            public IBMSectorSizeCode size;
+            /// <summary>
+            ///     ST1 register from controller
+            /// </summary>
+            public byte st1;
+            /// <summary>
+            ///     ST2 register from controller
+            /// </summary>
+            public byte st2;
+            /// <summary>
+            ///     Length in bytes of this sector size. If it is bigger than expected sector size, it's a weak sector read several
+            ///     times.
+            /// </summary>
+            public ushort len;
+        }
     }
 }

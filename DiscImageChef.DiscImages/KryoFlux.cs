@@ -46,45 +46,6 @@ namespace DiscImageChef.DiscImages
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class KryoFlux : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OobBlock
-        {
-            public BlockIds blockId;
-            public OobTypes blockType;
-            public ushort length;
-        }
-        #endregion Internal Structures
-
-        #region Internal Constants
-        enum BlockIds : byte
-        {
-            Flux2 = 0x00,
-            Flux2_1 = 0x01,
-            Flux2_2 = 0x02,
-            Flux2_3 = 0x03,
-            Flux2_4 = 0x04,
-            Flux2_5 = 0x05,
-            Flux2_6 = 0x06,
-            Flux2_7 = 0x07,
-            Nop1 = 0x08,
-            Nop2 = 0x09,
-            Nop3 = 0x0A,
-            Ovl16 = 0x0B,
-            Flux3 = 0x0C,
-            Oob = 0x0D
-        }
-
-        enum OobTypes : byte
-        {
-            Invalid = 0x00,
-            StreamInfo = 0x01,
-            Index = 0x02,
-            StreamEnd = 0x03,
-            KFInfo = 0x04,
-            EOF = 0x0D
-        }
-
         const string hostDate = "host_date";
         const string hostTime = "host_time";
         const string kfName = "name";
@@ -95,12 +56,9 @@ namespace DiscImageChef.DiscImages
         const string kfHwRv = "hwrv";
         const string kfSck = "sck";
         const string kfIck = "ick";
-        #endregion Internal Constants
 
-        #region Internal variables
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<byte, Filter> tracks;
-        #endregion Internal variables
 
         public KryoFlux()
         {
@@ -131,7 +89,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             OobBlock header = new OobBlock();
@@ -192,7 +149,7 @@ namespace DiscImageChef.DiscImages
                footer.blockId != BlockIds.Oob || footer.blockType != OobTypes.EOF ||
                footer.length != 0x0D0D) return false;
 
-            #region TODO: This is supposing NoFilter, shouldn't
+            // TODO: This is supposing NoFilter, shouldn't
             tracks = new SortedDictionary<byte, Filter>();
             byte step = 1;
             byte heads = 2;
@@ -285,12 +242,14 @@ namespace DiscImageChef.DiscImages
                             DateTime blockTime = DateTime.Now;
                             bool foundDate = false;
 
-                            foreach(string[] kvp in lines.Select(line => line.Split('=')).Where(kvp => kvp.Length == 2)) {
+                            foreach(string[] kvp in lines.Select(line => line.Split('=')).Where(kvp => kvp.Length == 2))
+                            {
                                 kvp[0] = kvp[0].Trim();
                                 kvp[1] = kvp[1].Trim();
                                 DicConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
 
-                                switch(kvp[0]) {
+                                switch(kvp[0])
+                                {
                                     case hostDate:
                                         if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
                                                                   DateTimeStyles.AssumeLocal, out blockDate))
@@ -300,9 +259,11 @@ namespace DiscImageChef.DiscImages
                                         DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
                                                                DateTimeStyles.AssumeLocal, out blockTime);
                                         break;
-                                    case kfName: ImageInfo.ImageApplication = kvp[1];
+                                    case kfName:
+                                        ImageInfo.ImageApplication = kvp[1];
                                         break;
-                                    case kfVersion: ImageInfo.ImageApplicationVersion = kvp[1];
+                                    case kfVersion:
+                                        ImageInfo.ImageApplicationVersion = kvp[1];
                                         break;
                                 }
                             }
@@ -345,7 +306,6 @@ namespace DiscImageChef.DiscImages
 
             ImageInfo.Heads = heads;
             ImageInfo.Cylinders = (uint)(tracks.Count / heads);
-            #endregion TODO: This is supposing NoFilter, shouldn't
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -520,9 +480,7 @@ namespace DiscImageChef.DiscImages
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -588,6 +546,41 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct OobBlock
+        {
+            public BlockIds blockId;
+            public OobTypes blockType;
+            public ushort length;
+        }
+
+        enum BlockIds : byte
+        {
+            Flux2 = 0x00,
+            Flux2_1 = 0x01,
+            Flux2_2 = 0x02,
+            Flux2_3 = 0x03,
+            Flux2_4 = 0x04,
+            Flux2_5 = 0x05,
+            Flux2_6 = 0x06,
+            Flux2_7 = 0x07,
+            Nop1 = 0x08,
+            Nop2 = 0x09,
+            Nop3 = 0x0A,
+            Ovl16 = 0x0B,
+            Flux3 = 0x0C,
+            Oob = 0x0D
+        }
+
+        enum OobTypes : byte
+        {
+            Invalid = 0x00,
+            StreamInfo = 0x01,
+            Index = 0x02,
+            StreamEnd = 0x03,
+            KFInfo = 0x04,
+            EOF = 0x0D
+        }
     }
 }

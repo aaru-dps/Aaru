@@ -41,6 +41,8 @@ namespace DiscImageChef.DiscImages
 {
     public class T98 : ImagePlugin
     {
+        Filter t98ImageFilter;
+
         public T98()
         {
             Name = "T98 Hard Disk Image";
@@ -69,8 +71,6 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
-
-        Filter t98ImageFilter;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -219,7 +219,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -380,6 +379,5 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
     }
 }

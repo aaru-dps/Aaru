@@ -51,165 +51,36 @@ namespace DiscImageChef.DiscImages
 {
     public class BlindWrite5 : ImagePlugin
     {
-        #region Internal Constants
-        /// <summary>"BWT5 STREAM SIGN"</summary>
-        readonly byte[] bw5Signature =
-            {0x42, 0x57, 0x54, 0x35, 0x20, 0x53, 0x54, 0x52, 0x45, 0x41, 0x4D, 0x20, 0x53, 0x49, 0x47, 0x4E};
         /// <summary>"BWT5 STREAM FOOT"</summary>
         readonly byte[] bw5Footer =
             {0x42, 0x57, 0x54, 0x35, 0x20, 0x53, 0x54, 0x52, 0x45, 0x41, 0x4D, 0x20, 0x46, 0x4F, 0x4F, 0x54};
-        #endregion Internal Constants
-
-        #region Internal enumerations
-        enum Bw5TrackType : byte
-        {
-            NotData = 0,
-            Audio = 1,
-            Mode1 = 2,
-            Mode2 = 3,
-            Mode2F1 = 4,
-            Mode2F2 = 5,
-            Dvd = 6
-        }
-
-        enum Bw5TrackSubchannel : byte
-        {
-            None = 0,
-            Q16 = 2,
-            Linear = 4
-        }
-        #endregion Internal enumerations
-
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw5Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] unknown1;
-            public ProfileNumber profile;
-            public ushort sessions;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown2;
-            [MarshalAs(UnmanagedType.U1, SizeConst = 3)] public bool mcnIsValid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] mcn;
-            public ushort unknown3;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] unknown4;
-            public ushort pmaLen;
-            public ushort atipLen;
-            public ushort cdtLen;
-            public ushort cdInfoLen;
-            public uint bcaLen;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown5;
-            public uint dvdStrLen;
-            public uint dvdInfoLen;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] unknown6;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] manufacturer;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] product;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] revision;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] vendor;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] volumeId;
-            public uint mode2ALen;
-            public uint unkBlkLen;
-            public uint dataLen;
-            public uint sessionsLen;
-            public uint dpmLen;
-        }
-
-        struct Bw5DataFile
-        {
-            public uint Type;
-            public uint Length;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] Unknown1;
-            public uint Offset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] Unknown2;
-            public int StartLba;
-            public int Sectors;
-            public uint FilenameLen;
-            public byte[] FilenameBytes;
-            public uint Unknown3;
-
-            public string Filename;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw5TrackDescriptor
-        {
-            public Bw5TrackType type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown1;
-            public uint unknown2;
-            public Bw5TrackSubchannel subchannel;
-            public byte unknown3;
-            public byte ctl;
-            public byte adr;
-            public byte point;
-            public byte unknown4;
-            public byte min;
-            public byte sec;
-            public byte frame;
-            public byte zero;
-            public byte pmin;
-            public byte psec;
-            public byte pframe;
-            public byte unknown5;
-            public uint pregap;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] unknown6;
-            public int startLba;
-            public int sectors;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown7;
-            public uint session;
-            public ushort unknown8;
-            // Seems to be only on non DVD track descriptors
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown9;
-        }
-
-        struct Bw5SessionDescriptor
-        {
-            public ushort Sequence;
-            public byte Entries;
-            public byte Unknown;
-            public int Start;
-            public int End;
-            public ushort FirstTrack;
-            public ushort LastTrack;
-            public Bw5TrackDescriptor[] Tracks;
-        }
-
-        struct DataFileCharacteristics
-        {
-            public Filter FileFilter;
-            public string FilePath;
-            public TrackSubchannelType Subchannel;
-            public long SectorSize;
-            public int StartLba;
-            public int Sectors;
-        }
-        #endregion Internal Structures
-
-        #region Internal variables
-        Bw5Header header;
-        byte[] mode2A;
-        byte[] unkBlock;
-        byte[] pma;
+        /// <summary>"BWT5 STREAM SIGN"</summary>
+        readonly byte[] bw5Signature =
+            {0x42, 0x57, 0x54, 0x35, 0x20, 0x53, 0x54, 0x52, 0x45, 0x41, 0x4D, 0x20, 0x53, 0x49, 0x47, 0x4E};
         byte[] atip;
-        byte[] cdtext;
         byte[] bca;
-        byte[] dmi;
-        byte[] pfi;
-        byte[] discInformation;
-        string dataPath;
-        List<Bw5DataFile> dataFiles;
         List<Bw5SessionDescriptor> bwSessions;
+        byte[] cdtext;
+        List<Bw5DataFile> dataFiles;
+        string dataPath;
+        byte[] discInformation;
+        byte[] dmi;
         byte[] dpm;
-        List<Session> sessions;
-        List<Track> tracks;
-        List<Partition> partitions;
         List<DataFileCharacteristics> filePaths;
         byte[] fullToc;
-        Dictionary<uint, ulong> offsetmap;
-        Dictionary<uint, byte> trackFlags;
-        Stream imageStream;
-        #endregion Internal variables
 
-        #region Public Methods
+        Bw5Header header;
+        Stream imageStream;
+        byte[] mode2A;
+        Dictionary<uint, ulong> offsetmap;
+        List<Partition> partitions;
+        byte[] pfi;
+        byte[] pma;
+        List<Session> sessions;
+        Dictionary<uint, byte> trackFlags;
+        List<Track> tracks;
+        byte[] unkBlock;
+
         public BlindWrite5()
         {
             Name = "BlindWrite 5";
@@ -359,8 +230,7 @@ namespace DiscImageChef.DiscImages
 
                 ATIP.CDATIP? decodedAtip = ATIP.Decode(atip);
                 if(decodedAtip.HasValue)
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "ATIP: {0}",
-                                              ATIP.Prettify(decodedAtip));
+                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "ATIP: {0}", ATIP.Prettify(decodedAtip));
                 else atip = null;
             }
 
@@ -741,13 +611,17 @@ namespace DiscImageChef.DiscImages
 
                 long sectorSize = dataFile.Length / dataFile.Sectors;
                 if(sectorSize > 2352)
-                    switch(sectorSize - 2352) {
-                        case 16: chars.Subchannel = TrackSubchannelType.Q16Interleaved;
+                    switch(sectorSize - 2352)
+                    {
+                        case 16:
+                            chars.Subchannel = TrackSubchannelType.Q16Interleaved;
                             break;
-                        case 96: chars.Subchannel = TrackSubchannelType.PackedInterleaved;
+                        case 96:
+                            chars.Subchannel = TrackSubchannelType.PackedInterleaved;
                             break;
                         default:
-                            DicConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}", sectorSize - 2352);
+                            DicConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}",
+                                                      sectorSize - 2352);
                             return false;
                     }
                 else chars.Subchannel = TrackSubchannelType.None;
@@ -872,7 +746,9 @@ namespace DiscImageChef.DiscImages
                     track.TrackEndSector = (ulong)(trk.sectors + trk.startLba);
 
                     foreach(DataFileCharacteristics chars in filePaths.Where(chars => trk.startLba >= chars.StartLba &&
-                                                                                      trk.startLba + trk.sectors <= chars.StartLba + chars.Sectors)) {
+                                                                                      trk.startLba + trk.sectors <=
+                                                                                      chars.StartLba + chars.Sectors))
+                    {
                         track.TrackFilter = chars.FileFilter;
                         track.TrackFile = chars.FileFilter.GetFilename();
                         if(trk.startLba >= 0)
@@ -1084,8 +960,10 @@ namespace DiscImageChef.DiscImages
             {
                 PMA.CDPMA pma0 = PMA.Decode(pma).Value;
 
-                foreach(uint id in from descriptor in pma0.PMADescriptors where descriptor.ADR == 2 select (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame)) ImageInfo.MediaSerialNumber =
-                    $"{id & 0x00FFFFFF:X6}";
+                foreach(uint id in from descriptor in pma0.PMADescriptors
+                                   where descriptor.ADR == 2
+                                   select (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame))
+                    ImageInfo.MediaSerialNumber = $"{id & 0x00FFFFFF:X6}";
             }
 
             if(atip != null)
@@ -1111,14 +989,15 @@ namespace DiscImageChef.DiscImages
             }
 
             if(isBd && ImageInfo.Sectors > 24438784)
-            {
-                switch(ImageInfo.MediaType) {
-                    case MediaType.BDR: ImageInfo.MediaType = MediaType.BDRXL;
+                switch(ImageInfo.MediaType)
+                {
+                    case MediaType.BDR:
+                        ImageInfo.MediaType = MediaType.BDRXL;
                         break;
-                    case MediaType.BDRE: ImageInfo.MediaType = MediaType.BDREXL;
+                    case MediaType.BDRE:
+                        ImageInfo.MediaType = MediaType.BDREXL;
                         break;
                 }
-            }
 
             DicConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", ImageInfo.MediaType);
 
@@ -1244,14 +1123,28 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector
+                                                     select kvp)
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector
+                                                     select kvp)
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1264,7 +1157,8 @@ namespace DiscImageChef.DiscImages
 
             dicTrack.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            {
                 dicTrack = bwTrack;
                 break;
             }
@@ -1276,7 +1170,11 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
+            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars =>
+                                                                          (long)sectorAddress >= _chars.StartLba &&
+                                                                          length < (ulong)_chars.Sectors -
+                                                                          sectorAddress))
+            {
                 chars = _chars;
                 break;
             }
@@ -1378,7 +1276,8 @@ namespace DiscImageChef.DiscImages
 
             dicTrack.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            {
                 dicTrack = bwTrack;
                 break;
             }
@@ -1390,7 +1289,11 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
+            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars =>
+                                                                          (long)sectorAddress >= _chars.StartLba &&
+                                                                          length < (ulong)_chars.Sectors -
+                                                                          sectorAddress))
+            {
                 chars = _chars;
                 break;
             }
@@ -1661,7 +1564,14 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector
+                                                     select kvp)
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1674,7 +1584,8 @@ namespace DiscImageChef.DiscImages
 
             dicTrack.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            {
                 dicTrack = bwTrack;
                 break;
             }
@@ -1686,7 +1597,11 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
+            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars =>
+                                                                          (long)sectorAddress >= _chars.StartLba &&
+                                                                          length < (ulong)_chars.Sectors -
+                                                                          sectorAddress))
+            {
                 chars = _chars;
                 break;
             }
@@ -1840,9 +1755,8 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
@@ -1871,16 +1785,134 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifyMediaImage()
         {
             return null;
         }
-        #endregion Public Methods
+
+        enum Bw5TrackType : byte
+        {
+            NotData = 0,
+            Audio = 1,
+            Mode1 = 2,
+            Mode2 = 3,
+            Mode2F1 = 4,
+            Mode2F2 = 5,
+            Dvd = 6
+        }
+
+        enum Bw5TrackSubchannel : byte
+        {
+            None = 0,
+            Q16 = 2,
+            Linear = 4
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Bw5Header
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] unknown1;
+            public ProfileNumber profile;
+            public ushort sessions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown2;
+            [MarshalAs(UnmanagedType.U1, SizeConst = 3)] public bool mcnIsValid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] mcn;
+            public ushort unknown3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] unknown4;
+            public ushort pmaLen;
+            public ushort atipLen;
+            public ushort cdtLen;
+            public ushort cdInfoLen;
+            public uint bcaLen;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown5;
+            public uint dvdStrLen;
+            public uint dvdInfoLen;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] unknown6;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] manufacturer;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] product;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] revision;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] vendor;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] volumeId;
+            public uint mode2ALen;
+            public uint unkBlkLen;
+            public uint dataLen;
+            public uint sessionsLen;
+            public uint dpmLen;
+        }
+
+        struct Bw5DataFile
+        {
+            public uint Type;
+            public uint Length;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] Unknown1;
+            public uint Offset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] Unknown2;
+            public int StartLba;
+            public int Sectors;
+            public uint FilenameLen;
+            public byte[] FilenameBytes;
+            public uint Unknown3;
+
+            public string Filename;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Bw5TrackDescriptor
+        {
+            public Bw5TrackType type;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown1;
+            public uint unknown2;
+            public Bw5TrackSubchannel subchannel;
+            public byte unknown3;
+            public byte ctl;
+            public byte adr;
+            public byte point;
+            public byte unknown4;
+            public byte min;
+            public byte sec;
+            public byte frame;
+            public byte zero;
+            public byte pmin;
+            public byte psec;
+            public byte pframe;
+            public byte unknown5;
+            public uint pregap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] unknown6;
+            public int startLba;
+            public int sectors;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown7;
+            public uint session;
+            public ushort unknown8;
+            // Seems to be only on non DVD track descriptors
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown9;
+        }
+
+        struct Bw5SessionDescriptor
+        {
+            public ushort Sequence;
+            public byte Entries;
+            public byte Unknown;
+            public int Start;
+            public int End;
+            public ushort FirstTrack;
+            public ushort LastTrack;
+            public Bw5TrackDescriptor[] Tracks;
+        }
+
+        struct DataFileCharacteristics
+        {
+            public Filter FileFilter;
+            public string FilePath;
+            public TrackSubchannelType Subchannel;
+            public long SectorSize;
+            public int StartLba;
+            public int Sectors;
+        }
 
         #region Private methods
         static TrackType BlindWriteTrackTypeToTrackType(Bw5TrackType trackType)

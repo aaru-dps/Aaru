@@ -44,73 +44,25 @@ namespace DiscImageChef.DiscImages
 {
     public class PartClone : ImagePlugin
     {
-        #region Internal constants
-        readonly byte[] partCloneMagic =
-            {0x70, 0x61, 0x72, 0x74, 0x63, 0x6C, 0x6F, 0x6E, 0x65, 0x2D, 0x69, 0x6D, 0x61, 0x67, 0x65};
-        readonly byte[] biTmAgIc = {0x42, 0x69, 0x54, 0x6D, 0x41, 0x67, 0x49, 0x63};
         const int CRC_SIZE = 4;
-        #endregion
-
-        #region Internal Structures
-        /// <summary>
-        /// PartClone disk image header, little-endian
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartCloneHeader
-        {
-            /// <summary>
-            /// Magic, <see cref="PartClone.partCloneMagic"/>
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] magic;
-            /// <summary>
-            /// Source filesystem
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] filesystem;
-            /// <summary>
-            /// Version
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] version;
-            /// <summary>
-            /// Padding
-            /// </summary>
-            public ushort padding;
-            /// <summary>
-            /// Block (sector) size
-            /// </summary>
-            public uint blockSize;
-            /// <summary>
-            /// Size of device containing the cloned partition
-            /// </summary>
-            public ulong deviceSize;
-            /// <summary>
-            /// Total blocks in cloned partition
-            /// </summary>
-            public ulong totalBlocks;
-            /// <summary>
-            /// Used blocks in cloned partition
-            /// </summary>
-            public ulong usedBlocks;
-            /// <summary>
-            /// Empty space
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)] public byte[] buffer;
-        }
-        #endregion
-
-        PartCloneHeader pHdr;
-        // The used block "bitmap" uses one byte per block
-        // TODO: Convert on-image bytemap to on-memory bitmap
-        byte[] byteMap;
-        Stream imageStream;
-        long dataOff;
-
-        Dictionary<ulong, byte[]> sectorCache;
 
         const uint MAX_CACHE_SIZE = 16777216;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        readonly byte[] biTmAgIc = {0x42, 0x69, 0x54, 0x6D, 0x41, 0x67, 0x49, 0x63};
+        readonly byte[] partCloneMagic =
+            {0x70, 0x61, 0x72, 0x74, 0x63, 0x6C, 0x6F, 0x6E, 0x65, 0x2D, 0x69, 0x6D, 0x61, 0x67, 0x65};
+        // The used block "bitmap" uses one byte per block
+        // TODO: Convert on-image bytemap to on-memory bitmap
+        byte[] byteMap;
+        long dataOff;
 
         ExtentsULong extents;
         Dictionary<ulong, ulong> extentsOff;
+        Stream imageStream;
+
+        PartCloneHeader pHdr;
+
+        Dictionary<ulong, byte[]> sectorCache;
 
         public PartClone()
         {
@@ -383,7 +335,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -545,6 +496,49 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     PartClone disk image header, little-endian
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct PartCloneHeader
+        {
+            /// <summary>
+            ///     Magic, <see cref="PartClone.partCloneMagic" />
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] magic;
+            /// <summary>
+            ///     Source filesystem
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] filesystem;
+            /// <summary>
+            ///     Version
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] version;
+            /// <summary>
+            ///     Padding
+            /// </summary>
+            public ushort padding;
+            /// <summary>
+            ///     Block (sector) size
+            /// </summary>
+            public uint blockSize;
+            /// <summary>
+            ///     Size of device containing the cloned partition
+            /// </summary>
+            public ulong deviceSize;
+            /// <summary>
+            ///     Total blocks in cloned partition
+            /// </summary>
+            public ulong totalBlocks;
+            /// <summary>
+            ///     Used blocks in cloned partition
+            /// </summary>
+            public ulong usedBlocks;
+            /// <summary>
+            ///     Empty space
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)] public byte[] buffer;
+        }
     }
 }

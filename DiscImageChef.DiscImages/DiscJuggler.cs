@@ -45,13 +45,13 @@ namespace DiscImageChef.DiscImages
     // Support separate data files? Never seen a DiscJuggler image using them anyways...
     public class DiscJuggler : ImagePlugin
     {
-        Stream imageStream;
-        List<Session> sessions;
-        List<Track> tracks;
         byte[] cdtext;
+        Stream imageStream;
         Dictionary<uint, ulong> offsetmap;
         List<Partition> partitions;
+        List<Session> sessions;
         Dictionary<uint, byte> trackFlags;
+        List<Track> tracks;
 
         public DiscJuggler()
         {
@@ -106,9 +106,7 @@ namespace DiscImageChef.DiscImages
                descriptor[14] != 0xFF || descriptor[15] != 0xFF) return false;
 
             // Too many tracks
-            if(descriptor[2] > 99) return false;
-
-            return true;
+            return descriptor[2] <= 99;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -347,8 +345,7 @@ namespace DiscImageChef.DiscImages
                                     track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
                                     currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
                                     break;
-                                default:
-                                    throw new ImageNotSupportedException($"Unknown read mode {readMode}");
+                                default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
                             }
 
                             break;
@@ -366,8 +363,8 @@ namespace DiscImageChef.DiscImages
                                     currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
                                     break;
                                 case 1:
-                                    throw new
-                                        ImageNotSupportedException($"Invalid read mode {readMode} for this track");
+                                    throw
+                                        new ImageNotSupportedException($"Invalid read mode {readMode} for this track");
                                 case 2:
                                     track.TrackRawBytesPerSector = 2352;
                                     currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
@@ -426,8 +423,7 @@ namespace DiscImageChef.DiscImages
                                     if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                                         ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                                     break;
-                                default:
-                                    throw new ImageNotSupportedException($"Unknown read mode {readMode}");
+                                default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
                             }
 
                             break;
@@ -439,8 +435,8 @@ namespace DiscImageChef.DiscImages
                             switch(readMode)
                             {
                                 case 0:
-                                    throw new
-                                        ImageNotSupportedException($"Invalid read mode {readMode} for this track");
+                                    throw
+                                        new ImageNotSupportedException($"Invalid read mode {readMode} for this track");
                                 case 1:
                                     track.TrackRawBytesPerSector = 2336;
                                     if(firstTrack) currentOffset += 150 * (ulong)track.TrackRawBytesPerSector;
@@ -481,13 +477,11 @@ namespace DiscImageChef.DiscImages
                                     if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                         ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                                     break;
-                                default:
-                                    throw new ImageNotSupportedException($"Unknown read mode {readMode}");
+                                default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
                             }
 
                             break;
-                        default:
-                            throw new ImageNotSupportedException($"Unknown track mode {trackMode}");
+                        default: throw new ImageNotSupportedException($"Unknown track mode {trackMode}");
                     }
 
                     track.TrackFile = imageFilter.GetFilename();
@@ -701,14 +695,24 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress < track.TrackEndSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress < track.TrackEndSector
+                                                     select kvp)
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap.Where(kvp => sectorAddress >= kvp.Value).Where(kvp => tracks.Where(track => track.TrackSequence == kvp.Key).Any(track => sectorAddress < track.TrackEndSector))) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap
+                .Where(kvp => sectorAddress >= kvp.Value)
+                .Where(kvp => tracks.Where(track => track.TrackSequence == kvp.Key)
+                                    .Any(track => sectorAddress < track.TrackEndSector)))
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
@@ -717,7 +721,8 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track))
+            {
                 dicTrack = linqTrack;
                 break;
             }
@@ -809,8 +814,8 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-
-            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track))
+            {
                 dicTrack = linqTrack;
                 break;
             }
@@ -899,9 +904,13 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            switch(dicTrack.TrackSubchannelType) {
-                                case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                                case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
+                            switch(dicTrack.TrackSubchannelType)
+                            {
+                                case TrackSubchannelType.None:
+                                    throw new ArgumentException("Unsupported tag requested for this track",
+                                                                nameof(tag));
+                                case TrackSubchannelType.Q16Interleaved:
+                                    throw new ArgumentException("Q16 subchannel not yet supported");
                             }
 
                             sectorOffset = 2352;
@@ -940,9 +949,13 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            switch(dicTrack.TrackSubchannelType) {
-                                case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                                case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
+                            switch(dicTrack.TrackSubchannelType)
+                            {
+                                case TrackSubchannelType.None:
+                                    throw new ArgumentException("Unsupported tag requested for this track",
+                                                                nameof(tag));
+                                case TrackSubchannelType.Q16Interleaved:
+                                    throw new ArgumentException("Q16 subchannel not yet supported");
                             }
 
                             sectorOffset = 2352;
@@ -959,9 +972,13 @@ namespace DiscImageChef.DiscImages
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSubchannel:
-                            switch(dicTrack.TrackSubchannelType) {
-                                case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                                case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
+                            switch(dicTrack.TrackSubchannelType)
+                            {
+                                case TrackSubchannelType.None:
+                                    throw new ArgumentException("Unsupported tag requested for this track",
+                                                                nameof(tag));
+                                case TrackSubchannelType.Q16Interleaved:
+                                    throw new ArgumentException("Q16 subchannel not yet supported");
                             }
 
                             sectorOffset = 2352;
@@ -1020,7 +1037,14 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector
+                                                     select kvp)
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
@@ -1029,8 +1053,8 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-
-            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track))
+            {
                 dicTrack = linqTrack;
                 break;
             }
@@ -1241,9 +1265,8 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
@@ -1272,9 +1295,8 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifyMediaImage()

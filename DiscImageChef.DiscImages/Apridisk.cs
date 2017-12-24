@@ -43,23 +43,6 @@ namespace DiscImageChef.DiscImages
 {
     public class Apridisk : ImagePlugin
     {
-        #region Internal enumerations
-        enum RecordType : uint
-        {
-            Deleted = 0xE31D0000,
-            Sector = 0xE31D0001,
-            Comment = 0xE31D0002,
-            Creator = 0xE31D0003
-        }
-
-        enum CompressType : ushort
-        {
-            Uncompresed = 0x9E90,
-            Compressed = 0x3E5A
-        }
-        #endregion
-
-        #region Internal constants
         readonly byte[] signature =
         {
             0x41, 0x43, 0x54, 0x20, 0x41, 0x70, 0x72, 0x69, 0x63, 0x6F, 0x74, 0x20, 0x64, 0x69, 0x73, 0x6B, 0x20, 0x69,
@@ -71,21 +54,6 @@ namespace DiscImageChef.DiscImages
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00
         };
-        #endregion
-
-        #region Internal structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ApridiskRecord
-        {
-            public RecordType type;
-            public CompressType compression;
-            public ushort headerSize;
-            public uint dataSize;
-            public byte head;
-            public byte sector;
-            public ushort cylinder;
-        }
-        #endregion
 
         // Cylinder by head, sector data matrix
         byte[][][][] sectorsData;
@@ -152,7 +120,8 @@ namespace DiscImageChef.DiscImages
                 stream.Read(recB, 0, recordSize);
 
                 GCHandle handle = GCHandle.Alloc(recB, GCHandleType.Pinned);
-                ApridiskRecord record = (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
+                ApridiskRecord record =
+                    (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
                 handle.Free();
 
                 switch(record.type)
@@ -241,7 +210,8 @@ namespace DiscImageChef.DiscImages
                 stream.Read(recB, 0, recordSize);
 
                 GCHandle handle = GCHandle.Alloc(recB, GCHandleType.Pinned);
-                ApridiskRecord record = (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
+                ApridiskRecord record =
+                    (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
                 handle.Free();
 
                 switch(record.type)
@@ -450,7 +420,6 @@ namespace DiscImageChef.DiscImages
             return (cylinder, head, sector);
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -611,6 +580,31 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        enum RecordType : uint
+        {
+            Deleted = 0xE31D0000,
+            Sector = 0xE31D0001,
+            Comment = 0xE31D0002,
+            Creator = 0xE31D0003
+        }
+
+        enum CompressType : ushort
+        {
+            Uncompresed = 0x9E90,
+            Compressed = 0x3E5A
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ApridiskRecord
+        {
+            public RecordType type;
+            public CompressType compression;
+            public ushort headerSize;
+            public uint dataSize;
+            public byte head;
+            public byte sector;
+            public ushort cylinder;
+        }
     }
 }

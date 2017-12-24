@@ -41,11 +41,9 @@ namespace DiscImageChef.DiscImages
 {
     public class ZZZRawImage : ImagePlugin
     {
-        #region Internal variables
-        Filter rawImageFilter;
         bool differentTrackZeroSize;
         string extension;
-        #endregion
+        Filter rawImageFilter;
 
         public ZZZRawImage()
         {
@@ -122,10 +120,13 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
 
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
-            switch(extension) {
-                case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0: ImageInfo.SectorSize = 2048;
+            switch(extension)
+            {
+                case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0:
+                    ImageInfo.SectorSize = 2048;
                     break;
-                case ".d81" when imageFilter.GetDataForkLength() == 819200: ImageInfo.SectorSize = 256;
+                case ".d81" when imageFilter.GetDataForkLength() == 819200:
+                    ImageInfo.SectorSize = 256;
                     break;
                 default:
                     if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
@@ -892,7 +893,6 @@ namespace DiscImageChef.DiscImages
             return ReadSectors(sectorAddress, length);
         }
 
-        #region Private methods
         MediaType CalculateDiskType()
         {
             if(ImageInfo.SectorSize == 2048)
@@ -903,9 +903,8 @@ namespace DiscImageChef.DiscImages
                 if(ImageInfo.Sectors <= 4171712) return MediaType.DVDRDL;
                 if(ImageInfo.Sectors <= 4173824) return MediaType.DVDPRDL;
                 if(ImageInfo.Sectors <= 24438784) return MediaType.BDR;
-                if(ImageInfo.Sectors <= 62500864) return MediaType.BDRXL;
 
-                return MediaType.Unknown;
+                return ImageInfo.Sectors <= 62500864 ? MediaType.BDRXL : MediaType.Unknown;
             }
 
             switch(ImageInfo.ImageSize)
@@ -1006,9 +1005,7 @@ namespace DiscImageChef.DiscImages
                 default: return MediaType.GENERIC_HDD;
             }
         }
-        #endregion
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -1137,6 +1134,5 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
     }
 }

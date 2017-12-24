@@ -46,7 +46,6 @@ namespace DiscImageChef.DiscImages
 {
     public class Dart : ImagePlugin
     {
-        #region Internal constants
         // Disk types
         const byte DISK_MAC = 1;
         const byte DISK_LISA = 2;
@@ -82,22 +81,11 @@ namespace DiscImageChef.DiscImages
         const int DATA_SIZE = SECTORS_PER_BLOCK * SECTOR_SIZE;
         const int TAG_SIZE = SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
         const int BUFFER_SIZE = SECTORS_PER_BLOCK * SECTOR_SIZE + SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
-        #endregion
-
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DartHeader
-        {
-            public byte srcCmp;
-            public byte srcType;
-            public short srcSize;
-        }
-        #endregion
 
         // DART images are at most 1474560 bytes, so let's cache the whole
         byte[] dataCache;
-        byte[] tagCache;
         uint dataChecksum;
+        byte[] tagCache;
         uint tagChecksum;
 
         public Dart()
@@ -177,9 +165,7 @@ namespace DiscImageChef.DiscImages
                 default: return false;
             }
 
-            if(stream.Length > expectedMaxSize) return false;
-
-            return true;
+            return stream.Length <= expectedMaxSize;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -234,7 +220,8 @@ namespace DiscImageChef.DiscImages
 
             short[] bLength;
 
-            if(header.srcType == DISK_MAC_HD || header.srcType == DISK_DOS_HD) bLength = new short[BLOCK_ARRAY_LEN_HIGH];
+            if(header.srcType == DISK_MAC_HD || header.srcType == DISK_DOS_HD)
+                bLength = new short[BLOCK_ARRAY_LEN_HIGH];
             else bLength = new short[BLOCK_ARRAY_LEN_LOW];
 
             for(int i = 0; i < bLength.Length; i++)
@@ -247,32 +234,31 @@ namespace DiscImageChef.DiscImages
             MemoryStream dataMs = new MemoryStream();
             MemoryStream tagMs = new MemoryStream();
 
-            foreach(short l in bLength) if(l != 0)
-            {
-                byte[] buffer = new byte[BUFFER_SIZE];
-                if(l == -1)
+            foreach(short l in bLength)
+                if(l != 0)
                 {
-                    stream.Read(buffer, 0, BUFFER_SIZE);
-                    dataMs.Write(buffer, 0, DATA_SIZE);
-                    tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
-                }
-                else
-                {
-                    byte[] temp;
-                    if(header.srcCmp == COMPRESS_RLE)
+                    byte[] buffer = new byte[BUFFER_SIZE];
+                    if(l == -1)
                     {
-                        temp = new byte[l * 2];
-                        stream.Read(temp, 0, temp.Length);
-                        throw new ImageNotSupportedException("Compressed images not yet supported");
+                        stream.Read(buffer, 0, BUFFER_SIZE);
+                        dataMs.Write(buffer, 0, DATA_SIZE);
+                        tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                     }
                     else
                     {
+                        byte[] temp;
+                        if(header.srcCmp == COMPRESS_RLE)
+                        {
+                            temp = new byte[l * 2];
+                            stream.Read(temp, 0, temp.Length);
+                            throw new ImageNotSupportedException("Compressed images not yet supported");
+                        }
+
                         temp = new byte[l];
                         stream.Read(temp, 0, temp.Length);
                         throw new ImageNotSupportedException("Compressed images not yet supported");
                     }
                 }
-            }
 
             dataCache = dataMs.ToArray();
             if(header.srcType == DISK_LISA || header.srcType == DISK_MAC || header.srcType == DISK_APPLE2)
@@ -303,8 +289,7 @@ namespace DiscImageChef.DiscImages
 
                             string major = $"{version.MajorVersion}";
                             string minor = $".{version.MinorVersion / 10}";
-                            if(version.MinorVersion % 10 > 0)
-                                release = $".{version.MinorVersion % 10}";
+                            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                             switch(version.DevStage)
                             {
                                 case Version.DevelopmentStage.Alpha:
@@ -336,7 +321,8 @@ namespace DiscImageChef.DiscImages
                         {
                             string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]),
                                                                         Encoding.GetEncoding("macintosh"));
-                            const string DART_REGEX = "(?<version>\\S+), tag checksum=\\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\\$(?<datachk>[0123456789ABCDEF]{8})$";
+                            const string DART_REGEX =
+                                "(?<version>\\S+), tag checksum=\\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\\$(?<datachk>[0123456789ABCDEF]{8})$";
                             Regex dArtEx = new Regex(DART_REGEX);
                             Match dArtMatch = dArtEx.Match(dArt);
 
@@ -556,7 +542,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -697,6 +682,13 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DartHeader
+        {
+            public byte srcCmp;
+            public byte srcType;
+            public short srcSize;
+        }
     }
 }

@@ -42,41 +42,8 @@ namespace DiscImageChef.DiscImages
 {
     public class MaxiDisk : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HdkHeader
-        {
-            public byte unknown;
-            public byte diskType;
-            public byte heads;
-            public byte cylinders;
-            public byte bytesPerSector;
-            public byte sectorsPerTrack;
-            public byte unknown2;
-            public byte unknown3;
-        }
-
-        enum HdkDiskTypes : byte
-        {
-            Dos360 = 0,
-            Maxi420 = 1,
-            Dos720 = 2,
-            Maxi800 = 3,
-            Dos1200 = 4,
-            Maxi1400 = 5,
-            Dos1440 = 6,
-            Mac1440 = 7,
-            Maxi1600 = 8,
-            Dmf = 9,
-            Dos2880 = 10,
-            Maxi3200 = 11
-        }
-        #endregion
-
-        #region Internal variables
         /// <summary>Disk image file</summary>
         Filter hdkImageFilter;
-        #endregion
 
         public MaxiDisk()
         {
@@ -390,7 +357,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -510,6 +476,34 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HdkHeader
+        {
+            public byte unknown;
+            public byte diskType;
+            public byte heads;
+            public byte cylinders;
+            public byte bytesPerSector;
+            public byte sectorsPerTrack;
+            public byte unknown2;
+            public byte unknown3;
+        }
+
+        enum HdkDiskTypes : byte
+        {
+            Dos360 = 0,
+            Maxi420 = 1,
+            Dos720 = 2,
+            Maxi800 = 3,
+            Dos1200 = 4,
+            Maxi1400 = 5,
+            Dos1440 = 6,
+            Mac1440 = 7,
+            Maxi1600 = 8,
+            Dmf = 9,
+            Dos2880 = 10,
+            Maxi3200 = 11
+        }
     }
 }

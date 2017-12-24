@@ -43,65 +43,13 @@ namespace DiscImageChef.DiscImages
 {
     public class SaveDskF : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SaveDskFHeader
-        {
-            /// <summary>0x00 magic number</summary>
-            public ushort magic;
-            /// <summary>0x02 media type from FAT</summary>
-            public ushort mediaType;
-            /// <summary>0x04 bytes per sector</summary>
-            public ushort sectorSize;
-            /// <summary>0x06 sectors per cluster - 1</summary>
-            public byte clusterMask;
-            /// <summary>0x07 log2(cluster / sector)</summary>
-            public byte clusterShift;
-            /// <summary>0x08 reserved sectors</summary>
-            public ushort reservedSectors;
-            /// <summary>0x0A copies of FAT</summary>
-            public byte fatCopies;
-            /// <summary>0x0B entries in root directory</summary>
-            public ushort rootEntries;
-            /// <summary>0x0D first cluster</summary>
-            public ushort firstCluster;
-            /// <summary>0x0F clusters present in image</summary>
-            public ushort clustersCopied;
-            /// <summary>0x11 sectors per FAT</summary>
-            public byte sectorsPerFat;
-            /// <summary>0x12 sector number of root directory</summary>
-            public ushort rootDirectorySector;
-            /// <summary>0x14 sum of all image bytes</summary>
-            public uint checksum;
-            /// <summary>0x18 cylinders</summary>
-            public ushort cylinders;
-            /// <summary>0x1A heads</summary>
-            public ushort heads;
-            /// <summary>0x1C sectors per track</summary>
-            public ushort sectorsPerTrack;
-            /// <summary>0x1E always zero</summary>
-            public uint padding;
-            /// <summary>0x22 sectors present in image</summary>
-            public ushort sectorsCopied;
-            /// <summary>0x24 offset to comment</summary>
-            public ushort commentOffset;
-            /// <summary>0x26 offset to data</summary>
-            public ushort dataOffset;
-        }
-        #endregion Internal Structures
-
-        #region Internal Constants
         const ushort SDF_MAGIC_OLD = 0x58AA;
         const ushort SDF_MAGIC = 0x59AA;
         const ushort SDF_MAGIC_COMPRESSED = 0x5AAA;
-        #endregion Internal Constants
-
-        #region Internal variables
-        SaveDskFHeader header;
-        long sectors;
         uint calculatedChk;
         byte[] decodedDisk;
-        #endregion Internal variables
+
+        SaveDskFHeader header;
 
         public SaveDskF()
         {
@@ -132,7 +80,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -204,9 +151,6 @@ namespace DiscImageChef.DiscImages
                 if(b >= 0) calculatedChk += (uint)b;
             }
             while(b >= 0);
-
-            // In case there is omitted data
-            sectors = header.sectorsPerTrack * header.heads * header.cylinders;
 
             DicConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
                                       calculatedChk == header.checksum);
@@ -514,9 +458,7 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.DriveSerialNumber;
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -596,6 +538,50 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct SaveDskFHeader
+        {
+            /// <summary>0x00 magic number</summary>
+            public ushort magic;
+            /// <summary>0x02 media type from FAT</summary>
+            public ushort mediaType;
+            /// <summary>0x04 bytes per sector</summary>
+            public ushort sectorSize;
+            /// <summary>0x06 sectors per cluster - 1</summary>
+            public byte clusterMask;
+            /// <summary>0x07 log2(cluster / sector)</summary>
+            public byte clusterShift;
+            /// <summary>0x08 reserved sectors</summary>
+            public ushort reservedSectors;
+            /// <summary>0x0A copies of FAT</summary>
+            public byte fatCopies;
+            /// <summary>0x0B entries in root directory</summary>
+            public ushort rootEntries;
+            /// <summary>0x0D first cluster</summary>
+            public ushort firstCluster;
+            /// <summary>0x0F clusters present in image</summary>
+            public ushort clustersCopied;
+            /// <summary>0x11 sectors per FAT</summary>
+            public byte sectorsPerFat;
+            /// <summary>0x12 sector number of root directory</summary>
+            public ushort rootDirectorySector;
+            /// <summary>0x14 sum of all image bytes</summary>
+            public uint checksum;
+            /// <summary>0x18 cylinders</summary>
+            public ushort cylinders;
+            /// <summary>0x1A heads</summary>
+            public ushort heads;
+            /// <summary>0x1C sectors per track</summary>
+            public ushort sectorsPerTrack;
+            /// <summary>0x1E always zero</summary>
+            public uint padding;
+            /// <summary>0x22 sectors present in image</summary>
+            public ushort sectorsCopied;
+            /// <summary>0x24 offset to comment</summary>
+            public ushort commentOffset;
+            /// <summary>0x26 offset to data</summary>
+            public ushort dataOffset;
+        }
     }
 }

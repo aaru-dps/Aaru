@@ -47,155 +47,9 @@ namespace DiscImageChef.DiscImages
     // Japanese comments copied from there
     public class D88 : ImagePlugin
     {
-        #region Internal enumerations
-        enum DiskType : byte
-        {
-            D2 = 0x00,
-            Dd2 = 0x10,
-            Hd2 = 0x20
-        }
-
-        enum DensityType : byte
-        {
-            Mfm = 0x00,
-            Fm = 0x40
-        }
-
-        /// <summary>
-        /// Status as returned by PC-98 BIOS
-        /// ステータスは、PC-98x1 のBIOS が返してくるステータスで、
-        /// </summary>
-        enum StatusType : byte
-        {
-            /// <summary>
-            /// Normal
-            /// 正常
-            /// </summary>
-            Normal = 0x00,
-            /// <summary>
-            /// Deleted
-            /// 正常(DELETED DATA)
-            /// </summary>
-            Deleted = 0x10,
-            /// <summary>
-            /// CRC error in address fields
-            /// ID CRC エラー
-            /// </summary>
-            IdError = 0xA0,
-            /// <summary>
-            /// CRC error in data block
-            /// データ CRC エラー
-            /// </summary>
-            DataError = 0xB0,
-            /// <summary>
-            /// Address mark not found
-            /// アドレスマークなし
-            /// </summary>
-            AddressMarkNotFound = 0xE0,
-            /// <summary>
-            /// Data mark not found
-            /// データマークなし
-            /// </summary>
-            DataMarkNotFound = 0xF0
-        }
-        #endregion
-
-        #region Internal constants
-        readonly byte[] reservedEmpty = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         const byte READ_ONLY = 0x10;
-        #endregion
 
-        #region Internal structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct D88Header
-        {
-            /// <summary>
-            /// Disk name, nul-terminated ASCII
-            /// ディスクの名前(ASCII + '\0')
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)] public byte[] name;
-            /// <summary>
-            /// Reserved
-            /// ディスクの名前(ASCII + '\0')
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] reserved;
-            /// <summary>
-            /// Write protect status
-            /// ライトプロテクト： 0x00 なし、0x10 あり
-            /// </summary>
-            public byte write_protect;
-            /// <summary>
-            /// Disk type
-            /// ディスクの種類： 0x00 2D、 0x10 2DD、 0x20 2HD
-            /// </summary>
-            public DiskType disk_type;
-            /// <summary>
-            /// Disk image size
-            /// ディスクのサイズ
-            /// </summary>
-            public int disk_size;
-            /// <summary>
-            /// Track pointers
-            /// トラック部のオフセットテーブル 0 Track ～ 163 Track
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 164)] public int[] track_table;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SectorHeader
-        {
-            /// <summary>
-            /// Cylinder
-            /// ID の C
-            /// </summary>
-            public byte c;
-            /// <summary>
-            /// Head
-            /// ID の H
-            /// </summary>
-            public byte h;
-            /// <summary>
-            /// Sector number
-            /// ID の R
-            /// </summary>
-            public byte r;
-            /// <summary>
-            /// Sector size
-            /// ID の N
-            /// </summary>
-            public IBMSectorSizeCode n;
-            /// <summary>
-            /// Number of sectors in this track
-            /// このトラック内に存在するセクタの数
-            /// </summary>
-            public short spt;
-            /// <summary>
-            /// Density: 0x00 MFM, 0x40 FM
-            /// 記録密度： 0x00 倍密度、0x40 単密度
-            /// </summary>
-            public DensityType density;
-            /// <summary>
-            /// Deleted sector, 0x00 not deleted, 0x10 deleted
-            /// DELETED MARK： 0x00 ノーマル、 0x10 DELETED
-            /// </summary>
-            public byte deleted_mark;
-            /// <summary>
-            /// Sector status
-            /// ステータス
-            /// </summary>
-            public byte status;
-            /// <summary>
-            /// Reserved
-            /// リザーブ
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] reserved;
-            /// <summary>
-            /// Size of data following this field
-            /// このセクタ部のデータサイズ
-            /// </summary>
-            public short size_of_data;
-        }
-        #endregion
+        readonly byte[] reservedEmpty = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
         List<byte[]> sectorsData;
 
@@ -263,7 +117,8 @@ namespace DiscImageChef.DiscImages
             if(!d88Hdr.reserved.SequenceEqual(reservedEmpty)) return false;
 
             int counter = 0;
-            foreach(int t in d88Hdr.track_table) {
+            foreach(int t in d88Hdr.track_table)
+            {
                 if(t > 0) counter++;
 
                 if(t < 0 || t > stream.Length) return false;
@@ -309,11 +164,11 @@ namespace DiscImageChef.DiscImages
             if(!d88Hdr.reserved.SequenceEqual(reservedEmpty)) return false;
 
             int trkCounter = 0;
-            for(int i = 0; i < d88Hdr.track_table.Length; i++)
+            foreach(int t in d88Hdr.track_table)
             {
-                if(d88Hdr.track_table[i] > 0) trkCounter++;
+                if(t > 0) trkCounter++;
 
-                if(d88Hdr.track_table[i] < 0 || d88Hdr.track_table[i] > stream.Length) return false;
+                if(t < 0 || t > stream.Length) return false;
             }
 
             DicConsole.DebugWriteLine("D88 plugin", "{0} tracks", trkCounter);
@@ -390,7 +245,7 @@ namespace DiscImageChef.DiscImages
                 foreach(KeyValuePair<byte, byte[]> kvp in sectors) sectorsData.Add(kvp.Value);
             }
 
-            DicConsole.DebugWriteLine("D88 plugin", "{0} sectors", sectorsData.Count());
+            DicConsole.DebugWriteLine("D88 plugin", "{0} sectors", sectorsData.Count);
 
             /*
             FileStream debugStream = new FileStream("debug.img", FileMode.CreateNew, FileAccess.ReadWrite);
@@ -404,16 +259,18 @@ namespace DiscImageChef.DiscImages
                 if(trkCounter == 154 && spt == 26 && bps == IBMSectorSizeCode.EighthKilo)
                     ImageInfo.MediaType = MediaType.NEC_8_SD;
                 else if(bps == IBMSectorSizeCode.QuarterKilo)
-                {
-                    switch(trkCounter) {
-                        case 80 when spt == 16: ImageInfo.MediaType = MediaType.NEC_525_SS;
+                    switch(trkCounter)
+                    {
+                        case 80 when spt == 16:
+                            ImageInfo.MediaType = MediaType.NEC_525_SS;
                             break;
-                        case 154 when spt == 26: ImageInfo.MediaType = MediaType.NEC_8_DD;
+                        case 154 when spt == 26:
+                            ImageInfo.MediaType = MediaType.NEC_8_DD;
                             break;
-                        case 160 when spt == 16: ImageInfo.MediaType = MediaType.NEC_525_DS;
+                        case 160 when spt == 16:
+                            ImageInfo.MediaType = MediaType.NEC_525_DS;
                             break;
                     }
-                }
                 else if(trkCounter == 154 && spt == 8 && bps == IBMSectorSizeCode.Kilo)
                     ImageInfo.MediaType = MediaType.NEC_525_HD;
                 else if(bps == IBMSectorSizeCode.HalfKilo)
@@ -646,7 +503,6 @@ namespace DiscImageChef.DiscImages
             return buffer.ToArray();
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -807,6 +663,146 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        enum DiskType : byte
+        {
+            D2 = 0x00,
+            Dd2 = 0x10,
+            Hd2 = 0x20
+        }
+
+        enum DensityType : byte
+        {
+            Mfm = 0x00,
+            Fm = 0x40
+        }
+
+        /// <summary>
+        ///     Status as returned by PC-98 BIOS
+        ///     ステータスは、PC-98x1 のBIOS が返してくるステータスで、
+        /// </summary>
+        enum StatusType : byte
+        {
+            /// <summary>
+            ///     Normal
+            ///     正常
+            /// </summary>
+            Normal = 0x00,
+            /// <summary>
+            ///     Deleted
+            ///     正常(DELETED DATA)
+            /// </summary>
+            Deleted = 0x10,
+            /// <summary>
+            ///     CRC error in address fields
+            ///     ID CRC エラー
+            /// </summary>
+            IdError = 0xA0,
+            /// <summary>
+            ///     CRC error in data block
+            ///     データ CRC エラー
+            /// </summary>
+            DataError = 0xB0,
+            /// <summary>
+            ///     Address mark not found
+            ///     アドレスマークなし
+            /// </summary>
+            AddressMarkNotFound = 0xE0,
+            /// <summary>
+            ///     Data mark not found
+            ///     データマークなし
+            /// </summary>
+            DataMarkNotFound = 0xF0
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct D88Header
+        {
+            /// <summary>
+            ///     Disk name, nul-terminated ASCII
+            ///     ディスクの名前(ASCII + '\0')
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)] public byte[] name;
+            /// <summary>
+            ///     Reserved
+            ///     ディスクの名前(ASCII + '\0')
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] reserved;
+            /// <summary>
+            ///     Write protect status
+            ///     ライトプロテクト： 0x00 なし、0x10 あり
+            /// </summary>
+            public byte write_protect;
+            /// <summary>
+            ///     Disk type
+            ///     ディスクの種類： 0x00 2D、 0x10 2DD、 0x20 2HD
+            /// </summary>
+            public DiskType disk_type;
+            /// <summary>
+            ///     Disk image size
+            ///     ディスクのサイズ
+            /// </summary>
+            public int disk_size;
+            /// <summary>
+            ///     Track pointers
+            ///     トラック部のオフセットテーブル 0 Track ～ 163 Track
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 164)] public int[] track_table;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct SectorHeader
+        {
+            /// <summary>
+            ///     Cylinder
+            ///     ID の C
+            /// </summary>
+            public byte c;
+            /// <summary>
+            ///     Head
+            ///     ID の H
+            /// </summary>
+            public byte h;
+            /// <summary>
+            ///     Sector number
+            ///     ID の R
+            /// </summary>
+            public byte r;
+            /// <summary>
+            ///     Sector size
+            ///     ID の N
+            /// </summary>
+            public IBMSectorSizeCode n;
+            /// <summary>
+            ///     Number of sectors in this track
+            ///     このトラック内に存在するセクタの数
+            /// </summary>
+            public short spt;
+            /// <summary>
+            ///     Density: 0x00 MFM, 0x40 FM
+            ///     記録密度： 0x00 倍密度、0x40 単密度
+            /// </summary>
+            public DensityType density;
+            /// <summary>
+            ///     Deleted sector, 0x00 not deleted, 0x10 deleted
+            ///     DELETED MARK： 0x00 ノーマル、 0x10 DELETED
+            /// </summary>
+            public byte deleted_mark;
+            /// <summary>
+            ///     Sector status
+            ///     ステータス
+            /// </summary>
+            public byte status;
+            /// <summary>
+            ///     Reserved
+            ///     リザーブ
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] reserved;
+            /// <summary>
+            ///     Size of data following this field
+            ///     このセクタ部のデータサイズ
+            /// </summary>
+            public short size_of_data;
+        }
     }
 }

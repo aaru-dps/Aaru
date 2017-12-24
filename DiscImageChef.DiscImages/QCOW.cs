@@ -44,9 +44,8 @@ namespace DiscImageChef.DiscImages
 {
     public class Qcow : ImagePlugin
     {
-        #region Internal constants
         /// <summary>
-        /// Magic number: 'Q', 'F', 'I', 0xFB
+        ///     Magic number: 'Q', 'F', 'I', 0xFB
         /// </summary>
         const uint QCOW_MAGIC = 0x514649FB;
         const uint QCOW_VERSION = 1;
@@ -55,83 +54,28 @@ namespace DiscImageChef.DiscImages
         const ulong QCOW_COMPRESSED = 0x8000000000000000;
 
         const int MAX_CACHE_SIZE = 16777216;
-        #endregion
 
-        #region Internal Structures
-        /// <summary>
-        /// QCOW header, big-endian
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QCowHeader
-        {
-            /// <summary>
-            /// <see cref="Qcow.QCOW_MAGIC"/>
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            /// Must be 1
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Offset inside file to string containing backing file
-            /// </summary>
-            public ulong backing_file_offset;
-            /// <summary>
-            /// Size of <see cref="backing_file_offset"/>
-            /// </summary>
-            public uint backing_file_size;
-            /// <summary>
-            /// Modification time
-            /// </summary>
-            public uint mtime;
-            /// <summary>
-            /// Size in bytes
-            /// </summary>
-            public ulong size;
-            /// <summary>
-            /// Cluster bits
-            /// </summary>
-            public byte cluster_bits;
-            /// <summary>
-            /// L2 table bits
-            /// </summary>
-            public byte l2_bits;
-            /// <summary>
-            /// Padding
-            /// </summary>
-            public ushort padding;
-            /// <summary>
-            /// Encryption method
-            /// </summary>
-            public uint crypt_method;
-            /// <summary>
-            /// Offset to L1 table
-            /// </summary>
-            public ulong l1_table_offset;
-        }
-        #endregion
-
-        QCowHeader qHdr;
-        int clusterSize;
+        const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        Dictionary<ulong, byte[]> clusterCache;
         int clusterSectors;
-        uint l1Size;
-        int l2Size;
-        ulong[] l1Table;
+        int clusterSize;
+
+        Stream imageStream;
 
         ulong l1Mask;
         int l1Shift;
+        uint l1Size;
+        ulong[] l1Table;
         ulong l2Mask;
-        ulong sectorMask;
+        int l2Size;
+        Dictionary<ulong, ulong[]> l2TableCache;
+        int maxClusterCache;
+        int maxL2TableCache;
+
+        QCowHeader qHdr;
 
         Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> clusterCache;
-        Dictionary<ulong, ulong[]> l2TableCache;
-
-        int maxCachedSectors = MAX_CACHE_SIZE / 512;
-        int maxL2TableCache;
-        int maxClusterCache;
-
-        Stream imageStream;
+        ulong sectorMask;
 
         public Qcow()
         {
@@ -281,7 +225,9 @@ namespace DiscImageChef.DiscImages
             clusterCache = new Dictionary<ulong, byte[]>();
 
             ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = qHdr.mtime > 0 ? DateHandlers.UnixUnsignedToDateTime(qHdr.mtime) : imageFilter.GetLastWriteTime();
+            ImageInfo.ImageLastModificationTime = qHdr.mtime > 0
+                                                      ? DateHandlers.UnixUnsignedToDateTime(qHdr.mtime)
+                                                      : imageFilter.GetLastWriteTime();
             ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.Sectors = qHdr.size / 512;
             ImageInfo.SectorSize = 512;
@@ -381,7 +327,7 @@ namespace DiscImageChef.DiscImages
                 Array.Copy(cluster, (int)(byteAddress & sectorMask), sector, 0, 512);
             }
 
-            if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+            if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
@@ -478,7 +424,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -639,6 +584,57 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     QCOW header, big-endian
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QCowHeader
+        {
+            /// <summary>
+            ///     <see cref="Qcow.QCOW_MAGIC" />
+            /// </summary>
+            public uint magic;
+            /// <summary>
+            ///     Must be 1
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Offset inside file to string containing backing file
+            /// </summary>
+            public ulong backing_file_offset;
+            /// <summary>
+            ///     Size of <see cref="backing_file_offset" />
+            /// </summary>
+            public uint backing_file_size;
+            /// <summary>
+            ///     Modification time
+            /// </summary>
+            public uint mtime;
+            /// <summary>
+            ///     Size in bytes
+            /// </summary>
+            public ulong size;
+            /// <summary>
+            ///     Cluster bits
+            /// </summary>
+            public byte cluster_bits;
+            /// <summary>
+            ///     L2 table bits
+            /// </summary>
+            public byte l2_bits;
+            /// <summary>
+            ///     Padding
+            /// </summary>
+            public ushort padding;
+            /// <summary>
+            ///     Encryption method
+            /// </summary>
+            public uint crypt_method;
+            /// <summary>
+            ///     Offset to L1 table
+            /// </summary>
+            public ulong l1_table_offset;
+        }
     }
 }

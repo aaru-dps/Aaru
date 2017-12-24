@@ -50,445 +50,6 @@ namespace DiscImageChef.DiscImages
     // TODO: Implement PCMCIA support
     public class Chd : ImagePlugin
     {
-        #region Internal Structures
-        enum ChdCompression : uint
-        {
-            None = 0,
-            Zlib = 1,
-            ZlibPlus = 2,
-            Av = 3
-        }
-
-        enum ChdFlags : uint
-        {
-            HasParent = 1,
-            Writable = 2
-        }
-
-        enum Chdv3EntryFlags : byte
-        {
-            /// <summary>Invalid</summary>
-            Invalid = 0,
-            /// <summary>Compressed with primary codec</summary>
-            Compressed = 1,
-            /// <summary>Uncompressed</summary>
-            Uncompressed = 2,
-            /// <summary>Use offset as data</summary>
-            Mini = 3,
-            /// <summary>Same as another hunk in file</summary>
-            SelfHunk = 4,
-            /// <summary>Same as another hunk in parent</summary>
-            ParentHunk = 5,
-            /// <summary>Compressed with secondary codec (FLAC)</summary>
-            SecondCompressed = 6
-        }
-
-        enum ChdOldTrackType : uint
-        {
-            Mode1 = 0,
-            Mode1Raw,
-            Mode2,
-            Mode2Form1,
-            Mode2Form2,
-            Mode2FormMix,
-            Mode2Raw,
-            Audio
-        }
-
-        enum ChdOldSubType : uint
-        {
-            Cooked = 0,
-            Raw,
-            None
-        }
-
-        // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
-        // Sectors are fixed at 512 bytes/sector
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV1
-        {
-            /// <summary>
-            /// Magic identifier, 'MComprHD'
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
-            /// <summary>
-            /// Length of header
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Image format version
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Image flags, <see cref="ChdFlags"/>
-            /// </summary>
-            public uint flags;
-            /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/>
-            /// </summary>
-            public uint compression;
-            /// <summary>
-            /// Sectors per hunk
-            /// </summary>
-            public uint hunksize;
-            /// <summary>
-            /// Total # of hunk in image
-            /// </summary>
-            public uint totalhunks;
-            /// <summary>
-            /// Cylinders on disk
-            /// </summary>
-            public uint cylinders;
-            /// <summary>
-            /// Heads per cylinder
-            /// </summary>
-            public uint heads;
-            /// <summary>
-            /// Sectors per track
-            /// </summary>
-            public uint sectors;
-            /// <summary>
-            /// MD5 of raw data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] md5;
-            /// <summary>
-            /// MD5 of parent file
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] parentmd5;
-        }
-
-        // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV2
-        {
-            /// <summary>
-            /// Magic identifier, 'MComprHD'
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
-            /// <summary>
-            /// Length of header
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Image format version
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Image flags, <see cref="ChdFlags"/>
-            /// </summary>
-            public uint flags;
-            /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/>
-            /// </summary>
-            public uint compression;
-            /// <summary>
-            /// Sectors per hunk
-            /// </summary>
-            public uint hunksize;
-            /// <summary>
-            /// Total # of hunk in image
-            /// </summary>
-            public uint totalhunks;
-            /// <summary>
-            /// Cylinders on disk
-            /// </summary>
-            public uint cylinders;
-            /// <summary>
-            /// Heads per cylinder
-            /// </summary>
-            public uint heads;
-            /// <summary>
-            /// Sectors per track
-            /// </summary>
-            public uint sectors;
-            /// <summary>
-            /// MD5 of raw data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] md5;
-            /// <summary>
-            /// MD5 of parent file
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] parentmd5;
-            /// <summary>
-            /// Bytes per sector
-            /// </summary>
-            public uint seclen;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV3
-        {
-            /// <summary>
-            /// Magic identifier, 'MComprHD'
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
-            /// <summary>
-            /// Length of header
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Image format version
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Image flags, <see cref="ChdFlags"/>
-            /// </summary>
-            public uint flags;
-            /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/>
-            /// </summary>
-            public uint compression;
-            /// <summary>
-            /// Total # of hunk in image
-            /// </summary>
-            public uint totalhunks;
-            /// <summary>
-            /// Total bytes in image
-            /// </summary>
-            public ulong logicalbytes;
-            /// <summary>
-            /// Offset to first metadata blob
-            /// </summary>
-            public ulong metaoffset;
-            /// <summary>
-            /// MD5 of raw data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] md5;
-            /// <summary>
-            /// MD5 of parent file
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] parentmd5;
-            /// <summary>
-            /// Bytes per hunk
-            /// </summary>
-            public uint hunkbytes;
-            /// <summary>
-            /// SHA1 of raw data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sha1;
-            /// <summary>
-            /// SHA1 of parent file
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] parentsha1;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdMapV3Entry
-        {
-            /// <summary>
-            /// Offset to hunk from start of image
-            /// </summary>
-            public ulong offset;
-            /// <summary>
-            /// CRC32 of uncompressed hunk
-            /// </summary>
-            public uint crc;
-            /// <summary>
-            /// Lower 16 bits of length
-            /// </summary>
-            public ushort lengthLsb;
-            /// <summary>
-            /// Upper 8 bits of length
-            /// </summary>
-            public byte length;
-            /// <summary>
-            /// Hunk flags
-            /// </summary>
-            public byte flags;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdTrackOld
-        {
-            public uint type;
-            public uint subType;
-            public uint dataSize;
-            public uint subSize;
-            public uint frames;
-            public uint extraFrames;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV4
-        {
-            /// <summary>
-            /// Magic identifier, 'MComprHD'
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
-            /// <summary>
-            /// Length of header
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Image format version
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Image flags, <see cref="ChdFlags"/>
-            /// </summary>
-            public uint flags;
-            /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/>
-            /// </summary>
-            public uint compression;
-            /// <summary>
-            /// Total # of hunk in image
-            /// </summary>
-            public uint totalhunks;
-            /// <summary>
-            /// Total bytes in image
-            /// </summary>
-            public ulong logicalbytes;
-            /// <summary>
-            /// Offset to first metadata blob
-            /// </summary>
-            public ulong metaoffset;
-            /// <summary>
-            /// Bytes per hunk
-            /// </summary>
-            public uint hunkbytes;
-            /// <summary>
-            /// SHA1 of raw+meta data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sha1;
-            /// <summary>
-            /// SHA1 of parent file
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] parentsha1;
-            /// <summary>
-            /// SHA1 of raw data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] rawsha1;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV5
-        {
-            /// <summary>
-            /// Magic identifier, 'MComprHD'
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
-            /// <summary>
-            /// Length of header
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Image format version
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Compressor 0
-            /// </summary>
-            public uint compressor0;
-            /// <summary>
-            /// Compressor 1
-            /// </summary>
-            public uint compressor1;
-            /// <summary>
-            /// Compressor 2
-            /// </summary>
-            public uint compressor2;
-            /// <summary>
-            /// Compressor 3
-            /// </summary>
-            public uint compressor3;
-            /// <summary>
-            /// Total bytes in image
-            /// </summary>
-            public ulong logicalbytes;
-            /// <summary>
-            /// Offset to hunk map
-            /// </summary>
-            public ulong mapoffset;
-            /// <summary>
-            /// Offset to first metadata blob
-            /// </summary>
-            public ulong metaoffset;
-            /// <summary>
-            /// Bytes per hunk
-            /// </summary>
-            public uint hunkbytes;
-            /// <summary>
-            /// Bytes per unit within hunk
-            /// </summary>
-            public uint unitbytes;
-            /// <summary>
-            /// SHA1 of raw data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] rawsha1;
-            /// <summary>
-            /// SHA1 of raw+meta data
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sha1;
-            /// <summary>
-            /// SHA1 of parent file
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] parentsha1;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdCompressedMapHeaderV5
-        {
-            /// <summary>
-            /// Length of compressed map
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Offset of first block (48 bits) and CRC16 of map (16 bits)
-            /// </summary>
-            public ulong startAndCrc;
-            /// <summary>
-            /// Bits used to encode compressed length on map entry
-            /// </summary>
-            public byte bitsUsedToEncodeCompLength;
-            /// <summary>
-            /// Bits used to encode self-refs
-            /// </summary>
-            public byte bitsUsedToEncodeSelfRefs;
-            /// <summary>
-            /// Bits used to encode parent unit refs
-            /// </summary>
-            public byte bitsUsedToEncodeParentUnits;
-            public byte reserved;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdMapV5Entry
-        {
-            /// <summary>
-            /// Compression (8 bits) and length (24 bits)
-            /// </summary>
-            public uint compAndLength;
-            /// <summary>
-            /// Offset (48 bits) and CRC (16 bits)
-            /// </summary>
-            public ulong offsetAndCrc;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdMetadataHeader
-        {
-            public uint tag;
-            public uint flagsAndLength;
-            public ulong next;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HunkSector
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public ulong[] hunkEntry;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HunkSectorSmall
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] hunkEntry;
-        }
-        #endregion
-
-        #region Internal Constants
-        /// <summary>"MComprHD"</summary>
-        readonly byte[] chdTag = {0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44};
         /// <summary>"GDDD"</summary>
         const uint HARD_DISK_METADATA = 0x47444444;
         /// <summary>"IDNT"</summary>
@@ -512,14 +73,14 @@ namespace DiscImageChef.DiscImages
         /// <summary>"AVLD"</summary>
         const uint AV_LASER_DISC_METADATA = 0x41564C44;
 
-        const string HARD_DISK_METADATA_REGEX =
+        const string REGEX_METADATA_HDD =
             "CYLS:(?<cylinders>\\d+),HEADS:(?<heads>\\d+),SECS:(?<sectors>\\d+),BPS:(?<bps>\\d+)";
-        const string CDROM_METADATA_REGEX =
+        const string REGEX_METADATA_CDROM =
             "TRACK:(?<track>\\d+) TYPE:(?<track_type>\\S+) SUBTYPE:(?<sub_type>\\S+) FRAMES:(?<frames>\\d+)";
-        const string CDROM_METADATA2_REGEX =
+        const string REGEX_METADATA_CDROM2 =
                 "TRACK:(?<track>\\d+) TYPE:(?<track_type>\\S+) SUBTYPE:(?<sub_type>\\S+) FRAMES:(?<frames>\\d+) PREGAP:(?<pregap>\\d+) PGTYPE:(?<pgtype>\\S+) PGSUB:(?<pgsub>\\S+) POSTGAP:(?<postgap>\\d+)"
             ;
-        const string GDROM_METADATA_REGEX =
+        const string REGEX_METADATA_GDROM =
                 "TRACK:(?<track>\\d+) TYPE:(?<track_type>\\S+) SUBTYPE:(?<sub_type>\\S+) FRAMES:(?<frames>\\d+) PAD:(?<pad>\\d+) PREGAP:(?<pregap>\\d+) PGTYPE:(?<pgtype>\\S+) PGSUB:(?<pgsub>\\S+) POSTGAP:(?<postgap>\\d+)"
             ;
 
@@ -541,41 +102,37 @@ namespace DiscImageChef.DiscImages
         const string SUB_TYPE_COOKED = "RW";
         const string SUB_TYPE_RAW = "RW_RAW";
         const string SUB_TYPE_NONE = "NONE";
-        #endregion
 
-        #region Internal variables
-        ulong[] hunkTable;
-        uint[] hunkTableSmall;
+        const int MAX_CACHE_SIZE = 16777216;
+
+        /// <summary>"MComprHD"</summary>
+        readonly byte[] chdTag = {0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44};
+        uint bytesPerHunk;
+        byte[] cis;
+        byte[] expectedChecksum;
         uint hdrCompression;
         uint hdrCompression1;
         uint hdrCompression2;
         uint hdrCompression3;
-        Stream imageStream;
-        uint sectorsPerHunk;
+        Dictionary<ulong, byte[]> hunkCache;
         byte[] hunkMap;
-        uint mapVersion;
-        uint bytesPerHunk;
-        uint totalHunks;
-        byte[] expectedChecksum;
+        ulong[] hunkTable;
+        uint[] hunkTableSmall;
+        byte[] identify;
+        Stream imageStream;
         bool isCdrom;
-        bool isHdd;
         bool isGdrom;
-        bool swapAudio;
-
-        const int MAX_CACHE_SIZE = 16777216;
+        bool isHdd;
+        uint mapVersion;
         int maxBlockCache;
         int maxSectorCache;
-
-        Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> hunkCache;
-
-        Dictionary<uint, Track> tracks;
-        List<Partition> partitions;
         Dictionary<ulong, uint> offsetmap;
-
-        byte[] identify;
-        byte[] cis;
-        #endregion
+        List<Partition> partitions;
+        Dictionary<ulong, byte[]> sectorCache;
+        uint sectorsPerHunk;
+        bool swapAudio;
+        uint totalHunks;
+        Dictionary<uint, Track> tracks;
 
         public Chd()
         {
@@ -673,15 +230,15 @@ namespace DiscImageChef.DiscImages
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
                         GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                        HunkSector hunkSector = (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
+                        HunkSector hunkSector =
+                            (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
                         if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
                             Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8,
-                                       hunkTable.Length - i * 512 / 8);
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, hunkTable.Length - i * 512 / 8);
                     }
 
                     DateTime end = DateTime.UtcNow;
@@ -744,15 +301,15 @@ namespace DiscImageChef.DiscImages
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
                         GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                        HunkSector hunkSector = (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
+                        HunkSector hunkSector =
+                            (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
                         if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
                             Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8,
-                                       hunkTable.Length - i * 512 / 8);
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, hunkTable.Length - i * 512 / 8);
                     }
 
                     DateTime end = DateTime.UtcNow;
@@ -921,8 +478,9 @@ namespace DiscImageChef.DiscImages
                             // This does the big-endian trick but reverses the order of elements also
                             Array.Reverse(hunkSectorBytes);
                             GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                            HunkSectorSmall hunkSector = (HunkSectorSmall)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                                                 typeof(HunkSectorSmall));
+                            HunkSectorSmall hunkSector =
+                                (HunkSectorSmall)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                        typeof(HunkSectorSmall));
                             handle.Free();
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
@@ -990,7 +548,7 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
 
                             string gddd = StringHandlers.CToString(meta);
-                            Regex gdddRegEx = new Regex(HARD_DISK_METADATA_REGEX);
+                            Regex gdddRegEx = new Regex(REGEX_METADATA_HDD);
                             Match gdddMatch = gdddRegEx.Match(gddd);
                             if(gdddMatch.Success)
                             {
@@ -1125,7 +683,7 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
                             string chtr = StringHandlers.CToString(meta);
-                            Regex chtrRegEx = new Regex(CDROM_METADATA_REGEX);
+                            Regex chtrRegEx = new Regex(REGEX_METADATA_CDROM);
                             Match chtrMatch = chtrRegEx.Match(chtr);
                             if(chtrMatch.Success)
                             {
@@ -1204,8 +762,7 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Unsupported subchannel type {subtype}");
+                                        throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
                                 dicTrack.Indexes = new Dictionary<int, ulong>();
@@ -1234,7 +791,7 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
                             string cht2 = StringHandlers.CToString(meta);
-                            Regex cht2RegEx = new Regex(CDROM_METADATA2_REGEX);
+                            Regex cht2RegEx = new Regex(REGEX_METADATA_CDROM2);
                             Match cht2Match = cht2RegEx.Match(cht2);
                             if(cht2Match.Success)
                             {
@@ -1318,8 +875,7 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Unsupported subchannel type {subtype}");
+                                        throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
                                 dicTrack.Indexes = new Dictionary<int, ulong>();
@@ -1352,7 +908,7 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.");
 
                             string chgd = StringHandlers.CToString(meta);
-                            Regex chgdRegEx = new Regex(GDROM_METADATA_REGEX);
+                            Regex chgdRegEx = new Regex(REGEX_METADATA_GDROM);
                             Match chgdMatch = chgdRegEx.Match(chgd);
                             if(chgdMatch.Success)
                             {
@@ -1437,8 +993,7 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Unsupported subchannel type {subtype}");
+                                        throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
                                 dicTrack.Indexes = new Dictionary<int, ulong>();
@@ -1624,7 +1179,8 @@ namespace DiscImageChef.DiscImages
         Track GetTrack(ulong sector)
         {
             Track track = new Track();
-            foreach(KeyValuePair<ulong, uint> kvp in offsetmap.Where(kvp => sector >= kvp.Key)) tracks.TryGetValue(kvp.Value, out track);
+            foreach(KeyValuePair<ulong, uint> kvp in offsetmap.Where(kvp => sector >= kvp.Key))
+                tracks.TryGetValue(kvp.Value, out track);
 
             return track;
         }
@@ -1651,7 +1207,8 @@ namespace DiscImageChef.DiscImages
 
                     if(length == sectorsPerHunk * ImageInfo.SectorSize) hunk = compHunk;
                     else if((ChdCompression)hdrCompression > ChdCompression.Zlib)
-                        throw new ImageNotSupportedException($"Unsupported compression {(ChdCompression)hdrCompression}");
+                        throw new
+                            ImageNotSupportedException($"Unsupported compression {(ChdCompression)hdrCompression}");
                     else
                     {
                         DeflateStream zStream =
@@ -1739,8 +1296,7 @@ namespace DiscImageChef.DiscImages
                     else throw new ImageNotSupportedException("Compressed v5 hunks not yet supported");
 
                     break;
-                default:
-                    throw new ImageNotSupportedException($"Unsupported hunk map version {mapVersion}");
+                default: throw new ImageNotSupportedException($"Unsupported hunk map version {mapVersion}");
             }
 
             if(hunkCache.Count >= maxBlockCache) hunkCache.Clear();
@@ -1794,9 +1350,7 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
-
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
@@ -1827,9 +1381,7 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
-
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifyMediaImage()
@@ -1991,7 +1543,6 @@ namespace DiscImageChef.DiscImages
 
             if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-
                 track = GetTrack(sectorAddress);
                 sectorSize = (uint)track.TrackRawBytesPerSector;
 
@@ -2013,8 +1564,10 @@ namespace DiscImageChef.DiscImages
             uint sectorOffset;
 
             if(tag == SectorTagType.CdSectorSubchannel)
-                switch(track.TrackSubchannelType) {
-                    case TrackSubchannelType.None: throw new FeatureNotPresentImageException("Requested sector does not contain subchannel");
+                switch(track.TrackSubchannelType)
+                {
+                    case TrackSubchannelType.None:
+                        throw new FeatureNotPresentImageException("Requested sector does not contain subchannel");
                     case TrackSubchannelType.RawInterleaved:
                         sectorOffset = (uint)track.TrackRawBytesPerSector;
                         sectorSize = 96;
@@ -2338,7 +1891,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             if(ImageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY)) return identify;
@@ -2496,6 +2048,439 @@ namespace DiscImageChef.DiscImages
 
             return ReadSectorLong(GetAbsoluteSector(sectorAddress, track), length);
         }
-        #endregion Unsupported features
+
+        enum ChdCompression : uint
+        {
+            None = 0,
+            Zlib = 1,
+            ZlibPlus = 2,
+            Av = 3
+        }
+
+        enum ChdFlags : uint
+        {
+            HasParent = 1,
+            Writable = 2
+        }
+
+        enum Chdv3EntryFlags : byte
+        {
+            /// <summary>Invalid</summary>
+            Invalid = 0,
+            /// <summary>Compressed with primary codec</summary>
+            Compressed = 1,
+            /// <summary>Uncompressed</summary>
+            Uncompressed = 2,
+            /// <summary>Use offset as data</summary>
+            Mini = 3,
+            /// <summary>Same as another hunk in file</summary>
+            SelfHunk = 4,
+            /// <summary>Same as another hunk in parent</summary>
+            ParentHunk = 5,
+            /// <summary>Compressed with secondary codec (FLAC)</summary>
+            SecondCompressed = 6
+        }
+
+        enum ChdOldTrackType : uint
+        {
+            Mode1 = 0,
+            Mode1Raw,
+            Mode2,
+            Mode2Form1,
+            Mode2Form2,
+            Mode2FormMix,
+            Mode2Raw,
+            Audio
+        }
+
+        enum ChdOldSubType : uint
+        {
+            Cooked = 0,
+            Raw,
+            None
+        }
+
+        // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
+        // Sectors are fixed at 512 bytes/sector
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdHeaderV1
+        {
+            /// <summary>
+            ///     Magic identifier, 'MComprHD'
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
+            /// <summary>
+            ///     Length of header
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Image format version
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Image flags, <see cref="ChdFlags" />
+            /// </summary>
+            public uint flags;
+            /// <summary>
+            ///     Compression algorithm, <see cref="ChdCompression" />
+            /// </summary>
+            public uint compression;
+            /// <summary>
+            ///     Sectors per hunk
+            /// </summary>
+            public uint hunksize;
+            /// <summary>
+            ///     Total # of hunk in image
+            /// </summary>
+            public uint totalhunks;
+            /// <summary>
+            ///     Cylinders on disk
+            /// </summary>
+            public uint cylinders;
+            /// <summary>
+            ///     Heads per cylinder
+            /// </summary>
+            public uint heads;
+            /// <summary>
+            ///     Sectors per track
+            /// </summary>
+            public uint sectors;
+            /// <summary>
+            ///     MD5 of raw data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] md5;
+            /// <summary>
+            ///     MD5 of parent file
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] parentmd5;
+        }
+
+        // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdHeaderV2
+        {
+            /// <summary>
+            ///     Magic identifier, 'MComprHD'
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
+            /// <summary>
+            ///     Length of header
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Image format version
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Image flags, <see cref="ChdFlags" />
+            /// </summary>
+            public uint flags;
+            /// <summary>
+            ///     Compression algorithm, <see cref="ChdCompression" />
+            /// </summary>
+            public uint compression;
+            /// <summary>
+            ///     Sectors per hunk
+            /// </summary>
+            public uint hunksize;
+            /// <summary>
+            ///     Total # of hunk in image
+            /// </summary>
+            public uint totalhunks;
+            /// <summary>
+            ///     Cylinders on disk
+            /// </summary>
+            public uint cylinders;
+            /// <summary>
+            ///     Heads per cylinder
+            /// </summary>
+            public uint heads;
+            /// <summary>
+            ///     Sectors per track
+            /// </summary>
+            public uint sectors;
+            /// <summary>
+            ///     MD5 of raw data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] md5;
+            /// <summary>
+            ///     MD5 of parent file
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] parentmd5;
+            /// <summary>
+            ///     Bytes per sector
+            /// </summary>
+            public uint seclen;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdHeaderV3
+        {
+            /// <summary>
+            ///     Magic identifier, 'MComprHD'
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
+            /// <summary>
+            ///     Length of header
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Image format version
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Image flags, <see cref="ChdFlags" />
+            /// </summary>
+            public uint flags;
+            /// <summary>
+            ///     Compression algorithm, <see cref="ChdCompression" />
+            /// </summary>
+            public uint compression;
+            /// <summary>
+            ///     Total # of hunk in image
+            /// </summary>
+            public uint totalhunks;
+            /// <summary>
+            ///     Total bytes in image
+            /// </summary>
+            public ulong logicalbytes;
+            /// <summary>
+            ///     Offset to first metadata blob
+            /// </summary>
+            public ulong metaoffset;
+            /// <summary>
+            ///     MD5 of raw data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] md5;
+            /// <summary>
+            ///     MD5 of parent file
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] parentmd5;
+            /// <summary>
+            ///     Bytes per hunk
+            /// </summary>
+            public uint hunkbytes;
+            /// <summary>
+            ///     SHA1 of raw data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sha1;
+            /// <summary>
+            ///     SHA1 of parent file
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] parentsha1;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdMapV3Entry
+        {
+            /// <summary>
+            ///     Offset to hunk from start of image
+            /// </summary>
+            public ulong offset;
+            /// <summary>
+            ///     CRC32 of uncompressed hunk
+            /// </summary>
+            public uint crc;
+            /// <summary>
+            ///     Lower 16 bits of length
+            /// </summary>
+            public ushort lengthLsb;
+            /// <summary>
+            ///     Upper 8 bits of length
+            /// </summary>
+            public byte length;
+            /// <summary>
+            ///     Hunk flags
+            /// </summary>
+            public byte flags;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdTrackOld
+        {
+            public uint type;
+            public uint subType;
+            public uint dataSize;
+            public uint subSize;
+            public uint frames;
+            public uint extraFrames;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdHeaderV4
+        {
+            /// <summary>
+            ///     Magic identifier, 'MComprHD'
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
+            /// <summary>
+            ///     Length of header
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Image format version
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Image flags, <see cref="ChdFlags" />
+            /// </summary>
+            public uint flags;
+            /// <summary>
+            ///     Compression algorithm, <see cref="ChdCompression" />
+            /// </summary>
+            public uint compression;
+            /// <summary>
+            ///     Total # of hunk in image
+            /// </summary>
+            public uint totalhunks;
+            /// <summary>
+            ///     Total bytes in image
+            /// </summary>
+            public ulong logicalbytes;
+            /// <summary>
+            ///     Offset to first metadata blob
+            /// </summary>
+            public ulong metaoffset;
+            /// <summary>
+            ///     Bytes per hunk
+            /// </summary>
+            public uint hunkbytes;
+            /// <summary>
+            ///     SHA1 of raw+meta data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sha1;
+            /// <summary>
+            ///     SHA1 of parent file
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] parentsha1;
+            /// <summary>
+            ///     SHA1 of raw data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] rawsha1;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdHeaderV5
+        {
+            /// <summary>
+            ///     Magic identifier, 'MComprHD'
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] tag;
+            /// <summary>
+            ///     Length of header
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Image format version
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Compressor 0
+            /// </summary>
+            public uint compressor0;
+            /// <summary>
+            ///     Compressor 1
+            /// </summary>
+            public uint compressor1;
+            /// <summary>
+            ///     Compressor 2
+            /// </summary>
+            public uint compressor2;
+            /// <summary>
+            ///     Compressor 3
+            /// </summary>
+            public uint compressor3;
+            /// <summary>
+            ///     Total bytes in image
+            /// </summary>
+            public ulong logicalbytes;
+            /// <summary>
+            ///     Offset to hunk map
+            /// </summary>
+            public ulong mapoffset;
+            /// <summary>
+            ///     Offset to first metadata blob
+            /// </summary>
+            public ulong metaoffset;
+            /// <summary>
+            ///     Bytes per hunk
+            /// </summary>
+            public uint hunkbytes;
+            /// <summary>
+            ///     Bytes per unit within hunk
+            /// </summary>
+            public uint unitbytes;
+            /// <summary>
+            ///     SHA1 of raw data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] rawsha1;
+            /// <summary>
+            ///     SHA1 of raw+meta data
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sha1;
+            /// <summary>
+            ///     SHA1 of parent file
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] parentsha1;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdCompressedMapHeaderV5
+        {
+            /// <summary>
+            ///     Length of compressed map
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Offset of first block (48 bits) and CRC16 of map (16 bits)
+            /// </summary>
+            public ulong startAndCrc;
+            /// <summary>
+            ///     Bits used to encode compressed length on map entry
+            /// </summary>
+            public byte bitsUsedToEncodeCompLength;
+            /// <summary>
+            ///     Bits used to encode self-refs
+            /// </summary>
+            public byte bitsUsedToEncodeSelfRefs;
+            /// <summary>
+            ///     Bits used to encode parent unit refs
+            /// </summary>
+            public byte bitsUsedToEncodeParentUnits;
+            public byte reserved;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdMapV5Entry
+        {
+            /// <summary>
+            ///     Compression (8 bits) and length (24 bits)
+            /// </summary>
+            public uint compAndLength;
+            /// <summary>
+            ///     Offset (48 bits) and CRC (16 bits)
+            /// </summary>
+            public ulong offsetAndCrc;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChdMetadataHeader
+        {
+            public uint tag;
+            public uint flagsAndLength;
+            public ulong next;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HunkSector
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public ulong[] hunkEntry;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HunkSectorSmall
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] hunkEntry;
+        }
     }
 }

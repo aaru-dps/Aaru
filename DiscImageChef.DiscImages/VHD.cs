@@ -45,319 +45,154 @@ namespace DiscImageChef.DiscImages
 {
     /// <inheritdoc />
     /// <summary>
-    /// Supports Connectix/Microsoft Virtual PC hard disk image format
-    /// Until Virtual PC 5 there existed no format, and the hard disk image was
-    /// merely a sector by sector (RAW) image with a resource fork giving
-    /// information to Virtual PC itself.
+    ///     Supports Connectix/Microsoft Virtual PC hard disk image format
+    ///     Until Virtual PC 5 there existed no format, and the hard disk image was
+    ///     merely a sector by sector (RAW) image with a resource fork giving
+    ///     information to Virtual PC itself.
     /// </summary>
     public class Vhd : ImagePlugin
     {
-        #region Internal Structures
-        struct HardDiskFooter
-        {
-            /// <summary>
-            /// Offset 0x00, File magic number, <see cref="Vhd.IMAGE_COOKIE"/>
-            /// </summary>
-            public ulong Cookie;
-            /// <summary>
-            /// Offset 0x08, Specific feature support
-            /// </summary>
-            public uint Features;
-            /// <summary>
-            /// Offset 0x0C, File format version
-            /// </summary>
-            public uint Version;
-            /// <summary>
-            /// Offset 0x10, Offset from beginning of file to next structure
-            /// </summary>
-            public ulong Offset;
-            /// <summary>
-            /// Offset 0x18, Creation date seconds since 2000/01/01 00:00:00 UTC
-            /// </summary>
-            public uint Timestamp;
-            /// <summary>
-            /// Offset 0x1C, Application that created this disk image
-            /// </summary>
-            public uint CreatorApplication;
-            /// <summary>
-            /// Offset 0x20, Version of the application that created this disk image
-            /// </summary>
-            public uint CreatorVersion;
-            /// <summary>
-            /// Offset 0x24, Host operating system of the application that created this disk image
-            /// </summary>
-            public uint CreatorHostOs;
-            /// <summary>
-            /// Offset 0x28, Original hard disk size, in bytes
-            /// </summary>
-            public ulong OriginalSize;
-            /// <summary>
-            /// Offset 0x30, Current hard disk size, in bytes
-            /// </summary>
-            public ulong CurrentSize;
-            /// <summary>
-            /// Offset 0x38, CHS geometry
-            /// Cylinder mask = 0xFFFF0000
-            /// Heads mask = 0x0000FF00
-            /// Sectors mask = 0x000000FF
-            /// </summary>
-            public uint DiskGeometry;
-            /// <summary>
-            /// Offset 0x3C, Disk image type
-            /// </summary>
-            public uint DiskType;
-            /// <summary>
-            /// Offset 0x40, Checksum for this structure
-            /// </summary>
-            public uint Checksum;
-            /// <summary>
-            /// Offset 0x44, UUID, used to associate parent with differencing disk images
-            /// </summary>
-            public Guid UniqueId;
-            /// <summary>
-            /// Offset 0x54, If set, system is saved, so compaction and expansion cannot be performed
-            /// </summary>
-            public byte SavedState;
-            /// <summary>
-            /// Offset 0x55, 427 bytes reserved, should contain zeros.
-            /// </summary>
-            public byte[] Reserved;
-        }
-
-        struct ParentLocatorEntry
-        {
-            /// <summary>
-            /// Offset 0x00, Describes the platform specific type this entry belongs to
-            /// </summary>
-            public uint PlatformCode;
-            /// <summary>
-            /// Offset 0x04, Describes the number of 512 bytes sectors used by this entry
-            /// </summary>
-            public uint PlatformDataSpace;
-            /// <summary>
-            /// Offset 0x08, Describes this entry's size in bytes
-            /// </summary>
-            public uint PlatformDataLength;
-            /// <summary>
-            /// Offset 0x0c, Reserved
-            /// </summary>
-            public uint Reserved;
-            /// <summary>
-            /// Offset 0x10, Offset on disk image this entry resides on
-            /// </summary>
-            public ulong PlatformDataOffset;
-        }
-
-        struct DynamicDiskHeader
-        {
-            /// <summary>
-            /// Offset 0x00, Header magic, <see cref="Vhd.DYNAMIC_COOKIE"/>
-            /// </summary>
-            public ulong Cookie;
-            /// <summary>
-            /// Offset 0x08, Offset to next structure on disk image.
-            /// Currently unused, 0xFFFFFFFF
-            /// </summary>
-            public ulong DataOffset;
-            /// <summary>
-            /// Offset 0x10, Offset of the Block Allocation Table (BAT)
-            /// </summary>
-            public ulong TableOffset;
-            /// <summary>
-            /// Offset 0x18, Version of this header
-            /// </summary>
-            public uint HeaderVersion;
-            /// <summary>
-            /// Offset 0x1C, Maximum entries present in the BAT
-            /// </summary>
-            public uint MaxTableEntries;
-            /// <summary>
-            /// Offset 0x20, Size of a block in bytes
-            /// Should always be a power of two of 512
-            /// </summary>
-            public uint BlockSize;
-            /// <summary>
-            /// Offset 0x24, Checksum of this header
-            /// </summary>
-            public uint Checksum;
-            /// <summary>
-            /// Offset 0x28, UUID of parent disk image for differencing type
-            /// </summary>
-            public Guid ParentId;
-            /// <summary>
-            /// Offset 0x38, Timestamp of parent disk image
-            /// </summary>
-            public uint ParentTimestamp;
-            /// <summary>
-            /// Offset 0x3C, Reserved
-            /// </summary>
-            public uint Reserved;
-            /// <summary>
-            /// Offset 0x40, 512 bytes UTF-16 of parent disk image filename
-            /// </summary>
-            public string ParentName;
-            /// <summary>
-            /// Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry"/>
-            /// </summary>
-            public ParentLocatorEntry[] LocatorEntries;
-            /// <summary>
-            /// Offset 0x300, 256 reserved bytes
-            /// </summary>
-            public byte[] Reserved2;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BatSector
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] blockPointer;
-        }
-        #endregion
-
-        #region Internal Constants
         /// <summary>
-        /// File magic number, "conectix"
+        ///     File magic number, "conectix"
         /// </summary>
         const ulong IMAGE_COOKIE = 0x636F6E6563746978;
         /// <summary>
-        /// Dynamic disk header magic, "cxsparse"
+        ///     Dynamic disk header magic, "cxsparse"
         /// </summary>
         const ulong DYNAMIC_COOKIE = 0x6378737061727365;
 
         /// <summary>
-        /// Disk image is candidate for deletion on shutdown
+        ///     Disk image is candidate for deletion on shutdown
         /// </summary>
         const uint FEATURES_TEMPORARY = 0x00000001;
         /// <summary>
-        /// Unknown, set from Virtual PC for Mac 7 onwards
+        ///     Unknown, set from Virtual PC for Mac 7 onwards
         /// </summary>
         const uint FEATURES_RESERVED = 0x00000002;
         /// <summary>
-        /// Unknown
+        ///     Unknown
         /// </summary>
         const uint FEATURES_UNKNOWN = 0x00000100;
 
         /// <summary>
-        /// Only known version
+        ///     Only known version
         /// </summary>
         const uint VERSION1 = 0x00010000;
 
         /// <summary>
-        /// Created by Virtual PC, "vpc "
+        ///     Created by Virtual PC, "vpc "
         /// </summary>
         const uint CREATOR_VIRTUAL_PC = 0x76706320;
         /// <summary>
-        /// Created by Virtual Server, "vs  "
+        ///     Created by Virtual Server, "vs  "
         /// </summary>
         const uint CREATOR_VIRTUAL_SERVER = 0x76732020;
         /// <summary>
-        /// Created by QEMU, "qemu"
+        ///     Created by QEMU, "qemu"
         /// </summary>
         const uint CREATOR_QEMU = 0x71656D75;
         /// <summary>
-        /// Created by VirtualBox, "vbox"
+        ///     Created by VirtualBox, "vbox"
         /// </summary>
         const uint CREATOR_VIRTUAL_BOX = 0x76626F78;
 
         /// <summary>
-        /// Disk image created by Virtual Server 2004
+        ///     Disk image created by Virtual Server 2004
         /// </summary>
         const uint VERSION_VIRTUAL_SERVER2004 = 0x00010000;
         /// <summary>
-        /// Disk image created by Virtual PC 2004
+        ///     Disk image created by Virtual PC 2004
         /// </summary>
         const uint VERSION_VIRTUAL_PC2004 = 0x00050000;
         /// <summary>
-        /// Disk image created by Virtual PC 2007
+        ///     Disk image created by Virtual PC 2007
         /// </summary>
         const uint VERSION_VIRTUAL_PC2007 = 0x00050003;
         /// <summary>
-        /// Disk image created by Virtual PC for Mac 5, 6 or 7
+        ///     Disk image created by Virtual PC for Mac 5, 6 or 7
         /// </summary>
         const uint VERSION_VIRTUAL_PC_MAC = 0x00040000;
 
         /// <summary>
-        /// Disk image created in Windows, "Wi2k"
+        ///     Disk image created in Windows, "Wi2k"
         /// </summary>
         const uint CREATOR_WINDOWS = 0x5769326B;
         /// <summary>
-        /// Disk image created in Macintosh, "Mac "
+        ///     Disk image created in Macintosh, "Mac "
         /// </summary>
         const uint CREATOR_MACINTOSH = 0x4D616320;
         /// <summary>
-        /// Seen in Virtual PC for Mac for dynamic and fixed images
+        ///     Seen in Virtual PC for Mac for dynamic and fixed images
         /// </summary>
         const uint CREATOR_MACINTOSH_OLD = 0x00000000;
 
         /// <summary>
-        /// Disk image type is none, useless?
+        ///     Disk image type is none, useless?
         /// </summary>
         const uint TYPE_NONE = 0;
         /// <summary>
-        /// Deprecated disk image type
+        ///     Deprecated disk image type
         /// </summary>
         const uint TYPE_DEPRECATED1 = 1;
         /// <summary>
-        /// Fixed disk image type
+        ///     Fixed disk image type
         /// </summary>
         const uint TYPE_FIXED = 2;
         /// <summary>
-        /// Dynamic disk image type
+        ///     Dynamic disk image type
         /// </summary>
         const uint TYPE_DYNAMIC = 3;
         /// <summary>
-        /// Differencing disk image type
+        ///     Differencing disk image type
         /// </summary>
         const uint TYPE_DIFFERENCING = 4;
         /// <summary>
-        /// Deprecated disk image type
+        ///     Deprecated disk image type
         /// </summary>
         const uint TYPE_DEPRECATED2 = 5;
         /// <summary>
-        /// Deprecated disk image type
+        ///     Deprecated disk image type
         /// </summary>
         const uint TYPE_DEPRECATED3 = 6;
 
         /// <summary>
-        /// Means platform locator is unused
+        ///     Means platform locator is unused
         /// </summary>
         const uint PLATFORM_CODE_UNUSED = 0x00000000;
         /// <summary>
-        /// Stores a relative path string for Windows, unknown locale used, deprecated, "Wi2r"
+        ///     Stores a relative path string for Windows, unknown locale used, deprecated, "Wi2r"
         /// </summary>
         const uint PLATFORM_CODE_WINDOWS_RELATIVE = 0x57693272;
         /// <summary>
-        /// Stores an absolute path string for Windows, unknown locale used, deprecated, "Wi2k"
+        ///     Stores an absolute path string for Windows, unknown locale used, deprecated, "Wi2k"
         /// </summary>
         const uint PLATFORM_CODE_WINDOWS_ABSOLUTE = 0x5769326B;
         /// <summary>
-        /// Stores a relative path string for Windows in UTF-16, "W2ru"
+        ///     Stores a relative path string for Windows in UTF-16, "W2ru"
         /// </summary>
         const uint PLATFORM_CODE_WINDOWS_RELATIVE_U = 0x57327275;
         /// <summary>
-        /// Stores an absolute path string for Windows in UTF-16, "W2ku"
+        ///     Stores an absolute path string for Windows in UTF-16, "W2ku"
         /// </summary>
         const uint PLATFORM_CODE_WINDOWS_ABSOLUTE_U = 0x57326B75;
         /// <summary>
-        /// Stores a Mac OS alias as a blob, "Mac "
+        ///     Stores a Mac OS alias as a blob, "Mac "
         /// </summary>
         const uint PLATFORM_CODE_MACINTOSH_ALIAS = 0x4D616320;
         /// <summary>
-        /// Stores a Mac OS X URI (RFC-2396) absolute path in UTF-8, "MacX"
+        ///     Stores a Mac OS X URI (RFC-2396) absolute path in UTF-8, "MacX"
         /// </summary>
         const uint PLATFORM_CODE_MACINTOSH_URI = 0x4D616358;
-        #endregion
-
-        #region Internal variables
-        HardDiskFooter thisFooter;
-        DynamicDiskHeader thisDynamic;
-        DateTime thisDateTime;
-        DateTime parentDateTime;
-        Filter thisFilter;
-        uint[] blockAllocationTable;
         uint bitmapSize;
+        uint[] blockAllocationTable;
         byte[][] locatorEntriesData;
+        DateTime parentDateTime;
         ImagePlugin parentImage;
-        #endregion
+        DateTime thisDateTime;
+        DynamicDiskHeader thisDynamic;
+        Filter thisFilter;
+
+        HardDiskFooter thisFooter;
 
         public Vhd()
         {
@@ -388,7 +223,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();
@@ -787,7 +621,8 @@ namespace DiscImageChef.DiscImages
                     // This does the big-endian trick but reverses the order of elements also
                     Array.Reverse(batSectorBytes);
                     GCHandle handle = GCHandle.Alloc(batSectorBytes, GCHandleType.Pinned);
-                    BatSector batSector = (BatSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BatSector));
+                    BatSector batSector =
+                        (BatSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BatSector));
                     handle.Free();
                     // This restores the order of elements
                     Array.Reverse(batSector.blockPointer);
@@ -1037,7 +872,7 @@ namespace DiscImageChef.DiscImages
                 case TYPE_DIFFERENCING:
                 {
                     // Block number for BAT searching
-                    uint blockNumber = (uint)Math.Floor((sectorAddress / (thisDynamic.BlockSize / 512.0)));
+                    uint blockNumber = (uint)Math.Floor(sectorAddress / (thisDynamic.BlockSize / 512.0));
                     // Sector number inside of block
                     uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.BlockSize / 512));
 
@@ -1116,7 +951,7 @@ namespace DiscImageChef.DiscImages
                 case TYPE_DYNAMIC:
                 {
                     // Block number for BAT searching
-                    uint blockNumber = (uint)Math.Floor((sectorAddress / (thisDynamic.BlockSize / 512.0)));
+                    uint blockNumber = (uint)Math.Floor(sectorAddress / (thisDynamic.BlockSize / 512.0));
                     // Sector number inside of block
                     uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.BlockSize / 512));
                     // How many sectors before reaching end of block
@@ -1186,18 +1021,14 @@ namespace DiscImageChef.DiscImages
                 }
             }
         }
-        #endregion
 
-        #region private methods
         static uint VhdChecksum(IEnumerable<byte> data)
         {
             uint checksum = data.Aggregate<byte, uint>(0, (current, b) => current + b);
 
             return ~checksum;
         }
-        #endregion
 
-        #region Unsupported features
         public override string GetImageComments()
         {
             return null;
@@ -1363,6 +1194,164 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        struct HardDiskFooter
+        {
+            /// <summary>
+            ///     Offset 0x00, File magic number, <see cref="Vhd.IMAGE_COOKIE" />
+            /// </summary>
+            public ulong Cookie;
+            /// <summary>
+            ///     Offset 0x08, Specific feature support
+            /// </summary>
+            public uint Features;
+            /// <summary>
+            ///     Offset 0x0C, File format version
+            /// </summary>
+            public uint Version;
+            /// <summary>
+            ///     Offset 0x10, Offset from beginning of file to next structure
+            /// </summary>
+            public ulong Offset;
+            /// <summary>
+            ///     Offset 0x18, Creation date seconds since 2000/01/01 00:00:00 UTC
+            /// </summary>
+            public uint Timestamp;
+            /// <summary>
+            ///     Offset 0x1C, Application that created this disk image
+            /// </summary>
+            public uint CreatorApplication;
+            /// <summary>
+            ///     Offset 0x20, Version of the application that created this disk image
+            /// </summary>
+            public uint CreatorVersion;
+            /// <summary>
+            ///     Offset 0x24, Host operating system of the application that created this disk image
+            /// </summary>
+            public uint CreatorHostOs;
+            /// <summary>
+            ///     Offset 0x28, Original hard disk size, in bytes
+            /// </summary>
+            public ulong OriginalSize;
+            /// <summary>
+            ///     Offset 0x30, Current hard disk size, in bytes
+            /// </summary>
+            public ulong CurrentSize;
+            /// <summary>
+            ///     Offset 0x38, CHS geometry
+            ///     Cylinder mask = 0xFFFF0000
+            ///     Heads mask = 0x0000FF00
+            ///     Sectors mask = 0x000000FF
+            /// </summary>
+            public uint DiskGeometry;
+            /// <summary>
+            ///     Offset 0x3C, Disk image type
+            /// </summary>
+            public uint DiskType;
+            /// <summary>
+            ///     Offset 0x40, Checksum for this structure
+            /// </summary>
+            public uint Checksum;
+            /// <summary>
+            ///     Offset 0x44, UUID, used to associate parent with differencing disk images
+            /// </summary>
+            public Guid UniqueId;
+            /// <summary>
+            ///     Offset 0x54, If set, system is saved, so compaction and expansion cannot be performed
+            /// </summary>
+            public byte SavedState;
+            /// <summary>
+            ///     Offset 0x55, 427 bytes reserved, should contain zeros.
+            /// </summary>
+            public byte[] Reserved;
+        }
+
+        struct ParentLocatorEntry
+        {
+            /// <summary>
+            ///     Offset 0x00, Describes the platform specific type this entry belongs to
+            /// </summary>
+            public uint PlatformCode;
+            /// <summary>
+            ///     Offset 0x04, Describes the number of 512 bytes sectors used by this entry
+            /// </summary>
+            public uint PlatformDataSpace;
+            /// <summary>
+            ///     Offset 0x08, Describes this entry's size in bytes
+            /// </summary>
+            public uint PlatformDataLength;
+            /// <summary>
+            ///     Offset 0x0c, Reserved
+            /// </summary>
+            public uint Reserved;
+            /// <summary>
+            ///     Offset 0x10, Offset on disk image this entry resides on
+            /// </summary>
+            public ulong PlatformDataOffset;
+        }
+
+        struct DynamicDiskHeader
+        {
+            /// <summary>
+            ///     Offset 0x00, Header magic, <see cref="Vhd.DYNAMIC_COOKIE" />
+            /// </summary>
+            public ulong Cookie;
+            /// <summary>
+            ///     Offset 0x08, Offset to next structure on disk image.
+            ///     Currently unused, 0xFFFFFFFF
+            /// </summary>
+            public ulong DataOffset;
+            /// <summary>
+            ///     Offset 0x10, Offset of the Block Allocation Table (BAT)
+            /// </summary>
+            public ulong TableOffset;
+            /// <summary>
+            ///     Offset 0x18, Version of this header
+            /// </summary>
+            public uint HeaderVersion;
+            /// <summary>
+            ///     Offset 0x1C, Maximum entries present in the BAT
+            /// </summary>
+            public uint MaxTableEntries;
+            /// <summary>
+            ///     Offset 0x20, Size of a block in bytes
+            ///     Should always be a power of two of 512
+            /// </summary>
+            public uint BlockSize;
+            /// <summary>
+            ///     Offset 0x24, Checksum of this header
+            /// </summary>
+            public uint Checksum;
+            /// <summary>
+            ///     Offset 0x28, UUID of parent disk image for differencing type
+            /// </summary>
+            public Guid ParentId;
+            /// <summary>
+            ///     Offset 0x38, Timestamp of parent disk image
+            /// </summary>
+            public uint ParentTimestamp;
+            /// <summary>
+            ///     Offset 0x3C, Reserved
+            /// </summary>
+            public uint Reserved;
+            /// <summary>
+            ///     Offset 0x40, 512 bytes UTF-16 of parent disk image filename
+            /// </summary>
+            public string ParentName;
+            /// <summary>
+            ///     Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry" />
+            /// </summary>
+            public ParentLocatorEntry[] LocatorEntries;
+            /// <summary>
+            ///     Offset 0x300, 256 reserved bytes
+            /// </summary>
+            public byte[] Reserved2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BatSector
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] blockPointer;
+        }
     }
 }

@@ -44,94 +44,13 @@ namespace DiscImageChef.DiscImages
 {
     public class DriDiskCopy : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DriFooter
-        {
-            /// <summary>Signature: "DiskImage 2.01 (C) 1990,1991 Digital Research Inc\0"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 51)] public byte[] signature;
-            /// <summary>Information about the disk image, mostly imitates FAT BPB</summary>
-            public DriBpb bpb;
-            /// <summary>Information about the disk image, mostly imitates FAT BPB, copy</summary>
-            public DriBpb bpbcopy;
-        }
+        const string REGEX_DRI = "DiskImage\\s(?<version>\\d+.\\d+)\\s\\(C\\)\\s\\d+\\,*\\d*\\s+Digital Research Inc";
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DriBpb
-        {
-            /// <summary>Seems to be always 0x05</summary>
-            public byte five;
-            /// <summary>A drive code that corresponds (but it not equal to) CMOS drive types</summary>
-            public DriDriveCodes driveCode;
-            /// <summary>Unknown seems to be always 2</summary>
-            public ushort unknown;
-            /// <summary>Cylinders</summary>
-            public ushort cylinders;
-            /// <summary>Seems to always be 0</summary>
-            public byte unknown2;
-            /// <summary>Bytes per sector</summary>
-            public ushort bps;
-            /// <summary>Sectors per cluster</summary>
-            public byte spc;
-            /// <summary>Sectors between BPB and FAT</summary>
-            public ushort rsectors;
-            /// <summary>How many FATs</summary>
-            public byte fats_no;
-            /// <summary>Entries in root directory</summary>
-            public ushort root_entries;
-            /// <summary>Total sectors</summary>
-            public ushort sectors;
-            /// <summary>Media descriptor</summary>
-            public byte media_descriptor;
-            /// <summary>Sectors per FAT</summary>
-            public ushort spfat;
-            /// <summary>Sectors per track</summary>
-            public ushort sptrack;
-            /// <summary>Heads</summary>
-            public ushort heads;
-            /// <summary>Hidden sectors before BPB</summary>
-            public uint hsectors;
-            /// <summary>Drive number</summary>
-            public byte drive_no;
-            /// <summary>Seems to be 0</summary>
-            public ulong unknown3;
-            /// <summary>Seems to be 0</summary>
-            public byte unknown4;
-            /// <summary>Sectors per track (again?)</summary>
-            public ushort sptrack2;
-            /// <summary>Seems to be 0</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 144)] public byte[] unknown5;
-        }
-        #endregion
-
-        #region Internal Constants
-        /// <summary>
-        /// Drive codes change according to CMOS stored valued
-        /// </summary>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum DriDriveCodes : byte
-        {
-            /// <summary>5.25" 360k</summary>
-            md2dd = 0,
-            /// <summary>5.25" 1.2M</summary>
-            md2hd = 1,
-            /// <summary>3.5" 720k</summary>
-            mf2dd = 2,
-            /// <summary>3.5" 1.44M</summary>
-            mf2hd = 7,
-            /// <summary>3.5" 2.88M</summary>
-            mf2ed = 9
-        }
-
-        const string DRI_REG_EX = "DiskImage\\s(?<version>\\d+.\\d+)\\s\\(C\\)\\s\\d+\\,*\\d*\\s+Digital Research Inc";
-        #endregion
-
-        #region Internal variables
-        /// <summary>Footer of opened image</summary>
-        DriFooter footer;
         /// <summary>Disk image file</summary>
         Filter driImageFilter;
-        #endregion
+
+        /// <summary>Footer of opened image</summary>
+        DriFooter footer;
 
         public DriDiskCopy()
         {
@@ -179,11 +98,9 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.signature = \"{0}\"", sig);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.five = {0}", tmpFooter.bpb.five);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.driveCode = {0}",
-                                      tmpFooter.bpb.driveCode);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.driveCode = {0}", tmpFooter.bpb.driveCode);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown = {0}", tmpFooter.bpb.unknown);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.cylinders = {0}",
-                                      tmpFooter.bpb.cylinders);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.cylinders = {0}", tmpFooter.bpb.cylinders);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown2 = {0}", tmpFooter.bpb.unknown2);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.bps = {0}", tmpFooter.bpb.bps);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spc = {0}", tmpFooter.bpb.spc);
@@ -204,20 +121,17 @@ namespace DiscImageChef.DiscImages
                                       "ArrayHelpers.ArrayIsNullOrEmpty(tmp_footer.bpb.unknown5) = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(tmpFooter.bpb.unknown5));
 
-            Regex regexSignature = new Regex(DRI_REG_EX);
+            Regex regexSignature = new Regex(REGEX_DRI);
             Match matchSignature = regexSignature.Match(sig);
 
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "MatchSignature.Success? = {0}", matchSignature.Success);
 
             if(!matchSignature.Success) return false;
 
-            if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads !=
-               tmpFooter.bpb.sectors) return false;
-
-            if(tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf(tmpFooter) != stream.Length)
+            if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors)
                 return false;
 
-            return true;
+            return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf(tmpFooter) == stream.Length;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -238,7 +152,7 @@ namespace DiscImageChef.DiscImages
 
             string sig = StringHandlers.CToString(footer.signature);
 
-            Regex regexSignature = new Regex(DRI_REG_EX);
+            Regex regexSignature = new Regex(REGEX_DRI);
             Match matchSignature = regexSignature.Match(sig);
 
             if(!matchSignature.Success) return false;
@@ -488,7 +402,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -608,6 +521,81 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DriFooter
+        {
+            /// <summary>Signature: "DiskImage 2.01 (C) 1990,1991 Digital Research Inc\0"</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 51)] public byte[] signature;
+            /// <summary>Information about the disk image, mostly imitates FAT BPB</summary>
+            public DriBpb bpb;
+            /// <summary>Information about the disk image, mostly imitates FAT BPB, copy</summary>
+            public DriBpb bpbcopy;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DriBpb
+        {
+            /// <summary>Seems to be always 0x05</summary>
+            public byte five;
+            /// <summary>A drive code that corresponds (but it not equal to) CMOS drive types</summary>
+            public DriDriveCodes driveCode;
+            /// <summary>Unknown seems to be always 2</summary>
+            public ushort unknown;
+            /// <summary>Cylinders</summary>
+            public ushort cylinders;
+            /// <summary>Seems to always be 0</summary>
+            public byte unknown2;
+            /// <summary>Bytes per sector</summary>
+            public ushort bps;
+            /// <summary>Sectors per cluster</summary>
+            public byte spc;
+            /// <summary>Sectors between BPB and FAT</summary>
+            public ushort rsectors;
+            /// <summary>How many FATs</summary>
+            public byte fats_no;
+            /// <summary>Entries in root directory</summary>
+            public ushort root_entries;
+            /// <summary>Total sectors</summary>
+            public ushort sectors;
+            /// <summary>Media descriptor</summary>
+            public byte media_descriptor;
+            /// <summary>Sectors per FAT</summary>
+            public ushort spfat;
+            /// <summary>Sectors per track</summary>
+            public ushort sptrack;
+            /// <summary>Heads</summary>
+            public ushort heads;
+            /// <summary>Hidden sectors before BPB</summary>
+            public uint hsectors;
+            /// <summary>Drive number</summary>
+            public byte drive_no;
+            /// <summary>Seems to be 0</summary>
+            public ulong unknown3;
+            /// <summary>Seems to be 0</summary>
+            public byte unknown4;
+            /// <summary>Sectors per track (again?)</summary>
+            public ushort sptrack2;
+            /// <summary>Seems to be 0</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 144)] public byte[] unknown5;
+        }
+
+        /// <summary>
+        ///     Drive codes change according to CMOS stored valued
+        /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        enum DriDriveCodes : byte
+        {
+            /// <summary>5.25" 360k</summary>
+            md2dd = 0,
+            /// <summary>5.25" 1.2M</summary>
+            md2hd = 1,
+            /// <summary>3.5" 720k</summary>
+            mf2dd = 2,
+            /// <summary>3.5" 1.44M</summary>
+            mf2hd = 7,
+            /// <summary>3.5" 2.88M</summary>
+            mf2ed = 9
+        }
     }
 }

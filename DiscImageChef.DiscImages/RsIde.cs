@@ -43,6 +43,12 @@ namespace DiscImageChef.DiscImages
 {
     public class RsIde : ImagePlugin
     {
+        readonly byte[] signature = {0x52, 0x53, 0x2D, 0x49, 0x44, 0x45, 0x1A};
+        ushort dataOff;
+        byte[] identify;
+
+        Filter rsIdeImageFilter;
+
         public RsIde()
         {
             Name = "RS-IDE Hard Disk Image";
@@ -71,28 +77,6 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RsIdeHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public byte[] magic;
-            public byte revision;
-            public RsIdeFlags flags;
-            public ushort dataOff;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 106)] public byte[] identify;
-        }
-
-        [Flags]
-        enum RsIdeFlags : byte
-        {
-            HalfSectors = 1
-        }
-
-        Filter rsIdeImageFilter;
-        ushort dataOff;
-        readonly byte[] signature = {0x52, 0x53, 0x2D, 0x49, 0x44, 0x45, 0x1A};
-        byte[] identify;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -258,7 +242,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             if(!ImageInfo.ReadableMediaTags.Contains(tag) || tag != MediaTagType.ATA_IDENTIFY)
@@ -424,6 +407,22 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RsIdeHeader
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public byte[] magic;
+            public byte revision;
+            public RsIdeFlags flags;
+            public ushort dataOff;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 106)] public byte[] identify;
+        }
+
+        [Flags]
+        enum RsIdeFlags : byte
+        {
+            HalfSectors = 1
+        }
     }
 }

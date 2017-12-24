@@ -49,131 +49,22 @@ namespace DiscImageChef.DiscImages
 {
     public class Alcohol120 : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholHeader
-        {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] version;
-            public AlcoholMediumType type;
-            public ushort sessions;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ushort[] unknown1;
-            public ushort bcaLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown2;
-            public uint bcaOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public uint[] unknown3;
-            public uint structuresOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown4;
-            public uint sessionOffset;
-            public uint dpmOffset;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholSession
-        {
-            public int sessionStart;
-            public int sessionEnd;
-            public ushort sessionSequence;
-            public byte allBlocks;
-            public byte nonTrackBlocks;
-            public ushort firstTrack;
-            public ushort lastTrack;
-            public uint unknown;
-            public uint trackOffset;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholTrack
-        {
-            public AlcoholTrackMode mode;
-            public AlcoholSubchannelMode subMode;
-            public byte adrCtl;
-            public byte tno;
-            public byte point;
-            public byte min;
-            public byte sec;
-            public byte frame;
-            public byte zero;
-            public byte pmin;
-            public byte psec;
-            public byte pframe;
-            public uint extraOffset;
-            public ushort sectorSize;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown;
-            public uint startLba;
-            public ulong startOffset;
-            public uint files;
-            public uint footerOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] unknown2;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholTrackExtra
-        {
-            public uint pregap;
-            public uint sectors;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholFooter
-        {
-            public uint filenameOffset;
-            public uint widechar;
-            public uint unknown1;
-            public uint unknown2;
-        }
-        #endregion Internal Structures
-
-        #region Internal enumerations
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum AlcoholMediumType : ushort
-        {
-            CD = 0x00,
-            CDR = 0x01,
-            CDRW = 0x02,
-            DVD = 0x10,
-            DVDR = 0x12
-        }
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum AlcoholTrackMode : byte
-        {
-            NoData = 0x00,
-            DVD = 0x02,
-            Audio = 0xA9,
-            Mode1 = 0xAA,
-            Mode2 = 0xAB,
-            Mode2F1 = 0xAC,
-            Mode2F2 = 0xAD,
-            Mode2F1Alt = 0xEC
-        }
-
-        enum AlcoholSubchannelMode : byte
-        {
-            None = 0x00,
-            Interleaved = 0x08
-        }
-        #endregion Internal enumerations
-
-        #region Internal variables
-        Dictionary<uint, ulong> offsetmap;
-        List<Partition> partitions;
-        Dictionary<int, AlcoholSession> alcSessions;
-        Dictionary<int, AlcoholTrack> alcTracks;
-        Dictionary<int, Dictionary<int, AlcoholTrack>> alcToc;
-        Dictionary<int, AlcoholTrackExtra> alcTrackExtras;
         AlcoholFooter alcFooter;
         Filter alcImage;
+        Dictionary<int, AlcoholSession> alcSessions;
+        Dictionary<int, Dictionary<int, AlcoholTrack>> alcToc;
+        Dictionary<int, AlcoholTrackExtra> alcTrackExtras;
+        Dictionary<int, AlcoholTrack> alcTracks;
         byte[] bca;
-        List<Session> sessions;
-        Stream imageStream;
-        byte[] fullToc;
-        bool isDvd;
         byte[] dmi;
+        byte[] fullToc;
+        Stream imageStream;
+        bool isDvd;
+        Dictionary<uint, ulong> offsetmap;
+        List<Partition> partitions;
         byte[] pfi;
-        #endregion
+        List<Session> sessions;
 
-        #region Public Methods
         public Alcohol120()
         {
             Name = "Alcohol 120% Media Descriptor Structure";
@@ -410,10 +301,14 @@ namespace DiscImageChef.DiscImages
             if(alcFooter.filenameOffset > 0)
             {
                 stream.Seek(alcFooter.filenameOffset, SeekOrigin.Begin);
-                byte[] filename = header.dpmOffset == 0 ? new byte[stream.Length - stream.Position] : new byte[header.dpmOffset - stream.Position];
+                byte[] filename = header.dpmOffset == 0
+                                      ? new byte[stream.Length - stream.Position]
+                                      : new byte[header.dpmOffset - stream.Position];
 
                 stream.Read(filename, 0, filename.Length);
-                alcFile = alcFooter.widechar == 1 ? Encoding.Unicode.GetString(filename) : Encoding.Default.GetString(filename);
+                alcFile = alcFooter.widechar == 1
+                              ? Encoding.Unicode.GetString(filename)
+                              : Encoding.Default.GetString(filename);
 
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filename = {0}", alcFile);
             }
@@ -504,7 +399,8 @@ namespace DiscImageChef.DiscImages
                                 ImageInfo.MediaType = MediaType.HDDVDRW;
                                 break;
                             case DiskCategory.Nintendo:
-                                ImageInfo.MediaType = pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
+                                ImageInfo.MediaType =
+                                    pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
                                 break;
                             case DiskCategory.UMD:
                                 ImageInfo.MediaType = MediaType.UMD;
@@ -596,7 +492,6 @@ namespace DiscImageChef.DiscImages
                         Offset = byteOffset,
                         Type = trk.mode.ToString()
                     };
-
 
                     partitions.Add(partition);
                     ImageInfo.Sectors += extra.sectors;
@@ -819,7 +714,8 @@ namespace DiscImageChef.DiscImages
                 if(sectorAddress >= kvp.Value)
                     foreach(AlcoholTrack track in alcTracks.Values)
                     {
-                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
+                        if(track.point != kvp.Key ||
+                           !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
 
                         if(sectorAddress - kvp.Value < extra.sectors)
                             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
@@ -834,7 +730,8 @@ namespace DiscImageChef.DiscImages
                 if(sectorAddress >= kvp.Value)
                     foreach(AlcoholTrack track in alcTracks.Values)
                     {
-                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
+                        if(track.point != kvp.Key ||
+                           !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
 
                         if(sectorAddress - kvp.Value < extra.sectors)
                             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
@@ -845,7 +742,8 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) || !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
+            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
+               !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > alcExtra.sectors)
@@ -937,7 +835,8 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) || !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
+            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
+               !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > alcExtra.sectors)
@@ -1273,7 +1172,8 @@ namespace DiscImageChef.DiscImages
                 if(sectorAddress >= kvp.Value)
                     foreach(AlcoholTrack alcTrack in alcTracks.Values)
                     {
-                        if(alcTrack.point != kvp.Key || !alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
+                        if(alcTrack.point != kvp.Key ||
+                           !alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
 
                         if(sectorAddress - kvp.Value < alcExtra.sectors)
                             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
@@ -1284,7 +1184,8 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) || !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
+            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
+               !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > alcExtra.sectors)
@@ -1354,7 +1255,10 @@ namespace DiscImageChef.DiscImages
 
             foreach(AlcoholTrack alcTrack in alcTracks.Values)
             {
-                ushort sessionNo = (from session in sessions where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack select session.SessionSequence).FirstOrDefault();
+                ushort sessionNo =
+                    (from session in sessions
+                     where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack
+                     select session.SessionSequence).FirstOrDefault();
 
                 if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
 
@@ -1408,9 +1312,13 @@ namespace DiscImageChef.DiscImages
 
             foreach(AlcoholTrack alcTrack in alcTracks.Values)
             {
-                ushort sessionNo = (from ses in sessions where alcTrack.point >= ses.StartTrack || alcTrack.point <= ses.EndTrack select ses.SessionSequence).FirstOrDefault();
+                ushort sessionNo =
+                    (from ses in sessions
+                     where alcTrack.point >= ses.StartTrack || alcTrack.point <= ses.EndTrack
+                     select ses.SessionSequence).FirstOrDefault();
 
-                if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra) || session != sessionNo) continue;
+                if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra) ||
+                   session != sessionNo) continue;
 
                 Track dicTrack = new Track
                 {
@@ -1522,18 +1430,15 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifyMediaImage()
         {
             return null;
         }
-        #endregion Public Methods
 
-        #region Private methods
         static ushort AlcoholTrackModeToBytesPerSector(AlcoholTrackMode trackMode)
         {
             switch(trackMode)
@@ -1590,9 +1495,7 @@ namespace DiscImageChef.DiscImages
                 default: return MediaType.Unknown;
             }
         }
-        #endregion Private methods
 
-        #region Unsupported features
         public override string GetImageApplicationVersion()
         {
             return ImageInfo.ImageApplicationVersion;
@@ -1672,6 +1575,107 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.ImageCreator;
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholHeader
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] version;
+            public AlcoholMediumType type;
+            public ushort sessions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ushort[] unknown1;
+            public ushort bcaLength;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown2;
+            public uint bcaOffset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public uint[] unknown3;
+            public uint structuresOffset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown4;
+            public uint sessionOffset;
+            public uint dpmOffset;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholSession
+        {
+            public int sessionStart;
+            public int sessionEnd;
+            public ushort sessionSequence;
+            public byte allBlocks;
+            public byte nonTrackBlocks;
+            public ushort firstTrack;
+            public ushort lastTrack;
+            public uint unknown;
+            public uint trackOffset;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholTrack
+        {
+            public AlcoholTrackMode mode;
+            public AlcoholSubchannelMode subMode;
+            public byte adrCtl;
+            public byte tno;
+            public byte point;
+            public byte min;
+            public byte sec;
+            public byte frame;
+            public byte zero;
+            public byte pmin;
+            public byte psec;
+            public byte pframe;
+            public uint extraOffset;
+            public ushort sectorSize;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown;
+            public uint startLba;
+            public ulong startOffset;
+            public uint files;
+            public uint footerOffset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] unknown2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholTrackExtra
+        {
+            public uint pregap;
+            public uint sectors;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AlcoholFooter
+        {
+            public uint filenameOffset;
+            public uint widechar;
+            public uint unknown1;
+            public uint unknown2;
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        enum AlcoholMediumType : ushort
+        {
+            CD = 0x00,
+            CDR = 0x01,
+            CDRW = 0x02,
+            DVD = 0x10,
+            DVDR = 0x12
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        enum AlcoholTrackMode : byte
+        {
+            NoData = 0x00,
+            DVD = 0x02,
+            Audio = 0xA9,
+            Mode1 = 0xAA,
+            Mode2 = 0xAB,
+            Mode2F1 = 0xAC,
+            Mode2F2 = 0xAD,
+            Mode2F1Alt = 0xEC
+        }
+
+        enum AlcoholSubchannelMode : byte
+        {
+            None = 0x00,
+            Interleaved = 0x08
+        }
     }
 }

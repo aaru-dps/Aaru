@@ -42,107 +42,52 @@ namespace DiscImageChef.DiscImages
 {
     public class Qed : ImagePlugin
     {
-        #region Internal constants
         /// <summary>
-        /// Magic number: 'Q', 'E', 'D', 0x00
+        ///     Magic number: 'Q', 'E', 'D', 0x00
         /// </summary>
         const uint QED_MAGIC = 0x00444551;
 
         /// <summary>
-        /// Mask of unsupported incompatible features
+        ///     Mask of unsupported incompatible features
         /// </summary>
         const ulong QED_FEATURE_MASK = 0xFFFFFFFFFFFFFFF8;
 
         /// <summary>
-        /// File is differential (has a backing file)
+        ///     File is differential (has a backing file)
         /// </summary>
         const ulong QED_FEATURE_BACKING_FILE = 0x01;
         /// <summary>
-        /// Image needs a consistency check before writing
+        ///     Image needs a consistency check before writing
         /// </summary>
         const ulong QED_FEATURE_NEEDS_CHECK = 0x02;
-        /// <summary>s
-        /// Backing file is a raw disk image
+        /// <summary>
+        ///     s
+        ///     Backing file is a raw disk image
         /// </summary>
         const ulong QED_FEATURE_RAW_BACKING = 0x04;
 
         const int MAX_CACHE_SIZE = 16777216;
-        #endregion
 
-        #region Internal Structures
-        /// <summary>
-        /// QED header, big-endian
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QedHeader
-        {
-            /// <summary>
-            /// <see cref="Qed.QED_MAGIC"/>
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            /// Cluster size in bytes
-            /// </summary>
-            public uint cluster_size;
-            /// <summary>
-            /// L1 and L2 table size in cluster
-            /// </summary>
-            public uint table_size;
-            /// <summary>
-            /// Header size in clusters
-            /// </summary>
-            public uint header_size;
-            /// <summary>
-            /// Incompatible features
-            /// </summary>
-            public ulong features;
-            /// <summary>
-            /// Compatible features
-            /// </summary>
-            public ulong compat_features;
-            /// <summary>
-            /// Self-resetting features
-            /// </summary>
-            public ulong autoclear_features;
-            /// <summary>
-            /// Offset to L1 table
-            /// </summary>
-            public ulong l1_table_offset;
-            /// <summary>
-            /// Image size
-            /// </summary>
-            public ulong image_size;
-            /// <summary>
-            /// Offset inside file to string containing backing file
-            /// </summary>
-            public ulong backing_file_offset;
-            /// <summary>
-            /// Size of <see cref="backing_file_offset"/>
-            /// </summary>
-            public uint backing_file_size;
-        }
-        #endregion
-
-        QedHeader qHdr;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        int clusterBits;
+        Dictionary<ulong, byte[]> clusterCache;
         uint clusterSectors;
-        uint tableSize;
-        ulong[] l1Table;
+
+        Stream imageStream;
 
         ulong l1Mask;
         int l1Shift;
+        ulong[] l1Table;
         ulong l2Mask;
-        ulong sectorMask;
-        int clusterBits;
+        Dictionary<ulong, ulong[]> l2TableCache;
+        uint maxClusterCache;
+        uint maxL2TableCache;
+
+        QedHeader qHdr;
 
         Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> clusterCache;
-        Dictionary<ulong, ulong[]> l2TableCache;
-
-        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-        uint maxL2TableCache;
-        uint maxClusterCache;
-
-        Stream imageStream;
+        ulong sectorMask;
+        uint tableSize;
 
         public Qed()
         {
@@ -330,8 +275,7 @@ namespace DiscImageChef.DiscImages
                 byte[] l2TableB = new byte[tableSize * 8];
                 imageStream.Read(l2TableB, 0, (int)tableSize * 8);
                 DicConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
-                for(long i = 0; i < l2Table.LongLength; i++)
-                    l2Table[i] = BitConverter.ToUInt64(l2TableB, (int)(i * 8));
+                for(long i = 0; i < l2Table.LongLength; i++) l2Table[i] = BitConverter.ToUInt64(l2TableB, (int)(i * 8));
 
                 if(l2TableCache.Count >= maxL2TableCache) l2TableCache.Clear();
 
@@ -457,7 +401,7 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        bool IsPowerOfTwo(uint x)
+        static bool IsPowerOfTwo(uint x)
         {
             while((x & 1) == 0 && x > 1) x >>= 1;
 
@@ -497,7 +441,6 @@ namespace DiscImageChef.DiscImages
             return cnt;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -658,6 +601,57 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     QED header, big-endian
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QedHeader
+        {
+            /// <summary>
+            ///     <see cref="Qed.QED_MAGIC" />
+            /// </summary>
+            public uint magic;
+            /// <summary>
+            ///     Cluster size in bytes
+            /// </summary>
+            public uint cluster_size;
+            /// <summary>
+            ///     L1 and L2 table size in cluster
+            /// </summary>
+            public uint table_size;
+            /// <summary>
+            ///     Header size in clusters
+            /// </summary>
+            public uint header_size;
+            /// <summary>
+            ///     Incompatible features
+            /// </summary>
+            public ulong features;
+            /// <summary>
+            ///     Compatible features
+            /// </summary>
+            public ulong compat_features;
+            /// <summary>
+            ///     Self-resetting features
+            /// </summary>
+            public ulong autoclear_features;
+            /// <summary>
+            ///     Offset to L1 table
+            /// </summary>
+            public ulong l1_table_offset;
+            /// <summary>
+            ///     Image size
+            /// </summary>
+            public ulong image_size;
+            /// <summary>
+            ///     Offset inside file to string containing backing file
+            /// </summary>
+            public ulong backing_file_offset;
+            /// <summary>
+            ///     Size of <see cref="backing_file_offset" />
+            /// </summary>
+            public uint backing_file_size;
+        }
     }
 }

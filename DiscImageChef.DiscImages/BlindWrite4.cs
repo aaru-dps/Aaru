@@ -46,148 +46,23 @@ namespace DiscImageChef.DiscImages
 {
     public class BlindWrite4 : ImagePlugin
     {
-        #region Internal Constants
         /// <summary>"BLINDWRITE TOC FILE"</summary>
         readonly byte[] bw4Signature =
         {
             0x42, 0x4C, 0x49, 0x4E, 0x44, 0x57, 0x52, 0x49, 0x54, 0x45, 0x20, 0x54, 0x4F, 0x43, 0x20, 0x46, 0x49, 0x4C,
             0x45
         };
-        #endregion Internal Constants
-
-        #region Internal Structures
-        struct Bw4Header
-        {
-            public byte[] Signature;
-            public uint Unknown1;
-            public ulong Timestamp;
-            public uint VolumeIdLength;
-            public byte[] VolumeIdBytes;
-            public uint SysIdLength;
-            public byte[] SysIdBytes;
-            public uint CommentsLength;
-            public byte[] CommentsBytes;
-            public uint TrackDescriptors;
-            public uint DataFileLength;
-            public byte[] DataFileBytes;
-            public uint SubchannelFileLength;
-            public byte[] SubchannelFileBytes;
-            public uint Unknown2;
-            public byte Unknown3;
-            public byte[] Unknown4;
-
-            // On memory only
-#pragma warning disable 649
-            public string VolumeIdentifier;
-            public string SystemIdentifier;
-            public string Comments;
-            public Filter DataFilter;
-            public Filter SubchannelFilter;
-            public string DataFile;
-            public string SubchannelFile;
-#pragma warning restore 649
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw4TrackDescriptor
-        {
-            public uint filenameLen;
-            public byte[] filenameBytes;
-            public uint offset;
-            public byte subchannel;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown1;
-            public uint unknown2;
-            public byte unknown3;
-            public byte session;
-            public byte unknown4;
-            public byte adrCtl;
-            public byte unknown5;
-            public Bw4TrackType trackMode;
-            public byte unknown6;
-            public byte point;
-            public uint unknown7;
-            public uint unknown8;
-            public uint unknown9;
-            public uint unknown10;
-            public ushort unknown11;
-            public uint lastSector;
-            public byte unknown12;
-            public int pregap;
-            public int startSector;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown13;
-            public uint titleLen;
-            public byte[] titleBytes;
-            public uint performerLen;
-            public byte[] performerBytes;
-            public uint unkStrLen1;
-            public byte[] unkStrBytes1;
-            public uint unkStrLen2;
-            public byte[] unkStrBytes2;
-            public uint unkStrLen3;
-            public byte[] unkStrBytes3;
-            public uint unkStrLen4;
-            public byte[] unkStrBytes4;
-            public uint discIdLen;
-            public byte[] discIdBytes;
-            public uint unkStrLen5;
-            public byte[] unkStrBytes5;
-            public uint unkStrLen6;
-            public byte[] unkStrBytes6;
-            public uint unkStrLen7;
-            public byte[] unkStrBytes7;
-            public uint unkStrLen8;
-            public byte[] unkStrBytes8;
-            public uint unkStrLen9;
-            public byte[] unkStrBytes9;
-            public uint unkStrLen10;
-            public byte[] unkStrBytes10;
-            public uint unkStrLen11;
-            public byte[] unkStrBytes11;
-            public uint isrcLen;
-            public byte[] isrcBytes;
-
-            // On memory only
-            public string filename;
-            public string title;
-            public string performer;
-            public string unkString1;
-            public string unkString2;
-            public string unkString3;
-            public string unkString4;
-            public string discId;
-            public string unkString5;
-            public string unkString6;
-            public string unkString7;
-            public string unkString8;
-            public string unkString9;
-            public string unkString10;
-            public string unkString11;
-            public string isrcUpc;
-        }
-        #endregion Internal Structures
-
-        #region Internal enumerations
-        enum Bw4TrackType : byte
-        {
-            Audio = 0,
-            Mode1 = 1,
-            Mode2 = 2
-        }
-        #endregion Internal enumerations
-
-        #region Internal variables
-        Bw4Header header;
         List<Bw4TrackDescriptor> bwTracks;
-        List<Track> tracks;
+        Filter dataFilter, subFilter;
+
+        Bw4Header header;
+        Stream imageStream;
         Dictionary<uint, ulong> offsetmap;
         List<Partition> partitions;
         List<Session> sessions;
-        Filter dataFilter, subFilter;
-        Stream imageStream;
         Dictionary<uint, byte> trackFlags;
-        #endregion Internal variables
+        List<Track> tracks;
 
-        #region Public Methods
         public BlindWrite4()
         {
             Name = "BlindWrite 4";
@@ -1018,7 +893,6 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-
             foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
                 dicTrack = bwTrack;
@@ -1202,7 +1076,6 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-
             foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
                 dicTrack = bwTrack;
@@ -1330,9 +1203,8 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
@@ -1361,18 +1233,15 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifyMediaImage()
         {
             return null;
         }
-        #endregion Public Methods
 
-        #region Unsupported features
         public override string GetImageApplicationVersion()
         {
             return ImageInfo.ImageApplicationVersion;
@@ -1452,6 +1321,121 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.ImageCreator;
         }
-        #endregion Unsupported features
+
+        struct Bw4Header
+        {
+            public byte[] Signature;
+            public uint Unknown1;
+            public ulong Timestamp;
+            public uint VolumeIdLength;
+            public byte[] VolumeIdBytes;
+            public uint SysIdLength;
+            public byte[] SysIdBytes;
+            public uint CommentsLength;
+            public byte[] CommentsBytes;
+            public uint TrackDescriptors;
+            public uint DataFileLength;
+            public byte[] DataFileBytes;
+            public uint SubchannelFileLength;
+            public byte[] SubchannelFileBytes;
+            public uint Unknown2;
+            public byte Unknown3;
+            public byte[] Unknown4;
+
+            // On memory only
+#pragma warning disable 649
+            public string VolumeIdentifier;
+            public string SystemIdentifier;
+            public string Comments;
+            public Filter DataFilter;
+            public Filter SubchannelFilter;
+            public string DataFile;
+            public string SubchannelFile;
+#pragma warning restore 649
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Bw4TrackDescriptor
+        {
+            public uint filenameLen;
+            public byte[] filenameBytes;
+            public uint offset;
+            public byte subchannel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown1;
+            public uint unknown2;
+            public byte unknown3;
+            public byte session;
+            public byte unknown4;
+            public byte adrCtl;
+            public byte unknown5;
+            public Bw4TrackType trackMode;
+            public byte unknown6;
+            public byte point;
+            public uint unknown7;
+            public uint unknown8;
+            public uint unknown9;
+            public uint unknown10;
+            public ushort unknown11;
+            public uint lastSector;
+            public byte unknown12;
+            public int pregap;
+            public int startSector;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown13;
+            public uint titleLen;
+            public byte[] titleBytes;
+            public uint performerLen;
+            public byte[] performerBytes;
+            public uint unkStrLen1;
+            public byte[] unkStrBytes1;
+            public uint unkStrLen2;
+            public byte[] unkStrBytes2;
+            public uint unkStrLen3;
+            public byte[] unkStrBytes3;
+            public uint unkStrLen4;
+            public byte[] unkStrBytes4;
+            public uint discIdLen;
+            public byte[] discIdBytes;
+            public uint unkStrLen5;
+            public byte[] unkStrBytes5;
+            public uint unkStrLen6;
+            public byte[] unkStrBytes6;
+            public uint unkStrLen7;
+            public byte[] unkStrBytes7;
+            public uint unkStrLen8;
+            public byte[] unkStrBytes8;
+            public uint unkStrLen9;
+            public byte[] unkStrBytes9;
+            public uint unkStrLen10;
+            public byte[] unkStrBytes10;
+            public uint unkStrLen11;
+            public byte[] unkStrBytes11;
+            public uint isrcLen;
+            public byte[] isrcBytes;
+
+            // On memory only
+            public string filename;
+            public string title;
+            public string performer;
+            public string unkString1;
+            public string unkString2;
+            public string unkString3;
+            public string unkString4;
+            public string discId;
+            public string unkString5;
+            public string unkString6;
+            public string unkString7;
+            public string unkString8;
+            public string unkString9;
+            public string unkString10;
+            public string unkString11;
+            public string isrcUpc;
+        }
+
+        enum Bw4TrackType : byte
+        {
+            Audio = 0,
+            Mode1 = 1,
+            Mode2 = 2
+        }
     }
 }

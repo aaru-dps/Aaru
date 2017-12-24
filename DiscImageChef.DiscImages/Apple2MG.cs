@@ -43,112 +43,36 @@ namespace DiscImageChef.DiscImages
 {
     public class Apple2Mg : ImagePlugin
     {
-        #region Internal Structures
-        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-        struct A2ImgHeader
-        {
-            /// <summary>
-            /// Offset 0x00, magic
-            /// </summary>
-            public uint Magic;
-            /// <summary>
-            /// Offset 0x04, disk image creator ID
-            /// </summary>
-            public uint Creator;
-            /// <summary>
-            /// Offset 0x08, header size, constant 0x0040
-            /// </summary>
-            public ushort HeaderSize;
-            /// <summary>
-            /// Offset 0x0A, disk image version
-            /// </summary>
-            public ushort Version;
-            /// <summary>
-            /// Offset 0x0C, disk image format
-            /// </summary>
-            public uint ImageFormat;
-            /// <summary>
-            /// Offset 0x10, flags and volume number
-            /// </summary>
-            public uint Flags;
-            /// <summary>
-            /// Offset 0x14, blocks for ProDOS, 0 otherwise
-            /// </summary>
-            public uint Blocks;
-            /// <summary>
-            /// Offset 0x18, offset to data
-            /// </summary>
-            public uint DataOffset;
-            /// <summary>
-            /// Offset 0x1C, data size in bytes
-            /// </summary>
-            public uint DataSize;
-            /// <summary>
-            /// Offset 0x20, offset to optional comment
-            /// </summary>
-            public uint CommentOffset;
-            /// <summary>
-            /// Offset 0x24, length of optional comment
-            /// </summary>
-            public uint CommentSize;
-            /// <summary>
-            /// Offset 0x28, offset to creator specific chunk
-            /// </summary>
-            public uint CreatorSpecificOffset;
-            /// <summary>
-            /// Offset 0x2C, creator specific chunk size
-            /// </summary>
-            public uint CreatorSpecificSize;
-            /// <summary>
-            /// Offset 0x30, reserved, should be zero
-            /// </summary>
-            public uint Reserved1;
-            /// <summary>
-            /// Offset 0x34, reserved, should be zero
-            /// </summary>
-            public uint Reserved2;
-            /// <summary>
-            /// Offset 0x38, reserved, should be zero
-            /// </summary>
-            public uint Reserved3;
-            /// <summary>
-            /// Offset 0x3C, reserved, should be zero
-            /// </summary>
-            public uint Reserved4;
-        }
-        #endregion
-
-        #region Internal Constants
         /// <summary>
-        /// Magic number, "2IMG"
+        ///     Magic number, "2IMG"
         /// </summary>
         const uint MAGIC = 0x474D4932;
         /// <summary>
-        /// Disk image created by ASIMOV2, "!nfc"
+        ///     Disk image created by ASIMOV2, "!nfc"
         /// </summary>
         const uint CREATOR_ASIMOV = 0x63666E21;
         /// <summary>
-        /// Disk image created by Bernie ][ the Rescue, "B2TR"
+        ///     Disk image created by Bernie ][ the Rescue, "B2TR"
         /// </summary>
         const uint CREATOR_BERNIE = 0x52543242;
         /// <summary>
-        /// Disk image created by Catakig, "CTKG"
+        ///     Disk image created by Catakig, "CTKG"
         /// </summary>
         const uint CREATOR_CATAKIG = 0x474B5443;
         /// <summary>
-        /// Disk image created by Sheppy's ImageMaker, "ShIm"
+        ///     Disk image created by Sheppy's ImageMaker, "ShIm"
         /// </summary>
         const uint CREATOR_SHEPPY = 0x6D496853;
         /// <summary>
-        /// Disk image created by Sweet16, "WOOF"
+        ///     Disk image created by Sweet16, "WOOF"
         /// </summary>
         const uint CREATOR_SWEET = 0x464F4F57;
         /// <summary>
-        /// Disk image created by XGS, "XGS!"
+        ///     Disk image created by XGS, "XGS!"
         /// </summary>
         const uint CREATOR_XGS = 0x21534758;
         /// <summary>
-        /// Disk image created by CiderPress, "CdrP"
+        ///     Disk image created by CiderPress, "CdrP"
         /// </summary>
         const uint CREATOR_CIDER = 0x50726443;
 
@@ -159,12 +83,9 @@ namespace DiscImageChef.DiscImages
         const uint LOCKED_DISK = 0x80000000;
         const uint VALID_VOLUME_NUMBER = 0x00000100;
         const uint VOLUME_NUMBER_MASK = 0x000000FF;
-        #endregion
-
-        #region Internal variables
-        A2ImgHeader imageHeader;
+        
         Filter a2MgImageFilter;
-        #endregion
+        A2ImgHeader imageHeader;
 
         public Apple2Mg()
         {
@@ -291,9 +212,11 @@ namespace DiscImageChef.DiscImages
             if(imageHeader.DataSize == 0 && imageHeader.Blocks == 0 &&
                imageHeader.ImageFormat != PRODOS_SECTOR_ORDER) return false;
 
-            switch(imageHeader.ImageFormat) {
+            switch(imageHeader.ImageFormat)
+            {
                 case PRODOS_SECTOR_ORDER when imageHeader.Blocks == 0: return false;
-                case PRODOS_SECTOR_ORDER: imageHeader.DataSize = imageHeader.Blocks * 512;
+                case PRODOS_SECTOR_ORDER:
+                    imageHeader.DataSize = imageHeader.Blocks * 512;
                     break;
                 default:
                     if(imageHeader.Blocks == 0 && imageHeader.DataSize != 0)
@@ -502,7 +425,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -663,6 +585,78 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+        struct A2ImgHeader
+        {
+            /// <summary>
+            ///     Offset 0x00, magic
+            /// </summary>
+            public uint Magic;
+            /// <summary>
+            ///     Offset 0x04, disk image creator ID
+            /// </summary>
+            public uint Creator;
+            /// <summary>
+            ///     Offset 0x08, header size, constant 0x0040
+            /// </summary>
+            public ushort HeaderSize;
+            /// <summary>
+            ///     Offset 0x0A, disk image version
+            /// </summary>
+            public ushort Version;
+            /// <summary>
+            ///     Offset 0x0C, disk image format
+            /// </summary>
+            public uint ImageFormat;
+            /// <summary>
+            ///     Offset 0x10, flags and volume number
+            /// </summary>
+            public uint Flags;
+            /// <summary>
+            ///     Offset 0x14, blocks for ProDOS, 0 otherwise
+            /// </summary>
+            public uint Blocks;
+            /// <summary>
+            ///     Offset 0x18, offset to data
+            /// </summary>
+            public uint DataOffset;
+            /// <summary>
+            ///     Offset 0x1C, data size in bytes
+            /// </summary>
+            public uint DataSize;
+            /// <summary>
+            ///     Offset 0x20, offset to optional comment
+            /// </summary>
+            public uint CommentOffset;
+            /// <summary>
+            ///     Offset 0x24, length of optional comment
+            /// </summary>
+            public uint CommentSize;
+            /// <summary>
+            ///     Offset 0x28, offset to creator specific chunk
+            /// </summary>
+            public uint CreatorSpecificOffset;
+            /// <summary>
+            ///     Offset 0x2C, creator specific chunk size
+            /// </summary>
+            public uint CreatorSpecificSize;
+            /// <summary>
+            ///     Offset 0x30, reserved, should be zero
+            /// </summary>
+            public uint Reserved1;
+            /// <summary>
+            ///     Offset 0x34, reserved, should be zero
+            /// </summary>
+            public uint Reserved2;
+            /// <summary>
+            ///     Offset 0x38, reserved, should be zero
+            /// </summary>
+            public uint Reserved3;
+            /// <summary>
+            ///     Offset 0x3C, reserved, should be zero
+            /// </summary>
+            public uint Reserved4;
+        }
     }
 }

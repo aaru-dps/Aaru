@@ -43,15 +43,14 @@ using DiscImageChef.Filters;
 using Ionic.Zlib;
 using SharpCompress.Compressors.ADC;
 using SharpCompress.Compressors.BZip2;
-using CompressionMode = SharpCompress.Compressors.CompressionMode;
 using Version = Resources.Version;
+
 #pragma warning disable 612
 
 namespace DiscImageChef.DiscImages
 {
     public class Udif : ImagePlugin
     {
-        #region Internal constants
         const uint UDIF_SIGNATURE = 0x6B6F6C79;
         const uint CHUNK_SIGNATURE = 0x6D697368;
 
@@ -74,87 +73,19 @@ namespace DiscImageChef.DiscImages
         const string RESOURCE_FORK_KEY = "resource-fork";
         const string BLOCK_KEY = "blkx";
         const uint BLOCK_OS_TYPE = 0x626C6B78;
-        #endregion
-
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct UdifFooter
-        {
-            public uint signature;
-            public uint version;
-            public uint headerSize;
-            public uint flags;
-            public ulong runningDataForkOff;
-            public ulong dataForkOff;
-            public ulong dataForkLen;
-            public ulong rsrcForkOff;
-            public ulong rsrcForkLen;
-            public uint segmentNumber;
-            public uint segmentCount;
-            public Guid segmentId;
-            public uint dataForkChkType;
-            public uint dataForkChkLen;
-            public uint dataForkChk;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)] public byte[] reserved1;
-            public ulong plistOff;
-            public ulong plistLen;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 120)] public byte[] reserved2;
-            public uint masterChkType;
-            public uint masterChkLen;
-            public uint masterChk;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)] public byte[] reserved3;
-            public uint imageVariant;
-            public ulong sectorCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] reserved4;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BlockHeader
-        {
-            public uint signature;
-            public uint version;
-            public ulong sectorStart;
-            public ulong sectorCount;
-            public ulong dataOffset;
-            public uint buffers;
-            public uint descriptor;
-            public uint reserved1;
-            public uint reserved2;
-            public uint reserved3;
-            public uint reserved4;
-            public uint reserved5;
-            public uint reserved6;
-            public uint checksumType;
-            public uint checksumLen;
-            public uint checksum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)] public byte[] reservedChk;
-            public uint chunks;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BlockChunk
-        {
-            public uint type;
-            public uint comment;
-            public ulong sector;
-            public ulong sectors;
-            public ulong offset;
-            public ulong length;
-        }
-        #endregion
-
-        UdifFooter footer;
-        Dictionary<ulong, BlockChunk> chunks;
-
-        Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> chunkCache;
         const uint MAX_CACHE_SIZE = 16777216;
         const uint SECTOR_SIZE = 512;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
-        uint currentChunkCacheSize;
         uint buffersize;
+        Dictionary<ulong, byte[]> chunkCache;
+        Dictionary<ulong, BlockChunk> chunks;
+        uint currentChunkCacheSize;
+
+        UdifFooter footer;
 
         Stream imageStream;
+
+        Dictionary<ulong, byte[]> sectorCache;
 
         public Udif()
         {
@@ -323,7 +254,8 @@ namespace DiscImageChef.DiscImages
 
                 NSObject[] blkx = ((NSArray)blkxObj).GetArray();
 
-                foreach(NSDictionary part in blkx.Cast<NSDictionary>()) {
+                foreach(NSDictionary part in blkx.Cast<NSDictionary>())
+                {
                     if(!part.TryGetValue("Name", out _)) throw new Exception("Could not retrieve Name");
 
                     if(!part.TryGetValue("Data", out NSObject dataObj)) throw new Exception("Could not retrieve Data");
@@ -456,16 +388,23 @@ namespace DiscImageChef.DiscImages
                         bChnk.sector += bHdr.sectorStart;
                         bChnk.offset += bHdr.dataOffset;
 
-                        switch(bChnk.type) {
+                        switch(bChnk.type)
+                        {
                             // TODO: Handle comments
                             case CHUNK_TYPE_COMMNT: continue;
                             // TODO: Handle compressed chunks
                             case CHUNK_TYPE_KENCODE:
                                 throw new
                                     ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                            case CHUNK_TYPE_RLE: throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
-                            case CHUNK_TYPE_LZH: throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                            case CHUNK_TYPE_LZFSE: throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
+                            case CHUNK_TYPE_RLE:
+                                throw new
+                                    ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
+                            case CHUNK_TYPE_LZH:
+                                throw new
+                                    ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+                            case CHUNK_TYPE_LZFSE:
+                                throw new
+                                    ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
                         }
 
                         if(bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT ||
@@ -510,7 +449,8 @@ namespace DiscImageChef.DiscImages
             bool chunkFound = false;
             ulong chunkStartSector = 0;
 
-            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key)) {
+            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key))
+            {
                 currentChunk = kvp.Value;
                 chunkFound = true;
                 chunkStartSector = kvp.Key;
@@ -536,15 +476,20 @@ namespace DiscImageChef.DiscImages
                     MemoryStream cmpMs = new MemoryStream(cmpBuffer);
                     Stream decStream;
 
-                    switch(currentChunk.type) {
-                        case CHUNK_TYPE_ADC: decStream = new ADCStream(cmpMs);
+                    switch(currentChunk.type)
+                    {
+                        case CHUNK_TYPE_ADC:
+                            decStream = new ADCStream(cmpMs);
                             break;
-                        case CHUNK_TYPE_ZLIB: decStream = new ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
+                        case CHUNK_TYPE_ZLIB:
+                            decStream = new ZlibStream(cmpMs, CompressionMode.Decompress);
                             break;
-                        case CHUNK_TYPE_BZIP: decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
+                        case CHUNK_TYPE_BZIP:
+                            decStream = new BZip2Stream(cmpMs, SharpCompress.Compressors.CompressionMode.Decompress);
                             break;
                         default:
-                            throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
+                            throw new
+                                ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
                     }
 
 #if DEBUG
@@ -584,7 +529,8 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            switch(currentChunk.type) {
+            switch(currentChunk.type)
+            {
                 case CHUNK_TYPE_NOCOPY:
                 case CHUNK_TYPE_ZERO:
                     sector = new byte[SECTOR_SIZE];
@@ -697,7 +643,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -858,6 +803,70 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct UdifFooter
+        {
+            public uint signature;
+            public uint version;
+            public uint headerSize;
+            public uint flags;
+            public ulong runningDataForkOff;
+            public ulong dataForkOff;
+            public ulong dataForkLen;
+            public ulong rsrcForkOff;
+            public ulong rsrcForkLen;
+            public uint segmentNumber;
+            public uint segmentCount;
+            public Guid segmentId;
+            public uint dataForkChkType;
+            public uint dataForkChkLen;
+            public uint dataForkChk;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)] public byte[] reserved1;
+            public ulong plistOff;
+            public ulong plistLen;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 120)] public byte[] reserved2;
+            public uint masterChkType;
+            public uint masterChkLen;
+            public uint masterChk;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)] public byte[] reserved3;
+            public uint imageVariant;
+            public ulong sectorCount;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] reserved4;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BlockHeader
+        {
+            public uint signature;
+            public uint version;
+            public ulong sectorStart;
+            public ulong sectorCount;
+            public ulong dataOffset;
+            public uint buffers;
+            public uint descriptor;
+            public uint reserved1;
+            public uint reserved2;
+            public uint reserved3;
+            public uint reserved4;
+            public uint reserved5;
+            public uint reserved6;
+            public uint checksumType;
+            public uint checksumLen;
+            public uint checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)] public byte[] reservedChk;
+            public uint chunks;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BlockChunk
+        {
+            public uint type;
+            public uint comment;
+            public ulong sector;
+            public ulong sectors;
+            public ulong offset;
+            public ulong length;
+        }
     }
 }

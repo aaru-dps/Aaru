@@ -44,7 +44,6 @@ namespace DiscImageChef.DiscImages
 {
     public class VMware : ImagePlugin
     {
-        #region Internal constants
         const uint VMWARE_EXTENT_MAGIC = 0x564D444B;
         const uint VMWARE_COW_MAGIC = 0x44574F43;
 
@@ -68,25 +67,21 @@ namespace DiscImageChef.DiscImages
         const string VM_TYPE_STREAM = "streamOptimized";
 
         const string DDF_MAGIC = "# Disk DescriptorFile";
-        readonly byte[] ddfMagicBytes =
-        {
-            0x23, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x20, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x6F, 0x72, 0x46,
-            0x69, 0x6C, 0x65
-        };
 
-        const string VERSION_REGEX = "^\\s*version\\s*=\\s*(?<version>\\d+)$";
-        const string CID_REGEX = "^\\s*CID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
-        const string PAREN_CID_REGEX = "^\\s*parentCID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
-        const string TYPE_REGEX =
+        const string REGEX_VERSION = "^\\s*version\\s*=\\s*(?<version>\\d+)$";
+        const string REGEX_CID = "^\\s*CID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
+        const string REGEX_CID_PARENT = "^\\s*parentCID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
+        const string REGEX_TYPE =
                 "^\\s*createType\\s*=\\s*\\\"(?<type>custom|monolithicSparse|monolithicFlat|twoGbMaxExtentSparse|twoGbMaxExtentFlat|fullDevice|partitionedDevice|vmfs|vmfsPreallocated|vmfsEagerZeroedThick|vmfsThin|vmfsSparse|vmfsRDM|vmfsRawDeviceMap|vmfsRDMP|vmfsPassthroughRawDeviceMap|vmfsRaw|streamOptimized)\\\"$"
             ;
-        const string EXTENT_REGEX =
+        const string REGEX_EXTENT =
                 "^\\s*(?<access>(RW|RDONLY|NOACCESS))\\s+(?<sectors>\\d+)\\s+(?<type>(FLAT|SPARSE|ZERO|VMFS|VMFSSPARSE|VMFSRDM|VMFSRAW))\\s+\\\"(?<filename>.+)\\\"(\\s*(?<offset>\\d+))?$"
             ;
-        const string DDB_TYPE_REGEX = "^\\s*ddb\\.adapterType\\s*=\\s*\\\"(?<type>ide|buslogic|lsilogic|legacyESX)\\\"$";
-        const string DDB_SECTORS_REGEX = "^\\s*ddb\\.geometry\\.sectors\\s*=\\s*\\\"(?<sectors>\\d+)\\\"$";
-        const string DDB_HEADS_REGEX = "^\\s*ddb\\.geometry\\.heads\\s*=\\s*\\\"(?<heads>\\d+)\\\"$";
-        const string DDB_CYLINDERS_REGEX = "^\\s*ddb\\.geometry\\.cylinders\\s*=\\s*\\\"(?<cylinders>\\d+)\\\"$";
+        const string REGEX_DDB_TYPE =
+            "^\\s*ddb\\.adapterType\\s*=\\s*\\\"(?<type>ide|buslogic|lsilogic|legacyESX)\\\"$";
+        const string REGEX_DDB_SECTORS = "^\\s*ddb\\.geometry\\.sectors\\s*=\\s*\\\"(?<sectors>\\d+)\\\"$";
+        const string REGEX_DDB_HEADS = "^\\s*ddb\\.geometry\\.heads\\s*=\\s*\\\"(?<heads>\\d+)\\\"$";
+        const string REGEX_DDB_CYLINDERS = "^\\s*ddb\\.geometry\\.cylinders\\s*=\\s*\\\"(?<cylinders>\\d+)\\\"$";
         const string PARENT_REGEX = "^\\s*parentFileNameHint\\s*=\\s*\\\"(?<filename>.+)\\\"$";
 
         const uint FLAGS_VALID_NEW_LINE = 0x01;
@@ -97,93 +92,36 @@ namespace DiscImageChef.DiscImages
 
         const ushort COMPRESSION_NONE = 0;
         const ushort COMPRESSION_DEFLATE = 1;
-        #endregion
-
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VMwareExtentHeader
-        {
-            public uint magic;
-            public uint version;
-            public uint flags;
-            public ulong capacity;
-            public ulong grainSize;
-            public ulong descriptorOffset;
-            public ulong descriptorSize;
-            public uint GTEsPerGT;
-            public ulong rgdOffset;
-            public ulong gdOffset;
-            public ulong overhead;
-            [MarshalAs(UnmanagedType.U1)] public bool uncleanShutdown;
-            public byte singleEndLineChar;
-            public byte nonEndLineChar;
-            public byte doubleEndLineChar1;
-            public byte doubleEndLineChar2;
-            public ushort compression;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 433)] public byte[] padding;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VMwareCowHeader
-        {
-            public uint magic;
-            public uint version;
-            public uint flags;
-            public uint sectors;
-            public uint grainSize;
-            public uint gdOffset;
-            public uint numGDEntries;
-            public uint freeSector;
-            public uint cylinders;
-            public uint heads;
-            public uint spt;
-            // It stats on cylinders, above, but, don't care
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024 - 12)] public byte[] parentFileName;
-            public uint parentGeneration;
-            public uint generation;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)] public byte[] name;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] description;
-            public uint savedGeneration;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved;
-            [MarshalAs(UnmanagedType.U1)] public bool uncleanShutdown;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 396)] public byte[] padding;
-        }
-        #endregion
-
-        struct VMwareExtent
-        {
-            public string Access;
-            public uint Sectors;
-            public string Type;
-            public Filter Filter;
-            public string Filename;
-            public uint Offset;
-        }
-
-        VMwareExtentHeader vmEHdr;
-        VMwareCowHeader vmCHdr;
-
-        Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> grainCache;
-
-        uint cid;
-        uint parentCid;
-        string imageType;
-        uint version;
-        Dictionary<ulong, VMwareExtent> extents;
-        string parentName;
 
         const uint MAX_CACHE_SIZE = 16777216;
         const uint SECTOR_SIZE = 512;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
-        uint maxCachedGrains;
+        readonly byte[] ddfMagicBytes =
+        {
+            0x23, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x20, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x6F, 0x72, 0x46,
+            0x69, 0x6C, 0x65
+        };
 
-        ImagePlugin parentImage;
-        bool hasParent;
+        uint cid;
+        Dictionary<ulong, VMwareExtent> extents;
         Filter gdFilter;
-        uint[] gTable;
+        Dictionary<ulong, byte[]> grainCache;
 
         ulong grainSize;
+        uint[] gTable;
+        bool hasParent;
+        string imageType;
+        uint maxCachedGrains;
+        uint parentCid;
+
+        ImagePlugin parentImage;
+        string parentName;
+
+        Dictionary<ulong, byte[]> sectorCache;
+        uint version;
+        VMwareCowHeader vmCHdr;
+
+        VMwareExtentHeader vmEHdr;
 
         public VMware()
         {
@@ -388,15 +326,15 @@ namespace DiscImageChef.DiscImages
             {
                 ddfStream.Seek(0, SeekOrigin.Begin);
 
-                Regex regexVersion = new Regex(VERSION_REGEX);
-                Regex regexCid = new Regex(CID_REGEX);
-                Regex regexParentCid = new Regex(PAREN_CID_REGEX);
-                Regex regexType = new Regex(TYPE_REGEX);
-                Regex regexExtent = new Regex(EXTENT_REGEX);
+                Regex regexVersion = new Regex(REGEX_VERSION);
+                Regex regexCid = new Regex(REGEX_CID);
+                Regex regexParentCid = new Regex(REGEX_CID_PARENT);
+                Regex regexType = new Regex(REGEX_TYPE);
+                Regex regexExtent = new Regex(REGEX_EXTENT);
                 Regex regexParent = new Regex(PARENT_REGEX);
-                Regex regexCylinders = new Regex(DDB_CYLINDERS_REGEX);
-                Regex regexHeads = new Regex(DDB_HEADS_REGEX);
-                Regex regexSectors = new Regex(DDB_SECTORS_REGEX);
+                Regex regexCylinders = new Regex(REGEX_DDB_CYLINDERS);
+                Regex regexHeads = new Regex(REGEX_DDB_HEADS);
+                Regex regexSectors = new Regex(REGEX_DDB_SECTORS);
 
                 StreamReader ddfStreamRdr = new StreamReader(ddfStream);
 
@@ -501,16 +439,14 @@ namespace DiscImageChef.DiscImages
                 case VMFS_TYPE_RAW: //"vmfsRaw";
                     throw new
                         ImageNotSupportedException("Raw device image files are not supported, try accessing the device directly.");
-                default:
-                    throw new ImageNotSupportedException($"Dunno how to handle \"{imageType}\" extents.");
+                default: throw new ImageNotSupportedException($"Dunno how to handle \"{imageType}\" extents.");
             }
 
             bool oneNoFlat = cowD;
 
             foreach(VMwareExtent extent in extents.Values)
             {
-                if(extent.Filter == null)
-                    throw new Exception($"Extent file {extent.Filename} not found.");
+                if(extent.Filter == null) throw new Exception($"Extent file {extent.Filename} not found.");
 
                 if(extent.Access == "NOACCESS") throw new Exception("Cannot access NOACCESS extents ;).");
 
@@ -519,8 +455,7 @@ namespace DiscImageChef.DiscImages
                 Stream extentStream = extent.Filter.GetDataForkStream();
                 extentStream.Seek(0, SeekOrigin.Begin);
 
-                if(extentStream.Length < SECTOR_SIZE)
-                    throw new Exception($"Extent {extent.Filename} is too small.");
+                if(extentStream.Length < SECTOR_SIZE) throw new Exception($"Extent {extent.Filename} is too small.");
 
                 VMwareExtentHeader extentHdr = new VMwareExtentHeader();
                 byte[] extentHdrB = new byte[Marshal.SizeOf(extentHdr)];
@@ -590,7 +525,8 @@ namespace DiscImageChef.DiscImages
                 gdEntries = grains / vmEHdr.GTEsPerGT;
                 gtEsPerGt = vmEHdr.GTEsPerGT;
 
-                if((vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE) gdOffset = (long)vmEHdr.rgdOffset;
+                if((vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE)
+                    gdOffset = (long)vmEHdr.rgdOffset;
                 else gdOffset = (long)vmEHdr.gdOffset;
             }
             else if(oneNoFlat && cowD)
@@ -668,8 +604,7 @@ namespace DiscImageChef.DiscImages
 
                 parentImage = new VMware();
 
-                if(!parentImage.OpenImage(parentFilter))
-                    throw new Exception($"Cannot open parent \"{parentName}\".");
+                if(!parentImage.OpenImage(parentFilter)) throw new Exception($"Cannot open parent \"{parentName}\".");
             }
 
             sectorCache = new Dictionary<ulong, byte[]>();
@@ -712,7 +647,8 @@ namespace DiscImageChef.DiscImages
             bool extentFound = false;
             ulong extentStartSector = 0;
 
-            foreach(KeyValuePair<ulong, VMwareExtent> kvp in extents.Where(kvp => sectorAddress >= kvp.Key)) {
+            foreach(KeyValuePair<ulong, VMwareExtent> kvp in extents.Where(kvp => sectorAddress >= kvp.Key))
+            {
                 currentExtent = kvp.Value;
                 extentFound = true;
                 extentStartSector = kvp.Key;
@@ -724,7 +660,8 @@ namespace DiscImageChef.DiscImages
 
             Stream dataStream;
 
-            switch(currentExtent.Type) {
+            switch(currentExtent.Type)
+            {
                 case "ZERO":
                     sector = new byte[SECTOR_SIZE];
 
@@ -875,7 +812,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -1036,6 +972,64 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VMwareExtentHeader
+        {
+            public uint magic;
+            public uint version;
+            public uint flags;
+            public ulong capacity;
+            public ulong grainSize;
+            public ulong descriptorOffset;
+            public ulong descriptorSize;
+            public uint GTEsPerGT;
+            public ulong rgdOffset;
+            public ulong gdOffset;
+            public ulong overhead;
+            [MarshalAs(UnmanagedType.U1)] public bool uncleanShutdown;
+            public byte singleEndLineChar;
+            public byte nonEndLineChar;
+            public byte doubleEndLineChar1;
+            public byte doubleEndLineChar2;
+            public ushort compression;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 433)] public byte[] padding;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VMwareCowHeader
+        {
+            public uint magic;
+            public uint version;
+            public uint flags;
+            public uint sectors;
+            public uint grainSize;
+            public uint gdOffset;
+            public uint numGDEntries;
+            public uint freeSector;
+            public uint cylinders;
+            public uint heads;
+            public uint spt;
+            // It stats on cylinders, above, but, don't care
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024 - 12)] public byte[] parentFileName;
+            public uint parentGeneration;
+            public uint generation;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] description;
+            public uint savedGeneration;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.U1)] public bool uncleanShutdown;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 396)] public byte[] padding;
+        }
+
+        struct VMwareExtent
+        {
+            public string Access;
+            public uint Sectors;
+            public string Type;
+            public Filter Filter;
+            public string Filename;
+            public uint Offset;
+        }
     }
 }

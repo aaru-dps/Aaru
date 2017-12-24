@@ -44,72 +44,6 @@ namespace DiscImageChef.DiscImages
 {
     public class SuperCardPro : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ScpHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] signature;
-            public byte version;
-            public ScpDiskType type;
-            public byte revolutions;
-            public byte start;
-            public byte end;
-            public ScpFlags flags;
-            public byte bitCellEncoding;
-            public byte heads;
-            public byte reserved;
-            public uint checksum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)] public uint[] offsets;
-        }
-
-        public struct TrackHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] Signature;
-            public byte TrackNumber;
-            public TrackEntry[] Entries;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct TrackEntry
-        {
-            public uint indexTime;
-            public uint trackLength;
-            public uint dataOffset;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ScpFooter
-        {
-            public uint manufacturerOffset;
-            public uint modelOffset;
-            public uint serialOffset;
-            public uint creatorOffset;
-            public uint applicationOffset;
-            public uint commentsOffset;
-            public long creationTime;
-            public long modificationTime;
-            public byte applicationVersion;
-            public byte hardwareVersion;
-            public byte firmwareVersion;
-            public byte imageVersion;
-            public uint signature;
-        }
-        #endregion Internal Structures
-
-        #region Internal Constants
-        /// <summary>
-        /// SuperCardPro header signature: "SCP"
-        /// </summary>
-        readonly byte[] scpSignature = {0x53, 0x43, 0x50};
-        /// <summary>
-        /// SuperCardPro track header signature: "TRK"
-        /// </summary>
-        readonly byte[] trkSignature = {0x54, 0x52, 0x4B};
-        /// <summary>
-        /// SuperCardPro footer signature: "FPCS"
-        /// </summary>
-        const uint FOOTER_SIGNATURE = 0x53435046;
-
         public enum ScpDiskType : byte
         {
             Commodore64 = 0x00,
@@ -140,38 +74,49 @@ namespace DiscImageChef.DiscImages
         public enum ScpFlags : byte
         {
             /// <summary>
-            /// If set flux starts at index pulse
+            ///     If set flux starts at index pulse
             /// </summary>
             Index = 0x00,
             /// <summary>
-            /// If set drive is 96tpi
+            ///     If set drive is 96tpi
             /// </summary>
             Tpi = 0x02,
             /// <summary>
-            /// If set drive is 360rpm
+            ///     If set drive is 360rpm
             /// </summary>
             Rpm = 0x04,
             /// <summary>
-            /// If set image contains normalized data
+            ///     If set image contains normalized data
             /// </summary>
             Normalized = 0x08,
             /// <summary>
-            /// If set image is read/write capable
+            ///     If set image is read/write capable
             /// </summary>
             Writable = 0x10,
             /// <summary>
-            /// If set, image has footer
+            ///     If set, image has footer
             /// </summary>
             HasFooter = 0x20
         }
-        #endregion Internal Constants
 
-        #region Internal variables
+        /// <summary>
+        ///     SuperCardPro footer signature: "FPCS"
+        /// </summary>
+        const uint FOOTER_SIGNATURE = 0x53435046;
+
+        /// <summary>
+        ///     SuperCardPro header signature: "SCP"
+        /// </summary>
+        readonly byte[] scpSignature = {0x53, 0x43, 0x50};
+        /// <summary>
+        ///     SuperCardPro track header signature: "TRK"
+        /// </summary>
+        readonly byte[] trkSignature = {0x54, 0x52, 0x4B};
+
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public ScpHeader Header;
-        public Dictionary<byte, TrackHeader> Tracks;
         Stream scpStream;
-        #endregion Internal variables
+        public Dictionary<byte, TrackHeader> Tracks;
 
         public SuperCardPro()
         {
@@ -202,7 +147,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             Header = new ScpHeader();
@@ -369,9 +313,14 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
                                                   ImageInfo.ImageComments);
 
-                        ImageInfo.ImageCreationTime = footer.creationTime != 0 ? DateHandlers.UnixToDateTime(footer.creationTime) : imageFilter.GetCreationTime();
+                        ImageInfo.ImageCreationTime = footer.creationTime != 0
+                                                          ? DateHandlers.UnixToDateTime(footer.creationTime)
+                                                          : imageFilter.GetCreationTime();
 
-                        ImageInfo.ImageLastModificationTime = footer.modificationTime != 0 ? DateHandlers.UnixToDateTime(footer.modificationTime) : imageFilter.GetLastWriteTime();
+                        ImageInfo.ImageLastModificationTime =
+                            footer.modificationTime != 0
+                                ? DateHandlers.UnixToDateTime(footer.modificationTime)
+                                : imageFilter.GetLastWriteTime();
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
                                                   ImageInfo.ImageCreationTime);
@@ -605,9 +554,7 @@ namespace DiscImageChef.DiscImages
 
             return Header.checksum == sum;
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -668,6 +615,55 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct ScpHeader
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] signature;
+            public byte version;
+            public ScpDiskType type;
+            public byte revolutions;
+            public byte start;
+            public byte end;
+            public ScpFlags flags;
+            public byte bitCellEncoding;
+            public byte heads;
+            public byte reserved;
+            public uint checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)] public uint[] offsets;
+        }
+
+        public struct TrackHeader
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] Signature;
+            public byte TrackNumber;
+            public TrackEntry[] Entries;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct TrackEntry
+        {
+            public uint indexTime;
+            public uint trackLength;
+            public uint dataOffset;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ScpFooter
+        {
+            public uint manufacturerOffset;
+            public uint modelOffset;
+            public uint serialOffset;
+            public uint creatorOffset;
+            public uint applicationOffset;
+            public uint commentsOffset;
+            public long creationTime;
+            public long modificationTime;
+            public byte applicationVersion;
+            public byte hardwareVersion;
+            public byte firmwareVersion;
+            public byte imageVersion;
+            public uint signature;
+        }
     }
 }

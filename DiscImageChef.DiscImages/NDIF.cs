@@ -40,7 +40,6 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using SharpCompress.Compressors;
 using SharpCompress.Compressors.ADC;
 using Version = Resources.Version;
 
@@ -52,124 +51,14 @@ namespace DiscImageChef.DiscImages
     // TODO: Implement compression
     public class Ndif : ImagePlugin
     {
-        #region Internal constants
         /// <summary>
-        /// Resource OSType for NDIF is "bcem"
+        ///     Resource OSType for NDIF is "bcem"
         /// </summary>
         const uint NDIF_RESOURCE = 0x6263656D;
         /// <summary>
-        /// Resource ID is always 128? Never found another
+        ///     Resource ID is always 128? Never found another
         /// </summary>
         const short NDIF_RESOURCEID = 128;
-        #endregion
-
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChunkHeader
-        {
-            /// <summary>
-            /// Version
-            /// </summary>
-            public short version;
-            /// <summary>
-            /// Filesystem ID
-            /// </summary>
-            public short driver;
-            /// <summary>
-            /// Disk image name, Str63 (Pascal string)
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] name;
-            /// <summary>
-            /// Sectors in image
-            /// </summary>
-            public uint sectors;
-            /// <summary>
-            /// Maximum number of sectors per chunk
-            /// </summary>
-            public uint maxSectorsPerChunk;
-            /// <summary>
-            /// Offset to add to every chunk offset
-            /// </summary>
-            public uint dataOffset;
-            /// <summary>
-            /// CRC28 of whole image
-            /// </summary>
-            public uint crc;
-            /// <summary>
-            /// Set to 1 if segmented
-            /// </summary>
-            public uint segmented;
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public uint p1;
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public uint p2;
-            /// <summary>
-            /// Unknown, spare?
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] unknown;
-            /// <summary>
-            /// Set to 1 by ShrinkWrap if image is encrypted
-            /// </summary>
-            public uint encrypted;
-            /// <summary>
-            /// Set by ShrinkWrap if image is encrypted, value is the same for same password
-            /// </summary>
-            public uint hash;
-            /// <summary>
-            /// How many chunks follow the header
-            /// </summary>
-            public uint chunks;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BlockChunk
-        {
-            /// <summary>
-            /// Starting sector, 3 bytes
-            /// </summary>
-            public uint sector;
-            /// <summary>
-            /// Chunk type
-            /// </summary>
-            public byte type;
-            /// <summary>
-            /// Offset in start of chunk
-            /// </summary>
-            public uint offset;
-            /// <summary>
-            /// Length in bytes of chunk
-            /// </summary>
-            public uint length;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SegmentHeader
-        {
-            /// <summary>
-            /// Segment #
-            /// </summary>
-            public ushort segment;
-            /// <summary>
-            /// How many segments
-            /// </summary>
-            public ushort segments;
-            /// <summary>
-            /// Seems to be a Guid, changes with different images, same for all segments of same image
-            /// </summary>
-            public Guid segmentId;
-            /// <summary>
-            /// Seems to be a CRC28 of this segment, unchecked
-            /// </summary>
-            public uint crc;
-        }
-        #endregion
-
-        ChunkHeader header;
-        Dictionary<ulong, BlockChunk> chunks;
 
         const byte CHUNK_TYPE_NOCOPY = 0;
         const byte CHUNK_TYPE_COPY = 2;
@@ -178,7 +67,7 @@ namespace DiscImageChef.DiscImages
         const byte CHUNK_TYPE_LZH = 0x82;
         const byte CHUNK_TYPE_ADC = 0x83;
         /// <summary>
-        /// Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using
+        ///     Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using
         /// </summary>
         const byte CHUNK_TYPE_STUFFIT = 0xF0;
         const byte CHUNK_TYPE_END = 0xFF;
@@ -189,16 +78,19 @@ namespace DiscImageChef.DiscImages
         const short DRIVER_HFS = 0;
         const short DRIVER_PRODOS = 256;
         const short DRIVER_DOS = 18771;
-
-        Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> chunkCache;
         const uint MAX_CACHE_SIZE = 16777216;
         const uint SECTOR_SIZE = 512;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
-        uint currentChunkCacheSize;
         uint buffersize;
+        Dictionary<ulong, byte[]> chunkCache;
+        Dictionary<ulong, BlockChunk> chunks;
+        uint currentChunkCacheSize;
+
+        ChunkHeader header;
 
         Stream imageStream;
+
+        Dictionary<ulong, byte[]> sectorCache;
 
         public Ndif()
         {
@@ -269,7 +161,8 @@ namespace DiscImageChef.DiscImages
             catch(InvalidCastException) { return false; }
 
             ImageInfo.Sectors = 0;
-            foreach(byte[] bcem in bcems.Select(id => rsrc.GetResource(NDIF_RESOURCEID))) {
+            foreach(byte[] bcem in bcems.Select(id => rsrc.GetResource(NDIF_RESOURCEID)))
+            {
                 if(bcem.Length < 128) return false;
 
                 header = BigEndianMarshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
@@ -323,11 +216,18 @@ namespace DiscImageChef.DiscImages
                     bChnk.sector += (uint)ImageInfo.Sectors;
 
                     // TODO: Handle compressed chunks
-                    switch(bChnk.type) {
-                        case CHUNK_TYPE_KENCODE: throw new ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                        case CHUNK_TYPE_RLE: throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
-                        case CHUNK_TYPE_LZH: throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                        case CHUNK_TYPE_STUFFIT: throw new ImageNotSupportedException("Chunks compressed with StuffIt! are not yet supported.");
+                    switch(bChnk.type)
+                    {
+                        case CHUNK_TYPE_KENCODE:
+                            throw new
+                                ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+                        case CHUNK_TYPE_RLE:
+                            throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
+                        case CHUNK_TYPE_LZH:
+                            throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+                        case CHUNK_TYPE_STUFFIT:
+                            throw new
+                                ImageNotSupportedException("Chunks compressed with StuffIt! are not yet supported.");
                     }
 
                     // TODO: Handle compressed chunks
@@ -471,7 +371,8 @@ namespace DiscImageChef.DiscImages
             bool chunkFound = false;
             ulong chunkStartSector = 0;
 
-            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key)) {
+            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key))
+            {
                 currentChunk = kvp.Value;
                 chunkFound = true;
                 chunkStartSector = kvp.Key;
@@ -498,8 +399,7 @@ namespace DiscImageChef.DiscImages
                     Stream decStream;
 
                     if(currentChunk.type == CHUNK_TYPE_ADC) decStream = new ADCStream(cmpMs);
-                    else
-                        throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
+                    else throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
 
                     byte[] tmpBuffer = new byte[buffersize];
                     int realSize = decStream.Read(tmpBuffer, 0, (int)buffersize);
@@ -526,7 +426,8 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            switch(currentChunk.type) {
+            switch(currentChunk.type)
+            {
                 case CHUNK_TYPE_NOCOPY:
                     sector = new byte[SECTOR_SIZE];
 
@@ -638,7 +539,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -799,6 +699,108 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChunkHeader
+        {
+            /// <summary>
+            ///     Version
+            /// </summary>
+            public short version;
+            /// <summary>
+            ///     Filesystem ID
+            /// </summary>
+            public short driver;
+            /// <summary>
+            ///     Disk image name, Str63 (Pascal string)
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] name;
+            /// <summary>
+            ///     Sectors in image
+            /// </summary>
+            public uint sectors;
+            /// <summary>
+            ///     Maximum number of sectors per chunk
+            /// </summary>
+            public uint maxSectorsPerChunk;
+            /// <summary>
+            ///     Offset to add to every chunk offset
+            /// </summary>
+            public uint dataOffset;
+            /// <summary>
+            ///     CRC28 of whole image
+            /// </summary>
+            public uint crc;
+            /// <summary>
+            ///     Set to 1 if segmented
+            /// </summary>
+            public uint segmented;
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public uint p1;
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public uint p2;
+            /// <summary>
+            ///     Unknown, spare?
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] unknown;
+            /// <summary>
+            ///     Set to 1 by ShrinkWrap if image is encrypted
+            /// </summary>
+            public uint encrypted;
+            /// <summary>
+            ///     Set by ShrinkWrap if image is encrypted, value is the same for same password
+            /// </summary>
+            public uint hash;
+            /// <summary>
+            ///     How many chunks follow the header
+            /// </summary>
+            public uint chunks;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BlockChunk
+        {
+            /// <summary>
+            ///     Starting sector, 3 bytes
+            /// </summary>
+            public uint sector;
+            /// <summary>
+            ///     Chunk type
+            /// </summary>
+            public byte type;
+            /// <summary>
+            ///     Offset in start of chunk
+            /// </summary>
+            public uint offset;
+            /// <summary>
+            ///     Length in bytes of chunk
+            /// </summary>
+            public uint length;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct SegmentHeader
+        {
+            /// <summary>
+            ///     Segment #
+            /// </summary>
+            public ushort segment;
+            /// <summary>
+            ///     How many segments
+            /// </summary>
+            public ushort segments;
+            /// <summary>
+            ///     Seems to be a Guid, changes with different images, same for all segments of same image
+            /// </summary>
+            public Guid segmentId;
+            /// <summary>
+            ///     Seems to be a CRC28 of this segment, unchecked
+            /// </summary>
+            public uint crc;
+        }
     }
 }

@@ -41,30 +41,15 @@ namespace DiscImageChef.DiscImages
 {
     public class Blu : ImagePlugin
     {
-        #region Internal Structures
-        struct BluHeader
-        {
-            public byte[] DeviceName;
-            public uint DeviceType;
-            public uint DeviceBlocks;
-            public ushort BytesPerBlock;
-        }
-        #endregion Internal Structures
-
-        #region Internal Constants
         const string PROFILE_NAME = "PROFILE      ";
         const string PROFILE10_NAME = "PROFILE 10   ";
         const string WIDGET_NAME = "WIDGET-10    ";
         const string PRIAM_NAME = "PRIAMDTATOWER";
-        #endregion Internal Constants
-
-        #region Internal variables
-        BluHeader imageHeader;
         Filter bluImageFilter;
         int bptag;
-        #endregion Internal variables
 
-        #region Public methods
+        BluHeader imageHeader;
+
         public Blu()
         {
             Name = "Basic Lisa Utility";
@@ -114,9 +99,7 @@ namespace DiscImageChef.DiscImages
 
             for(int i = 0; i < 0xD; i++) if(tmpHdr.DeviceName[i] < 0x20) return false;
 
-            if((tmpHdr.BytesPerBlock & 0xFE00) != 0x200) return false;
-
-            return true;
+            return (tmpHdr.BytesPerBlock & 0xFE00) == 0x200;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -177,7 +160,8 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.SectorsPerTrack = 16;
                     break;
                 case PRIAM_NAME:
-                    ImageInfo.MediaType = ImageInfo.Sectors == 0x022C7C ? MediaType.PriamDataTower : MediaType.GENERIC_HDD;
+                    ImageInfo.MediaType =
+                        ImageInfo.Sectors == 0x022C7C ? MediaType.PriamDataTower : MediaType.GENERIC_HDD;
                     // This values are invented...
                     ImageInfo.Cylinders = 419;
                     ImageInfo.Heads = 4;
@@ -207,45 +191,6 @@ namespace DiscImageChef.DiscImages
 
             return true;
         }
-
-        #region Verification, should add tag checksum checks
-        public override bool? VerifySector(ulong sectorAddress)
-        {
-            return null;
-        }
-
-        public override bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            return null;
-        }
-
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
-
-            return null;
-        }
-
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
-
-            return null;
-        }
-
-        public override bool? VerifyMediaImage()
-        {
-            return null;
-        }
-        #endregion Verification, should add tag checksum checks
 
         public override bool ImageHasPartitions()
         {
@@ -398,9 +343,7 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.MediaType;
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -520,6 +463,52 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        struct BluHeader
+        {
+            public byte[] DeviceName;
+            public uint DeviceType;
+            public uint DeviceBlocks;
+            public ushort BytesPerBlock;
+        }
+
+        #region Verification, should add tag checksum checks
+        public override bool? VerifySector(ulong sectorAddress)
+        {
+            return null;
+        }
+
+        public override bool? VerifySector(ulong sectorAddress, uint track)
+        {
+            return null;
+        }
+
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
+        {
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
+        {
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifyMediaImage()
+        {
+            return null;
+        }
+        #endregion Verification, should add tag checksum checks
     }
 }

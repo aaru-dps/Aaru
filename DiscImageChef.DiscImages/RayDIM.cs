@@ -44,35 +44,11 @@ namespace DiscImageChef.DiscImages
 {
     public class RayDim : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RayHdr
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)] public byte[] signature;
-            public RayDiskTypes diskType;
-            public byte cylinders;
-            public byte sectorsPerTrack;
-            public byte heads;
-        }
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum RayDiskTypes : byte
-        {
-            Md2dd = 1,
-            Md2hd = 2,
-            Mf2dd = 3,
-            Mf2hd = 4,
-            Mf2ed = 5
-        }
-        #endregion
-
-        const string DIM_SIGNATURE_REGEX =
+        const string REGEX_SIGNATURE =
                 "Disk IMage VER (?<major>\\d).(?<minor>\\d) Copyright \\(C\\) (?<year>\\d{4}) Ray Arachelian, All Rights Reserved\\."
             ;
 
-        #region Internal variables
         MemoryStream disk;
-        #endregion
 
         public RayDim()
         {
@@ -125,7 +101,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.sectorsPerTrack = {0}",
                                       header.sectorsPerTrack);
 
-            Regex sx = new Regex(DIM_SIGNATURE_REGEX);
+            Regex sx = new Regex(REGEX_SIGNATURE);
             Match sm = sx.Match(signature);
 
             DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature matches? = {0}",
@@ -151,7 +127,7 @@ namespace DiscImageChef.DiscImages
 
             string signature = StringHandlers.CToString(header.signature);
 
-            Regex sx = new Regex(DIM_SIGNATURE_REGEX);
+            Regex sx = new Regex(REGEX_SIGNATURE);
             Match sm = sx.Match(signature);
 
             if(!sm.Success) return false;
@@ -369,7 +345,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -489,6 +464,25 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RayHdr
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)] public byte[] signature;
+            public RayDiskTypes diskType;
+            public byte cylinders;
+            public byte sectorsPerTrack;
+            public byte heads;
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        enum RayDiskTypes : byte
+        {
+            Md2dd = 1,
+            Md2hd = 2,
+            Mf2dd = 3,
+            Mf2hd = 4,
+            Mf2ed = 5
+        }
     }
 }

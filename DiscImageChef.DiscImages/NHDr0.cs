@@ -45,25 +45,11 @@ namespace DiscImageChef.DiscImages
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
     public class Nhdr0 : ImagePlugin
     {
-        #region Internal structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Nhdr0Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] szFileID;
-            public byte reserved1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)] public byte[] szComment;
-            public int dwHeadSize;
-            public int dwCylinder;
-            public short wHead;
-            public short wSect;
-            public short wSectLen;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)] public byte[] reserved3;
-        }
-        #endregion
-
         readonly byte[] signature =
             {0x54, 0x39, 0x38, 0x48, 0x44, 0x44, 0x49, 0x4D, 0x41, 0x47, 0x45, 0x2E, 0x52, 0x30, 0x00};
+
+        Nhdr0Header nhdhdr;
+        Filter nhdImageFilter;
 
         public Nhdr0()
         {
@@ -93,9 +79,6 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
-
-        Nhdr0Header nhdhdr;
-        Filter nhdImageFilter;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -262,7 +245,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -423,6 +405,20 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Nhdr0Header
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] szFileID;
+            public byte reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)] public byte[] szComment;
+            public int dwHeadSize;
+            public int dwCylinder;
+            public short wHead;
+            public short wSect;
+            public short wSectLen;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)] public byte[] reserved3;
+        }
     }
 }

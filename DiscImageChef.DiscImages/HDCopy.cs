@@ -76,87 +76,6 @@ namespace DiscImageChef.DiscImages
 {
     public class HdCopy : ImagePlugin
     {
-        #region Internal structures
-        /// <summary>
-        /// The global header of a HDCP image file
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HdcpFileHeader
-        {
-            /// <summary>
-            /// Last cylinder (zero-based)
-            /// </summary>
-            public byte lastCylinder;
-
-            /// <summary>
-            /// Sectors per track
-            /// </summary>
-            public byte sectorsPerTrack;
-
-            /// <summary>
-            /// The track map. It contains one byte for each track.
-            /// Up to 82 tracks (41 tracks * 2 sides) are supported.
-            /// 0 means track is not present, 1 means it is present.
-            /// The first 2 tracks are always present.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)] public byte[] trackMap;
-        }
-
-        /// <summary>
-        /// The header for a RLE-compressed block
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HdcpBlockHeader
-        {
-            /// <summary>
-            /// The length of the compressed block, in bytes. Little-endian.
-            /// </summary>
-            public ushort length;
-
-            /// <summary>
-            /// The byte value used as RLE escape sequence
-            /// </summary>
-            public byte escape;
-        }
-
-        struct MediaTypeTableEntry
-        {
-            public byte Tracks;
-            public byte SectorsPerTrack;
-            public MediaType MediaType;
-
-            public MediaTypeTableEntry(byte tracks, byte sectorsPerTrack, MediaType mediaType)
-            {
-                Tracks = tracks;
-                SectorsPerTrack = sectorsPerTrack;
-                MediaType = mediaType;
-            }
-        }
-        #endregion
-
-        #region Internal variables
-        /// <summary>
-        /// The HDCP file header after the image has been opened
-        /// </summary>
-        HdcpFileHeader fileHeader;
-
-        /// <summary>
-        /// Every track that has been read is cached here
-        /// </summary>
-        Dictionary<int, byte[]> trackCache = new Dictionary<int, byte[]>();
-
-        /// <summary>
-        /// The offset in the file where each track starts, or -1 if the track is not present
-        /// </summary>
-        Dictionary<int, long> trackOffset = new Dictionary<int, long>();
-
-        /// <summary>
-        /// The ImageFilter we're reading from, after the file has been opened
-        /// </summary>
-        Filter hdcpImageFilter;
-        #endregion
-
-        #region Internal constants
         readonly MediaTypeTableEntry[] mediaTypes =
         {
             new MediaTypeTableEntry(80, 8, MediaType.DOS_35_DS_DD_8),
@@ -166,7 +85,26 @@ namespace DiscImageChef.DiscImages
             new MediaTypeTableEntry(40, 9, MediaType.DOS_525_DS_DD_9),
             new MediaTypeTableEntry(80, 15, MediaType.DOS_525_HD)
         };
-        #endregion
+
+        /// <summary>
+        ///     The HDCP file header after the image has been opened
+        /// </summary>
+        HdcpFileHeader fileHeader;
+
+        /// <summary>
+        ///     The ImageFilter we're reading from, after the file has been opened
+        /// </summary>
+        Filter hdcpImageFilter;
+
+        /// <summary>
+        ///     Every track that has been read is cached here
+        /// </summary>
+        Dictionary<int, byte[]> trackCache = new Dictionary<int, byte[]>();
+
+        /// <summary>
+        ///     The offset in the file where each track starts, or -1 if the track is not present
+        /// </summary>
+        Dictionary<int, long> trackOffset = new Dictionary<int, long>();
 
         public HdCopy()
         {
@@ -367,7 +305,9 @@ namespace DiscImageChef.DiscImages
 
         public override MediaType GetMediaType()
         {
-            return (from ent in mediaTypes where ent.Tracks == ImageInfo.Cylinders && ent.SectorsPerTrack == ImageInfo.SectorsPerTrack select ent.MediaType).FirstOrDefault();
+            return (from ent in mediaTypes
+                    where ent.Tracks == ImageInfo.Cylinders && ent.SectorsPerTrack == ImageInfo.SectorsPerTrack
+                    select ent.MediaType).FirstOrDefault();
         }
 
         void ReadTrackIntoCache(Stream stream, int tracknum)
@@ -444,12 +384,12 @@ namespace DiscImageChef.DiscImages
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            for(int i = 0; i < length; i++) ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.SectorSize);
+            for(int i = 0; i < length; i++)
+                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.SectorSize);
 
             return result;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -610,6 +550,62 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     The global header of a HDCP image file
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HdcpFileHeader
+        {
+            /// <summary>
+            ///     Last cylinder (zero-based)
+            /// </summary>
+            public byte lastCylinder;
+
+            /// <summary>
+            ///     Sectors per track
+            /// </summary>
+            public byte sectorsPerTrack;
+
+            /// <summary>
+            ///     The track map. It contains one byte for each track.
+            ///     Up to 82 tracks (41 tracks * 2 sides) are supported.
+            ///     0 means track is not present, 1 means it is present.
+            ///     The first 2 tracks are always present.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)] public byte[] trackMap;
+        }
+
+        /// <summary>
+        ///     The header for a RLE-compressed block
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HdcpBlockHeader
+        {
+            /// <summary>
+            ///     The length of the compressed block, in bytes. Little-endian.
+            /// </summary>
+            public ushort length;
+
+            /// <summary>
+            ///     The byte value used as RLE escape sequence
+            /// </summary>
+            public byte escape;
+        }
+
+        // TODO: Structs don't need constructors
+        struct MediaTypeTableEntry
+        {
+            public byte Tracks;
+            public byte SectorsPerTrack;
+            public MediaType MediaType;
+
+            public MediaTypeTableEntry(byte tracks, byte sectorsPerTrack, MediaType mediaType)
+            {
+                Tracks = tracks;
+                SectorsPerTrack = sectorsPerTrack;
+                MediaType = mediaType;
+            }
+        }
     }
 }

@@ -57,37 +57,7 @@ namespace DiscImageChef.DiscImages
      */
     public class CisCopy : ImagePlugin
     {
-        #region Internal enumerations
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum DiskType : byte
-        {
-            MD1DD8 = 1,
-            MD1DD = 2,
-            MD2DD8 = 3,
-            MD2DD = 4,
-            MF2DD = 5,
-            MD2HD = 6,
-            MF2HD = 7
-        }
-
-        enum Compression : byte
-        {
-            None = 0,
-            Normal = 1,
-            High = 2
-        }
-
-        enum TrackType : byte
-        {
-            Copied = 0x4C,
-            Omitted = 0xFA,
-            OmittedAlternate = 0xFE
-        }
-        #endregion Internal enumeration
-
-        #region Internal variables
         byte[] decodedDisk;
-        #endregion Internal variables
 
         public CisCopy()
         {
@@ -118,7 +88,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -510,9 +479,7 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.DriveSerialNumber;
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -592,6 +559,31 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        enum DiskType : byte
+        {
+            MD1DD8 = 1,
+            MD1DD = 2,
+            MD2DD8 = 3,
+            MD2DD = 4,
+            MF2DD = 5,
+            MD2HD = 6,
+            MF2HD = 7
+        }
+
+        enum Compression : byte
+        {
+            None = 0,
+            Normal = 1,
+            High = 2
+        }
+
+        enum TrackType : byte
+        {
+            Copied = 0x4C,
+            Omitted = 0xFA,
+            OmittedAlternate = 0xFE
+        }
     }
 }

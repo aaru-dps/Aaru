@@ -49,83 +49,6 @@ namespace DiscImageChef.DiscImages
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
     public class TeleDisk : ImagePlugin
     {
-        #region Internal Structures
-        struct TeleDiskHeader
-        {
-            /// <summary>"TD" or "td" depending on compression</summary>
-            public ushort Signature;
-            /// <summary>Sequence, but TeleDisk seems to complaing if != 0</summary>
-            public byte Sequence;
-            /// <summary>Random, same byte for all disks in the same set</summary>
-            public byte DiskSet;
-            /// <summary>TeleDisk version, major in high nibble, minor in low nibble</summary>
-            public byte Version;
-            /// <summary>Data rate</summary>
-            public byte DataRate;
-            /// <summary>BIOS drive type</summary>
-            public byte DriveType;
-            /// <summary>Stepping used</summary>
-            public byte Stepping;
-            /// <summary>If set means image only allocates sectors marked in-use by FAT12</summary>
-            public byte DosAllocation;
-            /// <summary>Sides of disk</summary>
-            public byte Sides;
-            /// <summary>CRC of all the previous</summary>
-            public ushort Crc;
-        }
-
-        struct TeleDiskCommentBlockHeader
-        {
-            /// <summary>CRC of comment block after crc field</summary>
-            public ushort Crc;
-            /// <summary>Length of comment</summary>
-            public ushort Length;
-            public byte Year;
-            public byte Month;
-            public byte Day;
-            public byte Hour;
-            public byte Minute;
-            public byte Second;
-        }
-
-        struct TeleDiskTrackHeader
-        {
-            /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
-            public byte Sectors;
-            /// <summary>Cylinder the head was on</summary>
-            public byte Cylinder;
-            /// <summary>Head/side used</summary>
-            public byte Head;
-            /// <summary>Lower byte of CRC of previous fields</summary>
-            public byte Crc;
-        }
-
-        struct TeleDiskSectorHeader
-        {
-            /// <summary>Cylinder as stored on sector address mark</summary>
-            public byte Cylinder;
-            /// <summary>Head as stored on sector address mark</summary>
-            public byte Head;
-            /// <summary>Sector number as stored on sector address mark</summary>
-            public byte SectorNumber;
-            /// <summary>Sector size</summary>
-            public byte SectorSize;
-            /// <summary>Sector flags</summary>
-            public byte Flags;
-            /// <summary>Lower byte of TeleDisk CRC of sector header, data header and data block</summary>
-            public byte Crc;
-        }
-
-        struct TeleDiskDataHeader
-        {
-            /// <summary>Size of all data (encoded) + next field (1)</summary>
-            public ushort DataSize;
-            /// <summary>Encoding used for data block</summary>
-            public byte DataEncoding;
-        }
-        #endregion
-
-        #region Internal Constants
         // "TD" as little endian uint.
         const ushort TD_MAGIC = 0x4454;
         // "td" as little endian uint. Means whole file is compressed (aka Advanced Compression)
@@ -185,21 +108,18 @@ namespace DiscImageChef.DiscImages
         const byte DATA_BLOCK_PATTERN = 0x01;
         // Data is encoded as RLE
         const byte DATA_BLOCK_RLE = 0x02;
-        #endregion
-
-        #region Internal variables
-        TeleDiskHeader header;
-        TeleDiskCommentBlockHeader commentHeader;
-        byte[] commentBlock;
-        // LBA, data
-        uint totalDiskSize;
         bool aDiskCrcHasFailed;
-        List<ulong> sectorsWhereCrcHasFailed;
-        // Cylinder by head, sector data matrix
-        byte[][][][] sectorsData;
+        byte[] commentBlock;
+        TeleDiskCommentBlockHeader commentHeader;
+
+        TeleDiskHeader header;
         Stream inStream;
         byte[] leadOut;
-        #endregion
+        // Cylinder by head, sector data matrix
+        byte[][][][] sectorsData;
+        List<ulong> sectorsWhereCrcHasFailed;
+        // LBA, data
+        uint totalDiskSize;
 
         public TeleDisk()
         {
@@ -280,12 +200,10 @@ namespace DiscImageChef.DiscImages
             if(header.DataRate != DATA_RATE_250KBPS && header.DataRate != DATA_RATE_300KBPS &&
                header.DataRate != DATA_RATE_500KBPS) return false;
 
-            if(header.DriveType != DRIVE_TYPE_35_DD && header.DriveType != DRIVE_TYPE_35_ED &&
-               header.DriveType != DRIVE_TYPE_35_HD && header.DriveType != DRIVE_TYPE_525_DD &&
-               header.DriveType != DRIVE_TYPE_525_HD && header.DriveType != DRIVE_TYPE_525_HD_DD_DISK &&
-               header.DriveType != DRIVE_TYPE_8_INCH) return false;
-
-            return true;
+            return header.DriveType == DRIVE_TYPE_35_DD || header.DriveType == DRIVE_TYPE_35_ED ||
+                   header.DriveType == DRIVE_TYPE_35_HD || header.DriveType == DRIVE_TYPE_525_DD ||
+                   header.DriveType == DRIVE_TYPE_525_HD || header.DriveType == DRIVE_TYPE_525_HD_DD_DISK ||
+                   header.DriveType == DRIVE_TYPE_8_INCH;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -416,7 +334,7 @@ namespace DiscImageChef.DiscImages
                 aDiskCrcHasFailed |= cmtcrc != commentHeader.Crc;
 
                 for(int i = 0; i < commentBlock.Length; i++)
-                // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
+                    // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
                     if(commentBlock[i] == 0x00) commentBlock[i] = 0x0A;
 
                 ImageInfo.ImageComments = Encoding.ASCII.GetString(commentBlock);
@@ -459,7 +377,6 @@ namespace DiscImageChef.DiscImages
                     Head = (byte)stream.ReadByte(),
                     Crc = (byte)stream.ReadByte()
                 };
-
 
                 if(teleDiskTrack.Cylinder > totalCylinders) totalCylinders = teleDiskTrack.Cylinder;
                 if(teleDiskTrack.Head > totalHeads) totalHeads = teleDiskTrack.Head;
@@ -522,7 +439,6 @@ namespace DiscImageChef.DiscImages
                     Head = (byte)stream.ReadByte(),
                     Crc = (byte)stream.ReadByte()
                 };
-
 
                 if(teleDiskTrack.Sectors == 0xFF) // End of disk image
                     break;
@@ -629,7 +545,8 @@ namespace DiscImageChef.DiscImages
                     teleDiskSector.Crc = (byte)stream.ReadByte();
 
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}", teleDiskSector.Cylinder);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}",
+                                              teleDiskSector.Cylinder);
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", teleDiskSector.Head);
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark sector number: {0}",
                                               teleDiskSector.SectorNumber);
@@ -639,7 +556,8 @@ namespace DiscImageChef.DiscImages
                                               teleDiskSector.Crc);
 
                     uint lba = (uint)(teleDiskSector.Cylinder * header.Sides * ImageInfo.SectorsPerTrack +
-                                      teleDiskSector.Head * ImageInfo.SectorsPerTrack + (teleDiskSector.SectorNumber - 1));
+                                      teleDiskSector.Head * ImageInfo.SectorsPerTrack +
+                                      (teleDiskSector.SectorNumber - 1));
                     if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&
                        (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED) != FLAGS_SECTOR_SKIPPED)
                     {
@@ -650,7 +568,8 @@ namespace DiscImageChef.DiscImages
                         teleDiskData.DataEncoding = (byte)stream.ReadByte();
                         byte[] data = new byte[teleDiskData.DataSize];
                         stream.Read(data, 0, teleDiskData.DataSize);
-                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}", teleDiskData.DataSize);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}",
+                                                  teleDiskData.DataSize);
                         DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
                                                   teleDiskData.DataEncoding);
 
@@ -664,7 +583,8 @@ namespace DiscImageChef.DiscImages
                                                       "Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}",
                                                       teleDiskTrack.Cylinder, tdSectorCalculatedCrc, teleDiskSector.Crc,
                                                       teleDiskTrack.Cylinder, teleDiskSector.SectorNumber);
-                            if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) != FLAGS_SECTOR_NO_ID) sectorsWhereCrcHasFailed.Add(lba);
+                            if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) != FLAGS_SECTOR_NO_ID)
+                                sectorsWhereCrcHasFailed.Add(lba);
                         }
                     }
                     else decodedData = new byte[128 << teleDiskSector.SectorSize];
@@ -683,7 +603,8 @@ namespace DiscImageChef.DiscImages
                                                   teleDiskSector.Head);
                     else
                     {
-                        sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] = decodedData;
+                        sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] =
+                            decodedData;
                         totalDiskSize += (uint)decodedData.Length;
                     }
                 }
@@ -880,7 +801,6 @@ namespace DiscImageChef.DiscImages
             return aDiskCrcHasFailed;
         }
 
-        #region Private methods
         static ushort TeleDiskCrc(ushort crc, byte[] buffer)
         {
             int counter = 0;
@@ -925,8 +845,7 @@ namespace DiscImageChef.DiscImages
                 case SECTOR_SIZE_8K:
                     decodedData = new byte[8192];
                     break;
-                default:
-                    throw new ImageNotSupportedException($"Sector size {sectorSize} is incorrect.");
+                default: throw new ImageNotSupportedException($"Sector size {sectorSize} is incorrect.");
             }
 
             switch(encodingType)
@@ -1002,8 +921,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
-                default:
-                    throw new ImageNotSupportedException($"Data encoding {encodingType} is incorrect.");
+                default: throw new ImageNotSupportedException($"Data encoding {encodingType} is incorrect.");
             }
 
             return decodedData;
@@ -1022,23 +940,24 @@ namespace DiscImageChef.DiscImages
                         case 163840:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            if(ImageInfo.SectorSize == 256) return MediaType.ACORN_525_SS_DD_40;
+                            return ImageInfo.SectorSize == 256
+                                       ? MediaType.ACORN_525_SS_DD_40
+                                       : MediaType.DOS_525_SS_DD_8;
                             // DOS disks use 512 bytes/sector
-                            return MediaType.DOS_525_SS_DD_8;
                         }
                         case 184320:
                         {
                             // Atari disk uses 256 bytes/sector
-                            if(ImageInfo.SectorSize == 256) return MediaType.ATARI_525_DD;
+                            return ImageInfo.SectorSize == 256 ? MediaType.ATARI_525_DD : MediaType.DOS_525_SS_DD_9;
                             // DOS disks use 512 bytes/sector
-                            return MediaType.DOS_525_SS_DD_9;
                         }
                         case 327680:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            if(ImageInfo.SectorSize == 256) return MediaType.ACORN_525_SS_DD_80;
+                            return ImageInfo.SectorSize == 256
+                                       ? MediaType.ACORN_525_SS_DD_80
+                                       : MediaType.DOS_525_DS_DD_8;
                             // DOS disks use 512 bytes/sector
-                            return MediaType.DOS_525_DS_DD_8;
                         }
                         case 368640: return MediaType.DOS_525_DS_DD_9;
                         case 1228800: return MediaType.DOS_525_HD;
@@ -1116,9 +1035,8 @@ namespace DiscImageChef.DiscImages
                         case 512512:
                         {
                             // DEC disk uses 256 bytes/sector
-                            if(ImageInfo.SectorSize == 256) return MediaType.RX02;
+                            return ImageInfo.SectorSize == 256 ? MediaType.RX02 : MediaType.ECMA_59;
                             // ECMA disks use 128 bytes/sector
-                            return MediaType.ECMA_59;
                         }
                         case 1261568: return MediaType.NEC_8_DD;
                         case 1255168: return MediaType.ECMA_69_8;
@@ -1150,9 +1068,7 @@ namespace DiscImageChef.DiscImages
 
             throw new FeatureNotPresentImageException("Lead-out not present in disk image");
         }
-        #endregion
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -1277,7 +1193,80 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        struct TeleDiskHeader
+        {
+            /// <summary>"TD" or "td" depending on compression</summary>
+            public ushort Signature;
+            /// <summary>Sequence, but TeleDisk seems to complaing if != 0</summary>
+            public byte Sequence;
+            /// <summary>Random, same byte for all disks in the same set</summary>
+            public byte DiskSet;
+            /// <summary>TeleDisk version, major in high nibble, minor in low nibble</summary>
+            public byte Version;
+            /// <summary>Data rate</summary>
+            public byte DataRate;
+            /// <summary>BIOS drive type</summary>
+            public byte DriveType;
+            /// <summary>Stepping used</summary>
+            public byte Stepping;
+            /// <summary>If set means image only allocates sectors marked in-use by FAT12</summary>
+            public byte DosAllocation;
+            /// <summary>Sides of disk</summary>
+            public byte Sides;
+            /// <summary>CRC of all the previous</summary>
+            public ushort Crc;
+        }
+
+        struct TeleDiskCommentBlockHeader
+        {
+            /// <summary>CRC of comment block after crc field</summary>
+            public ushort Crc;
+            /// <summary>Length of comment</summary>
+            public ushort Length;
+            public byte Year;
+            public byte Month;
+            public byte Day;
+            public byte Hour;
+            public byte Minute;
+            public byte Second;
+        }
+
+        struct TeleDiskTrackHeader
+        {
+            /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
+            public byte Sectors;
+            /// <summary>Cylinder the head was on</summary>
+            public byte Cylinder;
+            /// <summary>Head/side used</summary>
+            public byte Head;
+            /// <summary>Lower byte of CRC of previous fields</summary>
+            public byte Crc;
+        }
+
+        struct TeleDiskSectorHeader
+        {
+            /// <summary>Cylinder as stored on sector address mark</summary>
+            public byte Cylinder;
+            /// <summary>Head as stored on sector address mark</summary>
+            public byte Head;
+            /// <summary>Sector number as stored on sector address mark</summary>
+            public byte SectorNumber;
+            /// <summary>Sector size</summary>
+            public byte SectorSize;
+            /// <summary>Sector flags</summary>
+            public byte Flags;
+            /// <summary>Lower byte of TeleDisk CRC of sector header, data header and data block</summary>
+            public byte Crc;
+        }
+
+        struct TeleDiskDataHeader
+        {
+            /// <summary>Size of all data (encoded) + next field (1)</summary>
+            public ushort DataSize;
+            /// <summary>Encoding used for data block</summary>
+            public byte DataEncoding;
+        }
 
         #region LZH decompression from MAME
         /* This region is under following license:
@@ -1436,9 +1425,7 @@ namespace DiscImageChef.DiscImages
             i = (short)getbuf;
             getbuf <<= 1;
             getlen--;
-            if(i < 0) return 1;
-
-            return 0;
+            return i < 0 ? 1 : 0;
         }
 
         int GetByte() /* get a byte */

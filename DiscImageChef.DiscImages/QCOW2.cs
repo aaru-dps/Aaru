@@ -44,9 +44,8 @@ namespace DiscImageChef.DiscImages
 {
     public class Qcow2 : ImagePlugin
     {
-        #region Internal constants
         /// <summary>
-        /// Magic number: 'Q', 'F', 'I', 0xFB
+        ///     Magic number: 'Q', 'F', 'I', 0xFB
         /// </summary>
         const uint QCOW_MAGIC = 0x514649FB;
         const uint QCOW_VERSION2 = 2;
@@ -70,98 +69,28 @@ namespace DiscImageChef.DiscImages
         const ulong QCOW_HEADER_EXTENSION_BITMAPS = 0x23852875;
 
         const int MAX_CACHE_SIZE = 16777216;
-        #endregion
 
-        #region Internal Structures
-        /// <summary>
-        /// QCOW header, big-endian
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QCow2Header
-        {
-            /// <summary>
-            /// <see cref="Qcow2.QCOW_MAGIC"/>
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            /// Must be 1
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Offset inside file to string containing backing file
-            /// </summary>
-            public ulong backing_file_offset;
-            /// <summary>
-            /// Size of <see cref="backing_file_offset"/>
-            /// </summary>
-            public uint backing_file_size;
-            /// <summary>
-            /// Cluster bits
-            /// </summary>
-            public uint cluster_bits;
-            /// <summary>
-            /// Size in bytes
-            /// </summary>
-            public ulong size;
-            /// <summary>
-            /// Encryption method
-            /// </summary>
-            public uint crypt_method;
-            /// <summary>
-            /// Size of L1 table
-            /// </summary>
-            public uint l1_size;
-            /// <summary>
-            /// Offset to L1 table
-            /// </summary>
-            public ulong l1_table_offset;
-            /// <summary>
-            /// Offset to reference count table
-            /// </summary>
-            public ulong refcount_table_offset;
-            /// <summary>
-            /// How many clusters does the refcount table span
-            /// </summary>
-            public uint refcount_table_clusters;
-            /// <summary>
-            /// Number of snapshots
-            /// </summary>
-            public uint nb_snapshots;
-            /// <summary>
-            /// Offset to QCowSnapshotHeader
-            /// </summary>
-            public ulong snapshots_offset;
-
-            // Added in version 3
-            public ulong features;
-            public ulong compat_features;
-            public ulong autoclear_features;
-            public uint refcount_order;
-            public uint header_length;
-        }
-        #endregion
-
-        QCow2Header qHdr;
-        int clusterSize;
+        const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        Dictionary<ulong, byte[]> clusterCache;
         int clusterSectors;
-        int l2Bits;
-        int l2Size;
-        ulong[] l1Table;
+        int clusterSize;
+
+        Stream imageStream;
 
         ulong l1Mask;
         int l1Shift;
+        ulong[] l1Table;
+        int l2Bits;
         ulong l2Mask;
-        ulong sectorMask;
+        int l2Size;
+        Dictionary<ulong, ulong[]> l2TableCache;
+        int maxClusterCache;
+        int maxL2TableCache;
+
+        QCow2Header qHdr;
 
         Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> clusterCache;
-        Dictionary<ulong, ulong[]> l2TableCache;
-
-        const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-        int maxL2TableCache;
-        int maxClusterCache;
-
-        Stream imageStream;
+        ulong sectorMask;
 
         public Qcow2()
         {
@@ -526,7 +455,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -687,6 +615,72 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     QCOW header, big-endian
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QCow2Header
+        {
+            /// <summary>
+            ///     <see cref="Qcow2.QCOW_MAGIC" />
+            /// </summary>
+            public uint magic;
+            /// <summary>
+            ///     Must be 1
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Offset inside file to string containing backing file
+            /// </summary>
+            public ulong backing_file_offset;
+            /// <summary>
+            ///     Size of <see cref="backing_file_offset" />
+            /// </summary>
+            public uint backing_file_size;
+            /// <summary>
+            ///     Cluster bits
+            /// </summary>
+            public uint cluster_bits;
+            /// <summary>
+            ///     Size in bytes
+            /// </summary>
+            public ulong size;
+            /// <summary>
+            ///     Encryption method
+            /// </summary>
+            public uint crypt_method;
+            /// <summary>
+            ///     Size of L1 table
+            /// </summary>
+            public uint l1_size;
+            /// <summary>
+            ///     Offset to L1 table
+            /// </summary>
+            public ulong l1_table_offset;
+            /// <summary>
+            ///     Offset to reference count table
+            /// </summary>
+            public ulong refcount_table_offset;
+            /// <summary>
+            ///     How many clusters does the refcount table span
+            /// </summary>
+            public uint refcount_table_clusters;
+            /// <summary>
+            ///     Number of snapshots
+            /// </summary>
+            public uint nb_snapshots;
+            /// <summary>
+            ///     Offset to QCowSnapshotHeader
+            /// </summary>
+            public ulong snapshots_offset;
+
+            // Added in version 3
+            public ulong features;
+            public ulong compat_features;
+            public ulong autoclear_features;
+            public uint refcount_order;
+            public uint header_length;
+        }
     }
 }

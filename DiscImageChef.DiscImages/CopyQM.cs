@@ -42,76 +42,6 @@ namespace DiscImageChef.DiscImages
 {
     public class CopyQm : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CopyQmHeader
-        {
-            /// <summary>0x00 magic, "CQ"</summary>
-            public ushort magic;
-            /// <summary>0x02 always 0x14</summary>
-            public byte mark;
-            /// <summary>0x03 Bytes per sector (part of FAT's BPB)</summary>
-            public ushort sectorSize;
-            /// <summary>0x05 Sectors per cluster (part of FAT's BPB)</summary>
-            public byte sectorPerCluster;
-            /// <summary>0x06 Reserved sectors (part of FAT's BPB)</summary>
-            public ushort reservedSectors;
-            /// <summary>0x08 Number of FAT copies (part of FAT's BPB)</summary>
-            public byte fatCopy;
-            /// <summary>0x09 Maximum number of entries in root directory (part of FAT's BPB)</summary>
-            public ushort rootEntries;
-            /// <summary>0x0B Sectors on disk (part of FAT's BPB)</summary>
-            public ushort sectors;
-            /// <summary>0x0D Media descriptor (part of FAT's BPB)</summary>
-            public byte mediaType;
-            /// <summary>0x0E Sectors per FAT (part of FAT's BPB)</summary>
-            public ushort sectorsPerFat;
-            /// <summary>0x10 Sectors per track (part of FAT's BPB)</summary>
-            public ushort sectorsPerTrack;
-            /// <summary>0x12 Heads (part of FAT's BPB)</summary>
-            public ushort heads;
-            /// <summary>0x14 Hidden sectors (part of FAT's BPB)</summary>
-            public uint hidden;
-            /// <summary>0x18 Sectors on disk (part of FAT's BPB)</summary>
-            public uint sectorsBig;
-            /// <summary>0x1C Description</summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 60)] public string description;
-            /// <summary>0x58 Blind mode. 0 = DOS, 1 = blind, 2 = HFS</summary>
-            public byte blind;
-            /// <summary>0x59 Density. 0 = Double, 1 = High, 2 = Quad/Extra</summary>
-            public byte density;
-            /// <summary>0x5A Cylinders in image</summary>
-            public byte imageCylinders;
-            /// <summary>0x5B Cylinders on disk</summary>
-            public byte totalCylinders;
-            /// <summary>0x5C CRC32 of data</summary>
-            public uint crc;
-            /// <summary>0x60 DOS volume label</summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)] public string volumeLabel;
-            /// <summary>0x6B Modification time</summary>
-            public ushort time;
-            /// <summary>0x6D Modification date</summary>
-            public ushort date;
-            /// <summary>0x6F Comment length</summary>
-            public ushort commentLength;
-            /// <summary>0x71 Sector base (first sector - 1)</summary>
-            public byte secbs;
-            /// <summary>0x72 Unknown</summary>
-            public ushort unknown;
-            /// <summary>0x74 Interleave</summary>
-            public byte interleave;
-            /// <summary>0x75 Skew</summary>
-            public byte skew;
-            /// <summary>0x76 Source drive type. 1 = 5.25" DD, 2 = 5.25" HD, 3 = 3.5" DD, 4 = 3.5" HD, 6 = 3.5" ED</summary>
-            public byte drive;
-            /// <summary>0x77 Filling bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] fill;
-            /// <summary>0x84 Header checksum</summary>
-            public byte headerChecksum;
-        }
-        #endregion Internal Structures
-
-        #region Internal Constants
         const ushort COPYQM_MAGIC = 0x5143;
         const byte COPYQM_MARK = 0x14;
 
@@ -157,16 +87,13 @@ namespace DiscImageChef.DiscImages
             0x24B4A3A6, 0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
             0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
         };
-        #endregion Internal Constants
-
-        #region Internal variables
-        CopyQmHeader header;
+        uint calculatedDataCrc;
         byte[] decodedDisk;
         MemoryStream decodedImage;
 
+        CopyQmHeader header;
+
         bool headerChecksumOk;
-        uint calculatedDataCrc;
-        #endregion Internal variables
 
         public CopyQm()
         {
@@ -197,7 +124,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -209,9 +135,7 @@ namespace DiscImageChef.DiscImages
 
             ushort magic = BitConverter.ToUInt16(hdr, 0);
 
-            if(magic != COPYQM_MAGIC || hdr[0x02] != COPYQM_MARK || 133 + hdr[0x6F] >= stream.Length) return false;
-
-            return true;
+            return magic == COPYQM_MAGIC && hdr[0x02] == COPYQM_MARK && 133 + hdr[0x6F] < stream.Length;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -291,8 +215,8 @@ namespace DiscImageChef.DiscImages
                     stream.Read(nonRepeated, 0, runLength);
                     decodedImage.Write(nonRepeated, 0, runLength);
 
-                    foreach(byte c in nonRepeated) calculatedDataCrc = copyQmCrcTable[(c ^ calculatedDataCrc) & 0x3F] ^
-                                                                       (calculatedDataCrc >> 8);
+                    foreach(byte c in nonRepeated)
+                        calculatedDataCrc = copyQmCrcTable[(c ^ calculatedDataCrc) & 0x3F] ^ (calculatedDataCrc >> 8);
                 }
             }
 
@@ -319,8 +243,8 @@ namespace DiscImageChef.DiscImages
 
             headerChecksumOk = ((-1 * sum) & 0xFF) == header.headerChecksum;
 
-            DicConsole.DebugWriteLine("CopyQM plugin", "Calculated header checksum = 0x{0:X2}, {1}",
-                                      (-1 * sum) & 0xFF, headerChecksumOk);
+            DicConsole.DebugWriteLine("CopyQM plugin", "Calculated header checksum = 0x{0:X2}, {1}", (-1 * sum) & 0xFF,
+                                      headerChecksumOk);
             DicConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
                                       calculatedDataCrc == header.crc);
 
@@ -599,9 +523,7 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.DriveSerialNumber;
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -681,6 +603,72 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CopyQmHeader
+        {
+            /// <summary>0x00 magic, "CQ"</summary>
+            public ushort magic;
+            /// <summary>0x02 always 0x14</summary>
+            public byte mark;
+            /// <summary>0x03 Bytes per sector (part of FAT's BPB)</summary>
+            public ushort sectorSize;
+            /// <summary>0x05 Sectors per cluster (part of FAT's BPB)</summary>
+            public byte sectorPerCluster;
+            /// <summary>0x06 Reserved sectors (part of FAT's BPB)</summary>
+            public ushort reservedSectors;
+            /// <summary>0x08 Number of FAT copies (part of FAT's BPB)</summary>
+            public byte fatCopy;
+            /// <summary>0x09 Maximum number of entries in root directory (part of FAT's BPB)</summary>
+            public ushort rootEntries;
+            /// <summary>0x0B Sectors on disk (part of FAT's BPB)</summary>
+            public ushort sectors;
+            /// <summary>0x0D Media descriptor (part of FAT's BPB)</summary>
+            public byte mediaType;
+            /// <summary>0x0E Sectors per FAT (part of FAT's BPB)</summary>
+            public ushort sectorsPerFat;
+            /// <summary>0x10 Sectors per track (part of FAT's BPB)</summary>
+            public ushort sectorsPerTrack;
+            /// <summary>0x12 Heads (part of FAT's BPB)</summary>
+            public ushort heads;
+            /// <summary>0x14 Hidden sectors (part of FAT's BPB)</summary>
+            public uint hidden;
+            /// <summary>0x18 Sectors on disk (part of FAT's BPB)</summary>
+            public uint sectorsBig;
+            /// <summary>0x1C Description</summary>
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 60)] public string description;
+            /// <summary>0x58 Blind mode. 0 = DOS, 1 = blind, 2 = HFS</summary>
+            public byte blind;
+            /// <summary>0x59 Density. 0 = Double, 1 = High, 2 = Quad/Extra</summary>
+            public byte density;
+            /// <summary>0x5A Cylinders in image</summary>
+            public byte imageCylinders;
+            /// <summary>0x5B Cylinders on disk</summary>
+            public byte totalCylinders;
+            /// <summary>0x5C CRC32 of data</summary>
+            public uint crc;
+            /// <summary>0x60 DOS volume label</summary>
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)] public string volumeLabel;
+            /// <summary>0x6B Modification time</summary>
+            public ushort time;
+            /// <summary>0x6D Modification date</summary>
+            public ushort date;
+            /// <summary>0x6F Comment length</summary>
+            public ushort commentLength;
+            /// <summary>0x71 Sector base (first sector - 1)</summary>
+            public byte secbs;
+            /// <summary>0x72 Unknown</summary>
+            public ushort unknown;
+            /// <summary>0x74 Interleave</summary>
+            public byte interleave;
+            /// <summary>0x75 Skew</summary>
+            public byte skew;
+            /// <summary>0x76 Source drive type. 1 = 5.25" DD, 2 = 5.25" HD, 3 = 3.5" DD, 4 = 3.5" HD, 6 = 3.5" ED</summary>
+            public byte drive;
+            /// <summary>0x77 Filling bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] fill;
+            /// <summary>0x84 Header checksum</summary>
+            public byte headerChecksum;
+        }
     }
 }

@@ -42,7 +42,6 @@ namespace DiscImageChef.DiscImages
 {
     public class Vdi : ImagePlugin
     {
-        #region Internal constants
         const uint VDI_MAGIC = 0xBEDA107F;
         const uint VDI_EMPTY = 0xFFFFFFFF;
 
@@ -52,57 +51,15 @@ namespace DiscImageChef.DiscImages
         const string SUN_VDI = "<<< Sun VirtualBox Disk Image >>>\n";
         const string INNOTEK_VDI = "<<< innotek VirtualBox Disk Image >>>\n";
         const string INNOTEK_OLD_VDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
-        #endregion
 
-        #region Internal Structures
-        /// <summary>
-        /// VDI disk image header, little-endian
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VdiHeader
-        {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] public string creator;
-            /// <summary>
-            /// Magic, <see cref="Vdi.VDI_MAGIC"/>
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            /// Version
-            /// </summary>
-            public ushort majorVersion;
-            public ushort minorVersion;
-            public uint headerSize;
-            public uint imageType;
-            public uint imageFlags;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string description;
-            public uint offsetBlocks;
-            public uint offsetData;
-            public uint cylinders;
-            public uint heads;
-            public uint spt;
-            public uint sectorSize;
-            public uint unused;
-            public ulong size;
-            public uint blockSize;
-            public uint blockExtraData;
-            public uint blocks;
-            public uint allocatedBlocks;
-            public Guid uuid;
-            public Guid snapshotUuid;
-            public Guid linkUuid;
-            public Guid parentUuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 56)] public byte[] garbage;
-        }
-        #endregion
-
-        VdiHeader vHdr;
+        const uint MAX_CACHE_SIZE = 16777216;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
         uint[] ibm;
         Stream imageStream;
 
         Dictionary<ulong, byte[]> sectorCache;
 
-        const uint MAX_CACHE_SIZE = 16777216;
-        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        VdiHeader vHdr;
 
         public Vdi()
         {
@@ -361,7 +318,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -522,6 +478,44 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     VDI disk image header, little-endian
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VdiHeader
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] public string creator;
+            /// <summary>
+            ///     Magic, <see cref="Vdi.VDI_MAGIC" />
+            /// </summary>
+            public uint magic;
+            /// <summary>
+            ///     Version
+            /// </summary>
+            public ushort majorVersion;
+            public ushort minorVersion;
+            public uint headerSize;
+            public uint imageType;
+            public uint imageFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string description;
+            public uint offsetBlocks;
+            public uint offsetData;
+            public uint cylinders;
+            public uint heads;
+            public uint spt;
+            public uint sectorSize;
+            public uint unused;
+            public ulong size;
+            public uint blockSize;
+            public uint blockExtraData;
+            public uint blocks;
+            public uint allocatedBlocks;
+            public Guid uuid;
+            public Guid snapshotUuid;
+            public Guid linkUuid;
+            public Guid parentUuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 56)] public byte[] garbage;
+        }
     }
 }

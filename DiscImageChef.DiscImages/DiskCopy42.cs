@@ -48,32 +48,6 @@ namespace DiscImageChef.DiscImages
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class DiskCopy42 : ImagePlugin
     {
-        #region Internal Structures
-        // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
-        struct Dc42Header
-        {
-            /// <summary>0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage</summary>
-            public string DiskName;
-            /// <summary>0x40, size of data in bytes (usually sectors*512)</summary>
-            public uint DataSize;
-            /// <summary>0x44, size of tags in bytes (usually sectors*12)</summary>
-            public uint TagSize;
-            /// <summary>0x48, checksum of data bytes</summary>
-            public uint DataChecksum;
-            /// <summary>0x4C, checksum of tag bytes</summary>
-            public uint TagChecksum;
-            /// <summary>0x50, format of disk, see constants</summary>
-            public byte Format;
-            /// <summary>0x51, format of sectors, see constants</summary>
-            public byte FmtByte;
-            /// <summary>0x52, is disk image valid? always 0x01</summary>
-            public byte Valid;
-            /// <summary>0x53, reserved, always 0x00</summary>
-            public byte Reserved;
-        }
-        #endregion
-
-        #region Internal Constants
         // format byte
         /// <summary>3.5", single side, double density, GCR</summary>
         const byte kSonyFormat400K = 0x00;
@@ -104,7 +78,10 @@ namespace DiscImageChef.DiscImages
         const byte kSonyFmtByte1680K = kSonyFmtByte400K;
         /// <summary>3.5" double side double density GCR, 512 bytes/sector, interleave 2:1</summary>
         const byte kSonyFmtByte800K = 0x22;
-        /// <summary>3.5" double side double density GCR, 512 bytes/sector, interleave 2:1, incorrect value (but appears on official documentation)</summary>
+        /// <summary>
+        ///     3.5" double side double density GCR, 512 bytes/sector, interleave 2:1, incorrect value (but appears on
+        ///     official documentation)
+        /// </summary>
         const byte kSonyFmtByte800KIncorrect = 0x12;
         /// <summary>3.5" double side double density GCR, ProDOS format, interleave 4:1</summary>
         const byte kSonyFmtByteProDos = 0x24;
@@ -114,24 +91,20 @@ namespace DiscImageChef.DiscImages
         const byte kFmtNotStandard = 0x93;
         /// <summary>Used incorrectly by Mac OS X with certaing disk images</summary>
         const byte kMacOSXFmtByte = 0x00;
-        #endregion
-
-        #region Internal variables
-        /// <summary>Start of data sectors in disk image, should be 0x58</summary>
-        uint dataOffset;
-        /// <summary>Start of tags in disk image, after data sectors</summary>
-        uint tagOffset;
         /// <summary>Bytes per tag, should be 12</summary>
         uint bptag;
-        /// <summary>Header of opened image</summary>
-        Dc42Header header;
+
+        /// <summary>Start of data sectors in disk image, should be 0x58</summary>
+        uint dataOffset;
         /// <summary>Disk image file</summary>
         Filter dc42ImageFilter;
-
+        /// <summary>Header of opened image</summary>
+        Dc42Header header;
+        /// <summary>Start of tags in disk image, after data sectors</summary>
+        uint tagOffset;
+        bool twiggy;
         byte[] twiggyCache;
         byte[] twiggyCacheTags;
-        bool twiggy;
-        #endregion
 
         public DiskCopy42()
         {
@@ -474,8 +447,7 @@ namespace DiscImageChef.DiscImages
 
                             string major = $"{version.MajorVersion}";
                             string minor = $".{version.MinorVersion / 10}";
-                            if(version.MinorVersion % 10 > 0)
-                                release = $".{version.MinorVersion % 10}";
+                            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                             switch(version.DevStage)
                             {
                                 case Version.DevelopmentStage.Alpha:
@@ -803,7 +775,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -923,9 +894,7 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
 
-        #region Private methods
         static uint DC42CheckSum(byte[] buffer)
         {
             uint dc42Chk = 0;
@@ -940,6 +909,28 @@ namespace DiscImageChef.DiscImages
 
             return dc42Chk;
         }
-        #endregion
+
+        // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
+        struct Dc42Header
+        {
+            /// <summary>0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage</summary>
+            public string DiskName;
+            /// <summary>0x40, size of data in bytes (usually sectors*512)</summary>
+            public uint DataSize;
+            /// <summary>0x44, size of tags in bytes (usually sectors*12)</summary>
+            public uint TagSize;
+            /// <summary>0x48, checksum of data bytes</summary>
+            public uint DataChecksum;
+            /// <summary>0x4C, checksum of tag bytes</summary>
+            public uint TagChecksum;
+            /// <summary>0x50, format of disk, see constants</summary>
+            public byte Format;
+            /// <summary>0x51, format of sectors, see constants</summary>
+            public byte FmtByte;
+            /// <summary>0x52, is disk image valid? always 0x01</summary>
+            public byte Valid;
+            /// <summary>0x53, reserved, always 0x00</summary>
+            public byte Reserved;
+        }
     }
 }

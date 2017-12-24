@@ -45,24 +45,10 @@ namespace DiscImageChef.DiscImages
     // Info from Neko Project II emulator
     public class Virtual98 : ImagePlugin
     {
-        #region Internal structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Virtual98Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] comment;
-            public uint padding;
-            public ushort mbsize;
-            public ushort sectorsize;
-            public byte sectors;
-            public byte surfaces;
-            public ushort cylinders;
-            public uint totals;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x44)] public byte[] padding2;
-        }
-        #endregion
-
         readonly byte[] signature = {0x56, 0x48, 0x44, 0x31, 0x2E, 0x30, 0x30, 0x00};
+        Filter nhdImageFilter;
+
+        Virtual98Header v98Hdr;
 
         public Virtual98()
         {
@@ -92,9 +78,6 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
-
-        Virtual98Header v98Hdr;
-        Filter nhdImageFilter;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -269,7 +252,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -430,6 +412,20 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Virtual98Header
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] comment;
+            public uint padding;
+            public ushort mbsize;
+            public ushort sectorsize;
+            public byte sectors;
+            public byte surfaces;
+            public ushort cylinders;
+            public uint totals;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x44)] public byte[] padding2;
+        }
     }
 }

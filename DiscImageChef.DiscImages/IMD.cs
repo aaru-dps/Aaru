@@ -43,49 +43,14 @@ namespace DiscImageChef.DiscImages
 {
     public class Imd : ImagePlugin
     {
-        #region Internal enumerations
-        enum TransferRate : byte
-        {
-            /// <summary>500 kbps in FM mode</summary>
-            FiveHundred = 0,
-            /// <summary>300 kbps in FM mode</summary>
-            ThreeHundred = 1,
-            /// <summary>250 kbps in FM mode</summary>
-            TwoHundred = 2,
-            /// <summary>500 kbps in MFM mode</summary>
-            FiveHundredMfm = 3,
-            /// <summary>300 kbps in MFM mode</summary>
-            ThreeHundredMfm = 4,
-            /// <summary>250 kbps in MFM mode</summary>
-            TwoHundredMfm = 5
-        }
-
-        enum SectorType : byte
-        {
-            Unavailable = 0,
-            Normal = 1,
-            Compressed = 2,
-            Deleted = 3,
-            CompressedDeleted = 4,
-            Error = 5,
-            CompressedError = 6,
-            DeletedError = 7,
-            CompressedDeletedError = 8
-        }
-        #endregion Internal enumerations
-
-        #region Internal Constants
         const byte SECTOR_CYLINDER_MAP_MASK = 0x80;
         const byte SECTOR_HEAD_MAP_MASK = 0x40;
         const byte COMMENT_END = 0x1A;
-        const string HEADER_REGEX =
+        const string REGEX_HEADER =
                 "IMD (?<version>\\d.\\d+):\\s+(?<day>\\d+)\\/\\s*(?<month>\\d+)\\/(?<year>\\d+)\\s+(?<hour>\\d+):(?<minute>\\d+):(?<second>\\d+)\\r\\n"
             ;
-        #endregion Internal Constants
 
-        #region Internal variables
         List<byte[]> sectorsData;
-        #endregion Internal variables
 
         public Imd()
         {
@@ -116,7 +81,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -126,7 +90,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[31];
             stream.Read(hdr, 0, 31);
 
-            Regex hr = new Regex(HEADER_REGEX);
+            Regex hr = new Regex(REGEX_HEADER);
             Match hm = hr.Match(Encoding.ASCII.GetString(hdr));
 
             return hm.Success;
@@ -221,8 +185,7 @@ namespace DiscImageChef.DiscImages
                             ArrayHelpers.ArrayFill(data, filling);
                             if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
                             break;
-                        default:
-                            throw new ImageNotSupportedException($"Invalid sector type {(byte)type}");
+                        default: throw new ImageNotSupportedException($"Invalid sector type {(byte)type}");
                     }
                 }
 
@@ -523,9 +486,7 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.DriveSerialNumber;
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -605,6 +566,34 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        enum TransferRate : byte
+        {
+            /// <summary>500 kbps in FM mode</summary>
+            FiveHundred = 0,
+            /// <summary>300 kbps in FM mode</summary>
+            ThreeHundred = 1,
+            /// <summary>250 kbps in FM mode</summary>
+            TwoHundred = 2,
+            /// <summary>500 kbps in MFM mode</summary>
+            FiveHundredMfm = 3,
+            /// <summary>300 kbps in MFM mode</summary>
+            ThreeHundredMfm = 4,
+            /// <summary>250 kbps in MFM mode</summary>
+            TwoHundredMfm = 5
+        }
+
+        enum SectorType : byte
+        {
+            Unavailable = 0,
+            Normal = 1,
+            Compressed = 2,
+            Deleted = 3,
+            CompressedDeleted = 4,
+            Error = 5,
+            CompressedError = 6,
+            DeletedError = 7,
+            CompressedDeletedError = 8
+        }
     }
 }

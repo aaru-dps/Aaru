@@ -42,20 +42,8 @@ namespace DiscImageChef.DiscImages
 {
     public class Anex86 : ImagePlugin
     {
-        #region Internal structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Anex86Header
-        {
-            public int unknown;
-            public int hddtype;
-            public int hdrSize;
-            public int dskSize;
-            public int bps;
-            public int spt;
-            public int heads;
-            public int cylinders;
-        }
-        #endregion
+        Filter anexImageFilter;
+        Anex86Header fdihdr;
 
         public Anex86()
         {
@@ -85,9 +73,6 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
-
-        Anex86Header fdihdr;
-        Filter anexImageFilter;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -145,19 +130,25 @@ namespace DiscImageChef.DiscImages
                             switch(fdihdr.spt)
                             {
                                 case 8:
-                                    switch(fdihdr.heads) {
-                                        case 1: ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
+                                    switch(fdihdr.heads)
+                                    {
+                                        case 1:
+                                            ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
                                             break;
-                                        case 2: ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
+                                        case 2:
+                                            ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
                                             break;
                                     }
 
                                     break;
                                 case 9:
-                                    switch(fdihdr.heads) {
-                                        case 1: ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
+                                    switch(fdihdr.heads)
+                                    {
+                                        case 1:
+                                            ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
                                             break;
-                                        case 2: ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
+                                        case 2:
+                                            ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
                                             break;
                                     }
 
@@ -232,10 +223,13 @@ namespace DiscImageChef.DiscImages
                             switch(fdihdr.spt)
                             {
                                 case 16:
-                                    switch(fdihdr.heads) {
-                                        case 1: ImageInfo.MediaType = MediaType.NEC_525_SS;
+                                    switch(fdihdr.heads)
+                                    {
+                                        case 1:
+                                            ImageInfo.MediaType = MediaType.NEC_525_SS;
                                             break;
-                                        case 2: ImageInfo.MediaType = MediaType.NEC_525_DS;
+                                        case 2:
+                                            ImageInfo.MediaType = MediaType.NEC_525_DS;
                                             break;
                                     }
 
@@ -247,19 +241,25 @@ namespace DiscImageChef.DiscImages
                             switch(fdihdr.spt)
                             {
                                 case 8:
-                                    switch(fdihdr.heads) {
-                                        case 1: ImageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
+                                    switch(fdihdr.heads)
+                                    {
+                                        case 1:
+                                            ImageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
                                             break;
-                                        case 2: ImageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
+                                        case 2:
+                                            ImageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
                                             break;
                                     }
 
                                     break;
                                 case 9:
-                                    switch(fdihdr.heads) {
-                                        case 1: ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
+                                    switch(fdihdr.heads)
+                                    {
+                                        case 1:
+                                            ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
                                             break;
-                                        case 2: ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                                        case 2:
+                                            ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
                                             break;
                                     }
 
@@ -408,7 +408,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -569,6 +568,18 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Anex86Header
+        {
+            public int unknown;
+            public int hddtype;
+            public int hdrSize;
+            public int dskSize;
+            public int bps;
+            public int spt;
+            public int heads;
+            public int cylinders;
+        }
     }
 }

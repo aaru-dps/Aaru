@@ -43,31 +43,15 @@ namespace DiscImageChef.DiscImages
 {
     public class Dim : ImagePlugin
     {
-        #region Internal enumerations
-        enum DiskType : byte
-        {
-            Hd2 = 0,
-            Hs2 = 1,
-            Hc2 = 2,
-            Hde2 = 3,
-            Hq2 = 9,
-            N88 = 17
-        }
-        #endregion
-
-        #region Internal constants
-        readonly byte[] headerId = {0x44, 0x49, 0x46, 0x43, 0x20, 0x48, 0x45, 0x41, 0x44, 0x45, 0x52, 0x20, 0x20};
-        #endregion
-
-        #region Internal variables
         /// <summary>Start of data sectors in disk image, should be 0x100</summary>
         const uint DATA_OFFSET = 0x100;
+
+        readonly byte[] headerId = {0x44, 0x49, 0x46, 0x43, 0x20, 0x48, 0x45, 0x41, 0x44, 0x45, 0x52, 0x20, 0x20};
+        byte[] comment;
         /// <summary>Disk image file</summary>
         Filter dimImageFilter;
-        byte[] comment;
-        byte[] hdrId;
         DiskType dskType;
-        #endregion
+        byte[] hdrId;
 
         public Dim()
         {
@@ -364,7 +348,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -525,6 +508,15 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        enum DiskType : byte
+        {
+            Hd2 = 0,
+            Hs2 = 1,
+            Hc2 = 2,
+            Hde2 = 3,
+            Hq2 = 9,
+            N88 = 17
+        }
     }
 }

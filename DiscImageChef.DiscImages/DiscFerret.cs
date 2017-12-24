@@ -42,33 +42,17 @@ namespace DiscImageChef.DiscImages
 {
     public class DiscFerret : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DfiBlockHeader
-        {
-            public ushort cylinder;
-            public ushort head;
-            public ushort sector;
-            public uint length;
-        }
-        #endregion Internal Structures
-
-        #region Internal Constants
         /// <summary>
-        /// "DFER"
+        ///     "DFER"
         /// </summary>
         const uint DFI_MAGIC = 0x52454644;
         /// <summary>
-        /// "DFE2"
+        ///     "DFE2"
         /// </summary>
         const uint DFI_MAGIC2 = 0x32454644;
-        #endregion Internal Constants
-
-        #region Internal variables
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public SortedDictionary<int, long> TrackOffsets;
         public SortedDictionary<int, long> TrackLengths;
-        #endregion Internal variables
+        public SortedDictionary<int, long> TrackOffsets;
 
         public DiscFerret()
         {
@@ -99,7 +83,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             byte[] magicB = new byte[4];
@@ -351,9 +334,7 @@ namespace DiscImageChef.DiscImages
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
-        #endregion Public methods
 
-        #region Unsupported features
         public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -419,6 +400,14 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DfiBlockHeader
+        {
+            public ushort cylinder;
+            public ushort head;
+            public ushort sector;
+            public uint length;
+        }
     }
 }

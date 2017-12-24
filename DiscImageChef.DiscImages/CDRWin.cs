@@ -46,99 +46,6 @@ namespace DiscImageChef.DiscImages
     // TODO: Implement track flags
     public class CdrWin : ImagePlugin
     {
-        #region Internal structures
-        struct CdrWinTrackFile
-        {
-            /// <summary>Track #</summary>
-            public uint Sequence;
-            /// <summary>Filter of file containing track</summary>
-            public Filter Datafilter;
-            /// <summary>Offset of track start in file</summary>
-            public ulong Offset;
-            /// <summary>Type of file</summary>
-            public string Filetype;
-        }
-
-        struct CdrWinTrack
-        {
-            /// <summary>Track #</summary>
-            public uint Sequence;
-            /// <summary>Track title (from CD-Text)</summary>
-            public string Title;
-            /// <summary>Track genre (from CD-Text)</summary>
-            public string Genre;
-            /// <summary>Track arranger (from CD-Text)</summary>
-            public string Arranger;
-            /// <summary>Track composer (from CD-Text)</summary>
-            public string Composer;
-            /// <summary>Track performer (from CD-Text)</summary>
-            public string Performer;
-            /// <summary>Track song writer (from CD-Text)</summary>
-            public string Songwriter;
-            /// <summary>Track ISRC</summary>
-            public string Isrc;
-            /// <summary>File struct for this track</summary>
-            public CdrWinTrackFile Trackfile;
-            /// <summary>Indexes on this track</summary>
-            public Dictionary<int, ulong> Indexes;
-            /// <summary>Track pre-gap in sectors</summary>
-            public ulong Pregap;
-            /// <summary>Track post-gap in sectors</summary>
-            public ulong Postgap;
-            /// <summary>Digical Copy Permitted</summary>
-            public bool FlagDcp;
-            /// <summary>Track is quadraphonic</summary>
-            public bool Flag4ch;
-            /// <summary>Track has preemphasis</summary>
-            public bool FlagPre;
-            /// <summary>Track has SCMS</summary>
-            public bool FlagScms;
-            /// <summary>Bytes per sector</summary>
-            public ushort Bps;
-            /// <summary>Sectors in track</summary>
-            public ulong Sectors;
-            /// <summary>Track type</summary>
-            public string Tracktype;
-            /// <summary>Track session</summary>
-            public ushort Session;
-        }
-        #endregion
-
-        struct CdrWinDisc
-        {
-            /// <summary>Disk title (from CD-Text)</summary>
-            public string Title;
-            /// <summary>Disk genre (from CD-Text)</summary>
-            public string Genre;
-            /// <summary>Disk arranger (from CD-Text)</summary>
-            public string Arranger;
-            /// <summary>Disk composer (from CD-Text)</summary>
-            public string Composer;
-            /// <summary>Disk performer (from CD-Text)</summary>
-            public string Performer;
-            /// <summary>Disk song writer (from CD-Text)</summary>
-            public string Songwriter;
-            /// <summary>Media catalog number</summary>
-            public string Mcn;
-            /// <summary>Disk type</summary>
-            public MediaType Disktype;
-            /// <summary>Disk type string</summary>
-            public string Disktypestr;
-            /// <summary>Disk CDDB ID</summary>
-            public string DiskId;
-            /// <summary>Disk UPC/EAN</summary>
-            public string Barcode;
-            /// <summary>Sessions</summary>
-            public List<Session> Sessions;
-            /// <summary>Tracks</summary>
-            public List<CdrWinTrack> Tracks;
-            /// <summary>Disk comment</summary>
-            public string Comment;
-            /// <summary>File containing CD-Text</summary>
-            public string Cdtextfile;
-        }
-
-        #region Internal consts
         // Type for FILE entity
         /// <summary>Data as-is in little-endian</summary>
         const string CDRWIN_DISK_TYPE_LITTLE_ENDIAN = "BINARY";
@@ -238,45 +145,39 @@ namespace DiscImageChef.DiscImages
         const string CDRWIN_DISK_TYPE_BDRDL = "BD-R DL";
         /// <summary>DiskType.BDRE</summary>
         const string CDRWIN_DISK_TYPE_BDREDL = "BD-RE DL";
-        #endregion
 
-        #region Internal variables
+        const string REGEX_SESSION = "\\bREM\\s+SESSION\\s+(?<number>\\d+).*$";
+        const string REGEX_MEDIA_TYPE = "\\bREM\\s+ORIGINAL MEDIA-TYPE:\\s+(?<mediatype>.+)$";
+        const string REGEX_LEAD_OUT = "\\bREM\\s+LEAD-OUT\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        // Not checked
+        const string REGEX_LBA = "\\bREM MSF:\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)\\s+=\\s+LBA:\\s+(?<lba>[\\d]+)$";
+        const string REGEX_DISC_ID = "\\bDISC_ID\\s+(?<diskid>[\\da-f]{8})$";
+        const string REGEX_BARCODE = "\\bUPC_EAN\\s+(?<barcode>[\\d]{12,13})$";
+        const string REGEX_COMMENT = "\\bREM\\s+(?<comment>.+)$";
+        const string REGEX_CDTEXT = "\\bCDTEXTFILE\\s+(?<filename>.+)$";
+        const string REGEX_MCN = "\\bCATALOG\\s+(?<catalog>\\d{13})$";
+        const string REGEX_TITLE = "\\bTITLE\\s+(?<title>.+)$";
+        const string REGEX_GENRE = "\\bGENRE\\s+(?<genre>.+)$";
+        const string REGEX_ARRANGER = "\\bARRANGER\\s+(?<arranger>.+)$";
+        const string REGEX_COMPOSER = "\\bCOMPOSER\\s+(?<composer>.+)$";
+        const string REGEX_PERFORMER = "\\bPERFORMER\\s+(?<performer>.+)$";
+        const string REGEX_SONGWRITER = "\\bSONGWRITER\\s+(?<songwriter>.+)$";
+        const string REGEX_FILE = "\\bFILE\\s+(?<filename>.+)\\s+(?<type>\\S+)$";
+        const string REGEX_TRACK = "\\bTRACK\\s+(?<number>\\d+)\\s+(?<type>\\S+)$";
+        const string REGEX_ISRC = "\\bISRC\\s+(?<isrc>\\w{12})$";
+        const string REGEX_INDEX = "\\bINDEX\\s+(?<index>\\d+)\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string REGEX_PREGAP = "\\bPREGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string REGEX_POSTGAP = "\\bPOSTGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string REGEX_FLAGS = "\\bFLAGS\\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\\s*)+$";
+
         Filter cdrwinFilter;
         StreamReader cueStream;
+        CdrWinDisc discimage;
         Stream imageStream;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
         Dictionary<uint, ulong> offsetmap;
-        CdrWinDisc discimage;
         List<Partition> partitions;
-        #endregion
 
-        #region Parsing regexs
-        const string SESSION_REGEX = "\\bREM\\s+SESSION\\s+(?<number>\\d+).*$";
-        const string DISK_TYPE_REGEX = "\\bREM\\s+ORIGINAL MEDIA-TYPE:\\s+(?<mediatype>.+)$";
-        const string LEAD_OUT_REGEX = "\\bREM\\s+LEAD-OUT\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        // Not checked
-        const string LBA_REGEX = "\\bREM MSF:\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)\\s+=\\s+LBA:\\s+(?<lba>[\\d]+)$";
-        const string DISK_ID_REGEX = "\\bDISC_ID\\s+(?<diskid>[\\da-f]{8})$";
-        const string BAR_CODE_REGEX = "\\bUPC_EAN\\s+(?<barcode>[\\d]{12,13})$";
-        const string COMMENT_REGEX = "\\bREM\\s+(?<comment>.+)$";
-        const string CD_TEXT_REGEX = "\\bCDTEXTFILE\\s+(?<filename>.+)$";
-        const string MCN_REGEX = "\\bCATALOG\\s+(?<catalog>\\d{13})$";
-        const string TITLE_REGEX = "\\bTITLE\\s+(?<title>.+)$";
-        const string GENRE_REGEX = "\\bGENRE\\s+(?<genre>.+)$";
-        const string ARRANGER_REGEX = "\\bARRANGER\\s+(?<arranger>.+)$";
-        const string COMPOSER_REGEX = "\\bCOMPOSER\\s+(?<composer>.+)$";
-        const string PERFORMER_REGEX = "\\bPERFORMER\\s+(?<performer>.+)$";
-        const string SONG_WRITER_REGEX = "\\bSONGWRITER\\s+(?<songwriter>.+)$";
-        const string FILE_REGEX = "\\bFILE\\s+(?<filename>.+)\\s+(?<type>\\S+)$";
-        const string TRACK_REGEX = "\\bTRACK\\s+(?<number>\\d+)\\s+(?<type>\\S+)$";
-        const string ISRC_REGEX = "\\bISRC\\s+(?<isrc>\\w{12})$";
-        const string INDEX_REGEX = "\\bINDEX\\s+(?<index>\\d+)\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string PREGAP_REGEX = "\\bPREGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string POSTGAP_REGEX = "\\bPOSTGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string FLAGS_REGEX = "\\bFLAGS\\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\\s*)+$";
-        #endregion
-
-        #region Methods
         public CdrWin()
         {
             Name = "CDRWin cuesheet";
@@ -338,11 +239,11 @@ namespace DiscImageChef.DiscImages
                 {
                     string line = cueStream.ReadLine();
 
-                    Regex sr = new Regex(SESSION_REGEX);
-                    Regex rr = new Regex(COMMENT_REGEX);
-                    Regex cr = new Regex(MCN_REGEX);
-                    Regex fr = new Regex(FILE_REGEX);
-                    Regex tr = new Regex(CD_TEXT_REGEX);
+                    Regex sr = new Regex(REGEX_SESSION);
+                    Regex rr = new Regex(REGEX_COMMENT);
+                    Regex cr = new Regex(REGEX_MCN);
+                    Regex fr = new Regex(REGEX_FILE);
+                    Regex tr = new Regex(REGEX_CDTEXT);
 
                     // First line must be SESSION, REM, CATALOG,  FILE or CDTEXTFILE.
                     Match sm = sr.Match(line ?? throw new InvalidOperationException());
@@ -380,28 +281,28 @@ namespace DiscImageChef.DiscImages
                 byte currentsession = 1;
 
                 // Initialize all RegExs
-                Regex regexSession = new Regex(SESSION_REGEX);
-                Regex regexDiskType = new Regex(DISK_TYPE_REGEX);
-                Regex regexLeadOut = new Regex(LEAD_OUT_REGEX);
-                Regex regexLba = new Regex(LBA_REGEX);
-                Regex regexDiskId = new Regex(DISK_ID_REGEX);
-                Regex regexBarCode = new Regex(BAR_CODE_REGEX);
-                Regex regexComment = new Regex(COMMENT_REGEX);
-                Regex regexCdText = new Regex(CD_TEXT_REGEX);
-                Regex regexMcn = new Regex(MCN_REGEX);
-                Regex regexTitle = new Regex(TITLE_REGEX);
-                Regex regexGenre = new Regex(GENRE_REGEX);
-                Regex regexArranger = new Regex(ARRANGER_REGEX);
-                Regex regexComposer = new Regex(COMPOSER_REGEX);
-                Regex regexPerformer = new Regex(PERFORMER_REGEX);
-                Regex regexSongWriter = new Regex(SONG_WRITER_REGEX);
-                Regex regexFile = new Regex(FILE_REGEX);
-                Regex regexTrack = new Regex(TRACK_REGEX);
-                Regex regexIsrc = new Regex(ISRC_REGEX);
-                Regex regexIndex = new Regex(INDEX_REGEX);
-                Regex regexPregap = new Regex(PREGAP_REGEX);
-                Regex regexPostgap = new Regex(POSTGAP_REGEX);
-                Regex regexFlags = new Regex(FLAGS_REGEX);
+                Regex regexSession = new Regex(REGEX_SESSION);
+                Regex regexDiskType = new Regex(REGEX_MEDIA_TYPE);
+                Regex regexLeadOut = new Regex(REGEX_LEAD_OUT);
+                Regex regexLba = new Regex(REGEX_LBA);
+                Regex regexDiskId = new Regex(REGEX_DISC_ID);
+                Regex regexBarCode = new Regex(REGEX_BARCODE);
+                Regex regexComment = new Regex(REGEX_COMMENT);
+                Regex regexCdText = new Regex(REGEX_CDTEXT);
+                Regex regexMcn = new Regex(REGEX_MCN);
+                Regex regexTitle = new Regex(REGEX_TITLE);
+                Regex regexGenre = new Regex(REGEX_GENRE);
+                Regex regexArranger = new Regex(REGEX_ARRANGER);
+                Regex regexComposer = new Regex(REGEX_COMPOSER);
+                Regex regexPerformer = new Regex(REGEX_PERFORMER);
+                Regex regexSongWriter = new Regex(REGEX_SONGWRITER);
+                Regex regexFile = new Regex(REGEX_FILE);
+                Regex regexTrack = new Regex(REGEX_TRACK);
+                Regex regexIsrc = new Regex(REGEX_ISRC);
+                Regex regexIndex = new Regex(REGEX_INDEX);
+                Regex regexPregap = new Regex(REGEX_PREGAP);
+                Regex regexPostgap = new Regex(REGEX_POSTGAP);
+                Regex regexFlags = new Regex(REGEX_FLAGS);
 
                 // Initialize all RegEx matches
                 Match matchTrack;
@@ -459,7 +360,8 @@ namespace DiscImageChef.DiscImages
 
                     if(matchDiskType.Success && !intrack)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM ORIGINAL MEDIA TYPE at line {0}", lineNumber);
+                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM ORIGINAL MEDIA TYPE at line {0}",
+                                                  lineNumber);
                         discimage.Disktypestr = matchDiskType.Groups[1].Value;
                     }
                     else if(matchDiskType.Success && intrack)
@@ -472,8 +374,10 @@ namespace DiscImageChef.DiscImages
 
                         // What happens between sessions
                     }
-                    else if(matchLba.Success) DicConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
-                    else if(matchLeadOut.Success) DicConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", lineNumber);
+                    else if(matchLba.Success)
+                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
+                    else if(matchLeadOut.Success)
+                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", lineNumber);
                     else if(matchComment.Success)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM at line {0}", lineNumber);
@@ -561,14 +465,14 @@ namespace DiscImageChef.DiscImages
                             currentfile.Filetype = matchFile.Groups[2].Value;
 
                             // Check if file path is quoted
-                            if(datafile[0] == '"' && datafile[datafile.Length - 1] == '"') datafile = datafile.Substring(1, datafile.Length - 2); // Unquote it
+                            if(datafile[0] == '"' && datafile[datafile.Length - 1] == '"')
+                                datafile = datafile.Substring(1, datafile.Length - 2); // Unquote it
 
                             currentfile.Datafilter = filtersList.GetFilter(datafile);
 
                             // Check if file exists
                             if(currentfile.Datafilter == null)
-                                if(datafile[0] == '/' || datafile[0] == '/' && datafile[1] == '.'
-                                ) // UNIX absolute path
+                                if(datafile[0] == '/' || datafile[0] == '/' && datafile[1] == '.') // UNIX absolute path
                                 {
                                     Regex unixpath = new Regex("^(.+)/([^/]+)$");
                                     Match unixpathmatch = unixpath.Match(datafile);
@@ -643,7 +547,8 @@ namespace DiscImageChef.DiscImages
                                     throw new
                                         FeatureSupportedButNotImplementedImageException($"Unsupported file type {currentfile.Filetype}");
                                 default:
-                                    throw new FeatureUnsupportedImageException($"Unknown file type {currentfile.Filetype}");
+                                    throw new
+                                        FeatureUnsupportedImageException($"Unknown file type {currentfile.Filetype}");
                             }
 
                             currentfile.Offset = 0;
@@ -671,8 +576,7 @@ namespace DiscImageChef.DiscImages
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found INDEX at line {0}", lineNumber);
                             if(!intrack)
-                                throw new
-                                    FeatureUnsupportedImageException($"Found INDEX before a track {lineNumber}");
+                                throw new FeatureUnsupportedImageException($"Found INDEX before a track {lineNumber}");
 
                             int index = int.Parse(matchIndex.Groups[1].Value);
                             ulong offset = CdrWinMsftoLba(matchIndex.Groups[2].Value);
@@ -702,8 +606,7 @@ namespace DiscImageChef.DiscImages
                             if((index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0)) &&
                                currenttrack.Sequence == 1)
                             {
-                                DicConsole.DebugWriteLine("CDRWin plugin",
-                                                          "Sets currentfile.offset to {0} at line 559",
+                                DicConsole.DebugWriteLine("CDRWin plugin", "Sets currentfile.offset to {0} at line 559",
                                                           offset * currenttrack.Bps);
                                 currentfile.Offset = offset * currenttrack.Bps;
                             }
@@ -715,8 +618,7 @@ namespace DiscImageChef.DiscImages
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found ISRC at line {0}", lineNumber);
                             if(!intrack)
-                                throw new
-                                    FeatureUnsupportedImageException($"Found ISRC before a track {lineNumber}");
+                                throw new FeatureUnsupportedImageException($"Found ISRC before a track {lineNumber}");
 
                             currenttrack.Isrc = matchIsrc.Groups[1].Value;
                         }
@@ -771,7 +673,8 @@ namespace DiscImageChef.DiscImages
 
                             if(intrack)
                             {
-                                if(currenttrack.Indexes.ContainsKey(0) && currenttrack.Pregap == 0) currenttrack.Indexes.TryGetValue(0, out currenttrack.Pregap);
+                                if(currenttrack.Indexes.ContainsKey(0) && currenttrack.Pregap == 0)
+                                    currenttrack.Indexes.TryGetValue(0, out currenttrack.Pregap);
                                 currentfile.Sequence = currenttrack.Sequence;
                                 currenttrack.Trackfile = currentfile;
                                 cuetracks[currenttrack.Sequence - 1] = currenttrack;
@@ -1297,14 +1200,26 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrwinTrack in discimage.Tracks where cdrwinTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from cdrwinTrack in discimage.Tracks
+                                                     where cdrwinTrack.Sequence == kvp.Key
+                                                     where sectorAddress - kvp.Value < cdrwinTrack.Sectors
+                                                     select kvp)
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrwinTrack in discimage.Tracks where cdrwinTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from cdrwinTrack in discimage.Tracks
+                                                     where cdrwinTrack.Sequence == kvp.Key
+                                                     where sectorAddress - kvp.Value < cdrwinTrack.Sectors
+                                                     select kvp)
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1313,7 +1228,8 @@ namespace DiscImageChef.DiscImages
         {
             CdrWinTrack dicTrack = new CdrWinTrack {Sequence = 0};
 
-            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track)) {
+            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
+            {
                 dicTrack = cdrwinTrack;
                 break;
             }
@@ -1416,7 +1332,8 @@ namespace DiscImageChef.DiscImages
         {
             CdrWinTrack dicTrack = new CdrWinTrack {Sequence = 0};
 
-            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track)) {
+            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
+            {
                 dicTrack = cdrwinTrack;
                 break;
             }
@@ -1604,7 +1521,13 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrwinTrack in discimage.Tracks where cdrwinTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from cdrwinTrack in discimage.Tracks
+                                                     where cdrwinTrack.Sequence == kvp.Key
+                                                     where sectorAddress - kvp.Value < cdrwinTrack.Sectors
+                                                     select kvp)
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1613,7 +1536,8 @@ namespace DiscImageChef.DiscImages
         {
             CdrWinTrack dicTrack = new CdrWinTrack {Sequence = 0};
 
-            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track)) {
+            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
+            {
                 dicTrack = cdrwinTrack;
                 break;
             }
@@ -1887,9 +1811,8 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
@@ -1918,18 +1841,15 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifyMediaImage()
         {
             return null;
         }
-        #endregion
 
-        #region Private methods
         static ulong CdrWinMsftoLba(string msf)
         {
             ulong minute, second, frame, sectors;
@@ -2037,9 +1957,7 @@ namespace DiscImageChef.DiscImages
                 default: return MediaType.Unknown;
             }
         }
-        #endregion
 
-        #region Unsupported features
         public override int GetMediaSequence()
         {
             return ImageInfo.MediaSequence;
@@ -2089,6 +2007,95 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.ImageCreator;
         }
-        #endregion
+
+        struct CdrWinTrackFile
+        {
+            /// <summary>Track #</summary>
+            public uint Sequence;
+            /// <summary>Filter of file containing track</summary>
+            public Filter Datafilter;
+            /// <summary>Offset of track start in file</summary>
+            public ulong Offset;
+            /// <summary>Type of file</summary>
+            public string Filetype;
+        }
+
+        struct CdrWinTrack
+        {
+            /// <summary>Track #</summary>
+            public uint Sequence;
+            /// <summary>Track title (from CD-Text)</summary>
+            public string Title;
+            /// <summary>Track genre (from CD-Text)</summary>
+            public string Genre;
+            /// <summary>Track arranger (from CD-Text)</summary>
+            public string Arranger;
+            /// <summary>Track composer (from CD-Text)</summary>
+            public string Composer;
+            /// <summary>Track performer (from CD-Text)</summary>
+            public string Performer;
+            /// <summary>Track song writer (from CD-Text)</summary>
+            public string Songwriter;
+            /// <summary>Track ISRC</summary>
+            public string Isrc;
+            /// <summary>File struct for this track</summary>
+            public CdrWinTrackFile Trackfile;
+            /// <summary>Indexes on this track</summary>
+            public Dictionary<int, ulong> Indexes;
+            /// <summary>Track pre-gap in sectors</summary>
+            public ulong Pregap;
+            /// <summary>Track post-gap in sectors</summary>
+            public ulong Postgap;
+            /// <summary>Digical Copy Permitted</summary>
+            public bool FlagDcp;
+            /// <summary>Track is quadraphonic</summary>
+            public bool Flag4ch;
+            /// <summary>Track has preemphasis</summary>
+            public bool FlagPre;
+            /// <summary>Track has SCMS</summary>
+            public bool FlagScms;
+            /// <summary>Bytes per sector</summary>
+            public ushort Bps;
+            /// <summary>Sectors in track</summary>
+            public ulong Sectors;
+            /// <summary>Track type</summary>
+            public string Tracktype;
+            /// <summary>Track session</summary>
+            public ushort Session;
+        }
+
+        struct CdrWinDisc
+        {
+            /// <summary>Disk title (from CD-Text)</summary>
+            public string Title;
+            /// <summary>Disk genre (from CD-Text)</summary>
+            public string Genre;
+            /// <summary>Disk arranger (from CD-Text)</summary>
+            public string Arranger;
+            /// <summary>Disk composer (from CD-Text)</summary>
+            public string Composer;
+            /// <summary>Disk performer (from CD-Text)</summary>
+            public string Performer;
+            /// <summary>Disk song writer (from CD-Text)</summary>
+            public string Songwriter;
+            /// <summary>Media catalog number</summary>
+            public string Mcn;
+            /// <summary>Disk type</summary>
+            public MediaType Disktype;
+            /// <summary>Disk type string</summary>
+            public string Disktypestr;
+            /// <summary>Disk CDDB ID</summary>
+            public string DiskId;
+            /// <summary>Disk UPC/EAN</summary>
+            public string Barcode;
+            /// <summary>Sessions</summary>
+            public List<Session> Sessions;
+            /// <summary>Tracks</summary>
+            public List<CdrWinTrack> Tracks;
+            /// <summary>Disk comment</summary>
+            public string Comment;
+            /// <summary>File containing CD-Text</summary>
+            public string Cdtextfile;
+        }
     }
 }

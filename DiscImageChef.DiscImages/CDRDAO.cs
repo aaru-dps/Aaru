@@ -48,106 +48,6 @@ namespace DiscImageChef.DiscImages
     // TODO: Doesn't support silences that are not in files
     public class Cdrdao : ImagePlugin
     {
-        #region Internal structures
-        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-        struct CdrdaoTrackFile
-        {
-            /// <summary>Track #</summary>
-            public uint Sequence;
-            /// <summary>Filter of file containing track</summary>
-            public Filter Datafilter;
-            /// <summary>Path of file containing track</summary>
-            public string Datafile;
-            /// <summary>Offset of track start in file</summary>
-            public ulong Offset;
-            /// <summary>Type of file</summary>
-            public string Filetype;
-        }
-
-#pragma warning disable 169
-        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-        struct CdrdaoTrack
-        {
-            /// <summary>Track #</summary>
-            public uint Sequence;
-            /// <summary>Track title (from CD-Text)</summary>
-            public string Title;
-            /// <summary>Track genre (from CD-Text)</summary>
-            public string Genre;
-            /// <summary>Track arranger (from CD-Text)</summary>
-            public string Arranger;
-            /// <summary>Track composer (from CD-Text)</summary>
-            public string Composer;
-            /// <summary>Track performer (from CD-Text)</summary>
-            public string Performer;
-            /// <summary>Track song writer (from CD-Text)</summary>
-            public string Songwriter;
-            /// <summary>Track ISRC</summary>
-            public string Isrc;
-            /// <summary>Disk provider's message (from CD-Text)</summary>
-            public string Message;
-            /// <summary>File struct for this track</summary>
-            public CdrdaoTrackFile Trackfile;
-            /// <summary>Indexes on this track</summary>
-            public Dictionary<int, ulong> Indexes;
-            /// <summary>Track pre-gap in sectors</summary>
-            public ulong Pregap;
-            /// <summary>Track post-gap in sectors</summary>
-            public ulong Postgap;
-            /// <summary>Digical Copy Permitted</summary>
-            public bool FlagDcp;
-            /// <summary>Track is quadraphonic</summary>
-            public bool Flag_4Ch;
-            /// <summary>Track has preemphasis</summary>
-            public bool FlagPre;
-            /// <summary>Bytes per sector</summary>
-            public ushort Bps;
-            /// <summary>Sectors in track</summary>
-            public ulong Sectors;
-            /// <summary>Starting sector in track</summary>
-            public ulong StartSector;
-            /// <summary>Track type</summary>
-            public string Tracktype;
-            public bool Subchannel;
-            public bool Packedsubchannel;
-        }
-
-        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-        struct CdrdaoDisc
-        {
-            /// <summary>Disk title (from CD-Text)</summary>
-            public string Title;
-            /// <summary>Disk genre (from CD-Text)</summary>
-            public string Genre;
-            /// <summary>Disk arranger (from CD-Text)</summary>
-            public string Arranger;
-            /// <summary>Disk composer (from CD-Text)</summary>
-            public string Composer;
-            /// <summary>Disk performer (from CD-Text)</summary>
-            public string Performer;
-            /// <summary>Disk song writer (from CD-Text)</summary>
-            public string Songwriter;
-            /// <summary>Disk provider's message (from CD-Text)</summary>
-            public string Message;
-            /// <summary>Media catalog number</summary>
-            public string Mcn;
-            /// <summary>Disk type</summary>
-            public MediaType Disktype;
-            /// <summary>Disk type string</summary>
-            public string Disktypestr;
-            /// <summary>Disk CDDB ID</summary>
-            public string DiskId;
-            /// <summary>Disk UPC/EAN</summary>
-            public string Barcode;
-            /// <summary>Tracks</summary>
-            public List<CdrdaoTrack> Tracks;
-            /// <summary>Disk comment</summary>
-            public string Comment;
-        }
-#pragma warning restore 169
-        #endregion Internal structures
-
-        #region Internal consts
         /// <summary>Audio track, 2352 bytes/sector</summary>
         const string CDRDAO_TRACK_TYPE_AUDIO = "AUDIO";
         /// <summary>Mode 1 track, cooked, 2048 bytes/sector</summary>
@@ -164,59 +64,53 @@ namespace DiscImageChef.DiscImages
         const string CDRDAO_TRACK_TYPE_MODE2_MIX = "MODE2_FORM_MIX";
         /// <summary>Mode 2 track, raw, 2352 bytes/sector</summary>
         const string CDRDAO_TRACK_TYPE_MODE2_RAW = "MODE2_RAW";
-        #endregion Internal consts
 
-        #region Internal variables
+        const string REGEX_COMMENT = "^\\s*\\/{2}(?<comment>.+)$";
+        const string REGEX_COPY = "^\\s*(?<no>NO)?\\s*COPY";
+        const string REGEX_DISCTYPE = "^\\s*(?<type>(CD_DA|CD_ROM_XA|CD_ROM|CD_I))";
+        const string REGEX_EMPHASIS = "^\\s*(?<no>NO)?\\s*PRE_EMPHASIS";
+        const string REGEX_FILE_AUDIO =
+                "^\\s*(AUDIO)?FILE\\s*\"(?<filename>.+)\"\\s*(#(?<base_offset>\\d+))?\\s*((?<start>[\\d]+:[\\d]+:[\\d]+)|(?<start_num>\\d+))\\s*(?<length>[\\d]+:[\\d]+:[\\d]+)?"
+            ;
+        const string REGEX_FILE_DATA =
+            "^\\s*DATAFILE\\s*\"(?<filename>.+)\"\\s*(#(?<base_offset>\\d+))?\\s*(?<length>[\\d]+:[\\d]+:[\\d]+)?";
+        const string REGEX_INDEX = "^\\s*INDEX\\s*(?<address>\\d+:\\d+:\\d+)";
+        const string REGEX_ISRC = "^\\s*ISRC\\s*\"(?<isrc>[A-Z0-9]{5,5}[0-9]{7,7})\"";
+        const string REGEX_MCN = "^\\s*CATALOG\\s*\"(?<catalog>[\\d]{13,13})\"";
+        const string REGEX_PREGAP = "^\\s*START\\s*(?<address>\\d+:\\d+:\\d+)?";
+        const string REGEX_STEREO = "^\\s*(?<num>(TWO|FOUR))_CHANNEL_AUDIO";
+        const string REGEX_TRACK =
+                "^\\s*TRACK\\s*(?<type>(AUDIO|MODE1_RAW|MODE1|MODE2_FORM1|MODE2_FORM2|MODE2_FORM_MIX|MODE2_RAW|MODE2))\\s*(?<subchan>(RW_RAW|RW))?"
+            ;
+        const string REGEX_ZERO_AUDIO = "^\\s*SILENCE\\s*(?<length>\\d+:\\d+:\\d+)";
+        const string REGEX_ZERO_DATA = "^\\s*ZERO\\s*(?<length>\\d+:\\d+:\\d+)";
+        const string REGEX_ZERO_PREGAP = "^\\s*PREGAP\\s*(?<length>\\d+:\\d+:\\d+)";
+
+        // CD-Text
+        const string REGEX_ARRANGER = "^\\s*ARRANGER\\s*\"(?<arranger>.+)\"";
+        const string REGEX_COMPOSER = "^\\s*COMPOSER\\s*\"(?<composer>.+)\"";
+        const string REGEX_DISC_ID = "^\\s*DISC_ID\\s*\"(?<discid>.+)\"";
+        const string REGEX_MESSAGE = "^\\s*MESSAGE\\s*\"(?<message>.+)\"";
+        const string REGEX_PERFORMER = "^\\s*PERFORMER\\s*\"(?<performer>.+)\"";
+        const string REGEX_SONGWRITER = "^\\s*SONGWRITER\\s*\"(?<songwriter>.+)\"";
+        const string REGEX_TITLE = "^\\s*TITLE\\s*\"(?<title>.+)\"";
+        const string REGEX_UPC = "^\\s*UPC_EAN\\s*\"(?<catalog>[\\d]{13,13})\"";
+
+        // Unused
+        const string REGEX_CD_TEXT = "^\\s*CD_TEXT\\s*\\{";
+        const string REGEX_CLOSURE = "^\\s*\\}";
+        const string REGEX_LANGUAGE = "^\\s*LANGUAGE\\s*(?<code>\\d+)\\s*\\{";
+        const string REGEX_LANGUAGE_MAP = "^\\s*LANGUAGE_MAP\\s*\\{";
+        const string REGEX_LANGUAGE_MAPPING = "^\\s*(?<code>\\d+)\\s?\\:\\s?(?<language>\\d+|\\w+)";
+
         Filter cdrdaoFilter;
-        StreamReader tocStream;
+        CdrdaoDisc discimage;
         Stream imageStream;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
         Dictionary<uint, ulong> offsetmap;
         List<Partition> partitions;
-        CdrdaoDisc discimage;
-        #endregion
+        StreamReader tocStream;
 
-        #region Parsing regexs
-        const string COMMENT_REGEX = "^\\s*\\/{2}(?<comment>.+)$";
-        const string DISK_TYPE_REGEX = "^\\s*(?<type>(CD_DA|CD_ROM_XA|CD_ROM|CD_I))";
-        const string MCN_REGEX = "^\\s*CATALOG\\s*\"(?<catalog>[\\d]{13,13})\"";
-        const string TRACK_REGEX =
-                "^\\s*TRACK\\s*(?<type>(AUDIO|MODE1_RAW|MODE1|MODE2_FORM1|MODE2_FORM2|MODE2_FORM_MIX|MODE2_RAW|MODE2))\\s*(?<subchan>(RW_RAW|RW))?"
-            ;
-        const string COPY_REGEX = "^\\s*(?<no>NO)?\\s*COPY";
-        const string EMPHASIS_REGEX = "^\\s*(?<no>NO)?\\s*PRE_EMPHASIS";
-        const string STEREO_REGEX = "^\\s*(?<num>(TWO|FOUR))_CHANNEL_AUDIO";
-        const string ISRC_REGEX = "^\\s*ISRC\\s*\"(?<isrc>[A-Z0-9]{5,5}[0-9]{7,7})\"";
-        const string INDEX_REGEX = "^\\s*INDEX\\s*(?<address>\\d+:\\d+:\\d+)";
-        const string PREGAP_REGEX = "^\\s*START\\s*(?<address>\\d+:\\d+:\\d+)?";
-        const string ZERO_PREGAP_REGEX = "^\\s*PREGAP\\s*(?<length>\\d+:\\d+:\\d+)";
-        const string ZERO_DATA_REGEX = "^\\s*ZERO\\s*(?<length>\\d+:\\d+:\\d+)";
-        const string ZERO_AUDIO_REGEX = "^\\s*SILENCE\\s*(?<length>\\d+:\\d+:\\d+)";
-        const string AUDIO_FILE_REGEX =
-                "^\\s*(AUDIO)?FILE\\s*\"(?<filename>.+)\"\\s*(#(?<base_offset>\\d+))?\\s*((?<start>[\\d]+:[\\d]+:[\\d]+)|(?<start_num>\\d+))\\s*(?<length>[\\d]+:[\\d]+:[\\d]+)?"
-            ;
-        const string FILE_REGEX =
-            "^\\s*DATAFILE\\s*\"(?<filename>.+)\"\\s*(#(?<base_offset>\\d+))?\\s*(?<length>[\\d]+:[\\d]+:[\\d]+)?";
-
-        // CD-Text
-        const string TITLE_REGEX = "^\\s*TITLE\\s*\"(?<title>.+)\"";
-        const string PERFORMER_REGEX = "^\\s*PERFORMER\\s*\"(?<performer>.+)\"";
-        const string SONGWRITER_REGEX = "^\\s*SONGWRITER\\s*\"(?<songwriter>.+)\"";
-        const string COMPOSER_REGEX = "^\\s*COMPOSER\\s*\"(?<composer>.+)\"";
-        const string ARRANGER_REGEX = "^\\s*ARRANGER\\s*\"(?<arranger>.+)\"";
-        const string MESSAGE_REGEX = "^\\s*MESSAGE\\s*\"(?<message>.+)\"";
-        const string DISC_ID_REGEX = "^\\s*DISC_ID\\s*\"(?<discid>.+)\"";
-        const string UPC_REGEX = "^\\s*UPC_EAN\\s*\"(?<catalog>[\\d]{13,13})\"";
-
-        // Unused
-        const string CD_TEXT_REGEX = "^\\s*CD_TEXT\\s*\\{";
-        const string LANGUAGE_REGEX = "^\\s*LANGUAGE\\s*(?<code>\\d+)\\s*\\{";
-        const string CLOSURE_REGEX = "^\\s*\\}";
-        const string LANGUAGE_MAP_REGEX = "^\\s*LANGUAGE_MAP\\s*\\{";
-        const string LANGUAGE_MAPPING_REGEX = "^\\s*(?<code>\\d+)\\s?\\:\\s?(?<language>\\d+|\\w+)";
-        #endregion
-
-        #region Public methods
         public Cdrdao()
         {
             Name = "CDRDAO tocfile";
@@ -242,7 +136,6 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
-        #endregion Public methods
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -272,8 +165,8 @@ namespace DiscImageChef.DiscImages
 
                 tocStream = new StreamReader(imageFilter.GetDataForkStream());
 
-                Regex cr = new Regex(COMMENT_REGEX);
-                Regex dr = new Regex(DISK_TYPE_REGEX);
+                Regex cr = new Regex(REGEX_COMMENT);
+                Regex dr = new Regex(REGEX_DISCTYPE);
 
                 while(tocStream.Peek() >= 0)
                 {
@@ -292,8 +185,7 @@ namespace DiscImageChef.DiscImages
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}",
-                                          cdrdaoFilter.GetFilename());
+                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", cdrdaoFilter.GetFilename());
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
                 return false;
@@ -313,34 +205,34 @@ namespace DiscImageChef.DiscImages
                 bool intrack = false;
 
                 // Initialize all RegExs
-                Regex regexComment = new Regex(COMMENT_REGEX);
-                Regex regexDiskType = new Regex(DISK_TYPE_REGEX);
-                Regex regexMcn = new Regex(MCN_REGEX);
-                Regex regexTrack = new Regex(TRACK_REGEX);
-                Regex regexCopy = new Regex(COPY_REGEX);
-                Regex regexEmphasis = new Regex(EMPHASIS_REGEX);
-                Regex regexStereo = new Regex(STEREO_REGEX);
-                Regex regexIsrc = new Regex(ISRC_REGEX);
-                Regex regexIndex = new Regex(INDEX_REGEX);
-                Regex regexPregap = new Regex(PREGAP_REGEX);
-                Regex regexZeroPregap = new Regex(ZERO_PREGAP_REGEX);
-                Regex regexZeroData = new Regex(ZERO_DATA_REGEX);
-                Regex regexZeroAudio = new Regex(ZERO_AUDIO_REGEX);
-                Regex regexAudioFile = new Regex(AUDIO_FILE_REGEX);
-                Regex regexFile = new Regex(FILE_REGEX);
-                Regex regexTitle = new Regex(TITLE_REGEX);
-                Regex regexPerformer = new Regex(PERFORMER_REGEX);
-                Regex regexSongwriter = new Regex(SONGWRITER_REGEX);
-                Regex regexComposer = new Regex(COMPOSER_REGEX);
-                Regex regexArranger = new Regex(ARRANGER_REGEX);
-                Regex regexMessage = new Regex(MESSAGE_REGEX);
-                Regex regexDiscId = new Regex(DISC_ID_REGEX);
-                Regex regexUpc = new Regex(UPC_REGEX);
-                Regex regexCdText = new Regex(CD_TEXT_REGEX);
-                Regex regexLanguage = new Regex(LANGUAGE_REGEX);
-                Regex regexClosure = new Regex(CLOSURE_REGEX);
-                Regex regexLanguageMap = new Regex(LANGUAGE_MAP_REGEX);
-                Regex regexLanguageMapping = new Regex(LANGUAGE_MAPPING_REGEX);
+                Regex regexComment = new Regex(REGEX_COMMENT);
+                Regex regexDiskType = new Regex(REGEX_DISCTYPE);
+                Regex regexMcn = new Regex(REGEX_MCN);
+                Regex regexTrack = new Regex(REGEX_TRACK);
+                Regex regexCopy = new Regex(REGEX_COPY);
+                Regex regexEmphasis = new Regex(REGEX_EMPHASIS);
+                Regex regexStereo = new Regex(REGEX_STEREO);
+                Regex regexIsrc = new Regex(REGEX_ISRC);
+                Regex regexIndex = new Regex(REGEX_INDEX);
+                Regex regexPregap = new Regex(REGEX_PREGAP);
+                Regex regexZeroPregap = new Regex(REGEX_ZERO_PREGAP);
+                Regex regexZeroData = new Regex(REGEX_ZERO_DATA);
+                Regex regexZeroAudio = new Regex(REGEX_ZERO_AUDIO);
+                Regex regexAudioFile = new Regex(REGEX_FILE_AUDIO);
+                Regex regexFile = new Regex(REGEX_FILE_DATA);
+                Regex regexTitle = new Regex(REGEX_TITLE);
+                Regex regexPerformer = new Regex(REGEX_PERFORMER);
+                Regex regexSongwriter = new Regex(REGEX_SONGWRITER);
+                Regex regexComposer = new Regex(REGEX_COMPOSER);
+                Regex regexArranger = new Regex(REGEX_ARRANGER);
+                Regex regexMessage = new Regex(REGEX_MESSAGE);
+                Regex regexDiscId = new Regex(REGEX_DISC_ID);
+                Regex regexUpc = new Regex(REGEX_UPC);
+                Regex regexCdText = new Regex(REGEX_CD_TEXT);
+                Regex regexLanguage = new Regex(REGEX_LANGUAGE);
+                Regex regexClosure = new Regex(REGEX_CLOSURE);
+                Regex regexLanguageMap = new Regex(REGEX_LANGUAGE_MAP);
+                Regex regexLanguageMapping = new Regex(REGEX_LANGUAGE_MAPPING);
 
                 // Initialize all RegEx matches
                 Match matchComment;
@@ -464,8 +356,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(matchTrack.Groups["subchan"].Value == "")
                             DicConsole.DebugWriteLine("CDRDAO plugin",
-                                                      "Found TRACK type \"{1}\" with no subchannel at line {0}", lineNumber,
-                                                      matchTrack.Groups["type"].Value);
+                                                      "Found TRACK type \"{1}\" with no subchannel at line {0}",
+                                                      lineNumber, matchTrack.Groups["type"].Value);
                         else
                             DicConsole.DebugWriteLine("CDRDAO plugin",
                                                       "Found TRACK type \"{1}\" subchannel {2} at line {0}", lineNumber,
@@ -503,7 +395,8 @@ namespace DiscImageChef.DiscImages
                                 currenttrack.Bps = 2336;
                                 break;
                             default:
-                                throw new NotSupportedException($"Track mode {matchTrack.Groups["type"].Value} is unsupported");
+                                throw new
+                                    NotSupportedException($"Track mode {matchTrack.Groups["type"].Value} is unsupported");
                         }
 
                         switch(matchTrack.Groups["subchan"].Value)
@@ -595,8 +488,8 @@ namespace DiscImageChef.DiscImages
                         FiltersList filtersList;
                         if(matchAudioFile.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found AUDIOFILE \"{1}\" at line {0}", lineNumber,
-                                                      matchAudioFile.Groups["filename"].Value);
+                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found AUDIOFILE \"{1}\" at line {0}",
+                                                      lineNumber, matchAudioFile.Groups["filename"].Value);
 
                             filtersList = new FiltersList();
                             currenttrack.Trackfile = new CdrdaoTrackFile
@@ -617,8 +510,8 @@ namespace DiscImageChef.DiscImages
                             if(matchAudioFile.Groups["start"].Value != "")
                             {
                                 string[] startString = matchAudioFile.Groups["start"].Value.Split(':');
-                                startSectors = ulong.Parse(startString[0]) * 60 * 75 + ulong.Parse(startString[1]) * 75 +
-                                               ulong.Parse(startString[2]);
+                                startSectors = ulong.Parse(startString[0]) * 60 * 75 +
+                                               ulong.Parse(startString[1]) * 75 + ulong.Parse(startString[2]);
                             }
 
                             currenttrack.Trackfile.Offset += startSectors * currenttrack.Bps;
@@ -673,15 +566,15 @@ namespace DiscImageChef.DiscImages
                         }
                         else if(matchPerformer.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found PERFORMER \"{1}\" at line {0}", lineNumber,
-                                                      matchPerformer.Groups["performer"].Value);
+                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found PERFORMER \"{1}\" at line {0}",
+                                                      lineNumber, matchPerformer.Groups["performer"].Value);
                             if(intrack) currenttrack.Performer = matchPerformer.Groups["performer"].Value;
                             else discimage.Performer = matchPerformer.Groups["performer"].Value;
                         }
                         else if(matchSongwriter.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found SONGWRITER \"{1}\" at line {0}", lineNumber,
-                                                      matchSongwriter.Groups["songwriter"].Value);
+                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found SONGWRITER \"{1}\" at line {0}",
+                                                      lineNumber, matchSongwriter.Groups["songwriter"].Value);
                             if(intrack) currenttrack.Songwriter = matchSongwriter.Groups["songwriter"].Value;
                             else discimage.Songwriter = matchSongwriter.Groups["songwriter"].Value;
                         }
@@ -1041,14 +934,26 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrdaoTrack in discimage.Tracks where cdrdaoTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from cdrdaoTrack in discimage.Tracks
+                                                     where cdrdaoTrack.Sequence == kvp.Key
+                                                     where sectorAddress - kvp.Value < cdrdaoTrack.Sectors
+                                                     select kvp)
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrdaoTrack in discimage.Tracks where cdrdaoTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from cdrdaoTrack in discimage.Tracks
+                                                     where cdrdaoTrack.Sequence == kvp.Key
+                                                     where sectorAddress - kvp.Value < cdrdaoTrack.Sectors
+                                                     select kvp)
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
@@ -1057,7 +962,8 @@ namespace DiscImageChef.DiscImages
         {
             CdrdaoTrack dicTrack = new CdrdaoTrack {Sequence = 0};
 
-            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track)) {
+            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
+            {
                 dicTrack = cdrdaoTrack;
                 break;
             }
@@ -1148,7 +1054,8 @@ namespace DiscImageChef.DiscImages
         {
             CdrdaoTrack dicTrack = new CdrdaoTrack {Sequence = 0};
 
-            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track)) {
+            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
+            {
                 dicTrack = cdrdaoTrack;
                 break;
             }
@@ -1321,7 +1228,13 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrdaoTrack in discimage.Tracks where cdrdaoTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from cdrdaoTrack in discimage.Tracks
+                                                     where cdrdaoTrack.Sequence == kvp.Key
+                                                     where sectorAddress - kvp.Value < cdrdaoTrack.Sectors
+                                                     select kvp)
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1330,7 +1243,8 @@ namespace DiscImageChef.DiscImages
         {
             CdrdaoTrack dicTrack = new CdrdaoTrack {Sequence = 0};
 
-            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track)) {
+            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
+            {
                 dicTrack = cdrdaoTrack;
                 break;
             }
@@ -1492,8 +1406,8 @@ namespace DiscImageChef.DiscImages
                 if(cdrTrack.Subchannel)
                 {
                     dicTrack.TrackSubchannelType = cdrTrack.Packedsubchannel
-                                                     ? TrackSubchannelType.PackedInterleaved
-                                                     : TrackSubchannelType.RawInterleaved;
+                                                       ? TrackSubchannelType.PackedInterleaved
+                                                       : TrackSubchannelType.RawInterleaved;
                     dicTrack.TrackSubchannelFilter = cdrTrack.Trackfile.Datafilter;
                     dicTrack.TrackSubchannelFile = cdrTrack.Trackfile.Datafilter.GetFilename();
                     dicTrack.TrackSubchannelOffset = cdrTrack.Trackfile.Offset;
@@ -1595,15 +1509,12 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        #region Not implemented methods
         public override List<Session> GetSessions()
         {
             // TODO
             throw new NotImplementedException();
         }
-        #endregion
 
-        #region Private methods
         static ushort CdrdaoTrackTypeToBytesPerSector(string trackType)
         {
             switch(trackType)
@@ -1651,9 +1562,7 @@ namespace DiscImageChef.DiscImages
                 default: return TrackType.Data;
             }
         }
-        #endregion
 
-        #region Unsupported features
         public override int GetMediaSequence()
         {
             return ImageInfo.MediaSequence;
@@ -1703,6 +1612,102 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.ImageCreator;
         }
-        #endregion
+
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+        struct CdrdaoTrackFile
+        {
+            /// <summary>Track #</summary>
+            public uint Sequence;
+            /// <summary>Filter of file containing track</summary>
+            public Filter Datafilter;
+            /// <summary>Path of file containing track</summary>
+            public string Datafile;
+            /// <summary>Offset of track start in file</summary>
+            public ulong Offset;
+            /// <summary>Type of file</summary>
+            public string Filetype;
+        }
+
+#pragma warning disable 169
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+        struct CdrdaoTrack
+        {
+            /// <summary>Track #</summary>
+            public uint Sequence;
+            /// <summary>Track title (from CD-Text)</summary>
+            public string Title;
+            /// <summary>Track genre (from CD-Text)</summary>
+            public string Genre;
+            /// <summary>Track arranger (from CD-Text)</summary>
+            public string Arranger;
+            /// <summary>Track composer (from CD-Text)</summary>
+            public string Composer;
+            /// <summary>Track performer (from CD-Text)</summary>
+            public string Performer;
+            /// <summary>Track song writer (from CD-Text)</summary>
+            public string Songwriter;
+            /// <summary>Track ISRC</summary>
+            public string Isrc;
+            /// <summary>Disk provider's message (from CD-Text)</summary>
+            public string Message;
+            /// <summary>File struct for this track</summary>
+            public CdrdaoTrackFile Trackfile;
+            /// <summary>Indexes on this track</summary>
+            public Dictionary<int, ulong> Indexes;
+            /// <summary>Track pre-gap in sectors</summary>
+            public ulong Pregap;
+            /// <summary>Track post-gap in sectors</summary>
+            public ulong Postgap;
+            /// <summary>Digical Copy Permitted</summary>
+            public bool FlagDcp;
+            /// <summary>Track is quadraphonic</summary>
+            public bool Flag_4Ch;
+            /// <summary>Track has preemphasis</summary>
+            public bool FlagPre;
+            /// <summary>Bytes per sector</summary>
+            public ushort Bps;
+            /// <summary>Sectors in track</summary>
+            public ulong Sectors;
+            /// <summary>Starting sector in track</summary>
+            public ulong StartSector;
+            /// <summary>Track type</summary>
+            public string Tracktype;
+            public bool Subchannel;
+            public bool Packedsubchannel;
+        }
+
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+        struct CdrdaoDisc
+        {
+            /// <summary>Disk title (from CD-Text)</summary>
+            public string Title;
+            /// <summary>Disk genre (from CD-Text)</summary>
+            public string Genre;
+            /// <summary>Disk arranger (from CD-Text)</summary>
+            public string Arranger;
+            /// <summary>Disk composer (from CD-Text)</summary>
+            public string Composer;
+            /// <summary>Disk performer (from CD-Text)</summary>
+            public string Performer;
+            /// <summary>Disk song writer (from CD-Text)</summary>
+            public string Songwriter;
+            /// <summary>Disk provider's message (from CD-Text)</summary>
+            public string Message;
+            /// <summary>Media catalog number</summary>
+            public string Mcn;
+            /// <summary>Disk type</summary>
+            public MediaType Disktype;
+            /// <summary>Disk type string</summary>
+            public string Disktypestr;
+            /// <summary>Disk CDDB ID</summary>
+            public string DiskId;
+            /// <summary>Disk UPC/EAN</summary>
+            public string Barcode;
+            /// <summary>Tracks</summary>
+            public List<CdrdaoTrack> Tracks;
+            /// <summary>Disk comment</summary>
+            public string Comment;
+        }
+#pragma warning restore 169
     }
 }

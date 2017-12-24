@@ -40,6 +40,7 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+
 #pragma warning disable 414
 #pragma warning disable 169
 
@@ -49,566 +50,6 @@ namespace DiscImageChef.DiscImages
     [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public class Nero : ImagePlugin
     {
-        #region Internal structures
-        struct NeroV1Footer
-        {
-            /// <summary>
-            /// "NERO"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Offset of first chunk in file
-            /// </summary>
-            public uint FirstChunkOffset;
-        }
-
-        struct NeroV2Footer
-        {
-            /// <summary>
-            /// "NER5"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Offset of first chunk in file
-            /// </summary>
-            public ulong FirstChunkOffset;
-        }
-
-        struct NeroV2CueEntry
-        {
-            /// <summary>
-            /// Track mode. 0x01 for audio, 0x21 for copy-protected audio, 0x41 for data
-            /// </summary>
-            public byte Mode;
-
-            /// <summary>
-            /// Track number in BCD
-            /// </summary>
-            public byte TrackNumber;
-
-            /// <summary>
-            /// Index number in BCD
-            /// </summary>
-            public byte IndexNumber;
-
-            /// <summary>
-            /// Always zero
-            /// </summary>
-            public byte Dummy;
-
-            /// <summary>
-            /// LBA sector start for this entry
-            /// </summary>
-            public int LbaStart;
-        }
-
-        struct NeroV2Cuesheet
-        {
-            /// <summary>
-            /// "CUEX"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// Cuesheet entries
-            /// </summary>
-            public List<NeroV2CueEntry> Entries;
-        }
-
-        struct NeroV1CueEntry
-        {
-            /// <summary>
-            /// Track mode. 0x01 for audio, 0x21 for copy-protected audio, 0x41 for data
-            /// </summary>
-            public byte Mode;
-
-            /// <summary>
-            /// Track number in BCD
-            /// </summary>
-            public byte TrackNumber;
-
-            /// <summary>
-            /// Index number in BCD
-            /// </summary>
-            public byte IndexNumber;
-
-            /// <summary>
-            /// Always zero
-            /// </summary>
-            public ushort Dummy;
-
-            /// <summary>
-            /// MSF start sector's minute for this entry
-            /// </summary>
-            public byte Minute;
-
-            /// <summary>
-            /// MSF start sector's second for this entry
-            /// </summary>
-            public byte Second;
-
-            /// <summary>
-            /// MSF start sector's frame for this entry
-            /// </summary>
-            public byte Frame;
-        }
-
-        struct NeroV1Cuesheet
-        {
-            /// <summary>
-            /// "CUES"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// Cuesheet entries
-            /// </summary>
-            public List<NeroV1CueEntry> Entries;
-        }
-
-        struct NeroV1DaoEntry
-        {
-            /// <summary>
-            /// ISRC (12 bytes)
-            /// </summary>
-            public byte[] Isrc;
-
-            /// <summary>
-            /// Size of sector inside image (in bytes)
-            /// </summary>
-            public ushort SectorSize;
-
-            /// <summary>
-            /// Sector mode in image
-            /// </summary>
-            public ushort Mode;
-
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public ushort Unknown;
-
-            /// <summary>
-            /// Index 0 start
-            /// </summary>
-            public uint Index0;
-
-            /// <summary>
-            /// Index 1 start
-            /// </summary>
-            public uint Index1;
-
-            /// <summary>
-            /// End of track + 1
-            /// </summary>
-            public uint EndOfTrack;
-        }
-
-        struct NeroV1Dao
-        {
-            /// <summary>
-            /// "DAOI"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size (big endian)
-            /// </summary>
-            public uint ChunkSizeBe;
-
-            /// <summary>
-            /// Chunk size (little endian)
-            /// </summary>
-            public uint ChunkSizeLe;
-
-            /// <summary>
-            /// UPC (14 bytes, null-padded)
-            /// </summary>
-            public byte[] Upc;
-
-            /// <summary>
-            /// TOC type
-            /// </summary>
-            public ushort TocType;
-
-            /// <summary>
-            /// First track
-            /// </summary>
-            public byte FirstTrack;
-
-            /// <summary>
-            /// Last track
-            /// </summary>
-            public byte LastTrack;
-
-            /// <summary>
-            /// Tracks
-            /// </summary>
-            public List<NeroV1DaoEntry> Tracks;
-        }
-
-        struct NeroV2DaoEntry
-        {
-            /// <summary>
-            /// ISRC (12 bytes)
-            /// </summary>
-            public byte[] Isrc;
-
-            /// <summary>
-            /// Size of sector inside image (in bytes)
-            /// </summary>
-            public ushort SectorSize;
-
-            /// <summary>
-            /// Sector mode in image
-            /// </summary>
-            public ushort Mode;
-
-            /// <summary>
-            /// Seems to be always 0.
-            /// </summary>
-            public ushort Unknown;
-
-            /// <summary>
-            /// Index 0 start
-            /// </summary>
-            public ulong Index0;
-
-            /// <summary>
-            /// Index 1 start
-            /// </summary>
-            public ulong Index1;
-
-            /// <summary>
-            /// End of track + 1
-            /// </summary>
-            public ulong EndOfTrack;
-        }
-
-        struct NeroV2Dao
-        {
-            /// <summary>
-            /// "DAOX"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size (big endian)
-            /// </summary>
-            public uint ChunkSizeBe;
-
-            /// <summary>
-            /// Chunk size (little endian)
-            /// </summary>
-            public uint ChunkSizeLe;
-
-            /// <summary>
-            /// UPC (14 bytes, null-padded)
-            /// </summary>
-            public byte[] Upc;
-
-            /// <summary>
-            /// TOC type
-            /// </summary>
-            public ushort TocType;
-
-            /// <summary>
-            /// First track
-            /// </summary>
-            public byte FirstTrack;
-
-            /// <summary>
-            /// Last track
-            /// </summary>
-            public byte LastTrack;
-
-            /// <summary>
-            /// Tracks
-            /// </summary>
-            public List<NeroV2DaoEntry> Tracks;
-        }
-
-        struct NeroCdTextPack
-        {
-            /// <summary>
-            /// Pack type
-            /// </summary>
-            public byte PackType;
-
-            /// <summary>
-            /// Track number
-            /// </summary>
-            public byte TrackNumber;
-
-            /// <summary>
-            /// Pack number in block
-            /// </summary>
-            public byte PackNumber;
-
-            /// <summary>
-            /// Block number
-            /// </summary>
-            public byte BlockNumber;
-
-            /// <summary>
-            /// 12 bytes of data
-            /// </summary>
-            public byte[] Text;
-
-            /// <summary>
-            /// CRC
-            /// </summary>
-            public ushort Crc;
-        }
-
-        struct NeroCdText
-        {
-            /// <summary>
-            /// "CDTX"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// CD-TEXT packs
-            /// </summary>
-            public List<NeroCdTextPack> Packs;
-        }
-
-        struct NeroV1TaoEntry
-        {
-            /// <summary>
-            /// Offset of track on image
-            /// </summary>
-            public uint Offset;
-
-            /// <summary>
-            /// Length of track in bytes
-            /// </summary>
-            public uint Length;
-
-            /// <summary>
-            /// Track mode
-            /// </summary>
-            public uint Mode;
-
-            /// <summary>
-            /// LBA track start (plus 150 lead in sectors)
-            /// </summary>
-            public uint StartLba;
-
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public uint Unknown;
-        }
-
-        struct NeroV1Tao
-        {
-            /// <summary>
-            /// "ETNF"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// CD-TEXT packs
-            /// </summary>
-            public List<NeroV1TaoEntry> Tracks;
-        }
-
-        struct NeroV2TaoEntry
-        {
-            /// <summary>
-            /// Offset of track on image
-            /// </summary>
-            public ulong Offset;
-
-            /// <summary>
-            /// Length of track in bytes
-            /// </summary>
-            public ulong Length;
-
-            /// <summary>
-            /// Track mode
-            /// </summary>
-            public uint Mode;
-
-            /// <summary>
-            /// LBA track start (plus 150 lead in sectors)
-            /// </summary>
-            public uint StartLba;
-
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public uint Unknown;
-
-            /// <summary>
-            /// Track length in sectors
-            /// </summary>
-            public uint Sectors;
-        }
-
-        struct NeroV2Tao
-        {
-            /// <summary>
-            /// "ETN2"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// CD-TEXT packs
-            /// </summary>
-            public List<NeroV2TaoEntry> Tracks;
-        }
-
-        struct NeroSession
-        {
-            /// <summary>
-            /// "SINF"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// Tracks in session
-            /// </summary>
-            public uint Tracks;
-        }
-
-        struct NeroMediaType
-        {
-            /// <summary>
-            /// "MTYP"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// Media type
-            /// </summary>
-            public uint Type;
-        }
-
-        struct NeroDiscInformation
-        {
-            /// <summary>
-            /// "DINF"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public uint Unknown;
-        }
-
-        struct NeroTocChunk
-        {
-            /// <summary>
-            /// "TOCT"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public ushort Unknown;
-        }
-
-        struct NeroReloChunk
-        {
-            /// <summary>
-            /// "RELO"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-
-            /// <summary>
-            /// Unknown
-            /// </summary>
-            public uint Unknown;
-        }
-
-        struct NeroEndOfChunkChain
-        {
-            /// <summary>
-            /// "END!"
-            /// </summary>
-            public uint ChunkId;
-
-            /// <summary>
-            /// Chunk size
-            /// </summary>
-            public uint ChunkSize;
-        }
-
-        // Internal use only
-        struct NeroTrack
-        {
-            public byte[] Isrc;
-            public ushort SectorSize;
-            public ulong Offset;
-            public ulong Length;
-            public ulong EndOfTrack;
-            public uint Mode;
-            public ulong StartLba;
-            public ulong Sectors;
-            public ulong Index0;
-            public ulong Index1;
-            public uint Sequence;
-        }
-        #endregion
-
-        #region Internal consts
         // "NERO"
         const uint NERO_FOOTER_V1 = 0x4E45524F;
 
@@ -653,218 +94,31 @@ namespace DiscImageChef.DiscImages
 
         // "END!"
         const uint NERO_END = 0x454E4421;
-
-        enum DaoMode : ushort
-        {
-            Data = 0x0000,
-            DataM2F1 = 0x0002,
-            DataM2F2 = 0x0003,
-            DataRaw = 0x0005,
-            DataM2Raw = 0x0006,
-            Audio = 0x0007,
-            DataRawSub = 0x000F,
-            AudioSub = 0x0010,
-            DataM2RawSub = 0x0011
-        }
-
-        [Flags]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum NeroMediaTypes : uint
-        {
-            /// <summary>
-            /// No media
-            /// </summary>
-            NeroMtypNone = 0x00000,
-            /// <summary>
-            /// CD-R/RW
-            /// </summary>
-            NeroMtypCd = 0x00001,
-            /// <summary>
-            /// DDCD-R/RW
-            /// </summary>
-            NeroMtypDdcd = 0x00002,
-            /// <summary>
-            /// DVD-R/RW
-            /// </summary>
-            NeroMtypDvdM = 0x00004,
-            /// <summary>
-            /// DVD+RW
-            /// </summary>
-            NeroMtypDvdP = 0x00008,
-            /// <summary>
-            /// DVD-RAM
-            /// </summary>
-            NeroMtypDvdRam = 0x00010,
-            /// <summary>
-            /// Multi-level disc
-            /// </summary>
-            NeroMtypMl = 0x00020,
-            /// <summary>
-            /// Mount Rainier
-            /// </summary>
-            NeroMtypMrw = 0x00040,
-            /// <summary>
-            /// Exclude CD-R
-            /// </summary>
-            NeroMtypNoCdr = 0x00080,
-            /// <summary>
-            /// Exclude CD-RW
-            /// </summary>
-            NeroMtypNoCdrw = 0x00100,
-            /// <summary>
-            /// CD-RW
-            /// </summary>
-            NeroMtypCdrw = NeroMtypCd | NeroMtypNoCdr,
-            /// <summary>
-            /// CD-R
-            /// </summary>
-            NeroMtypCdr = NeroMtypCd | NeroMtypNoCdrw,
-            /// <summary>
-            /// DVD-ROM
-            /// </summary>
-            NeroMtypDvdRom = 0x00200,
-            /// <summary>
-            /// CD-ROM
-            /// </summary>
-            NeroMtypCdrom = 0x00400,
-            /// <summary>
-            /// Exclude DVD-RW
-            /// </summary>
-            NeroMtypNoDvdMRw = 0x00800,
-            /// <summary>
-            /// Exclude DVD-R
-            /// </summary>
-            NeroMtypNoDvdMR = 0x01000,
-            /// <summary>
-            /// Exclude DVD+RW
-            /// </summary>
-            NeroMtypNoDvdPRw = 0x02000,
-            /// <summary>
-            /// Exclude DVD+R
-            /// </summary>
-            NeroMtypNoDvdPR = 0x04000,
-            /// <summary>
-            /// DVD-R
-            /// </summary>
-            NeroMtypDvdMR = NeroMtypDvdM | NeroMtypNoDvdMRw,
-            /// <summary>
-            /// DVD-RW
-            /// </summary>
-            NeroMtypDvdMRw = NeroMtypDvdM | NeroMtypNoDvdMR,
-            /// <summary>
-            /// DVD+R
-            /// </summary>
-            NeroMtypDvdPR = NeroMtypDvdP | NeroMtypNoDvdPRw,
-            /// <summary>
-            /// DVD+RW
-            /// </summary>
-            NeroMtypDvdPRw = NeroMtypDvdP | NeroMtypNoDvdPR,
-            /// <summary>
-            /// Packet-writing (fixed)
-            /// </summary>
-            NeroMtypFpacket = 0x08000,
-            /// <summary>
-            /// Packet-writing (variable)
-            /// </summary>
-            NeroMtypVpacket = 0x10000,
-            /// <summary>
-            /// Packet-writing (any)
-            /// </summary>
-            NeroMtypPacketw = NeroMtypMrw | NeroMtypFpacket | NeroMtypVpacket,
-            /// <summary>
-            /// HD-Burn
-            /// </summary>
-            NeroMtypHdb = 0x20000,
-            /// <summary>
-            /// DVD+R DL
-            /// </summary>
-            NeroMtypDvdPR9 = 0x40000,
-            /// <summary>
-            /// DVD-R DL
-            /// </summary>
-            NeroMtypDvdMR9 = 0x80000,
-            /// <summary>
-            /// Any DVD double-layer
-            /// </summary>
-            NeroMtypDvdAnyR9 = NeroMtypDvdPR9 | NeroMtypDvdMR9,
-            /// <summary>
-            /// Any DVD
-            /// </summary>
-            NeroMtypDvdAny = NeroMtypDvdM | NeroMtypDvdP | NeroMtypDvdRam | NeroMtypDvdAnyR9,
-            /// <summary>
-            /// BD-ROM
-            /// </summary>
-            NeroMtypBdRom = 0x100000,
-            /// <summary>
-            /// BD-R
-            /// </summary>
-            NeroMtypBdR = 0x200000,
-            /// <summary>
-            /// BD-RE
-            /// </summary>
-            NeroMtypBdRe = 0x400000,
-            /// <summary>
-            /// BD-R/RE
-            /// </summary>
-            NeroMtypBd = NeroMtypBdR | NeroMtypBdRe,
-            /// <summary>
-            /// Any BD
-            /// </summary>
-            NeroMtypBdAny = NeroMtypBd | NeroMtypBdRom,
-            /// <summary>
-            /// HD DVD-ROM
-            /// </summary>
-            NeroMtypHdDvdRom = 0x0800000,
-            /// <summary>
-            /// HD DVD-R
-            /// </summary>
-            NeroMtypHdDvdR = 0x1000000,
-            /// <summary>
-            /// HD DVD-RW
-            /// </summary>
-            NeroMtypHdDvdRw = 0x2000000,
-            /// <summary>
-            /// HD DVD-R/RW
-            /// </summary>
-            NeroMtypHdDvd = NeroMtypHdDvdR | NeroMtypHdDvdRw,
-            /// <summary>
-            /// Any HD DVD
-            /// </summary>
-            NeroMtypHdDvdAny = NeroMtypHdDvd | NeroMtypHdDvdRom,
-            /// <summary>
-            /// Any DVD, old
-            /// </summary>
-            NeroMtypDvdAnyOld = NeroMtypDvdM | NeroMtypDvdP | NeroMtypDvdRam
-        }
-        #endregion
-
-        #region Internal variables
-        Filter neroFilter;
-        Stream imageStream;
         bool imageNewFormat;
-        Dictionary<ushort, uint> neroSessions;
+        List<Partition> imagePartitions;
+        List<Session> imageSessions;
+        Stream imageStream;
+
+        List<Track> imageTracks;
+        NeroCdText neroCdtxt;
         NeroV1Cuesheet neroCuesheetV1;
         NeroV2Cuesheet neroCuesheetV2;
         NeroV1Dao neroDaov1;
         NeroV2Dao neroDaov2;
-        NeroCdText neroCdtxt;
+        NeroDiscInformation neroDiscInfo;
+
+        Filter neroFilter;
+        NeroMediaType neroMediaTyp;
+        NeroReloChunk neroRelo;
+        Dictionary<ushort, uint> neroSessions;
         NeroV1Tao neroTaov1;
         NeroV2Tao neroTaov2;
-        NeroMediaType neroMediaTyp;
-        NeroDiscInformation neroDiscInfo;
         NeroTocChunk neroToc;
-        NeroReloChunk neroRelo;
-
-        List<Track> imageTracks;
-        Dictionary<uint, byte[]> trackIsrCs;
-        byte[] upc;
         Dictionary<uint, NeroTrack> neroTracks;
         Dictionary<uint, ulong> offsetmap;
-        List<Session> imageSessions;
-        List<Partition> imagePartitions;
-        #endregion
+        Dictionary<uint, byte[]> trackIsrCs;
+        byte[] upc;
 
-        #region Methods
         public Nero()
         {
             Name = "Nero Burning ROM image";
@@ -938,12 +192,10 @@ namespace DiscImageChef.DiscImages
 
                 DicConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", imageStream.Length);
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkId,
-                                          Encoding.ASCII
-                                                .GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkId)));
+                                          Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkId)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkId,
-                                          Encoding.ASCII
-                                                .GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkId)));
+                                          Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkId)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
                 if(footerV1.ChunkId == NERO_FOOTER_V1 && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
@@ -981,8 +233,7 @@ namespace DiscImageChef.DiscImages
                     chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
 
                     DicConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", chunkId,
-                                              Encoding.ASCII
-                                                    .GetString(BigEndianBitConverter.GetBytes(chunkId)));
+                                              Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(chunkId)));
                     DicConsole.DebugWriteLine("Nero plugin", "ChunkLength = {0}", chunkLength);
 
                     switch(chunkId)
@@ -1124,8 +375,8 @@ namespace DiscImageChef.DiscImages
                                 DicConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", i / 32 + 1);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", i / 32 + 1,
                                                           StringHandlers.CToString(entry.Isrc));
-                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
-                                                          i / 32 + 1, entry.SectorSize);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}", i / 32 + 1,
+                                                          entry.SectorSize);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
                                                           i / 32 + 1, (DaoMode)entry.Mode, entry.Mode);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
@@ -1134,8 +385,8 @@ namespace DiscImageChef.DiscImages
                                                           entry.Index0);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", i / 32 + 1,
                                                           entry.Index1);
-                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
-                                                          i / 32 + 1, entry.EndOfTrack);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}", i / 32 + 1,
+                                                          entry.EndOfTrack);
 
                                 neroDaov1.Tracks.Add(entry);
 
@@ -1218,18 +469,18 @@ namespace DiscImageChef.DiscImages
                                 DicConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", i / 32 + 1);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", i / 32 + 1,
                                                           StringHandlers.CToString(entry.Isrc));
-                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
-                                                          i / 32 + 1, entry.SectorSize);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}", i / 32 + 1,
+                                                          entry.SectorSize);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
                                                           i / 32 + 1, (DaoMode)entry.Mode, entry.Mode);
-                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = {1:X2}",
-                                                          i / 32 + 1, entry.Unknown);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = {1:X2}", i / 32 + 1,
+                                                          entry.Unknown);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", i / 32 + 1,
                                                           entry.Index0);
                                 DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", i / 32 + 1,
                                                           entry.Index1);
-                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
-                                                          i / 32 + 1, entry.EndOfTrack);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}", i / 32 + 1,
+                                                          entry.EndOfTrack);
 
                                 neroDaov2.Tracks.Add(entry);
 
@@ -1530,7 +781,7 @@ namespace DiscImageChef.DiscImages
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Unknown chunk ID \"{0}\", skipping...",
                                                       Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                                               .GetBytes(chunkId)));
+                                                                                   .GetBytes(chunkId)));
                             imageStream.Seek(chunkLength, SeekOrigin.Current);
                             break;
                         }
@@ -1585,8 +836,7 @@ namespace DiscImageChef.DiscImages
                     if(!neroTracks.TryGetValue(i, out NeroTrack neroTrack)) continue;
 
                     DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsession = {0}", currentsession);
-                    DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessionmaxtrack = {0}",
-                                              currentsessionmaxtrack);
+                    DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessionmaxtrack = {0}", currentsessionmaxtrack);
                     DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessioncurrenttrack = {0}",
                                               currentsessioncurrenttrack);
 
@@ -1660,25 +910,21 @@ namespace DiscImageChef.DiscImages
 
                     DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}",
                                               track.TrackDescription);
-                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}",
-                                              track.TrackEndSector);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}", track.TrackEndSector);
                     DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackPregap = {0}", track.TrackPregap);
-                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSequence = {0}",
-                                              track.TrackSequence);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSequence = {0}", track.TrackSequence);
                     DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSession = {0}", track.TrackSession);
                     DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackStartSector = {0}",
                                               track.TrackStartSector);
                     DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackType = {0}", track.TrackType);
 
                     if(currentsessioncurrenttrack == 1)
-                    {
                         currentsessionstruct = new Session
- {
+                        {
                             SessionSequence = currentsession,
                             StartSector = track.TrackStartSector,
                             StartTrack = track.TrackSequence
                         };
-                    }
                     currentsessioncurrenttrack++;
                     if(currentsessioncurrenttrack > currentsessionmaxtrack)
                     {
@@ -1751,10 +997,12 @@ namespace DiscImageChef.DiscImages
                                                  (DaoMode)neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
 
                         // First track is data
-                        firstdata |= i == 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
+                        firstdata |= i == 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                                     (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is data
-                        data |= i != 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
+                        data |= i != 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                                (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is audio
                         audio |= i != 0 && ((DaoMode)neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio ||
@@ -1845,14 +1093,28 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in imageTracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in imageTracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector
+                                                     select kvp)
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in imageTracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in imageTracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector
+                                                     select kvp)
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
@@ -1937,9 +1199,8 @@ namespace DiscImageChef.DiscImages
 
             imageStream = neroFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
-            br.BaseStream
-              .Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                               SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
@@ -2161,9 +1422,8 @@ namespace DiscImageChef.DiscImages
 
             imageStream = neroFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
-            br.BaseStream
-              .Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                               SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
@@ -2189,7 +1449,14 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in imageTracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in imageTracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector
+                                                     select kvp)
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
@@ -2250,9 +1517,8 @@ namespace DiscImageChef.DiscImages
             imageStream = neroFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
 
-            br.BaseStream
-              .Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                               SeekOrigin.Begin);
 
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
@@ -2401,18 +1667,15 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifyMediaImage()
         {
             return null;
         }
-        #endregion
 
-        #region Private methods
         static MediaType NeroMediaTypeToMediaType(NeroMediaTypes type)
         {
             switch(type)
@@ -2483,9 +1746,7 @@ namespace DiscImageChef.DiscImages
                 default: return 2352;
             }
         }
-        #endregion
 
-        #region Unsupported features
         public override int GetMediaSequence()
         {
             return ImageInfo.MediaSequence;
@@ -2545,6 +1806,745 @@ namespace DiscImageChef.DiscImages
         {
             return ImageInfo.MediaSerialNumber;
         }
-        #endregion
+
+        struct NeroV1Footer
+        {
+            /// <summary>
+            ///     "NERO"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Offset of first chunk in file
+            /// </summary>
+            public uint FirstChunkOffset;
+        }
+
+        struct NeroV2Footer
+        {
+            /// <summary>
+            ///     "NER5"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Offset of first chunk in file
+            /// </summary>
+            public ulong FirstChunkOffset;
+        }
+
+        struct NeroV2CueEntry
+        {
+            /// <summary>
+            ///     Track mode. 0x01 for audio, 0x21 for copy-protected audio, 0x41 for data
+            /// </summary>
+            public byte Mode;
+
+            /// <summary>
+            ///     Track number in BCD
+            /// </summary>
+            public byte TrackNumber;
+
+            /// <summary>
+            ///     Index number in BCD
+            /// </summary>
+            public byte IndexNumber;
+
+            /// <summary>
+            ///     Always zero
+            /// </summary>
+            public byte Dummy;
+
+            /// <summary>
+            ///     LBA sector start for this entry
+            /// </summary>
+            public int LbaStart;
+        }
+
+        struct NeroV2Cuesheet
+        {
+            /// <summary>
+            ///     "CUEX"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     Cuesheet entries
+            /// </summary>
+            public List<NeroV2CueEntry> Entries;
+        }
+
+        struct NeroV1CueEntry
+        {
+            /// <summary>
+            ///     Track mode. 0x01 for audio, 0x21 for copy-protected audio, 0x41 for data
+            /// </summary>
+            public byte Mode;
+
+            /// <summary>
+            ///     Track number in BCD
+            /// </summary>
+            public byte TrackNumber;
+
+            /// <summary>
+            ///     Index number in BCD
+            /// </summary>
+            public byte IndexNumber;
+
+            /// <summary>
+            ///     Always zero
+            /// </summary>
+            public ushort Dummy;
+
+            /// <summary>
+            ///     MSF start sector's minute for this entry
+            /// </summary>
+            public byte Minute;
+
+            /// <summary>
+            ///     MSF start sector's second for this entry
+            /// </summary>
+            public byte Second;
+
+            /// <summary>
+            ///     MSF start sector's frame for this entry
+            /// </summary>
+            public byte Frame;
+        }
+
+        struct NeroV1Cuesheet
+        {
+            /// <summary>
+            ///     "CUES"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     Cuesheet entries
+            /// </summary>
+            public List<NeroV1CueEntry> Entries;
+        }
+
+        struct NeroV1DaoEntry
+        {
+            /// <summary>
+            ///     ISRC (12 bytes)
+            /// </summary>
+            public byte[] Isrc;
+
+            /// <summary>
+            ///     Size of sector inside image (in bytes)
+            /// </summary>
+            public ushort SectorSize;
+
+            /// <summary>
+            ///     Sector mode in image
+            /// </summary>
+            public ushort Mode;
+
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public ushort Unknown;
+
+            /// <summary>
+            ///     Index 0 start
+            /// </summary>
+            public uint Index0;
+
+            /// <summary>
+            ///     Index 1 start
+            /// </summary>
+            public uint Index1;
+
+            /// <summary>
+            ///     End of track + 1
+            /// </summary>
+            public uint EndOfTrack;
+        }
+
+        struct NeroV1Dao
+        {
+            /// <summary>
+            ///     "DAOI"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size (big endian)
+            /// </summary>
+            public uint ChunkSizeBe;
+
+            /// <summary>
+            ///     Chunk size (little endian)
+            /// </summary>
+            public uint ChunkSizeLe;
+
+            /// <summary>
+            ///     UPC (14 bytes, null-padded)
+            /// </summary>
+            public byte[] Upc;
+
+            /// <summary>
+            ///     TOC type
+            /// </summary>
+            public ushort TocType;
+
+            /// <summary>
+            ///     First track
+            /// </summary>
+            public byte FirstTrack;
+
+            /// <summary>
+            ///     Last track
+            /// </summary>
+            public byte LastTrack;
+
+            /// <summary>
+            ///     Tracks
+            /// </summary>
+            public List<NeroV1DaoEntry> Tracks;
+        }
+
+        struct NeroV2DaoEntry
+        {
+            /// <summary>
+            ///     ISRC (12 bytes)
+            /// </summary>
+            public byte[] Isrc;
+
+            /// <summary>
+            ///     Size of sector inside image (in bytes)
+            /// </summary>
+            public ushort SectorSize;
+
+            /// <summary>
+            ///     Sector mode in image
+            /// </summary>
+            public ushort Mode;
+
+            /// <summary>
+            ///     Seems to be always 0.
+            /// </summary>
+            public ushort Unknown;
+
+            /// <summary>
+            ///     Index 0 start
+            /// </summary>
+            public ulong Index0;
+
+            /// <summary>
+            ///     Index 1 start
+            /// </summary>
+            public ulong Index1;
+
+            /// <summary>
+            ///     End of track + 1
+            /// </summary>
+            public ulong EndOfTrack;
+        }
+
+        struct NeroV2Dao
+        {
+            /// <summary>
+            ///     "DAOX"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size (big endian)
+            /// </summary>
+            public uint ChunkSizeBe;
+
+            /// <summary>
+            ///     Chunk size (little endian)
+            /// </summary>
+            public uint ChunkSizeLe;
+
+            /// <summary>
+            ///     UPC (14 bytes, null-padded)
+            /// </summary>
+            public byte[] Upc;
+
+            /// <summary>
+            ///     TOC type
+            /// </summary>
+            public ushort TocType;
+
+            /// <summary>
+            ///     First track
+            /// </summary>
+            public byte FirstTrack;
+
+            /// <summary>
+            ///     Last track
+            /// </summary>
+            public byte LastTrack;
+
+            /// <summary>
+            ///     Tracks
+            /// </summary>
+            public List<NeroV2DaoEntry> Tracks;
+        }
+
+        struct NeroCdTextPack
+        {
+            /// <summary>
+            ///     Pack type
+            /// </summary>
+            public byte PackType;
+
+            /// <summary>
+            ///     Track number
+            /// </summary>
+            public byte TrackNumber;
+
+            /// <summary>
+            ///     Pack number in block
+            /// </summary>
+            public byte PackNumber;
+
+            /// <summary>
+            ///     Block number
+            /// </summary>
+            public byte BlockNumber;
+
+            /// <summary>
+            ///     12 bytes of data
+            /// </summary>
+            public byte[] Text;
+
+            /// <summary>
+            ///     CRC
+            /// </summary>
+            public ushort Crc;
+        }
+
+        struct NeroCdText
+        {
+            /// <summary>
+            ///     "CDTX"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     CD-TEXT packs
+            /// </summary>
+            public List<NeroCdTextPack> Packs;
+        }
+
+        struct NeroV1TaoEntry
+        {
+            /// <summary>
+            ///     Offset of track on image
+            /// </summary>
+            public uint Offset;
+
+            /// <summary>
+            ///     Length of track in bytes
+            /// </summary>
+            public uint Length;
+
+            /// <summary>
+            ///     Track mode
+            /// </summary>
+            public uint Mode;
+
+            /// <summary>
+            ///     LBA track start (plus 150 lead in sectors)
+            /// </summary>
+            public uint StartLba;
+
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public uint Unknown;
+        }
+
+        struct NeroV1Tao
+        {
+            /// <summary>
+            ///     "ETNF"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     CD-TEXT packs
+            /// </summary>
+            public List<NeroV1TaoEntry> Tracks;
+        }
+
+        struct NeroV2TaoEntry
+        {
+            /// <summary>
+            ///     Offset of track on image
+            /// </summary>
+            public ulong Offset;
+
+            /// <summary>
+            ///     Length of track in bytes
+            /// </summary>
+            public ulong Length;
+
+            /// <summary>
+            ///     Track mode
+            /// </summary>
+            public uint Mode;
+
+            /// <summary>
+            ///     LBA track start (plus 150 lead in sectors)
+            /// </summary>
+            public uint StartLba;
+
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public uint Unknown;
+
+            /// <summary>
+            ///     Track length in sectors
+            /// </summary>
+            public uint Sectors;
+        }
+
+        struct NeroV2Tao
+        {
+            /// <summary>
+            ///     "ETN2"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     CD-TEXT packs
+            /// </summary>
+            public List<NeroV2TaoEntry> Tracks;
+        }
+
+        struct NeroSession
+        {
+            /// <summary>
+            ///     "SINF"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     Tracks in session
+            /// </summary>
+            public uint Tracks;
+        }
+
+        struct NeroMediaType
+        {
+            /// <summary>
+            ///     "MTYP"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     Media type
+            /// </summary>
+            public uint Type;
+        }
+
+        struct NeroDiscInformation
+        {
+            /// <summary>
+            ///     "DINF"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public uint Unknown;
+        }
+
+        struct NeroTocChunk
+        {
+            /// <summary>
+            ///     "TOCT"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public ushort Unknown;
+        }
+
+        struct NeroReloChunk
+        {
+            /// <summary>
+            ///     "RELO"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+
+            /// <summary>
+            ///     Unknown
+            /// </summary>
+            public uint Unknown;
+        }
+
+        struct NeroEndOfChunkChain
+        {
+            /// <summary>
+            ///     "END!"
+            /// </summary>
+            public uint ChunkId;
+
+            /// <summary>
+            ///     Chunk size
+            /// </summary>
+            public uint ChunkSize;
+        }
+
+        // Internal use only
+        struct NeroTrack
+        {
+            public byte[] Isrc;
+            public ushort SectorSize;
+            public ulong Offset;
+            public ulong Length;
+            public ulong EndOfTrack;
+            public uint Mode;
+            public ulong StartLba;
+            public ulong Sectors;
+            public ulong Index0;
+            public ulong Index1;
+            public uint Sequence;
+        }
+
+        enum DaoMode : ushort
+        {
+            Data = 0x0000,
+            DataM2F1 = 0x0002,
+            DataM2F2 = 0x0003,
+            DataRaw = 0x0005,
+            DataM2Raw = 0x0006,
+            Audio = 0x0007,
+            DataRawSub = 0x000F,
+            AudioSub = 0x0010,
+            DataM2RawSub = 0x0011
+        }
+
+        [Flags]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        enum NeroMediaTypes : uint
+        {
+            /// <summary>
+            ///     No media
+            /// </summary>
+            NeroMtypNone = 0x00000,
+            /// <summary>
+            ///     CD-R/RW
+            /// </summary>
+            NeroMtypCd = 0x00001,
+            /// <summary>
+            ///     DDCD-R/RW
+            /// </summary>
+            NeroMtypDdcd = 0x00002,
+            /// <summary>
+            ///     DVD-R/RW
+            /// </summary>
+            NeroMtypDvdM = 0x00004,
+            /// <summary>
+            ///     DVD+RW
+            /// </summary>
+            NeroMtypDvdP = 0x00008,
+            /// <summary>
+            ///     DVD-RAM
+            /// </summary>
+            NeroMtypDvdRam = 0x00010,
+            /// <summary>
+            ///     Multi-level disc
+            /// </summary>
+            NeroMtypMl = 0x00020,
+            /// <summary>
+            ///     Mount Rainier
+            /// </summary>
+            NeroMtypMrw = 0x00040,
+            /// <summary>
+            ///     Exclude CD-R
+            /// </summary>
+            NeroMtypNoCdr = 0x00080,
+            /// <summary>
+            ///     Exclude CD-RW
+            /// </summary>
+            NeroMtypNoCdrw = 0x00100,
+            /// <summary>
+            ///     CD-RW
+            /// </summary>
+            NeroMtypCdrw = NeroMtypCd | NeroMtypNoCdr,
+            /// <summary>
+            ///     CD-R
+            /// </summary>
+            NeroMtypCdr = NeroMtypCd | NeroMtypNoCdrw,
+            /// <summary>
+            ///     DVD-ROM
+            /// </summary>
+            NeroMtypDvdRom = 0x00200,
+            /// <summary>
+            ///     CD-ROM
+            /// </summary>
+            NeroMtypCdrom = 0x00400,
+            /// <summary>
+            ///     Exclude DVD-RW
+            /// </summary>
+            NeroMtypNoDvdMRw = 0x00800,
+            /// <summary>
+            ///     Exclude DVD-R
+            /// </summary>
+            NeroMtypNoDvdMR = 0x01000,
+            /// <summary>
+            ///     Exclude DVD+RW
+            /// </summary>
+            NeroMtypNoDvdPRw = 0x02000,
+            /// <summary>
+            ///     Exclude DVD+R
+            /// </summary>
+            NeroMtypNoDvdPR = 0x04000,
+            /// <summary>
+            ///     DVD-R
+            /// </summary>
+            NeroMtypDvdMR = NeroMtypDvdM | NeroMtypNoDvdMRw,
+            /// <summary>
+            ///     DVD-RW
+            /// </summary>
+            NeroMtypDvdMRw = NeroMtypDvdM | NeroMtypNoDvdMR,
+            /// <summary>
+            ///     DVD+R
+            /// </summary>
+            NeroMtypDvdPR = NeroMtypDvdP | NeroMtypNoDvdPRw,
+            /// <summary>
+            ///     DVD+RW
+            /// </summary>
+            NeroMtypDvdPRw = NeroMtypDvdP | NeroMtypNoDvdPR,
+            /// <summary>
+            ///     Packet-writing (fixed)
+            /// </summary>
+            NeroMtypFpacket = 0x08000,
+            /// <summary>
+            ///     Packet-writing (variable)
+            /// </summary>
+            NeroMtypVpacket = 0x10000,
+            /// <summary>
+            ///     Packet-writing (any)
+            /// </summary>
+            NeroMtypPacketw = NeroMtypMrw | NeroMtypFpacket | NeroMtypVpacket,
+            /// <summary>
+            ///     HD-Burn
+            /// </summary>
+            NeroMtypHdb = 0x20000,
+            /// <summary>
+            ///     DVD+R DL
+            /// </summary>
+            NeroMtypDvdPR9 = 0x40000,
+            /// <summary>
+            ///     DVD-R DL
+            /// </summary>
+            NeroMtypDvdMR9 = 0x80000,
+            /// <summary>
+            ///     Any DVD double-layer
+            /// </summary>
+            NeroMtypDvdAnyR9 = NeroMtypDvdPR9 | NeroMtypDvdMR9,
+            /// <summary>
+            ///     Any DVD
+            /// </summary>
+            NeroMtypDvdAny = NeroMtypDvdM | NeroMtypDvdP | NeroMtypDvdRam | NeroMtypDvdAnyR9,
+            /// <summary>
+            ///     BD-ROM
+            /// </summary>
+            NeroMtypBdRom = 0x100000,
+            /// <summary>
+            ///     BD-R
+            /// </summary>
+            NeroMtypBdR = 0x200000,
+            /// <summary>
+            ///     BD-RE
+            /// </summary>
+            NeroMtypBdRe = 0x400000,
+            /// <summary>
+            ///     BD-R/RE
+            /// </summary>
+            NeroMtypBd = NeroMtypBdR | NeroMtypBdRe,
+            /// <summary>
+            ///     Any BD
+            /// </summary>
+            NeroMtypBdAny = NeroMtypBd | NeroMtypBdRom,
+            /// <summary>
+            ///     HD DVD-ROM
+            /// </summary>
+            NeroMtypHdDvdRom = 0x0800000,
+            /// <summary>
+            ///     HD DVD-R
+            /// </summary>
+            NeroMtypHdDvdR = 0x1000000,
+            /// <summary>
+            ///     HD DVD-RW
+            /// </summary>
+            NeroMtypHdDvdRw = 0x2000000,
+            /// <summary>
+            ///     HD DVD-R/RW
+            /// </summary>
+            NeroMtypHdDvd = NeroMtypHdDvdR | NeroMtypHdDvdRw,
+            /// <summary>
+            ///     Any HD DVD
+            /// </summary>
+            NeroMtypHdDvdAny = NeroMtypHdDvd | NeroMtypHdDvdRom,
+            /// <summary>
+            ///     Any DVD, old
+            /// </summary>
+            NeroMtypDvdAnyOld = NeroMtypDvdM | NeroMtypDvdP | NeroMtypDvdRam
+        }
     }
 }

@@ -39,18 +39,13 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using Extents;
+
 #pragma warning disable 649
 
 namespace DiscImageChef.DiscImages
 {
     public class Partimage : ImagePlugin
     {
-        #region Internal constants
-        readonly byte[] partimageMagic =
-        {
-            0x50, 0x61, 0x52, 0x74, 0x49, 0x6D, 0x41, 0x67, 0x45, 0x2D, 0x56, 0x6F, 0x4C, 0x75, 0x4D, 0x65, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
         const int MAX_DESCRIPTION = 4096;
         const int MAX_HOSTNAMESIZE = 128;
         const int MAX_DEVICENAMELEN = 512;
@@ -77,187 +72,25 @@ namespace DiscImageChef.DiscImages
         const string MAGIC_BEGIN_EXT008 = "MAGIC-BEGIN-EXT008"; // reserved for future use
         const string MAGIC_BEGIN_EXT009 = "MAGIC-BEGIN-EXT009"; // reserved for future use
         const string MAGIC_BEGIN_VOLUME = "PaRtImAgE-VoLuMe";
-        #endregion
-
-        #region Internal Structures
-        /// <summary>
-        /// Partimage disk image header, little-endian
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartimageHeader
-        {
-            /// <summary>
-            /// Magic, <see cref="Partimage.partimageMagic"/>
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] magic;
-            /// <summary>
-            /// Source filesystem
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] version;
-            /// <summary>
-            /// Volume number
-            /// </summary>
-            public uint volumeNumber;
-            /// <summary>
-            /// Image identifier
-            /// </summary>
-            public ulong identificator;
-            /// <summary>
-            /// Empty space
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 404)] public byte[] reserved;
-        }
-
-        struct PortableTm
-        {
-            public uint Second;
-            public uint Minute;
-            public uint Hour;
-            public uint DayOfMonth;
-            public uint Month;
-            public uint Year;
-            public uint DayOfWeek;
-            public uint DayOfYear;
-            public uint IsDst;
-
-            public uint GmtOff;
-            public uint Timezone;
-        }
-
-        enum PCompression : uint
-        {
-            None = 0,
-            Gzip = 1,
-            Bzip2 = 2,
-            Lzo = 3
-        }
-
-        enum PEncryption : uint
-        {
-            None = 0
-        }
-
-        /// <summary>
-        /// Partimage CMainHeader
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartimageMainHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] szFileSystem; // ext2fs, ntfs, reiserfs, ...
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESCRIPTION)]
-            public byte[] szPartDescription; // user description of the partition
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)]
-            public byte[] szOriginalDevice; // original partition name
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4095)]
-            public byte[] szFirstImageFilepath; //MAXPATHLEN]; // for splitted image files
-
-            // system and hardware infos
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameSysname;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameNodename;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameRelease;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameVersion;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameMachine;
-
-            public PCompression dwCompression; // COMPRESS_XXXXXX
-            public uint dwMainFlags;
-            public PortableTm dateCreate; // date of image creation
-            public ulong qwPartSize; // size of the partition in bytes
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_HOSTNAMESIZE)] public byte[] szHostname;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] szVersion; // version of the image file
-
-            // MBR backup
-            public uint dwMbrCount; // how many MBR are saved in the image file
-            public uint dwMbrSize; // size of a MBR record (allow to change the size in the next versions)
-
-            // future encryption support
-            public PEncryption dwEncryptAlgo; // algo used to encrypt data
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] cHashTestKey; // used to test the password without giving it
-
-            // reserved for future use (save DiskLabel, Extended partitions, ...)
-            public uint dwReservedFuture000;
-            public uint dwReservedFuture001;
-            public uint dwReservedFuture002;
-            public uint dwReservedFuture003;
-            public uint dwReservedFuture004;
-            public uint dwReservedFuture005;
-            public uint dwReservedFuture006;
-            public uint dwReservedFuture007;
-            public uint dwReservedFuture008;
-            public uint dwReservedFuture009;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6524)]
-            public byte[] cReserved; // Adjust to fit with total header size
-
-            public uint crc;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CMbr // must be 1024
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MBR_SIZE_WHOLE)] public byte[] cData;
-            public uint dwDataCRC;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)] public byte[] szDevice; // ex: "hda"
-
-            // disk identificators
-            ulong qwBlocksCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESC_MODEL)] public byte[] szDescModel;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 884)] public byte[] cReserved; // for future use
-
-            //public byte[] szDescGeometry[MAX_DESC_GEOMETRY];
-            //public byte[] szDescIdentify[MAX_DESC_IDENTIFY];
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CCheck
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] byte[] cMagic; // must be 'C','H','K'
-            public uint dwCRC; // CRC of the CHECK_FREQUENCY blocks
-            public ulong qwPos; // number of the last block written
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CLocalHeader // size must be 16384 (adjust the reserved data)
-        {
-            public ulong qwBlockSize;
-            public ulong qwUsedBlocks;
-            public ulong qwBlocksCount;
-            public ulong qwBitmapSize; // bytes in the bitmap
-            public ulong qwBadBlocksCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] szLabel;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16280)]
-            public byte[] cReserved; // Adjust to fit with total header size
-
-            public uint crc;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CMainTail // size must be 16384 (adjust the reserved data)
-        {
-            public ulong qwCRC;
-            public uint dwVolumeNumber;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16372)]
-            public byte[] cReserved; // Adjust to fit with total header size
-        }
-        #endregion
-
-        PartimageHeader cVolumeHeader;
-        PartimageMainHeader cMainHeader;
-        byte[] bitmap;
-        Stream imageStream;
-        long dataOff;
-
-        Dictionary<ulong, byte[]> sectorCache;
 
         const uint MAX_CACHE_SIZE = 16777216;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        readonly byte[] partimageMagic =
+        {
+            0x50, 0x61, 0x52, 0x74, 0x49, 0x6D, 0x41, 0x67, 0x45, 0x2D, 0x56, 0x6F, 0x4C, 0x75, 0x4D, 0x65, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        };
+        byte[] bitmap;
+        PartimageMainHeader cMainHeader;
+
+        PartimageHeader cVolumeHeader;
+        long dataOff;
 
         ExtentsULong extents;
         Dictionary<ulong, ulong> extentsOff;
+        Stream imageStream;
+
+        Dictionary<ulong, byte[]> sectorCache;
 
         public Partimage()
         {
@@ -510,7 +343,7 @@ namespace DiscImageChef.DiscImages
             DateTime start = DateTime.Now;
             extents = new ExtentsULong();
             extentsOff = new Dictionary<ulong, ulong>();
-            bool current = (bitmap[0] & (1 << 0 % 8)) != 0;
+            bool current = (bitmap[0] & (1 << (0 % 8))) != 0;
             ulong blockOff = 0;
             ulong extentStart = 0;
 
@@ -571,7 +404,8 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if((bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) == 0) return new byte[ImageInfo.SectorSize];
+            if((bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) == 0)
+                return new byte[ImageInfo.SectorSize];
 
             if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
@@ -701,7 +535,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -863,6 +696,169 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     Partimage disk image header, little-endian
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct PartimageHeader
+        {
+            /// <summary>
+            ///     Magic, <see cref="Partimage.partimageMagic" />
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] magic;
+            /// <summary>
+            ///     Source filesystem
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] version;
+            /// <summary>
+            ///     Volume number
+            /// </summary>
+            public uint volumeNumber;
+            /// <summary>
+            ///     Image identifier
+            /// </summary>
+            public ulong identificator;
+            /// <summary>
+            ///     Empty space
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 404)] public byte[] reserved;
+        }
+
+        struct PortableTm
+        {
+            public uint Second;
+            public uint Minute;
+            public uint Hour;
+            public uint DayOfMonth;
+            public uint Month;
+            public uint Year;
+            public uint DayOfWeek;
+            public uint DayOfYear;
+            public uint IsDst;
+
+            public uint GmtOff;
+            public uint Timezone;
+        }
+
+        enum PCompression : uint
+        {
+            None = 0,
+            Gzip = 1,
+            Bzip2 = 2,
+            Lzo = 3
+        }
+
+        enum PEncryption : uint
+        {
+            None = 0
+        }
+
+        /// <summary>
+        ///     Partimage CMainHeader
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct PartimageMainHeader
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+            public byte[] szFileSystem; // ext2fs, ntfs, reiserfs, ...
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESCRIPTION)]
+            public byte[] szPartDescription; // user description of the partition
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)]
+            public byte[] szOriginalDevice; // original partition name
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4095)]
+            public byte[] szFirstImageFilepath; //MAXPATHLEN]; // for splitted image files
+
+            // system and hardware infos
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameSysname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameNodename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameRelease;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameVersion;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameMachine;
+
+            public PCompression dwCompression; // COMPRESS_XXXXXX
+            public uint dwMainFlags;
+            public PortableTm dateCreate; // date of image creation
+            public ulong qwPartSize; // size of the partition in bytes
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_HOSTNAMESIZE)] public byte[] szHostname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] szVersion; // version of the image file
+
+            // MBR backup
+            public uint dwMbrCount; // how many MBR are saved in the image file
+            public uint dwMbrSize; // size of a MBR record (allow to change the size in the next versions)
+
+            // future encryption support
+            public PEncryption dwEncryptAlgo; // algo used to encrypt data
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] cHashTestKey; // used to test the password without giving it
+
+            // reserved for future use (save DiskLabel, Extended partitions, ...)
+            public uint dwReservedFuture000;
+            public uint dwReservedFuture001;
+            public uint dwReservedFuture002;
+            public uint dwReservedFuture003;
+            public uint dwReservedFuture004;
+            public uint dwReservedFuture005;
+            public uint dwReservedFuture006;
+            public uint dwReservedFuture007;
+            public uint dwReservedFuture008;
+            public uint dwReservedFuture009;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6524)]
+            public byte[] cReserved; // Adjust to fit with total header size
+
+            public uint crc;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CMbr // must be 1024
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MBR_SIZE_WHOLE)] public byte[] cData;
+            public uint dwDataCRC;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)] public byte[] szDevice; // ex: "hda"
+
+            // disk identificators
+            ulong qwBlocksCount;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESC_MODEL)] public byte[] szDescModel;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 884)] public byte[] cReserved; // for future use
+
+            //public byte[] szDescGeometry[MAX_DESC_GEOMETRY];
+            //public byte[] szDescIdentify[MAX_DESC_IDENTIFY];
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CCheck
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] byte[] cMagic; // must be 'C','H','K'
+            public uint dwCRC; // CRC of the CHECK_FREQUENCY blocks
+            public ulong qwPos; // number of the last block written
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CLocalHeader // size must be 16384 (adjust the reserved data)
+        {
+            public ulong qwBlockSize;
+            public ulong qwUsedBlocks;
+            public ulong qwBlocksCount;
+            public ulong qwBitmapSize; // bytes in the bitmap
+            public ulong qwBadBlocksCount;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] szLabel;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16280)]
+            public byte[] cReserved; // Adjust to fit with total header size
+
+            public uint crc;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CMainTail // size must be 16384 (adjust the reserved data)
+        {
+            public ulong qwCRC;
+            public uint dwVolumeNumber;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16372)]
+            public byte[] cReserved; // Adjust to fit with total header size
+        }
     }
 }

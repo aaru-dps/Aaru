@@ -41,10 +41,8 @@ namespace DiscImageChef.DiscImages
     // Checked using several images and strings inside Apple's DiskImages.framework
     public class AppleDos : ImagePlugin
     {
-        #region Internal variables
-        byte[] deinterleaved;
-        string extension;
-        #endregion
+        readonly int[] dosOffsets = {0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15};
+        readonly int[] prodosOffsets = {0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15};
 
         public AppleDos()
         {
@@ -79,13 +77,8 @@ namespace DiscImageChef.DiscImages
         {
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            if(imageFilter.GetDataForkLength() == 143360 && (extension == ".po" || extension == ".do")) return true;
-
-            return false;
+            return imageFilter.GetDataForkLength() == 143360 && (extension == ".po" || extension == ".do");
         }
-
-        readonly int[] dosOffsets = {0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15};
-        readonly int[] prodosOffsets = {0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15};
 
         public override bool OpenImage(Filter imageFilter)
         {
@@ -104,8 +97,7 @@ namespace DiscImageChef.DiscImages
             for(int t = 0; t < 35; t++)
             {
                 for(int s = 0; s < 16; s++)
-                    Array.Copy(tmp, t * 16 * 256 + s * 256, deinterleaved, t * 16 * 256 + offsets[s] * 256,
-                               256);
+                    Array.Copy(tmp, t * 16 * 256 + s * 256, deinterleaved, t * 16 * 256 + offsets[s] * 256, 256);
             }
 
             ImageInfo.SectorSize = 256;
@@ -165,9 +157,7 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageFormat()
         {
-            if(extension == ".po") return "Apple ][ Interleaved Disk Image (ProDOS order)";
-
-            return "Apple ][ Interleaved Disk Image (DOS order)";
+            return extension == ".po" ? "Apple ][ Interleaved Disk Image (ProDOS order)" : "Apple ][ Interleaved Disk Image (DOS order)";
         }
 
         public override DateTime GetImageCreationTime()
@@ -266,6 +256,11 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
+        #region Internal variables
+        byte[] deinterleaved;
+        string extension;
+        #endregion
 
         #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
@@ -382,6 +377,6 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion Unsupported features
+        #endregion
     }
 }

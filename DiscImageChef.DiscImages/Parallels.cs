@@ -43,86 +43,29 @@ namespace DiscImageChef.DiscImages
 {
     public class Parallels : ImagePlugin
     {
-        #region Internal constants
-        readonly byte[] parallelsMagic =
-            {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65};
-        readonly byte[] parallelsExtMagic =
-            {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x46, 0x72, 0x65, 0x53, 0x70, 0x61, 0x63, 0x45, 0x78, 0x74};
-
         const uint PARALLELS_VERSION = 2;
 
         const uint PARALLELS_INUSE = 0x746F6E59;
         const uint PARALLELS_CLOSED = 0x312E3276;
 
         const uint PARALLELS_EMPTY = 0x00000001;
-        #endregion
-
-        #region Internal Structures
-        /// <summary>
-        /// Parallels disk image header, little-endian
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ParallelsHeader
-        {
-            /// <summary>
-            /// Magic, <see cref="Parallels.parallelsMagic"/> or <see cref="Parallels.parallelsExtMagic"/>
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
-            /// <summary>
-            /// Version
-            /// </summary>
-            public uint version;
-            /// <summary>
-            /// Disk geometry parameter
-            /// </summary>
-            public uint heads;
-            /// <summary>
-            /// Disk geometry parameter
-            /// </summary>
-            public uint cylinders;
-            /// <summary>
-            /// Cluser size in sectors
-            /// </summary>
-            public uint cluster_size;
-            /// <summary>
-            /// Entries in BAT (clusters in image)
-            /// </summary>
-            public uint bat_entries;
-            /// <summary>
-            /// Disk size in sectors
-            /// </summary>
-            public ulong sectors;
-            /// <summary>
-            /// Set to <see cref="Parallels.PARALLELS_INUSE"/> if image is opened by any software, <see cref="Parallels.PARALLELS_CLOSED"/> if not, and 0 if old version
-            /// </summary>
-            public uint in_use;
-            /// <summary>
-            /// Offset in sectors to start of data
-            /// </summary>
-            public uint data_off;
-            /// <summary>
-            /// Flags
-            /// </summary>
-            public uint flags;
-            /// <summary>
-            /// Offset in sectors to format extension
-            /// </summary>
-            public ulong ext_off;
-        }
-        #endregion
-
-        bool extended;
-        ParallelsHeader pHdr;
-        uint[] bat;
-        long dataOffset;
-        uint clusterBytes;
-        bool empty;
-        Stream imageStream;
-
-        Dictionary<ulong, byte[]> sectorCache;
 
         const uint MAX_CACHE_SIZE = 16777216;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        readonly byte[] parallelsExtMagic =
+            {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x46, 0x72, 0x65, 0x53, 0x70, 0x61, 0x63, 0x45, 0x78, 0x74};
+        readonly byte[] parallelsMagic =
+            {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65};
+        uint[] bat;
+        uint clusterBytes;
+        long dataOffset;
+        bool empty;
+
+        bool extended;
+        Stream imageStream;
+        ParallelsHeader pHdr;
+
+        Dictionary<ulong, byte[]> sectorCache;
 
         public Parallels()
         {
@@ -357,7 +300,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.MediaType;
         }
 
-        #region Unsupported features
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -518,6 +460,58 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        /// <summary>
+        ///     Parallels disk image header, little-endian
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ParallelsHeader
+        {
+            /// <summary>
+            ///     Magic, <see cref="Parallels.parallelsMagic" /> or <see cref="Parallels.parallelsExtMagic" />
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
+            /// <summary>
+            ///     Version
+            /// </summary>
+            public uint version;
+            /// <summary>
+            ///     Disk geometry parameter
+            /// </summary>
+            public uint heads;
+            /// <summary>
+            ///     Disk geometry parameter
+            /// </summary>
+            public uint cylinders;
+            /// <summary>
+            ///     Cluser size in sectors
+            /// </summary>
+            public uint cluster_size;
+            /// <summary>
+            ///     Entries in BAT (clusters in image)
+            /// </summary>
+            public uint bat_entries;
+            /// <summary>
+            ///     Disk size in sectors
+            /// </summary>
+            public ulong sectors;
+            /// <summary>
+            ///     Set to <see cref="Parallels.PARALLELS_INUSE" /> if image is opened by any software,
+            ///     <see cref="Parallels.PARALLELS_CLOSED" /> if not, and 0 if old version
+            /// </summary>
+            public uint in_use;
+            /// <summary>
+            ///     Offset in sectors to start of data
+            /// </summary>
+            public uint data_off;
+            /// <summary>
+            ///     Flags
+            /// </summary>
+            public uint flags;
+            /// <summary>
+            ///     Offset in sectors to format extension
+            /// </summary>
+            public ulong ext_off;
+        }
     }
 }

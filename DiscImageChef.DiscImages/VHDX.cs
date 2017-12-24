@@ -44,220 +44,10 @@ namespace DiscImageChef.DiscImages
 {
     public class Vhdx : ImagePlugin
     {
-        #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxIdentifier
-        {
-            /// <summary>
-            /// Signature, <see cref="Vhdx.VHDX_SIGNATURE"/>
-            /// </summary>
-            public ulong signature;
-            /// <summary>
-            /// UTF-16 string containing creator
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] creator;
-        }
-
-#pragma warning disable 649
-#pragma warning disable 169
-        struct VhdxHeader
-        {
-            /// <summary>
-            /// Signature, <see cref="Vhdx.VHDX_HEADER_SIG"/>
-            /// </summary>
-            public uint Signature;
-            /// <summary>
-            /// CRC-32C of whole 4096 bytes header with this field set to 0
-            /// </summary>
-            public uint Checksum;
-            /// <summary>
-            /// Sequence number
-            /// </summary>
-            public ulong Sequence;
-            /// <summary>
-            /// Unique identifier for file contents, must be changed on first write to metadata
-            /// </summary>
-            public Guid FileWriteGuid;
-            /// <summary>
-            /// Unique identifier for disk contents, must be changed on first write to metadata or data
-            /// </summary>
-            public Guid DataWriteGuid;
-            /// <summary>
-            /// Unique identifier for log entries
-            /// </summary>
-            public Guid LogGuid;
-            /// <summary>
-            /// Version of log format
-            /// </summary>
-            public ushort LogVersion;
-            /// <summary>
-            /// Version of VHDX format
-            /// </summary>
-            public ushort Version;
-            /// <summary>
-            /// Length in bytes of the log
-            /// </summary>
-            public uint LogLength;
-            /// <summary>
-            /// Offset from image start to the log
-            /// </summary>
-            public ulong LogOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4016)] public byte[] Reserved;
-        }
-#pragma warning restore 649
-#pragma warning restore 169
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxRegionTableHeader
-        {
-            /// <summary>
-            /// Signature, <see cref="Vhdx.VHDX_REGION_SIG"/>
-            /// </summary>
-            public uint signature;
-            /// <summary>
-            /// CRC-32C of whole 64Kb table with this field set to 0
-            /// </summary>
-            public uint checksum;
-            /// <summary>
-            /// How many entries follow this table
-            /// </summary>
-            public uint entries;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint reserved;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxRegionTableEntry
-        {
-            /// <summary>
-            /// Object identifier
-            /// </summary>
-            public Guid guid;
-            /// <summary>
-            /// Offset in image of the object
-            /// </summary>
-            public ulong offset;
-            /// <summary>
-            /// Length in bytes of the object
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Flags
-            /// </summary>
-            public uint flags;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxMetadataTableHeader
-        {
-            /// <summary>
-            /// Signature
-            /// </summary>
-            public ulong signature;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public ushort reserved;
-            /// <summary>
-            /// How many entries are in the table
-            /// </summary>
-            public ushort entries;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] reserved2;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxMetadataTableEntry
-        {
-            /// <summary>
-            /// Metadata ID
-            /// </summary>
-            public Guid itemId;
-            /// <summary>
-            /// Offset relative to start of metadata region
-            /// </summary>
-            public uint offset;
-            /// <summary>
-            /// Length in bytes
-            /// </summary>
-            public uint length;
-            /// <summary>
-            /// Flags
-            /// </summary>
-            public uint flags;
-            /// <summary>
-            /// Reserved
-            /// </summary>
-            public uint reserved;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxFileParameters
-        {
-            /// <summary>
-            /// Block size in bytes
-            /// </summary>
-            public uint blockSize;
-            /// <summary>
-            /// Flags
-            /// </summary>
-            public uint flags;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxParentLocatorHeader
-        {
-            /// <summary>
-            /// Type of parent virtual disk
-            /// </summary>
-            public Guid locatorType;
-            public ushort reserved;
-            /// <summary>
-            /// How many KVPs are in this parent locator
-            /// </summary>
-            public ushort keyValueCount;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxParentLocatorEntry
-        {
-            /// <summary>
-            /// Offset from metadata to key
-            /// </summary>
-            public uint keyOffset;
-            /// <summary>
-            /// Offset from metadata to value
-            /// </summary>
-            public uint valueOffset;
-            /// <summary>
-            /// Size of key
-            /// </summary>
-            public ushort keyLength;
-            /// <summary>
-            /// Size of value
-            /// </summary>
-            public ushort valueLength;
-        }
-        #endregion
-
-        #region Internal Constants
         const ulong VHDX_SIGNATURE = 0x656C696678646876;
         const uint VHDX_HEADER_SIG = 0x64616568;
         const uint VHDX_REGION_SIG = 0x69676572;
         const ulong VHDX_METADATA_SIG = 0x617461646174656D;
-        readonly Guid batGuid = new Guid("2DC27766-F623-4200-9D64-115E9BFD4A08");
-        readonly Guid metadataGuid = new Guid("8B7CA206-4790-4B9A-B8FE-575F050F886E");
-        readonly Guid fileParametersGuid = new Guid("CAA16737-FA36-4D43-B3B6-33F0AA44E76B");
-        readonly Guid virtualDiskSizeGuid = new Guid("2FA54224-CD1B-4876-B211-5DBED83BF4B8");
-        readonly Guid page83DataGuid = new Guid("BECA12AB-B2E6-4523-93EF-C309E000C746");
-        readonly Guid logicalSectorSizeGuid = new Guid("8141BF1D-A96F-4709-BA47-F233A8FAAB5F");
-        readonly Guid physicalSectorSizeGuid = new Guid("CDA348C7-445D-4471-9CC9-E9885251C556");
-        readonly Guid parentLocatorGuid = new Guid("A8D35F2D-B30B-454D-ABF7-D3D84834AB0C");
-        readonly Guid parentTypeVhdxGuid = new Guid("B04AEFB7-D19E-4A81-B789-25B8E9445913");
 
         const string PARENT_LINKAGE_KEY = "parent_linkage";
         const string PARENT_LINKAGE2_KEY = "parent_linkage2";
@@ -293,44 +83,50 @@ namespace DiscImageChef.DiscImages
         const ulong BAT_FILE_OFFSET_MASK = 0xFFFFFFFFFFFC0000;
         const ulong BAT_FLAGS_MASK = 0x7;
         const ulong BAT_RESERVED_MASK = 0x3FFF8;
-        #endregion
 
-        #region Internal variables
-        ulong virtualDiskSize;
-        Guid page83Data;
-        uint logicalSectorSize;
-        uint physicalSectorSize;
-
-        VhdxIdentifier vhdxId;
-        VhdxHeader vHdr;
-        VhdxRegionTableHeader vRegHdr;
-        VhdxRegionTableEntry[] vRegs;
-        VhdxMetadataTableHeader vMetHdr;
-        VhdxMetadataTableEntry[] vMets;
-        VhdxFileParameters vFileParms;
-        VhdxParentLocatorHeader vParHdr;
-        VhdxParentLocatorEntry[] vPars;
+        const int MAX_CACHE_SIZE = 16777216;
+        readonly Guid batGuid = new Guid("2DC27766-F623-4200-9D64-115E9BFD4A08");
+        readonly Guid fileParametersGuid = new Guid("CAA16737-FA36-4D43-B3B6-33F0AA44E76B");
+        readonly Guid logicalSectorSizeGuid = new Guid("8141BF1D-A96F-4709-BA47-F233A8FAAB5F");
+        readonly Guid metadataGuid = new Guid("8B7CA206-4790-4B9A-B8FE-575F050F886E");
+        readonly Guid page83DataGuid = new Guid("BECA12AB-B2E6-4523-93EF-C309E000C746");
+        readonly Guid parentLocatorGuid = new Guid("A8D35F2D-B30B-454D-ABF7-D3D84834AB0C");
+        readonly Guid parentTypeVhdxGuid = new Guid("B04AEFB7-D19E-4A81-B789-25B8E9445913");
+        readonly Guid physicalSectorSizeGuid = new Guid("CDA348C7-445D-4471-9CC9-E9885251C556");
+        readonly Guid virtualDiskSizeGuid = new Guid("2FA54224-CD1B-4876-B211-5DBED83BF4B8");
 
         long batOffset;
-        long metadataOffset;
+
+        ulong[] blockAllocationTable;
+        Dictionary<ulong, byte[]> blockCache;
 
         long chunkRatio;
         ulong dataBlocks;
-
-        ulong[] blockAllocationTable;
-        ulong[] sectorBitmapPointers;
-        byte[] sectorBitmap;
-        ImagePlugin parentImage;
         bool hasParent;
         Stream imageStream;
-
-        const int MAX_CACHE_SIZE = 16777216;
+        uint logicalSectorSize;
         int maxBlockCache;
         int maxSectorCache;
+        long metadataOffset;
+        Guid page83Data;
+        ImagePlugin parentImage;
+        uint physicalSectorSize;
+        byte[] sectorBitmap;
+        ulong[] sectorBitmapPointers;
 
         Dictionary<ulong, byte[]> sectorCache;
-        Dictionary<ulong, byte[]> blockCache;
-        #endregion
+        VhdxFileParameters vFileParms;
+        VhdxHeader vHdr;
+
+        VhdxIdentifier vhdxId;
+
+        ulong virtualDiskSize;
+        VhdxMetadataTableHeader vMetHdr;
+        VhdxMetadataTableEntry[] vMets;
+        VhdxParentLocatorHeader vParHdr;
+        VhdxParentLocatorEntry[] vPars;
+        VhdxRegionTableHeader vRegHdr;
+        VhdxRegionTableEntry[] vRegs;
 
         public Vhdx()
         {
@@ -361,7 +157,6 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        #region public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -625,8 +420,10 @@ namespace DiscImageChef.DiscImages
                             parentWorks = true;
                             break;
                         }
-                        catch { // ignored
- }
+                        catch
+                        {
+                            // ignored
+                        }
                     }
                     else if(string.Compare(entryType, VOLUME_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(entryType, ABSOLUTE_WIN32_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
@@ -645,8 +442,10 @@ namespace DiscImageChef.DiscImages
                             parentWorks = true;
                             break;
                         }
-                        catch { // ignored
- }
+                        catch
+                        {
+                            // ignored
+                        }
                     }
                 }
 
@@ -700,8 +499,10 @@ namespace DiscImageChef.DiscImages
 
                 MemoryStream sectorBmpMs = new MemoryStream();
                 foreach(ulong pt in sectorBitmapPointers)
-                    switch(pt & BAT_FLAGS_MASK) {
-                        case SECTOR_BITMAP_NOT_PRESENT: sectorBmpMs.Write(new byte[1048576], 0, 1048576);
+                    switch(pt & BAT_FLAGS_MASK)
+                    {
+                        case SECTOR_BITMAP_NOT_PRESENT:
+                            sectorBmpMs.Write(new byte[1048576], 0, 1048576);
                             break;
                         case SECTOR_BITMAP_PRESENT:
                             stream.Seek((long)((pt & BAT_FILE_OFFSET_MASK) * 1048576), SeekOrigin.Begin);
@@ -839,10 +640,13 @@ namespace DiscImageChef.DiscImages
             ulong blkFlags = blkPtr & BAT_FLAGS_MASK;
 
             if((blkPtr & BAT_RESERVED_MASK) != 0)
-                throw new ImageNotSupportedException($"Unknown flags (0x{blkPtr & BAT_RESERVED_MASK:X16}) set in block pointer");
+                throw new
+                    ImageNotSupportedException($"Unknown flags (0x{blkPtr & BAT_RESERVED_MASK:X16}) set in block pointer");
 
-            switch(blkFlags & BAT_FLAGS_MASK) {
-                case PAYLOAD_BLOCK_NOT_PRESENT: return hasParent ? parentImage.ReadSector(sectorAddress) : new byte[logicalSectorSize];
+            switch(blkFlags & BAT_FLAGS_MASK)
+            {
+                case PAYLOAD_BLOCK_NOT_PRESENT:
+                    return hasParent ? parentImage.ReadSector(sectorAddress) : new byte[logicalSectorSize];
                 case PAYLOAD_BLOCK_UNDEFINED:
                 case PAYLOAD_BLOCK_ZERO:
                 case PAYLOAD_BLOCK_UNMAPPER: return new byte[logicalSectorSize];
@@ -894,18 +698,14 @@ namespace DiscImageChef.DiscImages
 
             return ms.ToArray();
         }
-        #endregion
 
-        #region private methods
-        static uint VhdxChecksum(byte[] data)
+        static uint VhdxChecksum(IEnumerable<byte> data)
         {
             uint checksum = data.Aggregate<byte, uint>(0, (current, b) => current + b);
 
             return ~checksum;
         }
-        #endregion
 
-        #region Unsupported features
         public override string GetImageComments()
         {
             return null;
@@ -1071,6 +871,203 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-        #endregion
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxIdentifier
+        {
+            /// <summary>
+            ///     Signature, <see cref="Vhdx.VHDX_SIGNATURE" />
+            /// </summary>
+            public ulong signature;
+            /// <summary>
+            ///     UTF-16 string containing creator
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] creator;
+        }
+
+#pragma warning disable 649
+#pragma warning disable 169
+        struct VhdxHeader
+        {
+            /// <summary>
+            ///     Signature, <see cref="Vhdx.VHDX_HEADER_SIG" />
+            /// </summary>
+            public uint Signature;
+            /// <summary>
+            ///     CRC-32C of whole 4096 bytes header with this field set to 0
+            /// </summary>
+            public uint Checksum;
+            /// <summary>
+            ///     Sequence number
+            /// </summary>
+            public ulong Sequence;
+            /// <summary>
+            ///     Unique identifier for file contents, must be changed on first write to metadata
+            /// </summary>
+            public Guid FileWriteGuid;
+            /// <summary>
+            ///     Unique identifier for disk contents, must be changed on first write to metadata or data
+            /// </summary>
+            public Guid DataWriteGuid;
+            /// <summary>
+            ///     Unique identifier for log entries
+            /// </summary>
+            public Guid LogGuid;
+            /// <summary>
+            ///     Version of log format
+            /// </summary>
+            public ushort LogVersion;
+            /// <summary>
+            ///     Version of VHDX format
+            /// </summary>
+            public ushort Version;
+            /// <summary>
+            ///     Length in bytes of the log
+            /// </summary>
+            public uint LogLength;
+            /// <summary>
+            ///     Offset from image start to the log
+            /// </summary>
+            public ulong LogOffset;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4016)] public byte[] Reserved;
+        }
+#pragma warning restore 649
+#pragma warning restore 169
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxRegionTableHeader
+        {
+            /// <summary>
+            ///     Signature, <see cref="Vhdx.VHDX_REGION_SIG" />
+            /// </summary>
+            public uint signature;
+            /// <summary>
+            ///     CRC-32C of whole 64Kb table with this field set to 0
+            /// </summary>
+            public uint checksum;
+            /// <summary>
+            ///     How many entries follow this table
+            /// </summary>
+            public uint entries;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint reserved;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxRegionTableEntry
+        {
+            /// <summary>
+            ///     Object identifier
+            /// </summary>
+            public Guid guid;
+            /// <summary>
+            ///     Offset in image of the object
+            /// </summary>
+            public ulong offset;
+            /// <summary>
+            ///     Length in bytes of the object
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Flags
+            /// </summary>
+            public uint flags;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxMetadataTableHeader
+        {
+            /// <summary>
+            ///     Signature
+            /// </summary>
+            public ulong signature;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public ushort reserved;
+            /// <summary>
+            ///     How many entries are in the table
+            /// </summary>
+            public ushort entries;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] reserved2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxMetadataTableEntry
+        {
+            /// <summary>
+            ///     Metadata ID
+            /// </summary>
+            public Guid itemId;
+            /// <summary>
+            ///     Offset relative to start of metadata region
+            /// </summary>
+            public uint offset;
+            /// <summary>
+            ///     Length in bytes
+            /// </summary>
+            public uint length;
+            /// <summary>
+            ///     Flags
+            /// </summary>
+            public uint flags;
+            /// <summary>
+            ///     Reserved
+            /// </summary>
+            public uint reserved;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxFileParameters
+        {
+            /// <summary>
+            ///     Block size in bytes
+            /// </summary>
+            public uint blockSize;
+            /// <summary>
+            ///     Flags
+            /// </summary>
+            public uint flags;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxParentLocatorHeader
+        {
+            /// <summary>
+            ///     Type of parent virtual disk
+            /// </summary>
+            public Guid locatorType;
+            public ushort reserved;
+            /// <summary>
+            ///     How many KVPs are in this parent locator
+            /// </summary>
+            public ushort keyValueCount;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VhdxParentLocatorEntry
+        {
+            /// <summary>
+            ///     Offset from metadata to key
+            /// </summary>
+            public uint keyOffset;
+            /// <summary>
+            ///     Offset from metadata to value
+            /// </summary>
+            public uint valueOffset;
+            /// <summary>
+            ///     Size of key
+            /// </summary>
+            public ushort keyLength;
+            /// <summary>
+            ///     Size of value
+            /// </summary>
+            public ushort valueLength;
+        }
     }
 }
