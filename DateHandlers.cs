@@ -42,13 +42,13 @@ namespace DiscImageChef
         static readonly DateTime MacEpoch = new DateTime(1904, 1, 1, 0, 0, 0);
         static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
         /// <summary>
-        /// Day 0 of Julian Date system
+        ///     Day 0 of Julian Date system
         /// </summary>
         static readonly DateTime JulianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
         static readonly DateTime AmigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
 
         /// <summary>
-        /// Converts a Macintosh timestamp to a .NET DateTime
+        ///     Converts a Macintosh timestamp to a .NET DateTime
         /// </summary>
         /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
         /// <returns>.NET DateTime</returns>
@@ -58,7 +58,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a Lisa timestamp to a .NET DateTime
+        ///     Converts a Lisa timestamp to a .NET DateTime
         /// </summary>
         /// <param name="lisaTimeStamp">Lisa timestamp (seconds since 1st Jan. 1901)</param>
         /// <returns>.NET DateTime</returns>
@@ -68,7 +68,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a UNIX timestamp to a .NET DateTime
+        ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
@@ -78,7 +78,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a UNIX timestamp to a .NET DateTime
+        ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
@@ -88,7 +88,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a UNIX timestamp to a .NET DateTime
+        ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
@@ -98,7 +98,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a UNIX timestamp to a .NET DateTime
+        ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="seconds">Seconds since 1st Jan. 1970)</param>
         /// <param name="nanoseconds">Nanoseconds</param>
@@ -109,7 +109,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a UNIX timestamp to a .NET DateTime
+        ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
@@ -119,7 +119,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a High Sierra Format timestamp to a .NET DateTime
+        ///     Converts a High Sierra Format timestamp to a .NET DateTime
         /// </summary>
         /// <param name="vdDateTime">High Sierra Format timestamp</param>
         /// <returns>.NET DateTime</returns>
@@ -132,7 +132,7 @@ namespace DiscImageChef
 
         // TODO: Timezone
         /// <summary>
-        /// Converts an ISO9660 timestamp to a .NET DateTime
+        ///     Converts an ISO9660 timestamp to a .NET DateTime
         /// </summary>
         /// <param name="vdDateTime">ISO9660 timestamp</param>
         /// <returns>.NET DateTime</returns>
@@ -183,7 +183,8 @@ namespace DiscImageChef
             twocharvalue[1] = vdDateTime[15];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hundredths)) hundredths = 0;
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hundredths))
+                hundredths = 0;
 
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler",
                                       "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
@@ -195,7 +196,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a VMS timestamp to a .NET DateTime
+        ///     Converts a VMS timestamp to a .NET DateTime
         /// </summary>
         /// <param name="vmsDate">VMS timestamp (tenths of microseconds since day 0 of the Julian Date)</param>
         /// <returns>.NET DateTime</returns>
@@ -207,7 +208,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts an Amiga timestamp to a .NET DateTime
+        ///     Converts an Amiga timestamp to a .NET DateTime
         /// </summary>
         /// <param name="days">Days since the 1st Jan. 1978</param>
         /// <param name="minutes">Minutes since o'clock</param>
@@ -221,7 +222,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts an UCSD Pascal timestamp to a .NET DateTime
+        ///     Converts an UCSD Pascal timestamp to a .NET DateTime
         /// </summary>
         /// <param name="dateRecord">UCSD Pascal timestamp</param>
         /// <returns>.NET DateTime</returns>
@@ -238,7 +239,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a DOS timestamp to a .NET DateTime
+        ///     Converts a DOS timestamp to a .NET DateTime
         /// </summary>
         /// <param name="date">Date</param>
         /// <param name="time">Time</param>
@@ -266,7 +267,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a CP/M timestamp to .NET DateTime
+        ///     Converts a CP/M timestamp to .NET DateTime
         /// </summary>
         /// <param name="timestamp">CP/M timestamp</param>
         /// <returns>.NET DateTime</returns>
@@ -284,7 +285,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts an ECMA timestamp to a .NET DateTime
+        ///     Converts an ECMA timestamp to a .NET DateTime
         /// </summary>
         /// <param name="typeAndTimeZone">Timezone</param>
         /// <param name="year">Year</param>
@@ -322,7 +323,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Convers a Solaris high resolution timestamp to .NET DateTime
+        ///     Convers a Solaris high resolution timestamp to .NET DateTime
         /// </summary>
         /// <param name="hrTimeStamp">Solaris high resolution timestamp</param>
         /// <returns>.NET DateTime</returns>
@@ -332,7 +333,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts an OS-9 timestamp to .NET DateTime
+        ///     Converts an OS-9 timestamp to .NET DateTime
         /// </summary>
         /// <param name="date">OS-9 timestamp</param>
         /// <returns>.NET DateTime</returns>
@@ -354,7 +355,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a LIF timestamp to .NET DateTime
+        ///     Converts a LIF timestamp to .NET DateTime
         /// </summary>
         /// <param name="date">LIF timestamp</param>
         /// <returns>.NET DateTime</returns>
@@ -366,7 +367,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a LIF timestamp to .NET DateTime
+        ///     Converts a LIF timestamp to .NET DateTime
         /// </summary>
         /// <param name="year">Yer</param>
         /// <param name="month">Month</param>

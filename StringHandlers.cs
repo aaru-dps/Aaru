@@ -38,7 +38,7 @@ namespace DiscImageChef
     public static class StringHandlers
     {
         /// <summary>
-        /// Converts a null-terminated (aka C string) ASCII byte array to a C# string
+        ///     Converts a null-terminated (aka C string) ASCII byte array to a C# string
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="CString">A null-terminated (aka C string) ASCII byte array</param>
@@ -48,7 +48,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a null-terminated (aka C string) byte array with the specified encoding to a C# string
+        ///     Converts a null-terminated (aka C string) byte array with the specified encoding to a C# string
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="CString">A null-terminated (aka C string) byte array in the specified encoding</param>
@@ -86,7 +86,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string
+        ///     Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
@@ -96,7 +96,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string
+        ///     Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
@@ -123,7 +123,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string
+        ///     Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
@@ -133,7 +133,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string
+        ///     Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
@@ -159,7 +159,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Converts an OSTA compressed unicode byte array to a C# string
+        ///     Converts an OSTA compressed unicode byte array to a C# string
         /// </summary>
         /// <returns>The C# string.</returns>
         /// <param name="dstring">OSTA compressed unicode byte array.</param>

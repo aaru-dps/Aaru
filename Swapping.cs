@@ -118,12 +118,12 @@ namespace DiscImageChef
 
         public static ushort Swap(ushort x)
         {
-            return (ushort) ((x << 8) | (x >> 8));
+            return (ushort)((x << 8) | (x >> 8));
         }
 
         public static short Swap(short x)
         {
-            return (short) ((x << 8) | ((x >> 8) & 0xFF));
+            return (short)((x << 8) | ((x >> 8) & 0xFF));
         }
 
         public static uint Swap(uint x)
@@ -134,8 +134,8 @@ namespace DiscImageChef
 
         public static int Swap(int x)
         {
-            x = (int) (((x << 8) & 0xFF00FF00) | (((uint) x >> 8) & 0xFF00FF));
-            return (int) (((uint) x << 16) | (((uint) x >> 16) & 0xFFFF));
+            x = (int)(((x << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
+            return (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
         }
     }
 }

@@ -40,8 +40,8 @@ namespace DiscImageChef
     public static class BigEndianMarshal
     {
         /// <summary>
-        /// Marshals a big endian structure from a byte array.
-        /// Nested structures are still marshalled as little endian.
+        ///     Marshals a big endian structure from a byte array.
+        ///     Nested structures are still marshalled as little endian.
         /// </summary>
         /// <returns>The structure.</returns>
         /// <param name="bytes">Byte array.</param>
@@ -55,8 +55,8 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Swaps endian of structure members that correspond to numerical types.
-        /// Does not traverse nested structures.
+        ///     Swaps endian of structure members that correspond to numerical types.
+        ///     Does not traverse nested structures.
         /// </summary>
         /// <returns>The structure with its members endian swapped.</returns>
         /// <param name="str">The structure.</param>
