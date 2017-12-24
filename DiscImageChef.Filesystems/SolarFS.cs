@@ -81,14 +81,12 @@ namespace DiscImageChef.Filesystems
             return signature == 0x29 && fsType == "SOL_FS  ";
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
             byte[] bpbSector = imagePlugin.ReadSector(0 + partition.Start);
-
 
             SolarOSParameterBlock bpb = new SolarOSParameterBlock
             {
@@ -174,42 +172,6 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        struct SolarOSParameterBlock
-        {
-            /// <summary>0x00, x86 jump (3 bytes), jumps to 0x60</summary>
-            public byte[] x86_jump;
-            /// <summary>0x03, 8 bytes, "SOLAR_OS"</summary>
-            public string OEMName;
-            /// <summary>0x0B, Bytes per sector</summary>
-            public ushort bps;
-            /// <summary>0x0D, unknown, 0x01</summary>
-            public byte unk1;
-            /// <summary>0x0E, unknown, 0x0201</summary>
-            public ushort unk2;
-            /// <summary>0x10, Number of entries on root directory ? (no root directory found)</summary>
-            public ushort root_ent;
-            /// <summary>0x12, Sectors in volume</summary>
-            public ushort sectors;
-            /// <summary>0x14, Media descriptor</summary>
-            public byte media;
-            /// <summary>0x15, Sectors per FAT ? (no FAT found)</summary>
-            public ushort spfat;
-            /// <summary>0x17, Sectors per track</summary>
-            public ushort sptrk;
-            /// <summary>0x19, Heads</summary>
-            public ushort heads;
-            /// <summary>0x1B, unknown, 10 bytes, zero-filled</summary>
-            public byte[] unk3;
-            /// <summary>0x25, 0x29</summary>
-            public byte signature;
-            /// <summary>0x26, unknown, zero-filled</summary>
-            public uint unk4;
-            /// <summary>0x2A, 11 bytes, volume name, space-padded</summary>
-            public string vol_name;
-            /// <summary>0x35, 8 bytes, "SOL_FS  "</summary>
-            public string fs_type;
-        }
-
         public override Errno Mount()
         {
             return Errno.NotImplemented;
@@ -268,6 +230,42 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        struct SolarOSParameterBlock
+        {
+            /// <summary>0x00, x86 jump (3 bytes), jumps to 0x60</summary>
+            public byte[] x86_jump;
+            /// <summary>0x03, 8 bytes, "SOLAR_OS"</summary>
+            public string OEMName;
+            /// <summary>0x0B, Bytes per sector</summary>
+            public ushort bps;
+            /// <summary>0x0D, unknown, 0x01</summary>
+            public byte unk1;
+            /// <summary>0x0E, unknown, 0x0201</summary>
+            public ushort unk2;
+            /// <summary>0x10, Number of entries on root directory ? (no root directory found)</summary>
+            public ushort root_ent;
+            /// <summary>0x12, Sectors in volume</summary>
+            public ushort sectors;
+            /// <summary>0x14, Media descriptor</summary>
+            public byte media;
+            /// <summary>0x15, Sectors per FAT ? (no FAT found)</summary>
+            public ushort spfat;
+            /// <summary>0x17, Sectors per track</summary>
+            public ushort sptrk;
+            /// <summary>0x19, Heads</summary>
+            public ushort heads;
+            /// <summary>0x1B, unknown, 10 bytes, zero-filled</summary>
+            public byte[] unk3;
+            /// <summary>0x25, 0x29</summary>
+            public byte signature;
+            /// <summary>0x26, unknown, zero-filled</summary>
+            public uint unk4;
+            /// <summary>0x2A, 11 bytes, volume name, space-padded</summary>
+            public string vol_name;
+            /// <summary>0x35, 8 bytes, "SOL_FS  "</summary>
+            public string fs_type;
         }
     }
 }

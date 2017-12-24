@@ -43,19 +43,10 @@ namespace DiscImageChef.Filesystems
 {
     public class Reiser4 : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Reiser4_Superblock
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
-            public ushort diskformat;
-            public ushort blocksize;
-            public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
-        }
+        const uint REISER4_SUPER_OFFSET = 0x10000;
 
         readonly byte[] Reiser4_Magic =
             {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        const uint REISER4_SUPER_OFFSET = 0x10000;
 
         public Reiser4()
         {
@@ -103,8 +94,7 @@ namespace DiscImageChef.Filesystems
             return Reiser4_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -205,6 +195,16 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Reiser4_Superblock
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
+            public ushort diskformat;
+            public ushort blocksize;
+            public Guid uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
         }
     }
 }

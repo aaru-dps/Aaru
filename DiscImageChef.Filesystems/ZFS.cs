@@ -66,163 +66,13 @@ namespace DiscImageChef.Filesystems
         const ulong ZEC_MAGIC = 0x0210DA7AB10C7A11;
         const ulong ZEC_CIGAM = 0x117A0CB17ADA1002;
 
-        struct ZIO_Checksum
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public ulong[] word;
-        }
-
-        /// <summary>
-        /// There is an empty ZIO at sector 16 or sector 31, with magic and checksum, to detect it is really ZFS I suppose.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ZIO_Empty
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)] public byte[] empty;
-            public ulong magic;
-            public ZIO_Checksum checksum;
-        }
-
         // These parameters define how the nvlist is stored
         const byte NVS_LITTLE_ENDIAN = 1;
         const byte NVS_BIG_ENDIAN = 0;
         const byte NVS_NATIVE = 0;
         const byte NVS_XDR = 1;
 
-        /// <summary>
-        /// This structure indicates which encoding method and endianness is used to encode the nvlist
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NVS_Method
-        {
-            public byte encoding;
-            public byte endian;
-            public byte reserved1;
-            public byte reserved2;
-        }
-
-        /// <summary>
-        /// This structure gives information about the encoded nvlist
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NVS_XDR_Header
-        {
-            public NVS_Method encodingAndEndian;
-            public uint version;
-            public uint flags;
-        }
-
-        enum NVS_DataTypes : uint
-        {
-            DATA_TYPE_UNKNOWN = 0,
-            DATA_TYPE_BOOLEAN,
-            DATA_TYPE_BYTE,
-            DATA_TYPE_INT16,
-            DATA_TYPE_UINT16,
-            DATA_TYPE_INT32,
-            DATA_TYPE_UINT32,
-            DATA_TYPE_INT64,
-            DATA_TYPE_UINT64,
-            DATA_TYPE_STRING,
-            DATA_TYPE_BYTE_ARRAY,
-            DATA_TYPE_INT16_ARRAY,
-            DATA_TYPE_UINT16_ARRAY,
-            DATA_TYPE_INT32_ARRAY,
-            DATA_TYPE_UINT32_ARRAY,
-            DATA_TYPE_INT64_ARRAY,
-            DATA_TYPE_UINT64_ARRAY,
-            DATA_TYPE_STRING_ARRAY,
-            DATA_TYPE_HRTIME,
-            DATA_TYPE_NVLIST,
-            DATA_TYPE_NVLIST_ARRAY,
-            DATA_TYPE_BOOLEAN_VALUE,
-            DATA_TYPE_INT8,
-            DATA_TYPE_UINT8,
-            DATA_TYPE_BOOLEAN_ARRAY,
-            DATA_TYPE_INT8_ARRAY,
-            DATA_TYPE_UINT8_ARRAY,
-            DATA_TYPE_DOUBLE
-        }
-
-        /// <summary>
-        /// This represent an encoded nvpair (an item of an nvlist)
-        /// </summary>
-        struct NVS_Item
-        {
-            /// <summary>
-            /// Size in bytes when encoded in XDR
-            /// </summary>
-            public uint encodedSize;
-            /// <summary>
-            /// Size in bytes when decoded
-            /// </summary>
-            public uint decodedSize;
-            /// <summary>
-            /// On disk, it is null-padded for alignment to 4 bytes and prepended by a 4 byte length indicator
-            /// </summary>
-            public string name;
-            /// <summary>
-            /// Data type
-            /// </summary>
-            public NVS_DataTypes dataType;
-            /// <summary>
-            /// How many elements are here
-            /// </summary>
-            public uint elements;
-            /// <summary>
-            /// On disk size is relative to <see cref="dataType"/> and <see cref="elements"/> always aligned to 4 bytes
-            /// </summary>
-            public object value;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DVA
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ulong[] word;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SPA_BlockPointer
-        {
-            /// <summary>
-            /// Data virtual address
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public DVA[] dataVirtualAddress;
-            /// <summary>
-            /// Block properties
-            /// </summary>
-            public ulong properties;
-            /// <summary>
-            /// Reserved for future expansion
-            /// </summary>
-            public ulong[] padding;
-            /// <summary>
-            /// TXG when block was allocated
-            /// </summary>
-            public ulong birthTxg;
-            /// <summary>
-            /// Transaction group at birth
-            /// </summary>
-            public ulong birth;
-            /// <summary>
-            /// Fill count
-            /// </summary>
-            public ulong fill;
-            public ZIO_Checksum checksum;
-        }
-
         const ulong UBERBLOCK_MAGIC = 0x00BAB10C;
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ZFS_Uberblock
-        {
-            public ulong magic;
-            public ulong spaVersion;
-            public ulong lastTxg;
-            public ulong guidSum;
-            public ulong timestamp;
-            public SPA_BlockPointer mosPtr;
-            public ulong softwareVersion;
-        }
 
         const uint ZFS_MAGIC = 0x58465342;
 
@@ -270,8 +120,7 @@ namespace DiscImageChef.Filesystems
             return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -309,8 +158,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType {Type = "ZFS filesystem"};
             if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) XmlFsType.VolumeName = (string)tmpObj.value;
-            if(decodedNvList.TryGetValue("guid", out tmpObj))
-                XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
+            if(decodedNvList.TryGetValue("guid", out tmpObj)) XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
                 XmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
         }
@@ -639,7 +487,8 @@ namespace DiscImageChef.Filesystems
 
                         byte[] subListBytes = new byte[item.encodedSize - (offset - currOff)];
                         Array.Copy(nvlist, offset, subListBytes, 0, subListBytes.Length);
-                        if(DecodeNvList(subListBytes, out Dictionary<string, NVS_Item> subList, true, littleEndian)) item.value = subList;
+                        if(DecodeNvList(subListBytes, out Dictionary<string, NVS_Item> subList, true, littleEndian))
+                            item.value = subList;
                         else goto default;
                         offset = (int)(currOff + item.encodedSize);
                         break;
@@ -848,6 +697,156 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        struct ZIO_Checksum
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public ulong[] word;
+        }
+
+        /// <summary>
+        ///     There is an empty ZIO at sector 16 or sector 31, with magic and checksum, to detect it is really ZFS I suppose.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ZIO_Empty
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)] public byte[] empty;
+            public ulong magic;
+            public ZIO_Checksum checksum;
+        }
+
+        /// <summary>
+        ///     This structure indicates which encoding method and endianness is used to encode the nvlist
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct NVS_Method
+        {
+            public byte encoding;
+            public byte endian;
+            public byte reserved1;
+            public byte reserved2;
+        }
+
+        /// <summary>
+        ///     This structure gives information about the encoded nvlist
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct NVS_XDR_Header
+        {
+            public NVS_Method encodingAndEndian;
+            public uint version;
+            public uint flags;
+        }
+
+        enum NVS_DataTypes : uint
+        {
+            DATA_TYPE_UNKNOWN = 0,
+            DATA_TYPE_BOOLEAN,
+            DATA_TYPE_BYTE,
+            DATA_TYPE_INT16,
+            DATA_TYPE_UINT16,
+            DATA_TYPE_INT32,
+            DATA_TYPE_UINT32,
+            DATA_TYPE_INT64,
+            DATA_TYPE_UINT64,
+            DATA_TYPE_STRING,
+            DATA_TYPE_BYTE_ARRAY,
+            DATA_TYPE_INT16_ARRAY,
+            DATA_TYPE_UINT16_ARRAY,
+            DATA_TYPE_INT32_ARRAY,
+            DATA_TYPE_UINT32_ARRAY,
+            DATA_TYPE_INT64_ARRAY,
+            DATA_TYPE_UINT64_ARRAY,
+            DATA_TYPE_STRING_ARRAY,
+            DATA_TYPE_HRTIME,
+            DATA_TYPE_NVLIST,
+            DATA_TYPE_NVLIST_ARRAY,
+            DATA_TYPE_BOOLEAN_VALUE,
+            DATA_TYPE_INT8,
+            DATA_TYPE_UINT8,
+            DATA_TYPE_BOOLEAN_ARRAY,
+            DATA_TYPE_INT8_ARRAY,
+            DATA_TYPE_UINT8_ARRAY,
+            DATA_TYPE_DOUBLE
+        }
+
+        /// <summary>
+        ///     This represent an encoded nvpair (an item of an nvlist)
+        /// </summary>
+        struct NVS_Item
+        {
+            /// <summary>
+            ///     Size in bytes when encoded in XDR
+            /// </summary>
+            public uint encodedSize;
+            /// <summary>
+            ///     Size in bytes when decoded
+            /// </summary>
+            public uint decodedSize;
+            /// <summary>
+            ///     On disk, it is null-padded for alignment to 4 bytes and prepended by a 4 byte length indicator
+            /// </summary>
+            public string name;
+            /// <summary>
+            ///     Data type
+            /// </summary>
+            public NVS_DataTypes dataType;
+            /// <summary>
+            ///     How many elements are here
+            /// </summary>
+            public uint elements;
+            /// <summary>
+            ///     On disk size is relative to <see cref="dataType" /> and <see cref="elements" /> always aligned to 4 bytes
+            /// </summary>
+            public object value;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DVA
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ulong[] word;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct SPA_BlockPointer
+        {
+            /// <summary>
+            ///     Data virtual address
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public DVA[] dataVirtualAddress;
+            /// <summary>
+            ///     Block properties
+            /// </summary>
+            public ulong properties;
+            /// <summary>
+            ///     Reserved for future expansion
+            /// </summary>
+            public ulong[] padding;
+            /// <summary>
+            ///     TXG when block was allocated
+            /// </summary>
+            public ulong birthTxg;
+            /// <summary>
+            ///     Transaction group at birth
+            /// </summary>
+            public ulong birth;
+            /// <summary>
+            ///     Fill count
+            /// </summary>
+            public ulong fill;
+            public ZIO_Checksum checksum;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ZFS_Uberblock
+        {
+            public ulong magic;
+            public ulong spaVersion;
+            public ulong lastTxg;
+            public ulong guidSum;
+            public ulong timestamp;
+            public SPA_BlockPointer mosPtr;
+            public ulong softwareVersion;
         }
     }
 }

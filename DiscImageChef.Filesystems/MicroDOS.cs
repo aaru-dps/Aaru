@@ -77,14 +77,14 @@ namespace DiscImageChef.Filesystems
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
             GCHandle handle = GCHandle.Alloc(bk0, GCHandleType.Pinned);
-            MicroDOSBlock0 block0 = (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
+            MicroDOSBlock0 block0 =
+                (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
             handle.Free();
 
             return block0.label == MAGIC && block0.mklabel == MAGIC2;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -93,7 +93,8 @@ namespace DiscImageChef.Filesystems
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
             GCHandle handle = GCHandle.Alloc(bk0, GCHandleType.Pinned);
-            MicroDOSBlock0 block0 = (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
+            MicroDOSBlock0 block0 =
+                (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
             handle.Free();
 
             sb.AppendLine("MicroDOS filesystem");
@@ -115,62 +116,6 @@ namespace DiscImageChef.Filesystems
             };
 
             information = sb.ToString();
-        }
-
-        // Followed by directory entries
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MicroDOSBlock0
-        {
-            /// <summary>BK starts booting here</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] bootCode;
-            /// <summary>Number of files in directory</summary>
-            public ushort files;
-            /// <summary>Total number of blocks in files of the directory</summary>
-            public ushort usedBlocks;
-            /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 228)] public byte[] unknown;
-            /// <summary>Ownership label (label that shows it belongs to Micro DOS format)</summary>
-            public ushort label;
-            /// <summary>MK-DOS directory format label</summary>
-            public ushort mklabel;
-            /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)] public byte[] unknown2;
-            /// <summary>Disk size in blocks (absolute value for the system unlike NORD, NORTON etc.) that
-            /// doesn't use two fixed values 40 or 80 tracks, but i.e. if you drive works with 76 tracks
-            /// this field will contain an appropriate number of blocks</summary>
-            public ushort blocks;
-            /// <summary> Number of the first file's block. Value is changable</summary>
-            public ushort firstUsedBlock;
-            /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown3;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
-        {
-            /// <summary>File status</summary>
-            public byte status;
-            /// <summary>Directory number (0 - root)</summary>
-            public byte directory;
-            /// <summary>File name 14. symbols in ASCII KOI8</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] filename;
-            /// <summary>Block number</summary>
-            public ushort blockNo;
-            /// <summary>Length in blocks</summary>
-            public ushort blocks;
-            /// <summary>Address</summary>
-            public ushort address;
-            /// <summary>Length</summary>
-            public ushort length;
-        }
-
-        enum FileStatus : byte
-        {
-            CommonFile = 0,
-            Protected = 1,
-            LogicalDisk = 2,
-            BadFile = 0x80,
-            Deleted = 0xFF
         }
 
         public override Errno Mount()
@@ -231,6 +176,64 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        // Followed by directory entries
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct MicroDOSBlock0
+        {
+            /// <summary>BK starts booting here</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] bootCode;
+            /// <summary>Number of files in directory</summary>
+            public ushort files;
+            /// <summary>Total number of blocks in files of the directory</summary>
+            public ushort usedBlocks;
+            /// <summary>Unknown</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 228)] public byte[] unknown;
+            /// <summary>Ownership label (label that shows it belongs to Micro DOS format)</summary>
+            public ushort label;
+            /// <summary>MK-DOS directory format label</summary>
+            public ushort mklabel;
+            /// <summary>Unknown</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)] public byte[] unknown2;
+            /// <summary>
+            ///     Disk size in blocks (absolute value for the system unlike NORD, NORTON etc.) that
+            ///     doesn't use two fixed values 40 or 80 tracks, but i.e. if you drive works with 76 tracks
+            ///     this field will contain an appropriate number of blocks
+            /// </summary>
+            public ushort blocks;
+            /// <summary> Number of the first file's block. Value is changable</summary>
+            public ushort firstUsedBlock;
+            /// <summary>Unknown</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown3;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DirectoryEntry
+        {
+            /// <summary>File status</summary>
+            public byte status;
+            /// <summary>Directory number (0 - root)</summary>
+            public byte directory;
+            /// <summary>File name 14. symbols in ASCII KOI8</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] filename;
+            /// <summary>Block number</summary>
+            public ushort blockNo;
+            /// <summary>Length in blocks</summary>
+            public ushort blocks;
+            /// <summary>Address</summary>
+            public ushort address;
+            /// <summary>Length</summary>
+            public ushort length;
+        }
+
+        enum FileStatus : byte
+        {
+            CommonFile = 0,
+            Protected = 1,
+            LogicalDisk = 2,
+            BadFile = 0x80,
+            Deleted = 0xFF
         }
     }
 }

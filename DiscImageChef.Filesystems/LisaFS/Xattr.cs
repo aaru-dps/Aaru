@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.LisaFS
     public partial class LisaFS
     {
         /// <summary>
-        /// Lists all extended attributes, alternate data streams and forks of the given file.
+        ///     Lists all extended attributes, alternate data streams and forks of the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Reads an extended attribute, alternate data stream or fork from the given file.
+        ///     Reads an extended attribute, alternate data stream or fork from the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Lists special Apple Lisa filesystem features as extended attributes
+        ///     Lists special Apple Lisa filesystem features as extended attributes
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="fileId">File identifier.</param>
@@ -125,7 +125,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Lists special Apple Lisa filesystem features as extended attributes
+        ///     Lists special Apple Lisa filesystem features as extended attributes
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="fileId">File identifier.</param>
@@ -161,7 +161,8 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(error != Errno.NoError) return error;
 
-            switch(xattr) {
+            switch(xattr)
+            {
                 case "com.apple.lisa.password" when file.password_valid > 0:
                     buf = new byte[8];
                     Array.Copy(file.password, 0, buf, 0, 8);
@@ -184,7 +185,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Decodes a sector tag. Not tested with 24-byte tags.
+        ///     Decodes a sector tag. Not tested with 24-byte tags.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="tag">Sector tag.</param>

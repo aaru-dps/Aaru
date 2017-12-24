@@ -45,6 +45,11 @@ namespace DiscImageChef.Filesystems
     {
         const int SB_POS = 0x400;
 
+        /// <summary>
+        ///     ext superblock magic
+        /// </summary>
+        const ushort EXT_MAGIC = 0x137D;
+
         public extFS()
         {
             Name = "Linux extended Filesystem";
@@ -84,8 +89,7 @@ namespace DiscImageChef.Filesystems
             return magic == EXT_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -115,7 +119,6 @@ namespace DiscImageChef.Filesystems
                 maxsize = BitConverter.ToUInt32(sbSector, 0x020)
             };
 
-
             sb.AppendLine("ext filesystem");
             sb.AppendFormat("{0} zones on volume", extSb.zones);
             sb.AppendFormat("{0} free blocks ({1} bytes)", extSb.freecountblk, extSb.freecountblk * 1024);
@@ -137,49 +140,6 @@ namespace DiscImageChef.Filesystems
             };
 
             information = sb.ToString();
-        }
-
-        /// <summary>
-        /// ext superblock magic
-        /// </summary>
-        const ushort EXT_MAGIC = 0x137D;
-
-        /// <summary>
-        /// ext superblock
-        /// </summary>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct extFSSuperBlock
-        {
-            /// <summary>0x000, inodes on volume</summary>
-            public uint inodes;
-            /// <summary>0x004, zones on volume</summary>
-            public uint zones;
-            /// <summary>0x008, first free block</summary>
-            public uint firstfreeblk;
-            /// <summary>0x00C, free blocks count</summary>
-            public uint freecountblk;
-            /// <summary>0x010, first free inode</summary>
-            public uint firstfreeind;
-            /// <summary>0x014, free inodes count</summary>
-            public uint freecountind;
-            /// <summary>0x018, first data zone</summary>
-            public uint firstdatazone;
-            /// <summary>0x01C, log zone size</summary>
-            public uint logzonesize;
-            /// <summary>0x020, max zone size</summary>
-            public uint maxsize;
-            /// <summary>0x024, reserved</summary>
-            public uint reserved1;
-            /// <summary>0x028, reserved</summary>
-            public uint reserved2;
-            /// <summary>0x02C, reserved</summary>
-            public uint reserved3;
-            /// <summary>0x030, reserved</summary>
-            public uint reserved4;
-            /// <summary>0x034, reserved</summary>
-            public uint reserved5;
-            /// <summary>0x038, 0x137D (little endian)</summary>
-            public ushort magic;
         }
 
         public override Errno Mount()
@@ -240,6 +200,44 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        /// <summary>
+        ///     ext superblock
+        /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        struct extFSSuperBlock
+        {
+            /// <summary>0x000, inodes on volume</summary>
+            public uint inodes;
+            /// <summary>0x004, zones on volume</summary>
+            public uint zones;
+            /// <summary>0x008, first free block</summary>
+            public uint firstfreeblk;
+            /// <summary>0x00C, free blocks count</summary>
+            public uint freecountblk;
+            /// <summary>0x010, first free inode</summary>
+            public uint firstfreeind;
+            /// <summary>0x014, free inodes count</summary>
+            public uint freecountind;
+            /// <summary>0x018, first data zone</summary>
+            public uint firstdatazone;
+            /// <summary>0x01C, log zone size</summary>
+            public uint logzonesize;
+            /// <summary>0x020, max zone size</summary>
+            public uint maxsize;
+            /// <summary>0x024, reserved</summary>
+            public uint reserved1;
+            /// <summary>0x028, reserved</summary>
+            public uint reserved2;
+            /// <summary>0x02C, reserved</summary>
+            public uint reserved3;
+            /// <summary>0x030, reserved</summary>
+            public uint reserved4;
+            /// <summary>0x034, reserved</summary>
+            public uint reserved5;
+            /// <summary>0x038, 0x137D (little endian)</summary>
+            public ushort magic;
         }
     }
 }

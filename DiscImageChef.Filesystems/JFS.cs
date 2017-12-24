@@ -42,95 +42,6 @@ namespace DiscImageChef.Filesystems
 {
     public class JFS : Filesystem
     {
-        [Flags]
-        enum JFS_Flags : uint
-        {
-            Unicode = 0x00000001,
-            RemountRO = 0x00000002,
-            Continue = 0x00000004,
-            Panic = 0x00000008,
-            UserQuota = 0x00000010,
-            GroupQuota = 0x00000020,
-            NoJournal = 0x00000040,
-            Discard = 0x00000080,
-            GroupCommit = 0x00000100,
-            LazyCommit = 0x00000200,
-            Temporary = 0x00000400,
-            InlineLog = 0x00000800,
-            InlineMoving = 0x00001000,
-            BadSAIT = 0x00010000,
-            Sparse = 0x00020000,
-            DASDEnabled = 0x00040000,
-            DASDPrime = 0x00080000,
-            SwapBytes = 0x00100000,
-            DirIndex = 0x00200000,
-            Linux = 0x10000000,
-            DFS = 0x20000000,
-            OS2 = 0x40000000,
-            AIX = 0x80000000
-        }
-
-        [Flags]
-        enum JFS_State : uint
-        {
-            Clean = 0,
-            Mounted = 1,
-            Dirty = 2,
-            Logredo = 4,
-            Extendfs = 8
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JFS_Extent
-        {
-            /// <summary>
-            /// Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2"/>
-            /// </summary>
-            public uint len_addr;
-            public uint addr2;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JFS_TimeStruct
-        {
-            public uint tv_sec;
-            public uint tv_nsec;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JFS_SuperBlock
-        {
-            public uint s_magic;
-            public uint s_version;
-            public ulong s_size;
-            public uint s_bsize;
-            public ushort s_l2bsize;
-            public ushort s_l2bfactor;
-            public uint s_pbsize;
-            public ushort s_l1pbsize;
-            public ushort pad;
-            public uint s_agsize;
-            public JFS_Flags s_flags;
-            public JFS_State s_state;
-            public uint s_compress;
-            public JFS_Extent s_ait2;
-            public JFS_Extent s_aim2;
-            public uint s_logdev;
-            public uint s_logserial;
-            public JFS_Extent s_logpxd;
-            public JFS_Extent s_fsckpxd;
-            public JFS_TimeStruct s_time;
-            public uint s_fsckloglen;
-            public sbyte s_fscklog;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] s_fpack;
-            public ulong s_xsize;
-            public JFS_Extent s_xfsckpxd;
-            public JFS_Extent s_xlogpxd;
-            public Guid s_uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] s_label;
-            public Guid s_loguuid;
-        }
-
         const uint JFS_BOOT_BLOCKS_SIZE = 0x8000;
         const uint JFS_MAGIC = 0x3153464A;
 
@@ -172,8 +83,7 @@ namespace DiscImageChef.Filesystems
             return jfsSb.s_magic == JFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sb = new StringBuilder();
@@ -300,6 +210,95 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [Flags]
+        enum JFS_Flags : uint
+        {
+            Unicode = 0x00000001,
+            RemountRO = 0x00000002,
+            Continue = 0x00000004,
+            Panic = 0x00000008,
+            UserQuota = 0x00000010,
+            GroupQuota = 0x00000020,
+            NoJournal = 0x00000040,
+            Discard = 0x00000080,
+            GroupCommit = 0x00000100,
+            LazyCommit = 0x00000200,
+            Temporary = 0x00000400,
+            InlineLog = 0x00000800,
+            InlineMoving = 0x00001000,
+            BadSAIT = 0x00010000,
+            Sparse = 0x00020000,
+            DASDEnabled = 0x00040000,
+            DASDPrime = 0x00080000,
+            SwapBytes = 0x00100000,
+            DirIndex = 0x00200000,
+            Linux = 0x10000000,
+            DFS = 0x20000000,
+            OS2 = 0x40000000,
+            AIX = 0x80000000
+        }
+
+        [Flags]
+        enum JFS_State : uint
+        {
+            Clean = 0,
+            Mounted = 1,
+            Dirty = 2,
+            Logredo = 4,
+            Extendfs = 8
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct JFS_Extent
+        {
+            /// <summary>
+            ///     Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2" />
+            /// </summary>
+            public uint len_addr;
+            public uint addr2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct JFS_TimeStruct
+        {
+            public uint tv_sec;
+            public uint tv_nsec;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct JFS_SuperBlock
+        {
+            public uint s_magic;
+            public uint s_version;
+            public ulong s_size;
+            public uint s_bsize;
+            public ushort s_l2bsize;
+            public ushort s_l2bfactor;
+            public uint s_pbsize;
+            public ushort s_l1pbsize;
+            public ushort pad;
+            public uint s_agsize;
+            public JFS_Flags s_flags;
+            public JFS_State s_state;
+            public uint s_compress;
+            public JFS_Extent s_ait2;
+            public JFS_Extent s_aim2;
+            public uint s_logdev;
+            public uint s_logserial;
+            public JFS_Extent s_logpxd;
+            public JFS_Extent s_fsckpxd;
+            public JFS_TimeStruct s_time;
+            public uint s_fsckloglen;
+            public sbyte s_fscklog;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] s_fpack;
+            public ulong s_xsize;
+            public JFS_Extent s_xfsckpxd;
+            public JFS_Extent s_xlogpxd;
+            public Guid s_uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] s_label;
+            public Guid s_loguuid;
         }
     }
 }

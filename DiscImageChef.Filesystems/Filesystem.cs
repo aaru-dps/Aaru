@@ -40,22 +40,16 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     /// <summary>
-    /// Abstract class to implement filesystem plugins.
+    ///     Abstract class to implement filesystem plugins.
     /// </summary>
     public abstract class Filesystem
     {
+        protected Encoding CurrentEncoding;
         /// <summary>Plugin name.</summary>
         public string Name;
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUuid;
         internal FileSystemType XmlFsType;
-        protected Encoding CurrentEncoding;
-
-        /// <summary>
-        /// Information about the filesystem as expected by CICM Metadata XML
-        /// </summary>
-        /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
-        public FileSystemType XmlFSType => XmlFsType;
 
         protected Filesystem() { }
 
@@ -63,7 +57,7 @@ namespace DiscImageChef.Filesystems
         protected Filesystem(Encoding encoding) { }
 
         /// <summary>
-        /// Initializes a filesystem instance prepared for reading contents
+        ///     Initializes a filesystem instance prepared for reading contents
         /// </summary>
         /// <param name="imagePlugin">Image plugin.</param>
         /// <param name="partition">Partition.</param>
@@ -71,7 +65,13 @@ namespace DiscImageChef.Filesystems
         protected Filesystem(ImagePlugin imagePlugin, Partition partition, Encoding encoding) { }
 
         /// <summary>
-        /// Identifies the filesystem in the specified LBA
+        ///     Information about the filesystem as expected by CICM Metadata XML
+        /// </summary>
+        /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
+        public FileSystemType XmlFSType => XmlFsType;
+
+        /// <summary>
+        ///     Identifies the filesystem in the specified LBA
         /// </summary>
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
@@ -79,31 +79,32 @@ namespace DiscImageChef.Filesystems
         public abstract bool Identify(ImagePlugin imagePlugin, Partition partition);
 
         /// <summary>
-        /// Gets information about the identified filesystem.
+        ///     Gets information about the identified filesystem.
         /// </summary>
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="information">Filesystem information.</param>
-        public abstract void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information);
+        public abstract void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information);
 
         /// <summary>
-        /// Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories from the filesystem.
+        ///     Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories
+        ///     from the filesystem.
         /// </summary>
         public abstract Errno Mount();
 
         /// <summary>
-        /// Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories from the filesystem.
+        ///     Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories
+        ///     from the filesystem.
         /// </summary>
         public abstract Errno Mount(bool debug);
 
         /// <summary>
-        /// Frees all internal structures created by <see cref="Mount()"/>
+        ///     Frees all internal structures created by <see cref="Mount()" />
         /// </summary>
         public abstract Errno Unmount();
 
         /// <summary>
-        /// Maps a filesystem block from a file to a block from the underlying device.
+        ///     Maps a filesystem block from a file to a block from the underlying device.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
@@ -112,7 +113,7 @@ namespace DiscImageChef.Filesystems
         public abstract Errno MapBlock(string path, long fileBlock, ref long deviceBlock);
 
         /// <summary>
-        /// Gets the attributes of a file or directory
+        ///     Gets the attributes of a file or directory
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
@@ -120,7 +121,7 @@ namespace DiscImageChef.Filesystems
         public abstract Errno GetAttributes(string path, ref FileAttributes attributes);
 
         /// <summary>
-        /// Lists all extended attributes, alternate data streams and forks of the given file.
+        ///     Lists all extended attributes, alternate data streams and forks of the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
@@ -128,7 +129,7 @@ namespace DiscImageChef.Filesystems
         public abstract Errno ListXAttr(string path, ref List<string> xattrs);
 
         /// <summary>
-        /// Reads an extended attribute, alternate data stream or fork from the given file.
+        ///     Reads an extended attribute, alternate data stream or fork from the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
@@ -137,7 +138,7 @@ namespace DiscImageChef.Filesystems
         public abstract Errno GetXattr(string path, string xattr, ref byte[] buf);
 
         /// <summary>
-        /// Reads data from a file (main/only data stream or data fork).
+        ///     Reads data from a file (main/only data stream or data fork).
         /// </summary>
         /// <param name="path">File path.</param>
         /// <param name="offset">Offset.</param>
@@ -146,27 +147,27 @@ namespace DiscImageChef.Filesystems
         public abstract Errno Read(string path, long offset, long size, ref byte[] buf);
 
         /// <summary>
-        /// Lists contents from a directory.
+        ///     Lists contents from a directory.
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
         public abstract Errno ReadDir(string path, ref List<string> contents);
 
         /// <summary>
-        /// Gets information about the mounted volume.
+        ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
         public abstract Errno StatFs(ref FileSystemInfo stat);
 
         /// <summary>
-        /// Gets information about a file or directory.
+        ///     Gets information about a file or directory.
         /// </summary>
         /// <param name="path">File path.</param>
         /// <param name="stat">File information.</param>
         public abstract Errno Stat(string path, ref FileEntryInfo stat);
 
         /// <summary>
-        /// Solves a symbolic link.
+        ///     Solves a symbolic link.
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>

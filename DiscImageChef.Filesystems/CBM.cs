@@ -65,124 +65,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new PETSCII();
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CommodoreBAM
-        {
-            /// <summary>
-            /// Track where directory starts
-            /// </summary>
-            public byte directoryTrack;
-            /// <summary>
-            /// Sector where directory starts
-            /// </summary>
-            public byte directorySector;
-            /// <summary>
-            /// Disk DOS version, 0x41
-            /// </summary>
-            public byte dosVersion;
-            /// <summary>
-            /// Set to 0x80 if 1571, 0x00 if not
-            /// </summary>
-            public byte doubleSided;
-            /// <summary>
-            /// Block allocation map
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 140)] public byte[] bam;
-            /// <summary>
-            /// Disk name
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
-            /// <summary>
-            /// Filled with 0xA0
-            /// </summary>
-            public ushort fill1;
-            /// <summary>
-            /// Disk ID
-            /// </summary>
-            public ushort diskId;
-            /// <summary>
-            /// Filled with 0xA0
-            /// </summary>
-            public byte fill2;
-            /// <summary>
-            /// DOS type
-            /// </summary>
-            public ushort dosType;
-            /// <summary>
-            /// Filled with 0xA0
-            /// </summary>
-            public uint fill3;
-            /// <summary>
-            /// Unused
-            /// </summary>
-            public byte unused1;
-            /// <summary>
-            /// Block allocation map for Dolphin DOS extended tracks
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] dolphinBam;
-            /// <summary>
-            /// Block allocation map for Speed DOS extended tracks
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] speedBam;
-            /// <summary>
-            /// Unused
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] unused2;
-            /// <summary>
-            /// Free sector count for second side in 1571
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] freeCount;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CommodoreHeader
-        {
-            /// <summary>
-            /// Track where directory starts
-            /// </summary>
-            public byte directoryTrack;
-            /// <summary>
-            /// Sector where directory starts
-            /// </summary>
-            public byte directorySector;
-            /// <summary>
-            /// Disk DOS version, 0x44
-            /// </summary>
-            public byte diskDosVersion;
-            /// <summary>
-            /// Unusued
-            /// </summary>
-            public byte unused1;
-            /// <summary>
-            /// Disk name
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
-            /// <summary>
-            /// Filled with 0xA0
-            /// </summary>
-            public ushort fill1;
-            /// <summary>
-            /// Disk ID
-            /// </summary>
-            public ushort diskId;
-            /// <summary>
-            /// Filled with 0xA0
-            /// </summary>
-            public byte fill2;
-            /// <summary>
-            /// DOS version ('3')
-            /// </summary>
-            public byte dosVersion;
-            /// <summary>
-            /// Disk version ('D')
-            /// </summary>
-            public byte diskVersion;
-            /// <summary>
-            /// Filled with 0xA0
-            /// </summary>
-            public short fill3;
-        }
-
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start > 0) return false;
@@ -222,8 +104,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] sector;
 
@@ -249,13 +130,13 @@ namespace DiscImageChef.Filesystems
 
                 sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmHdr.directoryTrack,
                                            cbmHdr.directorySector).AppendLine();
-                sbInformation.AppendFormat("Disk DOS Version: {0}",
-                                           Encoding.ASCII.GetString(new[] {cbmHdr.diskDosVersion})).AppendLine();
+                sbInformation
+                    .AppendFormat("Disk DOS Version: {0}", Encoding.ASCII.GetString(new[] {cbmHdr.diskDosVersion}))
+                    .AppendLine();
                 sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new[] {cbmHdr.dosVersion}))
                              .AppendLine();
-                sbInformation
-                    .AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new[] {cbmHdr.diskVersion}))
-                    .AppendLine();
+                sbInformation.AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new[] {cbmHdr.diskVersion}))
+                             .AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
                 sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding))
                              .AppendLine();
@@ -348,6 +229,124 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CommodoreBAM
+        {
+            /// <summary>
+            ///     Track where directory starts
+            /// </summary>
+            public byte directoryTrack;
+            /// <summary>
+            ///     Sector where directory starts
+            /// </summary>
+            public byte directorySector;
+            /// <summary>
+            ///     Disk DOS version, 0x41
+            /// </summary>
+            public byte dosVersion;
+            /// <summary>
+            ///     Set to 0x80 if 1571, 0x00 if not
+            /// </summary>
+            public byte doubleSided;
+            /// <summary>
+            ///     Block allocation map
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 140)] public byte[] bam;
+            /// <summary>
+            ///     Disk name
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
+            /// <summary>
+            ///     Filled with 0xA0
+            /// </summary>
+            public ushort fill1;
+            /// <summary>
+            ///     Disk ID
+            /// </summary>
+            public ushort diskId;
+            /// <summary>
+            ///     Filled with 0xA0
+            /// </summary>
+            public byte fill2;
+            /// <summary>
+            ///     DOS type
+            /// </summary>
+            public ushort dosType;
+            /// <summary>
+            ///     Filled with 0xA0
+            /// </summary>
+            public uint fill3;
+            /// <summary>
+            ///     Unused
+            /// </summary>
+            public byte unused1;
+            /// <summary>
+            ///     Block allocation map for Dolphin DOS extended tracks
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] dolphinBam;
+            /// <summary>
+            ///     Block allocation map for Speed DOS extended tracks
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] speedBam;
+            /// <summary>
+            ///     Unused
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] unused2;
+            /// <summary>
+            ///     Free sector count for second side in 1571
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] freeCount;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CommodoreHeader
+        {
+            /// <summary>
+            ///     Track where directory starts
+            /// </summary>
+            public byte directoryTrack;
+            /// <summary>
+            ///     Sector where directory starts
+            /// </summary>
+            public byte directorySector;
+            /// <summary>
+            ///     Disk DOS version, 0x44
+            /// </summary>
+            public byte diskDosVersion;
+            /// <summary>
+            ///     Unusued
+            /// </summary>
+            public byte unused1;
+            /// <summary>
+            ///     Disk name
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
+            /// <summary>
+            ///     Filled with 0xA0
+            /// </summary>
+            public ushort fill1;
+            /// <summary>
+            ///     Disk ID
+            /// </summary>
+            public ushort diskId;
+            /// <summary>
+            ///     Filled with 0xA0
+            /// </summary>
+            public byte fill2;
+            /// <summary>
+            ///     DOS version ('3')
+            /// </summary>
+            public byte dosVersion;
+            /// <summary>
+            ///     Disk version ('D')
+            /// </summary>
+            public byte diskVersion;
+            /// <summary>
+            ///     Filled with 0xA0
+            /// </summary>
+            public short fill3;
         }
     }
 }

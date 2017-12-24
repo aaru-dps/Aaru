@@ -93,8 +93,7 @@ namespace DiscImageChef.Filesystems
             return signature == 0xAA55;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -141,8 +140,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType();
 
-            if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 &&
-               ntfsBb.signature2 == 0xAA55)
+            if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 && ntfsBb.signature2 == 0xAA55)
             {
                 XmlFsType.Bootable = true;
                 Sha1Context sha1Ctx = new Sha1Context();
@@ -160,8 +158,68 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
+        }
+
         /// <summary>
-        /// NTFS $BOOT
+        ///     NTFS $BOOT
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NtfsBootBlock
@@ -230,66 +288,6 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 430)] public byte[] boot_code;
             /// <summary>0x1FE, 0xAA55</summary>
             public ushort signature2;
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }

@@ -110,7 +110,10 @@ namespace DiscImageChef.Filesystems
                 spc
             };
 
-            foreach(byte[] sb_sector in locations.TakeWhile(i => i + sb_size_in_sectors < (int)imagePlugin.ImageInfo.Sectors).Select(i => imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors))) {
+            foreach(byte[] sb_sector in locations
+                .TakeWhile(i => i + sb_size_in_sectors < (int)imagePlugin.ImageInfo.Sectors)
+                .Select(i => imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors)))
+            {
                 uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
                 if(magic == XENIX_MAGIC || magic == XENIX_CIGAM || magic == SYSV_MAGIC || magic == SYSV_CIGAM)
@@ -156,15 +159,13 @@ namespace DiscImageChef.Filesystems
                 if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD) continue;
 
                 if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
-                   s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
-                    return true;
+                   s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize()) return true;
             }
 
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -680,6 +681,66 @@ namespace DiscImageChef.Filesystems
             BigEndianBitConverter.IsLittleEndian = false; // Return to default (bigendian)
         }
 
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
+        }
+
         // Old XENIX use different offsets
         struct XenixSuperBlock
         {
@@ -925,66 +986,6 @@ namespace DiscImageChef.Filesystems
             public string s_fpack;
             /// <summary>0x1F4, zero-filled</summary>
             public uint s_unique;
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }

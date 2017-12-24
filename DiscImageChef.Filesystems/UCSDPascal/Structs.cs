@@ -53,7 +53,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             public short dummy;
             /// <summary>0x14, last booted</summary>
             public short lastBoot;
-            /// <summary>0x16, tail to make record same size as <see cref="PascalFileEntry"/></summary>
+            /// <summary>0x16, tail to make record same size as <see cref="PascalFileEntry" /></summary>
             public int tail;
         }
 

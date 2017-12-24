@@ -49,6 +49,38 @@ namespace DiscImageChef.Filesystems
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class FFSPlugin : Filesystem
     {
+        const uint block_size = 8192;
+
+        // FreeBSD specifies starts at byte offsets 0, 8192, 65536 and 262144, but in other cases it's following sectors
+        // Without bootcode
+        const ulong sb_start_floppy = 0;
+        // With bootcode
+        const ulong sb_start_boot = 1;
+        // Dunno, longer boot code
+        const ulong sb_start_long_boot = 8;
+        // Found on AT&T for MD-2D floppieslzio
+        const ulong sb_start_att_dsdd = 14;
+        // Found on hard disks (Atari UNIX e.g.)
+        const ulong sb_start_piggy = 32;
+
+        // MAGICs
+        // UFS magic
+        const uint UFS_MAGIC = 0x00011954;
+        // Big-endian UFS magic
+        const uint UFS_CIGAM = 0x54190100;
+        // BorderWare UFS
+        const uint UFS_MAGIC_BW = 0x0F242697;
+        // Big-endian BorderWare UFS
+        const uint UFS_CIGAM_BW = 0x9726240F;
+        // UFS2 magic
+        const uint UFS2_MAGIC = 0x19540119;
+        // Big-endian UFS2 magic
+        const uint UFS2_CIGAM = 0x19015419;
+        // Incomplete newfs
+        const uint UFS_BAD_MAGIC = 0x19960408;
+        // Big-endian incomplete newfs
+        const uint UFS_BAD_CIGAM = 0x08049619;
+
         public FFSPlugin()
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
@@ -87,11 +119,15 @@ namespace DiscImageChef.Filesystems
                 262144 / imagePlugin.GetSectorSize()
             };
 
-            return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors).Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors)).Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C)).Any(magic => magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
+            return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors)
+                            .Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors))
+                            .Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C))
+                            .Any(magic => magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW ||
+                                          magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM ||
+                                          magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sbInformation = new StringBuilder();
@@ -119,7 +155,8 @@ namespace DiscImageChef.Filesystems
                 262144 / imagePlugin.GetSectorSize()
             };
 
-            foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sb_size_in_sectors)) {
+            foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sb_size_in_sectors))
+            {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
                 magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
@@ -347,12 +384,16 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("NINDIR: 0x{0:X8}", ufs_sb.fs_nindir).AppendLine();
             sbInformation.AppendFormat("INOPB: 0x{0:X8}", ufs_sb.fs_inopb).AppendLine();
             sbInformation.AppendFormat("NSPF: 0x{0:X8}", ufs_sb.fs_old_nspf).AppendLine();
-            switch(ufs_sb.fs_optim) {
-                case 0: sbInformation.AppendLine("Filesystem will minimize allocation time");
+            switch(ufs_sb.fs_optim)
+            {
+                case 0:
+                    sbInformation.AppendLine("Filesystem will minimize allocation time");
                     break;
-                case 1: sbInformation.AppendLine("Filesystem will minimize volume fragmentation");
+                case 1:
+                    sbInformation.AppendLine("Filesystem will minimize volume fragmentation");
                     break;
-                default: sbInformation.AppendFormat("Unknown optimization value: 0x{0:X8}", ufs_sb.fs_optim).AppendLine();
+                default:
+                    sbInformation.AppendFormat("Unknown optimization value: 0x{0:X8}", ufs_sb.fs_optim).AppendLine();
                     break;
             }
 
@@ -362,7 +403,8 @@ namespace DiscImageChef.Filesystems
                              .AppendLine();
             sbInformation.AppendFormat("Hardware sector interleave: {0}", ufs_sb.fs_old_interleave).AppendLine();
             sbInformation.AppendFormat("Sector 0 skew: {0}/track", ufs_sb.fs_old_trackskew).AppendLine();
-            if(!fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0) sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2).AppendLine();
+            if(!fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
+                sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2).AppendLine();
             else if(fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
             {
                 sbInformation.AppendFormat("{0} µsec for head switch", ufs_sb.fs_id_1).AppendLine();
@@ -451,37 +493,65 @@ namespace DiscImageChef.Filesystems
             information = sbInformation.ToString();
         }
 
-        const uint block_size = 8192;
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
 
-        // FreeBSD specifies starts at byte offsets 0, 8192, 65536 and 262144, but in other cases it's following sectors
-        // Without bootcode
-        const ulong sb_start_floppy = 0;
-        // With bootcode
-        const ulong sb_start_boot = 1;
-        // Dunno, longer boot code
-        const ulong sb_start_long_boot = 8;
-        // Found on AT&T for MD-2D floppieslzio
-        const ulong sb_start_att_dsdd = 14;
-        // Found on hard disks (Atari UNIX e.g.)
-        const ulong sb_start_piggy = 32;
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
 
-        // MAGICs
-        // UFS magic
-        const uint UFS_MAGIC = 0x00011954;
-        // Big-endian UFS magic
-        const uint UFS_CIGAM = 0x54190100;
-        // BorderWare UFS
-        const uint UFS_MAGIC_BW = 0x0F242697;
-        // Big-endian BorderWare UFS
-        const uint UFS_CIGAM_BW = 0x9726240F;
-        // UFS2 magic
-        const uint UFS2_MAGIC = 0x19540119;
-        // Big-endian UFS2 magic
-        const uint UFS2_CIGAM = 0x19015419;
-        // Incomplete newfs
-        const uint UFS_BAD_MAGIC = 0x19960408;
-        // Big-endian incomplete newfs
-        const uint UFS_BAD_CIGAM = 0x08049619;
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
+        }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct csum
@@ -518,8 +588,10 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>linked list of file systems</summary>
             public uint fs_link;
-            /// <summary>    used for incore super blocks
-            /// on Sun: uint fs_rolled; // logging only: fs fully rolled</summary>
+            /// <summary>
+            ///     used for incore super blocks
+            ///     on Sun: uint fs_rolled; // logging only: fs fully rolled
+            /// </summary>
             public uint fs_rlink;
             /// <summary>addr of super-block in filesys</summary>
             public ufs_daddr_t fs_sblkno;
@@ -586,21 +658,29 @@ namespace DiscImageChef.Filesystems
             /// <summary>value of NSPF</summary>
             public int fs_old_nspf;
             /* yet another configuration parameter */
-            /// <summary>optimization preference, see below
-            /// On SVR: int fs_state; // file system state</summary>
+            /// <summary>
+            ///     optimization preference, see below
+            ///     On SVR: int fs_state; // file system state
+            /// </summary>
             public int fs_optim;
             /// <summary># sectors/track including spares</summary>
             public int fs_old_npsect;
             /// <summary>hardware sector interleave</summary>
             public int fs_old_interleave;
-            /// <summary>sector 0 skew, per track
-            /// On A/UX: int fs_state; // file system state</summary>
+            /// <summary>
+            ///     sector 0 skew, per track
+            ///     On A/UX: int fs_state; // file system state
+            /// </summary>
             public int fs_old_trackskew;
-            /// <summary>unique filesystem id
-            /// On old: int fs_headswitch; // head switch time, usec</summary>
+            /// <summary>
+            ///     unique filesystem id
+            ///     On old: int fs_headswitch; // head switch time, usec
+            /// </summary>
             public int fs_id_1;
-            /// <summary>unique filesystem id
-            /// On old: int fs_trkseek; // track-to-track seek, usec</summary>
+            /// <summary>
+            ///     unique filesystem id
+            ///     On old: int fs_trkseek; // track-to-track seek, usec
+            /// </summary>
             public int fs_id_2;
             /* sizes determined by number of cylinder groups and their sizes */
             /// <summary>blk addr of cyl grp summary area</summary>
@@ -729,66 +809,6 @@ namespace DiscImageChef.Filesystems
             public uint fs_magic;
             /// <summary>list of blocks for each rotation</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] public byte[] fs_rotbl;
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }

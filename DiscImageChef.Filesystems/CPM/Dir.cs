@@ -52,10 +52,10 @@ namespace DiscImageChef.Filesystems.CPM
         }
 
         /// <summary>
-        /// Checks that the given directory blocks follow the CP/M filesystem directory specification
-        /// Corrupted directories will fail.
-        /// FAT firectories will false positive if all files start with 0x05, and do not use full extentions, for example:
-        /// "σAFILE.GZ" (using code page 437)
+        ///     Checks that the given directory blocks follow the CP/M filesystem directory specification
+        ///     Corrupted directories will fail.
+        ///     FAT firectories will false positive if all files start with 0x05, and do not use full extentions, for example:
+        ///     "σAFILE.GZ" (using code page 437)
         /// </summary>
         /// <returns>False if the directory does not follow the directory specification</returns>
         /// <param name="directory">Directory blocks.</param>
@@ -76,17 +76,21 @@ namespace DiscImageChef.Filesystems.CPM
 
                     if((entry.statusUser & 0x7F) < 0x20)
                     {
-                        for(int f = 0; f < 8; f++) if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
+                        for(int f = 0; f < 8; f++)
+                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
 
-                        for(int e = 0; e < 3; e++) if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
+                        for(int e = 0; e < 3; e++)
+                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
 
                         if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename)) fileCount++;
                     }
                     else if(entry.statusUser == 0x20)
                     {
-                        for(int f = 0; f < 8; f++) if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
+                        for(int f = 0; f < 8; f++)
+                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
 
-                        for(int e = 0; e < 3; e++) if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
+                        for(int e = 0; e < 3; e++)
+                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
 
                         label = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
                         labelCreationDate = new byte[4];

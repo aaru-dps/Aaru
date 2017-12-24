@@ -38,6 +38,49 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
+        static DecodedVolumeDescriptor DecodeVolumeDescriptor(HighSierraPrimaryVolumeDescriptor pvd)
+        {
+            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor
+            {
+                SystemIdentifier = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim('\0'),
+                VolumeIdentifier = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim('\0'),
+                VolumeSetIdentifier = Encoding.ASCII.GetString(pvd.volume_set_id).TrimEnd().Trim('\0'),
+                PublisherIdentifier = Encoding.ASCII.GetString(pvd.publisher_id).TrimEnd().Trim('\0'),
+                DataPreparerIdentifier = Encoding.ASCII.GetString(pvd.preparer_id).TrimEnd().Trim('\0'),
+                ApplicationIdentifier = Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim('\0')
+            };
+
+            if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00) decodedVD.CreationTime = DateTime.MinValue;
+            else decodedVD.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
+
+            if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00)
+                decodedVD.HasModificationTime = false;
+            else
+            {
+                decodedVD.HasModificationTime = true;
+                decodedVD.ModificationTime = DateHandlers.HighSierraToDateTime(pvd.modification_date);
+            }
+
+            if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00) decodedVD.HasExpirationTime = false;
+            else
+            {
+                decodedVD.HasExpirationTime = true;
+                decodedVD.ExpirationTime = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
+            }
+
+            if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00) decodedVD.HasEffectiveTime = false;
+            else
+            {
+                decodedVD.HasEffectiveTime = true;
+                decodedVD.EffectiveTime = DateHandlers.HighSierraToDateTime(pvd.effective_date);
+            }
+
+            decodedVD.Blocks = pvd.volume_space_size;
+            decodedVD.BlockSize = pvd.logical_block_size;
+
+            return decodedVD;
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HighSierraPrimaryVolumeDescriptor
         {
@@ -106,49 +149,6 @@ namespace DiscImageChef.Filesystems.ISO9660
             public ushort volume_sequence_number_be;
             public byte name_len;
             // Followed by name[name_len] and then system area until length arrives
-        }
-
-        static DecodedVolumeDescriptor DecodeVolumeDescriptor(HighSierraPrimaryVolumeDescriptor pvd)
-        {
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor
-            {
-                SystemIdentifier = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim('\0'),
-                VolumeIdentifier = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim('\0'),
-                VolumeSetIdentifier = Encoding.ASCII.GetString(pvd.volume_set_id).TrimEnd().Trim('\0'),
-                PublisherIdentifier = Encoding.ASCII.GetString(pvd.publisher_id).TrimEnd().Trim('\0'),
-                DataPreparerIdentifier = Encoding.ASCII.GetString(pvd.preparer_id).TrimEnd().Trim('\0'),
-                ApplicationIdentifier = Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim('\0')
-            };
-
-            if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)
-                decodedVD.CreationTime = DateTime.MinValue;
-            else decodedVD.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
-
-            if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00) decodedVD.HasModificationTime = false;
-            else
-            {
-                decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DateHandlers.HighSierraToDateTime(pvd.modification_date);
-            }
-
-            if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00) decodedVD.HasExpirationTime = false;
-            else
-            {
-                decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
-            }
-
-            if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00) decodedVD.HasEffectiveTime = false;
-            else
-            {
-                decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DateHandlers.HighSierraToDateTime(pvd.effective_date);
-            }
-
-            decodedVD.Blocks = pvd.volume_space_size;
-            decodedVD.BlockSize = pvd.logical_block_size;
-
-            return decodedVD;
         }
     }
 }

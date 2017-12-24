@@ -66,18 +66,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ApfsContainerSuperBlock
-        {
-            public ulong unknown1; // Varies between copies of the superblock
-            public ulong unknown2;
-            public ulong unknown3; // Varies by 1 between copies of the superblock
-            public ulong unknown4;
-            public uint magic;
-            public uint blockSize;
-            public ulong containerBlocks;
-        }
-
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
@@ -97,8 +85,7 @@ namespace DiscImageChef.Filesystems
             return nxSb.magic == APFS_CONTAINER_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             XmlFsType = new FileSystemType();
@@ -195,6 +182,18 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ApfsContainerSuperBlock
+        {
+            public ulong unknown1; // Varies between copies of the superblock
+            public ulong unknown2;
+            public ulong unknown3; // Varies by 1 between copies of the superblock
+            public ulong unknown4;
+            public uint magic;
+            public uint blockSize;
+            public ulong containerBlocks;
         }
     }
 }

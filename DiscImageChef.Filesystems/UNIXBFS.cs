@@ -77,8 +77,7 @@ namespace DiscImageChef.Filesystems
             return magic == BFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -125,28 +124,6 @@ namespace DiscImageChef.Filesystems
             XmlFsType.Clusters = (long)(partition.End - partition.Start + 1);
 
             information = sb.ToString();
-        }
-
-        struct BFSSuperBlock
-        {
-            /// <summary>0x00, 0x1BADFACE</summary>
-            public uint s_magic;
-            /// <summary>0x04, start in bytes of volume</summary>
-            public uint s_start;
-            /// <summary>0x08, end in bytes of volume</summary>
-            public uint s_end;
-            /// <summary>0x0C, unknown :p</summary>
-            public uint s_from;
-            /// <summary>0x10, unknown :p</summary>
-            public uint s_to;
-            /// <summary>0x14, unknown :p</summary>
-            public int s_bfrom;
-            /// <summary>0x18, unknown :p</summary>
-            public int s_bto;
-            /// <summary>0x1C, 6 bytes, filesystem name</summary>
-            public string s_fsname;
-            /// <summary>0x22, 6 bytes, volume name</summary>
-            public string s_volume;
         }
 
         public override Errno Mount()
@@ -207,6 +184,28 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        struct BFSSuperBlock
+        {
+            /// <summary>0x00, 0x1BADFACE</summary>
+            public uint s_magic;
+            /// <summary>0x04, start in bytes of volume</summary>
+            public uint s_start;
+            /// <summary>0x08, end in bytes of volume</summary>
+            public uint s_end;
+            /// <summary>0x0C, unknown :p</summary>
+            public uint s_from;
+            /// <summary>0x10, unknown :p</summary>
+            public uint s_to;
+            /// <summary>0x14, unknown :p</summary>
+            public int s_bfrom;
+            /// <summary>0x18, unknown :p</summary>
+            public int s_bto;
+            /// <summary>0x1C, 6 bytes, filesystem name</summary>
+            public string s_fsname;
+            /// <summary>0x22, 6 bytes, volume name</summary>
+            public string s_volume;
         }
     }
 }

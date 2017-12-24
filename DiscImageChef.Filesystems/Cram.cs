@@ -42,6 +42,12 @@ namespace DiscImageChef.Filesystems
 {
     public class Cram : Filesystem
     {
+        /// <summary>
+        ///     Identifier for Cram
+        /// </summary>
+        const uint CRAM_MAGIC = 0x28CD3D45;
+        const uint CRAM_CIGAM = 0x453DCD28;
+
         public Cram()
         {
             Name = "Cram filesystem";
@@ -63,36 +69,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
-        enum CramCompression : ushort
-        {
-            Zlib = 1,
-            Lzma = 2,
-            Lzo = 3,
-            Xz = 4,
-            Lz4 = 5
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CramSuperBlock
-        {
-            public uint magic;
-            public uint size;
-            public uint flags;
-            public uint future;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] signature;
-            public uint crc;
-            public uint edition;
-            public uint blocks;
-            public uint files;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
-        }
-
-        /// <summary>
-        /// Identifier for Cram
-        /// </summary>
-        const uint CRAM_MAGIC = 0x28CD3D45;
-        const uint CRAM_CIGAM = 0x453DCD28;
-
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
@@ -104,8 +80,7 @@ namespace DiscImageChef.Filesystems
             return magic == CRAM_MAGIC || magic == CRAM_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
@@ -113,7 +88,8 @@ namespace DiscImageChef.Filesystems
             CramSuperBlock crSb = new CramSuperBlock();
             bool littleEndian = true;
 
-            switch(magic) {
+            switch(magic)
+            {
                 case CRAM_MAGIC:
                     IntPtr crSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(crSb));
                     Marshal.Copy(sector, 0, crSbPtr, Marshal.SizeOf(crSb));
@@ -209,6 +185,30 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        enum CramCompression : ushort
+        {
+            Zlib = 1,
+            Lzma = 2,
+            Lzo = 3,
+            Xz = 4,
+            Lz4 = 5
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CramSuperBlock
+        {
+            public uint magic;
+            public uint size;
+            public uint flags;
+            public uint future;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] signature;
+            public uint crc;
+            public uint edition;
+            public uint blocks;
+            public uint files;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
         }
     }
 }

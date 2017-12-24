@@ -121,13 +121,15 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
         public override Errno StatFs(ref FileSystemInfo stat)
         {
-            stat = new FileSystemInfo();
-            stat.Blocks = mountedVolEntry.blocks;
-            stat.FilenameLength = 16;
-            stat.Files = (ulong)mountedVolEntry.files;
-            stat.FreeBlocks = 0;
-            stat.PluginId = PluginUuid;
-            stat.Type = "UCSD Pascal";
+            stat = new FileSystemInfo
+            {
+                Blocks = mountedVolEntry.blocks,
+                FilenameLength = 16,
+                Files = (ulong)mountedVolEntry.files,
+                FreeBlocks = 0,
+                PluginId = PluginUuid,
+                Type = "UCSD Pascal"
+            };
 
             stat.FreeBlocks = mountedVolEntry.blocks - (mountedVolEntry.lastBlock - mountedVolEntry.firstBlock);
             foreach(PascalFileEntry entry in fileEntries) stat.FreeBlocks -= entry.lastBlock - entry.firstBlock;

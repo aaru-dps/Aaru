@@ -43,65 +43,6 @@ namespace DiscImageChef.Filesystems
 {
     public class QNX4 : Filesystem
     {
-        struct QNX4_Extent
-        {
-            public uint block;
-            public uint length;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_Inode
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] di_fname;
-            public uint di_size;
-            public QNX4_Extent di_first_xtnt;
-            public uint di_xblk;
-            public uint di_ftime;
-            public uint di_mtime;
-            public uint di_atime;
-            public uint di_ctime;
-            public ushort di_num_xtnts;
-            public ushort di_mode;
-            public ushort di_uid;
-            public ushort di_gid;
-            public ushort di_nlink;
-            public uint di_zero;
-            public byte di_type;
-            public byte di_status;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_LinkInfo
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] dl_fname;
-            public uint dl_inode_blk;
-            public byte dl_inode_ndx;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] dl_spare;
-            public byte dl_status;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_ExtentBlock
-        {
-            public uint next_xblk;
-            public uint prev_xblk;
-            public byte num_xtnts;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] spare;
-            public uint num_blocks;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)] public QNX4_Extent[] xtnts;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
-            public QNX4_Extent first_xtnt;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_Superblock
-        {
-            public QNX4_Inode rootDir;
-            public QNX4_Inode inode;
-            public QNX4_Inode boot;
-            public QNX4_Inode altBoot;
-        }
-
         readonly byte[] QNX4_RootDir_Fname =
             {0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
@@ -159,8 +100,7 @@ namespace DiscImageChef.Filesystems
             return true;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
@@ -320,6 +260,65 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        struct QNX4_Extent
+        {
+            public uint block;
+            public uint length;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QNX4_Inode
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] di_fname;
+            public uint di_size;
+            public QNX4_Extent di_first_xtnt;
+            public uint di_xblk;
+            public uint di_ftime;
+            public uint di_mtime;
+            public uint di_atime;
+            public uint di_ctime;
+            public ushort di_num_xtnts;
+            public ushort di_mode;
+            public ushort di_uid;
+            public ushort di_gid;
+            public ushort di_nlink;
+            public uint di_zero;
+            public byte di_type;
+            public byte di_status;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QNX4_LinkInfo
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] dl_fname;
+            public uint dl_inode_blk;
+            public byte dl_inode_ndx;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] dl_spare;
+            public byte dl_status;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QNX4_ExtentBlock
+        {
+            public uint next_xblk;
+            public uint prev_xblk;
+            public byte num_xtnts;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] spare;
+            public uint num_blocks;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)] public QNX4_Extent[] xtnts;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
+            public QNX4_Extent first_xtnt;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QNX4_Superblock
+        {
+            public QNX4_Inode rootDir;
+            public QNX4_Inode inode;
+            public QNX4_Inode boot;
+            public QNX4_Inode altBoot;
         }
     }
 }

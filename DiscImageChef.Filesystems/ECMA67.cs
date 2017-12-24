@@ -43,6 +43,8 @@ namespace DiscImageChef.Filesystems
 {
     public class ECMA67 : Filesystem
     {
+        readonly byte[] ECMA67_Magic = {0x56, 0x4F, 0x4C};
+
         public ECMA67()
         {
             Name = "ECMA-67";
@@ -62,27 +64,6 @@ namespace DiscImageChef.Filesystems
             Name = "ECMA-67";
             PluginUuid = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
             CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        readonly byte[] ECMA67_Magic = {0x56, 0x4F, 0x4C};
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeLabel
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] labelIdentifier;
-            public byte labelNumber;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] volumeIdentifier;
-            public byte volumeAccessibility;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)] public byte[] reserved1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] owner;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] reserved2;
-            public byte surface;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] reserved3;
-            public byte recordLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved4;
-            public byte fileLabelAllocation;
-            public byte labelStandardVersion;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] reserved5;
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -190,6 +171,25 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VolumeLabel
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] labelIdentifier;
+            public byte labelNumber;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] volumeIdentifier;
+            public byte volumeAccessibility;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)] public byte[] reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] owner;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] reserved2;
+            public byte surface;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] reserved3;
+            public byte recordLength;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved4;
+            public byte fileLabelAllocation;
+            public byte labelStandardVersion;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] reserved5;
         }
     }
 }

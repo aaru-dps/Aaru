@@ -93,8 +93,7 @@ namespace DiscImageChef.Filesystems
             return magic == AFS_MAGIC1;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -112,7 +111,8 @@ namespace DiscImageChef.Filesystems
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
             GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
-            AtheosSuperBlock afsSb = (AtheosSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(AtheosSuperBlock));
+            AtheosSuperBlock afsSb =
+                (AtheosSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(AtheosSuperBlock));
             handle.Free();
 
             sb.AppendLine("Atheos filesystem");
@@ -121,8 +121,8 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, CurrentEncoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", afsSb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks,
-                            afsSb.num_blocks * afsSb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks, afsSb.num_blocks * afsSb.block_size)
+              .AppendLine();
             sb.AppendFormat("{0} used blocks ({1} bytes)", afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size)
               .AppendLine();
             sb.AppendFormat("{0} bytes per i-node", afsSb.inode_size).AppendLine();
@@ -163,8 +163,68 @@ namespace DiscImageChef.Filesystems
             };
         }
 
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
+        }
+
         /// <summary>
-        /// Be superblock
+        ///     Be superblock
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AtheosSuperBlock
@@ -229,66 +289,6 @@ namespace DiscImageChef.Filesystems
             public ushort indices_len;
             /// <summary>0x08C, Size of bootloader</summary>
             public int boot_size;
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }

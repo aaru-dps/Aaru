@@ -61,7 +61,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(int i = 0; i < 100; i++)
                 {
-                    DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag searchTag);
+                    DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag),
+                              out LisaTag.PriamTag searchTag);
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
@@ -137,7 +138,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(int i = 0; i < 100; i++)
                 {
-                    DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag searchTag);
+                    DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag),
+                              out LisaTag.PriamTag searchTag);
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
@@ -307,11 +309,10 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     sb.AppendFormat("Master copy ID: 0x{0:X8}", infoMddf.master_copy_id).AppendLine();
 
-                    sb.AppendFormat("Volume is number {0} of {1}", infoMddf.volnum, infoMddf.vol_sequence)
-                      .AppendLine();
+                    sb.AppendFormat("Volume is number {0} of {1}", infoMddf.volnum, infoMddf.vol_sequence).AppendLine();
 
-                    sb.AppendFormat("Serial number of Lisa computer that created this volume: {0}",
-                                    infoMddf.machine_id).AppendLine();
+                    sb.AppendFormat("Serial number of Lisa computer that created this volume: {0}", infoMddf.machine_id)
+                      .AppendLine();
                     sb.AppendFormat("Serial number of Lisa computer that can use this volume's software {0}",
                                     infoMddf.serialization).AppendLine();
 
@@ -341,8 +342,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                                     infoMddf.srec_ptr + infoMddf.mddf_block + beforeMddf, infoMddf.srec_len)
                       .AppendLine();
 
-                    if(infoMddf.vol_left_mounted == 0) sb.AppendLine("Volume is clean");
-                    else sb.AppendLine("Volume is dirty");
+                    sb.AppendLine(infoMddf.vol_left_mounted == 0 ? "Volume is clean" : "Volume is dirty");
 
                     information = sb.ToString();
 

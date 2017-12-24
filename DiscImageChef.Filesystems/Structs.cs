@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace DiscImageChef.Filesystems
 {
     /// <summary>
-    /// File attributes.
+    ///     File attributes.
     /// </summary>
     [Flags]
     public enum FileAttributes : ulong
@@ -143,12 +143,31 @@ namespace DiscImageChef.Filesystems
     }
 
     /// <summary>
-    /// Information about a file entry
+    ///     Information about a file entry
     /// </summary>
     public class FileEntryInfo
     {
         /// <summary>File attributes</summary>
         public FileAttributes Attributes;
+        /// <summary>File length in blocks</summary>
+        public long Blocks;
+        /// <summary>File block size in bytes</summary>
+        public long BlockSize;
+        /// <summary>If file points to a device, device number</summary>
+        public ulong DeviceNo;
+        /// <summary>POSIX group ID</summary>
+        public ulong GID;
+
+        /// <summary>inode number for this file</summary>
+        public ulong Inode;
+        /// <summary>File length in bytes</summary>
+        public long Length;
+        /// <summary>Number of hard links pointing to this file</summary>
+        public ulong Links;
+        /// <summary>POSIX permissions/mode for this file</summary>
+        public uint Mode;
+        /// <summary>POSIX owner ID</summary>
+        public ulong UID;
 
         /// <summary>File creation date in UTC</summary>
         public DateTime CreationTimeUtc { get; set; }
@@ -164,77 +183,59 @@ namespace DiscImageChef.Filesystems
         /// <summary>File creation date</summary>
         public DateTime CreationTime
         {
-            get { return CreationTimeUtc.ToLocalTime(); }
-            set { CreationTimeUtc = value.ToUniversalTime(); }
+            get => CreationTimeUtc.ToLocalTime();
+            set => CreationTimeUtc = value.ToUniversalTime();
         }
         /// <summary>File last access date</summary>
         public DateTime AccessTime
         {
-            get { return AccessTimeUtc.ToLocalTime(); }
-            set { AccessTimeUtc = value.ToUniversalTime(); }
+            get => AccessTimeUtc.ToLocalTime();
+            set => AccessTimeUtc = value.ToUniversalTime();
         }
         /// <summary>File attributes change date</summary>
         public DateTime StatusChangeTime
         {
-            get { return StatusChangeTimeUtc.ToLocalTime(); }
-            set { StatusChangeTimeUtc = value.ToUniversalTime(); }
+            get => StatusChangeTimeUtc.ToLocalTime();
+            set => StatusChangeTimeUtc = value.ToUniversalTime();
         }
         /// <summary>File last backup date</summary>
         public DateTime BackupTime
         {
-            get { return BackupTimeUtc.ToLocalTime(); }
-            set { BackupTimeUtc = value.ToUniversalTime(); }
+            get => BackupTimeUtc.ToLocalTime();
+            set => BackupTimeUtc = value.ToUniversalTime();
         }
         /// <summary>File last modification date</summary>
         public DateTime LastWriteTime
         {
-            get { return LastWriteTimeUtc.ToLocalTime(); }
-            set { LastWriteTimeUtc = value.ToUniversalTime(); }
+            get => LastWriteTimeUtc.ToLocalTime();
+            set => LastWriteTimeUtc = value.ToUniversalTime();
         }
-
-        /// <summary>inode number for this file</summary>
-        public ulong Inode;
-        /// <summary>POSIX permissions/mode for this file</summary>
-        public uint Mode;
-        /// <summary>Number of hard links pointing to this file</summary>
-        public ulong Links;
-        /// <summary>POSIX owner ID</summary>
-        public ulong UID;
-        /// <summary>POSIX group ID</summary>
-        public ulong GID;
-        /// <summary>If file points to a device, device number</summary>
-        public ulong DeviceNo;
-        /// <summary>File length in bytes</summary>
-        public long Length;
-        /// <summary>File block size in bytes</summary>
-        public long BlockSize;
-        /// <summary>File length in blocks</summary>
-        public long Blocks;
     }
 
     public class FileSystemInfo
     {
+        /// <summary>Blocks for this filesystem</summary>
+        public long Blocks;
+        /// <summary>Maximum length of filenames on this filesystem</summary>
+        public ushort FilenameLength;
+        /// <summary>Files on this filesystem</summary>
+        public ulong Files;
+        /// <summary>Blocks free on this filesystem</summary>
+        public long FreeBlocks;
+        /// <summary>Free inodes on this filesystem</summary>
+        public ulong FreeFiles;
+        /// <summary>Filesystem ID</summary>
+        public FileSystemId Id;
+        /// <summary>ID of plugin for this file</summary>
+        public Guid PluginId;
+
+        /// <summary>Filesystem type</summary>
+        public string Type;
+
         public FileSystemInfo()
         {
             Id = new FileSystemId();
         }
-
-        /// <summary>Filesystem type</summary>
-        public string Type;
-        /// <summary>ID of plugin for this file</summary>
-        public Guid PluginId;
-        /// <summary>Blocks for this filesystem</summary>
-        public long Blocks;
-        /// <summary>Blocks free on this filesystem</summary>
-        public long FreeBlocks;
-        /// <summary>Files on this filesystem</summary>
-        public ulong Files;
-        /// <summary>Free inodes on this filesystem</summary>
-        public ulong FreeFiles;
-        /// <summary>Maximum length of filenames on this filesystem</summary>
-        public ushort FilenameLength;
-        /// <summary>Filesystem ID</summary>
-        public FileSystemId Id;
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -250,7 +251,7 @@ namespace DiscImageChef.Filesystems
     }
 
     /// <summary>
-    /// Errors
+    ///     Errors
     /// </summary>
     public enum Errno
     {

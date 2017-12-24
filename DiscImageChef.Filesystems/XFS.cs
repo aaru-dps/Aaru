@@ -43,67 +43,6 @@ namespace DiscImageChef.Filesystems
 {
     public class XFS : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct XFS_Superblock
-        {
-            public uint magicnum;
-            public uint blocksize;
-            public ulong dblocks;
-            public ulong rblocks;
-            public ulong rextents;
-            public Guid uuid;
-            public ulong logstat;
-            public ulong rootino;
-            public ulong rbmino;
-            public ulong rsumino;
-            public uint rextsize;
-            public uint agblocks;
-            public uint agcount;
-            public uint rbmblocks;
-            public uint logblocks;
-            public ushort version;
-            public ushort sectsize;
-            public ushort inodesize;
-            public ushort inopblock;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] fname;
-            public byte blocklog;
-            public byte sectlog;
-            public byte inodelog;
-            public byte inopblog;
-            public byte agblklog;
-            public byte rextslog;
-            public byte inprogress;
-            public byte imax_pct;
-            public ulong icount;
-            public ulong ifree;
-            public ulong fdblocks;
-            public ulong frextents;
-            public ulong uquotino;
-            public ulong gquotino;
-            public ushort qflags;
-            public byte flags;
-            public byte shared_vn;
-            public ulong inoalignmt;
-            public ulong unit;
-            public ulong width;
-            public byte dirblklog;
-            public byte logsectlog;
-            public ushort logsectsize;
-            public uint logsunit;
-            public uint features2;
-            public uint bad_features2;
-            public uint features_compat;
-            public uint features_ro_compat;
-            public uint features_incompat;
-            public uint features_log_incompat;
-            // This field is little-endian while rest of superblock is big-endian
-            public uint crc;
-            public uint spino_align;
-            public ulong pquotino;
-            public ulong lsn;
-            public Guid meta_uuid;
-        }
-
         const uint XFS_MAGIC = 0x58465342;
 
         public XFS()
@@ -178,8 +117,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -318,6 +256,67 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct XFS_Superblock
+        {
+            public uint magicnum;
+            public uint blocksize;
+            public ulong dblocks;
+            public ulong rblocks;
+            public ulong rextents;
+            public Guid uuid;
+            public ulong logstat;
+            public ulong rootino;
+            public ulong rbmino;
+            public ulong rsumino;
+            public uint rextsize;
+            public uint agblocks;
+            public uint agcount;
+            public uint rbmblocks;
+            public uint logblocks;
+            public ushort version;
+            public ushort sectsize;
+            public ushort inodesize;
+            public ushort inopblock;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] fname;
+            public byte blocklog;
+            public byte sectlog;
+            public byte inodelog;
+            public byte inopblog;
+            public byte agblklog;
+            public byte rextslog;
+            public byte inprogress;
+            public byte imax_pct;
+            public ulong icount;
+            public ulong ifree;
+            public ulong fdblocks;
+            public ulong frextents;
+            public ulong uquotino;
+            public ulong gquotino;
+            public ushort qflags;
+            public byte flags;
+            public byte shared_vn;
+            public ulong inoalignmt;
+            public ulong unit;
+            public ulong width;
+            public byte dirblklog;
+            public byte logsectlog;
+            public ushort logsectsize;
+            public uint logsunit;
+            public uint features2;
+            public uint bad_features2;
+            public uint features_compat;
+            public uint features_ro_compat;
+            public uint features_incompat;
+            public uint features_log_incompat;
+            // This field is little-endian while rest of superblock is big-endian
+            public uint crc;
+            public uint spino_align;
+            public ulong pquotino;
+            public ulong lsn;
+            public Guid meta_uuid;
         }
     }
 }

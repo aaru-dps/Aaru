@@ -32,6 +32,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+
 #pragma warning disable 169
 
 namespace DiscImageChef.Filesystems.AppleMFS
@@ -42,7 +43,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     public partial class AppleMFS
     {
         /// <summary>
-        /// Master Directory Block, should be at offset 0x0400 bytes in volume
+        ///     Master Directory Block, should be at offset 0x0400 bytes in volume
         /// </summary>
         struct MFS_MasterDirectoryBlock
         {
@@ -79,7 +80,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
 
         /// <summary>
-        /// Should be at offset 0x0000 in volume, followed by boot code
+        ///     Should be at offset 0x0000 in volume, followed by boot code
         /// </summary>
         struct MFS_BootBlock
         {

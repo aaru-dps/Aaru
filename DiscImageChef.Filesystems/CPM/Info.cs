@@ -264,12 +264,16 @@ namespace DiscImageChef.Filesystems.CPM
 
                             if(amsSb.format == 2)
                             {
-                                switch(amsSb.sidedness & 0x02) {
-                                    case 1: workingDefinition.order = "SIDES";
+                                switch(amsSb.sidedness & 0x02)
+                                {
+                                    case 1:
+                                        workingDefinition.order = "SIDES";
                                         break;
-                                    case 2: workingDefinition.order = "CYLINDERS";
+                                    case 2:
+                                        workingDefinition.order = "CYLINDERS";
                                         break;
-                                    default: workingDefinition.order = null;
+                                    default:
+                                        workingDefinition.order = null;
                                         break;
                                 }
 
@@ -373,7 +377,6 @@ namespace DiscImageChef.Filesystems.CPM
                             for(int si = 0; si < hddSb.sectorsPerTrack; si++)
                                 workingDefinition.side1.sectorIds[si] = si + 1;
                             for(int si = 0; si < hddSb.spt; si++) workingDefinition.side2.sectorIds[si] = si + 1;
-
                         }
                     }
                 }
@@ -787,7 +790,13 @@ namespace DiscImageChef.Filesystems.CPM
                     if(LoadDefinitions() && definitions?.definitions != null && definitions.definitions.Count > 0)
                     {
                         DicConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
-                        foreach(CpmDefinition def in from def in definitions.definitions let sectors = (ulong)(def.cylinders * def.sides * def.sectorsPerTrack) where sectors == imagePlugin.GetSectors() && def.bytesPerSector == imagePlugin.GetSectorSize() select def) {
+                        foreach(CpmDefinition def in from def in definitions.definitions
+                                                     let sectors =
+                                                         (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
+                                                     where sectors == imagePlugin.GetSectors() &&
+                                                           def.bytesPerSector == imagePlugin.GetSectorSize()
+                                                     select def)
+                        {
                             // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
                             DicConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
                             ulong offset;
@@ -805,8 +814,7 @@ namespace DiscImageChef.Filesystems.CPM
                             else
                             {
                                 // Head changes after every track
-                                if(string.Compare(def.order, "SIDES",
-                                                  StringComparison.InvariantCultureIgnoreCase) == 0)
+                                if(string.Compare(def.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
                                 {
                                     sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
                                     for(int m = 0; m < def.side1.sectorIds.Length; m++)
@@ -838,8 +846,9 @@ namespace DiscImageChef.Filesystems.CPM
                                     continue;
                                 }
                                 // TODO: Implement EAGLE ordering
-                                else if(string.Compare(def.order, "EAGLE",
-                                                       StringComparison.InvariantCultureIgnoreCase) == 0)
+                                else if(
+                                    string.Compare(def.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) == 0
+                                )
                                 {
                                     DicConsole.DebugWriteLine("CP/M Plugin",
                                                               "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
@@ -873,14 +882,12 @@ namespace DiscImageChef.Filesystems.CPM
 
                             // Complement of the directory bytes if needed
                             if(def.complement)
-                                for(int b = 0; b < directory.Length; b++)
-                                    directory[b] = (byte)(~directory[b] & 0xFF);
+                                for(int b = 0; b < directory.Length; b++) directory[b] = (byte)(~directory[b] & 0xFF);
 
                             // Check the directory
                             if(CheckDir(directory))
                             {
-                                DicConsole.DebugWriteLine("CP/M Plugin",
-                                                          "Definition \"{0}\" has a correct directory",
+                                DicConsole.DebugWriteLine("CP/M Plugin", "Definition \"{0}\" has a correct directory",
                                                           def.comment);
 
                                 // Build a Disc Parameter Block

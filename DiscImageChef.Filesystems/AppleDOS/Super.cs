@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
     public partial class AppleDOS
     {
         /// <summary>
-        /// Mounts an Apple DOS filesystem
+        ///     Mounts an Apple DOS filesystem
         /// </summary>
         public override Errno Mount()
         {
@@ -48,7 +48,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         }
 
         /// <summary>
-        /// Mounts an Apple DOS filesystem
+        ///     Mounts an Apple DOS filesystem
         /// </summary>
         public override Errno Mount(bool debug)
         {
@@ -117,7 +117,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         }
 
         /// <summary>
-        /// Umounts this DOS filesystem
+        ///     Umounts this DOS filesystem
         /// </summary>
         public override Errno Unmount()
         {
@@ -131,7 +131,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         }
 
         /// <summary>
-        /// Gets information about the mounted volume.
+        ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
         public override Errno StatFs(ref FileSystemInfo stat)

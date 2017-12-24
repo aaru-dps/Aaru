@@ -74,8 +74,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds)) xattrs.Add("com.apple.FinderInfo");
 
-            if(debug && device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
-               entry.flLgLen > 0) xattrs.Add("com.apple.macintosh.tags");
+            if(debug && device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) && entry.flLgLen > 0)
+                xattrs.Add("com.apple.macintosh.tags");
 
             xattrs.Sort();
 

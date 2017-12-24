@@ -42,60 +42,6 @@ namespace DiscImageChef.Filesystems
 {
     public class QNX6 : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX6_RootNode
-        {
-            public ulong size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public uint[] pointers;
-            public byte levels;
-            public byte mode;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] spare;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX6_SuperBlock
-        {
-            public uint magic;
-            public uint checksum;
-            public ulong serial;
-            public uint ctime;
-            public uint atime;
-            public uint flags;
-            public ushort version1;
-            public ushort version2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] volumeid;
-            public uint blockSize;
-            public uint numInodes;
-            public uint freeInodes;
-            public uint numBlocks;
-            public uint freeBlocks;
-            public uint allocationGroup;
-            public QNX6_RootNode inode;
-            public QNX6_RootNode bitmap;
-            public QNX6_RootNode longfile;
-            public QNX6_RootNode unknown;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX6_AudiSuperBlock
-        {
-            public uint magic;
-            public uint checksum;
-            public ulong serial;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] spare1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] id;
-            public uint blockSize;
-            public uint numInodes;
-            public uint freeInodes;
-            public uint numBlocks;
-            public uint freeBlocks;
-            public uint spare2;
-            public QNX6_RootNode inode;
-            public QNX6_RootNode bitmap;
-            public QNX6_RootNode longfile;
-            public QNX6_RootNode unknown;
-        }
-
         const uint QNX6_SUPER_BLOCK_SIZE = 0x1000;
         const uint QNX6_BOOT_BLOCKS_SIZE = 0x2000;
         const uint QNX6_MAGIC = 0x68191122;
@@ -147,8 +93,7 @@ namespace DiscImageChef.Filesystems
             return qnxSb.magic == QNX6_MAGIC || audiSb.magic == QNX6_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sb = new StringBuilder();
@@ -296,6 +241,60 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QNX6_RootNode
+        {
+            public ulong size;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public uint[] pointers;
+            public byte levels;
+            public byte mode;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] spare;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QNX6_SuperBlock
+        {
+            public uint magic;
+            public uint checksum;
+            public ulong serial;
+            public uint ctime;
+            public uint atime;
+            public uint flags;
+            public ushort version1;
+            public ushort version2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] volumeid;
+            public uint blockSize;
+            public uint numInodes;
+            public uint freeInodes;
+            public uint numBlocks;
+            public uint freeBlocks;
+            public uint allocationGroup;
+            public QNX6_RootNode inode;
+            public QNX6_RootNode bitmap;
+            public QNX6_RootNode longfile;
+            public QNX6_RootNode unknown;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct QNX6_AudiSuperBlock
+        {
+            public uint magic;
+            public uint checksum;
+            public ulong serial;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] spare1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] id;
+            public uint blockSize;
+            public uint numInodes;
+            public uint freeInodes;
+            public uint numBlocks;
+            public uint freeBlocks;
+            public uint spare2;
+            public QNX6_RootNode inode;
+            public QNX6_RootNode bitmap;
+            public QNX6_RootNode longfile;
+            public QNX6_RootNode unknown;
         }
     }
 }

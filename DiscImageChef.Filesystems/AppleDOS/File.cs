@@ -58,7 +58,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) attributes |= FileAttributes.System;
+                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+                attributes |= FileAttributes.System;
 
             return Errno.NoError;
         }
@@ -77,14 +78,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-            {
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    file = catalogBlocks;
-                else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
-                    file = vtocBlocks;
-                else
-                    file = bootBlocks;
-            }
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = catalogBlocks;
+                else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0) file = vtocBlocks;
+                else file = bootBlocks;
             else
             {
                 if(!fileCache.TryGetValue(filename, out file))
@@ -224,7 +220,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             extentCache = new Dictionary<string, byte[]>();
 
             foreach(Errno error in catalogCache.Keys.Select(CacheFile).Where(error => error != Errno.NoError))
-            { return error; }
+                return error;
 
             uint tracksOnBoot = 1;
             if(!track1UsedByFiles) tracksOnBoot++;

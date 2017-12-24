@@ -159,8 +159,14 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             entry = new PascalFileEntry();
 
-            foreach(PascalFileEntry ent in fileEntries.Where(ent => string.Compare(path, StringHandlers.PascalToString(ent.filename, CurrentEncoding),
-                                                                                   StringComparison.InvariantCultureIgnoreCase) == 0)) {
+            foreach(PascalFileEntry ent in fileEntries.Where(ent =>
+                                                                 string.Compare(path,
+                                                                                StringHandlers
+                                                                                    .PascalToString(ent.filename,
+                                                                                                    CurrentEncoding),
+                                                                                StringComparison
+                                                                                    .InvariantCultureIgnoreCase) == 0))
+            {
                 entry = ent;
                 return Errno.NoError;
             }

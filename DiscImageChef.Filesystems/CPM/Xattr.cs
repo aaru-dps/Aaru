@@ -38,7 +38,7 @@ namespace DiscImageChef.Filesystems.CPM
     partial class CPM
     {
         /// <summary>
-        /// Reads an extended attribute, alternate data stream or fork from the given file.
+        ///     Reads an extended attribute, alternate data stream or fork from the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
@@ -53,16 +53,19 @@ namespace DiscImageChef.Filesystems.CPM
 
             if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;
 
-            if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0) if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
+            if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
+                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
 
             if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 
-            return !passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? Errno.NoError : Errno.NoSuchExtendedAttribute;
+            return !passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)
+                       ? Errno.NoError
+                       : Errno.NoSuchExtendedAttribute;
         }
 
         /// <summary>
-        /// Lists all extended attributes, alternate data streams and forks of the given file.
+        ///     Lists all extended attributes, alternate data streams and forks of the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>

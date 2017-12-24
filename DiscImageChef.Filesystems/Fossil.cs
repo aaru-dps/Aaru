@@ -43,84 +43,6 @@ namespace DiscImageChef.Filesystems
 {
     public class Fossil : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FossilHeader
-        {
-            /// <summary>
-            /// Magic number
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            /// Header version
-            /// </summary>
-            public ushort version;
-            /// <summary>
-            /// Block size
-            /// </summary>
-            public ushort blockSize;
-            /// <summary>
-            /// Block containing superblock
-            /// </summary>
-            public uint super;
-            /// <summary>
-            /// Block containing labels
-            /// </summary>
-            public uint label;
-            /// <summary>
-            /// Where do data blocks start
-            /// </summary>
-            public uint data;
-            /// <summary>
-            /// How many data blocks does it have
-            /// </summary>
-            public uint end;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FossilSuperBlock
-        {
-            /// <summary>
-            /// Magic number
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            /// Header version
-            /// </summary>
-            public ushort version;
-            /// <summary>
-            /// file system low epoch
-            /// </summary>
-            public uint epochLow;
-            /// <summary>
-            /// file system high(active) epoch
-            /// </summary>
-            public uint epochHigh;
-            /// <summary>
-            /// next qid to allocate
-            /// </summary>
-            public ulong qid;
-            /// <summary>
-            /// data block number: root of active file system
-            /// </summary>
-            public int active;
-            /// <summary>
-            /// data block number: root of next file system to archive
-            /// </summary>
-            public int next;
-            /// <summary>
-            /// data block number: root of file system currently being archived
-            /// </summary>
-            public int current;
-            /// <summary>
-            /// Venti score of last successful archive
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] last;
-            /// <summary>
-            /// name of file system(just a comment)
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] name;
-        }
-
         const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
         const uint FOSSIL_SB_MAGIC = 0x2340A3B1;
         // Fossil header starts at 128KiB
@@ -166,8 +88,7 @@ namespace DiscImageChef.Filesystems
             return hdr.magic == FOSSIL_HDR_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -284,6 +205,84 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct FossilHeader
+        {
+            /// <summary>
+            ///     Magic number
+            /// </summary>
+            public uint magic;
+            /// <summary>
+            ///     Header version
+            /// </summary>
+            public ushort version;
+            /// <summary>
+            ///     Block size
+            /// </summary>
+            public ushort blockSize;
+            /// <summary>
+            ///     Block containing superblock
+            /// </summary>
+            public uint super;
+            /// <summary>
+            ///     Block containing labels
+            /// </summary>
+            public uint label;
+            /// <summary>
+            ///     Where do data blocks start
+            /// </summary>
+            public uint data;
+            /// <summary>
+            ///     How many data blocks does it have
+            /// </summary>
+            public uint end;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct FossilSuperBlock
+        {
+            /// <summary>
+            ///     Magic number
+            /// </summary>
+            public uint magic;
+            /// <summary>
+            ///     Header version
+            /// </summary>
+            public ushort version;
+            /// <summary>
+            ///     file system low epoch
+            /// </summary>
+            public uint epochLow;
+            /// <summary>
+            ///     file system high(active) epoch
+            /// </summary>
+            public uint epochHigh;
+            /// <summary>
+            ///     next qid to allocate
+            /// </summary>
+            public ulong qid;
+            /// <summary>
+            ///     data block number: root of active file system
+            /// </summary>
+            public int active;
+            /// <summary>
+            ///     data block number: root of next file system to archive
+            /// </summary>
+            public int next;
+            /// <summary>
+            ///     data block number: root of file system currently being archived
+            /// </summary>
+            public int current;
+            /// <summary>
+            ///     Venti score of last successful archive
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] last;
+            /// <summary>
+            ///     name of file system(just a comment)
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] name;
         }
     }
 }

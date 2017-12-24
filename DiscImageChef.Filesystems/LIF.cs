@@ -44,23 +44,6 @@ namespace DiscImageChef.Filesystems
     // Information from http://www.hp9845.net/9845/projects/hpdir/#lif_filesystem
     public class LIF : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LIF_SystemBlock
-        {
-            public ushort magic;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] volumeLabel;
-            public uint directoryStart;
-            public ushort lifId;
-            public ushort unused;
-            public uint directorySize;
-            public ushort lifVersion;
-            public ushort unused2;
-            public uint tracks;
-            public uint heads;
-            public uint sectors;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] creationDate;
-        }
-
         const uint LIF_MAGIC = 0x8000;
 
         public LIF()
@@ -95,8 +78,7 @@ namespace DiscImageChef.Filesystems
             return lifSb.magic == LIF_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -193,6 +175,23 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct LIF_SystemBlock
+        {
+            public ushort magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] volumeLabel;
+            public uint directoryStart;
+            public ushort lifId;
+            public ushort unused;
+            public uint directorySize;
+            public ushort lifVersion;
+            public ushort unused2;
+            public uint tracks;
+            public uint heads;
+            public uint sectors;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] creationDate;
         }
     }
 }

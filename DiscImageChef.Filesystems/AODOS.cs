@@ -45,6 +45,8 @@ namespace DiscImageChef.Filesystems
     // This may be missing fields, or not, I don't know russian so any help is appreciated
     public class AODOS : Filesystem
     {
+        readonly byte[] AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
+
         public AODOS()
         {
             Name = "Alexander Osipov DOS file system";
@@ -65,41 +67,6 @@ namespace DiscImageChef.Filesystems
             PluginUuid = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AODOS_BootBlock
-        {
-            /// <summary>
-            /// A NOP opcode
-            /// </summary>
-            public byte nop;
-            /// <summary>
-            /// A branch to real bootloader
-            /// </summary>
-            public ushort branch;
-            /// <summary>
-            /// Unused
-            /// </summary>
-            public byte unused;
-            /// <summary>
-            /// " AO-DOS "
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] identifier;
-            /// <summary>
-            /// Volume label
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] volumeLabel;
-            /// <summary>
-            /// How many files are present in disk
-            /// </summary>
-            public ushort files;
-            /// <summary>
-            /// How many sectors are used
-            /// </summary>
-            public ushort usedSectors;
-        }
-
-        readonly byte[] AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
@@ -122,8 +89,7 @@ namespace DiscImageChef.Filesystems
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] sector = imagePlugin.ReadSector(0);
             AODOS_BootBlock bb = new AODOS_BootBlock();
@@ -215,6 +181,39 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AODOS_BootBlock
+        {
+            /// <summary>
+            ///     A NOP opcode
+            /// </summary>
+            public byte nop;
+            /// <summary>
+            ///     A branch to real bootloader
+            /// </summary>
+            public ushort branch;
+            /// <summary>
+            ///     Unused
+            /// </summary>
+            public byte unused;
+            /// <summary>
+            ///     " AO-DOS "
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] identifier;
+            /// <summary>
+            ///     Volume label
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] volumeLabel;
+            /// <summary>
+            ///     How many files are present in disk
+            /// </summary>
+            public ushort files;
+            /// <summary>
+            ///     How many sectors are used
+            /// </summary>
+            public ushort usedSectors;
         }
     }
 }

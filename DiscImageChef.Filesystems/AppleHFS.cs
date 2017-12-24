@@ -45,15 +45,15 @@ namespace DiscImageChef.Filesystems
     public class AppleHFS : Filesystem
     {
         /// <summary>
-        /// "BD", HFS magic
+        ///     "BD", HFS magic
         /// </summary>
         const ushort HFS_MAGIC = 0x4244;
         /// <summary>
-        /// "H+", HFS+ magic
+        ///     "H+", HFS+ magic
         /// </summary>
         const ushort HFSP_MAGIC = 0x482B;
         /// <summary>
-        /// "LK", HFS bootblock magic
+        ///     "LK", HFS bootblock magic
         /// </summary>
         const ushort HFSBB_MAGIC = 0x4C4B;
 
@@ -96,8 +96,7 @@ namespace DiscImageChef.Filesystems
                     if(drSigWord != HFS_MAGIC) continue;
 
                     drSigWord =
-                        BigEndianBitConverter
-                            .ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
+                        BigEndianBitConverter.ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
 
                     return drSigWord != HFSP_MAGIC;
                 }
@@ -117,8 +116,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -159,7 +157,8 @@ namespace DiscImageChef.Filesystems
                 else return;
             }
 
-            HFS_MasterDirectoryBlock MDB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_MasterDirectoryBlock>(mdbSector);
+            HFS_MasterDirectoryBlock MDB =
+                BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_MasterDirectoryBlock>(mdbSector);
             HFS_BootBlock BB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_BootBlock>(bbSector);
 
             sb.AppendLine("Apple Hierarchical File System");
@@ -275,7 +274,8 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
                 XmlFsType.BackupDateSpecified = true;
             }
-            XmlFsType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0;
+            XmlFsType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 ||
+                                 MDB.drFndrInfo5 != 0;
             XmlFsType.Clusters = MDB.drNmAlBlks;
             XmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
             if(MDB.drCrDate > 0)
@@ -312,8 +312,68 @@ namespace DiscImageChef.Filesystems
             return sector;
         }
 
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
+        }
+
         /// <summary>
-        /// Master Directory Block, should be sector 2 in volume
+        ///     Master Directory Block, should be sector 2 in volume
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HFS_MasterDirectoryBlock // Should be sector 2 in volume
@@ -393,16 +453,20 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x080, Size in blocks of volume common cache</summary>
             public ushort drCtlCSize;
             // End of variable variables :D
-            /// <summary>0x082, Bytes in the extents B-Tree
-            /// 3 HFS extents following, 32 bits each</summary>
+            /// <summary>
+            ///     0x082, Bytes in the extents B-Tree
+            ///     3 HFS extents following, 32 bits each
+            /// </summary>
             public uint drXTFlSize;
-            /// <summary>0x092, Bytes in the catalog B-Tree
-            /// 3 HFS extents following, 32 bits each</summary>
+            /// <summary>
+            ///     0x092, Bytes in the catalog B-Tree
+            ///     3 HFS extents following, 32 bits each
+            /// </summary>
             public uint drCTFlSize;
         }
 
         /// <summary>
-        /// Should be sectors 0 and 1 in volume, followed by boot code
+        ///     Should be sectors 0 and 1 in volume, followed by boot code
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HFS_BootBlock // Should be sectors 0 and 1 in volume
@@ -445,66 +509,6 @@ namespace DiscImageChef.Filesystems
             public uint heap_extra;
             /// <summary>Fraction of RAM for system heap</summary>
             public uint heap_fract;
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }

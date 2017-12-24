@@ -51,7 +51,8 @@ namespace DiscImageChef.Filesystems.CPM
                 return Errno.NoError;
             }
 
-            if(!statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out FileEntryInfo fInfo)) return Errno.NoSuchFile;
+            if(!statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out FileEntryInfo fInfo))
+                return Errno.NoSuchFile;
 
             attributes = fInfo.Attributes;
             return Errno.NoError;
@@ -91,9 +92,7 @@ namespace DiscImageChef.Filesystems.CPM
 
         public override Errno ReadLink(string path, ref string dest)
         {
-            if(!mounted) return Errno.AccessDenied;
-
-            return Errno.NotSupported;
+            return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
         public override Errno Stat(string path, ref FileEntryInfo stat)
@@ -112,9 +111,9 @@ namespace DiscImageChef.Filesystems.CPM
                 return Errno.NoError;
             }
 
-            if(statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)) return Errno.NoError;
-
-            return Errno.NoSuchFile;
+            return statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)
+                       ? Errno.NoError
+                       : Errno.NoSuchFile;
         }
     }
 }

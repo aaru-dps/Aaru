@@ -42,6 +42,11 @@ namespace DiscImageChef.Filesystems
 {
     public class SFS : Filesystem
     {
+        /// <summary>Identifier for SFS v1</summary>
+        const uint SFS_MAGIC = 0x53465300;
+        /// <summary>Identifier for SFS v2</summary>
+        const uint SFS2_MAGIC = 0x53465302;
+
         public SFS()
         {
             Name = "SmartFileSystem";
@@ -63,45 +68,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
-        [Flags]
-        enum SFSFlags : byte
-        {
-            RecyledFolder = 64,
-            CaseSensitive = 128
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RootBlock
-        {
-            public uint blockId;
-            public uint blockChecksum;
-            public uint blockSelfPointer;
-            public ushort version;
-            public ushort sequence;
-            public uint datecreated;
-            public SFSFlags bits;
-            public byte padding1;
-            public ushort padding2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved1;
-            public ulong firstbyte;
-            public ulong lastbyte;
-            public uint totalblocks;
-            public uint blocksize;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] reserved3;
-            public uint bitmapbase;
-            public uint adminspacecontainer;
-            public uint rootobjectcontainer;
-            public uint extentbnoderoot;
-            public uint objectnoderoot;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] reserved4;
-        }
-
-        /// <summary>Identifier for SFS v1</summary>
-        const uint SFS_MAGIC = 0x53465300;
-        /// <summary>Identifier for SFS v2</summary>
-        const uint SFS2_MAGIC = 0x53465302;
-
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
@@ -115,8 +81,7 @@ namespace DiscImageChef.Filesystems
             return magic == SFS_MAGIC || magic == SFS2_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] rootBlockSector = imagePlugin.ReadSector(partition.Start);
             RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
@@ -216,6 +181,40 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [Flags]
+        enum SFSFlags : byte
+        {
+            RecyledFolder = 64,
+            CaseSensitive = 128
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RootBlock
+        {
+            public uint blockId;
+            public uint blockChecksum;
+            public uint blockSelfPointer;
+            public ushort version;
+            public ushort sequence;
+            public uint datecreated;
+            public SFSFlags bits;
+            public byte padding1;
+            public ushort padding2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved1;
+            public ulong firstbyte;
+            public ulong lastbyte;
+            public uint totalblocks;
+            public uint blocksize;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] reserved3;
+            public uint bitmapbase;
+            public uint adminspacecontainer;
+            public uint rootobjectcontainer;
+            public uint extentbnoderoot;
+            public uint objectnoderoot;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] reserved4;
         }
     }
 }

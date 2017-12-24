@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.LisaFS
     public partial class LisaFS
     {
         /// <summary>
-        /// Solves a symbolic link.
+        ///     Solves a symbolic link.
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
@@ -52,7 +52,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Lists contents from a directory.
+        ///     Lists contents from a directory.
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
@@ -90,13 +90,15 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             // Do same trick as Mac OS X, replace filesystem '/' with '-',
             // as '-' is the path separator in Lisa OS
-            contents = (from entry in catalogCache where entry.parentID == dirId select StringHandlers.CToString(entry.filename, CurrentEncoding).Replace('/', '-')).ToList();
+            contents = (from entry in catalogCache
+                        where entry.parentID == dirId
+                        select StringHandlers.CToString(entry.filename, CurrentEncoding).Replace('/', '-')).ToList();
 
             return Errno.NoError;
         }
 
         /// <summary>
-        /// Reads, interprets and caches the Catalog File
+        ///     Reads, interprets and caches the Catalog File
         /// </summary>
         Errno ReadCatalog()
         {
@@ -215,7 +217,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 // Traverse all entries
                 while(offset + 64 <= buf.Length)
-                // Catalog block header
+                    // Catalog block header
                     if(buf[offset + 0x24] == 0x08) offset += 78;
                     // Maybe just garbage? Found in more than 1 disk
                     else if(buf[offset + 0x24] == 0x7C) offset += 50;

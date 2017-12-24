@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems.LisaFS
     public partial class LisaFS
     {
         /// <summary>
-        /// Mounts an Apple Lisa filesystem
+        ///     Mounts an Apple Lisa filesystem
         /// </summary>
         public override Errno Mount()
         {
@@ -50,7 +50,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Mounts an Apple Lisa filesystem
+        ///     Mounts an Apple Lisa filesystem
         /// </summary>
         public override Errno Mount(bool debug)
         {
@@ -319,7 +319,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Umounts this Lisa filesystem
+        ///     Umounts this Lisa filesystem
         /// </summary>
         public override Errno Unmount()
         {
@@ -339,7 +339,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// Gets information about the mounted volume.
+        ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
         public override Errno StatFs(ref FileSystemInfo stat)

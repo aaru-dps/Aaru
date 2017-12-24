@@ -56,139 +56,12 @@ using time_t = System.Int32;
 
 namespace DiscImageChef.Filesystems
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
     public class Locus : Filesystem
     {
         const int NICINOD = 325;
         const int NICFREE = 600;
         const int OLDNICINOD = 700;
         const int OLDNICFREE = 500;
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Locus_Superblock
-        {
-            public uint s_magic; /* identifies this as a locus filesystem */
-            /* defined as a constant below */
-            public gfs_t s_gfs; /* global filesystem number */
-            public daddr_t s_fsize; /* size in blocks of entire volume */
-            /* several ints for replicated filsystems */
-            public commitcnt_t s_lwm; /* all prior commits propagated */
-            public commitcnt_t s_hwm; /* highest commit propagated */
-            /* oldest committed version in the list.
-             * llst mod NCMTLST is the offset of commit #llst in the list,
-             * which wraps around from there.
-             */
-            public commitcnt_t s_llst;
-            public fstore_t s_fstore; /* filesystem storage bit mask; if the
-                   filsys is replicated and this is not a
-                   primary or backbone copy, this bit mask
-                   determines which files are stored */
-
-            public time_t s_time; /* last super block update */
-            public daddr_t s_tfree; /* total free blocks*/
-
-            public ino_t s_isize; /* size in blocks of i-list */
-            public short s_nfree; /* number of addresses in s_free */
-            public LocusFlags s_flags; /* filsys flags, defined below */
-            public ino_t s_tinode; /* total free inodes */
-            public ino_t s_lasti; /* start place for circular search */
-            public ino_t s_nbehind; /* est # free inodes before s_lasti */
-            public pckno_t s_gfspack; /* global filesystem pack number */
-            public short s_ninode; /* number of i-nodes in s_inode */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public short[] s_dinfo; /* interleave stuff */
-            //#define s_m s_dinfo[0]
-            //#define s_skip  s_dinfo[0]      /* AIX defines  */
-            //#define s_n s_dinfo[1]
-            //#define s_cyl   s_dinfo[1]      /* AIX defines  */
-            public byte s_flock; /* lock during free list manipulation */
-            public byte s_ilock; /* lock during i-list manipulation */
-            public byte s_fmod; /* super block modified flag */
-            public LocusVersion s_version; /* version of the data format in fs. */
-            /*  defined below. */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] s_fsmnt; /* name of this file system */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] s_fpack; /* name of this physical volume */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NICINOD)] public ino_t[] s_inode; /* free i-node list */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NICFREE)]
-            public daddr_t[] su_free; /* free block list for non-replicated filsys */
-            public byte s_byteorder; /* byte order of integers */
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Locus_OldSuperblock
-        {
-            public uint s_magic; /* identifies this as a locus filesystem */
-            /* defined as a constant below */
-            public gfs_t s_gfs; /* global filesystem number */
-            public daddr_t s_fsize; /* size in blocks of entire volume */
-            /* several ints for replicated filsystems */
-            public commitcnt_t s_lwm; /* all prior commits propagated */
-            public commitcnt_t s_hwm; /* highest commit propagated */
-            /* oldest committed version in the list.
-             * llst mod NCMTLST is the offset of commit #llst in the list,
-             * which wraps around from there.
-             */
-            public commitcnt_t s_llst;
-            public fstore_t s_fstore; /* filesystem storage bit mask; if the
-                   filsys is replicated and this is not a
-                   primary or backbone copy, this bit mask
-                   determines which files are stored */
-
-            public time_t s_time; /* last super block update */
-            public daddr_t s_tfree; /* total free blocks*/
-
-            public ino_t s_isize; /* size in blocks of i-list */
-            public short s_nfree; /* number of addresses in s_free */
-            public LocusFlags s_flags; /* filsys flags, defined below */
-            public ino_t s_tinode; /* total free inodes */
-            public ino_t s_lasti; /* start place for circular search */
-            public ino_t s_nbehind; /* est # free inodes before s_lasti */
-            public pckno_t s_gfspack; /* global filesystem pack number */
-            public short s_ninode; /* number of i-nodes in s_inode */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public short[] s_dinfo; /* interleave stuff */
-            //#define s_m s_dinfo[0]
-            //#define s_skip  s_dinfo[0]      /* AIX defines  */
-            //#define s_n s_dinfo[1]
-            //#define s_cyl   s_dinfo[1]      /* AIX defines  */
-            public byte s_flock; /* lock during free list manipulation */
-            public byte s_ilock; /* lock during i-list manipulation */
-            public byte s_fmod; /* super block modified flag */
-            public LocusVersion s_version; /* version of the data format in fs. */
-            /*  defined below. */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] s_fsmnt; /* name of this file system */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] s_fpack; /* name of this physical volume */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = OLDNICINOD)] public ino_t[] s_inode; /* free i-node list */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = OLDNICFREE)]
-            public daddr_t[] su_free; /* free block list for non-replicated filsys */
-            public byte s_byteorder; /* byte order of integers */
-        }
-
-        [Flags]
-        enum LocusFlags : ushort
-        {
-            SB_RDONLY = 0x1, /* no writes on filesystem */
-            SB_CLEAN = 0x2, /* fs unmounted cleanly (or checks run) */
-            SB_DIRTY = 0x4, /* fs mounted without CLEAN bit set */
-            SB_RMV = 0x8, /* fs is a removable file system */
-            SB_PRIMPACK = 0x10, /* This is the primary pack of the filesystem */
-            SB_REPLTYPE = 0x20, /* This is a replicated type filesystem. */
-            SB_USER = 0x40, /* This is a "user" replicated filesystem. */
-            SB_BACKBONE = 0x80, /* backbone pack ; complete copy of primary pack but not modifiable */
-            SB_NFS = 0x100, /* This is a NFS type filesystem */
-            SB_BYHAND = 0x200, /* Inhibits automatic fscks on a mangled file system */
-            SB_NOSUID = 0x400, /* Set-uid/Set-gid is disabled */
-            SB_SYNCW = 0x800 /* Synchronous Write */
-        }
-
-        [Flags]
-        enum LocusVersion : byte
-        {
-            SB_SB4096 = 1, /* smallblock filesys with 4096 byte blocks */
-            SB_B1024 = 2, /* 1024 byte block filesystem */
-            NUMSCANDEV = 5 /* Used by scangfs(), refed in space.h */
-        }
 
         const uint Locus_Magic = 0xFFEEDDCD;
         const uint Locus_Cigam = 0xCDDDEEFF;
@@ -246,8 +119,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -416,6 +288,139 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Locus_Superblock
+        {
+            public uint s_magic; /* identifies this as a locus filesystem */
+            /* defined as a constant below */
+            public gfs_t s_gfs; /* global filesystem number */
+            public daddr_t s_fsize; /* size in blocks of entire volume */
+            /* several ints for replicated filsystems */
+            public commitcnt_t s_lwm; /* all prior commits propagated */
+            public commitcnt_t s_hwm; /* highest commit propagated */
+            /* oldest committed version in the list.
+             * llst mod NCMTLST is the offset of commit #llst in the list,
+             * which wraps around from there.
+             */
+            public commitcnt_t s_llst;
+            public fstore_t s_fstore; /* filesystem storage bit mask; if the
+                   filsys is replicated and this is not a
+                   primary or backbone copy, this bit mask
+                   determines which files are stored */
+
+            public time_t s_time; /* last super block update */
+            public daddr_t s_tfree; /* total free blocks*/
+
+            public ino_t s_isize; /* size in blocks of i-list */
+            public short s_nfree; /* number of addresses in s_free */
+            public LocusFlags s_flags; /* filsys flags, defined below */
+            public ino_t s_tinode; /* total free inodes */
+            public ino_t s_lasti; /* start place for circular search */
+            public ino_t s_nbehind; /* est # free inodes before s_lasti */
+            public pckno_t s_gfspack; /* global filesystem pack number */
+            public short s_ninode; /* number of i-nodes in s_inode */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public short[] s_dinfo; /* interleave stuff */
+            //#define s_m s_dinfo[0]
+            //#define s_skip  s_dinfo[0]      /* AIX defines  */
+            //#define s_n s_dinfo[1]
+            //#define s_cyl   s_dinfo[1]      /* AIX defines  */
+            public byte s_flock; /* lock during free list manipulation */
+            public byte s_ilock; /* lock during i-list manipulation */
+            public byte s_fmod; /* super block modified flag */
+            public LocusVersion s_version; /* version of the data format in fs. */
+            /*  defined below. */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] s_fsmnt; /* name of this file system */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] s_fpack; /* name of this physical volume */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NICINOD)] public ino_t[] s_inode; /* free i-node list */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NICFREE)]
+            public daddr_t[] su_free; /* free block list for non-replicated filsys */
+            public byte s_byteorder; /* byte order of integers */
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Locus_OldSuperblock
+        {
+            public uint s_magic; /* identifies this as a locus filesystem */
+            /* defined as a constant below */
+            public gfs_t s_gfs; /* global filesystem number */
+            public daddr_t s_fsize; /* size in blocks of entire volume */
+            /* several ints for replicated filsystems */
+            public commitcnt_t s_lwm; /* all prior commits propagated */
+            public commitcnt_t s_hwm; /* highest commit propagated */
+            /* oldest committed version in the list.
+             * llst mod NCMTLST is the offset of commit #llst in the list,
+             * which wraps around from there.
+             */
+            public commitcnt_t s_llst;
+            public fstore_t s_fstore; /* filesystem storage bit mask; if the
+                   filsys is replicated and this is not a
+                   primary or backbone copy, this bit mask
+                   determines which files are stored */
+
+            public time_t s_time; /* last super block update */
+            public daddr_t s_tfree; /* total free blocks*/
+
+            public ino_t s_isize; /* size in blocks of i-list */
+            public short s_nfree; /* number of addresses in s_free */
+            public LocusFlags s_flags; /* filsys flags, defined below */
+            public ino_t s_tinode; /* total free inodes */
+            public ino_t s_lasti; /* start place for circular search */
+            public ino_t s_nbehind; /* est # free inodes before s_lasti */
+            public pckno_t s_gfspack; /* global filesystem pack number */
+            public short s_ninode; /* number of i-nodes in s_inode */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public short[] s_dinfo; /* interleave stuff */
+            //#define s_m s_dinfo[0]
+            //#define s_skip  s_dinfo[0]      /* AIX defines  */
+            //#define s_n s_dinfo[1]
+            //#define s_cyl   s_dinfo[1]      /* AIX defines  */
+            public byte s_flock; /* lock during free list manipulation */
+            public byte s_ilock; /* lock during i-list manipulation */
+            public byte s_fmod; /* super block modified flag */
+            public LocusVersion s_version; /* version of the data format in fs. */
+            /*  defined below. */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] s_fsmnt; /* name of this file system */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] s_fpack; /* name of this physical volume */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = OLDNICINOD)] public ino_t[] s_inode; /* free i-node list */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = OLDNICFREE)]
+            public daddr_t[] su_free; /* free block list for non-replicated filsys */
+            public byte s_byteorder; /* byte order of integers */
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        [Flags]
+        enum LocusFlags : ushort
+        {
+            SB_RDONLY = 0x1, /* no writes on filesystem */
+            SB_CLEAN = 0x2, /* fs unmounted cleanly (or checks run) */
+            SB_DIRTY = 0x4, /* fs mounted without CLEAN bit set */
+            SB_RMV = 0x8, /* fs is a removable file system */
+            SB_PRIMPACK = 0x10, /* This is the primary pack of the filesystem */
+            SB_REPLTYPE = 0x20, /* This is a replicated type filesystem. */
+            SB_USER = 0x40, /* This is a "user" replicated filesystem. */
+            SB_BACKBONE = 0x80, /* backbone pack ; complete copy of primary pack but not modifiable */
+            SB_NFS = 0x100, /* This is a NFS type filesystem */
+            SB_BYHAND = 0x200, /* Inhibits automatic fscks on a mangled file system */
+            SB_NOSUID = 0x400, /* Set-uid/Set-gid is disabled */
+            SB_SYNCW = 0x800 /* Synchronous Write */
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        [Flags]
+        enum LocusVersion : byte
+        {
+            SB_SB4096 = 1, /* smallblock filesys with 4096 byte blocks */
+            SB_B1024 = 2, /* 1024 byte block filesystem */
+            NUMSCANDEV = 5 /* Used by scangfs(), refed in space.h */
         }
     }
 }

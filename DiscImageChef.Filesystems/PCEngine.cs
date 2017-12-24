@@ -74,8 +74,7 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(systemDescriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             XmlFsType = new FileSystemType

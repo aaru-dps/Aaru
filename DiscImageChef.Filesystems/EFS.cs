@@ -44,54 +44,6 @@ namespace DiscImageChef.Filesystems
 {
     public class EFS : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct EFS_Superblock
-        {
-            /* 0:   fs size incl. bb 0 (in bb) */
-            public int sb_size;
-            /* 4:   first cg offset (in bb) */
-            public int sb_firstcg;
-            /* 8:   cg size (in bb) */
-            public int sb_cgfsize;
-            /* 12:  inodes/cg (in bb) */
-            public short sb_cgisize;
-            /* 14:  geom: sectors/track */
-            public short sb_sectors;
-            /* 16:  geom: heads/cylinder (unused) */
-            public short sb_heads;
-            /* 18:  num of cg's in the filesystem */
-            public short sb_ncg;
-            /* 20:  non-0 indicates fsck required */
-            public short sb_dirty;
-            /* 22:  */
-            public short sb_pad0;
-            /* 24:  superblock ctime */
-            public int sb_time;
-            /* 28:  magic [0] */
-            public uint sb_magic;
-            /* 32:  name of filesystem */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] sb_fname;
-            /* 38:  name of filesystem pack */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] sb_fpack;
-            /* 44:  bitmap size (in bytes) */
-            public int sb_bmsize;
-            /* 48:  total free data blocks */
-            public int sb_tfree;
-            /* 52:  total free inodes */
-            public int sb_tinode;
-            /* 56:  bitmap offset (grown fs) */
-            public int sb_bmblock;
-            /* 62:  repl. superblock offset */
-            public int sb_replsb;
-            /* 64:  last allocated inode */
-            public int sb_lastinode;
-            /* 68:  unused */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sb_spare;
-            /* 88:  checksum (all above) */
-            public uint sb_checksum;
-        }
-
         const uint EFS_MAGIC = 0x00072959;
         const uint EFS_MAGIC_NEW = 0x0007295A;
 
@@ -163,8 +115,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -304,6 +255,54 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        struct EFS_Superblock
+        {
+            /* 0:   fs size incl. bb 0 (in bb) */
+            public int sb_size;
+            /* 4:   first cg offset (in bb) */
+            public int sb_firstcg;
+            /* 8:   cg size (in bb) */
+            public int sb_cgfsize;
+            /* 12:  inodes/cg (in bb) */
+            public short sb_cgisize;
+            /* 14:  geom: sectors/track */
+            public short sb_sectors;
+            /* 16:  geom: heads/cylinder (unused) */
+            public short sb_heads;
+            /* 18:  num of cg's in the filesystem */
+            public short sb_ncg;
+            /* 20:  non-0 indicates fsck required */
+            public short sb_dirty;
+            /* 22:  */
+            public short sb_pad0;
+            /* 24:  superblock ctime */
+            public int sb_time;
+            /* 28:  magic [0] */
+            public uint sb_magic;
+            /* 32:  name of filesystem */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] sb_fname;
+            /* 38:  name of filesystem pack */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] sb_fpack;
+            /* 44:  bitmap size (in bytes) */
+            public int sb_bmsize;
+            /* 48:  total free data blocks */
+            public int sb_tfree;
+            /* 52:  total free inodes */
+            public int sb_tinode;
+            /* 56:  bitmap offset (grown fs) */
+            public int sb_bmblock;
+            /* 62:  repl. superblock offset */
+            public int sb_replsb;
+            /* 64:  last allocated inode */
+            public int sb_lastinode;
+            /* 68:  unused */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sb_spare;
+            /* 88:  checksum (all above) */
+            public uint sb_checksum;
         }
     }
 }

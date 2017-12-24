@@ -45,6 +45,12 @@ namespace DiscImageChef.Filesystems
 {
     public class AmigaDOSPlugin : Filesystem
     {
+        const uint FFS_MASK = 0x444F5300;
+        const uint MUFS_MASK = 0x6D754600;
+
+        const uint TYPE_HEADER = 2;
+        const uint SUBTYPE_ROOT = 1;
+
         public AmigaDOSPlugin()
         {
             Name = "Amiga DOS filesystem";
@@ -65,150 +71,6 @@ namespace DiscImageChef.Filesystems
             PluginUuid = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
             CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
-
-        /// <summary>
-        /// Boot block, first 2 sectors
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootBlock
-        {
-            /// <summary>
-            /// Offset 0x00, "DOSx" disk type
-            /// </summary>
-            public uint diskType;
-            /// <summary>
-            /// Offset 0x04, Checksum
-            /// </summary>
-            public uint checksum;
-            /// <summary>
-            /// Offset 0x08, Pointer to root block, mostly invalid
-            /// </summary>
-            public uint root_ptr;
-            /// <summary>
-            /// Offset 0x0C, Boot code, til completion. Size is intentionally incorrect to allow marshaling to work.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] public byte[] bootCode;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RootBlock
-        {
-            /// <summary>
-            /// Offset 0x00, block type, value = T_HEADER (2)
-            /// </summary>
-            public uint type;
-            /// <summary>
-            /// Offset 0x04, unused
-            /// </summary>
-            public uint headerKey;
-            /// <summary>
-            /// Offset 0x08, unused
-            /// </summary>
-            public uint highSeq;
-            /// <summary>
-            /// Offset 0x0C, longs used by hash table
-            /// </summary>
-            public uint hashTableSize;
-            /// <summary>
-            /// Offset 0x10, unused
-            /// </summary>
-            public uint firstData;
-            /// <summary>
-            /// Offset 0x14, Rootblock checksum
-            /// </summary>
-            public uint checksum;
-            /// <summary>
-            /// Offset 0x18, Hashtable, size = (block size / 4) - 56 or size = hashTableSize.
-            /// Size intentionally bad to allow marshalling to work.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] public uint[] hashTable;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+0, bitmap flag, 0xFFFFFFFF if valid
-            /// </summary>
-            public uint bitmapFlag;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+4, bitmap pages, 25 entries
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 25)] public uint[] bitmapPages;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+104, pointer to bitmap extension block
-            /// </summary>
-            public uint bitmapExtensionBlock;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+108, last root alteration days since 1978/01/01
-            /// </summary>
-            public uint rDays;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+112, last root alteration minutes past midnight
-            /// </summary>
-            public uint rMins;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+116, last root alteration ticks (1/50 secs)
-            /// </summary>
-            public uint rTicks;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+120, disk name, pascal string, 31 bytes
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)] public byte[] diskName;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+151, unused
-            /// </summary>
-            public byte padding;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+152, unused
-            /// </summary>
-            public uint reserved1;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+156, unused
-            /// </summary>
-            public uint reserved2;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+160, last disk alteration days since 1978/01/01
-            /// </summary>
-            public uint vDays;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+164, last disk alteration minutes past midnight
-            /// </summary>
-            public uint vMins;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+168, last disk alteration ticks (1/50 secs)
-            /// </summary>
-            public uint vTicks;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+172, filesystem creation days since 1978/01/01
-            /// </summary>
-            public uint cDays;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+176, filesystem creation minutes since 1978/01/01
-            /// </summary>
-            public uint cMins;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+180, filesystem creation ticks since 1978/01/01
-            /// </summary>
-            public uint cTicks;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+184, unused
-            /// </summary>
-            public uint nextHash;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+188, unused
-            /// </summary>
-            public uint parentDir;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+192, first directory cache block
-            /// </summary>
-            public uint extension;
-            /// <summary>
-            /// Offset 0x18+hashTableSize*4+196, block secondary type = ST_ROOT (1)
-            /// </summary>
-            public uint sec_type;
-        }
-
-        const uint FFS_MASK = 0x444F5300;
-        const uint MUFS_MASK = 0x6D754600;
-
-        const uint TYPE_HEADER = 2;
-        const uint SUBTYPE_ROOT = 1;
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
@@ -263,7 +125,8 @@ namespace DiscImageChef.Filesystems
             RootBlock rblk = new RootBlock();
 
             // So to handle even number of sectors
-            foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start)) {
+            foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start))
+            {
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
                 sector = imagePlugin.ReadSector(rootPtr);
@@ -305,8 +168,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             XmlFsType = new FileSystemType();
@@ -345,7 +207,8 @@ namespace DiscImageChef.Filesystems
             uint blockSize = 0;
 
             // So to handle even number of sectors
-            foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start)) {
+            foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start))
+            {
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
                 rootBlockSector = imagePlugin.ReadSector(rootPtr);
@@ -453,8 +316,7 @@ namespace DiscImageChef.Filesystems
             if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
-            long blocks = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
-                                 blockSize);
+            long blocks = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize / blockSize);
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", blocks).AppendLine();
@@ -580,6 +442,144 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        /// <summary>
+        ///     Boot block, first 2 sectors
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BootBlock
+        {
+            /// <summary>
+            ///     Offset 0x00, "DOSx" disk type
+            /// </summary>
+            public uint diskType;
+            /// <summary>
+            ///     Offset 0x04, Checksum
+            /// </summary>
+            public uint checksum;
+            /// <summary>
+            ///     Offset 0x08, Pointer to root block, mostly invalid
+            /// </summary>
+            public uint root_ptr;
+            /// <summary>
+            ///     Offset 0x0C, Boot code, til completion. Size is intentionally incorrect to allow marshaling to work.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] public byte[] bootCode;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RootBlock
+        {
+            /// <summary>
+            ///     Offset 0x00, block type, value = T_HEADER (2)
+            /// </summary>
+            public uint type;
+            /// <summary>
+            ///     Offset 0x04, unused
+            /// </summary>
+            public uint headerKey;
+            /// <summary>
+            ///     Offset 0x08, unused
+            /// </summary>
+            public uint highSeq;
+            /// <summary>
+            ///     Offset 0x0C, longs used by hash table
+            /// </summary>
+            public uint hashTableSize;
+            /// <summary>
+            ///     Offset 0x10, unused
+            /// </summary>
+            public uint firstData;
+            /// <summary>
+            ///     Offset 0x14, Rootblock checksum
+            /// </summary>
+            public uint checksum;
+            /// <summary>
+            ///     Offset 0x18, Hashtable, size = (block size / 4) - 56 or size = hashTableSize.
+            ///     Size intentionally bad to allow marshalling to work.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] public uint[] hashTable;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+0, bitmap flag, 0xFFFFFFFF if valid
+            /// </summary>
+            public uint bitmapFlag;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+4, bitmap pages, 25 entries
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 25)] public uint[] bitmapPages;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+104, pointer to bitmap extension block
+            /// </summary>
+            public uint bitmapExtensionBlock;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+108, last root alteration days since 1978/01/01
+            /// </summary>
+            public uint rDays;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+112, last root alteration minutes past midnight
+            /// </summary>
+            public uint rMins;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+116, last root alteration ticks (1/50 secs)
+            /// </summary>
+            public uint rTicks;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+120, disk name, pascal string, 31 bytes
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)] public byte[] diskName;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+151, unused
+            /// </summary>
+            public byte padding;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+152, unused
+            /// </summary>
+            public uint reserved1;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+156, unused
+            /// </summary>
+            public uint reserved2;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+160, last disk alteration days since 1978/01/01
+            /// </summary>
+            public uint vDays;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+164, last disk alteration minutes past midnight
+            /// </summary>
+            public uint vMins;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+168, last disk alteration ticks (1/50 secs)
+            /// </summary>
+            public uint vTicks;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+172, filesystem creation days since 1978/01/01
+            /// </summary>
+            public uint cDays;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+176, filesystem creation minutes since 1978/01/01
+            /// </summary>
+            public uint cMins;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+180, filesystem creation ticks since 1978/01/01
+            /// </summary>
+            public uint cTicks;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+184, unused
+            /// </summary>
+            public uint nextHash;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+188, unused
+            /// </summary>
+            public uint parentDir;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+192, first directory cache block
+            /// </summary>
+            public uint extension;
+            /// <summary>
+            ///     Offset 0x18+hashTableSize*4+196, block secondary type = ST_ROOT (1)
+            /// </summary>
+            public uint sec_type;
         }
     }
 }

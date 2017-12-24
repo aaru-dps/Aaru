@@ -80,8 +80,7 @@ namespace DiscImageChef.Filesystems
             return magic == "DECRT11A    ";
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -90,7 +89,8 @@ namespace DiscImageChef.Filesystems
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
             GCHandle handle = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
-            RT11HomeBlock homeblock = (RT11HomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(RT11HomeBlock));
+            RT11HomeBlock homeblock =
+                (RT11HomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(RT11HomeBlock));
             handle.Free();
 
             /* TODO: Is this correct?
@@ -128,42 +128,6 @@ namespace DiscImageChef.Filesystems
             };
 
             information = sb.ToString();
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RT11HomeBlock
-        {
-            /// <summary>Bad block replacement table</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 130)] public byte[] badBlockTable;
-            /// <summary>Unused</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] unused;
-            /// <summary>INITIALIZE/RESTORE data area</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)] public byte[] initArea;
-            /// <summary>BUP information area</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] bupInformation;
-            /// <summary>Empty</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 260)] public byte[] empty;
-            /// <summary>Reserved</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved1;
-            /// <summary>Reserved</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] empty2;
-            /// <summary>Cluster size</summary>
-            public ushort cluster;
-            /// <summary>Block of the first directory segment</summary>
-            public ushort rootBlock;
-            /// <summary>"V3A" in Radix-50</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] systemVersion;
-            /// <summary>Name of the volume, 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] volname;
-            /// <summary>Name of the volume owner, 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] ownername;
-            /// <summary>RT11 defines it as "DECRT11A    ", 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] format;
-            /// <summary>Unused</summary>
-            public ushort unused2;
-            /// <summary>Checksum of preceding 255 words (16 bit units)</summary>
-            public ushort checksum;
         }
 
         public override Errno Mount()
@@ -224,6 +188,42 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RT11HomeBlock
+        {
+            /// <summary>Bad block replacement table</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 130)] public byte[] badBlockTable;
+            /// <summary>Unused</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] unused;
+            /// <summary>INITIALIZE/RESTORE data area</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)] public byte[] initArea;
+            /// <summary>BUP information area</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] bupInformation;
+            /// <summary>Empty</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 260)] public byte[] empty;
+            /// <summary>Reserved</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved1;
+            /// <summary>Reserved</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] empty2;
+            /// <summary>Cluster size</summary>
+            public ushort cluster;
+            /// <summary>Block of the first directory segment</summary>
+            public ushort rootBlock;
+            /// <summary>"V3A" in Radix-50</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] systemVersion;
+            /// <summary>Name of the volume, 12 bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] volname;
+            /// <summary>Name of the volume owner, 12 bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] ownername;
+            /// <summary>RT11 defines it as "DECRT11A    ", 12 bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] format;
+            /// <summary>Unused</summary>
+            public ushort unused2;
+            /// <summary>Checksum of preceding 255 words (16 bit units)</summary>
+            public ushort checksum;
         }
     }
 }

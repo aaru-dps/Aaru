@@ -79,8 +79,7 @@ namespace DiscImageChef.Filesystems
             return magicGc == 0xC2339F3D || magicWii == 0x5D1C9EA3;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             information = "";
@@ -96,10 +95,8 @@ namespace DiscImageChef.Filesystems
             uint magicGc = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
-            if(magicWii == 0x5D1C9EA3)
-                wii = true;
-            else if(magicGc != 0xC2339F3D)
-                return;
+            if(magicWii == 0x5D1C9EA3) wii = true;
+            else if(magicGc != 0xC2339F3D) return;
 
             fields.DiscType = Encoding.ASCII.GetString(header, 0, 1);
             fields.GameCode = Encoding.ASCII.GetString(header, 1, 2);
@@ -314,46 +311,6 @@ namespace DiscImageChef.Filesystems
             XmlFsType.VolumeSerial = fields.DiscId;
         }
 
-        struct NintendoFields
-        {
-            public string DiscType;
-            public string GameCode;
-            public string RegionCode;
-            public string PublisherCode;
-            public string DiscId;
-            public byte DiscNumber;
-            public byte DiscVersion;
-            public bool Streaming;
-            public byte StreamBufferSize;
-            public string Title;
-            public uint DebugOff;
-            public uint DebugAddr;
-            public uint DolOff;
-            public uint FstOff;
-            public uint FstSize;
-            public uint FstMax;
-            public NintendoPartition[] FirstPartitions;
-            public NintendoPartition[] SecondPartitions;
-            public NintendoPartition[] ThirdPartitions;
-            public NintendoPartition[] FourthPartitions;
-            public byte Region;
-            public byte JapanAge;
-            public byte UsaAge;
-            public byte GermanAge;
-            public byte PegiAge;
-            public byte FinlandAge;
-            public byte PortugalAge;
-            public byte UkAge;
-            public byte AustraliaAge;
-            public byte KoreaAge;
-        }
-
-        struct NintendoPartition
-        {
-            public uint Offset;
-            public uint Type;
-        }
-
         static string DiscTypeToString(string discType)
         {
             switch(discType)
@@ -509,6 +466,46 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        struct NintendoFields
+        {
+            public string DiscType;
+            public string GameCode;
+            public string RegionCode;
+            public string PublisherCode;
+            public string DiscId;
+            public byte DiscNumber;
+            public byte DiscVersion;
+            public bool Streaming;
+            public byte StreamBufferSize;
+            public string Title;
+            public uint DebugOff;
+            public uint DebugAddr;
+            public uint DolOff;
+            public uint FstOff;
+            public uint FstSize;
+            public uint FstMax;
+            public NintendoPartition[] FirstPartitions;
+            public NintendoPartition[] SecondPartitions;
+            public NintendoPartition[] ThirdPartitions;
+            public NintendoPartition[] FourthPartitions;
+            public byte Region;
+            public byte JapanAge;
+            public byte UsaAge;
+            public byte GermanAge;
+            public byte PegiAge;
+            public byte FinlandAge;
+            public byte PortugalAge;
+            public byte UkAge;
+            public byte AustraliaAge;
+            public byte KoreaAge;
+        }
+
+        struct NintendoPartition
+        {
+            public uint Offset;
+            public uint Type;
         }
     }
 }

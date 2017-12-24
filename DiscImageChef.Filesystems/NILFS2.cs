@@ -42,59 +42,6 @@ namespace DiscImageChef.Filesystems
 {
     public class NILFS2 : Filesystem
     {
-        enum NILFS2_State : ushort
-        {
-            Valid = 0x0001,
-            Error = 0x0002,
-            Resize = 0x0004
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NILFS2_Superblock
-        {
-            public uint rev_level;
-            public ushort minor_rev_level;
-            public ushort magic;
-            public ushort bytes;
-            public ushort flags;
-            public uint crc_seed;
-            public uint sum;
-            public uint log_block_size;
-            public ulong nsegments;
-            public ulong dev_size;
-            public ulong first_data_block;
-            public uint blocks_per_segment;
-            public uint r_segments_percentage;
-            public ulong last_cno;
-            public ulong last_pseg;
-            public ulong last_seq;
-            public ulong free_blocks_count;
-            public ulong ctime;
-            public ulong mtime;
-            public ulong wtime;
-            public ushort mnt_count;
-            public ushort max_mnt_count;
-            public NILFS2_State state;
-            public ushort errors;
-            public ulong lastcheck;
-            public uint checkinterval;
-            public uint creator_os;
-            public ushort def_resuid;
-            public ushort def_resgid;
-            public uint first_ino;
-            public ushort inode_size;
-            public ushort dat_entry_size;
-            public ushort checkpoint_size;
-            public ushort segment_usage_size;
-            public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)] public byte[] volume_name;
-            public uint c_interval;
-            public uint c_block_max;
-            public ulong feature_compat;
-            public ulong feature_compat_ro;
-            public ulong feature_incompat;
-        }
-
         const ushort NILFS2_MAGIC = 0x3434;
         const uint NILFS2_SUPER_OFFSET = 1024;
 
@@ -144,8 +91,7 @@ namespace DiscImageChef.Filesystems
             return nilfsSb.magic == NILFS2_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -263,6 +209,59 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        enum NILFS2_State : ushort
+        {
+            Valid = 0x0001,
+            Error = 0x0002,
+            Resize = 0x0004
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct NILFS2_Superblock
+        {
+            public uint rev_level;
+            public ushort minor_rev_level;
+            public ushort magic;
+            public ushort bytes;
+            public ushort flags;
+            public uint crc_seed;
+            public uint sum;
+            public uint log_block_size;
+            public ulong nsegments;
+            public ulong dev_size;
+            public ulong first_data_block;
+            public uint blocks_per_segment;
+            public uint r_segments_percentage;
+            public ulong last_cno;
+            public ulong last_pseg;
+            public ulong last_seq;
+            public ulong free_blocks_count;
+            public ulong ctime;
+            public ulong mtime;
+            public ulong wtime;
+            public ushort mnt_count;
+            public ushort max_mnt_count;
+            public NILFS2_State state;
+            public ushort errors;
+            public ulong lastcheck;
+            public uint checkinterval;
+            public uint creator_os;
+            public ushort def_resuid;
+            public ushort def_resgid;
+            public uint first_ino;
+            public ushort inode_size;
+            public ushort dat_entry_size;
+            public ushort checkpoint_size;
+            public ushort segment_usage_size;
+            public Guid uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)] public byte[] volume_name;
+            public uint c_interval;
+            public uint c_block_max;
+            public ulong feature_compat;
+            public ulong feature_compat_ro;
+            public ulong feature_incompat;
         }
     }
 }

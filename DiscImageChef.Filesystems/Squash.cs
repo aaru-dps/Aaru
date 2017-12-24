@@ -42,6 +42,12 @@ namespace DiscImageChef.Filesystems
 {
     public class Squash : Filesystem
     {
+        /// <summary>
+        ///     Identifier for Squash
+        /// </summary>
+        const uint SQUASH_MAGIC = 0x73717368;
+        const uint SQUASH_CIGAM = 0x68737173;
+
         public Squash()
         {
             Name = "Squash filesystem";
@@ -63,46 +69,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
-        enum SquashCompression : ushort
-        {
-            Zlib = 1,
-            Lzma = 2,
-            Lzo = 3,
-            Xz = 4,
-            Lz4 = 5,
-            Zstd = 6
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SquashSuperBlock
-        {
-            public uint magic;
-            public uint inodes;
-            public uint mkfs_time;
-            public uint block_size;
-            public uint fragments;
-            public ushort compression;
-            public ushort block_log;
-            public ushort flags;
-            public ushort no_ids;
-            public ushort s_major;
-            public ushort s_minor;
-            public ulong root_inode;
-            public ulong bytes_used;
-            public ulong id_table_start;
-            public ulong xattr_id_table_start;
-            public ulong inode_table_start;
-            public ulong directory_table_start;
-            public ulong fragment_table_start;
-            public ulong lookup_table_start;
-        }
-
-        /// <summary>
-        /// Identifier for Squash
-        /// </summary>
-        const uint SQUASH_MAGIC = 0x73717368;
-        const uint SQUASH_CIGAM = 0x68737173;
-
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
@@ -114,8 +80,7 @@ namespace DiscImageChef.Filesystems
             return magic == SQUASH_MAGIC || magic == SQUASH_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
@@ -123,7 +88,8 @@ namespace DiscImageChef.Filesystems
             SquashSuperBlock sqSb = new SquashSuperBlock();
             bool littleEndian = true;
 
-            switch(magic) {
+            switch(magic)
+            {
                 case SQUASH_MAGIC:
                     IntPtr sqSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(sqSb));
                     Marshal.Copy(sector, 0, sqSbPtr, Marshal.SizeOf(sqSb));
@@ -247,6 +213,40 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        enum SquashCompression : ushort
+        {
+            Zlib = 1,
+            Lzma = 2,
+            Lzo = 3,
+            Xz = 4,
+            Lz4 = 5,
+            Zstd = 6
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct SquashSuperBlock
+        {
+            public uint magic;
+            public uint inodes;
+            public uint mkfs_time;
+            public uint block_size;
+            public uint fragments;
+            public ushort compression;
+            public ushort block_log;
+            public ushort flags;
+            public ushort no_ids;
+            public ushort s_major;
+            public ushort s_minor;
+            public ulong root_inode;
+            public ulong bytes_used;
+            public ulong id_table_start;
+            public ulong xattr_id_table_start;
+            public ulong inode_table_start;
+            public ulong directory_table_start;
+            public ulong fragment_table_start;
+            public ulong lookup_table_start;
         }
     }
 }

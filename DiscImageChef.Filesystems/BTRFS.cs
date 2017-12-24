@@ -44,7 +44,7 @@ namespace DiscImageChef.Filesystems
     public class BTRFS : Filesystem
     {
         /// <summary>
-        /// BTRFS magic "_BHRfS_M"
+        ///     BTRFS magic "_BHRfS_M"
         /// </summary>
         const ulong btrfsMagic = 0x4D5F53665248425F;
 
@@ -67,62 +67,6 @@ namespace DiscImageChef.Filesystems
             Name = "B-tree file system";
             PluginUuid = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
             CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20)] public byte[] checksum;
-            public Guid uuid;
-            public ulong pba;
-            public ulong flags;
-            public ulong magic;
-            public ulong generation;
-            public ulong root_lba;
-            public ulong chunk_lba;
-            public ulong log_lba;
-            public ulong log_root_transid;
-            public ulong total_bytes;
-            public ulong bytes_used;
-            public ulong root_dir_objectid;
-            public ulong num_devices;
-            public uint sectorsize;
-            public uint nodesize;
-            public uint leafsize;
-            public uint stripesize;
-            public uint n;
-            public ulong chunk_root_generation;
-            public ulong compat_flags;
-            public ulong compat_ro_flags;
-            public ulong incompat_flags;
-            public ushort csum_type;
-            public byte root_level;
-            public byte chunk_root_level;
-            public byte log_root_level;
-            public DevItem dev_item;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x100)] public string label;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)] public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x800)] public byte[] chunkpairs;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x4D5)] public byte[] unused;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DevItem
-        {
-            public ulong id;
-            public ulong bytes;
-            public ulong used;
-            public uint optimal_align;
-            public uint optimal_width;
-            public uint minimal_size;
-            public ulong type;
-            public ulong generation;
-            public ulong start_offset;
-            public uint dev_group;
-            public byte seek_speed;
-            public byte bandwitdh;
-            public Guid device_uuid;
-            public Guid uuid;
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -153,8 +97,7 @@ namespace DiscImageChef.Filesystems
             return btrfsSb.magic == btrfsMagic;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             XmlFsType = new FileSystemType();
@@ -311,6 +254,62 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct SuperBlock
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20)] public byte[] checksum;
+            public Guid uuid;
+            public ulong pba;
+            public ulong flags;
+            public ulong magic;
+            public ulong generation;
+            public ulong root_lba;
+            public ulong chunk_lba;
+            public ulong log_lba;
+            public ulong log_root_transid;
+            public ulong total_bytes;
+            public ulong bytes_used;
+            public ulong root_dir_objectid;
+            public ulong num_devices;
+            public uint sectorsize;
+            public uint nodesize;
+            public uint leafsize;
+            public uint stripesize;
+            public uint n;
+            public ulong chunk_root_generation;
+            public ulong compat_flags;
+            public ulong compat_ro_flags;
+            public ulong incompat_flags;
+            public ushort csum_type;
+            public byte root_level;
+            public byte chunk_root_level;
+            public byte log_root_level;
+            public DevItem dev_item;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x100)] public string label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x800)] public byte[] chunkpairs;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x4D5)] public byte[] unused;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DevItem
+        {
+            public ulong id;
+            public ulong bytes;
+            public ulong used;
+            public uint optimal_align;
+            public uint optimal_width;
+            public uint minimal_size;
+            public ulong type;
+            public ulong generation;
+            public ulong start_offset;
+            public uint dev_group;
+            public byte seek_speed;
+            public byte bandwitdh;
+            public Guid device_uuid;
+            public Guid uuid;
         }
     }
 }

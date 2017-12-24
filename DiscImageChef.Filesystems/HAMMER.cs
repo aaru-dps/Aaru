@@ -41,12 +41,11 @@ using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;
 using hammer_tid_t = System.UInt64;
+
 #pragma warning disable 169
 
 namespace DiscImageChef.Filesystems
 {
-    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class HAMMER : Filesystem
     {
         const ulong HAMMER_FSBUF_VOLUME = 0xC8414D4DC5523031;
@@ -92,8 +91,7 @@ namespace DiscImageChef.Filesystems
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -115,7 +113,7 @@ namespace DiscImageChef.Filesystems
             {
                 GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
                 hammerSb = (HammerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                     typeof(HammerSuperBlock));
+                                                                    typeof(HammerSuperBlock));
                 handle.Free();
             }
             else hammerSb = BigEndianMarshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
@@ -162,91 +160,6 @@ namespace DiscImageChef.Filesystems
             //sb.AppendFormat("Volume header CRC: 0x{0:X8}", afs_sb.vol_crc).AppendLine();
 
             information = sb.ToString();
-        }
-
-        /// <summary>
-        /// Be superblock
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HammerSuperBlock
-        {
-            /// <summary><see cref="HAMMER_FSBUF_VOLUME"/> for a valid header</summary>
-            public ulong vol_signature;
-
-            /* These are relative to block device offset, not zone offsets. */
-            /// <summary>offset of boot area</summary>
-            public long vol_bot_beg;
-            /// <summary>offset of memory log</summary>
-            public long vol_mem_beg;
-            /// <summary>offset of the first buffer in volume</summary>
-            public long vol_buf_beg;
-            /// <summary>offset of volume EOF (on buffer boundary)</summary>
-            public long vol_buf_end;
-            public long vol_reserved01;
-
-            /// <summary>identify filesystem</summary>
-            public Guid vol_fsid;
-            /// <summary>identify filesystem type</summary>
-            public Guid vol_fstype;
-            /// <summary>filesystem label</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] vol_label;
-
-            /// <summary>volume number within filesystem</summary>
-            public int vol_no;
-            /// <summary>number of volumes making up filesystem</summary>
-            public int vol_count;
-
-            /// <summary>version control information</summary>
-            public uint vol_version;
-            /// <summary>header crc</summary>
-            public hammer_crc_t vol_crc;
-            /// <summary>volume flags</summary>
-            public uint vol_flags;
-            /// <summary>the root volume number (must be 0)</summary>
-            public uint vol_rootvol;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] vol_reserved;
-
-            /*
-             * These fields are initialized and space is reserved in every
-             * volume making up a HAMMER filesytem, but only the root volume
-             * contains valid data.  Note that vol0_stat_bigblocks does not
-             * include big-blocks for freemap and undomap initially allocated
-             * by newfs_hammer(8).
-             */
-            /// <summary>total big-blocks when fs is empty</summary>
-            public long vol0_stat_bigblocks;
-            /// <summary>number of free big-blocks</summary>
-            public long vol0_stat_freebigblocks;
-            public long vol0_reserved01;
-            /// <summary>for statfs only</summary>
-            public long vol0_stat_inodes;
-            public long vol0_reserved02;
-            /// <summary>B-Tree root offset in zone-8</summary>
-            public hammer_off_t vol0_btree_root;
-            /// <summary>highest partially synchronized TID</summary>
-            public hammer_tid_t vol0_next_tid;
-            public hammer_off_t vol0_reserved03;
-
-            /// <summary>Blockmaps for zones.  Not all zones use a blockmap.  Note that the entire root blockmap is cached in the hammer_mount structure.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public HammerBlockMap[] vol0_blockmap;
-
-            /// <summary>Array of zone-2 addresses for undo FIFO.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public hammer_off_t[] vol0_undo_array;
-        }
-
-        struct HammerBlockMap
-        {
-            /// <summary>zone-2 offset only used by zone-4</summary>
-            public hammer_off_t phys_offset;
-            /// <summary>zone-X offset only used by zone-3</summary>
-            public hammer_off_t first_offset;
-            /// <summary>zone-X offset for allocation</summary>
-            public hammer_off_t next_offset;
-            /// <summary>zone-X offset only used by zone-3</summary>
-            public hammer_off_t alloc_offset;
-            public uint reserved01;
-            public hammer_crc_t entry_crc;
         }
 
         public override Errno Mount()
@@ -307,6 +220,97 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        /// <summary>
+        ///     Hammer superblock
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        struct HammerSuperBlock
+        {
+            /// <summary><see cref="HAMMER_FSBUF_VOLUME" /> for a valid header</summary>
+            public ulong vol_signature;
+
+            /* These are relative to block device offset, not zone offsets. */
+            /// <summary>offset of boot area</summary>
+            public long vol_bot_beg;
+            /// <summary>offset of memory log</summary>
+            public long vol_mem_beg;
+            /// <summary>offset of the first buffer in volume</summary>
+            public long vol_buf_beg;
+            /// <summary>offset of volume EOF (on buffer boundary)</summary>
+            public long vol_buf_end;
+            public long vol_reserved01;
+
+            /// <summary>identify filesystem</summary>
+            public Guid vol_fsid;
+            /// <summary>identify filesystem type</summary>
+            public Guid vol_fstype;
+            /// <summary>filesystem label</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] vol_label;
+
+            /// <summary>volume number within filesystem</summary>
+            public int vol_no;
+            /// <summary>number of volumes making up filesystem</summary>
+            public int vol_count;
+
+            /// <summary>version control information</summary>
+            public uint vol_version;
+            /// <summary>header crc</summary>
+            public hammer_crc_t vol_crc;
+            /// <summary>volume flags</summary>
+            public uint vol_flags;
+            /// <summary>the root volume number (must be 0)</summary>
+            public uint vol_rootvol;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] vol_reserved;
+
+            /*
+             * These fields are initialized and space is reserved in every
+             * volume making up a HAMMER filesytem, but only the root volume
+             * contains valid data.  Note that vol0_stat_bigblocks does not
+             * include big-blocks for freemap and undomap initially allocated
+             * by newfs_hammer(8).
+             */
+            /// <summary>total big-blocks when fs is empty</summary>
+            public long vol0_stat_bigblocks;
+            /// <summary>number of free big-blocks</summary>
+            public long vol0_stat_freebigblocks;
+            public long vol0_reserved01;
+            /// <summary>for statfs only</summary>
+            public long vol0_stat_inodes;
+            public long vol0_reserved02;
+            /// <summary>B-Tree root offset in zone-8</summary>
+            public hammer_off_t vol0_btree_root;
+            /// <summary>highest partially synchronized TID</summary>
+            public hammer_tid_t vol0_next_tid;
+            public hammer_off_t vol0_reserved03;
+
+            /// <summary>
+            ///     Blockmaps for zones.  Not all zones use a blockmap.  Note that the entire root blockmap is cached in the
+            ///     hammer_mount structure.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public HammerBlockMap[] vol0_blockmap;
+
+            /// <summary>Array of zone-2 addresses for undo FIFO.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public hammer_off_t[] vol0_undo_array;
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        struct HammerBlockMap
+        {
+            /// <summary>zone-2 offset only used by zone-4</summary>
+            public hammer_off_t phys_offset;
+            /// <summary>zone-X offset only used by zone-3</summary>
+            public hammer_off_t first_offset;
+            /// <summary>zone-X offset for allocation</summary>
+            public hammer_off_t next_offset;
+            /// <summary>zone-X offset only used by zone-3</summary>
+            public hammer_off_t alloc_offset;
+            public uint reserved01;
+            public hammer_crc_t entry_crc;
         }
     }
 }

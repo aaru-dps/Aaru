@@ -42,15 +42,6 @@ namespace DiscImageChef.Filesystems
 {
     public class FATX : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FATX_Superblock
-        {
-            public uint magic;
-            public uint id;
-            public uint sectorsPerCluster;
-            public uint rootDirectoryCluster;
-        }
-
         const uint FATX_MAGIC = 0x58544146;
 
         public FATX()
@@ -86,8 +77,7 @@ namespace DiscImageChef.Filesystems
             return fatxSb.magic == FATX_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -177,6 +167,15 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct FATX_Superblock
+        {
+            public uint magic;
+            public uint id;
+            public uint sectorsPerCluster;
+            public uint rootDirectoryCluster;
         }
     }
 }

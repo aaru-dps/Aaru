@@ -42,6 +42,12 @@ namespace DiscImageChef.Filesystems
 {
     public class VxFS : Filesystem
     {
+        /// <summary>
+        ///     Identifier for VxFS
+        /// </summary>
+        const uint VXFS_MAGIC = 0xA501FCF5;
+        const uint VXFS_BASE = 0x400;
+
         public VxFS()
         {
             Name = "Veritas filesystem";
@@ -61,6 +67,125 @@ namespace DiscImageChef.Filesystems
             Name = "Veritas filesystem";
             PluginUuid = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
             CurrentEncoding = encoding ?? Encoding.UTF8;
+        }
+
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        {
+            ulong vmfsSuperOff = VXFS_BASE / imagePlugin.ImageInfo.SectorSize;
+
+            if(partition.Start + vmfsSuperOff >= partition.End) return false;
+
+            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
+
+            uint magic = BitConverter.ToUInt32(sector, 0x00);
+
+            return magic == VXFS_MAGIC;
+        }
+
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        {
+            ulong vmfsSuperOff = VXFS_BASE / imagePlugin.ImageInfo.SectorSize;
+            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
+
+            VxSuperBlock vxSb = new VxSuperBlock();
+            IntPtr vxSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vxSb));
+            Marshal.Copy(sector, 0, vxSbPtr, Marshal.SizeOf(vxSb));
+            vxSb = (VxSuperBlock)Marshal.PtrToStructure(vxSbPtr, typeof(VxSuperBlock));
+            Marshal.FreeHGlobal(vxSbPtr);
+
+            StringBuilder sbInformation = new StringBuilder();
+
+            sbInformation.AppendLine("Veritas file system");
+
+            sbInformation.AppendFormat("Volume version {0}", vxSb.vs_version).AppendLine();
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, CurrentEncoding))
+                         .AppendLine();
+            sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size)
+                         .AppendLine();
+            sbInformation.AppendFormat("Volume has {0} inodes per block", vxSb.vs_inopb).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} free inodes", vxSb.vs_ifree).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} free blocks", vxSb.vs_free).AppendLine();
+            sbInformation.AppendFormat("Volume created on {0}",
+                                       DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
+            sbInformation.AppendFormat("Volume last modified on {0}",
+                                       DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
+            if(vxSb.vs_clean != 0) sbInformation.AppendLine("Volume is dirty");
+
+            information = sbInformation.ToString();
+
+            XmlFsType = new FileSystemType
+            {
+                Type = "Veritas file system",
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
+                CreationDateSpecified = true,
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
+                ModificationDateSpecified = true,
+                Clusters = vxSb.vs_size,
+                ClusterSize = vxSb.vs_bsize,
+                Dirty = vxSb.vs_clean != 0,
+                FreeClusters = vxSb.vs_free,
+                FreeClustersSpecified = true
+            };
+        }
+
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -204,132 +329,6 @@ namespace DiscImageChef.Filesystems
             public int vs_old_dniaddr;
             /// <summary>checksum of V2 RO</summary>
             public int vs_checksum2;
-        }
-
-        /// <summary>
-        /// Identifier for VxFS
-        /// </summary>
-        const uint VXFS_MAGIC = 0xA501FCF5;
-        const uint VXFS_Base = 0x400;
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            ulong vmfsSuperOff = VXFS_Base / imagePlugin.ImageInfo.SectorSize;
-
-            if(partition.Start + vmfsSuperOff >= partition.End) return false;
-
-            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
-
-            uint magic = BitConverter.ToUInt32(sector, 0x00);
-
-            return magic == VXFS_MAGIC;
-        }
-
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
-        {
-            ulong vmfsSuperOff = VXFS_Base / imagePlugin.ImageInfo.SectorSize;
-            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
-
-            VxSuperBlock vxSb = new VxSuperBlock();
-            IntPtr vxSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vxSb));
-            Marshal.Copy(sector, 0, vxSbPtr, Marshal.SizeOf(vxSb));
-            vxSb = (VxSuperBlock)Marshal.PtrToStructure(vxSbPtr, typeof(VxSuperBlock));
-            Marshal.FreeHGlobal(vxSbPtr);
-
-            StringBuilder sbInformation = new StringBuilder();
-
-            sbInformation.AppendLine("Veritas file system");
-
-            sbInformation.AppendFormat("Volume version {0}", vxSb.vs_version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, CurrentEncoding))
-                         .AppendLine();
-            sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size)
-                         .AppendLine();
-            sbInformation.AppendFormat("Volume has {0} inodes per block", vxSb.vs_inopb).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} free inodes", vxSb.vs_ifree).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} free blocks", vxSb.vs_free).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}",
-                                       DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
-            sbInformation.AppendFormat("Volume last modified on {0}",
-                                       DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
-            if(vxSb.vs_clean != 0) sbInformation.AppendLine("Volume is dirty");
-
-            information = sbInformation.ToString();
-
-            XmlFsType = new FileSystemType
-            {
-                Type = "Veritas file system",
-                CreationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
-                CreationDateSpecified = true,
-                ModificationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
-                ModificationDateSpecified = true,
-                Clusters = vxSb.vs_size,
-                ClusterSize = vxSb.vs_bsize,
-                Dirty = vxSb.vs_clean != 0,
-                FreeClusters = vxSb.vs_free,
-                FreeClustersSpecified = true
-            };
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }

@@ -91,8 +91,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 entry.flMdDat = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 46);
                 entry.flNam = new byte[directoryBlocks[offset + 50] + 1];
                 Array.Copy(directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
-                string lowerFilename = StringHandlers.PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant()
-                                                     .Replace('/', ':');
+                string lowerFilename = StringHandlers
+                    .PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant().Replace('/', ':');
 
                 if(entry.flFlags.HasFlag(MFS_FileFlags.Used) && !idToFilename.ContainsKey(entry.flFlNum) &&
                    !idToEntry.ContainsKey(entry.flFlNum) && !filenameToId.ContainsKey(lowerFilename) &&

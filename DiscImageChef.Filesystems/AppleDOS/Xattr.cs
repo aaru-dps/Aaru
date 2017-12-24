@@ -38,7 +38,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
     public partial class AppleDOS
     {
         /// <summary>
-        /// Lists all extended attributes, alternate data streams and forks of the given file.
+        ///     Lists all extended attributes, alternate data streams and forks of the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         }
 
         /// <summary>
-        /// Reads an extended attribute, alternate data stream or fork from the given file.
+        ///     Reads an extended attribute, alternate data stream or fork from the given file.
         /// </summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
@@ -89,7 +89,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) return Errno.NoSuchExtendedAttribute;
+                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+                return Errno.NoSuchExtendedAttribute;
 
             if(!catalogCache.ContainsKey(filename)) return Errno.NoSuchFile;
 

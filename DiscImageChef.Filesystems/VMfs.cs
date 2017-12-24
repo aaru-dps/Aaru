@@ -42,6 +42,12 @@ namespace DiscImageChef.Filesystems
 {
     public class VMfs : Filesystem
     {
+        /// <summary>
+        ///     Identifier for VMfs
+        /// </summary>
+        const uint VMFS_MAGIC = 0xC001D00D;
+        const uint VMFS_BASE = 0x00100000;
+
         public VMfs()
         {
             Name = "VMware filesystem";
@@ -63,36 +69,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
-        [Flags]
-        enum VMfsFlags : byte
-        {
-            RecyledFolder = 64,
-            CaseSensitive = 128
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeInfo
-        {
-            public uint magic;
-            public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown1;
-            public byte lun;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)] public byte[] name;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 49)] public byte[] unknown3;
-            public uint size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)] public byte[] unknown4;
-            public Guid uuid;
-            public ulong ctime;
-            public ulong mtime;
-        }
-
-        /// <summary>
-        /// Identifier for VMfs
-        /// </summary>
-        const uint VMFS_MAGIC = 0xC001D00D;
-        const uint VMFS_BASE = 0x00100000;
-
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
@@ -108,8 +84,7 @@ namespace DiscImageChef.Filesystems
             return magic == VMFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             ulong vmfsSuperOff = VMFS_BASE / imagePlugin.ImageInfo.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
@@ -213,6 +188,30 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [Flags]
+        enum VMfsFlags : byte
+        {
+            RecyledFolder = 64,
+            CaseSensitive = 128
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VolumeInfo
+        {
+            public uint magic;
+            public uint version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown1;
+            public byte lun;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 49)] public byte[] unknown3;
+            public uint size;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)] public byte[] unknown4;
+            public Guid uuid;
+            public ulong ctime;
+            public ulong mtime;
         }
     }
 }

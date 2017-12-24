@@ -40,75 +40,75 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM : Filesystem
     {
-        bool mounted;
         readonly ImagePlugin device;
-        Partition partition;
-
         /// <summary>
-        /// Stores all known CP/M disk definitions
-        /// </summary>
-        CpmDefinitions definitions;
-        /// <summary>
-        /// True if <see cref="Identify"/> thinks this is a CP/M filesystem
+        ///     True if <see cref="Identify" /> thinks this is a CP/M filesystem
         /// </summary>
         bool cpmFound;
-        /// <summary>
-        /// If <see cref="Identify"/> thinks this is a CP/M filesystem, this is the definition for it
-        /// </summary>
-        CpmDefinition workingDefinition;
-        /// <summary>
-        /// CP/M disc parameter block (on-memory)
-        /// </summary>
-        DiscParameterBlock dpb;
-        /// <summary>
-        /// Sector deinterleaving mask
-        /// </summary>
-        int[] sectorMask;
-        /// <summary>
-        /// The volume label, if the CP/M filesystem contains one
-        /// </summary>
-        string label;
-        /// <summary>
-        /// True if there are timestamps in Z80DOS or DOS+ format
-        /// </summary>
-        bool thirdPartyTimestamps;
-        /// <summary>
-        /// True if there are CP/M 3 timestamps
-        /// </summary>
-        bool standardTimestamps;
-        /// <summary>
-        /// Timestamp in volume label for creation
-        /// </summary>
-        byte[] labelCreationDate;
-        /// <summary>
-        /// Timestamp in volume label for update
-        /// </summary>
-        byte[] labelUpdateDate;
 
         /// <summary>
-        /// Cached <see cref="FileSystemInfo"/>
+        ///     Cached <see cref="FileSystemInfo" />
         /// </summary>
         FileSystemInfo cpmStat;
         /// <summary>
-        /// Cached directory listing
+        ///     Cached file passwords, decoded
+        /// </summary>
+        Dictionary<string, byte[]> decodedPasswordCache;
+
+        /// <summary>
+        ///     Stores all known CP/M disk definitions
+        /// </summary>
+        CpmDefinitions definitions;
+        /// <summary>
+        ///     Cached directory listing
         /// </summary>
         List<string> dirList;
         /// <summary>
-        /// Cached file data
+        ///     CP/M disc parameter block (on-memory)
+        /// </summary>
+        DiscParameterBlock dpb;
+        /// <summary>
+        ///     Cached file data
         /// </summary>
         Dictionary<string, byte[]> fileCache;
         /// <summary>
-        /// Cached file <see cref="FileEntryInfo"/>
+        ///     The volume label, if the CP/M filesystem contains one
         /// </summary>
-        Dictionary<string, FileEntryInfo> statCache;
+        string label;
         /// <summary>
-        /// Cached file passwords
+        ///     Timestamp in volume label for creation
+        /// </summary>
+        byte[] labelCreationDate;
+        /// <summary>
+        ///     Timestamp in volume label for update
+        /// </summary>
+        byte[] labelUpdateDate;
+        bool mounted;
+        Partition partition;
+        /// <summary>
+        ///     Cached file passwords
         /// </summary>
         Dictionary<string, byte[]> passwordCache;
         /// <summary>
-        /// Cached file passwords, decoded
+        ///     Sector deinterleaving mask
         /// </summary>
-        Dictionary<string, byte[]> decodedPasswordCache;
+        int[] sectorMask;
+        /// <summary>
+        ///     True if there are CP/M 3 timestamps
+        /// </summary>
+        bool standardTimestamps;
+        /// <summary>
+        ///     Cached file <see cref="FileEntryInfo" />
+        /// </summary>
+        Dictionary<string, FileEntryInfo> statCache;
+        /// <summary>
+        ///     True if there are timestamps in Z80DOS or DOS+ format
+        /// </summary>
+        bool thirdPartyTimestamps;
+        /// <summary>
+        ///     If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it
+        /// </summary>
+        CpmDefinition workingDefinition;
 
         public CPM()
         {

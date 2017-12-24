@@ -124,8 +124,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -166,7 +165,8 @@ namespace DiscImageChef.Filesystems
                 filenamesize = 60;
                 littleEndian = magic != MINIX3_CIGAM || magic == MINIX2_CIGAM || magic == MINIX_CIGAM;
 
-                switch(magic) {
+                switch(magic)
+                {
                     case MINIX3_MAGIC:
                     case MINIX3_CIGAM:
                         minixVersion = "Minix v3 filesystem";
@@ -251,7 +251,7 @@ namespace DiscImageChef.Filesystems
                 {
                     GCHandle handle = GCHandle.Alloc(minixSbSector, GCHandleType.Pinned);
                     mnxSb = (Minix3SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                      typeof(Minix3SuperBlock));
+                                                                     typeof(Minix3SuperBlock));
                     handle.Free();
                 }
                 else mnxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
@@ -288,7 +288,7 @@ namespace DiscImageChef.Filesystems
                 {
                     GCHandle handle = GCHandle.Alloc(minixSbSector, GCHandleType.Pinned);
                     mnxSb = (MinixSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                     typeof(MinixSuperBlock));
+                                                                    typeof(MinixSuperBlock));
                     handle.Free();
                 }
                 else mnxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
@@ -302,8 +302,8 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024)
                       .AppendLine();
                 sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
-                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks,
-                                mnxSb.s_imap_blocks * 1024).AppendLine();
+                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks, mnxSb.s_imap_blocks * 1024)
+                  .AppendLine();
                 sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks, mnxSb.s_zmap_blocks * 1024)
                   .AppendLine();
                 sb.AppendFormat("First data zone: {0}", mnxSb.s_firstdatazone).AppendLine();
@@ -314,68 +314,6 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
             }
             information = sb.ToString();
-        }
-
-        /// <summary>
-        /// Superblock for Minix v1 and V2 filesystems
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MinixSuperBlock
-        {
-            /// <summary>0x00, inodes on volume</summary>
-            public ushort s_ninodes;
-            /// <summary>0x02, zones on volume</summary>
-            public ushort s_nzones;
-            /// <summary>0x04, blocks on inode map</summary>
-            public short s_imap_blocks;
-            /// <summary>0x06, blocks on zone map</summary>
-            public short s_zmap_blocks;
-            /// <summary>0x08, first data zone</summary>
-            public ushort s_firstdatazone;
-            /// <summary>0x0A, log2 of blocks/zone</summary>
-            public short s_log_zone_size;
-            /// <summary>0x0C, max file size</summary>
-            public uint s_max_size;
-            /// <summary>0x10, magic</summary>
-            public ushort s_magic;
-            /// <summary>0x12, filesystem state</summary>
-            public ushort s_state;
-            /// <summary>0x14, number of zones</summary>
-            public uint s_zones;
-        }
-
-        /// <summary>
-        /// Superblock for Minix v3 filesystems
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Minix3SuperBlock
-        {
-            /// <summary>0x00, inodes on volume</summary>
-            public uint s_ninodes;
-            /// <summary>0x02, old zones on volume</summary>
-            public ushort s_nzones;
-            /// <summary>0x06, blocks on inode map</summary>
-            public ushort s_imap_blocks;
-            /// <summary>0x08, blocks on zone map</summary>
-            public ushort s_zmap_blocks;
-            /// <summary>0x0A, first data zone</summary>
-            public ushort s_firstdatazone;
-            /// <summary>0x0C, log2 of blocks/zone</summary>
-            public ushort s_log_zone_size;
-            /// <summary>0x0E, padding</summary>
-            public ushort s_pad1;
-            /// <summary>0x10, max file size</summary>
-            public uint s_max_size;
-            /// <summary>0x14, number of zones</summary>
-            public uint s_zones;
-            /// <summary>0x18, magic</summary>
-            public ushort s_magic;
-            /// <summary>0x1A, padding</summary>
-            public ushort s_pad2;
-            /// <summary>0x1C, bytes in a block</summary>
-            public ushort s_blocksize;
-            /// <summary>0x1E, on-disk structures version</summary>
-            public byte s_disk_version;
         }
 
         public override Errno Mount()
@@ -436,6 +374,68 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        /// <summary>
+        ///     Superblock for Minix v1 and V2 filesystems
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct MinixSuperBlock
+        {
+            /// <summary>0x00, inodes on volume</summary>
+            public ushort s_ninodes;
+            /// <summary>0x02, zones on volume</summary>
+            public ushort s_nzones;
+            /// <summary>0x04, blocks on inode map</summary>
+            public short s_imap_blocks;
+            /// <summary>0x06, blocks on zone map</summary>
+            public short s_zmap_blocks;
+            /// <summary>0x08, first data zone</summary>
+            public ushort s_firstdatazone;
+            /// <summary>0x0A, log2 of blocks/zone</summary>
+            public short s_log_zone_size;
+            /// <summary>0x0C, max file size</summary>
+            public uint s_max_size;
+            /// <summary>0x10, magic</summary>
+            public ushort s_magic;
+            /// <summary>0x12, filesystem state</summary>
+            public ushort s_state;
+            /// <summary>0x14, number of zones</summary>
+            public uint s_zones;
+        }
+
+        /// <summary>
+        ///     Superblock for Minix v3 filesystems
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Minix3SuperBlock
+        {
+            /// <summary>0x00, inodes on volume</summary>
+            public uint s_ninodes;
+            /// <summary>0x02, old zones on volume</summary>
+            public ushort s_nzones;
+            /// <summary>0x06, blocks on inode map</summary>
+            public ushort s_imap_blocks;
+            /// <summary>0x08, blocks on zone map</summary>
+            public ushort s_zmap_blocks;
+            /// <summary>0x0A, first data zone</summary>
+            public ushort s_firstdatazone;
+            /// <summary>0x0C, log2 of blocks/zone</summary>
+            public ushort s_log_zone_size;
+            /// <summary>0x0E, padding</summary>
+            public ushort s_pad1;
+            /// <summary>0x10, max file size</summary>
+            public uint s_max_size;
+            /// <summary>0x14, number of zones</summary>
+            public uint s_zones;
+            /// <summary>0x18, magic</summary>
+            public ushort s_magic;
+            /// <summary>0x1A, padding</summary>
+            public ushort s_pad2;
+            /// <summary>0x1C, bytes in a block</summary>
+            public ushort s_blocksize;
+            /// <summary>0x1E, on-disk structures version</summary>
+            public byte s_disk_version;
         }
     }
 }

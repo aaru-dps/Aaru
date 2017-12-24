@@ -41,38 +41,17 @@ namespace DiscImageChef.Filesystems.AppleDOS
 {
     public partial class AppleDOS : Filesystem
     {
-        bool mounted;
-        bool debug;
         readonly ImagePlugin device;
-
-        #region Caches
-        /// <summary>Caches track/sector lists</summary>
-        Dictionary<string, byte[]> extentCache;
-        /// <summary>Caches files</summary>
-        Dictionary<string, byte[]> fileCache;
-        /// <summary>Caches catalog</summary>
-        Dictionary<string, ushort> catalogCache;
-        /// <summary>Caches file size</summary>
-        Dictionary<string, int> fileSizeCache;
-        /// <summary>Caches VTOC</summary>
-        byte[] vtocBlocks;
-        /// <summary>Caches catalog</summary>
-        byte[] catalogBlocks;
-        /// <summary>Caches boot code</summary>
-        byte[] bootBlocks;
-        /// <summary>Caches file type</summary>
-        Dictionary<string, byte> fileTypeCache;
-        /// <summary>Caches locked files</summary>
-        List<string> lockedFiles;
-        #endregion Caches
-
-        Vtoc vtoc;
-        ulong start;
+        bool debug;
+        bool mounted;
         int sectorsPerTrack;
+        ulong start;
         ulong totalFileEntries;
         bool track1UsedByFiles;
         bool track2UsedByFiles;
         int usedSectors;
+
+        Vtoc vtoc;
 
         public AppleDOS()
         {
@@ -98,5 +77,26 @@ namespace DiscImageChef.Filesystems.AppleDOS
             // TODO: Until Apple ][ encoding is implemented
             CurrentEncoding = new LisaRoman();
         }
+
+        #region Caches
+        /// <summary>Caches track/sector lists</summary>
+        Dictionary<string, byte[]> extentCache;
+        /// <summary>Caches files</summary>
+        Dictionary<string, byte[]> fileCache;
+        /// <summary>Caches catalog</summary>
+        Dictionary<string, ushort> catalogCache;
+        /// <summary>Caches file size</summary>
+        Dictionary<string, int> fileSizeCache;
+        /// <summary>Caches VTOC</summary>
+        byte[] vtocBlocks;
+        /// <summary>Caches catalog</summary>
+        byte[] catalogBlocks;
+        /// <summary>Caches boot code</summary>
+        byte[] bootBlocks;
+        /// <summary>Caches file type</summary>
+        Dictionary<string, byte> fileTypeCache;
+        /// <summary>Caches locked files</summary>
+        List<string> lockedFiles;
+        #endregion Caches
     }
 }

@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
     public partial class AppleDOS
     {
         /// <summary>
-        /// Solves a symbolic link.
+        ///     Solves a symbolic link.
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
@@ -51,7 +51,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         }
 
         /// <summary>
-        /// Lists contents from a directory.
+        ///     Lists contents from a directory.
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
@@ -100,7 +100,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 CatalogSector catSector = (CatalogSector)Marshal.PtrToStructure(catPtr, typeof(CatalogSector));
                 Marshal.FreeHGlobal(catPtr);
 
-                foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0)) {
+                foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0))
+                {
                     track1UsedByFiles |= entry.extentTrack == 1;
                     track2UsedByFiles |= entry.extentTrack == 2;
 

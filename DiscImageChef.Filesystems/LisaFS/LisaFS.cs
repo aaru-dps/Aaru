@@ -43,31 +43,14 @@ namespace DiscImageChef.Filesystems.LisaFS
     // Variable names from Lisa API
     public partial class LisaFS : Filesystem
     {
-        bool mounted;
-        bool debug;
         readonly ImagePlugin device;
+        bool debug;
+        int devTagSize;
 
         MDDF mddf;
-        ulong volumePrefix;
-        int devTagSize;
+        bool mounted;
         SRecord[] srecords;
-
-        #region Caches
-        /// <summary>Caches Extents Files</summary>
-        Dictionary<short, ExtentFile> extentCache;
-        /// <summary>Caches system files</summary>
-        Dictionary<short, byte[]> systemFileCache;
-        /// <summary>Caches user files files</summary>
-        Dictionary<short, byte[]> fileCache;
-        /// <summary>Caches catalogs</summary>
-        List<CatalogEntry> catalogCache;
-        /// <summary>Caches file size</summary>
-        Dictionary<short, int> fileSizeCache;
-        /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
-        List<short> printedExtents;
-        /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
-        Dictionary<short, DateTime> directoryDtcCache;
-        #endregion Caches
+        ulong volumePrefix;
 
         public LisaFS()
         {
@@ -90,5 +73,22 @@ namespace DiscImageChef.Filesystems.LisaFS
             PluginUuid = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
             CurrentEncoding = new LisaRoman();
         }
+
+        #region Caches
+        /// <summary>Caches Extents Files</summary>
+        Dictionary<short, ExtentFile> extentCache;
+        /// <summary>Caches system files</summary>
+        Dictionary<short, byte[]> systemFileCache;
+        /// <summary>Caches user files files</summary>
+        Dictionary<short, byte[]> fileCache;
+        /// <summary>Caches catalogs</summary>
+        List<CatalogEntry> catalogCache;
+        /// <summary>Caches file size</summary>
+        Dictionary<short, int> fileSizeCache;
+        /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
+        List<short> printedExtents;
+        /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
+        Dictionary<short, DateTime> directoryDtcCache;
+        #endregion Caches
     }
 }

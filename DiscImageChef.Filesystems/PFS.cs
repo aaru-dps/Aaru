@@ -42,6 +42,27 @@ namespace DiscImageChef.Filesystems
 {
     public class PFS : Filesystem
     {
+        /// <summary>
+        ///     Identifier for AFS (PFS v1)
+        /// </summary>
+        const uint AFS_DISK = 0x41465301;
+        /// <summary>
+        ///     Identifier for PFS v2
+        /// </summary>
+        const uint PFS2_DISK = 0x50465302;
+        /// <summary>
+        ///     Identifier for PFS v3
+        /// </summary>
+        const uint PFS_DISK = 0x50465301;
+        /// <summary>
+        ///     Identifier for multi-user AFS
+        /// </summary>
+        const uint MUAF_DISK = 0x6D754146;
+        /// <summary>
+        ///     Identifier for multi-user PFS
+        /// </summary>
+        const uint MUPFS_DISK = 0x6D755046;
+
         public PFS()
         {
             Name = "Professional File System";
@@ -63,128 +84,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
-        /// <summary>
-        /// Boot block, first 2 sectors
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootBlock
-        {
-            /// <summary>
-            /// "PFS\1" disk type
-            /// </summary>
-            public uint diskType;
-            /// <summary>
-            /// Boot code, til completion
-            /// </summary>
-            public byte[] bootCode;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RootBlock
-        {
-            /// <summary>
-            /// Disk type
-            /// </summary>
-            public uint diskType;
-            /// <summary>
-            /// Options
-            /// </summary>
-            public uint options;
-            /// <summary>
-            /// Current datestamp
-            /// </summary>
-            public uint datestamp;
-            /// <summary>
-            /// Volume creation day
-            /// </summary>
-            public ushort creationday;
-            /// <summary>
-            /// Volume creation minute
-            /// </summary>
-            public ushort creationminute;
-            /// <summary>
-            /// Volume creation tick
-            /// </summary>
-            public ushort creationtick;
-            /// <summary>
-            /// AmigaDOS protection bits
-            /// </summary>
-            public ushort protection;
-            /// <summary>
-            /// Volume label (Pascal string)
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] diskname;
-            /// <summary>
-            /// Last reserved block
-            /// </summary>
-            public uint lastreserved;
-            /// <summary>
-            /// First reserved block
-            /// </summary>
-            public uint firstreserved;
-            /// <summary>
-            /// Free reserved blocks
-            /// </summary>
-            public uint reservedfree;
-            /// <summary>
-            /// Size of reserved blocks in bytes
-            /// </summary>
-            public ushort reservedblocksize;
-            /// <summary>
-            /// Blocks in rootblock, including bitmap
-            /// </summary>
-            public ushort rootblockclusters;
-            /// <summary>
-            /// Free blocks
-            /// </summary>
-            public uint blocksfree;
-            /// <summary>
-            /// Blocks that must be always free
-            /// </summary>
-            public uint alwaysfree;
-            /// <summary>
-            /// Current bitmapfield number for allocation
-            /// </summary>
-            public uint rovingPointer;
-            /// <summary>
-            /// Pointer to deldir
-            /// </summary>
-            public uint delDirPtr;
-            /// <summary>
-            /// Disk size in sectors
-            /// </summary>
-            public uint diskSize;
-            /// <summary>
-            /// Rootblock extension
-            /// </summary>
-            public uint extension;
-            /// <summary>
-            /// Unused
-            /// </summary>
-            public uint unused;
-        }
-
-        /// <summary>
-        /// Identifier for AFS (PFS v1)
-        /// </summary>
-        const uint AFS_DISK = 0x41465301;
-        /// <summary>
-        /// Identifier for PFS v2
-        /// </summary>
-        const uint PFS2_DISK = 0x50465302;
-        /// <summary>
-        /// Identifier for PFS v3
-        /// </summary>
-        const uint PFS_DISK = 0x50465301;
-        /// <summary>
-        /// Identifier for multi-user AFS
-        /// </summary>
-        const uint MUAF_DISK = 0x6D754146;
-        /// <summary>
-        /// Identifier for multi-user PFS
-        /// </summary>
-        const uint MUPFS_DISK = 0x6D755046;
-
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
@@ -199,8 +98,7 @@ namespace DiscImageChef.Filesystems
                    magic == MUPFS_DISK;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] rootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
             RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
@@ -313,6 +211,107 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        /// <summary>
+        ///     Boot block, first 2 sectors
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BootBlock
+        {
+            /// <summary>
+            ///     "PFS\1" disk type
+            /// </summary>
+            public uint diskType;
+            /// <summary>
+            ///     Boot code, til completion
+            /// </summary>
+            public byte[] bootCode;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RootBlock
+        {
+            /// <summary>
+            ///     Disk type
+            /// </summary>
+            public uint diskType;
+            /// <summary>
+            ///     Options
+            /// </summary>
+            public uint options;
+            /// <summary>
+            ///     Current datestamp
+            /// </summary>
+            public uint datestamp;
+            /// <summary>
+            ///     Volume creation day
+            /// </summary>
+            public ushort creationday;
+            /// <summary>
+            ///     Volume creation minute
+            /// </summary>
+            public ushort creationminute;
+            /// <summary>
+            ///     Volume creation tick
+            /// </summary>
+            public ushort creationtick;
+            /// <summary>
+            ///     AmigaDOS protection bits
+            /// </summary>
+            public ushort protection;
+            /// <summary>
+            ///     Volume label (Pascal string)
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] diskname;
+            /// <summary>
+            ///     Last reserved block
+            /// </summary>
+            public uint lastreserved;
+            /// <summary>
+            ///     First reserved block
+            /// </summary>
+            public uint firstreserved;
+            /// <summary>
+            ///     Free reserved blocks
+            /// </summary>
+            public uint reservedfree;
+            /// <summary>
+            ///     Size of reserved blocks in bytes
+            /// </summary>
+            public ushort reservedblocksize;
+            /// <summary>
+            ///     Blocks in rootblock, including bitmap
+            /// </summary>
+            public ushort rootblockclusters;
+            /// <summary>
+            ///     Free blocks
+            /// </summary>
+            public uint blocksfree;
+            /// <summary>
+            ///     Blocks that must be always free
+            /// </summary>
+            public uint alwaysfree;
+            /// <summary>
+            ///     Current bitmapfield number for allocation
+            /// </summary>
+            public uint rovingPointer;
+            /// <summary>
+            ///     Pointer to deldir
+            /// </summary>
+            public uint delDirPtr;
+            /// <summary>
+            ///     Disk size in sectors
+            /// </summary>
+            public uint diskSize;
+            /// <summary>
+            ///     Rootblock extension
+            /// </summary>
+            public uint extension;
+            /// <summary>
+            ///     Unused
+            /// </summary>
+            public uint unused;
         }
     }
 }

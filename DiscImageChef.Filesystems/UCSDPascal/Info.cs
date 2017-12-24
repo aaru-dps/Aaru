@@ -80,13 +80,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.GetSectors()) return false;
 
             // There can be not less than zero files
-            if(volEntry.files < 0) return false;
-
-            return true;
+            return volEntry.files >= 0;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             information = "";

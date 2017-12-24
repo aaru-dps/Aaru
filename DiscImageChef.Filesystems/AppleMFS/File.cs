@@ -169,8 +169,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = directoryBlocks.Length / stat.BlockSize +
-                                      directoryBlocks.Length % stat.BlockSize;
+                        stat.Blocks = directoryBlocks.Length / stat.BlockSize + directoryBlocks.Length % stat.BlockSize;
                         stat.Length = directoryBlocks.Length;
                     }
                     else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)

@@ -106,8 +106,7 @@ namespace DiscImageChef.Filesystems
             return magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -171,13 +170,16 @@ namespace DiscImageChef.Filesystems
                                 1 << (int)besb.block_shift, besb.block_size).AppendLine();
             }
 
-            switch(besb.flags) {
+            switch(besb.flags)
+            {
                 case BEFS_CLEAN:
                     sb.AppendLine(besb.log_start == besb.log_end ? "Filesystem is clean" : "Filesystem is dirty");
                     break;
-                case BEFS_DIRTY: sb.AppendLine("Filesystem is dirty");
+                case BEFS_DIRTY:
+                    sb.AppendLine("Filesystem is dirty");
                     break;
-                default: sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
+                default:
+                    sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
                     break;
             }
 
@@ -217,64 +219,6 @@ namespace DiscImageChef.Filesystems
                 Type = "BeFS",
                 VolumeName = StringHandlers.CToString(besb.name, CurrentEncoding)
             };
-        }
-
-        /// <summary>
-        /// Be superblock
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BeSuperBlock
-        {
-            /// <summary>0x000, Volume name, 32 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] name;
-            /// <summary>0x020, "BFS1", 0x42465331</summary>
-            public uint magic1;
-            /// <summary>0x024, "BIGE", 0x42494745</summary>
-            public uint fs_byte_order;
-            /// <summary>0x028, Bytes per block</summary>
-            public uint block_size;
-            /// <summary>0x02C, 1 &lt;&lt; block_shift == block_size</summary>
-            public uint block_shift;
-            /// <summary>0x030, Blocks in volume</summary>
-            public long num_blocks;
-            /// <summary>0x038, Used blocks in volume</summary>
-            public long used_blocks;
-            /// <summary>0x040, Bytes per inode</summary>
-            public int inode_size;
-            /// <summary>0x044, 0xDD121031</summary>
-            public uint magic2;
-            /// <summary>0x048, Blocks per allocation group</summary>
-            public int blocks_per_ag;
-            /// <summary>0x04C, 1 &lt;&lt; ag_shift == blocks_per_ag</summary>
-            public int ag_shift;
-            /// <summary>0x050, Allocation groups in volume</summary>
-            public int num_ags;
-            /// <summary>0x054, 0x434c454e if clean, 0x44495254 if dirty</summary>
-            public uint flags;
-            /// <summary>0x058, Allocation group of journal</summary>
-            public int log_blocks_ag;
-            /// <summary>0x05C, Start block of journal, inside ag</summary>
-            public ushort log_blocks_start;
-            /// <summary>0x05E, Length in blocks of journal, inside ag</summary>
-            public ushort log_blocks_len;
-            /// <summary>0x060, Start of journal</summary>
-            public long log_start;
-            /// <summary>0x068, End of journal</summary>
-            public long log_end;
-            /// <summary>0x070, 0x15B6830E</summary>
-            public uint magic3;
-            /// <summary>0x074, Allocation group where root folder's i-node resides</summary>
-            public int root_dir_ag;
-            /// <summary>0x078, Start in ag of root folder's i-node</summary>
-            public ushort root_dir_start;
-            /// <summary>0x07A, As this is part of inode_addr, this is 1</summary>
-            public ushort root_dir_len;
-            /// <summary>0x07C, Allocation group where indices' i-node resides</summary>
-            public int indices_ag;
-            /// <summary>0x080, Start in ag of indices' i-node</summary>
-            public ushort indices_start;
-            /// <summary>0x082, As this is part of inode_addr, this is 1</summary>
-            public ushort indices_len;
         }
 
         public override Errno Mount()
@@ -335,6 +279,64 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        /// <summary>
+        ///     Be superblock
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BeSuperBlock
+        {
+            /// <summary>0x000, Volume name, 32 bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] name;
+            /// <summary>0x020, "BFS1", 0x42465331</summary>
+            public uint magic1;
+            /// <summary>0x024, "BIGE", 0x42494745</summary>
+            public uint fs_byte_order;
+            /// <summary>0x028, Bytes per block</summary>
+            public uint block_size;
+            /// <summary>0x02C, 1 &lt;&lt; block_shift == block_size</summary>
+            public uint block_shift;
+            /// <summary>0x030, Blocks in volume</summary>
+            public long num_blocks;
+            /// <summary>0x038, Used blocks in volume</summary>
+            public long used_blocks;
+            /// <summary>0x040, Bytes per inode</summary>
+            public int inode_size;
+            /// <summary>0x044, 0xDD121031</summary>
+            public uint magic2;
+            /// <summary>0x048, Blocks per allocation group</summary>
+            public int blocks_per_ag;
+            /// <summary>0x04C, 1 &lt;&lt; ag_shift == blocks_per_ag</summary>
+            public int ag_shift;
+            /// <summary>0x050, Allocation groups in volume</summary>
+            public int num_ags;
+            /// <summary>0x054, 0x434c454e if clean, 0x44495254 if dirty</summary>
+            public uint flags;
+            /// <summary>0x058, Allocation group of journal</summary>
+            public int log_blocks_ag;
+            /// <summary>0x05C, Start block of journal, inside ag</summary>
+            public ushort log_blocks_start;
+            /// <summary>0x05E, Length in blocks of journal, inside ag</summary>
+            public ushort log_blocks_len;
+            /// <summary>0x060, Start of journal</summary>
+            public long log_start;
+            /// <summary>0x068, End of journal</summary>
+            public long log_end;
+            /// <summary>0x070, 0x15B6830E</summary>
+            public uint magic3;
+            /// <summary>0x074, Allocation group where root folder's i-node resides</summary>
+            public int root_dir_ag;
+            /// <summary>0x078, Start in ag of root folder's i-node</summary>
+            public ushort root_dir_start;
+            /// <summary>0x07A, As this is part of inode_addr, this is 1</summary>
+            public ushort root_dir_len;
+            /// <summary>0x07C, Allocation group where indices' i-node resides</summary>
+            public int indices_ag;
+            /// <summary>0x080, Start in ag of indices' i-node</summary>
+            public ushort indices_start;
+            /// <summary>0x082, As this is part of inode_addr, this is 1</summary>
+            public ushort indices_len;
         }
     }
 }

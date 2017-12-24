@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.CPM
     partial class CPM
     {
         /// <summary>
-        /// Loads all the known CP/M disk definitions from an XML stored as an embedded resource.
+        ///     Loads all the known CP/M disk definitions from an XML stored as an embedded resource.
         /// </summary>
         /// <returns>The definitions.</returns>
         bool LoadDefinitions()
@@ -50,7 +50,8 @@ namespace DiscImageChef.Filesystems.CPM
             {
                 XmlReader defsReader =
                     XmlReader.Create(Assembly.GetExecutingAssembly()
-                                             .GetManifestResourceStream("DiscImageChef.Filesystems.CPM.cpmdefs.xml") ?? throw new InvalidOperationException());
+                                             .GetManifestResourceStream("DiscImageChef.Filesystems.CPM.cpmdefs.xml") ??
+                                     throw new InvalidOperationException());
                 XmlSerializer defsSerializer = new XmlSerializer(typeof(CpmDefinitions));
                 definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);
 
@@ -78,131 +79,132 @@ namespace DiscImageChef.Filesystems.CPM
     }
 
     /// <summary>
-    /// CP/M disk definitions
+    ///     CP/M disk definitions
     /// </summary>
     class CpmDefinitions
     {
         /// <summary>
-        /// List of all CP/M disk definitions
-        /// </summary>
-        public List<CpmDefinition> definitions;
-        /// <summary>
-        /// Timestamp of creation of the CP/M disk definitions list
+        ///     Timestamp of creation of the CP/M disk definitions list
         /// </summary>
         public DateTime creation;
+        /// <summary>
+        ///     List of all CP/M disk definitions
+        /// </summary>
+        public List<CpmDefinition> definitions;
     }
 
     /// <summary>
-    /// CP/M disk definition
+    ///     CP/M disk definition
     /// </summary>
     class CpmDefinition
     {
         /// <summary>
-        /// Comment and description
-        /// </summary>
-        public string comment;
-        /// <summary>
-        /// Encoding, "FM", "MFM", "GCR"
-        /// </summary>
-        public string encoding;
-        /// <summary>
-        /// Controller bitrate
-        /// </summary>
-        public string bitrate;
-        /// <summary>
-        /// Total cylinders
-        /// </summary>
-        public int cylinders;
-        /// <summary>
-        /// Total sides
-        /// </summary>
-        public int sides;
-        /// <summary>
-        /// Physical sectors per side
-        /// </summary>
-        public int sectorsPerTrack;
-        /// <summary>
-        /// Physical bytes per sector
-        /// </summary>
-        public int bytesPerSector;
-        /// <summary>
-        /// Physical sector interleaving
-        /// </summary>
-        public int skew;
-        /// <summary>
-        /// Description of controller's side 0 (usually, upper side)
-        /// </summary>
-        public Side side1;
-        /// <summary>
-        /// Description of controller's side 1 (usually, lower side)
-        /// </summary>
-        public Side side2;
-        /// <summary>
-        /// Cylinder/side ordering. SIDES = change side after each track, CYLINDERS = change side after whole side, EAGLE and COLUMBIA unknown
-        /// </summary>
-        public string order;
-        /// <summary>
-        /// Disk definition label
-        /// </summary>
-        public string label;
-        /// <summary>
-        /// Left shifts needed to translate allocation block number to lba
-        /// </summary>
-        public int bsh;
-        /// <summary>
-        /// Block mask for <see cref="bsh"/>
-        /// </summary>
-        public int blm;
-        /// <summary>
-        /// Extent mask
-        /// </summary>
-        public int exm;
-        /// <summary>
-        /// Total number of 128 byte records on disk
-        /// </summary>
-        public int dsm;
-        /// <summary>
-        /// Total number of available directory entries
-        /// </summary>
-        public int drm;
-        /// <summary>
-        /// Maps the first 16 allocation blocks for reservation, high byte
+        ///     Maps the first 16 allocation blocks for reservation, high byte
         /// </summary>
         public int al0;
         /// <summary>
-        /// Maps the first 16 allocation blocks for reservation, low byte
+        ///     Maps the first 16 allocation blocks for reservation, low byte
         /// </summary>
         public int al1;
         /// <summary>
-        /// Tracks at the beginning of disk reserved for BIOS/BDOS
+        ///     Controller bitrate
         /// </summary>
-        public int ofs;
+        public string bitrate;
         /// <summary>
-        /// Sectors at the beginning of disk reserved for BIOS/BDOS
+        ///     Block mask for <see cref="bsh" />
         /// </summary>
-        public int sofs;
+        public int blm;
         /// <summary>
-        /// If true, all bytes written on disk are negated
+        ///     Left shifts needed to translate allocation block number to lba
+        /// </summary>
+        public int bsh;
+        /// <summary>
+        ///     Physical bytes per sector
+        /// </summary>
+        public int bytesPerSector;
+        /// <summary>
+        ///     Comment and description
+        /// </summary>
+        public string comment;
+        /// <summary>
+        ///     If true, all bytes written on disk are negated
         /// </summary>
         public bool complement;
         /// <summary>
-        /// Absolutely unknown?
+        ///     Total cylinders
+        /// </summary>
+        public int cylinders;
+        /// <summary>
+        ///     Total number of available directory entries
+        /// </summary>
+        public int drm;
+        /// <summary>
+        ///     Total number of 128 byte records on disk
+        /// </summary>
+        public int dsm;
+        /// <summary>
+        ///     Encoding, "FM", "MFM", "GCR"
+        /// </summary>
+        public string encoding;
+        /// <summary>
+        ///     Absolutely unknown?
         /// </summary>
         public bool evenOdd;
+        /// <summary>
+        ///     Extent mask
+        /// </summary>
+        public int exm;
+        /// <summary>
+        ///     Disk definition label
+        /// </summary>
+        public string label;
+        /// <summary>
+        ///     Tracks at the beginning of disk reserved for BIOS/BDOS
+        /// </summary>
+        public int ofs;
+        /// <summary>
+        ///     Cylinder/side ordering. SIDES = change side after each track, CYLINDERS = change side after whole side, EAGLE and
+        ///     COLUMBIA unknown
+        /// </summary>
+        public string order;
+        /// <summary>
+        ///     Physical sectors per side
+        /// </summary>
+        public int sectorsPerTrack;
+        /// <summary>
+        ///     Description of controller's side 0 (usually, upper side)
+        /// </summary>
+        public Side side1;
+        /// <summary>
+        ///     Description of controller's side 1 (usually, lower side)
+        /// </summary>
+        public Side side2;
+        /// <summary>
+        ///     Total sides
+        /// </summary>
+        public int sides;
+        /// <summary>
+        ///     Physical sector interleaving
+        /// </summary>
+        public int skew;
+        /// <summary>
+        ///     Sectors at the beginning of disk reserved for BIOS/BDOS
+        /// </summary>
+        public int sofs;
     }
 
     /// <summary>
-    /// Side descriptions
+    ///     Side descriptions
     /// </summary>
     class Side
     {
         /// <summary>
-        /// Side ID as found in each sector address mark
-        /// </summary>
-        public int sideId;
-        /// <summary>
-        /// Software interleaving mask, [1,3,0,2] means CP/M LBA 0 is physical sector 1, LBA 1 = 3, so on
+        ///     Software interleaving mask, [1,3,0,2] means CP/M LBA 0 is physical sector 1, LBA 1 = 3, so on
         /// </summary>
         public int[] sectorIds;
+        /// <summary>
+        ///     Side ID as found in each sector address mark
+        /// </summary>
+        public int sideId;
     }
 }

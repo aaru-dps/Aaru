@@ -43,52 +43,11 @@ namespace DiscImageChef.Filesystems
 {
     public class Reiser : Filesystem
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ReiserJournalParams
-        {
-            public uint journal_1stblock;
-            public uint journal_dev;
-            public uint journal_size;
-            public uint journal_trans_max;
-            public uint journal_magic;
-            public uint journal_max_batch;
-            public uint journal_max_commit_age;
-            public uint journal_max_trans_age;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Reiser_Superblock
-        {
-            public uint block_count;
-            public uint free_blocks;
-            public uint root_block;
-            public ReiserJournalParams journal;
-            public ushort blocksize;
-            public ushort oid_maxsize;
-            public ushort oid_cursize;
-            public ushort umount_state;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] magic;
-            public ushort fs_state;
-            public uint hash_function_code;
-            public ushort tree_height;
-            public ushort bmap_nr;
-            public ushort version;
-            public ushort reserved_for_journal;
-            public uint inode_generation;
-            public uint flags;
-            public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
-            public ushort mnt_count;
-            public ushort max_mnt_count;
-            public uint last_check;
-            public uint check_interval;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)] public byte[] unused;
-        }
+        const uint REISER_SUPER_OFFSET = 0x10000;
 
         readonly byte[] Reiser35_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x46, 0x73, 0x00, 0x00};
         readonly byte[] Reiser36_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x32, 0x46, 0x73, 0x00};
         readonly byte[] ReiserJr_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x33, 0x46, 0x73, 0x00};
-        const uint REISER_SUPER_OFFSET = 0x10000;
 
         public Reiser()
         {
@@ -137,8 +96,7 @@ namespace DiscImageChef.Filesystems
                    ReiserJr_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
@@ -255,6 +213,48 @@ namespace DiscImageChef.Filesystems
         public override Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ReiserJournalParams
+        {
+            public uint journal_1stblock;
+            public uint journal_dev;
+            public uint journal_size;
+            public uint journal_trans_max;
+            public uint journal_magic;
+            public uint journal_max_batch;
+            public uint journal_max_commit_age;
+            public uint journal_max_trans_age;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Reiser_Superblock
+        {
+            public uint block_count;
+            public uint free_blocks;
+            public uint root_block;
+            public ReiserJournalParams journal;
+            public ushort blocksize;
+            public ushort oid_maxsize;
+            public ushort oid_cursize;
+            public ushort umount_state;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] magic;
+            public ushort fs_state;
+            public uint hash_function_code;
+            public ushort tree_height;
+            public ushort bmap_nr;
+            public ushort version;
+            public ushort reserved_for_journal;
+            public uint inode_generation;
+            public uint flags;
+            public Guid uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
+            public ushort mnt_count;
+            public ushort max_mnt_count;
+            public uint last_check;
+            public uint check_interval;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)] public byte[] unused;
         }
     }
 }

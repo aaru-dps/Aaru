@@ -161,7 +161,8 @@ namespace DiscImageChef.Filesystems.LisaFS
             buf = null;
             if(!mounted || !debug) return Errno.AccessDenied;
 
-            if(fileId > 4 || fileId <= 0) if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED) return Errno.InvalidArgument;
+            if(fileId > 4 || fileId <= 0)
+                if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED) return Errno.InvalidArgument;
 
             if(systemFileCache.TryGetValue(fileId, out buf) && !tags) return Errno.NoError;
 
@@ -346,7 +347,8 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(!tags)
             {
-                if(fileSizeCache.TryGetValue(fileId, out int realSize)) if(realSize > temp.Length) DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
+                if(fileSizeCache.TryGetValue(fileId, out int realSize))
+                    if(realSize > temp.Length) DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
                 buf = temp;
 
                 fileCache.Add(fileId, buf);

@@ -44,6 +44,10 @@ namespace DiscImageChef.Filesystems
     // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
     public class exFAT : Filesystem
     {
+        readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
+
+        readonly byte[] Signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
+
         public exFAT()
         {
             Name = "Microsoft Extended File Allocation Table";
@@ -96,7 +100,8 @@ namespace DiscImageChef.Filesystems
             byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
             IntPtr parametersPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(parametersSector, 0, parametersPtr, 512);
-            OemParameterTable parametersTable = (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
+            OemParameterTable parametersTable =
+                (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
             Marshal.FreeHGlobal(parametersPtr);
 
             byte[] chkSector = imagePlugin.ReadSector(11 + partition.Start);
@@ -155,8 +160,65 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        readonly byte[] Signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
-        readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno Mount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Errno Unmount()
+        {
+            throw new NotImplementedException();
+        }
 
         [Flags]
         enum VolumeFlags : ushort
@@ -218,66 +280,6 @@ namespace DiscImageChef.Filesystems
         struct ChecksumSector
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] checksum;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno Mount()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno Unmount()
-        {
-            throw new NotImplementedException();
         }
     }
 }

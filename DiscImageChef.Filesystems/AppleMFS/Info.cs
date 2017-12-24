@@ -56,8 +56,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return drSigWord == MFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 

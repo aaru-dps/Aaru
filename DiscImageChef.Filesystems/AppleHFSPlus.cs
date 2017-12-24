@@ -44,15 +44,15 @@ namespace DiscImageChef.Filesystems
     public class AppleHFSPlus : Filesystem
     {
         /// <summary>
-        /// "BD", HFS magic
+        ///     "BD", HFS magic
         /// </summary>
         const ushort HFS_MAGIC = 0x4244;
         /// <summary>
-        /// "H+", HFS+ magic
+        ///     "H+", HFS+ magic
         /// </summary>
         const ushort HFSP_MAGIC = 0x482B;
         /// <summary>
-        /// "HX", HFSX magic
+        ///     "HX", HFSX magic
         /// </summary>
         const ushort HFSX_MAGIC = 0x4858;
 
@@ -88,8 +88,7 @@ namespace DiscImageChef.Filesystems
             uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
             if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
-            byte[] vhSector = imagePlugin.ReadSectors(partition.Start,
-                                                      sectorsToRead);
+            byte[] vhSector = imagePlugin.ReadSectors(partition.Start, sectorsToRead);
 
             drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400); // Check for HFS Wrapper MDB
 
@@ -99,13 +98,11 @@ namespace DiscImageChef.Filesystems
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    ushort xdrStABNt = BigEndianBitConverter
-                        .ToUInt16(vhSector, 0x47E);
+                    ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
                     uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                    ushort drAlBlSt = BigEndianBitConverter
-                        .ToUInt16(vhSector, 0x41C);
+                    ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
                     hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
                 }
@@ -119,8 +116,7 @@ namespace DiscImageChef.Filesystems
             return drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -133,8 +129,7 @@ namespace DiscImageChef.Filesystems
             uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
             if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
-            byte[] vhSector = imagePlugin.ReadSectors(partition.Start,
-                                                       sectorsToRead);
+            byte[] vhSector = imagePlugin.ReadSectors(partition.Start, sectorsToRead);
 
             drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400); // Check for HFS Wrapper MDB
 
@@ -144,13 +139,11 @@ namespace DiscImageChef.Filesystems
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    ushort xdrStABNt = BigEndianBitConverter
-                        .ToUInt16(vhSector, 0x47E);
+                    ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
                     uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                    ushort drAlBlSt = BigEndianBitConverter
-                        .ToUInt16(vhSector, 0x41C);
+                    ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
                     hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
                     wrapped = true;
@@ -278,8 +271,68 @@ namespace DiscImageChef.Filesystems
             else return;
         }
 
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
+        }
+
         /// <summary>
-        /// HFS+ Volume Header, should be at offset 0x0400 bytes in volume with a size of 532 bytes
+        ///     HFS+ Volume Header, should be at offset 0x0400 bytes in volume with a size of 532 bytes
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HFSPlusVolumeHeader
@@ -290,12 +343,14 @@ namespace DiscImageChef.Filesystems
             public ushort version;
             /// <summary>0x004, Volume attributes</summary>
             public uint attributes;
-            /// <summary>0x008, Implementation that last mounted the volume.
-            /// Reserved by Apple:
-            /// "8.10" Mac OS 8.1 to 9.2.2
-            /// "10.0" Mac OS X
-            /// "HFSJ" Journaled implementation
-            /// "fsck" /sbin/fsck</summary>
+            /// <summary>
+            ///     0x008, Implementation that last mounted the volume.
+            ///     Reserved by Apple:
+            ///     "8.10" Mac OS 8.1 to 9.2.2
+            ///     "10.0" Mac OS X
+            ///     "HFSJ" Journaled implementation
+            ///     "fsck" /sbin/fsck
+            /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] lastMountedVersion;
             /// <summary>0x00C, Allocation block number containing the journal</summary>
             public uint journalInfoBlock;
@@ -540,66 +595,6 @@ namespace DiscImageChef.Filesystems
             public uint startupFile_extents_startBlock7;
             /// <summary>0x200</summary>
             public uint startupFile_extents_blockCount7;
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }

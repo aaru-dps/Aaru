@@ -44,29 +44,38 @@ namespace DiscImageChef.Filesystems
     public class AcornADFS : Filesystem
     {
         /// <summary>
-        /// Location for boot block, in bytes
+        ///     Location for boot block, in bytes
         /// </summary>
         const ulong BOOT_BLOCK_LOCATION = 0xC00;
         /// <summary>
-        /// Size of boot block, in bytes
+        ///     Size of boot block, in bytes
         /// </summary>
         const uint BOOT_BLOCK_SIZE = 0x200;
         /// <summary>
-        /// Location of new directory, in bytes
+        ///     Location of new directory, in bytes
         /// </summary>
         const ulong NEW_DIRECTORY_LOCATION = 0x400;
         /// <summary>
-        /// Location of old directory, in bytes
+        ///     Location of old directory, in bytes
         /// </summary>
         const ulong OLD_DIRECTORY_LOCATION = 0x200;
         /// <summary>
-        /// Size of old directory
+        ///     Size of old directory
         /// </summary>
         const uint OLD_DIRECTORY_SIZE = 1280;
         /// <summary>
-        /// Size of new directory
+        ///     Size of new directory
         /// </summary>
         const uint NEW_DIRECTORY_SIZE = 2048;
+
+        /// <summary>
+        ///     New directory format magic number, "Nick"
+        /// </summary>
+        const uint NEW_DIR_MAGIC = 0x6B63694E;
+        /// <summary>
+        ///     Old directory format magic number, "Hugo"
+        /// </summary>
+        const uint OLD_DIR_MAGIC = 0x6F677548;
 
         public AcornADFS()
         {
@@ -89,175 +98,6 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
-        /// <summary>
-        /// Boot block, used in hard disks and ADFS-F and higher.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootBlock
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)] public byte[] spare;
-            public DiscRecord discRecord;
-            public byte flags;
-            public ushort startCylinder;
-            public byte checksum;
-        }
-
-        /// <summary>
-        /// Disc record, used in hard disks and ADFS-E and higher.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DiscRecord
-        {
-            public byte log2secsize;
-            public byte spt;
-            public byte heads;
-            public byte density;
-            public byte idlen;
-            public byte log2bpmb;
-            public byte skew;
-            public byte bootoption;
-            public byte lowsector;
-            public byte nzones;
-            public ushort zone_spare;
-            public uint root;
-            public uint disc_size;
-            public ushort disc_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] disc_name;
-            public uint disc_type;
-            public uint disc_size_high;
-            public byte flags;
-            public byte nzones_high;
-            public uint format_version;
-            public uint root_size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved;
-        }
-
-        /// <summary>
-        /// Free block map, sector 0, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldMapSector0
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)] public byte[] freeStart;
-            public byte reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] name;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] size;
-            public byte checksum;
-        }
-
-        /// <summary>
-        /// Free block map, sector 1, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldMapSector1
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)] public byte[] freeStart;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] name;
-            public ushort discId;
-            public byte boot;
-            public byte freeEnd;
-            public byte checksum;
-        }
-
-        /// <summary>
-        /// Free block map, sector 0, used in ADFS-E
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NewMap
-        {
-            public byte zoneChecksum;
-            public ushort freeLink;
-            public byte crossChecksum;
-            public DiscRecord discRecord;
-        }
-
-        /// <summary>
-        /// Directory header, common to "old" and "new" directories
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryHeader
-        {
-            public byte masterSequence;
-            public uint magic;
-        }
-
-        /// <summary>
-        /// New directory format magic number, "Nick"
-        /// </summary>
-        const uint NEW_DIR_MAGIC = 0x6B63694E;
-        /// <summary>
-        /// Old directory format magic number, "Hugo"
-        /// </summary>
-        const uint OLD_DIR_MAGIC = 0x6F677548;
-
-        /// <summary>
-        /// Directory header, common to "old" and "new" directories
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] name;
-            public uint load;
-            public uint exec;
-            public uint length;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] address;
-            public byte atts;
-        }
-
-        /// <summary>
-        /// Directory tail, new format
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NewDirectoryTail
-        {
-            public byte lastMark;
-            public ushort reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] parent;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)] public byte[] title;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] name;
-            public byte endMasSeq;
-            public uint magic;
-            public byte checkByte;
-        }
-
-        /// <summary>
-        /// Directory tail, old format
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldDirectoryTail
-        {
-            public byte lastMark;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] name;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] parent;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)] public byte[] title;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] reserved;
-            public byte endMasSeq;
-            public uint magic;
-            public byte checkByte;
-        }
-
-        /// <summary>
-        /// Directory, old format
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldDirectory
-        {
-            public DirectoryHeader header;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 47)] public DirectoryEntry[] entries;
-            public OldDirectoryTail tail;
-        }
-
-        /// <summary>
-        /// Directory, new format
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NewDirectory
-        {
-            public DirectoryHeader header;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 77)] public DirectoryEntry[] entries;
-            public NewDirectoryTail tail;
-        }
-
         // TODO: BBC Master hard disks are untested...
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
@@ -277,12 +117,14 @@ namespace DiscImageChef.Filesystems
                 sector = imagePlugin.ReadSector(0);
                 byte oldChk0 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector0 oldMap0 = (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
+                OldMapSector0 oldMap0 =
+                    (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
 
                 sector = imagePlugin.ReadSector(1);
                 byte oldChk1 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector1 oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                OldMapSector1 oldMap1 =
+                    (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
 
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldMap0.checksum = {0}", oldMap0.checksum);
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldChk0 = {0}", oldChk0);
@@ -317,7 +159,8 @@ namespace DiscImageChef.Filesystems
                         sector = tmp;
                     }
                     ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                    OldDirectory oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
+                    OldDirectory oldRoot =
+                        (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
                     byte dirChk = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
                     DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x200 = {0}",
@@ -421,8 +264,7 @@ namespace DiscImageChef.Filesystems
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
-                                            out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             XmlFsType = new FileSystemType();
@@ -440,12 +282,14 @@ namespace DiscImageChef.Filesystems
                 sector = imagePlugin.ReadSector(0);
                 byte oldChk0 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector0 oldMap0 = (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
+                OldMapSector0 oldMap0 =
+                    (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
 
                 sector = imagePlugin.ReadSector(1);
                 byte oldChk1 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector1 oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                OldMapSector1 oldMap1 =
+                    (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
 
                 // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum != oldChk1 && sector.Length >= 512)
@@ -492,9 +336,11 @@ namespace DiscImageChef.Filesystems
                             sector = tmp;
                         }
                         ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                        OldDirectory oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
+                        OldDirectory oldRoot =
+                            (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
 
-                        if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) namebytes = oldRoot.tail.name;
+                        if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
+                            namebytes = oldRoot.tail.name;
                         else
                         {
                             // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
@@ -514,7 +360,8 @@ namespace DiscImageChef.Filesystems
                             oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
                                                                            typeof(OldDirectory));
 
-                            if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) namebytes = oldRoot.tail.name;
+                            if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
+                                namebytes = oldRoot.tail.name;
                             else
                             {
                                 sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
@@ -526,9 +373,11 @@ namespace DiscImageChef.Filesystems
                                     sector = tmp;
                                 }
                                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                                NewDirectory newRoot = (NewDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
-                                                                                            typeof(NewDirectory));
-                                if(newRoot.header.magic == NEW_DIR_MAGIC && newRoot.tail.magic == NEW_DIR_MAGIC) namebytes = newRoot.tail.title;
+                                NewDirectory newRoot =
+                                    (NewDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
+                                                                         typeof(NewDirectory));
+                                if(newRoot.header.magic == NEW_DIR_MAGIC && newRoot.tail.magic == NEW_DIR_MAGIC)
+                                    namebytes = newRoot.tail.title;
                             }
                         }
                     }
@@ -797,6 +646,166 @@ namespace DiscImageChef.Filesystems
             }
 
             return (byte)(((sum & 0xFF000000) >> 24) ^ ((sum & 0xFF0000) >> 16) ^ ((sum & 0xFF00) >> 8) ^ (sum & 0xFF));
+        }
+
+        /// <summary>
+        ///     Boot block, used in hard disks and ADFS-F and higher.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BootBlock
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)] public byte[] spare;
+            public DiscRecord discRecord;
+            public byte flags;
+            public ushort startCylinder;
+            public byte checksum;
+        }
+
+        /// <summary>
+        ///     Disc record, used in hard disks and ADFS-E and higher.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DiscRecord
+        {
+            public byte log2secsize;
+            public byte spt;
+            public byte heads;
+            public byte density;
+            public byte idlen;
+            public byte log2bpmb;
+            public byte skew;
+            public byte bootoption;
+            public byte lowsector;
+            public byte nzones;
+            public ushort zone_spare;
+            public uint root;
+            public uint disc_size;
+            public ushort disc_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] disc_name;
+            public uint disc_type;
+            public uint disc_size_high;
+            public byte flags;
+            public byte nzones_high;
+            public uint format_version;
+            public uint root_size;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved;
+        }
+
+        /// <summary>
+        ///     Free block map, sector 0, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct OldMapSector0
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)] public byte[] freeStart;
+            public byte reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] size;
+            public byte checksum;
+        }
+
+        /// <summary>
+        ///     Free block map, sector 1, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct OldMapSector1
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)] public byte[] freeStart;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] name;
+            public ushort discId;
+            public byte boot;
+            public byte freeEnd;
+            public byte checksum;
+        }
+
+        /// <summary>
+        ///     Free block map, sector 0, used in ADFS-E
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct NewMap
+        {
+            public byte zoneChecksum;
+            public ushort freeLink;
+            public byte crossChecksum;
+            public DiscRecord discRecord;
+        }
+
+        /// <summary>
+        ///     Directory header, common to "old" and "new" directories
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DirectoryHeader
+        {
+            public byte masterSequence;
+            public uint magic;
+        }
+
+        /// <summary>
+        ///     Directory header, common to "old" and "new" directories
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DirectoryEntry
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] name;
+            public uint load;
+            public uint exec;
+            public uint length;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] address;
+            public byte atts;
+        }
+
+        /// <summary>
+        ///     Directory tail, new format
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct NewDirectoryTail
+        {
+            public byte lastMark;
+            public ushort reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] parent;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)] public byte[] title;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] name;
+            public byte endMasSeq;
+            public uint magic;
+            public byte checkByte;
+        }
+
+        /// <summary>
+        ///     Directory tail, old format
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct OldDirectoryTail
+        {
+            public byte lastMark;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] parent;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)] public byte[] title;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] reserved;
+            public byte endMasSeq;
+            public uint magic;
+            public byte checkByte;
+        }
+
+        /// <summary>
+        ///     Directory, old format
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct OldDirectory
+        {
+            public DirectoryHeader header;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 47)] public DirectoryEntry[] entries;
+            public OldDirectoryTail tail;
+        }
+
+        /// <summary>
+        ///     Directory, new format
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct NewDirectory
+        {
+            public DirectoryHeader header;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 77)] public DirectoryEntry[] entries;
+            public NewDirectoryTail tail;
         }
     }
 }

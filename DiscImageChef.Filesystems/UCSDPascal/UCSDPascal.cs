@@ -42,14 +42,14 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin : Filesystem
     {
-        bool mounted;
-        bool debug;
         readonly ImagePlugin device;
-
-        PascalVolumeEntry mountedVolEntry;
-        List<PascalFileEntry> fileEntries;
         byte[] bootBlocks;
         byte[] catalogBlocks;
+        bool debug;
+        List<PascalFileEntry> fileEntries;
+        bool mounted;
+
+        PascalVolumeEntry mountedVolEntry;
 
         public PascalPlugin()
         {
