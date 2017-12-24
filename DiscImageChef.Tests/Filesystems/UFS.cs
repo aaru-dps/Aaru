@@ -26,6 +26,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -87,6 +88,379 @@ namespace DiscImageChef.Tests.Filesystems
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class UfsApm
+    {
+        readonly string[] testfiles =
+        {
+            "ffs43/darwin_1.3.1.vdi.lz", "ffs43/darwin_1.4.1.vdi.lz", "ffs43/darwin_6.0.2.vdi.lz",
+            "ffs43/darwin_8.0.1.vdi.lz", "ufs1/darwin_1.3.1.vdi.lz", "ufs1/darwin_1.4.1.vdi.lz",
+            "ufs1/darwin_6.0.2.vdi.lz", "ufs1/darwin_8.0.1.vdi.lz", "ufs1/macosx_10.2.vdi.lz",
+            "ufs1/macosx_10.3.vdi.lz", "ufs1/macosx_10.4.vdi.lz"
+        };
+
+        readonly ulong[] sectors =
+            {1024000, 1024000, 1024000, 1024000, 204800, 204800, 204800, 204800, 2097152, 2097152, 2097152};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
+
+        readonly long[] clusters =
+            {511488, 511488, 511488, 511488, 102368, 102368, 102368, 102368, 1047660, 1038952, 1038952};
+
+        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024};
+
+        readonly string[] volumename = {null, null, null, null, null, null, null, null, null, null, null};
+
+        readonly string[] volumeserial = {null, null, null, null, null, null, null, null, null, null, null};
+
+        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_apm", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FFSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "Apple_UFS")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class UfsMbr
+    {
+        readonly string[] testfiles =
+        {
+            "ufs1/linux.vdi.lz", "ufs2/linux.vdi.lz", "ffs43/darwin_1.3.1.vdi.lz", "ffs43/darwin_1.4.1.vdi.lz",
+            "ffs43/darwin_6.0.2.vdi.lz", "ffs43/darwin_8.0.1.vdi.lz", "ffs43/dflybsd_1.2.0.vdi.lz",
+            "ffs43/dflybsd_3.6.1.vdi.lz", "ffs43/dflybsd_4.0.5.vdi.lz", "ffs43/netbsd_1.6.vdi.lz",
+            "ffs43/netbsd_7.1.vdi.lz", "ufs1/darwin_1.3.1.vdi.lz", "ufs1/darwin_1.4.1.vdi.lz",
+            "ufs1/darwin_6.0.2.vdi.lz", "ufs1/darwin_8.0.1.vdi.lz", "ufs1/dflybsd_1.2.0.vdi.lz",
+            "ufs1/dflybsd_3.6.1.vdi.lz", "ufs1/dflybsd_4.0.5.vdi.lz", "ufs1/freebsd_6.1.vdi.lz",
+            "ufs1/freebsd_7.0.vdi.lz", "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz", "ufs1/netbsd_7.1.vdi.lz",
+            "ufs1/solaris_7.vdi.lz", "ufs1/solaris_9.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz",
+            "ufs2/freebsd_8.2.vdi.lz", "ufs2/netbsd_7.1.vdi.lz"
+        };
+
+        readonly ulong[] sectors =
+        {
+            262144, 262144, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 409600, 204800,
+            204800, 204800, 204800, 2097152, 2097152, 2097152, 2097152, 8388608, 8388608, 2097152, 1024000, 2097152,
+            2097152, 16777216, 16777216, 16777216, 2097152
+        };
+
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
+            512, 512, 512, 512, 512, 512, 512, 512
+        };
+
+        readonly long[] clusters =
+        {
+            65024, 65024, 511024, 511024, 511024, 511488, 511950, 255470, 255470, 511992, 204768, 102280, 102280,
+            102280, 102368, 1048500, 523758, 523758, 262138, 1048231, 2096462, 524284, 511968, 1038240, 1046808,
+            2096472, 2096472, 4192945, 524272
+        };
+
+        readonly int[] clustersize =
+        {
+            2048, 2048, 1024, 1024, 1024, 1024, 1024, 2048, 2048, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 2048, 2048,
+            4096, 4096, 2048, 2048, 1024, 1024, 1024, 4096, 4096, 2048, 2048
+        };
+
+        readonly string[] volumename =
+        {
+            null, "VolumeLabel", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, "VolumeLabel", "VolumeLabel", "VolumeLabel", ""
+        };
+
+        readonly string[] volumeserial =
+        {
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null
+        };
+
+        readonly string[] type =
+        {
+            "UFS", "UFS2", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS2", "UFS2", "UFS2", "UFS2"
+        };
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_mbr", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FFSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "0x63" || partitions[j].Type == "0xA8" || partitions[j].Type == "0xA5" ||
+                       partitions[j].Type == "0xA9" || partitions[j].Type == "0x82" || partitions[j].Type == "0x83" ||
+                       partitions[j].Type == "4.2BSD Fast File System" || partitions[j].Type == "Sun boot")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class UfsNeXt
+    {
+        readonly string[] testfiles =
+        {
+            "nextstep_3.3.vdi.lz", "openstep_4.0.vdi.lz", "openstep_4.2.vdi.lz", "rhapsody_dr1.vdi.lz",
+            "rhapsody_dr2.vdi.lz"
+        };
+
+        readonly ulong[] sectors = {409600, 409600, 409600, 409600, 409600};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512};
+
+        readonly long[] clusters = {204640, 204640, 204640, 204640, 204464};
+
+        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024};
+
+        readonly string[] volumename = {null, null, null, null, null};
+
+        readonly string[] volumeserial = {null, null, null, null, null};
+
+        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FFSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "4.3BSD" || partitions[j].Type == "4.4BSD")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class UfsNeXtFloppy
+    {
+        readonly string[] testfiles =
+        {
+            "nextstep_3.3_mf2dd.img.lz", "nextstep_3.3_mf2hd.img.lz", "openstep_4.0_mf2dd.img.lz",
+            "openstep_4.0_mf2hd.img.lz", "openstep_4.2_mf2dd.img.lz", "openstep_4.2_mf2hd.img.lz",
+            "rhapsody_dr1_mf2dd.img.lz", "rhapsody_dr1_mf2hd.img.lz", "rhapsody_dr2_mf2dd.img.lz",
+            "rhapsody_dr2_mf2hd.img.lz"
+        };
+
+        readonly ulong[] sectors = {1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
+
+        readonly long[] clusters = {624, 1344, 624, 1344, 624, 1344, 624, 1344, 624, 1344};
+
+        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024};
+
+        readonly string[] volumename = {null, null, null, null, null, null, null, null, null, null};
+
+        readonly string[] volumeserial = {null, null, null, null, null, null, null, null, null, null};
+
+        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new ZZZRawImage();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FFSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "4.3BSD" || partitions[j].Type == "4.4BSD")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class UfsRdb
+    {
+        readonly string[] testfiles = {"amix.vdi.lz"};
+
+        readonly ulong[] sectors = {1024128};
+
+        readonly uint[] sectorsize = {512};
+
+        readonly long[] clusters = {511424};
+
+        readonly int[] clustersize = {1024};
+
+        readonly string[] volumename = {null};
+
+        readonly string[] volumeserial = {null};
+
+        readonly string[] type = {"UFS"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_rdb", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FFSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "\"UNI\\2\"")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class UfsSuni86
+    {
+        readonly string[] testfiles = {"solaris_7.vdi.lz"};
+
+        readonly ulong[] sectors = {4194304};
+
+        readonly uint[] sectorsize = {512};
+
+        readonly long[] clusters = {2063376};
+
+        readonly int[] clustersize = {1024};
+
+        readonly string[] volumename = {null};
+
+        readonly string[] volumeserial = {null};
+
+        readonly string[] type = {"UFS"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_suni86", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FFSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "Replacement sectors")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);

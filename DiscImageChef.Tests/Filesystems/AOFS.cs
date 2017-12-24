@@ -26,6 +26,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -76,6 +77,161 @@ namespace DiscImageChef.Tests.Filesystems
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    
+    [TestFixture]
+    public class AofsMbr
+    {
+        readonly string[] testfiles = {"aros.vdi.lz", "aros_intl.vdi.lz"};
+
+        readonly ulong[] sectors = {409600, 409600};
+
+        readonly uint[] sectorsize = {512, 512};
+
+        readonly long[] clusters = {408240, 408240};
+
+        readonly int[] clustersize = {512, 512};
+
+        readonly string[] volumename = {"Volume label", "Volume label"};
+
+        readonly string[] volumeserial = {"A582C90C", "A582CE0D"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new AmigaDOSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "0x2C")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    
+    [TestFixture]
+    public class AofsMbrRdb
+    {
+        readonly string[] testfiles = {"aros.vdi.lz", "aros_intl.vdi.lz"};
+
+        readonly ulong[] sectors = {409600, 409600};
+
+        readonly uint[] sectorsize = {512, 512};
+
+        readonly long[] clusters = {406224, 406224};
+
+        readonly int[] clustersize = {512, 512};
+
+        readonly string[] volumename = {"Volume label", "Volume label"};
+
+        readonly string[] volumeserial = {"A5833C5B", "A5833085"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr_rdb", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new AmigaDOSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "\"DOS\\0\"")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    
+    [TestFixture]
+    public class AofsRdb
+    {
+        readonly string[] testfiles =
+            {"amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz"};
+
+        readonly ulong[] sectors = {1024128, 1024128, 409600, 409600};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512};
+
+        readonly long[] clusters = {510032, 510032, 407232, 407232};
+
+        readonly int[] clustersize = {1024, 1024, 512, 512};
+
+        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label"};
+
+        readonly string[] volumeserial = {"A56D13BB", "A56D0415", "A582F3A0", "A5830B06"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_rdb", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new AmigaDOSPlugin();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "\"DOS\\0\"" || partitions[j].Type == "\"DOS\\2\"" ||
+                       partitions[j].Type == "\"DOS\\4\"")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);

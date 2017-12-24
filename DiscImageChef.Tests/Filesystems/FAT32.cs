@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : FAT32_MBR.cs
+// Filename       : FAT32.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef unit testing.
@@ -36,6 +36,112 @@ using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
+    [TestFixture]
+    public class Fat32Apm
+    {
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz"};
+
+        readonly ulong[] sectors = {4194304};
+
+        readonly uint[] sectorsize = {512};
+
+        readonly long[] clusters = {524278};
+
+        readonly int[] clustersize = {4096};
+
+        readonly string[] volumename = {"VOLUMELABEL"};
+
+        readonly string[] volumeserial = {"35BD1F0A"};
+
+        readonly string[] oemid = {"BSD  4.4"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat32_apm", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FAT();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "DOS_FAT_32")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("FAT32", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class Fat32Gpt
+    {
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz"};
+
+        readonly ulong[] sectors = {4194304};
+
+        readonly uint[] sectorsize = {512};
+
+        readonly long[] clusters = {523775};
+
+        readonly int[] clustersize = {4096};
+
+        readonly string[] volumename = {"VOLUMELABEL"};
+
+        readonly string[] volumeserial = {"7ABE1F1B"};
+
+        readonly string[] oemid = {"BSD  4.4"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat32_gpt", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new FAT();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "Microsoft Basic data")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("FAT32", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }
+        }
+    }
     [TestFixture]
     public class Fat32Mbr
     {

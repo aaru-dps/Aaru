@@ -26,6 +26,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -84,6 +85,161 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
                 Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }
+        }
+    }
+
+    [TestFixture]
+    public class BeFsApm
+    {
+        readonly string[] testfiles = {"beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz"};
+
+        readonly ulong[] sectors = {1572864, 1572864};
+
+        readonly uint[] sectorsize = {512, 512};
+
+        readonly long[] clusters = {786336, 786336};
+
+        readonly int[] clustersize = {1024, 1024};
+
+        readonly string[] volumename = {"Volume label", "Volume label"};
+
+        readonly string[] volumeserial = {null, null};
+
+        readonly string[] oemid = {null, null};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "befs_apm", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new BeFS();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "Be_BFS")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("BeFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class BeFsGpt
+    {
+        readonly string[] testfiles = {"haiku_hrev51259.vdi.lz"};
+
+        readonly ulong[] sectors = {8388608};
+
+        readonly uint[] sectorsize = {512};
+
+        readonly long[] clusters = {2096640};
+
+        readonly int[] clustersize = {2048};
+
+        readonly string[] volumename = {"Volume label"};
+
+        readonly string[] volumeserial = {null, null};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "befs_gpt", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new BeFS();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "Haiku BFS")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("BeFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class BeFsMbr
+    {
+        readonly string[] testfiles =
+            {"beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz", "haiku_hrev51259.vdi.lz", "syllable_0.6.7.vdi.lz"};
+
+        readonly ulong[] sectors = {1572864, 1572864, 8388608, 2097152};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512};
+
+        readonly long[] clusters = {786400, 785232, 2096640, 524272};
+
+        readonly int[] clustersize = {1024, 1024, 2048, 2048};
+
+        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label"};
+
+        readonly string[] volumeserial = {null, null, null, null};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "befs_mbr", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new BeFS();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "0xEB")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("BeFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }
         }
     }

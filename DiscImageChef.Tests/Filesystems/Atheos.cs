@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : HFSX_MBR.cs
+// Filename       : Atheos.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef unit testing.
@@ -37,35 +37,28 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HfsxMbr
+    public class AtheosMbr
     {
-        readonly string[] testfiles =
-        {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
-            "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz"
-        };
+        readonly string[] testfiles = {"syllable_0.6.7.vdi.lz"};
 
-        readonly ulong[] sectors = {393216, 409600, 262144, 262144, 1638400, 1433600};
+        readonly ulong[] sectors = {4194304};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {49140, 51187, 32512, 32512, 204792, 179192};
+        readonly long[] clusters = {2097120};
 
-        readonly int[] clustersize = {4096, 4096, 4096, 4096, 4096, 4096};
+        readonly int[] clustersize = {1024};
 
-        readonly string[] volumename = {null, null, null, null, null, null};
+        readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial =
-            {"C2BCCCE6DE5BC98D", "AC54CD78C75CC30F", null, null, "7559DD01BCFADD9A", "AEA39CFBBF14C0FF"};
-
-        readonly string[] oemid = {"10.0", "HFSJ", "10.0", "10.0", "10.0", "10.0"};
+        readonly string[] volumeserial = {null};
 
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsx_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "atheos_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new Vdi();
@@ -73,10 +66,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new AppleHFSPlus();
+                Filesystem fs = new AtheOS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0xAF")
+                    if(partitions[j].Type == "0x2A")
                     {
                         part = j;
                         break;
@@ -87,10 +80,9 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HFSX", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("AtheOS filesystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

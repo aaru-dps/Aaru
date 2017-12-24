@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Settings.cs
+// Filename       : XFS.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef unit testing.
@@ -37,28 +37,28 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AofsMbr
+    public class XfsMbr
     {
-        readonly string[] testfiles = {"aros.vdi.lz", "aros_intl.vdi.lz"};
+        readonly string[] testfiles = {"linux.vdi.lz"};
 
-        readonly ulong[] sectors = {409600, 409600};
+        readonly ulong[] sectors = {1048576};
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {408240, 408240};
+        readonly long[] clusters = {130816};
 
-        readonly int[] clustersize = {512, 512};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] volumename = {"Volume label", "Volume label"};
+        readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial = {"A582C90C", "A582CE0D"};
+        readonly string[] volumeserial = {"230075b7-9834-b44e-a257-982a058311d8"};
 
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "xfs_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new Vdi();
@@ -66,10 +66,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new AmigaDOSPlugin();
+                Filesystem fs = new XFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x2C")
+                    if(partitions[j].Type == "0x83")
                     {
                         part = j;
                         break;
@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("XFS filesystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

@@ -26,6 +26,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -84,6 +85,58 @@ namespace DiscImageChef.Tests.Filesystems
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class XenixMbr
+    {
+        readonly string[] testfiles = {"xenix_2.3.2d.vdi.lz", "xenix_2.3.4h.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"};
+
+        readonly ulong[] sectors = {40960, 40960, 2097152};
+
+        readonly uint[] sectorsize = {512, 512, 512};
+
+        readonly long[] clusters = {0, 0, 0, 19624, 19624, 19624};
+
+        readonly int[] clustersize = {1024, 1024, 1024};
+
+        readonly string[] volumename = {"", "", ""};
+
+        readonly string[] volumeserial = {null, null, null};
+
+        readonly string[] type = {"XENIX fs", "XENIX fs", "XENIX fs"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "xenix_mbr", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new SysVfs();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "XENIX")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);

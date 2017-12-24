@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AFFS.cs
+// Filename       : exFAT.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef unit testing.
@@ -37,78 +37,28 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class Affs
+    public class ExFatApm
     {
-        readonly string[] testfiles = {"amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz"};
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz"};
 
-        readonly MediaType[] mediatypes = {MediaType.CBM_AMIGA_35_DD, MediaType.CBM_AMIGA_35_DD};
+        readonly ulong[] sectors = {262144};
 
-        readonly ulong[] sectors = {1760, 1760};
+        readonly uint[] sectorsize = {512};
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly long[] clusters = {32710};
 
-        readonly long[] clusters = {1760, 1760};
+        readonly int[] clustersize = {4096};
 
-        readonly int[] clustersize = {512, 512};
+        readonly string[] volumename = {null};
 
-        readonly string[] volumename = {"Volume label", "Volume label"};
-
-        readonly string[] volumeserial = {"A5D9FAE2", "A5DA0CC9"};
+        readonly string[] volumeserial = {"595AC82C"};
 
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs", testfiles[i]);
-                Filter filter = new LZip();
-                filter.Open(location);
-                ImagePlugin image = new ZZZRawImage();
-                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Filesystem fs = new AmigaDOSPlugin();
-                Partition wholePart = new Partition
-                {
-                    Name = "Whole device",
-                    Length = image.ImageInfo.Sectors,
-                    Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
-                };
-                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out _);
-                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-            }
-        }
-    }
-    
-    [TestFixture]
-    public class AffsMbr
-    {
-        readonly string[] testfiles = {"aros.vdi.lz", "aros_intl.vdi.lz"};
-
-        readonly ulong[] sectors = {409600, 409600};
-
-        readonly uint[] sectorsize = {512, 512};
-
-        readonly long[] clusters = {408240, 408240};
-
-        readonly int[] clustersize = {512, 512};
-
-        readonly string[] volumename = {"Volume label", "Volume label"};
-
-        readonly string[] volumeserial = {"A582DCA4", "A582BC91"};
-
-        [Test]
-        public void Test()
-        {
-            for(int i = 0; i < testfiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_apm", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new Vdi();
@@ -116,10 +66,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new AmigaDOSPlugin();
+                Filesystem fs = new exFAT();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x2D" || partitions[j].Type == "0x2E")
+                    if(partitions[j].Type == "Windows_NTFS")
                     {
                         part = j;
                         break;
@@ -130,36 +80,35 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("exFAT", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }
         }
     }
-    
     [TestFixture]
-    public class AffsMbrRdb
+    public class ExFatGpt
     {
-        readonly string[] testfiles = {"aros.vdi.lz", "aros_intl.vdi.lz"};
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz"};
 
-        readonly ulong[] sectors = {409600, 409600};
+        readonly ulong[] sectors = {262144};
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {406224, 406224};
+        readonly long[] clusters = {32208};
 
-        readonly int[] clustersize = {512, 512};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] volumename = {"Volume label", "Volume label"};
+        readonly string[] volumename = {null};
 
-        readonly string[] volumeserial = {"A58348CE", "A5833CD0"};
+        readonly string[] volumeserial = {"595ACC39"};
 
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs_mbr_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_gpt", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new Vdi();
@@ -167,10 +116,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new AmigaDOSPlugin();
+                Filesystem fs = new exFAT();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "\"DOS\\1\"" || partitions[j].Type == "\"DOS\\3\"")
+                    if(partitions[j].Type == "Microsoft Basic data")
                     {
                         part = j;
                         break;
@@ -181,45 +130,35 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("exFAT", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }
         }
     }
-    
     [TestFixture]
-    public class AffsRdb
+    public class ExFatMbr
     {
-        readonly string[] testfiles =
-        {
-            "amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz", "amigaos_4.0.vdi.lz",
-            "amigaos_4.0_intl.vdi.lz", "amigaos_4.0_cache.vdi.lz"
-        };
+        readonly string[] testfiles = {"linux.vdi.lz", "macosx_10.11.vdi.lz", "win10.vdi.lz", "winvista.vdi.lz"};
 
-        readonly ulong[] sectors = {1024128, 1024128, 409600, 409600, 1024128, 1024128, 1024128};
+        readonly ulong[] sectors = {262144, 262144, 262144, 262144};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512};
+        readonly uint[] sectorsize = {512, 512, 512, 512};
 
-        readonly long[] clusters = {510032, 510032, 407232, 407232, 511040, 511040, 511040};
+        readonly long[] clusters = {32464, 32712, 32448, 32208};
 
-        readonly int[] clustersize = {1024, 1024, 512, 512, 1024, 1024, 1024};
+        readonly int[] clustersize = {4096, 4096, 4096, 4096};
 
-        readonly string[] volumename =
-        {
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label"
-        };
+        readonly string[] volumename = {null, null, null, null};
 
-        readonly string[] volumeserial =
-            {"A56D0F5C", "A56D049C", "A58307A9", "A58304BE", "A56CC7EE", "A56CDDC4", "A56CC133"};
+        readonly string[] volumeserial = {"603565AC", "595AC21E", "20126663", "0AC5CA52"};
 
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new Vdi();
@@ -227,11 +166,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new AmigaDOSPlugin();
+                Filesystem fs = new exFAT();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "\"DOS\\1\"" || partitions[j].Type == "\"DOS\\3\"" ||
-                       partitions[j].Type == "\"DOS\\5\"")
+                    if(partitions[j].Type == "0x07")
                     {
                         part = j;
                         break;
@@ -242,7 +180,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("exFAT", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

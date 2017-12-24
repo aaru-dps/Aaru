@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Atheos_MBR.cs
+// Filename       : AFFS2.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef unit testing.
@@ -37,28 +37,28 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AtheosMbr
+    public class Affs2Rdb
     {
-        readonly string[] testfiles = {"syllable_0.6.7.vdi.lz"};
+        readonly string[] testfiles = {"amigaos_4.0.vdi.lz"};
 
-        readonly ulong[] sectors = {4194304};
+        readonly ulong[] sectors = {1024128};
 
         readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {2097120};
+        readonly long[] clusters = {511040};
 
         readonly int[] clustersize = {1024};
 
         readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial = {null};
+        readonly string[] volumeserial = {"611D85E5"};
 
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "atheos_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs2_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new Vdi();
@@ -66,10 +66,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new AtheOS();
+                Filesystem fs = new AmigaDOSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x2A")
+                    if(partitions[j].Type == "\"DOS\\7\"")
                     {
                         part = j;
                         break;
@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("AtheOS filesystem", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("Amiga FFS2", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

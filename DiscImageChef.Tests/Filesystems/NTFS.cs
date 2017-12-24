@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : NTFS_GPT.cs
+// Filename       : NTFS.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef unit testing.
@@ -72,6 +72,69 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Microsoft Basic data")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("NTFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }
+        }
+    }
+    [TestFixture]
+    public class NtfsMbr
+    {
+        readonly string[] testfiles =
+        {
+            "win10.vdi.lz", "win2000.vdi.lz", "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz", "winnt_3.51.vdi.lz",
+            "winnt_4.00.vdi.lz", "winvista.vdi.lz", "linux.vdi.lz", "haiku_hrev51259.vdi.lz"
+        };
+
+        readonly ulong[] sectors = {524288, 2097152, 1024000, 524288, 524288, 524288, 524288, 262144, 2097152};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512};
+
+        readonly long[] clusters = {65263, 1046511, 1023057, 524256, 524256, 524096, 64767, 32511, 261887};
+
+        readonly int[] clustersize = {4096, 1024, 512, 512, 512, 512, 4096, 4096, 4096};
+
+        readonly string[] volumename = {null, null, null, null, null, null, null, null, null};
+
+        readonly string[] volumeserial =
+        {
+            "C46C1B3C6C1B28A6", "8070C8EC70C8E9CC", "10CC6AC6CC6AA5A6", "7A14F50014F4BFE5", "24884447884419A6",
+            "822C288D2C287E73", "E20AF54B0AF51D6B", "065BB96B7C1BCFDA", "46EC796749C6FA66"
+        };
+
+        readonly string[] oemid = {null, null, null, null, null, null, null, null, null};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ntfs_mbr", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new Vdi();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new NTFS();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "0x07" ||
+                       // Value incorrectly set by Haiku
+                       partitions[j].Type == "0x86")
                     {
                         part = j;
                         break;
