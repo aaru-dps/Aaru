@@ -35,7 +35,7 @@ namespace DiscImageChef.Helpers
     public static class CHS
     {
         /// <summary>
-        /// Converts a CHS position to a LBA one
+        ///     Converts a CHS position to a LBA one
         /// </summary>
         /// <param name="cyl">Cylinder</param>
         /// <param name="head">Head</param>

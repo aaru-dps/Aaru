@@ -37,7 +37,7 @@ namespace DiscImageChef
     public static partial class ArrayHelpers
     {
         /// <summary>
-        /// Checks if an array is null, filled with the NULL byte (0x00) or ASCII whitespace (0x20)
+        ///     Checks if an array is null, filled with the NULL byte (0x00) or ASCII whitespace (0x20)
         /// </summary>
         /// <param name="array">Array</param>
         /// <returns>True if null or whitespace</returns>
@@ -47,7 +47,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Checks if an array is null or filled with the NULL byte (0x00)
+        ///     Checks if an array is null or filled with the NULL byte (0x00)
         /// </summary>
         /// <param name="array">Array</param>
         /// <returns>True if null</returns>

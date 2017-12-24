@@ -37,14 +37,14 @@ using System.Linq;
 namespace Extents
 {
     /// <summary>
-    /// Implements extents for <see cref="int"/>
+    ///     Implements extents for <see cref="int" />
     /// </summary>
     public class ExtentsInt
     {
         List<Tuple<int, int>> backend;
 
         /// <summary>
-        /// Initialize an empty list of extents
+        ///     Initialize an empty list of extents
         /// </summary>
         public ExtentsInt()
         {
@@ -52,7 +52,7 @@ namespace Extents
         }
 
         /// <summary>
-        /// Initializes extents with an specific list
+        ///     Initializes extents with an specific list
         /// </summary>
         /// <param name="list">List of extents as tuples "start, end"</param>
         public ExtentsInt(IEnumerable<Tuple<int, int>> list)
@@ -61,12 +61,12 @@ namespace Extents
         }
 
         /// <summary>
-        /// Gets a count of how many extents are stored
+        ///     Gets a count of how many extents are stored
         /// </summary>
         public int Count => backend.Count;
 
         /// <summary>
-        /// Adds the specified number to the corresponding extent, or creates a new one
+        ///     Adds the specified number to the corresponding extent, or creates a new one
         /// </summary>
         /// <param name="item"></param>
         public void Add(int item)
@@ -123,11 +123,14 @@ namespace Extents
         }
 
         /// <summary>
-        /// Adds a new extent
+        ///     Adds a new extent
         /// </summary>
         /// <param name="start">First element of the extent</param>
-        /// <param name="end">Last element of the extent or if <see cref="run"/> is <c>true</c> how many elements the extent runs for</param>
-        /// <param name="run">If set to <c>true</c>, <see cref="end"/> indicates how many elements the extent runs for</param>
+        /// <param name="end">
+        ///     Last element of the extent or if <see cref="run" /> is <c>true</c> how many elements the extent runs
+        ///     for
+        /// </param>
+        /// <param name="run">If set to <c>true</c>, <see cref="end" /> indicates how many elements the extent runs for</param>
         public void Add(int start, int end, bool run = false)
         {
             int realEnd;
@@ -139,7 +142,7 @@ namespace Extents
         }
 
         /// <summary>
-        /// Checks if the specified item is contained by an extent on this instance
+        ///     Checks if the specified item is contained by an extent on this instance
         /// </summary>
         /// <param name="item">Item to seach for</param>
         /// <returns><c>true</c> if any of the extents on this instance contains the item</returns>
@@ -149,7 +152,7 @@ namespace Extents
         }
 
         /// <summary>
-        /// Removes all extents from this instance
+        ///     Removes all extents from this instance
         /// </summary>
         public void Clear()
         {
@@ -157,7 +160,7 @@ namespace Extents
         }
 
         /// <summary>
-        /// Removes an item from the extents in this instance
+        ///     Removes an item from the extents in this instance
         /// </summary>
         /// <param name="item">Item to remove</param>
         /// <returns><c>true</c> if the item was contained in a known extent and removed, false otherwise</returns>
@@ -215,16 +218,17 @@ namespace Extents
         }
 
         /// <summary>
-        /// Converts the list of extents to an array of <see cref="Tuple"/> where T1 is first element of the extent and T2 is last element
+        ///     Converts the list of extents to an array of <see cref="Tuple" /> where T1 is first element of the extent and T2 is
+        ///     last element
         /// </summary>
-        /// <returns>Array of <see cref="Tuple"/></returns>
+        /// <returns>Array of <see cref="Tuple" /></returns>
         public Tuple<int, int>[] ToArray()
         {
             return backend.ToArray();
         }
 
         /// <summary>
-        /// Gets the first element of the extent that contains the specified item
+        ///     Gets the first element of the extent that contains the specified item
         /// </summary>
         /// <param name="item">Item</param>
         /// <param name="start">First element of extent</param>
@@ -232,7 +236,8 @@ namespace Extents
         public bool GetStart(int item, out int start)
         {
             start = 0;
-            foreach(Tuple<int, int> extent in backend.Where(extent => item >= extent.Item1 && item <= extent.Item2)) {
+            foreach(Tuple<int, int> extent in backend.Where(extent => item >= extent.Item1 && item <= extent.Item2))
+            {
                 start = extent.Item1;
                 return true;
             }

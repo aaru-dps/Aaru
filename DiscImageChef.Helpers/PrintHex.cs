@@ -38,7 +38,7 @@ namespace DiscImageChef
     public static class PrintHex
     {
         /// <summary>
-        /// Prints a byte array as hexadecimal values to the console
+        ///     Prints a byte array as hexadecimal values to the console
         /// </summary>
         /// <param name="array">Array</param>
         /// <param name="width">Width of line</param>
@@ -48,7 +48,7 @@ namespace DiscImageChef
         }
 
         /// <summary>
-        /// Prints a byte array as hexadecimal values to a string
+        ///     Prints a byte array as hexadecimal values to a string
         /// </summary>
         /// <param name="array">Array</param>
         /// <param name="width">Width of line</param>
