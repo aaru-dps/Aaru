@@ -1,0 +1,10 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="AnonymousGroup" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="NonAsciiCharacters" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="CHECK_FOR_NOT_ASCII_STRING_LITERAL" value="true" />
+      <option name="CHECK_FOR_NOT_ASCII_COMMENT" value="true" />
+    </inspection_tool>
+  </profile>
+</component>

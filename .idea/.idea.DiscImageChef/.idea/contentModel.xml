@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.Rider2017.2/system/resharper-host/local/Transient/ReSharperHost/v10/SolutionCaches/_DiscImageChef.73225794.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p=".github" t="Include">
+        <e p="CODE_OF_CONDUCT.md" t="Include" />
+        <e p="ISSUE_TEMPLATE.md" t="Include" />
+        <e p="PULL_REQUEST_TEMPLATE.md" t="Include" />
+      </e>
+      <e p=".travis.yml" t="Include" />
+      <e p="CICMMetadata/dotnet/cicm.cs" t="Include" />
+      <e p="CONTRIBUTING.md" t="Include" />
+      <e p="Changelog.md" t="Include" />
+      <e p="DONATING.md" t="Include" />
+      <e p="DiscImageChef" t="IncludeRecursive">
+        <e p="AssemblyInfo.cs" t="Include" />
+        <e p="Commands" t="Include">
+          <e p="Analyze.cs" t="Include" />
+          <e p="Benchmark.cs" t="Include" />
+          <e p="Checksum.cs" t="Include" />
+          <e p="Commands.cs" t="Include" />
+          <e p="Compare.cs" t="Include" />
+          <e p="Configure.cs" t="Include" />
+          <e p="CreateSidecar.cs" t="Include" />
+          <e p="Decode.cs" t="Include" />
+          <e p="DeviceInfo.cs" t="Include" />
+          <e p="DeviceReport.cs" t="Include" />
+          <e p="DumpMedia.cs" t="Include" />
+          <e p="Entropy.cs" t="Include" />
+          <e p="ExtractFiles.cs" t="Include" />
+          <e p="Formats.cs" t="Include" />
+          <e p="ListDevices.cs" t="Include" />
+          <e p="ListEncodings.cs" t="Include" />
+          <e p="Ls.cs" t="Include" />
+          <e p="MediaInfo.cs" t="Include" />
+          <e p="MediaScan.cs" t="Include" />
+          <e p="PrintHex.cs" t="Include" />
+          <e p="Statistics.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="DiscImageChef.csproj" t="IncludeRecursive" />
+        <e p="Main.cs" t="Include" />
+        <e p="Options.cs" t="Include" />
+        <e p="Progress.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef.Checksums" t="IncludeRecursive">
+        <e p="Adler32Context.cs" t="Include" />
+        <e p="CDChecksums.cs" t="Include" />
+        <e p="CRC16Context.cs" t="Include" />
+        <e p="CRC32Context.cs" t="Include" />
+        <e p="CRC64Context.cs" t="Include" />
+        <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
+        <e p="FletcherContext.cs" t="Include" />
+        <e p="MD5Context.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="RIPEMD160Context.cs" t="Include" />
+        <e p="ReedSolomon.cs" t="Include" />
+        <e p="SHA1Context.cs" t="Include" />
+        <e p="SHA256Context.cs" t="Include" />
+        <e p="SHA384Context.cs" t="Include" />
+        <e p="SHA512Context.cs" t="Include" />
+        <e p="SpamSumContext.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
+        <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
+        <e p="MediaType.cs" t="Include" />
+        <e p="MediaTypeFromSCSI.cs" t="Include" />
+        <e p="Partition.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.Console" t="IncludeRecursive">
+        <e p="DicConsole.cs" t="Include" />
+        <e p="DiscImageChef.Console.csproj" t="IncludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.Core" t="IncludeRecursive">
+        <e p="Benchmark.cs" t="Include" />
+        <e p="Checksum.cs" t="Include" />
+        <e p="DataFile.cs" t="Include" />
+        <e p="Delegates.cs" t="Include" />
+        <e p="Devices" t="Include">
+          <e p="Dumping" t="Include">
+            <e p="ATA.cs" t="Include" />
+            <e p="Alcohol120.cs" t="Include" />
+            <e p="CompactDisc.cs" t="Include" />
+            <e p="MMC.cs" t="Include" />
+            <e p="NVMe.cs" t="Include" />
+            <e p="ResumeSupport.cs" t="Include" />
+            <e p="SBC.cs" t="Include" />
+            <e p="SCSI.cs" t="Include" />
+            <e p="SSC.cs" t="Include" />
+            <e p="SecureDigital.cs" t="Include" />
+            <e p="XGD.cs" t="Include" />
+          </e>
+          <e p="Reader.cs" t="Include" />
+          <e p="ReaderATA.cs" t="Include" />
+          <e p="ReaderSCSI.cs" t="Include" />
+          <e p="Report" t="Include">
+            <e p="ATA.cs" t="Include" />
+            <e p="ATAPI.cs" t="Include" />
+            <e p="FireWire.cs" t="Include" />
+            <e p="NVMe.cs" t="Include" />
+            <e p="PCMCIA.cs" t="Include" />
+            <e p="SCSI" t="Include">
+              <e p="General.cs" t="Include" />
+              <e p="MMC.cs" t="Include" />
+              <e p="SSC.cs" t="Include" />
+            </e>
+            <e p="SecureDigital.cs" t="Include" />
+            <e p="USB.cs" t="Include" />
+          </e>
+          <e p="Scanning" t="Include">
+            <e p="ATA.cs" t="Include" />
+            <e p="NVMe.cs" t="Include" />
+            <e p="SCSI.cs" t="Include" />
+            <e p="ScanResults.cs" t="Include" />
+            <e p="SecureDigital.cs" t="Include" />
+          </e>
+        </e>
+        <e p="DiscImageChef.Core.csproj" t="IncludeRecursive" />
+        <e p="Filesystems.cs" t="Include" />
+        <e p="ImageFormat.cs" t="Include" />
+        <e p="Logging" t="Include">
+          <e p="DumpLog.cs" t="Include" />
+          <e p="IBGLog.cs" t="Include" />
+          <e p="MHDDLog.cs" t="Include" />
+        </e>
+        <e p="Partitions.cs" t="Include" />
+        <e p="PluginBase.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Remote.cs" t="Include" />
+        <e p="Sidecar" t="Include">
+          <e p="AudioMedia.cs" t="Include" />
+          <e p="BlockMedia.cs" t="Include" />
+          <e p="BlockTape.cs" t="Include" />
+          <e p="Events.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="LinearMedia.cs" t="Include" />
+          <e p="OpticalDisc.cs" t="Include" />
+          <e p="Sidecar.cs" t="Include" />
+        </e>
+        <e p="Statistics.cs" t="Include" />
+        <e p="Version.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef.Decoders" t="IncludeRecursive">
+        <e p="ATA" t="Include">
+          <e p="Identify.cs" t="Include" />
+          <e p="Registers.cs" t="Include" />
+        </e>
+        <e p="Blu-ray" t="Include">
+          <e p="BCA.cs" t="Include" />
+          <e p="Cartridge.cs" t="Include" />
+          <e p="DDS.cs" t="Include" />
+          <e p="DI.cs" t="Include" />
+          <e p="Spare.cs" t="Include" />
+        </e>
+        <e p="CD" t="Include">
+          <e p="ATIP.cs" t="Include" />
+          <e p="CDTextOnLeadIn.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="FullTOC.cs" t="Include" />
+          <e p="PMA.cs" t="Include" />
+          <e p="Sector.cs" t="Include" />
+          <e p="Session.cs" t="Include" />
+          <e p="TOC.cs" t="Include" />
+        </e>
+        <e p="DVD" t="Include">
+          <e p="AACS.cs" t="Include" />
+          <e p="ADIP.cs" t="Include" />
+          <e p="BCA.cs" t="Include" />
+          <e p="CPRM.cs" t="Include" />
+          <e p="CSS&amp;CPRM.cs" t="Include" />
+          <e p="Cartridge.cs" t="Include" />
+          <e p="DDS.cs" t="Include" />
+          <e p="DMI.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Layers.cs" t="Include" />
+          <e p="PFI.cs" t="Include" />
+          <e p="PRI.cs" t="Include" />
+          <e p="RMD.cs" t="Include" />
+          <e p="Spare.cs" t="Include" />
+          <e p="UDI.cs" t="Include" />
+        </e>
+        <e p="DiscImageChef.Decoders.csproj" t="IncludeRecursive" />
+        <e p="Floppy" t="Include">
+          <e p="Amiga.cs" t="Include" />
+          <e p="Apple2.cs" t="Include" />
+          <e p="AppleSony.cs" t="Include" />
+          <e p="Commodore.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="ISO.cs" t="Include" />
+          <e p="Perpendicular.cs" t="Include" />
+          <e p="System34.cs" t="Include" />
+          <e p="System3740.cs" t="Include" />
+        </e>
+        <e p="LisaTag.cs" t="Include" />
+        <e p="MMC" t="Include">
+          <e p="CID.cs" t="Include" />
+          <e p="CSD.cs" t="Include" />
+          <e p="ExtendedCSD.cs" t="Include" />
+          <e p="OCR.cs" t="Include" />
+          <e p="VendorString.cs" t="Include" />
+        </e>
+        <e p="PCMCIA" t="Include">
+          <e p="CIS.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Types.cs" t="Include" />
+          <e p="VendorCode.cs" t="Include" />
+        </e>
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="SCSI" t="Include">
+          <e p="DiscStructureCapabilities.cs" t="Include" />
+          <e p="EVPD.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Inquiry.cs" t="Include" />
+          <e p="MMC" t="Include">
+            <e p="AACS.cs" t="Include" />
+            <e p="CPRM.cs" t="Include" />
+            <e p="DiscInformation.cs" t="Include" />
+            <e p="Enums.cs" t="Include" />
+            <e p="Features.cs" t="Include" />
+            <e p="Hybrid.cs" t="Include" />
+            <e p="WriteProtect.cs" t="Include" />
+          </e>
+          <e p="Modes" t="Include">
+            <e p="00_SFF.cs" t="Include" />
+            <e p="01.cs" t="Include" />
+            <e p="01_MMC.cs" t="Include" />
+            <e p="02.cs" t="Include" />
+            <e p="03.cs" t="Include" />
+            <e p="04.cs" t="Include" />
+            <e p="05.cs" t="Include" />
+            <e p="06.cs" t="Include" />
+            <e p="07.cs" t="Include" />
+            <e p="07_MMC.cs" t="Include" />
+            <e p="08.cs" t="Include" />
+            <e p="0A.cs" t="Include" />
+            <e p="0B.cs" t="Include" />
+            <e p="0C.cs" t="Include" />
+            <e p="0D.cs" t="Include" />
+            <e p="0E.cs" t="Include" />
+            <e p="0F.cs" t="Include" />
+            <e p="10.cs" t="Include" />
+            <e p="10_SSC.cs" t="Include" />
+            <e p="11.cs" t="Include" />
+            <e p="12_13_14.cs" t="Include" />
+            <e p="1A.cs" t="Include" />
+            <e p="1B.cs" t="Include" />
+            <e p="1C.cs" t="Include" />
+            <e p="1C_SFF.cs" t="Include" />
+            <e p="1D.cs" t="Include" />
+            <e p="21_Certance.cs" t="Include" />
+            <e p="22_Certance.cs" t="Include" />
+            <e p="24_IBM.cs" t="Include" />
+            <e p="2A.cs" t="Include" />
+            <e p="2F_IBM.cs" t="Include" />
+            <e p="30_Apple.cs" t="Include" />
+            <e p="3B_HP.cs" t="Include" />
+            <e p="3C_HP.cs" t="Include" />
+            <e p="3D_HP.cs" t="Include" />
+            <e p="3D_IBM.cs" t="Include" />
+            <e p="3E_Fujitsu.cs" t="Include" />
+            <e p="3E_HP.cs" t="Include" />
+            <e p="Headers.cs" t="Include" />
+            <e p="Mode10.cs" t="Include" />
+            <e p="Mode6.cs" t="Include" />
+            <e p="Structs.cs" t="Include" />
+          </e>
+          <e p="SSC" t="Include">
+            <e p="BlockLimits.cs" t="Include" />
+            <e p="DensitySupport.cs" t="Include" />
+          </e>
+          <e p="Sense.cs" t="Include" />
+          <e p="Types.cs" t="Include" />
+          <e p="VendorString.cs" t="Include" />
+        </e>
+        <e p="SecureDigital" t="Include">
+          <e p="CID.cs" t="Include" />
+          <e p="CSD.cs" t="Include" />
+          <e p="OCR.cs" t="Include" />
+          <e p="SCR.cs" t="Include" />
+          <e p="VendorString.cs" t="Include" />
+        </e>
+        <e p="Sega" t="Include">
+          <e p="CD.cs" t="Include" />
+          <e p="Dreamcast.cs" t="Include" />
+          <e p="Saturn.cs" t="Include" />
+        </e>
+        <e p="Xbox" t="Include">
+          <e p="DMI.cs" t="Include" />
+          <e p="SS.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.Devices" t="IncludeRecursive">
+        <e p="Command.cs" t="Include" />
+        <e p="Device" t="Include">
+          <e p="AtaCommands" t="Include">
+            <e p="Ata28.cs" t="Include" />
+            <e p="Ata48.cs" t="Include" />
+            <e p="AtaCHS.cs" t="Include" />
+            <e p="Atapi.cs" t="Include" />
+            <e p="Cfa.cs" t="Include" />
+            <e p="MCPT.cs" t="Include" />
+            <e p="Smart.cs" t="Include" />
+          </e>
+          <e p="Commands.cs" t="Include" />
+          <e p="Constructor.cs" t="Include" />
+          <e p="Destructor.cs" t="Include" />
+          <e p="List.cs" t="Include" />
+          <e p="MmcCommands" t="Include">
+            <e p="MMC.cs" t="Include" />
+            <e p="SecureDigital.cs" t="Include" />
+          </e>
+          <e p="ScsiCommands" t="Include">
+            <e p="Adaptec.cs" t="Include" />
+            <e p="ArchiveCorp.cs" t="Include" />
+            <e p="Certance.cs" t="Include" />
+            <e p="Fujitsu.cs" t="Include" />
+            <e p="HL-DT-ST.cs" t="Include" />
+            <e p="HP.cs" t="Include" />
+            <e p="Kreon.cs" t="Include" />
+            <e p="MMC.cs" t="Include" />
+            <e p="NEC.cs" t="Include" />
+            <e p="Pioneer.cs" t="Include" />
+            <e p="Plasmon.cs" t="Include" />
+            <e p="Plextor.cs" t="Include" />
+            <e p="SBC.cs" t="Include" />
+            <e p="SMC.cs" t="Include" />
+            <e p="SPC.cs" t="Include" />
+            <e p="SSC.cs" t="Include" />
+            <e p="SyQuest.cs" t="Include" />
+          </e>
+          <e p="Variables.cs" t="Include" />
+        </e>
+        <e p="DiscImageChef.Devices.csproj" t="IncludeRecursive" />
+        <e p="Enums.cs" t="Include" />
+        <e p="FreeBSD" t="Include">
+          <e p="Command.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Extern.cs" t="Include" />
+          <e p="ListDevices.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+        </e>
+        <e p="Linux" t="Include">
+          <e p="Command.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Extern.cs" t="Include" />
+          <e p="ListDevices.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+        </e>
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Windows" t="Include">
+          <e p="Command.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Extern.cs" t="Include" />
+          <e p="ListDevices.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Usb.cs" t="Include" />
+          <e p="UsbFunctions.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.DiscImages" t="IncludeRecursive">
+        <e p="Alcohol120.cs" t="Include" />
+        <e p="Anex86.cs" t="Include" />
+        <e p="Apple2MG.cs" t="Include" />
+        <e p="AppleDOS.cs" t="Include" />
+        <e p="AppleNIB.cs" t="Include" />
+        <e p="Apridisk.cs" t="Include" />
+        <e p="BLU.cs" t="Include" />
+        <e p="BlindWrite4.cs" t="Include" />
+        <e p="BlindWrite5.cs" t="Include" />
+        <e p="CDRDAO.cs" t="Include" />
+        <e p="CDRWin.cs" t="Include" />
+        <e p="CHD.cs" t="Include" />
+        <e p="CPCDSK.cs" t="Include" />
+        <e p="CisCopy.cs" t="Include" />
+        <e p="CloneCD.cs" t="Include" />
+        <e p="CopyQM.cs" t="Include" />
+        <e p="D88.cs" t="Include" />
+        <e p="DART.cs" t="Include" />
+        <e p="DIM.cs" t="Include" />
+        <e p="DiscFerret.cs" t="Include" />
+        <e p="DiscImageChef.DiscImages.csproj" t="IncludeRecursive" />
+        <e p="DiscJuggler.cs" t="Include" />
+        <e p="DiskCopy42.cs" t="Include" />
+        <e p="DriDiskCopy.cs" t="Include" />
+        <e p="GDI.cs" t="Include" />
+        <e p="HDCopy.cs" t="Include" />
+        <e p="IMD.cs" t="Include" />
+        <e p="ImageInfo.cs" t="Include" />
+        <e p="ImagePlugin.cs" t="Include" />
+        <e p="KryoFlux.cs" t="Include" />
+        <e p="MaxiDisk.cs" t="Include" />
+        <e p="NDIF.cs" t="Include" />
+        <e p="NHDr0.cs" t="Include" />
+        <e p="Nero.cs" t="Include" />
+        <e p="Parallels.cs" t="Include" />
+        <e p="PartClone.cs" t="Include" />
+        <e p="Partimage.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="QCOW.cs" t="Include" />
+        <e p="QCOW2.cs" t="Include" />
+        <e p="QED.cs" t="Include" />
+        <e p="RayDIM.cs" t="Include" />
+        <e p="RsIde.cs" t="Include" />
+        <e p="SaveDskF.cs" t="Include" />
+        <e p="SuperCardPro.cs" t="Include" />
+        <e p="T98.cs" t="Include" />
+        <e p="TeleDisk.cs" t="Include" />
+        <e p="UDIF.cs" t="Include" />
+        <e p="UkvFdi.cs" t="Include" />
+        <e p="VDI.cs" t="Include" />
+        <e p="VHD.cs" t="Include" />
+        <e p="VHDX.cs" t="Include" />
+        <e p="VMware.cs" t="Include" />
+        <e p="Virtual98.cs" t="Include" />
+        <e p="ZZZRawImage.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef.Filesystems" t="IncludeRecursive">
+        <e p="AODOS.cs" t="Include" />
+        <e p="APFS.cs" t="Include" />
+        <e p="Acorn.cs" t="Include" />
+        <e p="AmigaDOS.cs" t="Include" />
+        <e p="AppleDOS" t="Include">
+          <e p="AppleDOS.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Super.cs" t="Include" />
+          <e p="Xattr.cs" t="Include" />
+        </e>
+        <e p="AppleHFS.cs" t="Include" />
+        <e p="AppleHFSPlus.cs" t="Include" />
+        <e p="AppleMFS" t="Include">
+          <e p="AppleMFS.cs" t="Include" />
+          <e p="Consts.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Super.cs" t="Include" />
+          <e p="Xattr.cs" t="Include" />
+        </e>
+        <e p="AtheOS.cs" t="Include" />
+        <e p="BFS.cs" t="Include" />
+        <e p="BTRFS.cs" t="Include" />
+        <e p="CBM.cs" t="Include" />
+        <e p="CPM" t="Include">
+          <e p="CPM.cs" t="Include" />
+          <e p="Consts.cs" t="Include" />
+          <e p="Definitions.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Super.cs" t="Include" />
+          <e p="Xattr.cs" t="Include" />
+          <e p="cpmdefs.xml" t="Include" />
+        </e>
+        <e p="Cram.cs" t="Include" />
+        <e p="DiscImageChef.Filesystems.csproj" t="IncludeRecursive" />
+        <e p="ECMA67.cs" t="Include" />
+        <e p="EFS.cs" t="Include" />
+        <e p="F2FS.cs" t="Include" />
+        <e p="FAT.cs" t="Include" />
+        <e p="FATX.cs" t="Include" />
+        <e p="FFS.cs" t="Include" />
+        <e p="Filesystem.cs" t="Include" />
+        <e p="Fossil.cs" t="Include" />
+        <e p="HAMMER.cs" t="Include" />
+        <e p="HPFS.cs" t="Include" />
+        <e p="ISO9660" t="Include">
+          <e p="Consts" t="Include">
+            <e p="AAIP.cs" t="Include" />
+            <e p="Amiga.cs" t="Include" />
+            <e p="Apple.cs" t="Include" />
+            <e p="CDi.cs" t="Include" />
+            <e p="ElTorito.cs" t="Include" />
+            <e p="HighSierra.cs" t="Include" />
+            <e p="ISO.cs" t="Include" />
+            <e p="RRIP.cs" t="Include" />
+            <e p="SUSP.cs" t="Include" />
+            <e p="XA.cs" t="Include" />
+            <e p="Ziso.cs" t="Include" />
+          </e>
+          <e p="Dir.cs" t="Include" />
+          <e p="Extent.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="ISO9660.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs" t="Include">
+            <e p="Amiga.cs" t="Include" />
+            <e p="Apple.cs" t="Include" />
+            <e p="CDi.cs" t="Include" />
+            <e p="Common.cs" t="Include" />
+            <e p="ElTorito.cs" t="Include" />
+            <e p="HighSierra.cs" t="Include" />
+            <e p="ISO.cs" t="Include" />
+            <e p="Joliet.cs" t="Include" />
+            <e p="RRIP.cs" t="Include" />
+            <e p="SUSP.cs" t="Include" />
+            <e p="XA.cs" t="Include" />
+            <e p="Ziso.cs" t="Include" />
+          </e>
+          <e p="Super.cs" t="Include" />
+          <e p="Xattr.cs" t="Include" />
+        </e>
+        <e p="JFS.cs" t="Include" />
+        <e p="LIF.cs" t="Include" />
+        <e p="LisaFS" t="Include">
+          <e p="Consts.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="Extent.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="LisaFS.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Super.cs" t="Include" />
+          <e p="Xattr.cs" t="Include" />
+        </e>
+        <e p="Locus.cs" t="Include" />
+        <e p="MicroDOS.cs" t="Include" />
+        <e p="MinixFS.cs" t="Include" />
+        <e p="NILFS2.cs" t="Include" />
+        <e p="NTFS.cs" t="Include" />
+        <e p="Nintendo.cs" t="Include" />
+        <e p="ODS.cs" t="Include" />
+        <e p="Opera.cs" t="Include" />
+        <e p="PCEngine.cs" t="Include" />
+        <e p="PFS.cs" t="Include" />
+        <e p="ProDOS.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="QNX4.cs" t="Include" />
+        <e p="QNX6.cs" t="Include" />
+        <e p="RBF.cs" t="Include" />
+        <e p="RT11.cs" t="Include" />
+        <e p="Reiser.cs" t="Include" />
+        <e p="Reiser4.cs" t="Include" />
+        <e p="SFS.cs" t="Include" />
+        <e p="SolarFS.cs" t="Include" />
+        <e p="Squash.cs" t="Include" />
+        <e p="Structs.cs" t="Include" />
+        <e p="Symbian.cs" t="Include" />
+        <e p="SysV.cs" t="Include" />
+        <e p="UCSDPascal" t="Include">
+          <e p="Consts.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Super.cs" t="Include" />
+          <e p="UCSDPascal.cs" t="Include" />
+        </e>
+        <e p="UDF.cs" t="Include" />
+        <e p="UNICOS.cs" t="Include" />
+        <e p="UNIXBFS.cs" t="Include" />
+        <e p="VMfs.cs" t="Include" />
+        <e p="VxFS.cs" t="Include" />
+        <e p="XFS.cs" t="Include" />
+        <e p="ZFS.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="dump.cs" t="Include" />
+        <e p="exFAT.cs" t="Include" />
+        <e p="ext2FS.cs" t="Include" />
+        <e p="extFS.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef.Filters" t="IncludeRecursive">
+        <e p="AppleDouble.cs" t="Include" />
+        <e p="AppleSingle.cs" t="Include" />
+        <e p="BZip2.cs" t="Include" />
+        <e p="DiscImageChef.Filters.csproj" t="IncludeRecursive" />
+        <e p="Filter.cs" t="Include" />
+        <e p="Filters.cs" t="Include" />
+        <e p="ForcedSeekStream.cs" t="Include" />
+        <e p="GZip.cs" t="Include" />
+        <e p="LZip.cs" t="Include" />
+        <e p="MacBinary.cs" t="Include" />
+        <e p="OffsetStream.cs" t="Include" />
+        <e p="PCExchange.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="XZ.cs" t="Include" />
+        <e p="ZZZNoFilter.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef.Helpers" t="IncludeRecursive">
+        <e p="ArrayFill.cs" t="Include" />
+        <e p="ArrayIsEmpty.cs" t="Include" />
+        <e p="BigEndianBitConverter.cs" t="Include" />
+        <e p="BigEndianMarshal.cs" t="Include" />
+        <e p="CHS.cs" t="Include" />
+        <e p="CompareBytes.cs" t="Include" />
+        <e p="CountBits.cs" t="Include" />
+        <e p="DateHandlers.cs" t="Include" />
+        <e p="DiscImageChef.Helpers.csproj" t="IncludeRecursive" />
+        <e p="Extents" t="Include">
+          <e p="ExtentsByte.cs" t="Include" />
+          <e p="ExtentsInt.cs" t="Include" />
+          <e p="ExtentsLong.cs" t="Include" />
+          <e p="ExtentsSByte.cs" t="Include" />
+          <e p="ExtentsShort.cs" t="Include" />
+          <e p="ExtentsUInt.cs" t="Include" />
+          <e p="ExtentsULong.cs" t="Include" />
+          <e p="ExtentsUShort.cs" t="Include" />
+        </e>
+        <e p="PrintHex.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="StringHandlers.cs" t="Include" />
+        <e p="Swapping.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.Interop" t="IncludeRecursive">
+        <e p="DetectOS.cs" t="Include" />
+        <e p="DiscImageChef.Interop.csproj" t="IncludeRecursive" />
+        <e p="PlatformID.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.Metadata" t="IncludeRecursive">
+        <e p="DeviceReport.cs" t="Include" />
+        <e p="Dimensions.cs" t="Include" />
+        <e p="DiscImageChef.Metadata.csproj" t="IncludeRecursive" />
+        <e p="ExtentsConverter.cs" t="Include" />
+        <e p="MediaType.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Resume.cs" t="Include" />
+        <e p="Statistics.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.Partitions" t="IncludeRecursive">
+        <e p="Acorn.cs" t="Include" />
+        <e p="AppleMap.cs" t="Include" />
+        <e p="Apricot.cs" t="Include" />
+        <e p="Atari.cs" t="Include" />
+        <e p="BSD.cs" t="Include" />
+        <e p="DEC.cs" t="Include" />
+        <e p="DiscImageChef.Partitions.csproj" t="IncludeRecursive" />
+        <e p="DragonFlyBSD.cs" t="Include" />
+        <e p="GPT.cs" t="Include" />
+        <e p="Human68k.cs" t="Include" />
+        <e p="MBR.cs" t="Include" />
+        <e p="NeXT.cs" t="Include" />
+        <e p="PC98.cs" t="Include" />
+        <e p="PartitionPlugin.cs" t="Include" />
+        <e p="Plan9.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="RDB.cs" t="Include" />
+        <e p="RioKarma.cs" t="Include" />
+        <e p="SGI.cs" t="Include" />
+        <e p="Sun.cs" t="Include" />
+        <e p="UNIX.cs" t="Include" />
+        <e p="VTOC.cs" t="Include" />
+        <e p="XENIX.cs" t="Include" />
+        <e p="Xbox.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.Server" t="IncludeRecursive">
+        <e p="App_Start" t="Include">
+          <e p="Ata.cs" t="Include" />
+          <e p="ScsiEvpd.cs" t="Include" />
+          <e p="ScsiInquiry.cs" t="Include" />
+          <e p="ScsiMmcFeatures.cs" t="Include" />
+          <e p="ScsiMmcMode.cs" t="Include" />
+          <e p="ScsiModeSense.cs" t="Include" />
+          <e p="SscTestedMedia.cs" t="Include" />
+          <e p="TestedMedia.cs" t="Include" />
+          <e p="WebApiConfig.cs" t="Include" />
+        </e>
+        <e p="Changelog.aspx" t="Include" />
+        <e p="Controllers" t="Include">
+          <e p="UploadReportController.cs" t="Include" />
+          <e p="UploadStatsController.cs" t="Include" />
+        </e>
+        <e p="DONATING.aspx" t="Include" />
+        <e p="Default.aspx" t="Include" />
+        <e p="Default.aspx.cs" t="Include" />
+        <e p="Default.aspx.designer.cs" t="Include" />
+        <e p="DiscImageChef.Server.csproj" t="IncludeRecursive" />
+        <e p="Global.asax" t="Include" />
+        <e p="Global.asax.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Reports" t="Include">
+          <e p=".htaccess" t="Include" />
+        </e>
+        <e p="Statistics" t="Include">
+          <e p=".htaccess" t="Include" />
+          <e p="Statistics.xml" t="Include" />
+        </e>
+        <e p="Statistics.aspx" t="Include" />
+        <e p="Statistics.aspx.cs" t="Include" />
+        <e p="Statistics.aspx.designer.cs" t="Include" />
+        <e p="TODO.aspx" t="Include" />
+        <e p="Upload" t="Include">
+          <e p=".htaccess" t="Include" />
+        </e>
+        <e p="ViewReport.aspx" t="Include" />
+        <e p="ViewReport.aspx.cs" t="Include" />
+        <e p="ViewReport.aspx.designer.cs" t="Include" />
+        <e p="Web.config" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="docs" t="Include" />
+        <e p="dos.css" t="Include" />
+        <e p="int10h.org" t="Include">
+          <e p=".htaccess" t="Include" />
+          <e p="vga_squarepx.eot" t="Include" />
+          <e p="vga_squarepx.ttf" t="Include" />
+          <e p="vga_squarepx.woff" t="Include" />
+          <e p="vga_squarepx.woff2" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="usb.ids" t="Include" />
+      </e>
+      <e p="DiscImageChef.Settings" t="IncludeRecursive">
+        <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Settings.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef.Tests" t="IncludeRecursive">
+        <e p="Checksums" t="Include">
+          <e p="Adler32.cs" t="Include" />
+          <e p="CRC16.cs" t="Include" />
+          <e p="CRC32.cs" t="Include" />
+          <e p="CRC64.cs" t="Include" />
+          <e p="MD5.cs" t="Include" />
+          <e p="RIPEMD160.cs" t="Include" />
+          <e p="SHA1.cs" t="Include" />
+          <e p="SHA256.cs" t="Include" />
+          <e p="SHA384.cs" t="Include" />
+          <e p="SHA512.cs" t="Include" />
+          <e p="SpamSum.cs" t="Include" />
+        </e>
+        <e p="Consts.cs" t="Include" />
+        <e p="Devices" t="Include">
+          <e p="IomegaJaz.cs" t="Include" />
+          <e p="LS120.cs" t="Include" />
+          <e p="PocketZip.cs" t="Include" />
+        </e>
+        <e p="DiscImageChef.Tests.csproj" t="IncludeRecursive" />
+        <e p="Filesystems" t="Include">
+          <e p="ADFS.cs" t="Include" />
+          <e p="AFFS.cs" t="Include" />
+          <e p="AFFS2.cs" t="Include" />
+          <e p="AFS.cs" t="Include" />
+          <e p="AOFS.cs" t="Include" />
+          <e p="Atheos.cs" t="Include" />
+          <e p="BeFS.cs" t="Include" />
+          <e p="COHERENT.cs" t="Include" />
+          <e p="DTFS.cs" t="Include" />
+          <e p="EAFS.cs" t="Include" />
+          <e p="F2FS.cs" t="Include" />
+          <e p="FAT12.cs" t="Include" />
+          <e p="FAT16.cs" t="Include" />
+          <e p="FAT32.cs" t="Include" />
+          <e p="HAMMER.cs" t="Include" />
+          <e p="HFS.cs" t="Include" />
+          <e p="HFSPlus.cs" t="Include" />
+          <e p="HFSX.cs" t="Include" />
+          <e p="HPFS.cs" t="Include" />
+          <e p="HTFS.cs" t="Include" />
+          <e p="ISO9660.cs" t="Include" />
+          <e p="JFS2.cs" t="Include" />
+          <e p="LFS.cs" t="Include" />
+          <e p="LisaFS.cs" t="Include" />
+          <e p="Locus.cs" t="Include" />
+          <e p="MFS.cs" t="Include" />
+          <e p="MINIX.cs" t="Include" />
+          <e p="NILFS2.cs" t="Include" />
+          <e p="NTFS.cs" t="Include" />
+          <e p="NWFS386.cs" t="Include" />
+          <e p="OCFS2.cs" t="Include" />
+          <e p="PFS3.cs" t="Include" />
+          <e p="ProDOS.cs" t="Include" />
+          <e p="QNX4.cs" t="Include" />
+          <e p="ReFS.cs" t="Include" />
+          <e p="Reiser3.cs" t="Include" />
+          <e p="Reiser4.cs" t="Include" />
+          <e p="SFS.cs" t="Include" />
+          <e p="SysV.cs" t="Include" />
+          <e p="UDF.cs" t="Include" />
+          <e p="UFS.cs" t="Include" />
+          <e p="UNIXBFS.cs" t="Include" />
+          <e p="XENIX.cs" t="Include" />
+          <e p="XFS.cs" t="Include" />
+          <e p="ZFS.cs" t="Include" />
+          <e p="btrfs.cs" t="Include" />
+          <e p="exFAT.cs" t="Include" />
+          <e p="ext2.cs" t="Include" />
+        </e>
+        <e p="Filters" t="Include">
+          <e p="AppleDoubleDave.cs" t="Include" />
+          <e p="AppleDoubleDos.cs" t="Include" />
+          <e p="AppleDoubleNetatalk.cs" t="Include" />
+          <e p="AppleDoubleOsX.cs" t="Include" />
+          <e p="AppleDoubleProDos.cs" t="Include" />
+          <e p="AppleDoubleUnAr.cs" t="Include" />
+          <e p="AppleDoubleUnix.cs" t="Include" />
+          <e p="AppleSingle.cs" t="Include" />
+          <e p="BZip2.cs" t="Include" />
+          <e p="GZip.cs" t="Include" />
+          <e p="LZip.cs" t="Include" />
+          <e p="MacBinary1.cs" t="Include" />
+          <e p="MacBinary2.cs" t="Include" />
+          <e p="MacBinary3.cs" t="Include" />
+          <e p="PCExchange.cs" t="Include" />
+          <e p="XZ.cs" t="Include" />
+        </e>
+        <e p="Images" t="Include">
+          <e p="2MG.cs" t="Include" />
+          <e p="Anex86.cs" t="Include" />
+          <e p="CisCopy.cs" t="Include" />
+          <e p="CopyQM.cs" t="Include" />
+          <e p="D88.cs" t="Include" />
+          <e p="DART.cs" t="Include" />
+          <e p="DiskCopy42.cs" t="Include" />
+        </e>
+        <e p="Partitions" t="Include">
+          <e p="Acorn.cs" t="Include" />
+          <e p="AppleMap.cs" t="Include" />
+          <e p="Atari.cs" t="Include" />
+          <e p="BSD.cs" t="Include" />
+          <e p="GPT.cs" t="Include" />
+          <e p="MBR.cs" t="Include" />
+          <e p="MINIX.cs" t="Include" />
+          <e p="PC98.cs" t="Include" />
+          <e p="RDB.cs" t="Include" />
+          <e p="SGI.cs" t="Include" />
+          <e p="Sun.cs" t="Include" />
+          <e p="VTOC.cs" t="Include" />
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef.Tests.Devices" t="IncludeRecursive">
+        <e p="ATA" t="Include">
+          <e p="Ata28.cs" t="Include" />
+          <e p="Ata48.cs" t="Include" />
+          <e p="AtaCHS.cs" t="Include" />
+          <e p="Atapi.cs" t="Include" />
+          <e p="Cfa.cs" t="Include" />
+          <e p="MCPT.cs" t="Include" />
+          <e p="Smart.cs" t="Include" />
+        </e>
+        <e p="ATA.cs" t="Include" />
+        <e p="Command.cs" t="Include" />
+        <e p="DecodeATARegisters.cs" t="Include" />
+        <e p="Device.cs" t="Include" />
+        <e p="DiscImageChef.Tests.Devices.csproj" t="IncludeRecursive" />
+        <e p="Main.cs" t="Include" />
+        <e p="NVMe.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="SCSI" t="Include">
+          <e p="Adaptec.cs" t="Include" />
+          <e p="ArchiveCorp.cs" t="Include" />
+          <e p="Certance.cs" t="Include" />
+          <e p="Fujitsu.cs" t="Include" />
+          <e p="HL-DT-ST.cs" t="Include" />
+          <e p="HP.cs" t="Include" />
+          <e p="Kreon.cs" t="Include" />
+          <e p="MMC.cs" t="Include" />
+          <e p="NEC.cs" t="Include" />
+          <e p="Pioneer.cs" t="Include" />
+          <e p="Plasmon.cs" t="Include" />
+          <e p="Plextor.cs" t="Include" />
+          <e p="SBC.cs" t="Include" />
+          <e p="SMC.cs" t="Include" />
+          <e p="SPC.cs" t="Include" />
+          <e p="SSC.cs" t="Include" />
+          <e p="SyQuest.cs" t="Include" />
+        </e>
+        <e p="SCSI.cs" t="Include" />
+        <e p="SecureDigital" t="Include">
+          <e p="MultiMediaCard.cs" t="Include" />
+          <e p="SecureDigital.cs" t="Include" />
+        </e>
+        <e p="SecureDigital.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="DiscImageChef.sln" t="IncludeFlat" />
+      <e p="LICENSE" t="Include" />
+      <e p="LICENSE.LGPL" t="Include" />
+      <e p="LICENSE.MIT" t="Include" />
+      <e p="NEEDINFO.md" t="Include" />
+      <e p="README.md" t="Include" />
+      <e p="TODO.md" t="Include" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

@@ -177,3 +177,6 @@ FakesAssemblies/
 
 # Visual Studio 2017
 .vs
+
+workspace.xml
+cmake-build-debug
