@@ -38,117 +38,35 @@ using System.Runtime.InteropServices;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Decodes AppleDouble files
+    ///     Decodes AppleDouble files
     /// </summary>
     public class AppleDouble : Filter
     {
-        enum AppleDoubleEntryID : uint
-        {
-            Invalid = 0,
-            DataFork = 1,
-            ResourceFork = 2,
-            RealName = 3,
-            Comment = 4,
-            Icon = 5,
-            ColorIcon = 6,
-            FileInfo = 7,
-            FileDates = 8,
-            FinderInfo = 9,
-            MacFileInfo = 10,
-            ProDOSFileInfo = 11,
-            DOSFileInfo = 12,
-            ShortName = 13,
-            AFPFileInfo = 14,
-            DirectoryID = 15
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleHeader
-        {
-            public uint magic;
-            public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] homeFilesystem;
-            public ushort entries;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleEntry
-        {
-            public uint id;
-            public uint offset;
-            public uint length;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleFileDates
-        {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public uint accessDate;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleMacFileInfo
-        {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public uint accessDate;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleUNIXFileInfo
-        {
-            public uint creationDate;
-            public uint accessDate;
-            public uint modificationDate;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleDOSFileInfo
-        {
-            public ushort modificationDate;
-            public ushort modificationTime;
-            public ushort attributes;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleProDOSFileInfo
-        {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public ushort access;
-            public ushort fileType;
-            public uint auxType;
-        }
-
         const uint AppleDoubleMagic = 0x00051607;
         const uint AppleDoubleVersion = 0x00010000;
         const uint AppleDoubleVersion2 = 0x00020000;
+        readonly byte[] DOSHome =
+            {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 
         readonly byte[] MacintoshHome =
             {0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        readonly byte[] OSXHome =
+            {0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] ProDOSHome =
             {0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-        readonly byte[] DOSHome =
-            {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] UNIXHome =
             {0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] VMXHome =
             {0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-        readonly byte[] OSXHome =
-            {0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        string basePath;
+        DateTime creationTime;
 
         AppleDoubleEntry dataFork;
-        AppleDoubleEntry rsrcFork;
-        bool opened;
-        string basePath;
+        AppleDoubleHeader header;
         string headerPath;
         DateTime lastWriteTime;
-        DateTime creationTime;
-        AppleDoubleHeader header;
+        bool opened;
+        AppleDoubleEntry rsrcFork;
 
         public AppleDouble()
         {
@@ -263,7 +181,8 @@ namespace DiscImageChef.Filters
             UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
             DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
-            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
+            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
+                                               filename ?? throw new InvalidOperationException());
             DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
             UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
@@ -431,7 +350,8 @@ namespace DiscImageChef.Filters
             UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
             DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
-            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
+            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
+                                               filename ?? throw new InvalidOperationException());
             DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
             UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
@@ -645,6 +565,88 @@ namespace DiscImageChef.Filters
             fs.Close();
             opened = true;
             basePath = path;
+        }
+
+        enum AppleDoubleEntryID : uint
+        {
+            Invalid = 0,
+            DataFork = 1,
+            ResourceFork = 2,
+            RealName = 3,
+            Comment = 4,
+            Icon = 5,
+            ColorIcon = 6,
+            FileInfo = 7,
+            FileDates = 8,
+            FinderInfo = 9,
+            MacFileInfo = 10,
+            ProDOSFileInfo = 11,
+            DOSFileInfo = 12,
+            ShortName = 13,
+            AFPFileInfo = 14,
+            DirectoryID = 15
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleDoubleHeader
+        {
+            public uint magic;
+            public uint version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] homeFilesystem;
+            public ushort entries;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleDoubleEntry
+        {
+            public uint id;
+            public uint offset;
+            public uint length;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleDoubleFileDates
+        {
+            public uint creationDate;
+            public uint modificationDate;
+            public uint backupDate;
+            public uint accessDate;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleDoubleMacFileInfo
+        {
+            public uint creationDate;
+            public uint modificationDate;
+            public uint backupDate;
+            public uint accessDate;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleDoubleUNIXFileInfo
+        {
+            public uint creationDate;
+            public uint accessDate;
+            public uint modificationDate;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleDoubleDOSFileInfo
+        {
+            public ushort modificationDate;
+            public ushort modificationTime;
+            public ushort attributes;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleDoubleProDOSFileInfo
+        {
+            public uint creationDate;
+            public uint modificationDate;
+            public uint backupDate;
+            public ushort access;
+            public ushort fileType;
+            public uint auxType;
         }
     }
 }

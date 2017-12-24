@@ -42,7 +42,7 @@ namespace DiscImageChef.Filters
         public SortedDictionary<string, Filter> Filters;
 
         /// <summary>
-        /// Fills the list of all known filters
+        ///     Fills the list of all known filters
         /// </summary>
         public FiltersList()
         {
@@ -55,13 +55,14 @@ namespace DiscImageChef.Filters
                     if(!type.IsSubclassOf(typeof(Filter))) continue;
 
                     Filter filter = (Filter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                    if(filter != null && !Filters.ContainsKey(filter.Name.ToLower())) Filters.Add(filter.Name.ToLower(), filter);
+                    if(filter != null && !Filters.ContainsKey(filter.Name.ToLower()))
+                        Filters.Add(filter.Name.ToLower(), filter);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
         }
 
         /// <summary>
-        /// Gets the filter that allows to read the specified path
+        ///     Gets the filter that allows to read the specified path
         /// </summary>
         /// <param name="path">Path</param>
         /// <returns>The filter that allows reading the specified path</returns>
@@ -91,7 +92,7 @@ namespace DiscImageChef.Filters
         }
 
         /// <summary>
-        /// Gets all known filters
+        ///     Gets all known filters
         /// </summary>
         /// <returns>Known filters</returns>
         public SortedDictionary<string, Filter> GetFiltersList()

@@ -38,17 +38,17 @@ using SharpCompress.Compressors.LZMA;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Decompress lzip files while reading
+    ///     Decompress lzip files while reading
     /// </summary>
     public class LZip : Filter
     {
-        Stream dataStream;
         string basePath;
-        DateTime lastWriteTime;
         DateTime creationTime;
-        bool opened;
+        Stream dataStream;
         long decompressedSize;
         Stream innerStream;
+        DateTime lastWriteTime;
+        bool opened;
 
         public LZip()
         {

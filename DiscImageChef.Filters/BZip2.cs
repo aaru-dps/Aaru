@@ -38,17 +38,17 @@ using SharpCompress.Compressors.BZip2;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Decompress bz2 files while reading
+    ///     Decompress bz2 files while reading
     /// </summary>
     public class BZip2 : Filter
     {
-        Stream dataStream;
         string basePath;
-        DateTime lastWriteTime;
         DateTime creationTime;
-        bool opened;
+        Stream dataStream;
         long decompressedSize;
         Stream innerStream;
+        DateTime lastWriteTime;
+        bool opened;
 
         public BZip2()
         {
@@ -96,7 +96,8 @@ namespace DiscImageChef.Filters
 
             if(buffer.Length <= 512) return true;
 
-            return buffer[buffer.Length - 512] != 0x6B || buffer[buffer.Length - 511] != 0x6F || buffer[buffer.Length - 510] != 0x6C || buffer[buffer.Length - 509] != 0x79;
+            return buffer[buffer.Length - 512] != 0x6B || buffer[buffer.Length - 511] != 0x6F ||
+                   buffer[buffer.Length - 510] != 0x6C || buffer[buffer.Length - 509] != 0x79;
         }
 
         public override bool Identify(Stream stream)
@@ -139,8 +140,7 @@ namespace DiscImageChef.Filters
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
             // Check it is not an UDIF
-            if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79)
-                return false;
+            if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79) return false;
 
             return true;
         }

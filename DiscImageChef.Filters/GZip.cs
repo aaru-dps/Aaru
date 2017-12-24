@@ -37,16 +37,16 @@ using System.IO.Compression;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Decompress gzip files while reading
+    ///     Decompress gzip files while reading
     /// </summary>
     public class GZip : Filter
     {
-        Stream dataStream;
         string basePath;
-        DateTime lastWriteTime;
         DateTime creationTime;
-        bool opened;
+        Stream dataStream;
         uint decompressedSize;
+        DateTime lastWriteTime;
+        bool opened;
         Stream zStream;
 
         public GZip()

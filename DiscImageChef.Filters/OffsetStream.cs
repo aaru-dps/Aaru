@@ -38,13 +38,13 @@ using Microsoft.Win32.SafeHandles;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Creates a stream that is a subset of another stream.
+    ///     Creates a stream that is a subset of another stream.
     /// </summary>
     public class OffsetStream : Stream
     {
         readonly Stream baseStream;
-        readonly long streamStart;
         readonly long streamEnd;
+        readonly long streamStart;
 
         public OffsetStream(Stream stream, long start, long end)
         {
@@ -291,12 +291,6 @@ namespace DiscImageChef.Filters
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        ~OffsetStream()
-        {
-            baseStream.Close();
-            baseStream.Dispose();
-        }
-
         public override bool CanRead => baseStream.CanRead;
 
         public override bool CanSeek => baseStream.CanSeek;
@@ -315,6 +309,12 @@ namespace DiscImageChef.Filters
 
                 baseStream.Position = value;
             }
+        }
+
+        ~OffsetStream()
+        {
+            baseStream.Close();
+            baseStream.Dispose();
         }
 
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback,

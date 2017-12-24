@@ -40,82 +40,22 @@ using System.Text;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Decodes PCExchange files
+    ///     Decodes PCExchange files
     /// </summary>
     public class PCExchange : Filter
     {
         const string FILE_ID = "FILEID.DAT";
         const string FINDER_INFO = "FINDER.DAT";
         const string RESOURCES = "RESOURCE.FRK";
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PCExchangeEntry
-        {
-            /// <summary>
-            /// Name in Macintosh. If PCExchange version supports FAT's LFN they are the same.
-            /// Illegal characters for FAT get substituted with '_' both here and in FAT's LFN entry.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] macName;
-            /// <summary>
-            /// File type
-            /// </summary>
-            public uint type;
-            /// <summary>
-            /// File creator
-            /// </summary>
-            public uint creator;
-            /// <summary>
-            /// Finder flags
-            /// </summary>
-            public ushort fdFlags;
-            /// <summary>
-            /// File's icon vertical position within its window
-            /// </summary>
-            public ushort verticalPosition;
-            /// <summary>
-            /// File's icon horizontal position within its window
-            /// </summary>
-            public ushort horizontalPosition;
-            /// <summary>
-            /// Unknown, all bytes are empty but last, except in volume's label entry
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown1;
-            /// <summary>
-            /// File's creation date
-            /// </summary>
-            public uint creationDate;
-            /// <summary>
-            /// File's modification date
-            /// </summary>
-            public uint modificationDate;
-            /// <summary>
-            /// File's last backup date
-            /// </summary>
-            public uint backupDate;
-            /// <summary>
-            /// Unknown, but is unique, starts 0x7FFFFFFF and counts in reverse.
-            /// Probably file ID for alias look up?
-            /// </summary>
-            public uint unknown2;
-            /// <summary>
-            /// Name as in FAT entry (not LFN).
-            /// Resource fork file is always using this name, never LFN.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] dosName;
-            /// <summary>
-            /// Unknown, flags?
-            /// </summary>
-            public byte unknown3;
-        }
-
-        bool opened;
         string basePath;
-        string dataPath;
-        string rsrcPath;
-        DateTime lastWriteTime;
         DateTime creationTime;
         long dataLen;
+        string dataPath;
+        DateTime lastWriteTime;
+
+        bool opened;
         long rsrcLen;
+        string rsrcPath;
 
         public PCExchange()
         {
@@ -203,7 +143,8 @@ namespace DiscImageChef.Filters
         {
             string parentFolder = Path.GetDirectoryName(path);
 
-            if(!File.Exists(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO))) return false;
+            if(!File.Exists(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO)))
+                return false;
 
             if(!Directory.Exists(Path.Combine(parentFolder, RESOURCES))) return false;
 
@@ -233,9 +174,10 @@ namespace DiscImageChef.Filters
 
                 if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
-                dataFound |= File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
-                             File.Exists(Path.Combine(parentFolder, dosName)) ||
-                             File.Exists(Path.Combine(parentFolder, dosNameLow));
+                dataFound |=
+                    File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
+                    File.Exists(Path.Combine(parentFolder, dosName)) ||
+                    File.Exists(Path.Combine(parentFolder, dosNameLow));
 
                 rsrcFound |= File.Exists(Path.Combine(parentFolder, RESOURCES, dosName)) ||
                              File.Exists(Path.Combine(parentFolder, RESOURCES, dosNameLow));
@@ -269,7 +211,8 @@ namespace DiscImageChef.Filters
             string baseFilename = Path.GetFileName(path);
 
             FileStream finderDatStream =
-                new FileStream(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO), FileMode.Open, FileAccess.Read);
+                new FileStream(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO),
+                               FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -288,7 +231,8 @@ namespace DiscImageChef.Filters
 
                 if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
-                if(File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException()))) dataPath = Path.Combine(parentFolder, macName);
+                if(File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))
+                    dataPath = Path.Combine(parentFolder, macName);
                 else if(File.Exists(Path.Combine(parentFolder, dosName)))
                     dataPath = Path.Combine(parentFolder, dosName);
                 else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
@@ -314,6 +258,66 @@ namespace DiscImageChef.Filters
             opened = true;
 
             finderDatStream.Close();
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct PCExchangeEntry
+        {
+            /// <summary>
+            ///     Name in Macintosh. If PCExchange version supports FAT's LFN they are the same.
+            ///     Illegal characters for FAT get substituted with '_' both here and in FAT's LFN entry.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] macName;
+            /// <summary>
+            ///     File type
+            /// </summary>
+            public uint type;
+            /// <summary>
+            ///     File creator
+            /// </summary>
+            public uint creator;
+            /// <summary>
+            ///     Finder flags
+            /// </summary>
+            public ushort fdFlags;
+            /// <summary>
+            ///     File's icon vertical position within its window
+            /// </summary>
+            public ushort verticalPosition;
+            /// <summary>
+            ///     File's icon horizontal position within its window
+            /// </summary>
+            public ushort horizontalPosition;
+            /// <summary>
+            ///     Unknown, all bytes are empty but last, except in volume's label entry
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown1;
+            /// <summary>
+            ///     File's creation date
+            /// </summary>
+            public uint creationDate;
+            /// <summary>
+            ///     File's modification date
+            /// </summary>
+            public uint modificationDate;
+            /// <summary>
+            ///     File's last backup date
+            /// </summary>
+            public uint backupDate;
+            /// <summary>
+            ///     Unknown, but is unique, starts 0x7FFFFFFF and counts in reverse.
+            ///     Probably file ID for alias look up?
+            /// </summary>
+            public uint unknown2;
+            /// <summary>
+            ///     Name as in FAT entry (not LFN).
+            ///     Resource fork file is always using this name, never LFN.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] dosName;
+            /// <summary>
+            ///     Unknown, flags?
+            /// </summary>
+            public byte unknown3;
         }
     }
 }

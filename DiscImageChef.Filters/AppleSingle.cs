@@ -38,118 +38,36 @@ using System.Runtime.InteropServices;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Decodes AppleSingle files
+    ///     Decodes AppleSingle files
     /// </summary>
     public class AppleSingle : Filter
     {
-        enum AppleSingleEntryID : uint
-        {
-            Invalid = 0,
-            DataFork = 1,
-            ResourceFork = 2,
-            RealName = 3,
-            Comment = 4,
-            Icon = 5,
-            ColorIcon = 6,
-            FileInfo = 7,
-            FileDates = 8,
-            FinderInfo = 9,
-            MacFileInfo = 10,
-            ProDOSFileInfo = 11,
-            DOSFileInfo = 12,
-            ShortName = 13,
-            AFPFileInfo = 14,
-            DirectoryID = 15
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleHeader
-        {
-            public uint magic;
-            public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] homeFilesystem;
-            public ushort entries;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleEntry
-        {
-            public uint id;
-            public uint offset;
-            public uint length;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleFileDates
-        {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public uint accessDate;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleMacFileInfo
-        {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public uint accessDate;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleUNIXFileInfo
-        {
-            public uint creationDate;
-            public uint accessDate;
-            public uint modificationDate;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleDOSFileInfo
-        {
-            public ushort modificationDate;
-            public ushort modificationTime;
-            public ushort attributes;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleProDOSFileInfo
-        {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public ushort access;
-            public ushort fileType;
-            public uint auxType;
-        }
-
         const uint AppleSingleMagic = 0x00051600;
         const uint AppleSingleVersion = 0x00010000;
         const uint AppleSingleVersion2 = 0x00020000;
+        readonly byte[] DOSHome =
+            {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 
         readonly byte[] MacintoshHome =
             {0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        readonly byte[] OSXHome =
+            {0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] ProDOSHome =
             {0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-        readonly byte[] DOSHome =
-            {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] UNIXHome =
             {0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] VMSHome =
             {0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-        readonly byte[] OSXHome =
-            {0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        string basePath;
+        byte[] bytes;
+        DateTime creationTime;
 
         AppleSingleEntry dataFork;
-        AppleSingleEntry rsrcFork;
-        byte[] bytes;
-        Stream stream;
-        bool isBytes, isStream, isPath, opened;
-        string basePath;
-        DateTime lastWriteTime;
-        DateTime creationTime;
         AppleSingleHeader header;
+        bool isBytes, isStream, isPath, opened;
+        DateTime lastWriteTime;
+        AppleSingleEntry rsrcFork;
+        Stream stream;
 
         public AppleSingle()
         {
@@ -518,6 +436,88 @@ namespace DiscImageChef.Filters
             opened = true;
             isPath = true;
             basePath = path;
+        }
+
+        enum AppleSingleEntryID : uint
+        {
+            Invalid = 0,
+            DataFork = 1,
+            ResourceFork = 2,
+            RealName = 3,
+            Comment = 4,
+            Icon = 5,
+            ColorIcon = 6,
+            FileInfo = 7,
+            FileDates = 8,
+            FinderInfo = 9,
+            MacFileInfo = 10,
+            ProDOSFileInfo = 11,
+            DOSFileInfo = 12,
+            ShortName = 13,
+            AFPFileInfo = 14,
+            DirectoryID = 15
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleSingleHeader
+        {
+            public uint magic;
+            public uint version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] homeFilesystem;
+            public ushort entries;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleSingleEntry
+        {
+            public uint id;
+            public uint offset;
+            public uint length;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleSingleFileDates
+        {
+            public uint creationDate;
+            public uint modificationDate;
+            public uint backupDate;
+            public uint accessDate;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleSingleMacFileInfo
+        {
+            public uint creationDate;
+            public uint modificationDate;
+            public uint backupDate;
+            public uint accessDate;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleSingleUNIXFileInfo
+        {
+            public uint creationDate;
+            public uint accessDate;
+            public uint modificationDate;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleSingleDOSFileInfo
+        {
+            public ushort modificationDate;
+            public ushort modificationTime;
+            public ushort attributes;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AppleSingleProDOSFileInfo
+        {
+            public uint creationDate;
+            public uint modificationDate;
+            public uint backupDate;
+            public ushort access;
+            public ushort fileType;
+            public uint auxType;
         }
     }
 }

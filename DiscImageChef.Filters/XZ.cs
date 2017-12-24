@@ -37,17 +37,17 @@ using SharpCompress.Compressors.Xz;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// Decompress xz files while reading
+    ///     Decompress xz files while reading
     /// </summary>
     public class XZ : Filter
     {
-        Stream dataStream;
         string basePath;
-        DateTime lastWriteTime;
         DateTime creationTime;
-        bool opened;
+        Stream dataStream;
         long decompressedSize;
         Stream innerStream;
+        DateTime lastWriteTime;
+        bool opened;
 
         public XZ()
         {
@@ -242,7 +242,10 @@ namespace DiscImageChef.Filters
         {
             if(basePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 3);
-            return basePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true ? basePath.Substring(0, basePath.Length - 5) : basePath;
+
+            return basePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? basePath.Substring(0, basePath.Length - 5)
+                       : basePath;
         }
 
         public override string GetParentFolder()

@@ -36,19 +36,19 @@ using System.IO;
 namespace DiscImageChef.Filters
 {
     /// <summary>
-    /// ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams)
-    /// by doing the slow and known trick of rewinding and forward reading until arriving the desired position.
+    ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams)
+    ///     by doing the slow and known trick of rewinding and forward reading until arriving the desired position.
     /// </summary>
     public class ForcedSeekStream<T> : Stream where T : Stream
     {
+        const int BUFFER_LEN = 1048576;
+        string backFile;
+        FileStream backStream;
         T baseStream;
         long streamLength;
-        const int BUFFER_LEN = 1048576;
-        FileStream backStream;
-        string backFile;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1"/> class.
+        ///     Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1" /> class.
         /// </summary>
         /// <param name="length">The real (uncompressed) length of the stream.</param>
         /// <param name="args">Parameters that are used to create the base stream.</param>
@@ -62,7 +62,7 @@ namespace DiscImageChef.Filters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1"/> class.
+        ///     Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1" /> class.
         /// </summary>
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(params object[] args)
@@ -71,27 +71,6 @@ namespace DiscImageChef.Filters
             backFile = Path.GetTempFileName();
             backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             CalculateLength();
-        }
-
-        /// <summary>
-        /// Calculates the real (uncompressed) length of the stream.
-        /// It basically reads (uncompresses) the whole stream to memory discarding its contents,
-        /// so it should be used as a last resort.
-        /// </summary>
-        /// <returns>The length.</returns>
-        public void CalculateLength()
-        {
-            int read;
-            do
-            {
-                byte[] buffer = new byte[BUFFER_LEN];
-                read = baseStream.Read(buffer, 0, BUFFER_LEN);
-                backStream.Write(buffer, 0, read);
-            }
-            while(read == BUFFER_LEN);
-
-            streamLength = backStream.Length;
-            backStream.Position = 0;
         }
 
         public override bool CanRead => baseStream.CanRead;
@@ -107,6 +86,27 @@ namespace DiscImageChef.Filters
             get => backStream.Position;
 
             set => SetPosition(value);
+        }
+
+        /// <summary>
+        ///     Calculates the real (uncompressed) length of the stream.
+        ///     It basically reads (uncompresses) the whole stream to memory discarding its contents,
+        ///     so it should be used as a last resort.
+        /// </summary>
+        /// <returns>The length.</returns>
+        public void CalculateLength()
+        {
+            int read;
+            do
+            {
+                byte[] buffer = new byte[BUFFER_LEN];
+                read = baseStream.Read(buffer, 0, BUFFER_LEN);
+                backStream.Write(buffer, 0, read);
+            }
+            while(read == BUFFER_LEN);
+
+            streamLength = backStream.Length;
+            backStream.Position = 0;
         }
 
         void SetPosition(long position)
