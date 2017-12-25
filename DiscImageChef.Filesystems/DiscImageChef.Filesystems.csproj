@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -116,6 +116,7 @@
     <Compile Include="UDF.cs" />
     <Compile Include="ECMA67.cs" />
     <Compile Include="FATX.cs" />
+    <Compile Include="Xia.cs" />
     <Compile Include="ZFS.cs" />
     <Compile Include="AppleDOS\Dir.cs" />
     <Compile Include="AppleDOS\File.cs" />

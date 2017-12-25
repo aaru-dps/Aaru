@@ -594,6 +594,7 @@
         <e p="VMfs.cs" t="Include" />
         <e p="VxFS.cs" t="Include" />
         <e p="XFS.cs" t="Include" />
+        <e p="Xia.cs" t="Include" />
         <e p="ZFS.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="dump.cs" t="Include" />
@@ -843,6 +844,7 @@
           <e p="UNIXBFS.cs" t="Include" />
           <e p="XENIX.cs" t="Include" />
           <e p="XFS.cs" t="Include" />
+          <e p="Xia.cs" t="Include" />
           <e p="ZFS.cs" t="Include" />
           <e p="btrfs.cs" t="Include" />
           <e p="exFAT.cs" t="Include" />

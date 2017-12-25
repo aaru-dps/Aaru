@@ -60,7 +60,6 @@
 * Add support for SecureDigital and MultiMediaCard devices in FreeBSD. (https://github.com/claunia/DiscImageChef/issues/116)
 * Add support for Sharp X68000 FAT filesystem variation. (https://github.com/claunia/DiscImageChef/issues/158)
 * Add support for SuperCardPro devices. (https://github.com/claunia/DiscImageChef/issues/139)
-* Add support for Xia filesystem. (https://github.com/claunia/DiscImageChef/issues/152)
 * Add support for XPACK images. (https://github.com/claunia/DiscImageChef/issues/45)
 * Check CompactDisc read capabilities on dumping. (https://github.com/claunia/DiscImageChef/issues/138)
 * Checksum disk tags

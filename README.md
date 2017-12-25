@@ -201,6 +201,7 @@ Supported file systems for identification and information only
 * Veritas file system
 * Xbox filesystems
 * Xenix file system
+* Xia filesystem
 * Zettabyte File System (ZFS)
 
 Supported checksums
