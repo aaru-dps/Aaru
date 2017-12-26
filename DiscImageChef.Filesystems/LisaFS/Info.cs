@@ -32,11 +32,13 @@
 
 using System;
 using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
 using DiscImageChef.DiscImages;
 using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -120,6 +122,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = new LisaRoman();
             information = "";
             StringBuilder sb = new StringBuilder();
 
