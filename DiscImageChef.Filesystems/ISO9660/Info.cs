@@ -69,12 +69,12 @@ namespace DiscImageChef.Filesystems.ISO9660
             Array.Copy(vdSector, 0x001 + xaOff, vdMagic, 0, 5);
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", currentEncoding.GetString(vdMagic));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", currentEncoding.GetString(hsMagic));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", Encoding.ASCII.GetString(vdMagic));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", Encoding.ASCII.GetString(hsMagic));
 
-            return currentEncoding.GetString(vdMagic) == ISO_MAGIC ||
-                   currentEncoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC ||
-                   currentEncoding.GetString(vdMagic) == CDI_MAGIC;
+            return Encoding.ASCII.GetString(vdMagic) == ISO_MAGIC ||
+                   Encoding.ASCII.GetString(hsMagic) == HIGH_SIERRA_MAGIC ||
+                   Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
         }
 
         public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)

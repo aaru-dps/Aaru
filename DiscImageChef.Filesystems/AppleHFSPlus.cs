@@ -66,7 +66,6 @@ namespace DiscImageChef.Filesystems
 
         public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            currentEncoding = Encoding.BigEndianUnicode;
             if(2 + partition.Start >= partition.End) return false;
 
             ushort drSigWord;
@@ -107,6 +106,7 @@ namespace DiscImageChef.Filesystems
         public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
+            currentEncoding = Encoding.BigEndianUnicode;
             information = "";
 
             ushort drSigWord;

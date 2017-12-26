@@ -116,9 +116,9 @@ namespace DiscImageChef.Filesystems
 
                 byte[] coherent_string = new byte[6];
                 Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
-                string s_fname = StringHandlers.CToString(coherent_string, currentEncoding);
+                string s_fname = StringHandlers.CToString(coherent_string);
                 Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-                string s_fpack = StringHandlers.CToString(coherent_string, currentEncoding);
+                string s_fpack = StringHandlers.CToString(coherent_string);
 
                 if(s_fname == COH_FNAME && s_fpack == COH_FPACK || s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
                    s_fname == COH_XXXXS && s_fpack == COH_XXXXN) return true;
