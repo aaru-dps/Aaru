@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -48,11 +47,8 @@ namespace DiscImageChef.Filesystems
         // Fossil header starts at 128KiB
         const ulong HEADER_POS = 128 * 1024;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Fossil Filesystem Plugin";
         public Guid Id => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
 
@@ -73,10 +69,11 @@ namespace DiscImageChef.Filesystems
             return hdr.magic == FOSSIL_HDR_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
             // Technically everything on Plan 9 from Bell Labs is in UTF-8
-            currentEncoding = Encoding.UTF8;
+            Encoding = Encoding.UTF8;
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -102,7 +99,7 @@ namespace DiscImageChef.Filesystems
 
             ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize) + partition.Start;
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Fossil filesystem",
                 ClusterSize = hdr.blockSize,
@@ -125,9 +122,8 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Active root block {0}", fsb.active).AppendLine();
                     sb.AppendFormat("Next root block {0}", fsb.next).AppendLine();
                     sb.AppendFormat("Curren root block {0}", fsb.current).AppendLine();
-                    sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, currentEncoding))
-                      .AppendLine();
-                    xmlFsType.VolumeName = StringHandlers.CToString(fsb.name, currentEncoding);
+                    sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, Encoding)).AppendLine();
+                    XmlFsType.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
                 }
             }
 

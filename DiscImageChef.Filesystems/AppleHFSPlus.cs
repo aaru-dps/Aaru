@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -56,11 +55,8 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const ushort HFSX_MAGIC = 0x4858;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Apple HFS+ filesystem";
         public Guid Id => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
 
@@ -104,9 +100,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = Encoding.BigEndianUnicode;
+            Encoding = Encoding.BigEndianUnicode;
             information = "";
 
             ushort drSigWord;
@@ -219,35 +215,35 @@ namespace DiscImageChef.Filesystems
                         sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7)
                           .AppendLine();
 
-                    xmlFsType = new FileSystemType();
+                    XmlFsType = new FileSystemType();
                     if(HPVH.backupDate > 0)
                     {
-                        xmlFsType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
-                        xmlFsType.BackupDateSpecified = true;
+                        XmlFsType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
+                        XmlFsType.BackupDateSpecified = true;
                     }
-                    xmlFsType.Bootable |= HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0;
-                    xmlFsType.Clusters = HPVH.totalBlocks;
-                    xmlFsType.ClusterSize = (int)HPVH.blockSize;
+                    XmlFsType.Bootable |= HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0;
+                    XmlFsType.Clusters = HPVH.totalBlocks;
+                    XmlFsType.ClusterSize = (int)HPVH.blockSize;
                     if(HPVH.createDate > 0)
                     {
-                        xmlFsType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
-                        xmlFsType.CreationDateSpecified = true;
+                        XmlFsType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
+                        XmlFsType.CreationDateSpecified = true;
                     }
-                    xmlFsType.Dirty = (HPVH.attributes & 0x100) != 0x100;
-                    xmlFsType.Files = HPVH.fileCount;
-                    xmlFsType.FilesSpecified = true;
-                    xmlFsType.FreeClusters = HPVH.freeBlocks;
-                    xmlFsType.FreeClustersSpecified = true;
+                    XmlFsType.Dirty = (HPVH.attributes & 0x100) != 0x100;
+                    XmlFsType.Files = HPVH.fileCount;
+                    XmlFsType.FilesSpecified = true;
+                    XmlFsType.FreeClusters = HPVH.freeBlocks;
+                    XmlFsType.FreeClustersSpecified = true;
                     if(HPVH.modifyDate > 0)
                     {
-                        xmlFsType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
-                        xmlFsType.ModificationDateSpecified = true;
+                        XmlFsType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
+                        XmlFsType.ModificationDateSpecified = true;
                     }
-                    if(HPVH.signature == 0x482B) xmlFsType.Type = "HFS+";
-                    if(HPVH.signature == 0x4858) xmlFsType.Type = "HFSX";
+                    if(HPVH.signature == 0x482B) XmlFsType.Type = "HFS+";
+                    if(HPVH.signature == 0x4858) XmlFsType.Type = "HFSX";
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
-                        xmlFsType.VolumeSerial = $"{HPVH.drFndrInfo6:X8}{HPVH.drFndrInfo7:X8}";
-                    xmlFsType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
+                        XmlFsType.VolumeSerial = $"{HPVH.drFndrInfo6:X8}{HPVH.drFndrInfo7:X8}";
+                    XmlFsType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
                 }
                 else
                 {

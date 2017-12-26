@@ -83,7 +83,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return volEntry.files >= 0;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
             StringBuilder sbInformation = new StringBuilder();
             information = "";
@@ -129,8 +130,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             sbInformation.AppendFormat("Volume record spans from block {0} to block {1}", volEntry.firstBlock,
                                        volEntry.lastBlock).AppendLine();
-            sbInformation.AppendFormat("Volume name: {0}",
-                                       StringHandlers.PascalToString(volEntry.volumeName, currentEncoding))
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(volEntry.volumeName, Encoding))
                          .AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", volEntry.blocks).AppendLine();
             sbInformation.AppendFormat("Volume has {0} files", volEntry.files).AppendLine();
@@ -140,7 +140,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2)),
                 Clusters = volEntry.blocks,
@@ -148,7 +148,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 Files = volEntry.files,
                 FilesSpecified = true,
                 Type = "UCSD Pascal",
-                VolumeName = StringHandlers.PascalToString(volEntry.volumeName, currentEncoding)
+                VolumeName = StringHandlers.PascalToString(volEntry.volumeName, Encoding)
             };
         }
     }

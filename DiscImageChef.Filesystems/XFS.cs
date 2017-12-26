@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -45,11 +44,8 @@ namespace DiscImageChef.Filesystems
     {
         const uint XFS_MAGIC = 0x58465342;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "XFS Filesystem Plugin";
         public Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
 
@@ -104,9 +100,10 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -166,12 +163,12 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} allocation groups in volume", xfsSb.agcount).AppendLine();
             sb.AppendFormat("{0} inodes in volume, {1} free", xfsSb.icount, xfsSb.ifree).AppendLine();
             if(xfsSb.inprogress > 0) sb.AppendLine("fsck in progress");
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(xfsSb.fname, currentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(xfsSb.fname, Encoding)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", xfsSb.uuid).AppendLine();
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "XFS filesystem",
                 ClusterSize = (int)xfsSb.blocksize,
@@ -181,7 +178,7 @@ namespace DiscImageChef.Filesystems
                 Files = (long)(xfsSb.icount - xfsSb.ifree),
                 FilesSpecified = true,
                 Dirty = xfsSb.inprogress > 0,
-                VolumeName = StringHandlers.CToString(xfsSb.fname, currentEncoding),
+                VolumeName = StringHandlers.CToString(xfsSb.fname, Encoding),
                 VolumeSerial = xfsSb.uuid.ToString()
             };
         }

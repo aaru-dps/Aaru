@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -43,11 +42,8 @@ namespace DiscImageChef.Filesystems
     // Based on FAT's BPB, cannot find a FAT or directory
     public class SolarFS : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Solar_OS filesystem";
         public Guid Id => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
 
@@ -68,9 +64,10 @@ namespace DiscImageChef.Filesystems
             return signature == 0x29 && fsType == "SOL_FS  ";
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -92,10 +89,10 @@ namespace DiscImageChef.Filesystems
             bpb.OEMName = StringHandlers.CToString(bpbStrings);
             bpbStrings = new byte[8];
             Array.Copy(bpbSector, 0x2A, bpbStrings, 0, 11);
-            bpb.vol_name = StringHandlers.CToString(bpbStrings, currentEncoding);
+            bpb.vol_name = StringHandlers.CToString(bpbStrings, Encoding);
             bpbStrings = new byte[8];
             Array.Copy(bpbSector, 0x35, bpbStrings, 0, 8);
-            bpb.fs_type = StringHandlers.CToString(bpbStrings, currentEncoding);
+            bpb.fs_type = StringHandlers.CToString(bpbStrings, Encoding);
 
             bpb.x86_jump = new byte[3];
             Array.Copy(bpbSector, 0x00, bpb.x86_jump, 0, 3);
@@ -149,7 +146,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
             sb.AppendFormat("Volume name: {0}", bpb.vol_name).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "SolarFS",
                 Clusters = bpb.sectors,

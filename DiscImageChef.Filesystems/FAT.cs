@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -53,11 +52,9 @@ namespace DiscImageChef.Filesystems
         const uint FSINFO_SIGNATURE2 = 0x61417272;
         const uint FSINFO_SIGNATURE3 = 0xAA550000;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType { get; private set; }
 
-        public Encoding Encoding => currentEncoding;
+        public Encoding Encoding { get; private set; }
         public string Name => "Microsoft File Allocation Table";
         public Guid Id => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
 
@@ -314,13 +311,14 @@ namespace DiscImageChef.Filesystems
             return fatId == fat2Sector[0];
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
+            Encoding = encoding ?? Encoding.GetEncoding("IBM437");
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             bool useAtariBpb = false;
             bool useMsxBpb = false;
@@ -625,7 +623,7 @@ namespace DiscImageChef.Filesystems
                     fakeBpb.heads = 1;
                     fakeBpb.hsectors = 0;
                     fakeBpb.spfat = 3;
-                    xmlFsType.Bootable = true;
+                    XmlFsType.Bootable = true;
                     fakeBpb.boot_code = bpbSector;
                     isFat12 = true;
                 }
@@ -799,7 +797,7 @@ namespace DiscImageChef.Filesystems
                 }
 
                 // This assumes a bootable sector will jump somewhere or disable interrupts in x86 code
-                xmlFsType.Bootable |= bpbSector[0] == 0xFA || bpbSector[0] == 0xEB && bpbSector[1] <= 0x7F;
+                XmlFsType.Bootable |= bpbSector[0] == 0xFA || bpbSector[0] == 0xEB && bpbSector[1] <= 0x7F;
                 fakeBpb.boot_code = bpbSector;
             }
             else if(useShortFat32 || useLongFat32)
@@ -819,38 +817,38 @@ namespace DiscImageChef.Filesystems
                 if(fat32Bpb.version != 0)
                 {
                     sb.AppendLine("FAT+");
-                    xmlFsType.Type = "FAT+";
+                    XmlFsType.Type = "FAT+";
                 }
                 else
                 {
                     sb.AppendLine("Microsoft FAT32");
-                    xmlFsType.Type = "FAT32";
+                    XmlFsType.Type = "FAT32";
                 }
 
                 if(fat32Bpb.oem_name != null)
                     if(fat32Bpb.oem_name[5] == 0x49 && fat32Bpb.oem_name[6] == 0x48 && fat32Bpb.oem_name[7] == 0x43)
                         sb.AppendLine("Volume has been modified by Windows 9x/Me Volume Tracker.");
-                    else xmlFsType.SystemIdentifier = StringHandlers.CToString(fat32Bpb.oem_name);
+                    else XmlFsType.SystemIdentifier = StringHandlers.CToString(fat32Bpb.oem_name);
 
-                if(!string.IsNullOrEmpty(xmlFsType.SystemIdentifier))
-                    sb.AppendFormat("OEM Name: {0}", xmlFsType.SystemIdentifier.Trim()).AppendLine();
+                if(!string.IsNullOrEmpty(XmlFsType.SystemIdentifier))
+                    sb.AppendFormat("OEM Name: {0}", XmlFsType.SystemIdentifier.Trim()).AppendLine();
                 sb.AppendFormat("{0} bytes per sector.", fat32Bpb.bps).AppendLine();
                 sb.AppendFormat("{0} sectors per cluster.", fat32Bpb.spc).AppendLine();
-                xmlFsType.ClusterSize = fat32Bpb.bps * fat32Bpb.spc;
+                XmlFsType.ClusterSize = fat32Bpb.bps * fat32Bpb.spc;
                 sb.AppendFormat("{0} sectors reserved between BPB and FAT.", fat32Bpb.rsectors).AppendLine();
                 if(fat32Bpb.big_sectors == 0 && fat32Bpb.signature == 0x28)
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", shortFat32Bpb.huge_sectors,
                                     shortFat32Bpb.huge_sectors * shortFat32Bpb.bps).AppendLine();
-                    xmlFsType.Clusters = (long)(shortFat32Bpb.huge_sectors / shortFat32Bpb.spc);
+                    XmlFsType.Clusters = (long)(shortFat32Bpb.huge_sectors / shortFat32Bpb.spc);
                 }
                 else
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", fat32Bpb.big_sectors,
                                     fat32Bpb.big_sectors * fat32Bpb.bps).AppendLine();
-                    xmlFsType.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
+                    XmlFsType.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
                 }
-                sb.AppendFormat("{0} clusters on volume.", xmlFsType.Clusters).AppendLine();
+                sb.AppendFormat("{0} clusters on volume.", XmlFsType.Clusters).AppendLine();
                 sb.AppendFormat("Media descriptor: 0x{0:X2}", fat32Bpb.media).AppendLine();
                 sb.AppendFormat("{0} sectors per FAT.", fat32Bpb.big_spfat).AppendLine();
                 sb.AppendFormat("{0} sectors per track.", fat32Bpb.sptrk).AppendLine();
@@ -861,14 +859,14 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Sector of backup FAT32 parameter block: {0}", fat32Bpb.backup_sector).AppendLine();
                 sb.AppendFormat("Drive number: 0x{0:X2}", fat32Bpb.drive_no).AppendLine();
                 sb.AppendFormat("Volume Serial Number: 0x{0:X8}", fat32Bpb.serial_no).AppendLine();
-                xmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
+                XmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
 
                 if((fat32Bpb.flags & 0xF8) == 0x00)
                 {
                     if((fat32Bpb.flags & 0x01) == 0x01)
                     {
                         sb.AppendLine("Volume should be checked on next mount.");
-                        xmlFsType.Dirty = true;
+                        XmlFsType.Dirty = true;
                     }
                     if((fat32Bpb.flags & 0x02) == 0x02) sb.AppendLine("Disk surface should be on next mount.");
                 }
@@ -884,7 +882,7 @@ namespace DiscImageChef.Filesystems
 
                 if(fat32Bpb.signature == 0x29)
                 {
-                    xmlFsType.VolumeName = Encoding.ASCII.GetString(fat32Bpb.volume_label);
+                    XmlFsType.VolumeName = Encoding.ASCII.GetString(fat32Bpb.volume_label);
                     sb.AppendFormat("Filesystem type: {0}", Encoding.ASCII.GetString(fat32Bpb.fs_type)).AppendLine();
                     bootChk = sha1Ctx.Data(fat32Bpb.boot_code, out _);
                 }
@@ -892,7 +890,7 @@ namespace DiscImageChef.Filesystems
 
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-                xmlFsType.Bootable |= fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] > 0x58 && fat32Bpb.jump[1] < 0x80 &&
+                XmlFsType.Bootable |= fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] > 0x58 && fat32Bpb.jump[1] < 0x80 &&
                                       fat32Bpb.boot_signature == 0xAA55;
 
                 sectorsPerRealSector = fat32Bpb.bps / imagePlugin.Info.SectorSize;
@@ -916,8 +914,8 @@ namespace DiscImageChef.Filesystems
                         if(fsInfo.free_clusters < 0xFFFFFFFF)
                         {
                             sb.AppendFormat("{0} free clusters", fsInfo.free_clusters).AppendLine();
-                            xmlFsType.FreeClusters = fsInfo.free_clusters;
-                            xmlFsType.FreeClustersSpecified = true;
+                            XmlFsType.FreeClusters = fsInfo.free_clusters;
+                            XmlFsType.FreeClustersSpecified = true;
                         }
 
                         if(fsInfo.last_cluster > 2 && fsInfo.last_cluster < 0xFFFFFFFF)
@@ -1039,7 +1037,7 @@ namespace DiscImageChef.Filesystems
                 fakeBpb.boot_signature = msxBpb.boot_signature;
                 fakeBpb.serial_no = msxBpb.serial_no;
                 // TODO: Is there any way to check this?
-                xmlFsType.Bootable = true;
+                XmlFsType.Bootable = true;
             }
             else if(useAtariBpb)
             {
@@ -1064,7 +1062,7 @@ namespace DiscImageChef.Filesystems
                 // TODO: Check this
                 if(sum == 0x1234)
                 {
-                    xmlFsType.Bootable = true;
+                    XmlFsType.Bootable = true;
                     StringBuilder atariSb = new StringBuilder();
                     atariSb.AppendFormat("cmdload will be loaded with value {0:X4}h",
                                          BigEndianBitConverter.ToUInt16(bpbSector, 0x01E)).AppendLine();
@@ -1107,7 +1105,7 @@ namespace DiscImageChef.Filesystems
                 fakeBpb.media = apricotBpb.mainBPB.media;
                 fakeBpb.spfat = apricotBpb.mainBPB.spfat;
                 fakeBpb.sptrk = apricotBpb.spt;
-                xmlFsType.Bootable = apricotBpb.bootType > 0;
+                XmlFsType.Bootable = apricotBpb.bootType > 0;
 
                 if(apricotBpb.bootLocation > 0 &&
                    apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.Info.Sectors)
@@ -1152,12 +1150,12 @@ namespace DiscImageChef.Filesystems
                     if(useAtariBpb) sb.AppendLine("Atari FAT12");
                     else if(useApricotBpb) sb.AppendLine("Apricot FAT12");
                     else sb.AppendLine("Microsoft FAT12");
-                    xmlFsType.Type = "FAT12";
+                    XmlFsType.Type = "FAT12";
                 }
                 else if(isFat16)
                 {
                     sb.AppendLine(useAtariBpb ? "Atari FAT16" : "Microsoft FAT16");
-                    xmlFsType.Type = "FAT16";
+                    XmlFsType.Type = "FAT16";
                 }
 
                 if(useAtariBpb)
@@ -1165,11 +1163,11 @@ namespace DiscImageChef.Filesystems
                     if(atariBpb.serial_no[0] == 0x49 && atariBpb.serial_no[1] == 0x48 && atariBpb.serial_no[2] == 0x43)
                         sb.AppendLine("Volume has been modified by Windows 9x/Me Volume Tracker.");
                     else
-                        xmlFsType.VolumeSerial =
+                        XmlFsType.VolumeSerial =
                             $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]:X2}";
 
-                    xmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
-                    if(string.IsNullOrEmpty(xmlFsType.SystemIdentifier)) xmlFsType.SystemIdentifier = null;
+                    XmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
+                    if(string.IsNullOrEmpty(XmlFsType.SystemIdentifier)) XmlFsType.SystemIdentifier = null;
                 }
                 else if(fakeBpb.oem_name != null)
                 {
@@ -1185,7 +1183,7 @@ namespace DiscImageChef.Filesystems
                            fakeBpb.oem_name[4] <= 0x7F && fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
                            fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F && fakeBpb.oem_name[7] >= 0x20 &&
                            fakeBpb.oem_name[7] <= 0x7F)
-                            xmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name);
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name);
                         else if(fakeBpb.oem_name[0] < 0x20 && fakeBpb.oem_name[1] >= 0x20 &&
                                 fakeBpb.oem_name[1] <= 0x7F && fakeBpb.oem_name[2] >= 0x20 &&
                                 fakeBpb.oem_name[2] <= 0x7F && fakeBpb.oem_name[3] >= 0x20 &&
@@ -1194,33 +1192,32 @@ namespace DiscImageChef.Filesystems
                                 fakeBpb.oem_name[5] <= 0x7F && fakeBpb.oem_name[6] >= 0x20 &&
                                 fakeBpb.oem_name[6] <= 0x7F && fakeBpb.oem_name[7] >= 0x20 &&
                                 fakeBpb.oem_name[7] <= 0x7F)
-                            xmlFsType.SystemIdentifier =
-                                StringHandlers.CToString(fakeBpb.oem_name, currentEncoding, start: 1);
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
                     }
 
                     if(fakeBpb.signature == 0x28 || fakeBpb.signature == 0x29)
-                        xmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
+                        XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
                 }
 
-                if(xmlFsType.SystemIdentifier != null)
-                    sb.AppendFormat("OEM Name: {0}", xmlFsType.SystemIdentifier.Trim()).AppendLine();
+                if(XmlFsType.SystemIdentifier != null)
+                    sb.AppendFormat("OEM Name: {0}", XmlFsType.SystemIdentifier.Trim()).AppendLine();
 
                 sb.AppendFormat("{0} bytes per sector.", fakeBpb.bps).AppendLine();
                 if(fakeBpb.sectors == 0)
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.big_sectors,
                                     fakeBpb.big_sectors * fakeBpb.bps).AppendLine();
-                    xmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
+                    XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
                 }
                 else
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.sectors,
                                     fakeBpb.sectors * fakeBpb.bps).AppendLine();
-                    xmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.sectors : fakeBpb.sectors / fakeBpb.spc;
+                    XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.sectors : fakeBpb.sectors / fakeBpb.spc;
                 }
                 sb.AppendFormat("{0} sectors per cluster.", fakeBpb.spc).AppendLine();
-                sb.AppendFormat("{0} clusters on volume.", xmlFsType.Clusters).AppendLine();
-                xmlFsType.ClusterSize = fakeBpb.bps * fakeBpb.spc;
+                sb.AppendFormat("{0} clusters on volume.", XmlFsType.Clusters).AppendLine();
+                XmlFsType.ClusterSize = fakeBpb.bps * fakeBpb.spc;
                 sb.AppendFormat("{0} sectors reserved between BPB and FAT.", fakeBpb.rsectors).AppendLine();
                 sb.AppendFormat("{0} FATs.", fakeBpb.fats_no).AppendLine();
                 sb.AppendFormat("{0} entries on root directory.", fakeBpb.root_ent).AppendLine();
@@ -1241,34 +1238,34 @@ namespace DiscImageChef.Filesystems
                 {
                     sb.AppendFormat("Drive number: 0x{0:X2}", fakeBpb.drive_no).AppendLine();
 
-                    if(xmlFsType.VolumeSerial != null)
-                        sb.AppendFormat("Volume Serial Number: {0}", xmlFsType.VolumeSerial).AppendLine();
+                    if(XmlFsType.VolumeSerial != null)
+                        sb.AppendFormat("Volume Serial Number: {0}", XmlFsType.VolumeSerial).AppendLine();
 
                     if((fakeBpb.flags & 0xF8) == 0x00)
                     {
                         if((fakeBpb.flags & 0x01) == 0x01)
                         {
                             sb.AppendLine("Volume should be checked on next mount.");
-                            xmlFsType.Dirty = true;
+                            XmlFsType.Dirty = true;
                         }
                         if((fakeBpb.flags & 0x02) == 0x02) sb.AppendLine("Disk surface should be on next mount.");
                     }
 
                     if(fakeBpb.signature == 0x29 || andosOemCorrect)
                     {
-                        xmlFsType.VolumeName = Encoding.ASCII.GetString(fakeBpb.volume_label);
+                        XmlFsType.VolumeName = Encoding.ASCII.GetString(fakeBpb.volume_label);
                         sb.AppendFormat("Filesystem type: {0}", Encoding.ASCII.GetString(fakeBpb.fs_type)).AppendLine();
                     }
                 }
-                else if(useAtariBpb && xmlFsType.VolumeSerial != null)
-                    sb.AppendFormat("Volume Serial Number: {0}", xmlFsType.VolumeSerial).AppendLine();
+                else if(useAtariBpb && XmlFsType.VolumeSerial != null)
+                    sb.AppendFormat("Volume Serial Number: {0}", XmlFsType.VolumeSerial).AppendLine();
 
                 bootChk = sha1Ctx.Data(fakeBpb.boot_code, out _);
 
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-                if(xmlFsType.Bootable == false && fakeBpb.jump != null)
-                    xmlFsType.Bootable |= fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] > 0x58 && fakeBpb.jump[1] < 0x80 &&
+                if(XmlFsType.Bootable == false && fakeBpb.jump != null)
+                    XmlFsType.Bootable |= fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] > 0x58 && fakeBpb.jump[1] < 0x80 &&
                                           fakeBpb.boot_signature == 0xAA55;
 
                 sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
@@ -1314,24 +1311,24 @@ namespace DiscImageChef.Filesystems
                     byte[] fullname = new byte[11];
                     Array.Copy(entry.filename, 0, fullname, 0, 8);
                     Array.Copy(entry.extension, 0, fullname, 8, 3);
-                    string volname = currentEncoding.GetString(fullname).Trim();
+                    string volname = Encoding.GetString(fullname).Trim();
                     if(!string.IsNullOrEmpty(volname))
-                        xmlFsType.VolumeName = (entry.caseinfo & 0x0C) > 0 ? volname.ToLower() : volname;
+                        XmlFsType.VolumeName = (entry.caseinfo & 0x0C) > 0 ? volname.ToLower() : volname;
 
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {
-                        xmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
+                        XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
                         if(entry.ctime_ms > 0)
-                            xmlFsType.CreationDate = xmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
-                        xmlFsType.CreationDateSpecified = true;
-                        sb.AppendFormat("Volume created on {0}", xmlFsType.CreationDate).AppendLine();
+                            XmlFsType.CreationDate = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
+                        XmlFsType.CreationDateSpecified = true;
+                        sb.AppendFormat("Volume created on {0}", XmlFsType.CreationDate).AppendLine();
                     }
 
                     if(entry.mtime > 0 && entry.mdate > 0)
                     {
-                        xmlFsType.ModificationDate = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
-                        xmlFsType.ModificationDateSpecified = true;
-                        sb.AppendFormat("Volume last modified on {0}", xmlFsType.ModificationDate).AppendLine();
+                        XmlFsType.ModificationDate = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
+                        XmlFsType.ModificationDateSpecified = true;
+                        sb.AppendFormat("Volume last modified on {0}", XmlFsType.ModificationDate).AppendLine();
                     }
 
                     if(entry.adate > 0)
@@ -1342,9 +1339,9 @@ namespace DiscImageChef.Filesystems
                 }
             }
 
-            if(!string.IsNullOrEmpty(xmlFsType.VolumeName))
-                sb.AppendFormat("Volume label: {0}", xmlFsType.VolumeName).AppendLine();
-            if(xmlFsType.Bootable)
+            if(!string.IsNullOrEmpty(XmlFsType.VolumeName))
+                sb.AppendFormat("Volume label: {0}", XmlFsType.VolumeName).AppendLine();
+            if(XmlFsType.Bootable)
             {
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();

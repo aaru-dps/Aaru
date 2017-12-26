@@ -32,19 +32,16 @@
 
 using System;
 using System.Collections.Generic;
-using Claunia.Encoding;
-using DiscImageChef.CommonTypes;
+using System.Text;
 using DiscImageChef.DiscImages;
 using Schemas;
-using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
     public partial class AppleDOS : IReadOnlyFilesystem
     {
-        IMediaImage device;
-        Encoding currentEncoding;
         bool debug;
+        IMediaImage device;
         bool mounted;
         int sectorsPerTrack;
         ulong start;
@@ -55,9 +52,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         Vtoc vtoc;
 
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Apple DOS File System";
         public Guid Id => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
 

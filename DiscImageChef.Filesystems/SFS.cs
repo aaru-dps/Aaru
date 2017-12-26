@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -46,11 +45,9 @@ namespace DiscImageChef.Filesystems
         const uint SFS_MAGIC = 0x53465300;
         /// <summary>Identifier for SFS v2</summary>
         const uint SFS2_MAGIC = 0x53465302;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "SmartFileSystem";
         public Guid Id => new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
 
@@ -67,9 +64,10 @@ namespace DiscImageChef.Filesystems
             return magic == SFS_MAGIC || magic == SFS2_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] rootBlockSector = imagePlugin.ReadSector(partition.Start);
             RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
@@ -100,7 +98,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
                 CreationDateSpecified = true,

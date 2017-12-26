@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -49,11 +48,8 @@ namespace DiscImageChef.Filesystems
         const uint F2FS_MAX_SECTOR = 4096;
         const uint F2FS_BLOCK_SIZE = 4096;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "F2FS Plugin";
         public Guid Id => new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
 
@@ -84,9 +80,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = Encoding.Unicode;
+            Encoding = Encoding.Unicode;
             information = "";
             if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR || imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR) return;
 
@@ -132,7 +128,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "F2FS filesystem",
                 SystemIdentifier = Encoding.ASCII.GetString(f2fsSb.version),

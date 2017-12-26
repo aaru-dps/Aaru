@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // as '-' is the path separator in Lisa OS
             contents = (from entry in catalogCache
                         where entry.parentID == dirId
-                        select StringHandlers.CToString(entry.filename, currentEncoding).Replace('/', '-')).ToList();
+                        select StringHandlers.CToString(entry.filename, Encoding).Replace('/', '-')).ToList();
 
             return Errno.NoError;
         }
@@ -118,15 +118,17 @@ namespace DiscImageChef.Filesystems.LisaFS
                 // For each entry on the catalog
                 while(offset + 54 < buf.Length)
                 {
-                    CatalogEntryV2 entV2 = new CatalogEntryV2();
-                    entV2.filenameLen = buf[offset];
-                    entV2.filename = new byte[E_NAME];
+                    CatalogEntryV2 entV2 = new CatalogEntryV2
+                    {
+                        filenameLen = buf[offset],
+                        filename = new byte[E_NAME],
+                        unknown1 = buf[offset + 0x21],
+                        fileType = buf[offset + 0x22],
+                        unknown2 = buf[offset + 0x23],
+                        fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x24),
+                        unknown3 = new byte[16]
+                    };
                     Array.Copy(buf, offset + 0x01, entV2.filename, 0, E_NAME);
-                    entV2.unknown1 = buf[offset + 0x21];
-                    entV2.fileType = buf[offset + 0x22];
-                    entV2.unknown2 = buf[offset + 0x23];
-                    entV2.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x24);
-                    entV2.unknown3 = new byte[16];
                     Array.Copy(buf, offset + 0x26, entV2.unknown3, 0, 16);
 
                     offset += 54;

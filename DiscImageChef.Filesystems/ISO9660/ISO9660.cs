@@ -32,8 +32,6 @@
 
 using System;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.ISO9660
@@ -41,11 +39,8 @@ namespace DiscImageChef.Filesystems.ISO9660
     // This is coded following ECMA-119.
     public partial class ISO9660 : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "ISO9660 Filesystem";
         public Guid Id => new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
     }

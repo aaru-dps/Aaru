@@ -52,7 +52,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             try
             {
                 device = imagePlugin;
-                currentEncoding = new LisaRoman();
+                Encoding = new LisaRoman();
 
                 // Lisa OS is unable to work on disks without tags.
                 // This code is designed like that.
@@ -100,11 +100,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                     mddf.volid = BigEndianBitConverter.ToUInt64(sector, 0x02);
                     mddf.volnum = BigEndianBitConverter.ToUInt16(sector, 0x0A);
                     Array.Copy(sector, 0x0C, pString, 0, 33);
-                    mddf.volname = StringHandlers.PascalToString(pString, currentEncoding);
+                    mddf.volname = StringHandlers.PascalToString(pString, Encoding);
                     mddf.unknown1 = sector[0x2D];
                     Array.Copy(sector, 0x2E, pString, 0, 33);
                     // Prevent garbage
-                    mddf.password = pString[0] <= 32 ? StringHandlers.PascalToString(pString, currentEncoding) : "";
+                    mddf.password = pString[0] <= 32 ? StringHandlers.PascalToString(pString, Encoding) : "";
                     mddf.unknown2 = sector[0x4F];
                     mddf.machine_id = BigEndianBitConverter.ToUInt32(sector, 0x50);
                     mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
@@ -281,27 +281,27 @@ namespace DiscImageChef.Filesystems.LisaFS
                     }
 
                     // Create XML metadata for mounted filesystem
-                    xmlFsType = new FileSystemType();
+                    XmlFsType = new FileSystemType();
                     if(DateTime.Compare(mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        xmlFsType.BackupDate = mddf.dtvb;
-                        xmlFsType.BackupDateSpecified = true;
+                        XmlFsType.BackupDate = mddf.dtvb;
+                        XmlFsType.BackupDateSpecified = true;
                     }
-                    xmlFsType.Clusters = mddf.vol_size;
-                    xmlFsType.ClusterSize = mddf.clustersize * mddf.datasize;
+                    XmlFsType.Clusters = mddf.vol_size;
+                    XmlFsType.ClusterSize = mddf.clustersize * mddf.datasize;
                     if(DateTime.Compare(mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        xmlFsType.CreationDate = mddf.dtvc;
-                        xmlFsType.CreationDateSpecified = true;
+                        XmlFsType.CreationDate = mddf.dtvc;
+                        XmlFsType.CreationDateSpecified = true;
                     }
-                    xmlFsType.Dirty = mddf.vol_left_mounted != 0;
-                    xmlFsType.Files = mddf.filecount;
-                    xmlFsType.FilesSpecified = true;
-                    xmlFsType.FreeClusters = mddf.freecount;
-                    xmlFsType.FreeClustersSpecified = true;
-                    xmlFsType.Type = "LisaFS";
-                    xmlFsType.VolumeName = mddf.volname;
-                    xmlFsType.VolumeSerial = $"{mddf.volid:X16}";
+                    XmlFsType.Dirty = mddf.vol_left_mounted != 0;
+                    XmlFsType.Files = mddf.filecount;
+                    XmlFsType.FilesSpecified = true;
+                    XmlFsType.FreeClusters = mddf.freecount;
+                    XmlFsType.FreeClustersSpecified = true;
+                    XmlFsType.Type = "LisaFS";
+                    XmlFsType.VolumeName = mddf.volname;
+                    XmlFsType.VolumeSerial = $"{mddf.volid:X16}";
 
                     return Errno.NoError;
                 }

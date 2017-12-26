@@ -79,8 +79,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 if(error != Errno.NoError) return error;
 
                 byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock));
-                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.Info.SectorSize +
-                                entry.lastBytes];
+                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.Info.SectorSize + entry.lastBytes];
                 Array.Copy(tmp, 0, file, 0, file.Length);
             }
 
@@ -164,7 +163,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                                                                  string.Compare(path,
                                                                                 StringHandlers
                                                                                     .PascalToString(ent.filename,
-                                                                                                    currentEncoding),
+                                                                                                    Encoding),
                                                                                 StringComparison
                                                                                     .InvariantCultureIgnoreCase) == 0))
             {

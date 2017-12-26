@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                     // Apple DOS has high byte set over ASCII.
                     for(int i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
-                    string filename = StringHandlers.SpacePaddedToString(filenameB, currentEncoding);
+                    string filename = StringHandlers.SpacePaddedToString(filenameB, Encoding);
 
                     if(!catalogCache.ContainsKey(filename)) catalogCache.Add(filename, ts);
 

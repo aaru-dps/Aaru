@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -52,11 +51,8 @@ namespace DiscImageChef.Filesystems
     // TODO: Implement checksum
     public class ODS : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Files-11 On-Disk Structure";
         public Guid Id => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
 
@@ -91,9 +87,10 @@ namespace DiscImageChef.Filesystems
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -129,8 +126,8 @@ namespace DiscImageChef.Filesystems
                 sb.AppendLine("The following information may be incorrect for this volume.");
             if(homeblock.resfiles < 5 || homeblock.devtype != 0) sb.AppendLine("This volume may be corrupted.");
 
-            sb.AppendFormat("Volume format is {0}",
-                            StringHandlers.SpacePaddedToString(homeblock.format, currentEncoding)).AppendLine();
+            sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, Encoding))
+              .AppendLine();
             sb.AppendFormat("Volume is Level {0} revision {1}", (homeblock.struclev & 0xFF00) >> 8,
                             homeblock.struclev & 0xFF).AppendLine();
             sb.AppendFormat("Lowest structure in the volume is Level {0}, revision {1}",
@@ -154,12 +151,12 @@ namespace DiscImageChef.Filesystems
             if(homeblock.rvn > 0 && homeblock.setcount > 0 &&
                StringHandlers.CToString(homeblock.strucname) != "            ")
                 sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount,
-                                StringHandlers.SpacePaddedToString(homeblock.strucname, currentEncoding)).AppendLine();
+                                StringHandlers.SpacePaddedToString(homeblock.strucname, Encoding)).AppendLine();
             sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})",
-                            StringHandlers.SpacePaddedToString(homeblock.ownername, currentEncoding),
-                            homeblock.volowner).AppendLine();
-            sb.AppendFormat("Volume label: \"{0}\"",
-                            StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.ownername, Encoding), homeblock.volowner)
+              .AppendLine();
+            sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.SpacePaddedToString(homeblock.volname, Encoding))
+              .AppendLine();
             sb.AppendFormat("Drive serial number: 0x{0:X8}", homeblock.serialnum).AppendLine();
             sb.AppendFormat("Volume was created on {0}", DateHandlers.VmsToDateTime(homeblock.credate)).AppendLine();
             if(homeblock.revdate > 0)
@@ -207,23 +204,23 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
             sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "FILES-11",
                 ClusterSize = homeblock.cluster * 512,
                 Clusters = (long)partition.Size / (homeblock.cluster * 512),
-                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding),
+                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
                 VolumeSerial = $"{homeblock.serialnum:X8}"
             };
             if(homeblock.credate > 0)
             {
-                xmlFsType.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
+                XmlFsType.CreationDateSpecified = true;
             }
             if(homeblock.revdate > 0)
             {
-                xmlFsType.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
-                xmlFsType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
+                XmlFsType.ModificationDateSpecified = true;
             }
 
             information = sb.ToString();

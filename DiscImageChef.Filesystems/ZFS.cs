@@ -76,10 +76,8 @@ namespace DiscImageChef.Filesystems
 
         const uint ZFS_MAGIC = 0x58465342;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "ZFS Filesystem Plugin";
         public Guid Id => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
 
@@ -108,7 +106,7 @@ namespace DiscImageChef.Filesystems
                                             Encoding encoding)
         {
             // ZFS is always UTF-8
-            currentEncoding = Encoding.UTF8;
+            Encoding = Encoding.UTF8;
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -143,11 +141,11 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType {Type = "ZFS filesystem"};
-            if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) xmlFsType.VolumeName = (string)tmpObj.value;
-            if(decodedNvList.TryGetValue("guid", out tmpObj)) xmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
+            XmlFsType = new FileSystemType {Type = "ZFS filesystem"};
+            if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) XmlFsType.VolumeName = (string)tmpObj.value;
+            if(decodedNvList.TryGetValue("guid", out tmpObj)) XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
-                xmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
+                XmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
         }
 
         static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList)

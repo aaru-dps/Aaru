@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -47,11 +46,9 @@ namespace DiscImageChef.Filesystems
         ///     BTRFS magic "_BHRfS_M"
         /// </summary>
         const ulong btrfsMagic = 0x4D5F53665248425F;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "B-tree file system";
         public Guid Id => new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
 
@@ -84,11 +81,11 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             StringBuilder sbInformation = new StringBuilder();
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = "";
 
             ulong sbSectorOff = 0x10000 / imagePlugin.Info.SectorSize;
@@ -171,7 +168,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Clusters = (long)(btrfsSb.total_bytes / btrfsSb.sectorsize),
                 ClusterSize = (int)btrfsSb.sectorsize,
@@ -181,7 +178,7 @@ namespace DiscImageChef.Filesystems
                 VolumeSetIdentifier = $"{btrfsSb.dev_item.device_uuid}",
                 Type = Name
             };
-            xmlFsType.FreeClusters = xmlFsType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
+            XmlFsType.FreeClusters = XmlFsType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

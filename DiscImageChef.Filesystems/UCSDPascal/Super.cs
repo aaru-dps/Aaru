@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             device = imagePlugin;
             // TODO: Until Apple ][ encoding is implemented
-            currentEncoding = new LisaRoman();
+            Encoding = new LisaRoman();
             this.debug = debug;
             if(device.Info.Sectors < 3) return Errno.InvalidArgument;
 
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             bootBlocks = device.ReadSectors(0, 2);
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
                 Clusters = mountedVolEntry.blocks,
@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 Files = mountedVolEntry.files,
                 FilesSpecified = true,
                 Type = "UCSD Pascal",
-                VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, currentEncoding)
+                VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, Encoding)
             };
 
             mounted = true;

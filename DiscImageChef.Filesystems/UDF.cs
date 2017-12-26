@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -51,11 +50,8 @@ namespace DiscImageChef.Filesystems
             0x74, 0x00, 0x00, 0x00, 0x00
         };
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Universal Disk Format";
         public Guid Id => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
 
@@ -146,10 +142,11 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
             // UDF is always UTF-8
-            currentEncoding = Encoding.UTF8;
+            Encoding = Encoding.UTF8;
             byte[] sector;
 
             StringBuilder sbInformation = new StringBuilder();
@@ -255,11 +252,10 @@ namespace DiscImageChef.Filesystems
                 .AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories)
                 .AppendLine();
             sbInformation.AppendFormat("Volume conforms to {0}",
-                                       currentEncoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000'))
+                                       Encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000'))
                          .AppendLine();
             sbInformation.AppendFormat("Volume was last written by: {0}",
-                                       currentEncoding
-                                           .GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'))
+                                       Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'))
                          .AppendLine();
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read",
                                        Convert.ToInt32($"{(lvidiu.minimumReadUDF & 0xFF00) >> 8}", 10),
@@ -271,12 +267,11 @@ namespace DiscImageChef.Filesystems
                                        Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10),
                                        Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10)).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type =
                     $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}",
-                ApplicationIdentifier =
-                    currentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
+                ApplicationIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
                 ClusterSize = (int)lvd.logicalBlockSize,
                 ModificationDate = EcmaToDateTime(lvid.recordingDateTime),
                 ModificationDateSpecified = true,
@@ -284,10 +279,10 @@ namespace DiscImageChef.Filesystems
                 FilesSpecified = true,
                 VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
                 VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
-                SystemIdentifier = currentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
+                SystemIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
             };
-            xmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                        (ulong)xmlFsType.ClusterSize);
+            XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                        (ulong)XmlFsType.ClusterSize);
 
             information = sbInformation.ToString();
         }

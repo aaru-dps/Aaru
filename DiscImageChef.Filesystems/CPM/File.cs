@@ -107,7 +107,7 @@ namespace DiscImageChef.Filesystems.CPM
                 if(labelCreationDate != null) stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
                 if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
                 stat.Attributes = FileAttributes.Directory;
-                stat.BlockSize = xmlFsType.ClusterSize;
+                stat.BlockSize = XmlFsType.ClusterSize;
                 return Errno.NoError;
             }
 

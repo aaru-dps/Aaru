@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             device = imagePlugin;
             partitionStart = partition.Start;
-            currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
+            Encoding = encoding ?? Encoding.GetEncoding("macintosh");
             this.debug = debug;
             volMDB = new MFS_MasterDirectoryBlock();
 
@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             volMDB.drVNSiz = mdbBlocks[0x024];
             byte[] variableSize = new byte[volMDB.drVNSiz + 1];
             Array.Copy(mdbBlocks, 0x024, variableSize, 0, volMDB.drVNSiz + 1);
-            volMDB.drVN = StringHandlers.PascalToString(variableSize, currentEncoding);
+            volMDB.drVN = StringHandlers.PascalToString(variableSize, Encoding);
 
             directoryBlocks = device.ReadSectors(volMDB.drDirSt + partitionStart, volMDB.drBlLen);
             int bytesInBlockMap = volMDB.drNmAlBlks * 12 / 8 + volMDB.drNmAlBlks * 12 % 8;
@@ -130,26 +130,26 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(bbSig != MFSBB_MAGIC) bootBlocks = null;
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             if(volMDB.drLsBkUp > 0)
             {
-                xmlFsType.BackupDate = DateHandlers.MacToDateTime(volMDB.drLsBkUp);
-                xmlFsType.BackupDateSpecified = true;
+                XmlFsType.BackupDate = DateHandlers.MacToDateTime(volMDB.drLsBkUp);
+                XmlFsType.BackupDateSpecified = true;
             }
-            xmlFsType.Bootable = bbSig == MFSBB_MAGIC;
-            xmlFsType.Clusters = volMDB.drNmAlBlks;
-            xmlFsType.ClusterSize = (int)volMDB.drAlBlkSiz;
+            XmlFsType.Bootable = bbSig == MFSBB_MAGIC;
+            XmlFsType.Clusters = volMDB.drNmAlBlks;
+            XmlFsType.ClusterSize = (int)volMDB.drAlBlkSiz;
             if(volMDB.drCrDate > 0)
             {
-                xmlFsType.CreationDate = DateHandlers.MacToDateTime(volMDB.drCrDate);
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.MacToDateTime(volMDB.drCrDate);
+                XmlFsType.CreationDateSpecified = true;
             }
-            xmlFsType.Files = volMDB.drNmFls;
-            xmlFsType.FilesSpecified = true;
-            xmlFsType.FreeClusters = volMDB.drFreeBks;
-            xmlFsType.FreeClustersSpecified = true;
-            xmlFsType.Type = "MFS";
-            xmlFsType.VolumeName = volMDB.drVN;
+            XmlFsType.Files = volMDB.drNmFls;
+            XmlFsType.FilesSpecified = true;
+            XmlFsType.FreeClusters = volMDB.drFreeBks;
+            XmlFsType.FreeClustersSpecified = true;
+            XmlFsType.Type = "MFS";
+            XmlFsType.VolumeName = volMDB.drVN;
 
             return Errno.NoError;
         }

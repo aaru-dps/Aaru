@@ -46,7 +46,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = fileEntries.Select(ent => StringHandlers.PascalToString(ent.filename, currentEncoding)).ToList();
+            contents = fileEntries.Select(ent => StringHandlers.PascalToString(ent.filename, Encoding)).ToList();
 
             if(debug)
             {

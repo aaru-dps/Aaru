@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -48,11 +47,8 @@ namespace DiscImageChef.Filesystems
         const uint VMFS_MAGIC = 0xC001D00D;
         const uint VMFS_BASE = 0x00100000;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "VMware filesystem";
         public Guid Id => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
 
@@ -71,9 +67,10 @@ namespace DiscImageChef.Filesystems
             return magic == VMFS_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.UTF8;
+            Encoding = encoding ?? Encoding.UTF8;
             ulong vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
@@ -93,7 +90,7 @@ namespace DiscImageChef.Filesystems
             uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
             sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, currentEncoding))
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, Encoding))
                          .AppendLine();
             sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
             sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
@@ -105,7 +102,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "VMware file system",
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),

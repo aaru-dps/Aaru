@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -44,11 +43,9 @@ namespace DiscImageChef.Filesystems
     {
         const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
         const uint APFS_VOLUME_MAGIC = 0x42535041; // "APSB"
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Apple File System";
         public Guid Id => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
 
@@ -72,11 +69,11 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = Encoding.UTF8;
+            Encoding = Encoding.UTF8;
             StringBuilder sbInformation = new StringBuilder();
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = "";
 
             if(partition.Start >= partition.End) return;
@@ -103,7 +100,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = false,
                 Clusters = (long)nxSb.containerBlocks,

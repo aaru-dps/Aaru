@@ -85,14 +85,12 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Current sector = {0}", i);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.mddf_block = {0}", infoMddf.mddf_block);
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors",
-                                              imagePlugin.Info.Sectors);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors", imagePlugin.Info.Sectors);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size = {0} sectors", infoMddf.vol_size);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - 1 = {0}", infoMddf.volsize_minus_one);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - mddf.mddf_block -1 = {0}",
                                               infoMddf.volsize_minus_mddf_minus_one);
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes",
-                                              imagePlugin.Info.SectorSize);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes", imagePlugin.Info.SectorSize);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.blocksize = {0} bytes", infoMddf.blocksize);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.datasize = {0} bytes", infoMddf.datasize);
 
@@ -120,9 +118,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = new LisaRoman();
+            Encoding = new LisaRoman();
             information = "";
             StringBuilder sb = new StringBuilder();
 
@@ -161,11 +160,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                     infoMddf.volid = BigEndianBitConverter.ToUInt64(sector, 0x02);
                     infoMddf.volnum = BigEndianBitConverter.ToUInt16(sector, 0x0A);
                     Array.Copy(sector, 0x0C, pString, 0, 33);
-                    infoMddf.volname = StringHandlers.PascalToString(pString, currentEncoding);
+                    infoMddf.volname = StringHandlers.PascalToString(pString, Encoding);
                     infoMddf.unknown1 = sector[0x2D];
                     Array.Copy(sector, 0x2E, pString, 0, 33);
                     // Prevent garbage
-                    infoMddf.password = pString[0] <= 32 ? StringHandlers.PascalToString(pString, currentEncoding) : "";
+                    infoMddf.password = pString[0] <= 32 ? StringHandlers.PascalToString(pString, Encoding) : "";
                     infoMddf.unknown2 = sector[0x4F];
                     infoMddf.machine_id = BigEndianBitConverter.ToUInt32(sector, 0x50);
                     infoMddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
@@ -351,27 +350,27 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     information = sb.ToString();
 
-                    xmlFsType = new FileSystemType();
+                    XmlFsType = new FileSystemType();
                     if(DateTime.Compare(infoMddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        xmlFsType.BackupDate = infoMddf.dtvb;
-                        xmlFsType.BackupDateSpecified = true;
+                        XmlFsType.BackupDate = infoMddf.dtvb;
+                        XmlFsType.BackupDateSpecified = true;
                     }
-                    xmlFsType.Clusters = infoMddf.vol_size;
-                    xmlFsType.ClusterSize = infoMddf.clustersize * infoMddf.datasize;
+                    XmlFsType.Clusters = infoMddf.vol_size;
+                    XmlFsType.ClusterSize = infoMddf.clustersize * infoMddf.datasize;
                     if(DateTime.Compare(infoMddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        xmlFsType.CreationDate = infoMddf.dtvc;
-                        xmlFsType.CreationDateSpecified = true;
+                        XmlFsType.CreationDate = infoMddf.dtvc;
+                        XmlFsType.CreationDateSpecified = true;
                     }
-                    xmlFsType.Dirty = infoMddf.vol_left_mounted != 0;
-                    xmlFsType.Files = infoMddf.filecount;
-                    xmlFsType.FilesSpecified = true;
-                    xmlFsType.FreeClusters = infoMddf.freecount;
-                    xmlFsType.FreeClustersSpecified = true;
-                    xmlFsType.Type = "LisaFS";
-                    xmlFsType.VolumeName = infoMddf.volname;
-                    xmlFsType.VolumeSerial = $"{infoMddf.volid:X16}";
+                    XmlFsType.Dirty = infoMddf.vol_left_mounted != 0;
+                    XmlFsType.Files = infoMddf.filecount;
+                    XmlFsType.FilesSpecified = true;
+                    XmlFsType.FreeClusters = infoMddf.freecount;
+                    XmlFsType.FreeClustersSpecified = true;
+                    XmlFsType.Type = "LisaFS";
+                    XmlFsType.VolumeName = infoMddf.volname;
+                    XmlFsType.VolumeSerial = $"{infoMddf.volid:X16}";
 
                     return;
                 }

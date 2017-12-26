@@ -50,8 +50,8 @@ namespace DiscImageChef.Filesystems.CPM
         public Errno Mount(IMediaImage imagePlugin, Partition partition1, Encoding encoding, bool debug)
         {
             device = imagePlugin;
-            this.partition = partition;
-            currentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
+            partition = partition;
+            Encoding = encoding ?? Encoding.GetEncoding("IBM437");
 
             // As the identification is so complex, just call Identify() and relay on its findings
             if(!Identify(device, partition) || !cpmFound || workingDefinition == null || dpb == null)
@@ -656,7 +656,7 @@ namespace DiscImageChef.Filesystems.CPM
             cpmStat.Type = "CP/M filesystem";
 
             // Generate XML info
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Clusters = cpmStat.Blocks,
                 ClusterSize = blockSize,
@@ -668,15 +668,15 @@ namespace DiscImageChef.Filesystems.CPM
             };
             if(labelCreationDate != null)
             {
-                xmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
+                XmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                xmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
-                xmlFsType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
+                XmlFsType.ModificationDateSpecified = true;
             }
-            if(!string.IsNullOrEmpty(label)) xmlFsType.VolumeName = label;
+            if(!string.IsNullOrEmpty(label)) XmlFsType.VolumeName = label;
 
             mounted = true;
             return Errno.NoError;

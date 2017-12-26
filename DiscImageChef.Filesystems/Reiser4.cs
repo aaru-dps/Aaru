@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -48,11 +47,8 @@ namespace DiscImageChef.Filesystems
         readonly byte[] Reiser4_Magic =
             {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Reiser4 Filesystem Plugin";
         public Guid Id => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
 
@@ -81,9 +77,10 @@ namespace DiscImageChef.Filesystems
             return Reiser4_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -111,16 +108,16 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
             sb.AppendFormat("Volume disk format: {0}", reiserSb.diskformat).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", reiserSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(reiserSb.label, currentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(reiserSb.label, Encoding)).AppendLine();
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Reiser 4 filesystem",
                 ClusterSize = reiserSb.blocksize,
                 Clusters = (long)((partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize),
-                VolumeName = StringHandlers.CToString(reiserSb.label, currentEncoding),
+                VolumeName = StringHandlers.CToString(reiserSb.label, Encoding),
                 VolumeSerial = reiserSb.uuid.ToString()
             };
         }

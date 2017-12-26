@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -48,10 +47,8 @@ namespace DiscImageChef.Filesystems
         const uint SQUASH_MAGIC = 0x73717368;
         const uint SQUASH_CIGAM = 0x68737173;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Squash filesystem";
         public Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
 
@@ -67,9 +64,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.UTF8;
+            Encoding = encoding ?? Encoding.UTF8;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -128,7 +125,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Squash file system",
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),

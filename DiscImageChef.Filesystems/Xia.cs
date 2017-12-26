@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -51,10 +50,8 @@ namespace DiscImageChef.Filesystems
         const int XIAFS_NUM_BLOCK_POINTERS = 10;
         const int XIAFS_NAME_LEN = 248;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Xia filesystem";
         public Guid Id => new Guid("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
 
@@ -74,9 +71,10 @@ namespace DiscImageChef.Filesystems
             return supblk.s_magic == XIAFS_SUPER_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -108,7 +106,7 @@ namespace DiscImageChef.Filesystems
                             supblk.s_kernzones * supblk.s_zone_size).AppendLine();
             sb.AppendFormat("First kernel zone: {0}", supblk.s_firstkernzone).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
                 Clusters = supblk.s_nzones,

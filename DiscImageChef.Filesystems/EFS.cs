@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -46,11 +45,9 @@ namespace DiscImageChef.Filesystems
     {
         const uint EFS_MAGIC = 0x00072959;
         const uint EFS_MAGIC_NEW = 0x0007295A;
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Extent File System Plugin";
         public Guid Id => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
 
@@ -101,9 +98,10 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -164,12 +162,12 @@ namespace DiscImageChef.Filesystems
             if(efsSb.sb_lastinode > 0) sb.AppendFormat("Last inode allocated: {0}", efsSb.sb_lastinode).AppendLine();
             if(efsSb.sb_dirty > 0) sb.AppendLine("Volume is dirty");
             sb.AppendFormat("Checksum: 0x{0:X8}", efsSb.sb_checksum).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(efsSb.sb_fname, currentEncoding)).AppendLine();
-            sb.AppendFormat("Volume pack: {0}", StringHandlers.CToString(efsSb.sb_fpack, currentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(efsSb.sb_fname, Encoding)).AppendLine();
+            sb.AppendFormat("Volume pack: {0}", StringHandlers.CToString(efsSb.sb_fpack, Encoding)).AppendLine();
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Extent File System",
                 ClusterSize = 512,
@@ -177,7 +175,7 @@ namespace DiscImageChef.Filesystems
                 FreeClusters = efsSb.sb_tfree,
                 FreeClustersSpecified = true,
                 Dirty = efsSb.sb_dirty > 0,
-                VolumeName = StringHandlers.CToString(efsSb.sb_fname, currentEncoding),
+                VolumeName = StringHandlers.CToString(efsSb.sb_fname, Encoding),
                 VolumeSerial = $"{efsSb.sb_checksum:X8}",
                 CreationDate = DateHandlers.UnixToDateTime(efsSb.sb_time),
                 CreationDateSpecified = true

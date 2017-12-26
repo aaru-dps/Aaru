@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -46,10 +45,8 @@ namespace DiscImageChef.Filesystems
         readonly byte[] QNX4_RootDir_Fname =
             {0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "QNX4 Plugin";
         public Guid Id => new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
 
@@ -87,9 +84,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return;
@@ -177,7 +174,7 @@ namespace DiscImageChef.Filesystems
             information =
                 $"QNX4 filesystem\nCreated on {DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)}\n";
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "QNX4 filesystem",
                 Clusters = (long)partition.Length,
@@ -187,7 +184,7 @@ namespace DiscImageChef.Filesystems
                 ModificationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime),
                 ModificationDateSpecified = true
             };
-            xmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
+            XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
         }
 
         struct QNX4_Extent

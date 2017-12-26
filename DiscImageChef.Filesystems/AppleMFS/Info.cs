@@ -56,7 +56,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return drSigWord == MFS_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
             information = "";
 
@@ -90,7 +91,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             MDB.drVNSiz = mdbSector[0x024];
             byte[] variableSize = new byte[MDB.drVNSiz + 1];
             Array.Copy(mdbSector, 0x024, variableSize, 0, MDB.drVNSiz + 1);
-            MDB.drVN = StringHandlers.PascalToString(variableSize, currentEncoding);
+            MDB.drVN = StringHandlers.PascalToString(variableSize, Encoding);
 
             BB.signature = BigEndianBitConverter.ToUInt16(bbSector, 0x000);
 
@@ -103,19 +104,19 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 BB.sec_sv_pages = BigEndianBitConverter.ToInt16(bbSector, 0x008);
 
                 Array.Copy(mdbSector, 0x00A, pString, 0, 16);
-                BB.system_name = StringHandlers.PascalToString(pString, currentEncoding);
+                BB.system_name = StringHandlers.PascalToString(pString, Encoding);
                 Array.Copy(mdbSector, 0x01A, pString, 0, 16);
-                BB.finder_name = StringHandlers.PascalToString(pString, currentEncoding);
+                BB.finder_name = StringHandlers.PascalToString(pString, Encoding);
                 Array.Copy(mdbSector, 0x02A, pString, 0, 16);
-                BB.debug_name = StringHandlers.PascalToString(pString, currentEncoding);
+                BB.debug_name = StringHandlers.PascalToString(pString, Encoding);
                 Array.Copy(mdbSector, 0x03A, pString, 0, 16);
-                BB.disasm_name = StringHandlers.PascalToString(pString, currentEncoding);
+                BB.disasm_name = StringHandlers.PascalToString(pString, Encoding);
                 Array.Copy(mdbSector, 0x04A, pString, 0, 16);
-                BB.stupscr_name = StringHandlers.PascalToString(pString, currentEncoding);
+                BB.stupscr_name = StringHandlers.PascalToString(pString, Encoding);
                 Array.Copy(mdbSector, 0x05A, pString, 0, 16);
-                BB.bootup_name = StringHandlers.PascalToString(pString, currentEncoding);
+                BB.bootup_name = StringHandlers.PascalToString(pString, Encoding);
                 Array.Copy(mdbSector, 0x06A, pString, 0, 16);
-                BB.clipbrd_name = StringHandlers.PascalToString(pString, currentEncoding);
+                BB.clipbrd_name = StringHandlers.PascalToString(pString, Encoding);
 
                 BB.max_files = BigEndianBitConverter.ToUInt16(bbSector, 0x07A);
                 BB.queue_size = BigEndianBitConverter.ToUInt16(bbSector, 0x07C);
@@ -173,26 +174,26 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             if(MDB.drLsBkUp > 0)
             {
-                xmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drLsBkUp);
-                xmlFsType.BackupDateSpecified = true;
+                XmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drLsBkUp);
+                XmlFsType.BackupDateSpecified = true;
             }
-            xmlFsType.Bootable = BB.signature == MFSBB_MAGIC;
-            xmlFsType.Clusters = MDB.drNmAlBlks;
-            xmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
+            XmlFsType.Bootable = BB.signature == MFSBB_MAGIC;
+            XmlFsType.Clusters = MDB.drNmAlBlks;
+            XmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
             if(MDB.drCrDate > 0)
             {
-                xmlFsType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+                XmlFsType.CreationDateSpecified = true;
             }
-            xmlFsType.Files = MDB.drNmFls;
-            xmlFsType.FilesSpecified = true;
-            xmlFsType.FreeClusters = MDB.drFreeBks;
-            xmlFsType.FreeClustersSpecified = true;
-            xmlFsType.Type = "MFS";
-            xmlFsType.VolumeName = MDB.drVN;
+            XmlFsType.Files = MDB.drNmFls;
+            XmlFsType.FilesSpecified = true;
+            XmlFsType.FreeClusters = MDB.drFreeBks;
+            XmlFsType.FreeClustersSpecified = true;
+            XmlFsType.Type = "MFS";
+            XmlFsType.VolumeName = MDB.drVN;
         }
     }
 }

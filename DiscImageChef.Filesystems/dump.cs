@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -99,12 +98,10 @@ namespace DiscImageChef.Filesystems
         const int NDADDR = 12;
         const int NIADDR = 3;
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public Encoding Encoding { get; private set; }
         public string Name => "dump(8) Plugin";
         public Guid Id => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType { get; private set; }
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -148,9 +145,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -213,71 +210,71 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            xmlFsType = new FileSystemType {ClusterSize = 1024, Clusters = (long)(partition.Size / 1024)};
+            XmlFsType = new FileSystemType {ClusterSize = 1024, Clusters = (long)(partition.Size / 1024)};
 
             if(useOld)
             {
-                xmlFsType.Type = "Old 16-bit dump(8)";
-                sb.AppendLine(xmlFsType.Type);
+                XmlFsType.Type = "Old 16-bit dump(8)";
+                sb.AppendLine(XmlFsType.Type);
                 if(oldHdr.c_date > 0)
                 {
-                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(oldHdr.c_date);
-                    xmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(oldHdr.c_date);
+                    XmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 if(oldHdr.c_ddate > 0)
                 {
-                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(oldHdr.c_ddate);
-                    xmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(oldHdr.c_ddate);
+                    XmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }
                 sb.AppendFormat("Dump volume number: {0}", oldHdr.c_volume).AppendLine();
             }
             else if(useAix)
             {
-                xmlFsType.Type = "AIX dump(8)";
-                sb.AppendLine(xmlFsType.Type);
+                XmlFsType.Type = "AIX dump(8)";
+                sb.AppendLine(XmlFsType.Type);
                 if(aixHdr.c_date > 0)
                 {
-                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(aixHdr.c_date);
-                    xmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(aixHdr.c_date);
+                    XmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 if(aixHdr.c_ddate > 0)
                 {
-                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(aixHdr.c_ddate);
-                    xmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(aixHdr.c_ddate);
+                    XmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }
                 sb.AppendFormat("Dump volume number: {0}", aixHdr.c_volume).AppendLine();
             }
             else
             {
-                xmlFsType.Type = "dump(8)";
-                sb.AppendLine(xmlFsType.Type);
+                XmlFsType.Type = "dump(8)";
+                sb.AppendLine(XmlFsType.Type);
                 if(newHdr.c_ndate > 0)
                 {
-                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_ndate);
-                    xmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_ndate);
+                    XmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 else if(newHdr.c_date > 0)
                 {
-                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_date);
-                    xmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_date);
+                    XmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 if(newHdr.c_nddate > 0)
                 {
-                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_nddate);
-                    xmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_nddate);
+                    XmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }
                 else if(newHdr.c_ddate > 0)
                 {
-                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_ddate);
-                    xmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_ddate);
+                    XmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }
                 sb.AppendFormat("Dump volume number: {0}", newHdr.c_volume).AppendLine();
                 sb.AppendFormat("Dump level: {0}", newHdr.c_level).AppendLine();

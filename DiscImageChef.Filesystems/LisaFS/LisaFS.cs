@@ -32,11 +32,9 @@
 
 using System;
 using System.Collections.Generic;
-using Claunia.Encoding;
-using DiscImageChef.CommonTypes;
+using System.Text;
 using DiscImageChef.DiscImages;
 using Schemas;
-using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -44,9 +42,8 @@ namespace DiscImageChef.Filesystems.LisaFS
     // Variable names from Lisa API
     public partial class LisaFS : IReadOnlyFilesystem
     {
-        IMediaImage device;
-        Encoding currentEncoding;
         bool debug;
+        IMediaImage device;
         int devTagSize;
 
         MDDF mddf;
@@ -56,9 +53,8 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         public string Name => "Apple Lisa File System";
         public Guid Id => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-        public Encoding Encoding => currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding { get; private set; }
+        public FileSystemType XmlFsType { get; private set; }
 
         #region Caches
         /// <summary>Caches Extents Files</summary>

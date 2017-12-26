@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -45,12 +44,10 @@ namespace DiscImageChef.Filesystems
     {
         readonly byte[] ECMA67_Magic = {0x56, 0x4F, 0x4C};
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public Encoding Encoding { get; private set; }
         public string Name => "ECMA-67";
         public Guid Id => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType { get; private set; }
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -72,9 +69,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] sector = imagePlugin.ReadSector(6);
 
             StringBuilder sbInformation = new StringBuilder();
@@ -90,7 +87,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(vol.volumeIdentifier)).AppendLine();
             sbInformation.AppendFormat("Volume owner: {0}", Encoding.ASCII.GetString(vol.owner)).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "ECMA-67",
                 ClusterSize = 256,

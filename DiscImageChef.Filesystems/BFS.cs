@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -54,11 +53,9 @@ namespace DiscImageChef.Filesystems
         // Common constants
         const uint BEFS_CLEAN = 0x434C454E;
         const uint BEFS_DIRTY = 0x44495254;
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Be Filesystem";
         public Guid Id => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
 
@@ -92,9 +89,10 @@ namespace DiscImageChef.Filesystems
             return magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -170,7 +168,7 @@ namespace DiscImageChef.Filesystems
                     break;
             }
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, currentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, Encoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();
             sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size)
               .AppendLine();
@@ -196,7 +194,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Clusters = besb.num_blocks,
                 ClusterSize = (int)besb.block_size,
@@ -204,7 +202,7 @@ namespace DiscImageChef.Filesystems
                 FreeClusters = besb.num_blocks - besb.used_blocks,
                 FreeClustersSpecified = true,
                 Type = "BeFS",
-                VolumeName = StringHandlers.CToString(besb.name, currentEncoding)
+                VolumeName = StringHandlers.CToString(besb.name, Encoding)
             };
         }
 

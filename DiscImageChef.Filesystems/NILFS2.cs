@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -45,11 +44,8 @@ namespace DiscImageChef.Filesystems
         const ushort NILFS2_MAGIC = 0x3434;
         const uint NILFS2_SUPER_OFFSET = 1024;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "NILFS2 Plugin";
         public Guid Id => new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
 
@@ -78,9 +74,10 @@ namespace DiscImageChef.Filesystems
             return nilfsSb.magic == NILFS2_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.UTF8;
+            Encoding = encoding ?? Encoding.UTF8;
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -114,8 +111,7 @@ namespace DiscImageChef.Filesystems
             else sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
             sb.AppendFormat("{0} bytes per inode", nilfsSb.inode_size).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", nilfsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, currentEncoding))
-              .AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, Encoding)).AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
             sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime))
               .AppendLine();
@@ -124,19 +120,19 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "NILFS2 filesystem",
                 ClusterSize = 1 << (int)(nilfsSb.log_block_size + 10),
-                VolumeName = StringHandlers.CToString(nilfsSb.volume_name, currentEncoding),
+                VolumeName = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
                 VolumeSerial = nilfsSb.uuid.ToString(),
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
                 CreationDateSpecified = true,
                 ModificationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime),
                 ModificationDateSpecified = true
             };
-            if(nilfsSb.creator_os == 0) xmlFsType.SystemIdentifier = "Linux";
-            xmlFsType.Clusters = (long)nilfsSb.dev_size / xmlFsType.ClusterSize;
+            if(nilfsSb.creator_os == 0) XmlFsType.SystemIdentifier = "Linux";
+            XmlFsType.Clusters = (long)nilfsSb.dev_size / XmlFsType.ClusterSize;
         }
 
         enum NILFS2_State : ushort

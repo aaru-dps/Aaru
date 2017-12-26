@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -45,11 +44,8 @@ namespace DiscImageChef.Filesystems
         const uint JFS_BOOT_BLOCKS_SIZE = 0x8000;
         const uint JFS_MAGIC = 0x3153464A;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "JFS Plugin";
         public Guid Id => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
 
@@ -70,9 +66,10 @@ namespace DiscImageChef.Filesystems
             return jfsSb.s_magic == JFS_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             StringBuilder sb = new StringBuilder();
             uint bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
@@ -120,22 +117,22 @@ namespace DiscImageChef.Filesystems
                             DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec))
               .AppendLine();
             if(jfsSb.s_version == 1)
-                sb.AppendFormat("Volume name: {0}", currentEncoding.GetString(jfsSb.s_fpack)).AppendLine();
-            else sb.AppendFormat("Volume name: {0}", currentEncoding.GetString(jfsSb.s_label)).AppendLine();
+                sb.AppendFormat("Volume name: {0}", Encoding.GetString(jfsSb.s_fpack)).AppendLine();
+            else sb.AppendFormat("Volume name: {0}", Encoding.GetString(jfsSb.s_label)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", jfsSb.s_uuid).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "JFS filesystem",
                 Clusters = (long)jfsSb.s_size,
                 ClusterSize = (int)jfsSb.s_bsize,
                 Bootable = true,
-                VolumeName = currentEncoding.GetString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label),
+                VolumeName = Encoding.GetString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label),
                 VolumeSerial = $"{jfsSb.s_uuid}",
                 ModificationDate = DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
                 ModificationDateSpecified = true
             };
-            if(jfsSb.s_state != 0) xmlFsType.Dirty = true;
+            if(jfsSb.s_state != 0) XmlFsType.Dirty = true;
 
             information = sb.ToString();
         }

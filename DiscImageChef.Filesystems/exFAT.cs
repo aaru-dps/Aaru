@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -47,11 +46,9 @@ namespace DiscImageChef.Filesystems
         readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 
         readonly byte[] Signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Microsoft Extended File Allocation Table";
         public Guid Id => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
 
@@ -71,13 +68,13 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             IntPtr vbrPtr = Marshal.AllocHGlobal(512);
@@ -139,11 +136,11 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendFormat("Checksum 0x{0:X8}", chksector.checksum[0]).AppendLine();
 
-            xmlFsType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
-            xmlFsType.Clusters = vbr.clusterHeapLength;
-            xmlFsType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
-            xmlFsType.Type = "exFAT";
-            xmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
+            XmlFsType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
+            XmlFsType.Clusters = vbr.clusterHeapLength;
+            XmlFsType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
+            XmlFsType.Type = "exFAT";
+            XmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
             information = sb.ToString();
         }

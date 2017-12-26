@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -50,13 +49,11 @@ namespace DiscImageChef.Filesystems
 
         const uint TYPE_HEADER = 2;
         const uint SUBTYPE_ROOT = 1;
-        Encoding currentEncoding;
 
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType { get; private set; }
         public string Name => "Amiga DOS filesystem";
         public Guid Id => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
-        public Encoding Encoding => currentEncoding;
+        public Encoding Encoding { get; private set; }
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -154,11 +151,12 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             StringBuilder sbInformation = new StringBuilder();
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = null;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -242,41 +240,41 @@ namespace DiscImageChef.Filesystems
 
             rootBlk = MarshalRootBlock(rootBlockSector);
 
-            string diskName = StringHandlers.PascalToString(rootBlk.diskName, currentEncoding);
+            string diskName = StringHandlers.PascalToString(rootBlk.diskName, Encoding);
 
             switch(bootBlk.diskType & 0xFF)
             {
                 case 0:
                     sbInformation.Append("Amiga Original File System");
-                    xmlFsType.Type = "Amiga OFS";
+                    XmlFsType.Type = "Amiga OFS";
                     break;
                 case 1:
                     sbInformation.Append("Amiga Fast File System");
-                    xmlFsType.Type = "Amiga FFS";
+                    XmlFsType.Type = "Amiga FFS";
                     break;
                 case 2:
                     sbInformation.Append("Amiga Original File System with international characters");
-                    xmlFsType.Type = "Amiga OFS";
+                    XmlFsType.Type = "Amiga OFS";
                     break;
                 case 3:
                     sbInformation.Append("Amiga Fast File System with international characters");
-                    xmlFsType.Type = "Amiga FFS";
+                    XmlFsType.Type = "Amiga FFS";
                     break;
                 case 4:
                     sbInformation.Append("Amiga Original File System with directory cache");
-                    xmlFsType.Type = "Amiga OFS";
+                    XmlFsType.Type = "Amiga OFS";
                     break;
                 case 5:
                     sbInformation.Append("Amiga Fast File System with directory cache");
-                    xmlFsType.Type = "Amiga FFS";
+                    XmlFsType.Type = "Amiga FFS";
                     break;
                 case 6:
                     sbInformation.Append("Amiga Original File System with long filenames");
-                    xmlFsType.Type = "Amiga OFS2";
+                    XmlFsType.Type = "Amiga OFS2";
                     break;
                 case 7:
                     sbInformation.Append("Amiga Fast File System with long filenames");
-                    xmlFsType.Type = "Amiga FFS2";
+                    XmlFsType.Type = "Amiga FFS2";
                     break;
             }
 
@@ -319,17 +317,17 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Root block checksum is 0x{0:X8}", rootBlk.checksum).AppendLine();
             information = sbInformation.ToString();
 
-            xmlFsType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
-            xmlFsType.CreationDateSpecified = true;
-            xmlFsType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
-            xmlFsType.ModificationDateSpecified = true;
-            xmlFsType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
-            xmlFsType.Clusters = blocks;
-            xmlFsType.ClusterSize = (int)blockSize;
-            xmlFsType.VolumeName = diskName;
-            xmlFsType.Bootable = bsum == bootBlk.checksum;
+            XmlFsType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
+            XmlFsType.CreationDateSpecified = true;
+            XmlFsType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
+            XmlFsType.ModificationDateSpecified = true;
+            XmlFsType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
+            XmlFsType.Clusters = blocks;
+            XmlFsType.ClusterSize = (int)blockSize;
+            XmlFsType.VolumeName = diskName;
+            XmlFsType.Bootable = bsum == bootBlk.checksum;
             // Useful as a serial
-            xmlFsType.VolumeSerial = $"{rootBlk.checksum:X8}";
+            XmlFsType.VolumeSerial = $"{rootBlk.checksum:X8}";
         }
 
         static RootBlock MarshalRootBlock(byte[] block)

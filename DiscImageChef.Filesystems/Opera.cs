@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -42,11 +41,8 @@ namespace DiscImageChef.Filesystems
 {
     public class OperaFS : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Opera Filesystem Plugin";
         public Guid Id => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
 
@@ -67,10 +63,11 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(syncBytes) == "ZZZZZ";
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
             // TODO: Find correct default encoding
-            currentEncoding = Encoding.ASCII;
+            Encoding = Encoding.ASCII;
             information = "";
             StringBuilder superBlockMetadata = new StringBuilder();
 
@@ -83,14 +80,14 @@ namespace DiscImageChef.Filesystems
             if(Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ") return;
 
             superBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
-            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, currentEncoding)))
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, Encoding)))
                 superBlockMetadata
-                    .AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, currentEncoding))
+                    .AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, Encoding))
                     .AppendLine();
-            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, currentEncoding)))
-                superBlockMetadata.AppendFormat("Volume comment: {0}",
-                                                StringHandlers.CToString(sb.volume_comment, currentEncoding))
-                                  .AppendLine();
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, Encoding)))
+                superBlockMetadata
+                    .AppendFormat("Volume comment: {0}", StringHandlers.CToString(sb.volume_comment, Encoding))
+                    .AppendLine();
             superBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
             superBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
             if(imagePlugin.Info.SectorSize == 2336 || imagePlugin.Info.SectorSize == 2352 ||
@@ -120,10 +117,10 @@ namespace DiscImageChef.Filesystems
 
             information = superBlockMetadata.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Opera",
-                VolumeName = StringHandlers.CToString(sb.volume_label, currentEncoding),
+                VolumeName = StringHandlers.CToString(sb.volume_label, Encoding),
                 ClusterSize = sb.block_size,
                 Clusters = sb.block_count
             };

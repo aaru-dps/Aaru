@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -41,10 +40,8 @@ namespace DiscImageChef.Filesystems
 {
     public class PCEnginePlugin : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "PC Engine CD Plugin";
         public Guid Id => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
 
@@ -61,11 +58,11 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
+            Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
             information = "";
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "PC Engine filesystem",
                 Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048),

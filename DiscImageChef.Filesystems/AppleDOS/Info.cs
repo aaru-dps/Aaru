@@ -63,10 +63,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
                    vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector == 256;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
             // TODO: Until Apple ][ encoding is implemented
-            currentEncoding = new LisaRoman();
+            Encoding = new LisaRoman();
             information = "";
             StringBuilder sb = new StringBuilder();
 
@@ -95,7 +96,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = true,
                 Clusters = (long)imagePlugin.Info.Sectors,

@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -46,10 +45,8 @@ namespace DiscImageChef.Filesystems
         const uint QNX6_BOOT_BLOCKS_SIZE = 0x2000;
         const uint QNX6_MAGIC = 0x68191122;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "QNX6 Plugin";
         public Guid Id => new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
 
@@ -80,9 +77,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             StringBuilder sb = new StringBuilder();
             uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
@@ -117,7 +114,7 @@ namespace DiscImageChef.Filesystems
                                 audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
                                 audiSb.numBlocks * audiSb.blockSize).AppendLine();
 
-                xmlFsType = new FileSystemType
+                XmlFsType = new FileSystemType
                 {
                     Type = "QNX6 (Audi) filesystem",
                     Clusters = audiSb.numBlocks,
@@ -150,7 +147,7 @@ namespace DiscImageChef.Filesystems
                             qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize)
               .AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "QNX6 filesystem",
                 Clusters = qnxSb.numBlocks,

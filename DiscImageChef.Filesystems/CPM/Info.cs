@@ -203,8 +203,7 @@ namespace DiscImageChef.Filesystems.CPM
                         sectorSize = (ulong)(128 << amsSb.psh);
 
                         // Compare device limits from superblock to real limits
-                        if(sectorSize == imagePlugin.Info.SectorSize &&
-                           sectorCount == imagePlugin.Info.Sectors)
+                        if(sectorSize == imagePlugin.Info.SectorSize && sectorCount == imagePlugin.Info.Sectors)
                         {
                             cpmFound = true;
                             firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
@@ -976,9 +975,10 @@ namespace DiscImageChef.Filesystems.CPM
             }
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
+            Encoding = encoding ?? Encoding.GetEncoding("IBM437");
             information = "";
             // As the identification is so complex, just call Identify() and relay on its findings
             if(!Identify(imagePlugin, partition) || !cpmFound || workingDefinition == null || dpb == null) return;
@@ -1051,23 +1051,23 @@ namespace DiscImageChef.Filesystems.CPM
             if(labelUpdateDate != null)
                 sb.AppendFormat("Volume updated on {0}", DateHandlers.CpmToDateTime(labelUpdateDate)).AppendLine();
 
-            xmlFsType = new FileSystemType();
-            xmlFsType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
-            xmlFsType.ClusterSize = 128 << dpb.bsh;
-            if(dpb.dsm > 0) xmlFsType.Clusters = dpb.dsm;
-            else xmlFsType.Clusters = (long)(partition.End - partition.Start);
+            XmlFsType = new FileSystemType();
+            XmlFsType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
+            XmlFsType.ClusterSize = 128 << dpb.bsh;
+            if(dpb.dsm > 0) XmlFsType.Clusters = dpb.dsm;
+            else XmlFsType.Clusters = (long)(partition.End - partition.Start);
             if(labelCreationDate != null)
             {
-                xmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
+                XmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                xmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
-                xmlFsType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
+                XmlFsType.ModificationDateSpecified = true;
             }
-            xmlFsType.Type = "CP/M";
-            xmlFsType.VolumeName = label;
+            XmlFsType.Type = "CP/M";
+            XmlFsType.VolumeName = label;
 
             information = sb.ToString();
         }

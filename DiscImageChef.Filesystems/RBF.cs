@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -47,11 +46,8 @@ namespace DiscImageChef.Filesystems
         const uint RBF_SYNC = 0x4372757A;
         const uint RBF_CNYS = 0x7A757243;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "OS-9 Random Block File Plugin";
         public Guid Id => new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
 
@@ -88,9 +84,10 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 256) return;
 
@@ -154,10 +151,10 @@ namespace DiscImageChef.Filesystems
                   .AppendLine();
                 sb.AppendFormat("Volume's identification block was last written on {0}",
                                 DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime)).AppendLine();
-                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbf9000Sb.rid_name, currentEncoding))
+                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbf9000Sb.rid_name, Encoding))
                   .AppendLine();
 
-                xmlFsType = new FileSystemType
+                XmlFsType = new FileSystemType
                 {
                     Type = "OS-9 Random Block File",
                     Bootable = rbf9000Sb.rid_bootfile > 0,
@@ -167,7 +164,7 @@ namespace DiscImageChef.Filesystems
                     CreationDateSpecified = true,
                     ModificationDate = DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime),
                     ModificationDateSpecified = true,
-                    VolumeName = StringHandlers.CToString(rbf9000Sb.rid_name, currentEncoding),
+                    VolumeName = StringHandlers.CToString(rbf9000Sb.rid_name, Encoding),
                     VolumeSerial = $"{rbf9000Sb.rid_diskid:X8}"
                 };
             }
@@ -198,12 +195,11 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Disk is owned by user {0}", rbfSb.dd_own).AppendLine();
                 sb.AppendFormat("Volume was created on {0}", DateHandlers.Os9ToDateTime(rbfSb.dd_dat)).AppendLine();
                 sb.AppendFormat("Volume attributes: {0:X2}", rbfSb.dd_att).AppendLine();
-                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbfSb.dd_nam, currentEncoding))
-                  .AppendLine();
-                sb.AppendFormat("Path descriptor options: {0}", StringHandlers.CToString(rbfSb.dd_opt, currentEncoding))
+                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbfSb.dd_nam, Encoding)).AppendLine();
+                sb.AppendFormat("Path descriptor options: {0}", StringHandlers.CToString(rbfSb.dd_opt, Encoding))
                   .AppendLine();
 
-                xmlFsType = new FileSystemType
+                XmlFsType = new FileSystemType
                 {
                     Type = "OS-9 Random Block File",
                     Bootable = LSNToUInt32(rbfSb.dd_bt) > 0 && rbfSb.dd_bsz > 0,
@@ -211,7 +207,7 @@ namespace DiscImageChef.Filesystems
                     Clusters = LSNToUInt32(rbfSb.dd_tot),
                     CreationDate = DateHandlers.Os9ToDateTime(rbfSb.dd_dat),
                     CreationDateSpecified = true,
-                    VolumeName = StringHandlers.CToString(rbfSb.dd_nam, currentEncoding),
+                    VolumeName = StringHandlers.CToString(rbfSb.dd_nam, Encoding),
                     VolumeSerial = $"{rbfSb.dd_dsk:X4}"
                 };
             }

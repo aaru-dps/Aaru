@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -46,11 +45,8 @@ namespace DiscImageChef.Filesystems
     {
         const uint LIF_MAGIC = 0x8000;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "HP Logical Interchange Format Plugin";
         public Guid Id => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
 
@@ -65,9 +61,10 @@ namespace DiscImageChef.Filesystems
             return lifSb.magic == LIF_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             if(imagePlugin.Info.SectorSize < 256) return;
@@ -88,20 +85,19 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} tracks", lifSb.tracks).AppendLine();
             sb.AppendFormat("{0} heads", lifSb.heads).AppendLine();
             sb.AppendFormat("{0} sectors", lifSb.sectors).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(lifSb.volumeLabel, currentEncoding))
-              .AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(lifSb.volumeLabel, Encoding)).AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.LifToDateTime(lifSb.creationDate)).AppendLine();
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "HP Logical Interchange Format",
                 ClusterSize = 256,
                 Clusters = (long)(partition.Size / 256),
                 CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate),
                 CreationDateSpecified = true,
-                VolumeName = StringHandlers.CToString(lifSb.volumeLabel, currentEncoding)
+                VolumeName = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
             };
         }
 

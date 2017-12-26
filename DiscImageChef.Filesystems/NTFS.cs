@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
@@ -44,10 +43,8 @@ namespace DiscImageChef.Filesystems
     // Information from Inside Windows NT
     public class NTFS : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "New Technology File System (NTFS)";
         public Guid Id => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
 
@@ -79,9 +76,10 @@ namespace DiscImageChef.Filesystems
             return signature == 0xAA55;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = Encoding.Unicode;
+            Encoding = Encoding.Unicode;
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -125,11 +123,11 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume serial number: {0:X16}", ntfsBb.serial_no).AppendLine();
             //          sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 && ntfsBb.signature2 == 0xAA55)
             {
-                xmlFsType.Bootable = true;
+                XmlFsType.Bootable = true;
                 Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 string bootChk = sha1Ctx.Data(ntfsBb.boot_code, out _);
@@ -137,10 +135,10 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }
 
-            xmlFsType.ClusterSize = ntfsBb.spc * ntfsBb.bps;
-            xmlFsType.Clusters = ntfsBb.sectors / ntfsBb.spc;
-            xmlFsType.VolumeSerial = $"{ntfsBb.serial_no:X16}";
-            xmlFsType.Type = "NTFS";
+            XmlFsType.ClusterSize = ntfsBb.spc * ntfsBb.bps;
+            XmlFsType.Clusters = ntfsBb.sectors / ntfsBb.spc;
+            XmlFsType.VolumeSerial = $"{ntfsBb.serial_no:X16}";
+            XmlFsType.Type = "NTFS";
 
             information = sb.ToString();
         }

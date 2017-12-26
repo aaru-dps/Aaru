@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -46,11 +45,9 @@ namespace DiscImageChef.Filesystems
     {
         const ushort MAGIC = 0xA72E;
         const ushort MAGIC2 = 0x530C;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "MicroDOS file system";
         public Guid Id => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
 
@@ -71,9 +68,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("koi8-r");
+            Encoding = encoding ?? Encoding.GetEncoding("koi8-r");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -92,7 +89,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume contains {0} files", block0.files).AppendLine();
             sb.AppendFormat("First used block is {0}", block0.firstUsedBlock).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "MicroDOS",
                 ClusterSize = 512,

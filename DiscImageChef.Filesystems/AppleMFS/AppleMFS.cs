@@ -62,29 +62,27 @@ namespace DiscImageChef.Filesystems.AppleMFS
         byte[] mdbTags;
         byte[] directoryTags;
         byte[] bitmapTags;
-        Encoding currentEncoding;
 
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType { get; private set; }
         public string Name => "Apple Macintosh File System";
         public Guid Id => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-        public Encoding Encoding => currentEncoding;
+        public Encoding Encoding { get; private set; }
 
         public AppleMFS()
         {
-            currentEncoding = Encoding.GetEncoding("macintosh");
+            Encoding = Encoding.GetEncoding("macintosh");
         }
 
         public AppleMFS(Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
+            Encoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
 
         public AppleMFS(IMediaImage imagePlugin, Partition partition, Encoding encoding)
         {
             device = imagePlugin;
             partitionStart = partition.Start;
-            currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
+            Encoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
     }
 }

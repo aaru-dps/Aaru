@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
@@ -44,11 +43,8 @@ namespace DiscImageChef.Filesystems
     // Information from an old unnamed document
     public class HPFS : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "OS/2 High Performance File System";
         public Guid Id => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
 
@@ -66,9 +62,10 @@ namespace DiscImageChef.Filesystems
             return magic1 == 0xF995E849 && magic2 == 0xFA53E9C5;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("ibm850");
+            Encoding = encoding ?? Encoding.GetEncoding("ibm850");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -126,8 +123,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("NT Flags: 0x{0:X2}", hpfsBpb.nt_flags).AppendLine();
             sb.AppendFormat("Signature: 0x{0:X2}", hpfsBpb.signature).AppendLine();
             sb.AppendFormat("Serial number: 0x{0:X8}", hpfsBpb.serial_no).AppendLine();
-            sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(hpfsBpb.volume_label, currentEncoding))
-              .AppendLine();
+            sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(hpfsBpb.volume_label, Encoding)).AppendLine();
             //          sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 
             DateTime lastChk = DateHandlers.UnixToDateTime(hpfsSb.last_chkdsk);
@@ -177,13 +173,13 @@ namespace DiscImageChef.Filesystems
             if((hpfsSp.flags2 & 0x40) == 0x40) sb.AppendLine("Unknown flag 0x40 on flags2 is active");
             if((hpfsSp.flags2 & 0x80) == 0x80) sb.AppendLine("Unknown flag 0x80 on flags2 is active");
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
             if(hpfsBpb.jump[0] == 0xEB && hpfsBpb.jump[1] > 0x3C && hpfsBpb.jump[1] < 0x80 &&
                hpfsBpb.signature2 == 0xAA55)
             {
-                xmlFsType.Bootable = true;
+                XmlFsType.Bootable = true;
                 Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 string bootChk = sha1Ctx.Data(hpfsBpb.boot_code, out byte[] sha1_out);
@@ -191,13 +187,13 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }
 
-            xmlFsType.Dirty |= (hpfsSp.flags1 & 0x01) == 0x01;
-            xmlFsType.Clusters = hpfsSb.sectors;
-            xmlFsType.ClusterSize = hpfsBpb.bps;
-            xmlFsType.Type = "HPFS";
-            xmlFsType.VolumeName = StringHandlers.CToString(hpfsBpb.volume_label, currentEncoding);
-            xmlFsType.VolumeSerial = $"{hpfsBpb.serial_no:X8}";
-            xmlFsType.SystemIdentifier = StringHandlers.CToString(hpfsBpb.oem_name);
+            XmlFsType.Dirty |= (hpfsSp.flags1 & 0x01) == 0x01;
+            XmlFsType.Clusters = hpfsSb.sectors;
+            XmlFsType.ClusterSize = hpfsBpb.bps;
+            XmlFsType.Type = "HPFS";
+            XmlFsType.VolumeName = StringHandlers.CToString(hpfsBpb.volume_label, Encoding);
+            XmlFsType.VolumeSerial = $"{hpfsBpb.serial_no:X8}";
+            XmlFsType.SystemIdentifier = StringHandlers.CToString(hpfsBpb.oem_name);
 
             information = sb.ToString();
         }

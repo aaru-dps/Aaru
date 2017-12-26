@@ -76,13 +76,11 @@ namespace DiscImageChef.Filesystems
         ///     Old directory format magic number, "Hugo"
         /// </summary>
         const uint OLD_DIR_MAGIC = 0x6F677548;
-        Encoding currentEncoding;
 
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType { get; private set; }
         public string Name => "Acorn Advanced Disc Filing System";
         public Guid Id => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-        public Encoding Encoding => currentEncoding;
+        public Encoding Encoding { get; private set; }
 
         // TODO: BBC Master hard disks are untested...
         public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -250,11 +248,12 @@ namespace DiscImageChef.Filesystems
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             StringBuilder sbInformation = new StringBuilder();
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = "";
 
             ulong sbSector;
@@ -300,7 +299,7 @@ namespace DiscImageChef.Filesystems
                         namebytes[i * 2 + 1] = oldMap1.name[i];
                     }
 
-                    xmlFsType = new FileSystemType
+                    XmlFsType = new FileSystemType
                     {
                         Bootable = oldMap1.boot != 0, // Or not?
                         Clusters = (long)(bytes / imagePlugin.Info.SectorSize),
@@ -373,15 +372,15 @@ namespace DiscImageChef.Filesystems
                     sbInformation.AppendLine();
                     sbInformation.AppendFormat("{0} bytes per sector", imagePlugin.Info.SectorSize).AppendLine();
                     sbInformation.AppendFormat("Volume has {0} bytes", bytes).AppendLine();
-                    sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(namebytes, currentEncoding))
+                    sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(namebytes, Encoding))
                                  .AppendLine();
                     if(oldMap1.discId > 0)
                     {
-                        xmlFsType.VolumeSerial = $"{oldMap1.discId:X4}";
+                        XmlFsType.VolumeSerial = $"{oldMap1.discId:X4}";
                         sbInformation.AppendFormat("Volume ID: {0:X4}", oldMap1.discId).AppendLine();
                     }
                     if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
-                        xmlFsType.VolumeName = StringHandlers.CToString(namebytes, currentEncoding);
+                        XmlFsType.VolumeName = StringHandlers.CToString(namebytes, Encoding);
 
                     information = sbInformation.ToString();
 
@@ -439,7 +438,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size = {0}", drSb.disc_size);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_id = {0}", drSb.disc_id);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_name = {0}",
-                                      StringHandlers.CToString(drSb.disc_name, currentEncoding));
+                                      StringHandlers.CToString(drSb.disc_name, Encoding));
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_type = {0}", drSb.disc_type);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.flags = {0}", drSb.flags);
@@ -465,7 +464,7 @@ namespace DiscImageChef.Filesystems
 
             if(bytes > imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) return;
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             sbInformation.AppendLine("Acorn Advanced Disc Filing System");
             sbInformation.AppendLine();
@@ -483,22 +482,22 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume flags: 0x{0:X4}", drSb.flags).AppendLine();
             if(drSb.disc_id > 0)
             {
-                xmlFsType.VolumeSerial = $"{drSb.disc_id:X4}";
+                XmlFsType.VolumeSerial = $"{drSb.disc_id:X4}";
                 sbInformation.AppendFormat("Volume ID: {0:X4}", drSb.disc_id).AppendLine();
             }
             if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))
             {
-                string discname = StringHandlers.CToString(drSb.disc_name, currentEncoding);
-                xmlFsType.VolumeName = discname;
+                string discname = StringHandlers.CToString(drSb.disc_name, Encoding);
+                XmlFsType.VolumeName = discname;
                 sbInformation.AppendFormat("Volume name: {0}", discname).AppendLine();
             }
 
             information = sbInformation.ToString();
 
-            xmlFsType.Bootable |= drSb.bootoption != 0; // Or not?
-            xmlFsType.Clusters = (long)(bytes / (ulong)(1 << drSb.log2secsize));
-            xmlFsType.ClusterSize = 1 << drSb.log2secsize;
-            xmlFsType.Type = "Acorn Advanced Disc Filing System";
+            XmlFsType.Bootable |= drSb.bootoption != 0; // Or not?
+            XmlFsType.Clusters = (long)(bytes / (ulong)(1 << drSb.log2secsize));
+            XmlFsType.ClusterSize = 1 << drSb.log2secsize;
+            XmlFsType.Type = "Acorn Advanced Disc Filing System";
         }
 
         byte AcornMapChecksum(byte[] data, int length)

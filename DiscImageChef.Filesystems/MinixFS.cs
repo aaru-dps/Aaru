@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -64,11 +63,9 @@ namespace DiscImageChef.Filesystems
         const ushort MINIX2_CIGAM2 = 0x7824;
         /// <summary>Minix v3, 60 char filenames</summary>
         const ushort MINIX3_CIGAM = 0x5A4D;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        Encoding currentEncoding;
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Minix Filesystem";
         public Guid Id => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
 
@@ -111,9 +108,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -143,7 +140,7 @@ namespace DiscImageChef.Filesystems
 
             magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             bool littleEndian;
 
@@ -158,16 +155,16 @@ namespace DiscImageChef.Filesystems
                     case MINIX3_MAGIC:
                     case MINIX3_CIGAM:
                         minixVersion = "Minix v3 filesystem";
-                        xmlFsType.Type = "Minix v3";
+                        XmlFsType.Type = "Minix v3";
                         break;
                     case MINIX2_MAGIC:
                     case MINIX2_CIGAM:
                         minixVersion = "Minix 3 v2 filesystem";
-                        xmlFsType.Type = "Minix 3 v2";
+                        XmlFsType.Type = "Minix 3 v2";
                         break;
                     default:
                         minixVersion = "Minix 3 v1 filesystem";
-                        xmlFsType.Type = "Minix 3 v1";
+                        XmlFsType.Type = "Minix 3 v1";
                         break;
                 }
 
@@ -183,49 +180,49 @@ namespace DiscImageChef.Filesystems
                         filenamesize = 14;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        xmlFsType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        xmlFsType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX2_MAGIC:
                         filenamesize = 14;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        xmlFsType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     case MINIX2_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        xmlFsType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     case MINIX_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        xmlFsType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        xmlFsType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX2_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        xmlFsType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     case MINIX2_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        xmlFsType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     default: return;
                 }
@@ -265,8 +262,8 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
                 sb.AppendFormat("On-disk filesystem version: {0}", mnxSb.s_disk_version).AppendLine();
 
-                xmlFsType.ClusterSize = mnxSb.s_blocksize;
-                xmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
+                XmlFsType.ClusterSize = mnxSb.s_blocksize;
+                XmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
             }
             else
             {
@@ -298,8 +295,8 @@ namespace DiscImageChef.Filesystems
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
                 sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
                 sb.AppendFormat("Filesystem state: {0:X4}", mnxSb.s_state).AppendLine();
-                xmlFsType.ClusterSize = 1024;
-                xmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
+                XmlFsType.ClusterSize = 1024;
+                XmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
             }
             information = sb.ToString();
         }

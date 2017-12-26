@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -162,11 +161,8 @@ namespace DiscImageChef.Filesystems
         /// <summary>Testing development code</summary>
         const uint EXT2_FLAGS_TEST_FILESYS = 0x00000004;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Linux extended Filesystem 2, 3 and 4";
         public Guid Id => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
 
@@ -190,9 +186,10 @@ namespace DiscImageChef.Filesystems
             return magic == EXT2_MAGIC || magic == EXT2_MAGIC_OLD;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -216,13 +213,13 @@ namespace DiscImageChef.Filesystems
             ext2FSSuperBlock supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             switch(supblk.magic)
             {
                 case EXT2_MAGIC_OLD:
                     sb.AppendLine("ext2 (old) filesystem");
-                    xmlFsType.Type = "ext2";
+                    XmlFsType.Type = "ext2";
                     break;
                 case EXT2_MAGIC:
                     ext3 |= (supblk.ftr_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
@@ -250,17 +247,17 @@ namespace DiscImageChef.Filesystems
                     if(newExt2)
                     {
                         sb.AppendLine("ext2 filesystem");
-                        xmlFsType.Type = "ext2";
+                        XmlFsType.Type = "ext2";
                     }
                     if(ext3)
                     {
                         sb.AppendLine("ext3 filesystem");
-                        xmlFsType.Type = "ext3";
+                        XmlFsType.Type = "ext3";
                     }
                     if(ext4)
                     {
                         sb.AppendLine("ext4 filesystem");
-                        xmlFsType.Type = "ext4";
+                        XmlFsType.Type = "ext4";
                     }
                     break;
                 default:
@@ -291,14 +288,14 @@ namespace DiscImageChef.Filesystems
                     break;
             }
 
-            xmlFsType.SystemIdentifier = extOs;
+            XmlFsType.SystemIdentifier = extOs;
 
             if(supblk.mkfs_t > 0)
             {
                 sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t),
                                 extOs).AppendLine();
-                xmlFsType.CreationDate = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
+                XmlFsType.CreationDateSpecified = true;
             }
             else sb.AppendFormat("Volume was created for {0}", extOs).AppendLine();
 
@@ -356,8 +353,8 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks,
                             1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size))
               .AppendLine();
-            xmlFsType.Clusters = (long)blocks;
-            xmlFsType.ClusterSize = 1024 << (int)supblk.block_size;
+            XmlFsType.Clusters = (long)blocks;
+            XmlFsType.ClusterSize = 1024 << (int)supblk.block_size;
             if(supblk.mount_t > 0 || supblk.mount_c > 0)
             {
                 if(supblk.mount_t > 0)
@@ -369,12 +366,12 @@ namespace DiscImageChef.Filesystems
                 else
                     sb.AppendFormat("Volume has been mounted {0} times with no maximum no. of mounts before checking",
                                     supblk.mount_c).AppendLine();
-                if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, currentEncoding)))
+                if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, Encoding)))
                     sb.AppendFormat("Last mounted on: \"{0}\"",
-                                    StringHandlers.CToString(supblk.last_mount_dir, currentEncoding)).AppendLine();
-                if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, currentEncoding)))
+                                    StringHandlers.CToString(supblk.last_mount_dir, Encoding)).AppendLine();
+                if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, Encoding)))
                     sb.AppendFormat("Last used mount options were: {0}",
-                                    StringHandlers.CToString(supblk.mount_options, currentEncoding)).AppendLine();
+                                    StringHandlers.CToString(supblk.mount_options, Encoding)).AppendLine();
             }
             else
             {
@@ -403,17 +400,17 @@ namespace DiscImageChef.Filesystems
             {
                 sb.AppendFormat("Last written on {0}", DateHandlers.UnixUnsignedToDateTime(supblk.write_t))
                   .AppendLine();
-                xmlFsType.ModificationDate = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
-                xmlFsType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
+                XmlFsType.ModificationDateSpecified = true;
             }
             else sb.AppendLine("Volume has never been written");
 
-            xmlFsType.Dirty = true;
+            XmlFsType.Dirty = true;
             switch(supblk.state)
             {
                 case EXT2_VALID_FS:
                     sb.AppendLine("Volume is clean");
-                    xmlFsType.Dirty = false;
+                    XmlFsType.Dirty = false;
                     break;
                 case EXT2_ERROR_FS:
                     sb.AppendLine("Volume is dirty");
@@ -426,11 +423,11 @@ namespace DiscImageChef.Filesystems
                     break;
             }
 
-            if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.volume_name, currentEncoding)))
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.volume_name, Encoding)))
             {
-                sb.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(supblk.volume_name, currentEncoding))
+                sb.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(supblk.volume_name, Encoding))
                   .AppendLine();
-                xmlFsType.VolumeName = StringHandlers.CToString(supblk.volume_name, currentEncoding);
+                XmlFsType.VolumeName = StringHandlers.CToString(supblk.volume_name, Encoding);
             }
 
             switch(supblk.err_behaviour)
@@ -456,15 +453,15 @@ namespace DiscImageChef.Filesystems
             if(supblk.uuid != Guid.Empty)
             {
                 sb.AppendFormat("Volume UUID: {0}", supblk.uuid).AppendLine();
-                xmlFsType.VolumeSerial = supblk.uuid.ToString();
+                XmlFsType.VolumeSerial = supblk.uuid.ToString();
             }
 
             if(supblk.kbytes_written > 0)
                 sb.AppendFormat("{0} KiB has been written on volume", supblk.kbytes_written).AppendLine();
 
             sb.AppendFormat("{0} reserved and {1} free blocks", reserved, free).AppendLine();
-            xmlFsType.FreeClusters = (long)free;
-            xmlFsType.FreeClustersSpecified = true;
+            XmlFsType.FreeClusters = (long)free;
+            XmlFsType.FreeClustersSpecified = true;
             sb.AppendFormat("{0} inodes with {1} free inodes ({2}%)", supblk.inodes, supblk.free_inodes,
                             supblk.free_inodes * 100 / supblk.inodes).AppendLine();
             if(supblk.first_inode > 0) sb.AppendFormat("First inode is {0}", supblk.first_inode).AppendLine();

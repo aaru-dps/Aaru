@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -53,11 +52,8 @@ namespace DiscImageChef.Filesystems
         const uint HAMMER_VOLHDR_SIZE = 1928;
         const int HAMMER_BIGBLOCK_SIZE = 8192 * 1024;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "HAMMER Filesystem";
         public Guid Id => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
 
@@ -78,9 +74,10 @@ namespace DiscImageChef.Filesystems
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -111,8 +108,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume version: {0}", hammerSb.vol_version).AppendLine();
             sb.AppendFormat("Volume {0} of {1} on this filesystem", hammerSb.vol_no + 1, hammerSb.vol_count)
               .AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammerSb.vol_label, currentEncoding))
-              .AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammerSb.vol_label, Encoding)).AppendLine();
             sb.AppendFormat("Volume serial: {0}", hammerSb.vol_fsid).AppendLine();
             sb.AppendFormat("Filesystem type: {0}", hammerSb.vol_fstype).AppendLine();
             sb.AppendFormat("Boot area starts at {0}", hammerSb.vol_bot_beg).AppendLine();
@@ -120,13 +116,13 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("First volume buffer starts at {0}", hammerSb.vol_buf_beg).AppendLine();
             sb.AppendFormat("Volume ends at {0}", hammerSb.vol_buf_end).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Clusters = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
                 ClusterSize = HAMMER_BIGBLOCK_SIZE,
                 Dirty = false,
                 Type = "HAMMER",
-                VolumeName = StringHandlers.CToString(hammerSb.vol_label, currentEncoding),
+                VolumeName = StringHandlers.CToString(hammerSb.vol_label, Encoding),
                 VolumeSerial = hammerSb.vol_fsid.ToString()
             };
 
@@ -138,11 +134,11 @@ namespace DiscImageChef.Filesystems
                                 hammerSb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
                 sb.AppendFormat("Filesystem has {0} inode used", hammerSb.vol0_stat_inodes).AppendLine();
 
-                xmlFsType.Clusters = hammerSb.vol0_stat_bigblocks;
-                xmlFsType.FreeClusters = hammerSb.vol0_stat_freebigblocks;
-                xmlFsType.FreeClustersSpecified = true;
-                xmlFsType.Files = hammerSb.vol0_stat_inodes;
-                xmlFsType.FilesSpecified = true;
+                XmlFsType.Clusters = hammerSb.vol0_stat_bigblocks;
+                XmlFsType.FreeClusters = hammerSb.vol0_stat_freebigblocks;
+                XmlFsType.FreeClustersSpecified = true;
+                XmlFsType.Files = hammerSb.vol0_stat_inodes;
+                XmlFsType.FilesSpecified = true;
             }
             // 0 ?
             //sb.AppendFormat("Volume header CRC: 0x{0:X8}", afs_sb.vol_crc).AppendLine();

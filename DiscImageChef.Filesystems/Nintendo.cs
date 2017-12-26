@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -42,11 +41,8 @@ namespace DiscImageChef.Filesystems
 {
     public class NintendoPlugin : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Nintendo optical filesystems";
         public Guid Id => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
 
@@ -66,12 +62,13 @@ namespace DiscImageChef.Filesystems
             return magicGc == 0xC2339F3D || magicWii == 0x5D1C9EA3;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
+            Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
             StringBuilder sbInformation = new StringBuilder();
             information = "";
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             NintendoFields fields = new NintendoFields();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -97,7 +94,7 @@ namespace DiscImageChef.Filesystems
             fields.StreamBufferSize = header[9];
             byte[] temp = new byte[64];
             Array.Copy(header, 0x20, temp, 0, 64);
-            fields.Title = StringHandlers.CToString(temp, currentEncoding);
+            fields.Title = StringHandlers.CToString(temp, Encoding);
 
             if(!wii)
             {
@@ -291,12 +288,12 @@ namespace DiscImageChef.Filesystems
                              .AppendLine();
 
             information = sbInformation.ToString();
-            xmlFsType.Bootable = true;
-            xmlFsType.Clusters = (long)(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048);
-            xmlFsType.ClusterSize = 2048;
-            xmlFsType.Type = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
-            xmlFsType.VolumeName = fields.Title;
-            xmlFsType.VolumeSerial = fields.DiscId;
+            XmlFsType.Bootable = true;
+            XmlFsType.Clusters = (long)(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048);
+            XmlFsType.ClusterSize = 2048;
+            XmlFsType.Type = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
+            XmlFsType.VolumeName = fields.Title;
+            XmlFsType.VolumeSerial = fields.DiscId;
         }
 
         static string DiscTypeToString(string discType)

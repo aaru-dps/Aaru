@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -63,11 +62,8 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const uint MUPFS_DISK = 0x6D755046;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Professional File System";
         public Guid Id => new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
 
@@ -85,30 +81,31 @@ namespace DiscImageChef.Filesystems
                    magic == MUPFS_DISK;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] rootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
             RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
             StringBuilder sbInformation = new StringBuilder();
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             switch(rootBlock.diskType)
             {
                 case AFS_DISK:
                 case MUAF_DISK:
                     sbInformation.Append("Professional File System v1");
-                    xmlFsType.Type = "PFS v1";
+                    XmlFsType.Type = "PFS v1";
                     break;
                 case PFS2_DISK:
                     sbInformation.Append("Professional File System v2");
-                    xmlFsType.Type = "PFS v2";
+                    XmlFsType.Type = "PFS v2";
                     break;
                 case PFS_DISK:
                 case MUPFS_DISK:
                     sbInformation.Append("Professional File System v3");
-                    xmlFsType.Type = "PFS v3";
+                    XmlFsType.Type = "PFS v3";
                     break;
             }
 
@@ -117,9 +114,8 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine();
 
-            sbInformation
-                .AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, currentEncoding))
-                .AppendLine();
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, Encoding))
+                         .AppendLine();
             sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize)
                          .AppendLine();
             sbInformation.AppendFormat("Volume created on {0}",
@@ -131,14 +127,14 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFsType.CreationDate =
+            XmlFsType.CreationDate =
                 DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
-            xmlFsType.CreationDateSpecified = true;
-            xmlFsType.FreeClusters = rootBlock.blocksfree;
-            xmlFsType.FreeClustersSpecified = true;
-            xmlFsType.Clusters = rootBlock.diskSize;
-            xmlFsType.ClusterSize = (int)imagePlugin.Info.SectorSize;
-            xmlFsType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, currentEncoding);
+            XmlFsType.CreationDateSpecified = true;
+            XmlFsType.FreeClusters = rootBlock.blocksfree;
+            XmlFsType.FreeClustersSpecified = true;
+            XmlFsType.Clusters = rootBlock.diskSize;
+            XmlFsType.ClusterSize = (int)imagePlugin.Info.SectorSize;
+            XmlFsType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
         }
 
         /// <summary>

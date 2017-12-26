@@ -51,7 +51,6 @@ namespace DiscImageChef.Filesystems.CPM
         /// </summary>
         FileSystemInfo cpmStat;
 
-        Encoding currentEncoding;
         /// <summary>
         ///     Cached file passwords, decoded
         /// </summary>
@@ -112,9 +111,9 @@ namespace DiscImageChef.Filesystems.CPM
         ///     If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it
         /// </summary>
         CpmDefinition workingDefinition;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-        public Encoding Encoding => currentEncoding;
+
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "CP/M File System";
         public Guid Id => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
     }

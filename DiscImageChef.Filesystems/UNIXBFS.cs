@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -45,11 +44,8 @@ namespace DiscImageChef.Filesystems
     {
         const uint BFS_MAGIC = 0x1BADFACE;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "UNIX Boot filesystem";
         public Guid Id => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
 
@@ -64,9 +60,10 @@ namespace DiscImageChef.Filesystems
             return magic == BFS_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -85,9 +82,9 @@ namespace DiscImageChef.Filesystems
             };
 
             Array.Copy(bfsSbSector, 0x1C, sbStrings, 0, 6);
-            bfsSb.s_fsname = StringHandlers.CToString(sbStrings, currentEncoding);
+            bfsSb.s_fsname = StringHandlers.CToString(sbStrings, Encoding);
             Array.Copy(bfsSbSector, 0x22, sbStrings, 0, 6);
-            bfsSb.s_volume = StringHandlers.CToString(sbStrings, currentEncoding);
+            bfsSb.s_volume = StringHandlers.CToString(sbStrings, Encoding);
 
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
@@ -105,7 +102,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Filesystem name: {0}", bfsSb.s_fsname).AppendLine();
             sb.AppendFormat("Volume name: {0}", bfsSb.s_volume).AppendLine();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "BFS",
                 VolumeName = bfsSb.s_volume,

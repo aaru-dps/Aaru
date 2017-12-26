@@ -51,8 +51,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             device = imagePlugin;
             start = partition.Start;
             // TODO: Until Apple ][ encoding is implemented
-            currentEncoding = new LisaRoman();
-            
+            Encoding = new LisaRoman();
+
             if(device.Info.Sectors != 455 && device.Info.Sectors != 560)
             {
                 DicConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
@@ -100,7 +100,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             }
 
             // Create XML metadata for mounted filesystem
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = true,
                 Clusters = (long)device.Info.Sectors,
@@ -110,7 +110,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 FreeClustersSpecified = true,
                 Type = "Apple DOS"
             };
-            xmlFsType.FreeClusters = xmlFsType.Clusters - usedSectors;
+            XmlFsType.FreeClusters = XmlFsType.Clusters - usedSectors;
 
             this.debug = debug;
             mounted = true;

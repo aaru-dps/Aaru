@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -44,11 +43,8 @@ namespace DiscImageChef.Filesystems
     // TODO: Implement Radix-50
     public class RT11 : IFilesystem
     {
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "RT-11 file system";
         public Guid Id => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
 
@@ -67,9 +63,10 @@ namespace DiscImageChef.Filesystems
             return magic == "DECRT11A    ";
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -93,25 +90,25 @@ namespace DiscImageChef.Filesystems
             ushort check = 0;
             for(int i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hbSector, i);
 
-            sb.AppendFormat("Volume format is {0}",
-                            StringHandlers.SpacePaddedToString(homeblock.format, currentEncoding)).AppendLine();
+            sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, Encoding))
+              .AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512)
               .AppendLine();
             sb.AppendFormat("First directory segment starts at block {0}", homeblock.rootBlock).AppendLine();
             sb.AppendFormat("Volume owner is \"{0}\"",
-                            StringHandlers.SpacePaddedToString(homeblock.ownername, currentEncoding)).AppendLine();
-            sb.AppendFormat("Volume label: \"{0}\"",
-                            StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.ownername, Encoding)).AppendLine();
+            sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.SpacePaddedToString(homeblock.volname, Encoding))
+              .AppendLine();
             sb.AppendFormat("Checksum: 0x{0:X4} (calculated 0x{1:X4})", homeblock.checksum, check).AppendLine();
 
             byte[] bootBlock = imagePlugin.ReadSector(0);
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "RT-11",
                 ClusterSize = homeblock.cluster * 512,
                 Clusters = homeblock.cluster,
-                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding),
+                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
             };
 

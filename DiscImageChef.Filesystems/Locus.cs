@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -68,11 +67,8 @@ namespace DiscImageChef.Filesystems
         const uint Locus_OldMagic = 0xFFEEDDCC;
         const uint Locus_OldCigam = 0xCCDDEEFF;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Locus Filesystem Plugin";
         public Guid Id => new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
 
@@ -106,9 +102,10 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -149,8 +146,8 @@ namespace DiscImageChef.Filesystems
 
             int blockSize = LocusSb.s_version == LocusVersion.SB_SB4096 ? 4096 : 1024;
 
-            string s_fsmnt = StringHandlers.CToString(LocusSb.s_fsmnt, currentEncoding);
-            string s_fpack = StringHandlers.CToString(LocusSb.s_fpack, currentEncoding);
+            string s_fsmnt = StringHandlers.CToString(LocusSb.s_fsmnt, Encoding);
+            string s_fpack = StringHandlers.CToString(LocusSb.s_fpack, Encoding);
 
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_magic = 0x{0:X8}", LocusSb.s_magic);
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_gfs = {0}", LocusSb.s_gfs);
@@ -203,7 +200,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Locus filesystem",
                 ClusterSize = blockSize,

@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Claunia.Encoding;
@@ -84,11 +83,8 @@ namespace DiscImageChef.Filesystems
         const byte ENTRY_LENGTH = 0x27;
         const byte ENTRIES_PER_BLOCK = 0x0D;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Apple ProDOS filesystem";
         public Guid Id => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
 
@@ -154,10 +150,11 @@ namespace DiscImageChef.Filesystems
             return totalBlocks <= partition.End - partition.Start + 1;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
             // TODO: Until Apple ][ encoding is implemented
-            currentEncoding = new LisaRoman();
+            Encoding = new LisaRoman();
             StringBuilder sbInformation = new StringBuilder();
 
             // Blocks 0 and 1 are boot code
@@ -201,7 +198,7 @@ namespace DiscImageChef.Filesystems
             rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & NAME_LENGTH_MASK);
             byte[] temporal = new byte[rootDirectoryKeyBlock.header.name_length];
             Array.Copy(rootDirectoryKeyBlockBytes, 0x05, temporal, 0, rootDirectoryKeyBlock.header.name_length);
-            rootDirectoryKeyBlock.header.volume_name = currentEncoding.GetString(temporal);
+            rootDirectoryKeyBlock.header.volume_name = Encoding.GetString(temporal);
             rootDirectoryKeyBlock.header.reserved = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
 
             ushort tempTimestampLeft = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
@@ -296,19 +293,19 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType();
-            xmlFsType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
+            XmlFsType = new FileSystemType();
+            XmlFsType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
             if(dateCorrect)
             {
-                xmlFsType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
+                XmlFsType.CreationDateSpecified = true;
             }
-            xmlFsType.Files = rootDirectoryKeyBlock.header.file_count;
-            xmlFsType.FilesSpecified = true;
-            xmlFsType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            xmlFsType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                          (ulong)xmlFsType.Clusters);
-            xmlFsType.Type = "ProDOS";
+            XmlFsType.Files = rootDirectoryKeyBlock.header.file_count;
+            XmlFsType.FilesSpecified = true;
+            XmlFsType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
+            XmlFsType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                          (ulong)XmlFsType.Clusters);
+            XmlFsType.Type = "ProDOS";
         }
 
         /// <summary>

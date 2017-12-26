@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -47,11 +46,9 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const uint CRAM_MAGIC = 0x28CD3D45;
         const uint CRAM_CIGAM = 0x453DCD28;
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "Cram filesystem";
         public Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
 
@@ -66,9 +63,10 @@ namespace DiscImageChef.Filesystems
             return magic == CRAM_MAGIC || magic == CRAM_CIGAM;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -94,17 +92,16 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendLine("Cram file system");
             sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
             sbInformation.AppendFormat("Volume edition {0}", crSb.edition).AppendLine();
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, currentEncoding))
-                         .AppendLine();
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, Encoding)).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", crSb.size).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", crSb.blocks).AppendLine();
             sbInformation.AppendFormat("Volume has {0} files", crSb.files).AppendLine();
 
             information = sbInformation.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
-                VolumeName = StringHandlers.CToString(crSb.name, currentEncoding),
+                VolumeName = StringHandlers.CToString(crSb.name, Encoding),
                 Type = "Cram file system",
                 Clusters = crSb.blocks,
                 Files = crSb.files,

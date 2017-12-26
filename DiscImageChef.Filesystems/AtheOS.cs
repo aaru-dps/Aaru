@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -49,11 +48,9 @@ namespace DiscImageChef.Filesystems
         // Common constants
         const uint AFS_SUPERBLOCK_SIZE = 1024;
         const uint AFS_BOOTBLOCK_SIZE = AFS_SUPERBLOCK_SIZE;
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "AtheOS Filesystem";
         public Guid Id => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
 
@@ -80,9 +77,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -107,7 +104,7 @@ namespace DiscImageChef.Filesystems
 
             if(afsSb.flags == 1) sb.AppendLine("Filesystem is read-only");
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, currentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, Encoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", afsSb.block_size).AppendLine();
             sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks, afsSb.num_blocks * afsSb.block_size)
               .AppendLine();
@@ -139,7 +136,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Clusters = afsSb.num_blocks,
                 ClusterSize = (int)afsSb.block_size,
@@ -147,7 +144,7 @@ namespace DiscImageChef.Filesystems
                 FreeClusters = afsSb.num_blocks - afsSb.used_blocks,
                 FreeClustersSpecified = true,
                 Type = "AtheOS filesystem",
-                VolumeName = StringHandlers.CToString(afsSb.name, currentEncoding)
+                VolumeName = StringHandlers.CToString(afsSb.name, Encoding)
             };
         }
 

@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -49,13 +48,11 @@ namespace DiscImageChef.Filesystems
         ///     ext superblock magic
         /// </summary>
         const ushort EXT_MAGIC = 0x137D;
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
 
+        public FileSystemType XmlFsType { get; private set; }
         public string Name => "Linux extended Filesystem";
         public Guid Id => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
-        public Encoding Encoding => currentEncoding;
+        public Encoding Encoding { get; private set; }
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -76,9 +73,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -118,7 +115,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Log zone size: {0}", extSb.logzonesize);
             sb.AppendFormat("Max zone size: {0}", extSb.maxsize);
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "ext",
                 FreeClusters = extSb.freecountblk,

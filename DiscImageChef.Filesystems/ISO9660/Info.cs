@@ -77,9 +77,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                    Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.ASCII;
+            Encoding = encoding ?? Encoding.ASCII;
             information = "";
             StringBuilder isoMetadata = new StringBuilder();
             byte[] vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
@@ -105,7 +106,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             byte[] vdSector = imagePlugin.ReadSector(16 + counter + partition.Start);
             int xaOff = vdSector.Length == 2336 ? 8 : 0;
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
-            bool highSierra = currentEncoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
+            bool highSierra = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
             int hsOff = 0;
             if(highSierra) hsOff = 8;
             bool cdi = false;
@@ -132,9 +133,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 Array.Copy(vdSector, 0x001, vdMagic, 0, 5);
                 Array.Copy(vdSector, 0x009, hsMagic, 0, 5);
 
-                if(currentEncoding.GetString(vdMagic) != ISO_MAGIC &&
-                   currentEncoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
-                   currentEncoding.GetString(vdMagic) != CDI_MAGIC
+                if(Encoding.GetString(vdMagic) != ISO_MAGIC && Encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
+                   Encoding.GetString(vdMagic) != CDI_MAGIC
                 ) // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0) return;
@@ -142,7 +142,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     break;
                 }
 
-                cdi |= currentEncoding.GetString(vdMagic) == CDI_MAGIC;
+                cdi |= Encoding.GetString(vdMagic) == CDI_MAGIC;
 
                 switch(vdType)
                 {
@@ -155,7 +155,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         bootSpec = "Unknown";
 
-                        if(currentEncoding.GetString(bvd.Value.system_id).Substring(0, 23) == "EL TORITO SPECIFICATION")
+                        if(Encoding.GetString(bvd.Value.system_id).Substring(0, 23) == "EL TORITO SPECIFICATION")
                         {
                             bootSpec = "El Torito";
                             ptr = Marshal.AllocHGlobal(2048);
@@ -214,7 +214,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             DecodedVolumeDescriptor decodedVd;
             DecodedVolumeDescriptor decodedJolietVd = new DecodedVolumeDescriptor();
 
-            xmlFsType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             if(pvd == null && hsvd == null && fsvd == null)
             {
@@ -449,10 +449,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 foreach(byte[] erb in refareas)
                 {
                     ReferenceArea er = BigEndianMarshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
-                    string extId = currentEncoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
-                    string extDes = currentEncoding.GetString(erb, Marshal.SizeOf(er) + er.id_len, er.des_len);
-                    string extSrc =
-                        currentEncoding.GetString(erb, Marshal.SizeOf(er) + er.id_len + er.des_len, er.src_len);
+                    string extId = Encoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
+                    string extDes = Encoding.GetString(erb, Marshal.SizeOf(er) + er.id_len, er.des_len);
+                    string extSrc = Encoding.GetString(erb, Marshal.SizeOf(er) + er.id_len + er.des_len, er.src_len);
                     suspInformation.AppendFormat("Extension: {0}", counter).AppendLine();
                     suspInformation.AppendFormat("\tID: {0}, version {1}", extId, er.ext_ver).AppendLine();
                     suspInformation.AppendFormat("\tDescription: {0}", extDes).AppendLine();
@@ -582,8 +581,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 isoMetadata.AppendLine("----------------------");
 
                 isoMetadata.AppendLine("Initial entry:");
-                isoMetadata.AppendFormat("\tDeveloper ID: {0}", currentEncoding.GetString(valentry.developer_id))
-                           .AppendLine();
+                isoMetadata.AppendFormat("\tDeveloper ID: {0}", Encoding.GetString(valentry.developer_id)).AppendLine();
                 if(initialEntry.bootable == ElToritoIndicator.Bootable)
                 {
                     isoMetadata.AppendFormat("\tBootable on {0}", valentry.platform_id).AppendLine();
@@ -637,7 +635,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     toritoOff += EL_TORITO_ENTRY_SIZE;
 
                     isoMetadata.AppendFormat("Boot section {0}:", SECTION_COUNTER);
-                    isoMetadata.AppendFormat("\tSection ID: {0}", currentEncoding.GetString(sectionHeader.identifier))
+                    isoMetadata.AppendFormat("\tSection ID: {0}", Encoding.GetString(sectionHeader.identifier))
                                .AppendLine();
 
                     for(int entryCounter = 1; entryCounter <= sectionHeader.entries && toritoOff < vdSector.Length;
@@ -725,85 +723,85 @@ namespace DiscImageChef.Filesystems.ISO9660
             exit_torito:
             if(refareas.Count > 0) isoMetadata.Append(suspInformation);
 
-            xmlFsType.Type = fsFormat;
+            XmlFsType.Type = fsFormat;
 
             if(jolietvd != null)
             {
-                xmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
+                XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
                 if(decodedJolietVd.SystemIdentifier == null ||
                    decodedVd.SystemIdentifier.Length > decodedJolietVd.SystemIdentifier.Length)
-                    xmlFsType.SystemIdentifier = decodedVd.SystemIdentifier;
-                else xmlFsType.SystemIdentifier = decodedJolietVd.SystemIdentifier;
+                    XmlFsType.SystemIdentifier = decodedVd.SystemIdentifier;
+                else XmlFsType.SystemIdentifier = decodedJolietVd.SystemIdentifier;
 
                 if(decodedJolietVd.VolumeSetIdentifier == null || decodedVd.VolumeSetIdentifier.Length >
                    decodedJolietVd.VolumeSetIdentifier.Length)
-                    xmlFsType.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
-                else xmlFsType.VolumeSetIdentifier = decodedJolietVd.VolumeSetIdentifier;
+                    XmlFsType.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
+                else XmlFsType.VolumeSetIdentifier = decodedJolietVd.VolumeSetIdentifier;
 
                 if(decodedJolietVd.PublisherIdentifier == null || decodedVd.PublisherIdentifier.Length >
                    decodedJolietVd.PublisherIdentifier.Length)
-                    xmlFsType.PublisherIdentifier = decodedVd.PublisherIdentifier;
-                else xmlFsType.PublisherIdentifier = decodedJolietVd.PublisherIdentifier;
+                    XmlFsType.PublisherIdentifier = decodedVd.PublisherIdentifier;
+                else XmlFsType.PublisherIdentifier = decodedJolietVd.PublisherIdentifier;
 
                 if(decodedJolietVd.DataPreparerIdentifier == null || decodedVd.DataPreparerIdentifier.Length >
                    decodedJolietVd.DataPreparerIdentifier.Length)
-                    xmlFsType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
-                else xmlFsType.DataPreparerIdentifier = decodedJolietVd.SystemIdentifier;
+                    XmlFsType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
+                else XmlFsType.DataPreparerIdentifier = decodedJolietVd.SystemIdentifier;
 
                 if(decodedJolietVd.ApplicationIdentifier == null || decodedVd.ApplicationIdentifier.Length >
                    decodedJolietVd.ApplicationIdentifier.Length)
-                    xmlFsType.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
-                else xmlFsType.ApplicationIdentifier = decodedJolietVd.SystemIdentifier;
+                    XmlFsType.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
+                else XmlFsType.ApplicationIdentifier = decodedJolietVd.SystemIdentifier;
 
-                xmlFsType.CreationDate = decodedJolietVd.CreationTime;
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = decodedJolietVd.CreationTime;
+                XmlFsType.CreationDateSpecified = true;
                 if(decodedJolietVd.HasModificationTime)
                 {
-                    xmlFsType.ModificationDate = decodedJolietVd.ModificationTime;
-                    xmlFsType.ModificationDateSpecified = true;
+                    XmlFsType.ModificationDate = decodedJolietVd.ModificationTime;
+                    XmlFsType.ModificationDateSpecified = true;
                 }
                 if(decodedJolietVd.HasExpirationTime)
                 {
-                    xmlFsType.ExpirationDate = decodedJolietVd.ExpirationTime;
-                    xmlFsType.ExpirationDateSpecified = true;
+                    XmlFsType.ExpirationDate = decodedJolietVd.ExpirationTime;
+                    XmlFsType.ExpirationDateSpecified = true;
                 }
                 if(decodedJolietVd.HasEffectiveTime)
                 {
-                    xmlFsType.EffectiveDate = decodedJolietVd.EffectiveTime;
-                    xmlFsType.EffectiveDateSpecified = true;
+                    XmlFsType.EffectiveDate = decodedJolietVd.EffectiveTime;
+                    XmlFsType.EffectiveDateSpecified = true;
                 }
             }
             else
             {
-                xmlFsType.SystemIdentifier = decodedVd.SystemIdentifier;
-                xmlFsType.VolumeName = decodedVd.VolumeIdentifier;
-                xmlFsType.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
-                xmlFsType.PublisherIdentifier = decodedVd.PublisherIdentifier;
-                xmlFsType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
-                xmlFsType.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
-                xmlFsType.CreationDate = decodedVd.CreationTime;
-                xmlFsType.CreationDateSpecified = true;
+                XmlFsType.SystemIdentifier = decodedVd.SystemIdentifier;
+                XmlFsType.VolumeName = decodedVd.VolumeIdentifier;
+                XmlFsType.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
+                XmlFsType.PublisherIdentifier = decodedVd.PublisherIdentifier;
+                XmlFsType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
+                XmlFsType.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
+                XmlFsType.CreationDate = decodedVd.CreationTime;
+                XmlFsType.CreationDateSpecified = true;
                 if(decodedVd.HasModificationTime)
                 {
-                    xmlFsType.ModificationDate = decodedVd.ModificationTime;
-                    xmlFsType.ModificationDateSpecified = true;
+                    XmlFsType.ModificationDate = decodedVd.ModificationTime;
+                    XmlFsType.ModificationDateSpecified = true;
                 }
                 if(decodedVd.HasExpirationTime)
                 {
-                    xmlFsType.ExpirationDate = decodedVd.ExpirationTime;
-                    xmlFsType.ExpirationDateSpecified = true;
+                    XmlFsType.ExpirationDate = decodedVd.ExpirationTime;
+                    XmlFsType.ExpirationDateSpecified = true;
                 }
                 if(decodedVd.HasEffectiveTime)
                 {
-                    xmlFsType.EffectiveDate = decodedVd.EffectiveTime;
-                    xmlFsType.EffectiveDateSpecified = true;
+                    XmlFsType.EffectiveDate = decodedVd.EffectiveTime;
+                    XmlFsType.EffectiveDateSpecified = true;
                 }
             }
 
-            xmlFsType.Bootable |= bvd != null || segaCd != null || saturn != null || dreamcast != null;
-            xmlFsType.Clusters = decodedVd.Blocks;
-            xmlFsType.ClusterSize = decodedVd.BlockSize;
+            XmlFsType.Bootable |= bvd != null || segaCd != null || saturn != null || dreamcast != null;
+            XmlFsType.Clusters = decodedVd.Blocks;
+            XmlFsType.ClusterSize = decodedVd.BlockSize;
 
             information = isoMetadata.ToString();
         }

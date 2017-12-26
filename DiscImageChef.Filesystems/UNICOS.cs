@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -57,11 +56,8 @@ namespace DiscImageChef.Filesystems
         const ulong UNICOS_Magic = 0x6e6331667331636e;
         const ulong UNICOS_Secure = 0xcd076d1771d670cd;
 
-        Encoding currentEncoding;
-        FileSystemType xmlFsType;
-        public FileSystemType XmlFsType => xmlFsType;
-
-        public Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType { get; private set; }
+        public Encoding Encoding { get; private set; }
         public string Name => "UNICOS Filesystem Plugin";
         public Guid Id => new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
 
@@ -85,9 +81,10 @@ namespace DiscImageChef.Filesystems
             return unicosSb.s_magic == UNICOS_Magic;
         }
 
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                   Encoding encoding)
         {
-            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -116,21 +113,20 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume last updated on {0}", DateHandlers.UnixToDateTime(unicosSb.s_time)).AppendLine();
             if(unicosSb.s_error > 0)
                 sb.AppendFormat("Volume is dirty, error code = 0x{0:X16}", unicosSb.s_error).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(unicosSb.s_fname, currentEncoding))
-              .AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(unicosSb.s_fname, Encoding)).AppendLine();
 
             information = sb.ToString();
 
-            xmlFsType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "UNICOS filesystem",
                 ClusterSize = 4096,
                 Clusters = unicosSb.s_fsize,
-                VolumeName = StringHandlers.CToString(unicosSb.s_fname, currentEncoding),
+                VolumeName = StringHandlers.CToString(unicosSb.s_fname, Encoding),
                 ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time),
                 ModificationDateSpecified = true
             };
-            xmlFsType.Dirty |= unicosSb.s_error > 0;
+            XmlFsType.Dirty |= unicosSb.s_error > 0;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
