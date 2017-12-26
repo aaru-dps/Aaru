@@ -40,7 +40,7 @@ using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    public partial class AppleDOS : IFilesystem
+    public partial class AppleDOS : IReadOnlyFilesystem
     {
         IMediaImage device;
         Encoding currentEncoding;

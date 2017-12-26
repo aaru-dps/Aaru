@@ -134,7 +134,7 @@ namespace DiscImageChef.Commands
                 Core.Partitions.AddSchemesToStats(partitions);
 
                 List<string> idPlugins;
-                IFilesystem plugin;
+                IReadOnlyFilesystem plugin;
                 Errno error;
                 if(partitions.Count == 0) DicConsole.DebugWriteLine("Extract-Files command", "No partitions found");
                 else
@@ -155,10 +155,10 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                             foreach(string pluginName in idPlugins)
-                                if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
                                 {
                                     DicConsole.WriteLine($"As identified by {plugin.Name}.");
-                                    IFilesystem fs = (IFilesystem)plugin
+                                    IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                         .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
 
                                     error = fs.Mount(imageFormat, partitions[i], encoding, options.Debug);
@@ -307,9 +307,9 @@ namespace DiscImageChef.Commands
                         }
                         else
                         {
-                            plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                            plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
                             DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                            IFilesystem fs = (IFilesystem)plugin
+                            IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                 .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                             error = fs.Mount(imageFormat, partitions[i], encoding, options.Debug);
                             if(error == Errno.NoError)
@@ -462,10 +462,10 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                     foreach(string pluginName in idPlugins)
-                        if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                        if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
                         {
                             DicConsole.WriteLine($"As identified by {plugin.Name}.");
-                            IFilesystem fs = (IFilesystem)plugin
+                            IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                 .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                             error = fs.Mount(imageFormat, wholePart, encoding, options.Debug);
                             if(error == Errno.NoError)
@@ -604,9 +604,9 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                    plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
                     DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                    IFilesystem fs = (IFilesystem)plugin
+                    IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                         .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     error = fs.Mount(imageFormat, wholePart, encoding, options.Debug);
                     if(error == Errno.NoError)

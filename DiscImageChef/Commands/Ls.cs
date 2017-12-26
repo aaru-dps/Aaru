@@ -121,7 +121,7 @@ namespace DiscImageChef.Commands
                 Core.Partitions.AddSchemesToStats(partitions);
 
                 List<string> idPlugins;
-                IFilesystem plugin;
+                IReadOnlyFilesystem plugin;
                 Errno error;
                 if(partitions.Count == 0) DicConsole.DebugWriteLine("Ls command", "No partitions found");
                 else
@@ -142,10 +142,10 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                             foreach(string pluginName in idPlugins)
-                                if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
                                 {
                                     DicConsole.WriteLine($"As identified by {plugin.Name}.");
-                                    IFilesystem fs = (IFilesystem)plugin
+                                    IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                         .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
 
                                     if(fs == null) continue;
@@ -170,11 +170,11 @@ namespace DiscImageChef.Commands
                         }
                         else
                         {
-                            plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                            plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
                             if(plugin == null) continue;
 
                             DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                            IFilesystem fs = (IFilesystem)plugin
+                            IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                 .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                             if(fs == null) continue;
 
@@ -209,10 +209,10 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                     foreach(string pluginName in idPlugins)
-                        if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                        if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
                         {
                             DicConsole.WriteLine($"As identified by {plugin.Name}.");
-                            IFilesystem fs = (IFilesystem)plugin
+                            IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                 .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                             if(fs == null) continue;
 
@@ -233,11 +233,11 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                    plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
                     if(plugin != null)
                     {
                         DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                        IFilesystem fs = (IFilesystem)plugin
+                        IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                             .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                         if(fs != null)
                         {

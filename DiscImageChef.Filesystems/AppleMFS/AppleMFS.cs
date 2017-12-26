@@ -40,7 +40,7 @@ using Schemas;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS : IFilesystem
+    public partial class AppleMFS : IReadOnlyFilesystem
     {
         bool mounted;
         bool debug;

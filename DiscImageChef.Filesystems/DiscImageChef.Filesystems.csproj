@@ -38,6 +38,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IReadOnlyFilesystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AmigaDOS.cs" />
     <Compile Include="AppleHFS.cs" />
@@ -137,13 +138,8 @@
     <Compile Include="Locus.cs" />
     <Compile Include="dump.cs" />
     <Compile Include="MicroDOS.cs" />
-    <Compile Include="ISO9660\Dir.cs" />
-    <Compile Include="ISO9660\File.cs" />
     <Compile Include="ISO9660\Info.cs" />
     <Compile Include="ISO9660\ISO9660.cs" />
-    <Compile Include="ISO9660\Xattr.cs" />
-    <Compile Include="ISO9660\Extent.cs" />
-    <Compile Include="ISO9660\Super.cs" />
     <Compile Include="ISO9660\Structs\ISO.cs" />
     <Compile Include="ISO9660\Structs\RRIP.cs" />
     <Compile Include="ISO9660\Structs\SUSP.cs" />

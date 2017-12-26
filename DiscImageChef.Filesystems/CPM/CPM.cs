@@ -39,7 +39,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : IFilesystem
+    partial class CPM : IReadOnlyFilesystem
     {
         /// <summary>
         ///     True if <see cref="Identify" /> thinks this is a CP/M filesystem

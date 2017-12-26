@@ -148,61 +148,6 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno ReadDir(string path, ref List<string> contents)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno ReadLink(string path, ref string dest)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno StatFs(ref FileSystemInfo stat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Errno Unmount()
-        {
-            throw new NotImplementedException();
-        }
-
         [Flags]
         enum VolumeFlags : ushort
         {

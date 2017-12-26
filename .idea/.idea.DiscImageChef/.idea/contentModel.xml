@@ -506,6 +506,7 @@
         <e p="HAMMER.cs" t="Include" />
         <e p="HPFS.cs" t="Include" />
         <e p="IFilesystem.cs" t="Include" />
+        <e p="IReadOnlyFilesystem.cs" t="Include" />
         <e p="ISO9660" t="Include">
           <e p="Consts" t="Include">
             <e p="AAIP.cs" t="Include" />
@@ -520,9 +521,6 @@
             <e p="XA.cs" t="Include" />
             <e p="Ziso.cs" t="Include" />
           </e>
-          <e p="Dir.cs" t="Include" />
-          <e p="Extent.cs" t="Include" />
-          <e p="File.cs" t="Include" />
           <e p="ISO9660.cs" t="Include" />
           <e p="Info.cs" t="Include" />
           <e p="Structs" t="Include">
@@ -539,8 +537,6 @@
             <e p="XA.cs" t="Include" />
             <e p="Ziso.cs" t="Include" />
           </e>
-          <e p="Super.cs" t="Include" />
-          <e p="Xattr.cs" t="Include" />
         </e>
         <e p="JFS.cs" t="Include" />
         <e p="LIF.cs" t="Include" />

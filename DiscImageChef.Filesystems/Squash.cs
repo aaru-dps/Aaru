@@ -143,61 +143,6 @@ namespace DiscImageChef.Filesystems
             };
         }
 
-        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public virtual Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
-        }
-
         enum SquashCompression : ushort
         {
             Zlib = 1,

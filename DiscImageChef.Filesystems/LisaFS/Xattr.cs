@@ -190,7 +190,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <returns>Error number.</returns>
         /// <param name="tag">Sector tag.</param>
         /// <param name="decoded">Decoded sector tag.</param>
-        Errno DecodeTag(byte[] tag, out LisaTag.PriamTag decoded)
+        static Errno DecodeTag(byte[] tag, out LisaTag.PriamTag decoded)
         {
             decoded = new LisaTag.PriamTag();
             LisaTag.PriamTag? pmTag = LisaTag.DecodeTag(tag);

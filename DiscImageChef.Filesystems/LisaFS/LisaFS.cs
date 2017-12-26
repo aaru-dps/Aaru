@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     // All information by Natalia Portillo
     // Variable names from Lisa API
-    public partial class LisaFS : IFilesystem
+    public partial class LisaFS : IReadOnlyFilesystem
     {
         IMediaImage device;
         Encoding currentEncoding;

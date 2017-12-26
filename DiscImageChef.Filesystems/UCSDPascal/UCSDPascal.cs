@@ -41,7 +41,7 @@ using Encoding = System.Text.Encoding;
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin : IFilesystem
+    public partial class PascalPlugin : IReadOnlyFilesystem
     {
         IMediaImage device;
         byte[] bootBlocks;
