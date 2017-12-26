@@ -153,8 +153,7 @@ namespace DiscImageChef.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            // TODO: Until Apple ][ encoding is implemented
-            Encoding = new LisaRoman();
+            Encoding = encoding ?? new Apple2gs();
             StringBuilder sbInformation = new StringBuilder();
 
             // Blocks 0 and 1 are boot code

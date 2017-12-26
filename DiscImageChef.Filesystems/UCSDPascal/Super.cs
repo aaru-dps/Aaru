@@ -46,8 +46,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             device = imagePlugin;
-            // TODO: Until Apple ][ encoding is implemented
-            Encoding = new LisaRoman();
+            Encoding = encoding ?? new Apple2();
             this.debug = debug;
             if(device.Info.Sectors < 3) return Errno.InvalidArgument;
 

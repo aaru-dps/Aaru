@@ -66,8 +66,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            // TODO: Until Apple ][ encoding is implemented
-            Encoding = new LisaRoman();
+            Encoding = encoding ?? new Apple2();
             information = "";
             StringBuilder sb = new StringBuilder();
 

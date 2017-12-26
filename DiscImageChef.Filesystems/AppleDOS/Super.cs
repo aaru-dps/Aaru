@@ -50,8 +50,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             device = imagePlugin;
             start = partition.Start;
-            // TODO: Until Apple ][ encoding is implemented
-            Encoding = new LisaRoman();
+            Encoding = encoding ?? new Apple2();
 
             if(device.Info.Sectors != 455 && device.Info.Sectors != 560)
             {

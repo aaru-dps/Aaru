@@ -600,7 +600,6 @@
         <e p="ext2FS.cs" t="Include" />
         <e p="extFS.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Filters" t="IncludeRecursive">
         <e p="AppleDouble.cs" t="Include" />
