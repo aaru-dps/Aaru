@@ -240,7 +240,7 @@ namespace DiscImageChef.Filesystems
                 bool equalFatIds = fat1Sector0[0] == fat2Sector0[0] && fat1Sector0[1] == fat2Sector0[1];
                 // Volume is software interleaved 2:1
                 MemoryStream rootMs = new MemoryStream();
-                foreach(byte[] tmp in from ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20}
+                foreach(byte[] tmp in from ulong rootSector in new ulong[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20}
                                       select imagePlugin.ReadSector(rootSector)) rootMs.Write(tmp, 0, tmp.Length);
 
                 byte[] rootDir = rootMs.ToArray();
