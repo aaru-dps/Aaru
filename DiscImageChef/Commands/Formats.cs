@@ -45,7 +45,6 @@ namespace DiscImageChef.Commands
         internal static void ListFormats(FormatsOptions formatsOptions)
         {
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
             FiltersList filtersList = new FiltersList();
 
             DicConsole.WriteLine("Supported filters:");

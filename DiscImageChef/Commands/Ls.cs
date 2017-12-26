@@ -74,7 +74,6 @@ namespace DiscImageChef.Commands
                 }
 
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
 
             try
             {

@@ -53,7 +53,6 @@ namespace DiscImageChef.Core
         {
             CICMMetadataType sidecar = new CICMMetadataType();
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
 
             FileInfo fi = new FileInfo(imagePath);
             FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);

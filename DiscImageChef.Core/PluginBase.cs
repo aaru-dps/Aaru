@@ -50,15 +50,15 @@ namespace DiscImageChef.Core
         /// <summary>
         ///     List of all media image plugins
         /// </summary>
-        public SortedDictionary<string, IMediaImage> ImagePluginsList;
+        public readonly SortedDictionary<string, IMediaImage> ImagePluginsList;
         /// <summary>
         ///     List of all partition plugins
         /// </summary>
-        public SortedDictionary<string, IPartition> PartPluginsList;
+        public readonly SortedDictionary<string, IPartition> PartPluginsList;
         /// <summary>
         ///     List of all filesystem plugins
         /// </summary>
-        public SortedDictionary<string, IFilesystem> PluginsList;
+        public readonly SortedDictionary<string, IFilesystem> PluginsList;
 
         /// <summary>
         ///     Initializes the plugins lists
@@ -68,13 +68,7 @@ namespace DiscImageChef.Core
             PluginsList = new SortedDictionary<string, IFilesystem>();
             PartPluginsList = new SortedDictionary<string, IPartition>();
             ImagePluginsList = new SortedDictionary<string, IMediaImage>();
-        }
-
-        /// <summary>
-        ///     Fills the plugins lists
-        /// </summary>
-        public void RegisterAllPlugins()
-        {
+            
             Assembly assembly = Assembly.GetAssembly(typeof(IMediaImage));
 
             foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMediaImage))))

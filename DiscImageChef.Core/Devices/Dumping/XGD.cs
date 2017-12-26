@@ -794,7 +794,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
             FiltersList filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(outputPrefix + ".iso");
 

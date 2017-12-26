@@ -50,7 +50,6 @@ namespace DiscImageChef.Core
             try
             {
                 PluginBase plugins = new PluginBase();
-                plugins.RegisterAllPlugins();
 
                 IMediaImage imageFormat = null;
 

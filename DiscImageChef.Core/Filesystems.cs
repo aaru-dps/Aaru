@@ -49,7 +49,6 @@ namespace DiscImageChef.Core
         public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition)
         {
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
 
             idPlugins = (from plugin in plugins.PluginsList.Values
                          where plugin.Identify(imagePlugin, partition)
