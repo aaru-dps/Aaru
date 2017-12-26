@@ -38,13 +38,15 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
+            deviceBlock = 0;
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
-        public Errno GetAttributes(string path, ref FileAttributes attributes)
+        public Errno GetAttributes(string path, out FileAttributes attributes)
         {
+            attributes = new FileAttributes();
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -54,7 +56,6 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             if(error != Errno.NoError) return error;
 
-            attributes = new FileAttributes();
             attributes = FileAttributes.File;
 
             return error;
@@ -94,11 +95,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
-        public Errno Stat(string path, ref FileEntryInfo stat)
+        public Errno Stat(string path, out FileEntryInfo stat)
         {
-            if(!mounted) return Errno.AccessDenied;
-
-            if(!mounted) return Errno.AccessDenied;
+            stat = null;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;

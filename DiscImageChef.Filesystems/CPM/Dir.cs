@@ -39,14 +39,15 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public Errno ReadDir(string path, ref List<string> contents)
+        public Errno ReadDir(string path, out List<string> contents)
         {
+            contents = null;
             if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = dirList;
+            contents = new List<string>(dirList);
 
             return Errno.NoError;
         }

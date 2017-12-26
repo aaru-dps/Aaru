@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="path">File path.</param>
         /// <param name="fileBlock">File block.</param>
         /// <param name="deviceBlock">Device block.</param>
-        Errno MapBlock(string path, long fileBlock, ref long deviceBlock);
+        Errno MapBlock(string path, long fileBlock, out long deviceBlock);
 
         /// <summary>
         ///     Gets the attributes of a file or directory
@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
         /// <param name="attributes">File attributes.</param>
-        Errno GetAttributes(string path, ref FileAttributes attributes);
+        Errno GetAttributes(string path, out FileAttributes attributes);
 
         /// <summary>
         ///     Lists all extended attributes, alternate data streams and forks of the given file.
@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
-        Errno ListXAttr(string path, ref List<string> xattrs);
+        Errno ListXAttr(string path, out List<string> xattrs);
 
         /// <summary>
         ///     Reads an extended attribute, alternate data stream or fork from the given file.
@@ -110,26 +110,26 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
-        Errno ReadDir(string path, ref List<string> contents);
+        Errno ReadDir(string path, out List<string> contents);
 
         /// <summary>
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        Errno StatFs(ref FileSystemInfo stat);
+        Errno StatFs(out FileSystemInfo stat);
 
         /// <summary>
         ///     Gets information about a file or directory.
         /// </summary>
         /// <param name="path">File path.</param>
         /// <param name="stat">File information.</param>
-        Errno Stat(string path, ref FileEntryInfo stat);
+        Errno Stat(string path, out FileEntryInfo stat);
 
         /// <summary>
         ///     Solves a symbolic link.
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
-        Errno ReadLink(string path, ref string dest);
+        Errno ReadLink(string path, out string dest);
     }
 }

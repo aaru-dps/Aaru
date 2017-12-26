@@ -56,8 +56,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public Guid Id => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
         public Encoding Encoding { get; private set; }
 
-        public Errno ListXAttr(string path, ref List<string> xattrs)
+        public Errno ListXAttr(string path, out List<string> xattrs)
         {
+            xattrs = null;
             return Errno.NotSupported;
         }
 
@@ -66,8 +67,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NotSupported;
         }
 
-        public Errno ReadLink(string path, ref string dest)
+        public Errno ReadLink(string path, out string dest)
         {
+            dest = null;
             return Errno.NotSupported;
         }
     }

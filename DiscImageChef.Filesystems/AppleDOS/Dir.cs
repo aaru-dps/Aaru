@@ -45,8 +45,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
-        public Errno ReadLink(string path, ref string dest)
+        public Errno ReadLink(string path, out string dest)
         {
+            dest = null;
             return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
@@ -55,8 +56,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
-        public Errno ReadDir(string path, ref List<string> contents)
+        public Errno ReadDir(string path, out List<string> contents)
         {
+            contents = null;
             if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)

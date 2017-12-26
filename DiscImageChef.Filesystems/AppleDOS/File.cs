@@ -40,8 +40,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
-        public Errno GetAttributes(string path, ref FileAttributes attributes)
+        public Errno GetAttributes(string path, out FileAttributes attributes)
         {
+            attributes = new FileAttributes();
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -51,7 +52,6 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(!fileCache.ContainsKey(filename)) return Errno.NoSuchFile;
 
-            attributes = new FileAttributes();
             attributes = FileAttributes.Extents;
             attributes |= FileAttributes.File;
             if(lockedFiles.Contains(filename)) attributes |= FileAttributes.ReadOnly;
@@ -103,8 +103,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
             return Errno.NoError;
         }
 
-        public Errno Stat(string path, ref FileEntryInfo stat)
+        public Errno Stat(string path, out FileEntryInfo stat)
         {
+            stat = null;
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -115,12 +116,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(!fileCache.ContainsKey(filename)) return Errno.NoSuchFile;
 
-            FileAttributes attrs = new FileAttributes();
+            stat = new FileEntryInfo();
 
             fileSizeCache.TryGetValue(filename, out int filesize);
-            GetAttributes(path, ref attrs);
-
-            stat = new FileEntryInfo();
+            GetAttributes(path, out FileAttributes attrs);
 
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
@@ -148,8 +147,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
             return Errno.NoError;
         }
 
-        public Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
+            deviceBlock = 0;
             // TODO: Not really important.
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }

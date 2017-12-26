@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = new long();
 
@@ -75,8 +75,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.InOutError;
         }
 
-        public Errno GetAttributes(string path, ref FileAttributes attributes)
+        public Errno GetAttributes(string path, out FileAttributes attributes)
         {
+            attributes = new FileAttributes();
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -86,7 +87,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
-            attributes = new FileAttributes();
             MFS_FinderFlags fdFlags = (MFS_FinderFlags)BigEndianBitConverter.ToUInt16(entry.flUsrWds, 0x08);
 
             if(fdFlags.HasFlag(MFS_FinderFlags.kIsAlias)) attributes |= FileAttributes.Alias;
@@ -142,8 +142,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public Errno Stat(string path, ref FileEntryInfo stat)
+        public Errno Stat(string path, out FileEntryInfo stat)
         {
+            stat = null;
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -196,8 +197,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
-            FileAttributes attr = new FileAttributes();
-            Errno error = GetAttributes(path, ref attr);
+            Errno error = GetAttributes(path, out FileAttributes attr);
             if(error != Errno.NoError) return error;
 
             stat = new FileEntryInfo
@@ -219,8 +219,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public Errno ReadLink(string path, ref string dest)
+        public Errno ReadLink(string path, out string dest)
         {
+            dest = null;
             return Errno.NotImplemented;
         }
 

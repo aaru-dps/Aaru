@@ -121,7 +121,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
-        public Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {

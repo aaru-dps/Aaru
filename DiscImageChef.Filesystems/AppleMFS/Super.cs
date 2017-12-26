@@ -165,7 +165,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {

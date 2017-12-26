@@ -165,7 +165,7 @@ namespace DiscImageChef.Commands
                                     if(error == Errno.NoError)
                                     {
                                         List<string> rootDir = new List<string>();
-                                        error = fs.ReadDir("/", ref rootDir);
+                                        error = fs.ReadDir("/", out rootDir);
                                         if(error == Errno.NoError)
                                             foreach(string entry in rootDir)
                                             {
@@ -176,7 +176,7 @@ namespace DiscImageChef.Commands
                                                         ? "NO NAME"
                                                         : fs.XmlFsType.VolumeName;
 
-                                                error = fs.Stat(entry, ref stat);
+                                                error = fs.Stat(entry, out stat);
                                                 if(error == Errno.NoError)
                                                 {
                                                     string outputPath;
@@ -185,7 +185,7 @@ namespace DiscImageChef.Commands
                                                     {
                                                         List<string> xattrs = new List<string>();
 
-                                                        error = fs.ListXAttr(entry, ref xattrs);
+                                                        error = fs.ListXAttr(entry, out xattrs);
                                                         if(error == Errno.NoError)
                                                             foreach(string xattr in xattrs)
                                                             {
@@ -315,7 +315,7 @@ namespace DiscImageChef.Commands
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
-                                error = fs.ReadDir("/", ref rootDir);
+                                error = fs.ReadDir("/", out rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                     {
@@ -326,7 +326,7 @@ namespace DiscImageChef.Commands
                                                 ? "NO NAME"
                                                 : fs.XmlFsType.VolumeName;
 
-                                        error = fs.Stat(entry, ref stat);
+                                        error = fs.Stat(entry, out stat);
                                         if(error == Errno.NoError)
                                         {
                                             FileStream outputFile;
@@ -335,7 +335,7 @@ namespace DiscImageChef.Commands
                                             {
                                                 List<string> xattrs = new List<string>();
 
-                                                error = fs.ListXAttr(entry, ref xattrs);
+                                                error = fs.ListXAttr(entry, out xattrs);
                                                 if(error == Errno.NoError)
                                                     foreach(string xattr in xattrs)
                                                     {
@@ -471,7 +471,7 @@ namespace DiscImageChef.Commands
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
-                                error = fs.ReadDir("/", ref rootDir);
+                                error = fs.ReadDir("/", out rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                     {
@@ -482,7 +482,7 @@ namespace DiscImageChef.Commands
                                                 ? "NO NAME"
                                                 : fs.XmlFsType.VolumeName;
 
-                                        error = fs.Stat(entry, ref stat);
+                                        error = fs.Stat(entry, out stat);
                                         if(error == Errno.NoError)
                                         {
                                             FileStream outputFile;
@@ -491,7 +491,7 @@ namespace DiscImageChef.Commands
                                             {
                                                 List<string> xattrs = new List<string>();
 
-                                                error = fs.ListXAttr(entry, ref xattrs);
+                                                error = fs.ListXAttr(entry, out xattrs);
                                                 if(error == Errno.NoError)
                                                     foreach(string xattr in xattrs)
                                                     {
@@ -612,7 +612,7 @@ namespace DiscImageChef.Commands
                     if(error == Errno.NoError)
                     {
                         List<string> rootDir = new List<string>();
-                        error = fs.ReadDir("/", ref rootDir);
+                        error = fs.ReadDir("/", out rootDir);
                         if(error == Errno.NoError)
                             foreach(string entry in rootDir)
                             {
@@ -622,7 +622,7 @@ namespace DiscImageChef.Commands
                                                         ? "NO NAME"
                                                         : fs.XmlFsType.VolumeName;
 
-                                error = fs.Stat(entry, ref stat);
+                                error = fs.Stat(entry, out stat);
                                 if(error == Errno.NoError)
                                 {
                                     string outputPath;
@@ -631,7 +631,7 @@ namespace DiscImageChef.Commands
                                     {
                                         List<string> xattrs = new List<string>();
 
-                                        error = fs.ListXAttr(entry, ref xattrs);
+                                        error = fs.ListXAttr(entry, out xattrs);
                                         if(error == Errno.NoError)
                                             foreach(string xattr in xattrs)
                                             {

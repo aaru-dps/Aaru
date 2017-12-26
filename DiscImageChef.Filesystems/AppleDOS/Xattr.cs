@@ -43,8 +43,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
-        public Errno ListXAttr(string path, ref List<string> xattrs)
+        public Errno ListXAttr(string path, out List<string> xattrs)
         {
+            xattrs = null;
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);

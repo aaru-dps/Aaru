@@ -40,8 +40,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public Errno ReadDir(string path, ref List<string> contents)
+        public Errno ReadDir(string path, out List<string> contents)
         {
+            contents = null;
             if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)

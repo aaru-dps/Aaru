@@ -135,7 +135,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        public Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {

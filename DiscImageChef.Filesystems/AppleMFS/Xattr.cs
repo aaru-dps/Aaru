@@ -40,8 +40,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public Errno ListXAttr(string path, ref List<string> xattrs)
+        public Errno ListXAttr(string path, out List<string> xattrs)
         {
+            xattrs = null;
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);

@@ -46,12 +46,13 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
-        public Errno ListXAttr(string path, ref List<string> xattrs)
+        public Errno ListXAttr(string path, out List<string> xattrs)
         {
+            xattrs = null;
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
-            return isDir ? Errno.InvalidArgument : ListXAttr(fileId, ref xattrs);
+            return isDir ? Errno.InvalidArgument : ListXAttr(fileId, out xattrs);
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <returns>Error number.</returns>
         /// <param name="fileId">File identifier.</param>
         /// <param name="xattrs">Extended attributes.</param>
-        Errno ListXAttr(short fileId, ref List<string> xattrs)
+        Errno ListXAttr(short fileId, out List<string> xattrs)
         {
             xattrs = null;
 

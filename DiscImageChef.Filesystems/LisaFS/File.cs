@@ -39,14 +39,15 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        public Errno GetAttributes(string path, ref FileAttributes attributes)
+        public Errno GetAttributes(string path, out FileAttributes attributes)
         {
+            attributes = new FileAttributes();
+
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
-            if(!isDir) return GetAttributes(fileId, ref attributes);
+            if(!isDir) return GetAttributes(fileId, out attributes);
 
-            attributes = new FileAttributes();
             attributes = FileAttributes.Directory;
 
             return Errno.NoError;
@@ -94,16 +95,18 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        public Errno Stat(string path, ref FileEntryInfo stat)
+        public Errno Stat(string path, out FileEntryInfo stat)
         {
+            stat = null;
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
             return isDir ? StatDir(fileId, out stat) : Stat(fileId, out stat);
         }
 
-        Errno GetAttributes(short fileId, ref FileAttributes attributes)
+        Errno GetAttributes(short fileId, out FileAttributes attributes)
         {
+            attributes = new FileAttributes();
             if(!mounted) return Errno.AccessDenied;
 
             if(fileId < 4)
@@ -122,8 +125,6 @@ namespace DiscImageChef.Filesystems.LisaFS
             Errno error = ReadExtentsFile(fileId, out ExtentFile extFile);
 
             if(error != Errno.NoError) return error;
-
-            attributes = new FileAttributes();
 
             switch(extFile.ftype)
             {
@@ -231,7 +232,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 {
                     stat = new FileEntryInfo {Attributes = new FileAttributes()};
 
-                    error = GetAttributes(fileId, ref stat.Attributes);
+                    error = GetAttributes(fileId, out stat.Attributes);
                     if(error != Errno.NoError) return error;
 
                     if(fileId < 0 && fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED)
@@ -278,7 +279,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 }
 
             stat = new FileEntryInfo {Attributes = new FileAttributes()};
-            error = GetAttributes(fileId, ref stat.Attributes);
+            error = GetAttributes(fileId, out stat.Attributes);
             if(error != Errno.NoError) return error;
 
             error = ReadExtentsFile(fileId, out file);

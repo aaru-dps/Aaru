@@ -45,8 +45,9 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
-        public Errno ReadLink(string path, ref string dest)
+        public Errno ReadLink(string path, out string dest)
         {
+            dest = null;
             // LisaFS does not support symbolic links (afaik)
             return Errno.NotSupported;
         }
@@ -56,8 +57,9 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
-        public Errno ReadDir(string path, ref List<string> contents)
+        public Errno ReadDir(string path, out List<string> contents)
         {
+            contents = null;
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
@@ -68,7 +70,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(error != Errno.NoError)
                 return error;*/
 
-            ReadDir(fileId, ref contents);
+            ReadDir(fileId, out contents);
 
             // On debug add system files as readable files
             // Syntax similar to NTFS
@@ -86,7 +88,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno ReadDir(short dirId, ref List<string> contents)
+        Errno ReadDir(short dirId, out List<string> contents)
         {
             // Do same trick as Mac OS X, replace filesystem '/' with '-',
             // as '-' is the path separator in Lisa OS

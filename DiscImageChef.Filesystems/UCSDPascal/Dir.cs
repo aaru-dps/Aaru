@@ -39,8 +39,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public Errno ReadDir(string path, ref List<string> contents)
+        public Errno ReadDir(string path, out List<string> contents)
         {
+            contents = null;
             if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)

@@ -36,8 +36,9 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public Errno GetAttributes(string path, ref FileAttributes attributes)
+        public Errno GetAttributes(string path, out FileAttributes attributes)
         {
+            attributes = new FileAttributes();
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -59,8 +60,9 @@ namespace DiscImageChef.Filesystems.CPM
         }
 
         // TODO: Implementing this would require storing the interleaving
-        public Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
+            deviceBlock = 0;
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
@@ -90,30 +92,29 @@ namespace DiscImageChef.Filesystems.CPM
             return Errno.NoError;
         }
 
-        public Errno ReadLink(string path, ref string dest)
+        public Errno ReadLink(string path, out string dest)
         {
+            dest = null;
             return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
-        public Errno Stat(string path, ref FileEntryInfo stat)
+        public Errno Stat(string path, out FileEntryInfo stat)
         {
+            stat = null;
             if(!mounted) return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
-            if(string.IsNullOrEmpty(path) || string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                if(labelCreationDate != null) stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
-                if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
-                stat.Attributes = FileAttributes.Directory;
-                stat.BlockSize = XmlFsType.ClusterSize;
-                return Errno.NoError;
-            }
+            if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+                return statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)
+                           ? Errno.NoError
+                           : Errno.NoSuchFile;
 
-            return statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)
-                       ? Errno.NoError
-                       : Errno.NoSuchFile;
+            stat = new FileEntryInfo {Attributes = FileAttributes.Directory, BlockSize = XmlFsType.ClusterSize};
+            if(labelCreationDate != null) stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
+            if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
+            return Errno.NoError;
         }
     }
 }
