@@ -102,12 +102,12 @@ namespace DiscImageChef.Commands
 
                     DicConsole.DebugWriteLine("Ls command", "Correctly opened image file.");
                     DicConsole.DebugWriteLine("Ls command", "Image without headers is {0} bytes.",
-                                              imageFormat.GetImageSize());
-                    DicConsole.DebugWriteLine("Ls command", "Image has {0} sectors.", imageFormat.GetSectors());
+                                              imageFormat.ImageInfo.ImageSize);
+                    DicConsole.DebugWriteLine("Ls command", "Image has {0} sectors.", imageFormat.ImageInfo.Sectors);
                     DicConsole.DebugWriteLine("Ls command", "Image identifies disk type as {0}.",
-                                              imageFormat.GetMediaType());
+                                              imageFormat.ImageInfo.MediaType);
 
-                    Core.Statistics.AddMediaFormat(imageFormat.GetImageFormat());
+                    Core.Statistics.AddMediaFormat(imageFormat.ImageFormat);
                     Core.Statistics.AddMedia(imageFormat.ImageInfo.MediaType, false);
                     Core.Statistics.AddFilter(inputFilter.Name);
                 }
@@ -205,8 +205,8 @@ namespace DiscImageChef.Commands
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = imageFormat.GetSectors(),
-                    Size = imageFormat.GetSectors() * imageFormat.GetSectorSize()
+                    Length = imageFormat.ImageInfo.Sectors,
+                    Size = imageFormat.ImageInfo.Sectors * imageFormat.ImageInfo.SectorSize
                 };
 
                 Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);

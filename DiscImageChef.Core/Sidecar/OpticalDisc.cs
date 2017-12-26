@@ -67,20 +67,20 @@ namespace DiscImageChef.Core
                     Checksums = imgChecksums.ToArray(),
                     Image = new ImageType
                     {
-                        format = image.GetImageFormat(),
+                        format = image.ImageFormat,
                         offset = 0,
                         offsetSpecified = true,
                         Value = Path.GetFileName(imagePath)
                     },
                     Size = fi.Length,
-                    Sequence = new SequenceType {MediaTitle = image.GetImageName()}
+                    Sequence = new SequenceType {MediaTitle = image.ImageInfo.MediaTitle}
                 }
             };
 
-            if(image.GetMediaSequence() != 0 && image.GetLastDiskSequence() != 0)
+            if(image.ImageInfo.MediaSequence != 0 && image.ImageInfo.LastMediaSequence != 0)
             {
-                sidecar.OpticalDisc[0].Sequence.MediaSequence = image.GetMediaSequence();
-                sidecar.OpticalDisc[0].Sequence.TotalMedia = image.GetMediaSequence();
+                sidecar.OpticalDisc[0].Sequence.MediaSequence = image.ImageInfo.MediaSequence;
+                sidecar.OpticalDisc[0].Sequence.TotalMedia = image.ImageInfo.LastMediaSequence;
             }
             else
             {
@@ -246,12 +246,12 @@ namespace DiscImageChef.Core
 
             try
             {
-                List<Session> sessions = image.GetSessions();
+                List<Session> sessions = image.Sessions;
                 sidecar.OpticalDisc[0].Sessions = sessions?.Count ?? 1;
             }
             catch { sidecar.OpticalDisc[0].Sessions = 1; }
 
-            List<Track> tracks = image.GetTracks();
+            List<Track> tracks = image.Tracks;
             List<TrackType> trksLst = null;
             if(tracks != null)
             {
@@ -608,8 +608,8 @@ namespace DiscImageChef.Core
                         Serial = image.ImageInfo.DriveSerialNumber,
                         Software = new SoftwareType
                         {
-                            Name = image.GetImageApplication(),
-                            Version = image.GetImageApplicationVersion()
+                            Name = image.ImageInfo.Application,
+                            Version = image.ImageInfo.ApplicationVersion
                         }
                     }
                 };

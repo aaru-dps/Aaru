@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
             // It should be start of a tape or floppy or file
             if(partition.Start != 0) return false;
@@ -131,8 +131,8 @@ namespace DiscImageChef.Filesystems
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
-            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(newHdr) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(newHdr) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return false;
@@ -164,7 +164,7 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
             if(partition.Start != 0) return;
 
@@ -172,8 +172,8 @@ namespace DiscImageChef.Filesystems
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
-            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(newHdr) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(newHdr) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return;
@@ -469,10 +469,9 @@ namespace DiscImageChef.Filesystems
             public int di_mtimensec; /*  28: Last modified time. */
             public int di_ctime; /*  32: Last inode change time. */
             public int di_ctimensec; /*  36: Last inode change time. */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDADDR)]
-            public ufs_daddr_t[] di_db; /*  40: Direct disk blocks. */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDADDR)] public int[] di_db; /*  40: Direct disk blocks. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NIADDR)]
-            public ufs_daddr_t[] di_ib; /*  88: Indirect disk blocks. */
+            public int[] di_ib; /*  88: Indirect disk blocks. */
             public uint di_flags; /* 100: Status flags (chflags). */
             public uint di_blocks; /* 104: Blocks actually held. */
             public int di_gen; /* 108: Generation number. */

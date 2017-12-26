@@ -59,13 +59,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -79,6 +79,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "NHDr0 disk image";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -135,90 +146,20 @@ namespace DiscImageChef.DiscImages
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
 
             ImageInfo.ImageSize = (ulong)(stream.Length - nhdhdr.dwHeadSize);
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.Sectors = (ulong)(nhdhdr.dwCylinder * nhdhdr.wHead * nhdhdr.wSect);
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.SectorSize = (uint)nhdhdr.wSectLen;
             ImageInfo.Cylinders = (uint)nhdhdr.dwCylinder;
             ImageInfo.Heads = (uint)nhdhdr.wHead;
             ImageInfo.SectorsPerTrack = (uint)nhdhdr.wSect;
-            ImageInfo.ImageComments = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
+            ImageInfo.Comments = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
 
             nhdImageFilter = imageFilter;
 
             return true;
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return false;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "NHDr0 disk image";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -300,77 +241,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetMediaManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetMediaModel()
-        {
-            return null;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return null;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return null;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return 0;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return 0;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetDriveModel()
-        {
-            return null;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return null;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

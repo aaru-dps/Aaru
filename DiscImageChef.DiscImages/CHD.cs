@@ -142,11 +142,11 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageApplication = "MAME",
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Application = "MAME",
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -159,6 +159,44 @@ namespace DiscImageChef.DiscImages
                 DriveSerialNumber = null,
                 DriveFirmwareRevision = null
             };
+        }
+
+        public override string ImageFormat => "Compressed Hunks of Data";
+
+        public override List<Partition> Partitions
+        {
+            get
+            {
+                if(isHdd)
+                    throw new
+                        FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
+
+                return partitions;
+            }
+        }
+
+        public override List<Track> Tracks
+        {
+            get
+            {
+                if(isHdd)
+                    throw new
+                        FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
+
+                return tracks.Values.ToList();
+            }
+        }
+
+        public override List<Session> Sessions
+        {
+            get
+            {
+                if(isHdd)
+                    throw new
+                        FeaturedNotSupportedByDiscImageException("Cannot access optical sessions on a hard disk image");
+
+                throw new NotImplementedException();
+            }
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -248,7 +286,7 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.Sectors = hdrV1.hunksize * hdrV1.totalhunks;
                     ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
                     ImageInfo.SectorSize = 512;
-                    ImageInfo.ImageVersion = "1";
+                    ImageInfo.Version = "1";
                     ImageInfo.ImageSize = ImageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
 
                     totalHunks = hdrV1.totalhunks;
@@ -319,7 +357,7 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.Sectors = hdrV2.hunksize * hdrV2.totalhunks;
                     ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
                     ImageInfo.SectorSize = hdrV2.seclen;
-                    ImageInfo.ImageVersion = "2";
+                    ImageInfo.Version = "2";
                     ImageInfo.ImageSize = ImageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
 
                     totalHunks = hdrV2.totalhunks;
@@ -372,7 +410,7 @@ namespace DiscImageChef.DiscImages
                     nextMetaOff = hdrV3.metaoffset;
 
                     ImageInfo.ImageSize = hdrV3.logicalbytes;
-                    ImageInfo.ImageVersion = "3";
+                    ImageInfo.Version = "3";
 
                     totalHunks = hdrV3.totalhunks;
                     bytesPerHunk = hdrV3.hunkbytes;
@@ -416,7 +454,7 @@ namespace DiscImageChef.DiscImages
                     nextMetaOff = hdrV4.metaoffset;
 
                     ImageInfo.ImageSize = hdrV4.logicalbytes;
-                    ImageInfo.ImageVersion = "4";
+                    ImageInfo.Version = "4";
 
                     totalHunks = hdrV4.totalhunks;
                     bytesPerHunk = hdrV4.hunkbytes;
@@ -499,7 +537,7 @@ namespace DiscImageChef.DiscImages
                     nextMetaOff = hdrV5.metaoffset;
 
                     ImageInfo.ImageSize = hdrV5.logicalbytes;
-                    ImageInfo.ImageVersion = "5";
+                    ImageInfo.Version = "5";
 
                     totalHunks = (uint)(hdrV5.logicalbytes / hdrV5.hunkbytes);
                     bytesPerHunk = hdrV5.hunkbytes;
@@ -1157,8 +1195,8 @@ namespace DiscImageChef.DiscImages
                     partitions.Add(partition);
                 }
 
-                ImageInfo.ImageHasPartitions = true;
-                ImageInfo.ImageHasSessions = true;
+                ImageInfo.HasPartitions = true;
+                ImageInfo.HasSessions = true;
             }
 
             maxBlockCache = (int)(MAX_CACHE_SIZE / (ImageInfo.SectorSize * sectorsPerHunk));
@@ -1350,6 +1388,7 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
+
             return failingLbas.Count <= 0;
         }
 
@@ -1381,6 +1420,7 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
+
             return failingLbas.Count <= 0;
         }
 
@@ -1405,26 +1445,6 @@ namespace DiscImageChef.DiscImages
             }
 
             return expectedChecksum.SequenceEqual(calculated);
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -1851,46 +1871,6 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override string GetImageFormat()
-        {
-            return "Compressed Hunks of Data";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             if(ImageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY)) return identify;
@@ -1898,82 +1878,6 @@ namespace DiscImageChef.DiscImages
             if(ImageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS)) return cis;
 
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            if(isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-            return partitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            if(isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-            return tracks.Values.ToList();
         }
 
         public override List<Track> GetSessionTracks(Session session)
@@ -1990,15 +1894,6 @@ namespace DiscImageChef.DiscImages
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return tracks.Values.Where(track => track.TrackSession == session).ToList();
-        }
-
-        public override List<Session> GetSessions()
-        {
-            if(isHdd)
-                throw new
-                    FeaturedNotSupportedByDiscImageException("Cannot access optical sessions on a hard disk image");
-
-            throw new NotImplementedException();
         }
 
         public override byte[] ReadSector(ulong sectorAddress, uint track)

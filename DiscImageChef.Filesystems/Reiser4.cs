@@ -71,15 +71,15 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
-            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.GetSectorSize();
+            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(reiserSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
@@ -97,15 +97,15 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
-            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.GetSectorSize();
+            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(reiserSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(reiserSb)) return;
@@ -131,7 +131,8 @@ namespace DiscImageChef.Filesystems
             {
                 Type = "Reiser 4 filesystem",
                 ClusterSize = reiserSb.blocksize,
-                Clusters = (long)((partition.End - partition.Start) * imagePlugin.GetSectorSize() / reiserSb.blocksize),
+                Clusters =
+                    (long)((partition.End - partition.Start) * imagePlugin.ImageInfo.SectorSize / reiserSb.blocksize),
                 VolumeName = StringHandlers.CToString(reiserSb.label, CurrentEncoding),
                 VolumeSerial = reiserSb.uuid.ToString()
             };

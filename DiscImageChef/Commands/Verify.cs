@@ -67,7 +67,7 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(inputFilter);
-            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
             Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
 
@@ -107,7 +107,7 @@ namespace DiscImageChef.Commands
                 bool formatHasTracks;
                 try
                 {
-                    List<Track> inputTracks = inputFormat.GetTracks();
+                    List<Track> inputTracks = inputFormat.Tracks;
                     formatHasTracks = inputTracks.Count > 0;
                 }
                 catch { formatHasTracks = false; }
@@ -120,7 +120,7 @@ namespace DiscImageChef.Commands
 
                 if(formatHasTracks)
                 {
-                    List<Track> inputTracks = inputFormat.GetTracks();
+                    List<Track> inputTracks = inputFormat.Tracks;
                     ulong currentSectorAll = 0;
 
                     startCheck = DateTime.UtcNow;
@@ -132,7 +132,7 @@ namespace DiscImageChef.Commands
                         while(remainingSectors > 0)
                         {
                             DicConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll,
-                                             inputFormat.GetSectors(), currentTrack.TrackSequence);
+                                             inputFormat.ImageInfo.Sectors, currentTrack.TrackSequence);
 
                             List<ulong> tempfailingLbas;
                             List<ulong> tempunknownLbas;
@@ -174,13 +174,13 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    ulong remainingSectors = inputFormat.GetSectors();
+                    ulong remainingSectors = inputFormat.ImageInfo.Sectors;
                     ulong currentSector = 0;
 
                     startCheck = DateTime.UtcNow;
                     while(remainingSectors > 0)
                     {
-                        DicConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.GetSectors());
+                        DicConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.ImageInfo.Sectors);
 
                         List<ulong> tempfailingLbas;
                         List<ulong> tempunknownLbas;
@@ -239,22 +239,22 @@ namespace DiscImageChef.Commands
                 if(options.Verbose)
                 {
                     DicConsole.VerboseWriteLine("LBAs with error:");
-                    if(failingLbas.Count == (int)inputFormat.GetSectors())
+                    if(failingLbas.Count == (int)inputFormat.ImageInfo.Sectors)
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else foreach(ulong t in failingLbas) DicConsole.VerboseWriteLine("\t{0}", t);
 
                     DicConsole.WriteLine("LBAs without checksum:");
-                    if(unknownLbas.Count == (int)inputFormat.GetSectors())
+                    if(unknownLbas.Count == (int)inputFormat.ImageInfo.Sectors)
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else foreach(ulong t in unknownLbas) DicConsole.VerboseWriteLine("\t{0}", t);
                 }
 
-                DicConsole.WriteLine("Total sectors........... {0}", inputFormat.GetSectors());
+                DicConsole.WriteLine("Total sectors........... {0}", inputFormat.ImageInfo.Sectors);
                 DicConsole.WriteLine("Total errors............ {0}", failingLbas.Count);
                 DicConsole.WriteLine("Total unknowns.......... {0}", unknownLbas.Count);
                 DicConsole.WriteLine("Total errors+unknowns... {0}", failingLbas.Count + unknownLbas.Count);
 
-                totalSectors = (long)inputFormat.GetSectors();
+                totalSectors = (long)inputFormat.ImageInfo.Sectors;
                 errorSectors = failingLbas.Count;
                 unknownSectors = unknownLbas.Count;
                 correctSectors = totalSectors - errorSectors - unknownSectors;

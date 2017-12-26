@@ -129,11 +129,11 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageApplication = "Sydex TeleDisk",
-                ImageComments = null,
-                ImageCreator = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Application = "Sydex TeleDisk",
+                Comments = null,
+                Creator = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -149,6 +149,17 @@ namespace DiscImageChef.DiscImages
             aDiskCrcHasFailed = false;
             sectorsWhereCrcHasFailed = new List<ulong>();
         }
+
+        public override string ImageFormat => "Sydex TeleDisk";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -231,9 +242,9 @@ namespace DiscImageChef.DiscImages
             header.Sides = headerBytes[9];
             header.Crc = BitConverter.ToUInt16(headerBytes, 10);
 
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.ImageVersion = $"{(header.Version & 0xF0) >> 4}.{header.Version & 0x0F}";
-            ImageInfo.ImageApplication = ImageInfo.ImageVersion;
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Version = $"{(header.Version & 0xF0) >> 4}.{header.Version & 0x0F}";
+            ImageInfo.Application = ImageInfo.Version;
 
             byte[] headerBytesForCrc = new byte[10];
             Array.Copy(headerBytes, headerBytesForCrc, 10);
@@ -292,7 +303,7 @@ namespace DiscImageChef.DiscImages
 
             stream.Seek(12, SeekOrigin.Begin);
 
-            ImageInfo.ImageCreationTime = DateTime.MinValue;
+            ImageInfo.CreationTime = DateTime.MinValue;
 
             if((header.Stepping & COMMENT_BLOCK_PRESENT) == COMMENT_BLOCK_PRESENT)
             {
@@ -337,22 +348,22 @@ namespace DiscImageChef.DiscImages
                     // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
                     if(commentBlock[i] == 0x00) commentBlock[i] = 0x0A;
 
-                ImageInfo.ImageComments = Encoding.ASCII.GetString(commentBlock);
+                ImageInfo.Comments = Encoding.ASCII.GetString(commentBlock);
 
                 DicConsole.DebugWriteLine("TeleDisk plugin", "Comment");
-                DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", ImageInfo.ImageComments);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", ImageInfo.Comments);
 
-                ImageInfo.ImageCreationTime = new DateTime(commentHeader.Year + 1900, commentHeader.Month + 1,
+                ImageInfo.CreationTime = new DateTime(commentHeader.Year + 1900, commentHeader.Month + 1,
                                                            commentHeader.Day, commentHeader.Hour, commentHeader.Minute,
                                                            commentHeader.Second, DateTimeKind.Unspecified);
             }
 
-            if(ImageInfo.ImageCreationTime == DateTime.MinValue)
-                ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            if(ImageInfo.CreationTime == DateTime.MinValue)
+                ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-            DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", ImageInfo.ImageCreationTime);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", ImageInfo.ImageLastModificationTime);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", ImageInfo.CreationTime);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", ImageInfo.LastModificationTime);
 
             DicConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
 
@@ -634,8 +645,8 @@ namespace DiscImageChef.DiscImages
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", ImageInfo.MediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
-                DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.ImageComments);
+            if(!string.IsNullOrEmpty(ImageInfo.Comments))
+                DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.Comments);
 
             inStream.Dispose();
             stream.Dispose();
@@ -648,26 +659,6 @@ namespace DiscImageChef.DiscImages
             */
 
             return true;
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -721,46 +712,6 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             return ReadSectors(sectorAddress, length);
-        }
-
-        public override string GetImageFormat()
-        {
-            return "Sydex TeleDisk";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -1079,87 +1030,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

@@ -73,11 +73,11 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            ulong hdrSector = HEADER_POS / imagePlugin.GetSectorSize();
+            ulong hdrSector = HEADER_POS / imagePlugin.ImageInfo.SectorSize;
 
             FossilHeader hdr;
 
-            if(partition.Start + hdrSector > imagePlugin.GetSectors()) return false;
+            if(partition.Start + hdrSector > imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
@@ -91,9 +91,9 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
-            ulong hdrSector = HEADER_POS / imagePlugin.GetSectorSize();
+            ulong hdrSector = HEADER_POS / imagePlugin.ImageInfo.SectorSize;
 
             FossilHeader hdr;
 
@@ -113,7 +113,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Data starts at block {0}", hdr.data).AppendLine();
             sb.AppendFormat("Volume has {0} blocks", hdr.end).AppendLine();
 
-            ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.GetSectorSize()) + partition.Start;
+            ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.ImageInfo.SectorSize) + partition.Start;
 
             XmlFsType = new FileSystemType
             {

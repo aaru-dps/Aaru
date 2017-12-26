@@ -157,7 +157,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 {
                     stat = new FileEntryInfo
                     {
-                        BlockSize = device.GetSectorSize(),
+                        BlockSize = device.ImageInfo.SectorSize,
                         DeviceNo = 0,
                         GID = 0,
                         Inode = 0,

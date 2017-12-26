@@ -77,8 +77,7 @@ namespace DiscImageChef.DiscImages
         const string REGEX_EXTENT =
                 @"^\s*(?<access>(RW|RDONLY|NOACCESS))\s+(?<sectors>\d+)\s+(?<type>(FLAT|SPARSE|ZERO|VMFS|VMFSSPARSE|VMFSRDM|VMFSRAW))\s+\""(?<filename>.+)\""(\s*(?<offset>\d+))?$"
             ;
-        const string REGEX_DDB_TYPE =
-            @"^\s*ddb\.adapterType\s*=\s*\""(?<type>ide|buslogic|lsilogic|legacyESX)\""$";
+        const string REGEX_DDB_TYPE = @"^\s*ddb\.adapterType\s*=\s*\""(?<type>ide|buslogic|lsilogic|legacyESX)\""$";
         const string REGEX_DDB_SECTORS = @"^\s*ddb\.geometry\.sectors\s*=\s*\""(?<sectors>\d+)\""$";
         const string REGEX_DDB_HEADS = @"^\s*ddb\.geometry\.heads\s*=\s*\""(?<heads>\d+)\""$";
         const string REGEX_DDB_CYLINDERS = @"^\s*ddb\.geometry\.cylinders\s*=\s*\""(?<cylinders>\d+)\""$";
@@ -131,13 +130,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = "VMware",
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = "VMware",
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -151,6 +150,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "VMware";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -554,8 +564,8 @@ namespace DiscImageChef.DiscImages
                 gdEntries = vmCHdr.numGDEntries;
                 gdOffset = vmCHdr.gdOffset;
                 gtEsPerGt = grains / gdEntries;
-                ImageInfo.ImageName = StringHandlers.CToString(vmCHdr.name);
-                ImageInfo.ImageComments = StringHandlers.CToString(vmCHdr.description);
+                ImageInfo.MediaTitle = StringHandlers.CToString(vmCHdr.name);
+                ImageInfo.Comments = StringHandlers.CToString(vmCHdr.description);
                 version = vmCHdr.version;
             }
 
@@ -609,15 +619,15 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.SectorSize = SECTOR_SIZE;
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
             ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
             // VMDK version 1 started on VMware 4, so there is a previous version, "COWD"
-            ImageInfo.ImageVersion = cowD ? $"{version}" : $"{version + 3}";
+            ImageInfo.Version = cowD ? $"{version}" : $"{version + 3}";
 
             if(cowD)
             {
@@ -742,76 +752,6 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override bool ImageHasPartitions()
-        {
-            return false;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "VMware";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -867,77 +807,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetMediaManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetMediaModel()
-        {
-            return null;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return null;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return null;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return 0;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return 0;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetDriveModel()
-        {
-            return null;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return null;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

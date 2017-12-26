@@ -80,9 +80,9 @@ namespace DiscImageChef.Partitions
         {
             partitions = new List<Partition>();
 
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
-            if(sectorOffset + 2 >= imagePlugin.GetSectors()) return false;
+            if(sectorOffset + 2 >= imagePlugin.ImageInfo.Sectors) return false;
 
             bool useDkl = false, useDkl8 = false, useDkl16 = false;
 
@@ -161,16 +161,17 @@ namespace DiscImageChef.Partitions
                         Partition part = new Partition
                         {
                             Size = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                            Length = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.GetSectorSize()),
+                            Length =
+                                (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.ImageInfo.SectorSize),
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                             Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                    DK_LABEL_SIZE / imagePlugin.GetSectorSize(),
+                                    DK_LABEL_SIZE / imagePlugin.ImageInfo.SectorSize,
                             Type = "SunOS partition",
                             Scheme = Name
                         };
-                        if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
+                        if(part.Start < imagePlugin.ImageInfo.Sectors && part.End <= imagePlugin.ImageInfo.Sectors)
                             partitions.Add(part);
                     }
             }
@@ -227,12 +228,13 @@ namespace DiscImageChef.Partitions
                         {
                             Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
                             Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                            Length = (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.GetSectorSize()),
+                            Length =
+                                (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.ImageInfo.SectorSize),
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                             Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                    DK_LABEL_SIZE / imagePlugin.GetSectorSize(),
+                                    DK_LABEL_SIZE / imagePlugin.ImageInfo.SectorSize,
                             Type = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name
                         };
@@ -240,7 +242,7 @@ namespace DiscImageChef.Partitions
                             part.Description +=
                                 $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
 
-                        if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
+                        if(part.Start < imagePlugin.ImageInfo.Sectors && part.End <= imagePlugin.ImageInfo.Sectors)
                             partitions.Add(part);
                     }
             }
@@ -295,19 +297,19 @@ namespace DiscImageChef.Partitions
                             Size = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
                             Length =
                                 (ulong)(dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz /
-                                        imagePlugin.GetSectorSize()),
+                                        imagePlugin.ImageInfo.SectorSize),
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
                             Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
-                                    dkl16.dkl_vtoc.v_sectorsz / imagePlugin.GetSectorSize(),
+                                    dkl16.dkl_vtoc.v_sectorsz / imagePlugin.ImageInfo.SectorSize,
                             Type = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name
                         };
                         if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
                             part.Description +=
                                 $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
-                        if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
+                        if(part.Start < imagePlugin.ImageInfo.Sectors && part.End <= imagePlugin.ImageInfo.Sectors)
                             partitions.Add(part);
                     }
             }

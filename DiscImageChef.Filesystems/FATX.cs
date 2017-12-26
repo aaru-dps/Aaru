@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
             FATX_Superblock fatxSb;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
@@ -80,7 +80,7 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
             FATX_Superblock fatxSb;
 

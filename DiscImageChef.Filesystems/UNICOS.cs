@@ -80,12 +80,12 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
             UNICOS_Superblock unicosSb = new UNICOS_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(unicosSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(unicosSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return false;
@@ -101,12 +101,12 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
             UNICOS_Superblock unicosSb = new UNICOS_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(unicosSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(unicosSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return;

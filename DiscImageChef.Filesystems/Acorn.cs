@@ -258,7 +258,7 @@ namespace DiscImageChef.Filesystems
             bytes *= 0x100000000;
             bytes += drSb.disc_size;
 
-            return bytes <= imagePlugin.GetSectors() * imagePlugin.GetSectorSize();
+            return bytes <= imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize;
         }
 
         // TODO: Find root directory on volumes with DiscRecord
@@ -476,7 +476,7 @@ namespace DiscImageChef.Filesystems
             zones *= 0x100000000;
             zones += drSb.nzones;
 
-            if(bytes > imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) return;
+            if(bytes > imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize) return;
 
             XmlFsType = new FileSystemType();
 

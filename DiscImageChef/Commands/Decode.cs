@@ -71,7 +71,7 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(inputFilter);
-            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
             Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
 
@@ -232,7 +232,7 @@ namespace DiscImageChef.Commands
             {
                 ulong length;
 
-                if(options.Length.ToLowerInvariant() == "all") length = inputFormat.GetSectors() - 1;
+                if(options.Length.ToLowerInvariant() == "all") length = inputFormat.ImageInfo.Sectors - 1;
                 else
                 {
                     if(!ulong.TryParse(options.Length, out length))

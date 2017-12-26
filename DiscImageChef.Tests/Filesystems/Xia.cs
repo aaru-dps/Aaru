@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class XiaMbr
     {
-        readonly string[] testfiles = {"linux.vdi.lz"};
+        readonly string[] testfiles = {"linux.vdi.lz", "linux-files.vdi.lz"};
 
-        readonly ulong[] sectors = {1024000};
+        readonly ulong[] sectors = {1024000, 2048000};
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {511528};
+        readonly long[] clusters = {511528, 1023088};
 
-        readonly int[] clustersize = {1024};
+        readonly int[] clustersize = {1024, 1024};
 
-        readonly string[] volumename = {null};
+        readonly string[] volumename = {null, null};
 
-        readonly string[] volumeserial = {null};
+        readonly string[] volumeserial = {null, null};
 
         [Test]
         public void Test()

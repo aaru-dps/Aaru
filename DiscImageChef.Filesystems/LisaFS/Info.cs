@@ -54,7 +54,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if(imagePlugin.GetSectors() < 800) return false;
+                if(imagePlugin.ImageInfo.Sectors < 800) return false;
 
                 int beforeMddf = -1;
 
@@ -83,18 +83,20 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Current sector = {0}", i);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.mddf_block = {0}", infoMddf.mddf_block);
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors", imagePlugin.GetSectors());
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors",
+                                              imagePlugin.ImageInfo.Sectors);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size = {0} sectors", infoMddf.vol_size);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - 1 = {0}", infoMddf.volsize_minus_one);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - mddf.mddf_block -1 = {0}",
                                               infoMddf.volsize_minus_mddf_minus_one);
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes", imagePlugin.GetSectorSize());
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes",
+                                              imagePlugin.ImageInfo.SectorSize);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.blocksize = {0} bytes", infoMddf.blocksize);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.datasize = {0} bytes", infoMddf.datasize);
 
                     if(infoMddf.mddf_block != i - beforeMddf) return false;
 
-                    if(infoMddf.vol_size > imagePlugin.GetSectors()) return false;
+                    if(infoMddf.vol_size > imagePlugin.ImageInfo.Sectors) return false;
 
                     if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one) return false;
 
@@ -102,9 +104,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     if(infoMddf.datasize > infoMddf.blocksize) return false;
 
-                    if(infoMddf.blocksize < imagePlugin.GetSectorSize()) return false;
+                    if(infoMddf.blocksize < imagePlugin.ImageInfo.SectorSize) return false;
 
-                    return infoMddf.datasize == imagePlugin.GetSectorSize();
+                    return infoMddf.datasize == imagePlugin.ImageInfo.SectorSize;
                 }
 
                 return false;
@@ -131,7 +133,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if(imagePlugin.GetSectors() < 800) return;
+                if(imagePlugin.ImageInfo.Sectors < 800) return;
 
                 int beforeMddf = -1;
 
@@ -274,7 +276,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     if(infoMddf.mddf_block != i - beforeMddf) return;
 
-                    if(infoMddf.vol_size > imagePlugin.GetSectors()) return;
+                    if(infoMddf.vol_size > imagePlugin.ImageInfo.Sectors) return;
 
                     if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one) return;
 
@@ -282,9 +284,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     if(infoMddf.datasize > infoMddf.blocksize) return;
 
-                    if(infoMddf.blocksize < imagePlugin.GetSectorSize()) return;
+                    if(infoMddf.blocksize < imagePlugin.ImageInfo.SectorSize) return;
 
-                    if(infoMddf.datasize != imagePlugin.GetSectorSize()) return;
+                    if(infoMddf.datasize != imagePlugin.ImageInfo.SectorSize) return;
 
                     switch(infoMddf.fsversion)
                     {

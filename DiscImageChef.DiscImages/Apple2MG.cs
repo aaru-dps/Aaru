@@ -83,7 +83,7 @@ namespace DiscImageChef.DiscImages
         const uint LOCKED_DISK = 0x80000000;
         const uint VALID_VOLUME_NUMBER = 0x00000100;
         const uint VOLUME_NUMBER_MASK = 0x000000FF;
-        
+
         Filter a2MgImageFilter;
         A2ImgHeader imageHeader;
 
@@ -95,13 +95,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -115,6 +115,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "Apple 2IMG";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -234,32 +245,32 @@ namespace DiscImageChef.DiscImages
             switch(imageHeader.Creator)
             {
                 case CREATOR_ASIMOV:
-                    ImageInfo.ImageApplication = "ASIMOV2";
+                    ImageInfo.Application = "ASIMOV2";
                     break;
                 case CREATOR_BERNIE:
-                    ImageInfo.ImageApplication = "Bernie ][ the Rescue";
+                    ImageInfo.Application = "Bernie ][ the Rescue";
                     break;
                 case CREATOR_CATAKIG:
-                    ImageInfo.ImageApplication = "Catakig";
+                    ImageInfo.Application = "Catakig";
                     break;
                 case CREATOR_SHEPPY:
-                    ImageInfo.ImageApplication = "Sheppy's ImageMaker";
+                    ImageInfo.Application = "Sheppy's ImageMaker";
                     break;
                 case CREATOR_SWEET:
-                    ImageInfo.ImageApplication = "Sweet16";
+                    ImageInfo.Application = "Sweet16";
                     break;
                 case CREATOR_XGS:
-                    ImageInfo.ImageApplication = "XGS";
+                    ImageInfo.Application = "XGS";
                     break;
                 case CREATOR_CIDER:
-                    ImageInfo.ImageApplication = "CiderPress";
+                    ImageInfo.Application = "CiderPress";
                     break;
                 default:
-                    ImageInfo.ImageApplication = $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\"";
+                    ImageInfo.Application = $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\"";
                     break;
             }
 
-            ImageInfo.ImageVersion = imageHeader.Version.ToString();
+            ImageInfo.Version = imageHeader.Version.ToString();
 
             if(imageHeader.CommentOffset != 0 && imageHeader.CommentSize != 0)
             {
@@ -267,12 +278,12 @@ namespace DiscImageChef.DiscImages
 
                 byte[] comments = new byte[imageHeader.CommentSize];
                 stream.Read(comments, 0, (int)imageHeader.CommentSize);
-                ImageInfo.ImageComments = Encoding.ASCII.GetString(comments);
+                ImageInfo.Comments = Encoding.ASCII.GetString(comments);
             }
 
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.MediaType = GetMediaType();
 
             a2MgImageFilter = imageFilter;
@@ -280,8 +291,8 @@ namespace DiscImageChef.DiscImages
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             DicConsole.VerboseWriteLine("2MG image contains a disk of type {0}", ImageInfo.MediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
-                DicConsole.VerboseWriteLine("2MG comments: {0}", ImageInfo.ImageComments);
+            if(!string.IsNullOrEmpty(ImageInfo.Comments))
+                DicConsole.VerboseWriteLine("2MG comments: {0}", ImageInfo.Comments);
 
             switch(ImageInfo.MediaType)
             {
@@ -322,72 +333,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public override bool ImageHasPartitions()
-        {
-            return false;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "Apple 2IMG";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override MediaType GetMediaType()
+        MediaType GetMediaType()
         {
             switch(ImageInfo.Sectors)
             {
@@ -480,77 +426,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetMediaManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetMediaModel()
-        {
-            return null;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return null;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return null;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return 0;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return 0;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetDriveModel()
-        {
-            return null;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return null;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

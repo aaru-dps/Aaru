@@ -52,13 +52,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -72,6 +72,16 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => extension == ".po"
+                                                  ? "Apple ][ Interleaved Disk Image (ProDOS order)"
+                                                  : "Apple ][ Interleaved Disk Image (DOS order)";
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -102,9 +112,9 @@ namespace DiscImageChef.DiscImages
 
             ImageInfo.SectorSize = 256;
             ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.Sectors = 560;
             ImageInfo.MediaType = MediaType.Apple33SS;
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
@@ -113,26 +123,6 @@ namespace DiscImageChef.DiscImages
             ImageInfo.SectorsPerTrack = 16;
 
             return true;
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -153,31 +143,6 @@ namespace DiscImageChef.DiscImages
             Array.Copy(deinterleaved, (int)(sectorAddress * ImageInfo.SectorSize), buffer, 0, buffer.Length);
 
             return buffer;
-        }
-
-        public override string GetImageFormat()
-        {
-            return extension == ".po" ? "Apple ][ Interleaved Disk Image (ProDOS order)" : "Apple ][ Interleaved Disk Image (DOS order)";
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -217,22 +182,12 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -283,90 +238,13 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
+        public override List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {

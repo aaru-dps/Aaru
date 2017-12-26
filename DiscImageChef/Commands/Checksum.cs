@@ -82,7 +82,7 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(inputFilter);
-            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
             Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
             EnableChecksum enabledChecksums = new EnableChecksum();
@@ -101,7 +101,7 @@ namespace DiscImageChef.Commands
 
             Core.Checksum mediaChecksum = null;
 
-            if(inputFormat.ImageInfo.ImageHasPartitions)
+            if(inputFormat.ImageInfo.HasPartitions)
                 try
                 {
                     Core.Checksum trackChecksum = null;
@@ -110,7 +110,7 @@ namespace DiscImageChef.Commands
 
                     ulong previousTrackEnd = 0;
 
-                    List<Track> inputTracks = inputFormat.GetTracks();
+                    List<Track> inputTracks = inputFormat.Tracks;
                     foreach(Track currentTrack in inputTracks)
                     {
                         if(currentTrack.TrackStartSector - previousTrackEnd != 0 && options.WholeDisc)
@@ -171,8 +171,8 @@ namespace DiscImageChef.Commands
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
-                    if(inputFormat.GetSectors() - previousTrackEnd != 0 && options.WholeDisc)
-                        for(ulong i = previousTrackEnd + 1; i < inputFormat.GetSectors(); i++)
+                    if(inputFormat.ImageInfo.Sectors - previousTrackEnd != 0 && options.WholeDisc)
+                        for(ulong i = previousTrackEnd + 1; i < inputFormat.ImageInfo.Sectors; i++)
                         {
                             DicConsole.Write("\rHashing track-less sector {0}", i);
 
@@ -194,7 +194,7 @@ namespace DiscImageChef.Commands
             {
                 mediaChecksum = new Core.Checksum(enabledChecksums);
 
-                ulong sectors = inputFormat.GetSectors();
+                ulong sectors = inputFormat.ImageInfo.Sectors;
                 DicConsole.WriteLine("Sectors {0}", sectors);
                 ulong doneSectors = 0;
 

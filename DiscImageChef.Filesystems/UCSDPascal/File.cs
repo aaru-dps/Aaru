@@ -79,7 +79,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 if(error != Errno.NoError) return error;
 
                 byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock));
-                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.GetSectorSize() + entry.lastBytes];
+                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.ImageInfo.SectorSize +
+                                entry.lastBytes];
                 Array.Copy(tmp, 0, file, 0, file.Length);
             }
 
@@ -110,7 +111,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                     stat = new FileEntryInfo
                     {
                         Attributes = FileAttributes.System,
-                        BlockSize = device.GetSectorSize(),
+                        BlockSize = device.ImageInfo.SectorSize,
                         DeviceNo = 0,
                         GID = 0,
                         Inode = 0,
@@ -141,12 +142,12 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             {
                 Attributes = FileAttributes.File,
                 Blocks = entry.lastBlock - entry.firstBlock,
-                BlockSize = device.GetSectorSize(),
+                BlockSize = device.ImageInfo.SectorSize,
                 DeviceNo = 0,
                 GID = 0,
                 Inode = 0,
                 LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.mtime),
-                Length = (entry.lastBlock - entry.firstBlock) * device.GetSectorSize() + entry.lastBytes,
+                Length = (entry.lastBlock - entry.firstBlock) * device.ImageInfo.SectorSize + entry.lastBytes,
                 Links = 1,
                 Mode = 0x124,
                 UID = 0

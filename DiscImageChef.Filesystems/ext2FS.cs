@@ -185,14 +185,14 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            ulong sbSectorOff = SB_POS / imagePlugin.GetSectorSize();
-            uint sbOff = SB_POS % imagePlugin.GetSectorSize();
+            ulong sbSectorOff = SB_POS / imagePlugin.ImageInfo.SectorSize;
+            uint sbOff = SB_POS % imagePlugin.ImageInfo.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return false;
 
             int sbSizeInBytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
-            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.GetSectorSize());
-            if(sbSizeInBytes % imagePlugin.GetSectorSize() > 0) sbSizeInSectors++;
+            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.ImageInfo.SectorSize);
+            if(sbSizeInBytes % imagePlugin.ImageInfo.SectorSize > 0) sbSizeInSectors++;
 
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
             byte[] sb = new byte[sbSizeInBytes];
@@ -214,11 +214,11 @@ namespace DiscImageChef.Filesystems
             bool ext4 = false;
 
             int sbSizeInBytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
-            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.GetSectorSize());
-            if(sbSizeInBytes % imagePlugin.GetSectorSize() > 0) sbSizeInSectors++;
+            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.ImageInfo.SectorSize);
+            if(sbSizeInBytes % imagePlugin.ImageInfo.SectorSize > 0) sbSizeInSectors++;
 
-            ulong sbSectorOff = SB_POS / imagePlugin.GetSectorSize();
-            uint sbOff = SB_POS % imagePlugin.GetSectorSize();
+            ulong sbSectorOff = SB_POS / imagePlugin.ImageInfo.SectorSize;
+            uint sbOff = SB_POS % imagePlugin.ImageInfo.SectorSize;
 
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
             byte[] sblock = new byte[sbSizeInBytes];

@@ -51,10 +51,10 @@ namespace DiscImageChef.Partitions
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            uint nSectors = 2048 / imagePlugin.GetSectorSize();
-            if(2048 % imagePlugin.GetSectorSize() > 0) nSectors++;
+            uint nSectors = 2048 / imagePlugin.ImageInfo.SectorSize;
+            if(2048 % imagePlugin.ImageInfo.SectorSize > 0) nSectors++;
 
-            if(sectorOffset + nSectors >= imagePlugin.GetSectors()) return false;
+            if(sectorOffset + nSectors >= imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
             if(sectors.Length < 2048) return false;
@@ -72,10 +72,10 @@ namespace DiscImageChef.Partitions
             {
                 Partition part = new Partition
                 {
-                    Start = entry.p_boffset / imagePlugin.GetSectorSize() + sectorOffset,
-                    Offset = entry.p_boffset + sectorOffset * imagePlugin.GetSectorSize(),
+                    Start = entry.p_boffset / imagePlugin.ImageInfo.SectorSize + sectorOffset,
+                    Offset = entry.p_boffset + sectorOffset * imagePlugin.ImageInfo.SectorSize,
                     Size = entry.p_bsize,
-                    Length = entry.p_bsize / imagePlugin.GetSectorSize(),
+                    Length = entry.p_bsize / imagePlugin.ImageInfo.SectorSize,
                     Name = entry.p_stor_uuid.ToString(),
                     Sequence = counter,
                     Scheme = Name,
@@ -84,7 +84,7 @@ namespace DiscImageChef.Partitions
                                : BSD.fsTypeToString((BSD.fsType)entry.p_fstype)
                 };
 
-                if(entry.p_bsize % imagePlugin.GetSectorSize() > 0) part.Length++;
+                if(entry.p_bsize % imagePlugin.ImageInfo.SectorSize > 0) part.Length++;
 
                 if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
 

@@ -69,13 +69,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -89,6 +89,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "VDI";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -156,34 +167,34 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.Sectors = vHdr.size / vHdr.sectorSize;
             ImageInfo.ImageSize = vHdr.size;
             ImageInfo.SectorSize = vHdr.sectorSize;
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
-            ImageInfo.ImageComments = vHdr.description;
-            ImageInfo.ImageVersion = $"{vHdr.majorVersion}.{vHdr.minorVersion}";
+            ImageInfo.Comments = vHdr.description;
+            ImageInfo.Version = $"{vHdr.majorVersion}.{vHdr.minorVersion}";
 
             switch(vHdr.creator)
             {
                 case SUN_VDI:
-                    ImageInfo.ImageApplication = "Sun VirtualBox";
+                    ImageInfo.Application = "Sun VirtualBox";
                     break;
                 case SUN_OLD_VDI:
-                    ImageInfo.ImageApplication = "Sun xVM";
+                    ImageInfo.Application = "Sun xVM";
                     break;
                 case ORACLE_VDI:
-                    ImageInfo.ImageApplication = "Oracle VirtualBox";
+                    ImageInfo.Application = "Oracle VirtualBox";
                     break;
                 case QEMUVDI:
-                    ImageInfo.ImageApplication = "QEMU";
+                    ImageInfo.Application = "QEMU";
                     break;
                 case INNOTEK_VDI:
                 case INNOTEK_OLD_VDI:
-                    ImageInfo.ImageApplication = "innotek VirtualBox";
+                    ImageInfo.Application = "innotek VirtualBox";
                     break;
             }
 
@@ -248,76 +259,6 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override bool ImageHasPartitions()
-        {
-            return false;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "VDI";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -373,77 +314,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetMediaManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetMediaModel()
-        {
-            return null;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return null;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return null;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return 0;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return 0;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetDriveModel()
-        {
-            return null;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return null;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

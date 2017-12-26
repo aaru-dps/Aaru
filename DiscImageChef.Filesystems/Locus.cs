@@ -91,16 +91,16 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
             for(ulong location = 0; location <= 8; location++)
             {
                 Locus_Superblock LocusSb = new Locus_Superblock();
 
-                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(LocusSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.ImageInfo.SectorSize);
+                if(Marshal.SizeOf(LocusSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
-                if(partition.Start + location + sbSize >= imagePlugin.GetSectors()) break;
+                if(partition.Start + location + sbSize >= imagePlugin.ImageInfo.Sectors) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(LocusSb)) return false;
@@ -122,15 +122,15 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
             Locus_Superblock LocusSb = new Locus_Superblock();
             byte[] sector = null;
 
             for(ulong location = 0; location <= 8; location++)
             {
-                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(LocusSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.ImageInfo.SectorSize);
+                if(Marshal.SizeOf(LocusSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(LocusSb)) return;

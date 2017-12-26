@@ -202,13 +202,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -222,6 +222,29 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat
+        {
+            get
+            {
+                switch(thisFooter.DiskType)
+                {
+                    case TYPE_FIXED: return "Virtual PC fixed size disk image";
+                    case TYPE_DYNAMIC: return "Virtual PC dynamic size disk image";
+                    case TYPE_DIFFERENCING: return "Virtual PC differencing disk image";
+                    default: return "Virtual PC disk image";
+                }
+            }
+        }
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -364,7 +387,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.savedState = 0x{0:X2}", thisFooter.SavedState);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
 
-            if(thisFooter.Version == VERSION1) ImageInfo.ImageVersion = "1.0";
+            if(thisFooter.Version == VERSION1) ImageInfo.Version = "1.0";
             else
                 throw new
                     ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {thisFooter.DiskType} found. Please submit a bug with an example image.");
@@ -373,28 +396,28 @@ namespace DiscImageChef.DiscImages
             {
                 case CREATOR_QEMU:
                 {
-                    ImageInfo.ImageApplication = "QEMU";
+                    ImageInfo.Application = "QEMU";
                     // QEMU always set same version
-                    ImageInfo.ImageApplicationVersion = "Unknown";
+                    ImageInfo.ApplicationVersion = "Unknown";
 
                     break;
                 }
                 case CREATOR_VIRTUAL_BOX:
                 {
-                    ImageInfo.ImageApplicationVersion =
+                    ImageInfo.ApplicationVersion =
                         $"{(thisFooter.CreatorVersion & 0xFFFF0000) >> 16}.{thisFooter.CreatorVersion & 0x0000FFFF:D2}";
                     switch(thisFooter.CreatorHostOs)
                     {
                         case CREATOR_MACINTOSH:
                         case CREATOR_MACINTOSH_OLD:
-                            ImageInfo.ImageApplication = "VirtualBox for Mac";
+                            ImageInfo.Application = "VirtualBox for Mac";
                             break;
                         case CREATOR_WINDOWS:
                             // VirtualBox uses Windows creator for any other OS
-                            ImageInfo.ImageApplication = "VirtualBox";
+                            ImageInfo.Application = "VirtualBox";
                             break;
                         default:
-                            ImageInfo.ImageApplication =
+                            ImageInfo.Application =
                                 $"VirtualBox for unknown OS \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.CreatorHostOs))}\"";
                             break;
                     }
@@ -403,14 +426,14 @@ namespace DiscImageChef.DiscImages
                 }
                 case CREATOR_VIRTUAL_SERVER:
                 {
-                    ImageInfo.ImageApplication = "Microsoft Virtual Server";
+                    ImageInfo.Application = "Microsoft Virtual Server";
                     switch(thisFooter.CreatorVersion)
                     {
                         case VERSION_VIRTUAL_SERVER2004:
-                            ImageInfo.ImageApplicationVersion = "2004";
+                            ImageInfo.ApplicationVersion = "2004";
                             break;
                         default:
-                            ImageInfo.ImageApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
+                            ImageInfo.ApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                             break;
                     }
 
@@ -425,11 +448,11 @@ namespace DiscImageChef.DiscImages
                             switch(thisFooter.CreatorVersion)
                             {
                                 case VERSION_VIRTUAL_PC_MAC:
-                                    ImageInfo.ImageApplication = "Connectix Virtual PC";
-                                    ImageInfo.ImageApplicationVersion = "5, 6 or 7";
+                                    ImageInfo.Application = "Connectix Virtual PC";
+                                    ImageInfo.ApplicationVersion = "5, 6 or 7";
                                     break;
                                 default:
-                                    ImageInfo.ImageApplicationVersion =
+                                    ImageInfo.ApplicationVersion =
                                         $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                                     break;
                             }
@@ -439,28 +462,28 @@ namespace DiscImageChef.DiscImages
                             switch(thisFooter.CreatorVersion)
                             {
                                 case VERSION_VIRTUAL_PC_MAC:
-                                    ImageInfo.ImageApplication = "Connectix Virtual PC";
-                                    ImageInfo.ImageApplicationVersion = "5, 6 or 7";
+                                    ImageInfo.Application = "Connectix Virtual PC";
+                                    ImageInfo.ApplicationVersion = "5, 6 or 7";
                                     break;
                                 case VERSION_VIRTUAL_PC2004:
-                                    ImageInfo.ImageApplication = "Microsoft Virtual PC";
-                                    ImageInfo.ImageApplicationVersion = "2004";
+                                    ImageInfo.Application = "Microsoft Virtual PC";
+                                    ImageInfo.ApplicationVersion = "2004";
                                     break;
                                 case VERSION_VIRTUAL_PC2007:
-                                    ImageInfo.ImageApplication = "Microsoft Virtual PC";
-                                    ImageInfo.ImageApplicationVersion = "2007";
+                                    ImageInfo.Application = "Microsoft Virtual PC";
+                                    ImageInfo.ApplicationVersion = "2007";
                                     break;
                                 default:
-                                    ImageInfo.ImageApplicationVersion =
+                                    ImageInfo.ApplicationVersion =
                                         $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                                     break;
                             }
 
                             break;
                         default:
-                            ImageInfo.ImageApplication =
+                            ImageInfo.Application =
                                 $"Virtual PC for unknown OS \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.CreatorHostOs))}\"";
-                            ImageInfo.ImageApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
+                            ImageInfo.ApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                             break;
                     }
 
@@ -468,9 +491,9 @@ namespace DiscImageChef.DiscImages
                 }
                 default:
                 {
-                    ImageInfo.ImageApplication =
+                    ImageInfo.Application =
                         $"Unknown application \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.CreatorHostOs))}\"";
-                    ImageInfo.ImageApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
+                    ImageInfo.ApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                     break;
                 }
             }
@@ -480,9 +503,9 @@ namespace DiscImageChef.DiscImages
             ImageInfo.Sectors = thisFooter.CurrentSize / 512;
             ImageInfo.SectorSize = 512;
 
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = thisDateTime;
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = thisDateTime;
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
             ImageInfo.Cylinders = (thisFooter.DiskGeometry & 0xFFFF0000) >> 16;
             ImageInfo.Heads = (thisFooter.DiskGeometry & 0xFF00) >> 8;
@@ -772,7 +795,7 @@ namespace DiscImageChef.DiscImages
                         // the parent never stored itself. So the only real way to know that images are related is
                         // because the parent IS found and SAME SIZE. Ugly...
                         // More funny even, tested parent images show an empty host OS, and child images a correct one.
-                        if(parentImage.GetSectors() != GetSectors())
+                        if(parentImage.ImageInfo.Sectors != ImageInfo.Sectors)
                             throw new
                                 ImageNotSupportedException("(VirtualPC plugin): Parent image is of different size");
                     }
@@ -792,77 +815,6 @@ namespace DiscImageChef.DiscImages
                         ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {thisFooter.DiskType} found. Please submit a bug with an example image.");
                 }
             }
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return false;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
-        public override string GetImageFormat()
-        {
-            switch(thisFooter.DiskType)
-            {
-                case TYPE_FIXED: return "Virtual PC fixed size disk image";
-                case TYPE_DYNAMIC: return "Virtual PC dynamic size disk image";
-                case TYPE_DIFFERENCING: return "Virtual PC differencing disk image";
-                default: return "Virtual PC disk image";
-            }
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return MediaType.GENERIC_HDD;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -1029,11 +981,6 @@ namespace DiscImageChef.DiscImages
             return ~checksum;
         }
 
-        public override string GetImageComments()
-        {
-            return null;
-        }
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -1089,77 +1036,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetMediaManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetMediaModel()
-        {
-            return null;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return null;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return null;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return 0;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return 0;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetDriveModel()
-        {
-            return null;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return null;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

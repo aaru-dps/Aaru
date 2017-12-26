@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public override Errno Mount(bool debug)
         {
             this.debug = debug;
-            if(device.GetSectors() < 3) return Errno.InvalidArgument;
+            if(device.ImageInfo.Sectors < 3) return Errno.InvalidArgument;
 
             // Blocks 0 and 1 are boot code
             catalogBlocks = device.ReadSector(2);
@@ -66,10 +66,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             mountedVolEntry.tail = BigEndianBitConverter.ToInt32(catalogBlocks, 0x16);
 
             if(mountedVolEntry.firstBlock != 0 || mountedVolEntry.lastBlock <= mountedVolEntry.firstBlock ||
-               (ulong)mountedVolEntry.lastBlock > device.GetSectors() - 2 ||
+               (ulong)mountedVolEntry.lastBlock > device.ImageInfo.Sectors - 2 ||
                mountedVolEntry.entryType != PascalFileKind.Volume &&
                mountedVolEntry.entryType != PascalFileKind.Secure || mountedVolEntry.volumeName[0] > 7 ||
-               mountedVolEntry.blocks < 0 || (ulong)mountedVolEntry.blocks != device.GetSectors() ||
+               mountedVolEntry.blocks < 0 || (ulong)mountedVolEntry.blocks != device.ImageInfo.Sectors ||
                mountedVolEntry.files < 0) return Errno.InvalidArgument;
 
             catalogBlocks = device.ReadSectors(2, (uint)(mountedVolEntry.lastBlock - mountedVolEntry.firstBlock - 2));
@@ -100,7 +100,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             {
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
                 Clusters = mountedVolEntry.blocks,
-                ClusterSize = (int)device.GetSectorSize(),
+                ClusterSize = (int)device.ImageInfo.SectorSize,
                 Files = mountedVolEntry.files,
                 FilesSpecified = true,
                 Type = "UCSD Pascal",

@@ -196,9 +196,9 @@ namespace DiscImageChef.Partitions
 
             partitions = new List<Partition>();
 
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
-            uint sectorSize = imagePlugin.GetSectorSize();
+            uint sectorSize = imagePlugin.ImageInfo.SectorSize;
             // Divider of sector size in MBR between real sector size
             ulong divider = 1;
 
@@ -300,14 +300,15 @@ namespace DiscImageChef.Partitions
 
                 if(minix && lbaStart == sectorOffset) minix = false;
 
-                if(lbaStart > imagePlugin.GetSectors())
+                if(lbaStart > imagePlugin.ImageInfo.Sectors)
                 {
                     valid = false;
                     extended = false;
                 }
 
                 // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-                if(lbaStart + lbaSectors > imagePlugin.GetSectors()) lbaSectors = imagePlugin.GetSectors() - lbaStart;
+                if(lbaStart + lbaSectors > imagePlugin.ImageInfo.Sectors)
+                    lbaSectors = imagePlugin.ImageInfo.Sectors - lbaStart;
 
                 DicConsole.DebugWriteLine("MBR plugin", "entry.status {0}", entry.status);
                 DicConsole.DebugWriteLine("MBR plugin", "entry.type {0}", entry.type);
@@ -436,11 +437,11 @@ namespace DiscImageChef.Partitions
                         }
 
                         extStart += lbaStart;
-                        extValid &= extStart <= imagePlugin.GetSectors();
+                        extValid &= extStart <= imagePlugin.ImageInfo.Sectors;
 
                         // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-                        if(extStart + extSectors > imagePlugin.GetSectors())
-                            extSectors = imagePlugin.GetSectors() - extStart;
+                        if(extStart + extSectors > imagePlugin.ImageInfo.Sectors)
+                            extSectors = imagePlugin.ImageInfo.Sectors - extStart;
 
                         if(extValid && extMinix) // Let's mix the fun
                             if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize,
@@ -473,7 +474,7 @@ namespace DiscImageChef.Partitions
 
                     DicConsole.DebugWriteLine("MBR plugin", "next_start {0}", nextStart);
                     processingExtended &= nextStart != 0;
-                    processingExtended &= nextStart <= imagePlugin.GetSectors();
+                    processingExtended &= nextStart <= imagePlugin.ImageInfo.Sectors;
                     lbaStart = nextStart;
                 }
             }

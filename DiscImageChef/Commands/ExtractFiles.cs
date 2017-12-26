@@ -114,13 +114,13 @@ namespace DiscImageChef.Commands
 
                     DicConsole.DebugWriteLine("Extract-Files command", "Correctly opened image file.");
                     DicConsole.DebugWriteLine("Extract-Files command", "Image without headers is {0} bytes.",
-                                              imageFormat.GetImageSize());
+                                              imageFormat.ImageInfo.ImageSize);
                     DicConsole.DebugWriteLine("Extract-Files command", "Image has {0} sectors.",
-                                              imageFormat.GetSectors());
+                                              imageFormat.ImageInfo.Sectors);
                     DicConsole.DebugWriteLine("Extract-Files command", "Image identifies disk type as {0}.",
-                                              imageFormat.GetMediaType());
+                                              imageFormat.ImageInfo.MediaType);
 
-                    Core.Statistics.AddMediaFormat(imageFormat.GetImageFormat());
+                    Core.Statistics.AddMediaFormat(imageFormat.ImageFormat);
                     Core.Statistics.AddMedia(imageFormat.ImageInfo.MediaType, false);
                     Core.Statistics.AddFilter(inputFilter.Name);
                 }
@@ -458,8 +458,8 @@ namespace DiscImageChef.Commands
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = imageFormat.GetSectors(),
-                    Size = imageFormat.GetSectors() * imageFormat.GetSectorSize()
+                    Length = imageFormat.ImageInfo.Sectors,
+                    Size = imageFormat.ImageInfo.Sectors * imageFormat.ImageInfo.SectorSize
                 };
 
                 Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);

@@ -71,12 +71,12 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = true,
-                ImageHasSessions = true,
-                ImageVersion = null,
-                ImageApplicationVersion = null,
-                ImageName = null,
-                ImageCreator = null,
+                HasPartitions = true,
+                HasSessions = true,
+                Version = null,
+                ApplicationVersion = null,
+                MediaTitle = null,
+                Creator = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaPartNumber = null,
@@ -88,6 +88,14 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "BlindWrite 4 TOC file";
+
+        public override List<Partition> Partitions => partitions;
+
+        public override List<Track> Tracks => tracks;
+
+        public override List<Session> Sessions => sessions;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -650,7 +658,7 @@ namespace DiscImageChef.DiscImages
                 {
                     ImageInfo.MediaBarcode = bwTrack.isrcUpc;
                     ImageInfo.MediaSerialNumber = bwTrack.discId;
-                    ImageInfo.ImageName = bwTrack.title;
+                    ImageInfo.MediaTitle = bwTrack.title;
 
                     if(!string.IsNullOrEmpty(bwTrack.isrcUpc) &&
                        !ImageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
@@ -680,13 +688,13 @@ namespace DiscImageChef.DiscImages
 
             ImageInfo.MediaType = MediaType.CD;
 
-            ImageInfo.ImageApplication = "BlindWrite";
-            ImageInfo.ImageApplicationVersion = "4";
-            ImageInfo.ImageVersion = "4";
+            ImageInfo.Application = "BlindWrite";
+            ImageInfo.ApplicationVersion = "4";
+            ImageInfo.Version = "4";
 
             ImageInfo.ImageSize = (ulong)dataFilter.GetDataForkLength();
-            ImageInfo.ImageCreationTime = dataFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = dataFilter.GetLastWriteTime();
+            ImageInfo.CreationTime = dataFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = dataFilter.GetLastWriteTime();
             ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
             bool data = false;
@@ -723,33 +731,13 @@ namespace DiscImageChef.DiscImages
             else if(!audio) ImageInfo.MediaType = MediaType.CDROM;
             else ImageInfo.MediaType = MediaType.CD;
 
-            ImageInfo.ImageComments = header.Comments;
+            ImageInfo.Comments = header.Comments;
 
             DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", ImageInfo.MediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
-                DicConsole.VerboseWriteLine("BlindrWrite comments: {0}", ImageInfo.ImageComments);
+            if(!string.IsNullOrEmpty(ImageInfo.Comments))
+                DicConsole.VerboseWriteLine("BlindrWrite comments: {0}", ImageInfo.Comments);
 
             return true;
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -1118,36 +1106,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override string GetImageFormat()
-        {
-            return "BlindWrite 4 TOC file";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            return partitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            return tracks;
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
@@ -1158,11 +1116,6 @@ namespace DiscImageChef.DiscImages
         public override List<Track> GetSessionTracks(ushort session)
         {
             return tracks.Where(track => track.TrackSession == session).ToList();
-        }
-
-        public override List<Session> GetSessions()
-        {
-            return sessions;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -1240,86 +1193,6 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifyMediaImage()
         {
             return null;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
         }
 
         struct Bw4Header

@@ -103,13 +103,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -123,6 +123,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "Sydex CopyQM";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -184,7 +195,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] cmt = new byte[header.commentLength];
             stream.Read(cmt, 0, header.commentLength);
-            ImageInfo.ImageComments = StringHandlers.CToString(cmt);
+            ImageInfo.Comments = StringHandlers.CToString(cmt);
             decodedImage = new MemoryStream();
 
             calculatedDataCrc = 0;
@@ -248,10 +259,10 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
                                       calculatedDataCrc == header.crc);
 
-            ImageInfo.ImageApplication = "CopyQM";
-            ImageInfo.ImageCreationTime = DateHandlers.DosToDateTime(header.date, header.time);
-            ImageInfo.ImageLastModificationTime = ImageInfo.ImageCreationTime;
-            ImageInfo.ImageName = header.volumeLabel;
+            ImageInfo.Application = "CopyQM";
+            ImageInfo.CreationTime = DateHandlers.DosToDateTime(header.date, header.time);
+            ImageInfo.LastModificationTime = ImageInfo.CreationTime;
+            ImageInfo.MediaTitle = header.volumeLabel;
             ImageInfo.ImageSize = (ulong)(stream.Length - 133 - header.commentLength);
             ImageInfo.Sectors = (ulong)sectors;
             ImageInfo.SectorSize = header.sectorSize;
@@ -336,8 +347,8 @@ namespace DiscImageChef.DiscImages
             decodedImage.Close();
 
             DicConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", ImageInfo.MediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
-                DicConsole.VerboseWriteLine("CopyQM comments: {0}", ImageInfo.ImageComments);
+            if(!string.IsNullOrEmpty(ImageInfo.Comments))
+                DicConsole.VerboseWriteLine("CopyQM comments: {0}", ImageInfo.Comments);
 
             ImageInfo.Heads = header.heads;
             ImageInfo.Cylinders = header.imageCylinders;
@@ -383,26 +394,6 @@ namespace DiscImageChef.DiscImages
             return calculatedDataCrc == header.crc && headerChecksumOk;
         }
 
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
         public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
@@ -422,106 +413,6 @@ namespace DiscImageChef.DiscImages
                        length * ImageInfo.SectorSize);
 
             return buffer;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "Sydex CopyQM";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
         }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
@@ -549,27 +440,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

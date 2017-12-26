@@ -73,13 +73,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = true,
+                HasSessions = true,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -93,6 +93,65 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "Alcohol 120% Media Descriptor Structure";
+
+        public override List<Partition> Partitions => partitions;
+
+        public override List<Track> Tracks
+        {
+            get
+            {
+                List<Track> tracks = new List<Track>();
+
+                foreach(AlcoholTrack alcTrack in alcTracks.Values)
+                {
+                    ushort sessionNo =
+                        (from session in sessions
+                         where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack
+                         select session.SessionSequence).FirstOrDefault();
+
+                    if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
+
+                    Track dicTrack = new Track
+                    {
+                        Indexes = new Dictionary<int, ulong> {{1, alcTrack.startLba}},
+                        TrackStartSector = alcTrack.startLba,
+                        TrackEndSector = alcExtra.sectors - 1,
+                        TrackPregap = alcExtra.pregap,
+                        TrackSession = sessionNo,
+                        TrackSequence = alcTrack.point,
+                        TrackType = AlcoholTrackTypeToTrackType(alcTrack.mode),
+                        TrackFilter = alcImage,
+                        TrackFile = alcImage.GetFilename(),
+                        TrackFileOffset = alcTrack.startOffset,
+                        TrackFileType = "BINARY",
+                        TrackRawBytesPerSector = alcTrack.sectorSize,
+                        TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
+                    };
+
+                    switch(alcTrack.subMode)
+                    {
+                        case AlcoholSubchannelMode.Interleaved:
+                            dicTrack.TrackSubchannelFilter = alcImage;
+                            dicTrack.TrackSubchannelFile = alcImage.GetFilename();
+                            dicTrack.TrackSubchannelOffset = alcTrack.startOffset;
+                            dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                            dicTrack.TrackRawBytesPerSector += 96;
+                            break;
+                        case AlcoholSubchannelMode.None:
+                            dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                            break;
+                    }
+
+                    tracks.Add(dicTrack);
+                }
+
+                return tracks;
+            }
+        }
+
+        public override List<Session> Sessions => sessions;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -561,7 +620,7 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition size in bytes: {0}", partition.Size);
             }
 
-            ImageInfo.ImageApplication = "Alcohol 120%";
+            ImageInfo.Application = "Alcohol 120%";
 
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "Data filename: {0}", alcFile);
 
@@ -571,10 +630,10 @@ namespace DiscImageChef.DiscImages
             if(alcImage == null) throw new Exception("Cannot open data file");
 
             ImageInfo.ImageSize = (ulong)alcImage.GetDataForkLength();
-            ImageInfo.ImageCreationTime = alcImage.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = alcImage.GetLastWriteTime();
+            ImageInfo.CreationTime = alcImage.GetCreationTime();
+            ImageInfo.LastModificationTime = alcImage.GetLastWriteTime();
             ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
-            ImageInfo.ImageVersion = $"{header.version[0]}.{header.version[1]}";
+            ImageInfo.Version = $"{header.version[0]}.{header.version[1]}";
 
             if(!isDvd)
             {
@@ -633,26 +692,6 @@ namespace DiscImageChef.DiscImages
             DicConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", ImageInfo.MediaType);
 
             return true;
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -1224,81 +1263,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override string GetImageFormat()
-        {
-            return "Alcohol 120% Media Descriptor Structure";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            return partitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            List<Track> tracks = new List<Track>();
-
-            foreach(AlcoholTrack alcTrack in alcTracks.Values)
-            {
-                ushort sessionNo =
-                    (from session in sessions
-                     where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack
-                     select session.SessionSequence).FirstOrDefault();
-
-                if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
-
-                Track dicTrack = new Track
-                {
-                    Indexes = new Dictionary<int, ulong> {{1, alcTrack.startLba}},
-                    TrackStartSector = alcTrack.startLba,
-                    TrackEndSector = alcExtra.sectors - 1,
-                    TrackPregap = alcExtra.pregap,
-                    TrackSession = sessionNo,
-                    TrackSequence = alcTrack.point,
-                    TrackType = AlcoholTrackTypeToTrackType(alcTrack.mode),
-                    TrackFilter = alcImage,
-                    TrackFile = alcImage.GetFilename(),
-                    TrackFileOffset = alcTrack.startOffset,
-                    TrackFileType = "BINARY",
-                    TrackRawBytesPerSector = alcTrack.sectorSize,
-                    TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
-                };
-
-                switch(alcTrack.subMode)
-                {
-                    case AlcoholSubchannelMode.Interleaved:
-                        dicTrack.TrackSubchannelFilter = alcImage;
-                        dicTrack.TrackSubchannelFile = alcImage.GetFilename();
-                        dicTrack.TrackSubchannelOffset = alcTrack.startOffset;
-                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                        dicTrack.TrackRawBytesPerSector += 96;
-                        break;
-                    case AlcoholSubchannelMode.None:
-                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
-                        break;
-                }
-
-                tracks.Add(dicTrack);
-            }
-
-            return tracks;
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
@@ -1355,11 +1319,6 @@ namespace DiscImageChef.DiscImages
             }
 
             return tracks;
-        }
-
-        public override List<Session> GetSessions()
-        {
-            return sessions;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -1494,86 +1453,6 @@ namespace DiscImageChef.DiscImages
                 case AlcoholMediumType.DVDR: return MediaType.DVDR;
                 default: return MediaType.Unknown;
             }
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

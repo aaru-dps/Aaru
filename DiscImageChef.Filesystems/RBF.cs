@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 256) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 256) return false;
 
             // Documentation says ID should be sector 0
             // I've found that OS-9/X68000 has it on sector 4
@@ -79,10 +79,10 @@ namespace DiscImageChef.Filesystems
             {
                 RBF_IdSector rbfSb = new RBF_IdSector();
 
-                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(rbfSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.ImageInfo.SectorSize);
+                if(Marshal.SizeOf(rbfSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
-                if(partition.Start + location + sbSize >= imagePlugin.GetSectors()) break;
+                if(partition.Start + location + sbSize >= imagePlugin.ImageInfo.Sectors) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(rbfSb)) return false;
@@ -104,15 +104,15 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 256) return;
+            if(imagePlugin.ImageInfo.SectorSize < 256) return;
 
             RBF_IdSector rbfSb = new RBF_IdSector();
             RBF_NewIdSector rbf9000Sb = new RBF_NewIdSector();
 
             foreach(ulong location in new[] {0, 4, 15})
             {
-                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(rbfSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.ImageInfo.SectorSize);
+                if(Marshal.SizeOf(rbfSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(rbfSb)) return;

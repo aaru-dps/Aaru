@@ -203,7 +203,8 @@ namespace DiscImageChef.Filesystems.CPM
                         sectorSize = (ulong)(128 << amsSb.psh);
 
                         // Compare device limits from superblock to real limits
-                        if(sectorSize == imagePlugin.GetSectorSize() && sectorCount == imagePlugin.GetSectors())
+                        if(sectorSize == imagePlugin.ImageInfo.SectorSize &&
+                           sectorCount == imagePlugin.ImageInfo.Sectors)
                         {
                             cpmFound = true;
                             firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
@@ -318,7 +319,7 @@ namespace DiscImageChef.Filesystems.CPM
                             (ulong)((hddSb.firstCylinder * hddSb.heads + hddSb.heads) * hddSb.sectorsPerTrack);
 
                         // If volume size corresponds with working partition (this variant will be inside MBR partitioning)
-                        if(sectorSize == imagePlugin.GetSectorSize() && startingSector == partition.Start &&
+                        if(sectorSize == imagePlugin.ImageInfo.SectorSize && startingSector == partition.Start &&
                            sectorsInPartition + partition.Start <= partition.End)
                         {
                             cpmFound = true;
@@ -404,7 +405,7 @@ namespace DiscImageChef.Filesystems.CPM
                     switch((FormatByte)formatByte)
                     {
                         case FormatByte.k160:
-                            if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 320)
+                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 320)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 8;
@@ -452,7 +453,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.k320:
-                            if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 640)
+                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 640)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 16;
@@ -505,7 +506,7 @@ namespace DiscImageChef.Filesystems.CPM
                         case FormatByte.k360:
                         case FormatByte.k360Alt:
                         case FormatByte.k360Alt2:
-                            if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 720)
+                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 720)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
@@ -557,7 +558,7 @@ namespace DiscImageChef.Filesystems.CPM
                             break;
                         case FormatByte.k720:
                         case FormatByte.k720Alt:
-                            if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 1440)
+                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 1440)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
@@ -608,7 +609,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.f720:
-                            if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 1440)
+                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 1440)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 18;
@@ -659,7 +660,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.f1200:
-                            if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 2400)
+                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 2400)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 30;
@@ -710,7 +711,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.f1440:
-                            if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 2880)
+                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 2880)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
@@ -764,7 +765,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                     if(cpmFound)
                     {
-                        uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / imagePlugin.GetSectorSize());
+                        uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / imagePlugin.ImageInfo.SectorSize);
                         directory = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength);
                         DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
@@ -793,8 +794,8 @@ namespace DiscImageChef.Filesystems.CPM
                         foreach(CpmDefinition def in from def in definitions.definitions
                                                      let sectors =
                                                          (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
-                                                     where sectors == imagePlugin.GetSectors() &&
-                                                           def.bytesPerSector == imagePlugin.GetSectorSize()
+                                                     where sectors == imagePlugin.ImageInfo.Sectors &&
+                                                           def.bytesPerSector == imagePlugin.ImageInfo.SectorSize
                                                      select def)
                         {
                             // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector

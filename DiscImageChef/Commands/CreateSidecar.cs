@@ -120,7 +120,7 @@ namespace DiscImageChef.Commands
                         return;
                     }
 
-                    Core.Statistics.AddMediaFormat(imageFormat.GetImageFormat());
+                    Core.Statistics.AddMediaFormat(imageFormat.ImageFormat);
                     Core.Statistics.AddFilter(inputFilter.Name);
 
                     CICMMetadataType sidecar =

@@ -164,7 +164,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Search for the first sector describing the catalog
             // While root catalog is not stored in S-Records, probably rest are? (unchecked)
             // If root catalog is not pointed in MDDF (unchecked) maybe it's always following S-Records File?
-            for(ulong i = 0; i < device.GetSectors(); i++)
+            for(ulong i = 0; i < device.ImageInfo.Sectors; i++)
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag catTag);
 

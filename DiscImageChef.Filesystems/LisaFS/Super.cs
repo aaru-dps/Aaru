@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if(device.GetSectors() < 800)
+                if(device.ImageInfo.Sectors < 800)
                 {
                     DicConsole.DebugWriteLine("LisaFS plugin", "Device is too small");
                     return Errno.InOutError;
@@ -178,11 +178,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                     mddf.vol_left_mounted = sector[0x138];
 
                     // Check that the MDDF is correct
-                    if(mddf.mddf_block != i - volumePrefix || mddf.vol_size > device.GetSectors() ||
+                    if(mddf.mddf_block != i - volumePrefix || mddf.vol_size > device.ImageInfo.Sectors ||
                        mddf.vol_size - 1 != mddf.volsize_minus_one ||
                        mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one - volumePrefix ||
-                       mddf.datasize > mddf.blocksize || mddf.blocksize < device.GetSectorSize() ||
-                       mddf.datasize != device.GetSectorSize())
+                       mddf.datasize > mddf.blocksize || mddf.blocksize < device.ImageInfo.SectorSize ||
+                       mddf.datasize != device.ImageInfo.SectorSize)
                     {
                         DicConsole.DebugWriteLine("LisaFS plugin", "Incorrect MDDF found");
                         return Errno.InvalidArgument;

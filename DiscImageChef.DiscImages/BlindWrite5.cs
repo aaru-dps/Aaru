@@ -89,12 +89,12 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = true,
-                ImageHasSessions = true,
-                ImageVersion = null,
-                ImageApplicationVersion = null,
-                ImageName = null,
-                ImageCreator = null,
+                HasPartitions = true,
+                HasSessions = true,
+                Version = null,
+                ApplicationVersion = null,
+                MediaTitle = null,
+                Creator = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaPartNumber = null,
@@ -106,6 +106,14 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "BlindWrite 5 TOC file";
+
+        public override List<Partition> Partitions => partitions;
+
+        public override List<Track> Tracks => tracks;
+
+        public override List<Session> Sessions => sessions;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -944,16 +952,16 @@ namespace DiscImageChef.DiscImages
             ImageInfo.DriveManufacturer = StringHandlers.CToString(header.manufacturer);
             ImageInfo.DriveModel = StringHandlers.CToString(header.product);
             ImageInfo.DriveFirmwareRevision = StringHandlers.CToString(header.revision);
-            ImageInfo.ImageApplication = "BlindWrite";
+            ImageInfo.Application = "BlindWrite";
             if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), "B5T",
-                              StringComparison.OrdinalIgnoreCase) == 0) ImageInfo.ImageApplicationVersion = "5";
+                              StringComparison.OrdinalIgnoreCase) == 0) ImageInfo.ApplicationVersion = "5";
             else if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), "B6T",
-                                   StringComparison.OrdinalIgnoreCase) == 0) ImageInfo.ImageApplicationVersion = "6";
-            ImageInfo.ImageVersion = "5";
+                                   StringComparison.OrdinalIgnoreCase) == 0) ImageInfo.ApplicationVersion = "6";
+            ImageInfo.Version = "5";
 
             ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
             if(pma != null)
@@ -1021,26 +1029,6 @@ namespace DiscImageChef.DiscImages
             DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", ImageInfo.MediaType);
 
             return true;
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -1670,36 +1658,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override string GetImageFormat()
-        {
-            return "BlindWrite 5 TOC file";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            return partitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            return tracks;
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
@@ -1710,11 +1668,6 @@ namespace DiscImageChef.DiscImages
         public override List<Track> GetSessionTracks(ushort session)
         {
             return tracks.Where(dicTrack => dicTrack.TrackSession == session).ToList();
-        }
-
-        public override List<Session> GetSessions()
-        {
-            return sessions;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -1792,6 +1745,62 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifyMediaImage()
         {
             return null;
+        }
+
+        static TrackType BlindWriteTrackTypeToTrackType(Bw5TrackType trackType)
+        {
+            switch(trackType)
+            {
+                case Bw5TrackType.Mode1: return TrackType.CdMode1;
+                case Bw5TrackType.Mode2F1: return TrackType.CdMode2Form1;
+                case Bw5TrackType.Mode2F2: return TrackType.CdMode2Form2;
+                case Bw5TrackType.Mode2: return TrackType.CdMode2Formless;
+                case Bw5TrackType.Audio: return TrackType.Audio;
+                default: return TrackType.Data;
+            }
+        }
+
+        static MediaType BlindWriteProfileToMediaType(ProfileNumber profile)
+        {
+            switch(profile)
+            {
+                case ProfileNumber.BDRE: return MediaType.BDRE;
+                case ProfileNumber.BDROM: return MediaType.BDROM;
+                case ProfileNumber.BDRRdm:
+                case ProfileNumber.BDRSeq: return MediaType.BDR;
+                case ProfileNumber.CDR:
+                case ProfileNumber.HDBURNR: return MediaType.CDR;
+                case ProfileNumber.CDROM:
+                case ProfileNumber.HDBURNROM: return MediaType.CDROM;
+                case ProfileNumber.CDRW:
+                case ProfileNumber.HDBURNRW: return MediaType.CDRW;
+                case ProfileNumber.DDCDR: return MediaType.DDCDR;
+                case ProfileNumber.DDCDROM: return MediaType.DDCD;
+                case ProfileNumber.DDCDRW: return MediaType.DDCDRW;
+                case ProfileNumber.DVDDownload: return MediaType.DVDDownload;
+                case ProfileNumber.DVDRAM: return MediaType.DVDRAM;
+                case ProfileNumber.DVDRDLJump:
+                case ProfileNumber.DVDRDLSeq: return MediaType.DVDRDL;
+                case ProfileNumber.DVDRDLPlus: return MediaType.DVDPRDL;
+                case ProfileNumber.DVDROM: return MediaType.DVDROM;
+                case ProfileNumber.DVDRPlus: return MediaType.DVDPR;
+                case ProfileNumber.DVDRSeq: return MediaType.DVDR;
+                case ProfileNumber.DVDRWDL: return MediaType.DVDRWDL;
+                case ProfileNumber.DVDRWDLPlus: return MediaType.DVDPRWDL;
+                case ProfileNumber.DVDRWPlus: return MediaType.DVDPRW;
+                case ProfileNumber.DVDRWRes:
+                case ProfileNumber.DVDRWSeq: return MediaType.DVDRW;
+                case ProfileNumber.HDDVDR: return MediaType.HDDVDR;
+                case ProfileNumber.HDDVDRAM: return MediaType.HDDVDRAM;
+                case ProfileNumber.HDDVDRDL: return MediaType.HDDVDRDL;
+                case ProfileNumber.HDDVDROM: return MediaType.HDDVDROM;
+                case ProfileNumber.HDDVDRW: return MediaType.HDDVDRW;
+                case ProfileNumber.HDDVDRWDL: return MediaType.HDDVDRWDL;
+                case ProfileNumber.ASMO:
+                case ProfileNumber.MOErasable: return MediaType.UnknownMO;
+                case ProfileNumber.NonRemovable: return MediaType.GENERIC_HDD;
+                default: return MediaType.CD;
+            }
         }
 
         enum Bw5TrackType : byte
@@ -1913,145 +1922,5 @@ namespace DiscImageChef.DiscImages
             public int StartLba;
             public int Sectors;
         }
-
-        #region Private methods
-        static TrackType BlindWriteTrackTypeToTrackType(Bw5TrackType trackType)
-        {
-            switch(trackType)
-            {
-                case Bw5TrackType.Mode1: return TrackType.CdMode1;
-                case Bw5TrackType.Mode2F1: return TrackType.CdMode2Form1;
-                case Bw5TrackType.Mode2F2: return TrackType.CdMode2Form2;
-                case Bw5TrackType.Mode2: return TrackType.CdMode2Formless;
-                case Bw5TrackType.Audio: return TrackType.Audio;
-                default: return TrackType.Data;
-            }
-        }
-
-        static MediaType BlindWriteProfileToMediaType(ProfileNumber profile)
-        {
-            switch(profile)
-            {
-                case ProfileNumber.BDRE: return MediaType.BDRE;
-                case ProfileNumber.BDROM: return MediaType.BDROM;
-                case ProfileNumber.BDRRdm:
-                case ProfileNumber.BDRSeq: return MediaType.BDR;
-                case ProfileNumber.CDR:
-                case ProfileNumber.HDBURNR: return MediaType.CDR;
-                case ProfileNumber.CDROM:
-                case ProfileNumber.HDBURNROM: return MediaType.CDROM;
-                case ProfileNumber.CDRW:
-                case ProfileNumber.HDBURNRW: return MediaType.CDRW;
-                case ProfileNumber.DDCDR: return MediaType.DDCDR;
-                case ProfileNumber.DDCDROM: return MediaType.DDCD;
-                case ProfileNumber.DDCDRW: return MediaType.DDCDRW;
-                case ProfileNumber.DVDDownload: return MediaType.DVDDownload;
-                case ProfileNumber.DVDRAM: return MediaType.DVDRAM;
-                case ProfileNumber.DVDRDLJump:
-                case ProfileNumber.DVDRDLSeq: return MediaType.DVDRDL;
-                case ProfileNumber.DVDRDLPlus: return MediaType.DVDPRDL;
-                case ProfileNumber.DVDROM: return MediaType.DVDROM;
-                case ProfileNumber.DVDRPlus: return MediaType.DVDPR;
-                case ProfileNumber.DVDRSeq: return MediaType.DVDR;
-                case ProfileNumber.DVDRWDL: return MediaType.DVDRWDL;
-                case ProfileNumber.DVDRWDLPlus: return MediaType.DVDPRWDL;
-                case ProfileNumber.DVDRWPlus: return MediaType.DVDPRW;
-                case ProfileNumber.DVDRWRes:
-                case ProfileNumber.DVDRWSeq: return MediaType.DVDRW;
-                case ProfileNumber.HDDVDR: return MediaType.HDDVDR;
-                case ProfileNumber.HDDVDRAM: return MediaType.HDDVDRAM;
-                case ProfileNumber.HDDVDRDL: return MediaType.HDDVDRDL;
-                case ProfileNumber.HDDVDROM: return MediaType.HDDVDROM;
-                case ProfileNumber.HDDVDRW: return MediaType.HDDVDRW;
-                case ProfileNumber.HDDVDRWDL: return MediaType.HDDVDRWDL;
-                case ProfileNumber.ASMO:
-                case ProfileNumber.MOErasable: return MediaType.UnknownMO;
-                case ProfileNumber.NonRemovable: return MediaType.GENERIC_HDD;
-                default: return MediaType.CD;
-            }
-        }
-        #endregion Private methods
-
-        #region Unsupported features
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-        #endregion Unsupported features
     }
 }

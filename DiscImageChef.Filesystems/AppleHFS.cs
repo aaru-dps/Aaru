@@ -85,8 +85,8 @@ namespace DiscImageChef.Filesystems
             byte[] mdbSector;
             ushort drSigWord;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 ||
-               imagePlugin.GetSectorSize() == 2048)
+            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448 ||
+               imagePlugin.ImageInfo.SectorSize == 2048)
             {
                 mdbSector = imagePlugin.ReadSectors(partition.Start, 2);
 
@@ -128,8 +128,8 @@ namespace DiscImageChef.Filesystems
 
             bool APMFromHDDOnCD = false;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 ||
-               imagePlugin.GetSectorSize() == 2048)
+            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448 ||
+               imagePlugin.ImageInfo.SectorSize == 2048)
             {
                 byte[] tmpSector = imagePlugin.ReadSectors(partition.Start, 2);
 

@@ -73,10 +73,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
-            ulong sbSectorOff = SB_POS / imagePlugin.GetSectorSize();
-            uint sbOff = SB_POS % imagePlugin.GetSectorSize();
+            ulong sbSectorOff = SB_POS / imagePlugin.ImageInfo.SectorSize;
+            uint sbOff = SB_POS % imagePlugin.ImageInfo.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return false;
 
@@ -95,10 +95,10 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
-            ulong sbSectorOff = SB_POS / imagePlugin.GetSectorSize();
-            uint sbOff = SB_POS % imagePlugin.GetSectorSize();
+            ulong sbSectorOff = SB_POS / imagePlugin.ImageInfo.SectorSize;
+            uint sbOff = SB_POS % imagePlugin.ImageInfo.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return;
 
@@ -136,7 +136,7 @@ namespace DiscImageChef.Filesystems
                 FreeClusters = extSb.freecountblk,
                 FreeClustersSpecified = true,
                 ClusterSize = 1024,
-                Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.GetSectorSize() / 1024)
+                Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize / 1024)
             };
 
             information = sb.ToString();

@@ -67,11 +67,11 @@ namespace DiscImageChef.Filesystems
         {
             if(partition.Start != 0) return false;
 
-            if(imagePlugin.GetSectors() * imagePlugin.GetSectorSize() < 0x50000) return false;
+            if(imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize < 0x50000) return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.GetSectorSize());
+            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.ImageInfo.SectorSize);
 
             uint magicGc = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
@@ -88,7 +88,7 @@ namespace DiscImageChef.Filesystems
             NintendoFields fields = new NintendoFields();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.GetSectorSize());
+            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.ImageInfo.SectorSize);
 
             bool wii = false;
 
@@ -304,7 +304,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
             XmlFsType.Bootable = true;
-            XmlFsType.Clusters = (long)(imagePlugin.GetSectors() * imagePlugin.GetSectorSize() / 2048);
+            XmlFsType.Clusters = (long)(imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize / 2048);
             XmlFsType.ClusterSize = 2048;
             XmlFsType.Type = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
             XmlFsType.VolumeName = fields.Title;

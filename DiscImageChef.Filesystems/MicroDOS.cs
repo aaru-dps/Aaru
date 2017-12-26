@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems
         {
             if(1 + partition.Start >= partition.End) return false;
 
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 

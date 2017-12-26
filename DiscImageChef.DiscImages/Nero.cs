@@ -788,13 +788,13 @@ namespace DiscImageChef.DiscImages
                     }
                 }
 
-                ImageInfo.ImageHasPartitions = true;
-                ImageInfo.ImageHasSessions = true;
-                ImageInfo.ImageCreator = null;
-                ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-                ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-                ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-                ImageInfo.ImageComments = null;
+                ImageInfo.HasPartitions = true;
+                ImageInfo.HasSessions = true;
+                ImageInfo.Creator = null;
+                ImageInfo.CreationTime = imageFilter.GetCreationTime();
+                ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+                ImageInfo.Comments = null;
                 ImageInfo.MediaManufacturer = null;
                 ImageInfo.MediaModel = null;
                 ImageInfo.MediaSerialNumber = null;
@@ -809,16 +809,16 @@ namespace DiscImageChef.DiscImages
                 if(imageNewFormat)
                 {
                     ImageInfo.ImageSize = footerV2.FirstChunkOffset;
-                    ImageInfo.ImageVersion = "Nero Burning ROM >= 5.5";
-                    ImageInfo.ImageApplication = "Nero Burning ROM";
-                    ImageInfo.ImageApplicationVersion = ">= 5.5";
+                    ImageInfo.Version = "Nero Burning ROM >= 5.5";
+                    ImageInfo.Application = "Nero Burning ROM";
+                    ImageInfo.ApplicationVersion = ">= 5.5";
                 }
                 else
                 {
                     ImageInfo.ImageSize = footerV1.FirstChunkOffset;
-                    ImageInfo.ImageVersion = "Nero Burning ROM <= 5.0";
-                    ImageInfo.ImageApplication = "Nero Burning ROM";
-                    ImageInfo.ImageApplicationVersion = "<= 5.0";
+                    ImageInfo.Version = "Nero Burning ROM <= 5.0";
+                    ImageInfo.Application = "Nero Burning ROM";
+                    ImageInfo.ApplicationVersion = "<= 5.0";
                 }
 
                 if(neroSessions.Count == 0) neroSessions.Add(1, currenttrack);
@@ -1037,27 +1037,6 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWrite("Nero plugin", "Exception ocurred opening file.");
                 return false;
             }
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            // Even if they only have 1 track, there is a partition (track 1)
-            return true;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -1534,55 +1513,11 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override string GetImageFormat()
-        {
-            return "Nero Burning ROM";
-        }
+        public override string ImageFormat => "Nero Burning ROM";
 
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
+        public override List<Partition> Partitions => imagePartitions;
 
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            return imagePartitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            return imageTracks;
-        }
+        public override List<Track> Tracks => imageTracks;
 
         public override List<Track> GetSessionTracks(Session session)
         {
@@ -1594,10 +1529,7 @@ namespace DiscImageChef.DiscImages
             return imageTracks.Where(track => track.TrackSession == session).ToList();
         }
 
-        public override List<Session> GetSessions()
-        {
-            return imageSessions;
-        }
+        public override List<Session> Sessions => imageSessions;
 
         public override bool? VerifySector(ulong sectorAddress)
         {
@@ -1745,66 +1677,6 @@ namespace DiscImageChef.DiscImages
                 case DaoMode.AudioSub: return 2448;
                 default: return 2352;
             }
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
         }
 
         struct NeroV1Footer

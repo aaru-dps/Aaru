@@ -65,8 +65,8 @@ namespace DiscImageChef.Partitions
             // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
             if(sectorOffset != 0) return false;
 
-            if(imagePlugin.GetSectorSize() > ADFS_SB_POS) sbSector = 0;
-            else sbSector = ADFS_SB_POS / imagePlugin.GetSectorSize();
+            if(imagePlugin.ImageInfo.SectorSize > ADFS_SB_POS) sbSector = 0;
+            else sbSector = ADFS_SB_POS / imagePlugin.ImageInfo.SectorSize;
 
             byte[] sector = imagePlugin.ReadSector(sbSector);
 
@@ -84,7 +84,7 @@ namespace DiscImageChef.Partitions
             int secCyl = bootBlock.discRecord.spt * heads;
             int mapSector = bootBlock.startCylinder * secCyl;
 
-            if((ulong)mapSector >= imagePlugin.GetSectors()) return false;
+            if((ulong)mapSector >= imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] map = imagePlugin.ReadSector((ulong)mapSector);
 

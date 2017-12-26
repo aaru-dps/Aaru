@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 256) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 256) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems
         {
             information = "";
 
-            if(imagePlugin.GetSectorSize() < 256) return;
+            if(imagePlugin.ImageInfo.SectorSize < 256) return;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);

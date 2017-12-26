@@ -69,8 +69,8 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.GetSectorSize();
-            uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.GetSectorSize();
+            uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.ImageInfo.SectorSize;
 
             if(partition.Start + bootSectors + sectors >= partition.End) return false;
 
@@ -97,8 +97,8 @@ namespace DiscImageChef.Filesystems
         {
             information = "";
             StringBuilder sb = new StringBuilder();
-            uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.GetSectorSize();
-            uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.GetSectorSize();
+            uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.ImageInfo.SectorSize;
 
             byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
             byte[] sector = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);

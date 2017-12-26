@@ -76,9 +76,9 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
+            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.ImageInfo.SectorSize;
 
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0) run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.ImageInfo.SectorSize > 0) run++;
 
             if(run + partition.Start >= partition.End) return false;
 
@@ -99,9 +99,9 @@ namespace DiscImageChef.Filesystems
 
             HammerSuperBlock hammerSb;
 
-            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
+            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.ImageInfo.SectorSize;
 
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0) run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.ImageInfo.SectorSize > 0) run++;
 
             ulong magic;
 

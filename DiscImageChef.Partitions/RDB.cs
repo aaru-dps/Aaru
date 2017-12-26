@@ -290,9 +290,9 @@ namespace DiscImageChef.Partitions
 
             while(rdbBlock < 16)
             {
-                if(imagePlugin.GetSectors() <= rdbBlock) return false;
+                if(imagePlugin.ImageInfo.Sectors <= rdbBlock) return false;
 
-                if(rdbBlock + sectorOffset >= imagePlugin.GetSectors()) break;
+                if(rdbBlock + sectorOffset >= imagePlugin.ImageInfo.Sectors) break;
 
                 byte[] tmpSector = imagePlugin.ReadSector(rdbBlock + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);

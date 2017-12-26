@@ -108,15 +108,15 @@ namespace DiscImageChef.Filesystems
 
             uint sbSizeInSectors;
 
-            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
-               imagePlugin.GetSectorSize() == 2448) sbSizeInSectors = block_size / 2048;
-            else sbSizeInSectors = block_size / imagePlugin.GetSectorSize();
+            if(imagePlugin.ImageInfo.SectorSize == 2336 || imagePlugin.ImageInfo.SectorSize == 2352 ||
+               imagePlugin.ImageInfo.SectorSize == 2448) sbSizeInSectors = block_size / 2048;
+            else sbSizeInSectors = block_size / imagePlugin.ImageInfo.SectorSize;
 
             ulong[] locations =
             {
                 sb_start_floppy, sb_start_boot, sb_start_long_boot, sb_start_piggy, sb_start_att_dsdd,
-                8192 / imagePlugin.GetSectorSize(), 65536 / imagePlugin.GetSectorSize(),
-                262144 / imagePlugin.GetSectorSize()
+                8192 / imagePlugin.ImageInfo.SectorSize, 65536 / imagePlugin.ImageInfo.SectorSize,
+                262144 / imagePlugin.ImageInfo.SectorSize
             };
 
             return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors)
@@ -144,15 +144,15 @@ namespace DiscImageChef.Filesystems
             bool fs_type_sun = false;
             bool fs_type_sun86 = false;
 
-            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
-               imagePlugin.GetSectorSize() == 2448) sb_size_in_sectors = block_size / 2048;
-            else sb_size_in_sectors = block_size / imagePlugin.GetSectorSize();
+            if(imagePlugin.ImageInfo.SectorSize == 2336 || imagePlugin.ImageInfo.SectorSize == 2352 ||
+               imagePlugin.ImageInfo.SectorSize == 2448) sb_size_in_sectors = block_size / 2048;
+            else sb_size_in_sectors = block_size / imagePlugin.ImageInfo.SectorSize;
 
             ulong[] locations =
             {
                 sb_start_floppy, sb_start_boot, sb_start_long_boot, sb_start_piggy, sb_start_att_dsdd,
-                8192 / imagePlugin.GetSectorSize(), 65536 / imagePlugin.GetSectorSize(),
-                262144 / imagePlugin.GetSectorSize()
+                8192 / imagePlugin.ImageInfo.SectorSize, 65536 / imagePlugin.ImageInfo.SectorSize,
+                262144 / imagePlugin.ImageInfo.SectorSize
             };
 
             foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sb_size_in_sectors))
@@ -594,19 +594,19 @@ namespace DiscImageChef.Filesystems
             /// </summary>
             public uint fs_rlink;
             /// <summary>addr of super-block in filesys</summary>
-            public ufs_daddr_t fs_sblkno;
+            public int fs_sblkno;
             /// <summary>offset of cyl-block in filesys</summary>
-            public ufs_daddr_t fs_cblkno;
+            public int fs_cblkno;
             /// <summary>offset of inode-blocks in filesys</summary>
-            public ufs_daddr_t fs_iblkno;
+            public int fs_iblkno;
             /// <summary>offset of first data after cg</summary>
-            public ufs_daddr_t fs_dblkno;
+            public int fs_dblkno;
             /// <summary>cylinder group offset in cylinder</summary>
             public int fs_old_cgoffset;
             /// <summary>used to calc mod fs_ntrak</summary>
             public int fs_old_cgmask;
             /// <summary>last time written</summary>
-            public time_t fs_old_time;
+            public int fs_old_time;
             /// <summary>number of blocks in fs</summary>
             public int fs_old_size;
             /// <summary>number of data blocks in fs</summary>
@@ -684,7 +684,7 @@ namespace DiscImageChef.Filesystems
             public int fs_id_2;
             /* sizes determined by number of cylinder groups and their sizes */
             /// <summary>blk addr of cyl grp summary area</summary>
-            public ufs_daddr_t fs_old_csaddr;
+            public int fs_old_csaddr;
             /// <summary>size of cyl grp summary area</summary>
             public int fs_cssize;
             /// <summary>cylinder group size</summary>

@@ -68,15 +68,15 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
-            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.GetSectorSize();
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(nilfsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
@@ -94,15 +94,15 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
-            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.GetSectorSize();
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(nilfsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(nilfsSb)) return;

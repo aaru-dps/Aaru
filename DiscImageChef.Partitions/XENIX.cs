@@ -58,7 +58,7 @@ namespace DiscImageChef.Partitions
         {
             partitions = new List<Partition>();
 
-            if(42 + sectorOffset >= imagePlugin.GetSectors()) return false;
+            if(42 + sectorOffset >= imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] tblsector = imagePlugin.ReadSector(42 + sectorOffset);
 
@@ -80,19 +80,19 @@ namespace DiscImageChef.Partitions
                 Partition part = new Partition
                 {
                     Start =
-                        (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.GetSectorSize() +
+                        (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.ImageInfo.SectorSize +
                         sectorOffset,
-                    Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.GetSectorSize(),
+                    Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.ImageInfo.SectorSize,
                     Offset =
                         (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
-                        imagePlugin.GetSectorSize() * sectorOffset,
+                        imagePlugin.ImageInfo.SectorSize * sectorOffset,
                     Size = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
                     Sequence = (ulong)i,
                     Type = "XENIX",
                     Scheme = Name
                 };
 
-                if(part.End < imagePlugin.GetSectors()) partitions.Add(part);
+                if(part.End < imagePlugin.ImageInfo.Sectors) partitions.Add(part);
             }
 
             return partitions.Count > 0;

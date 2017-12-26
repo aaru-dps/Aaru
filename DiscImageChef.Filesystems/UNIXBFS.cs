@@ -120,7 +120,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType();
             XmlFsType.Type = "BFS";
             XmlFsType.VolumeName = bfsSb.s_volume;
-            XmlFsType.ClusterSize = (int)imagePlugin.GetSectorSize();
+            XmlFsType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
             XmlFsType.Clusters = (long)(partition.End - partition.Start + 1);
 
             information = sb.ToString();

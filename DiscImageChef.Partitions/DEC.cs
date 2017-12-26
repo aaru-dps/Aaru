@@ -54,7 +54,7 @@ namespace DiscImageChef.Partitions
         {
             partitions = new List<Partition>();
 
-            if(31 + sectorOffset >= imagePlugin.GetSectors()) return false;
+            if(31 + sectorOffset >= imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
             if(sector.Length < 512) return false;

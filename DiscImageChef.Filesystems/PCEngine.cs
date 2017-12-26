@@ -80,7 +80,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type = "PC Engine filesystem",
-                Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.GetSectorSize() * 2048),
+                Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.ImageInfo.SectorSize * 2048),
                 ClusterSize = 2048
             };
         }

@@ -73,12 +73,12 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();
+            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.ImageInfo.SectorSize;
             uint run = 1;
 
-            if(imagePlugin.GetSectorSize() < AFS_SUPERBLOCK_SIZE)
-                run = AFS_SUPERBLOCK_SIZE / imagePlugin.GetSectorSize();
+            if(imagePlugin.ImageInfo.SectorSize < AFS_SUPERBLOCK_SIZE)
+                run = AFS_SUPERBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
 
             if(sector + partition.Start >= partition.End) return false;
 
@@ -99,12 +99,12 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();
+            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.ImageInfo.SectorSize;
             uint run = 1;
 
-            if(imagePlugin.GetSectorSize() < AFS_SUPERBLOCK_SIZE)
-                run = AFS_SUPERBLOCK_SIZE / imagePlugin.GetSectorSize();
+            if(imagePlugin.ImageInfo.SectorSize < AFS_SUPERBLOCK_SIZE)
+                run = AFS_SUPERBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
 
             byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];

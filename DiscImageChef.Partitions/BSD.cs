@@ -60,15 +60,15 @@ namespace DiscImageChef.Partitions
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.GetSectorSize();
-            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.GetSectorSize() > 0) run++;
+            uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.ImageInfo.SectorSize;
+            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.ImageInfo.SectorSize > 0) run++;
 
             DiskLabel dl = new DiskLabel();
             bool found = false;
 
             foreach(ulong location in labelLocations)
             {
-                if(location + run + sectorOffset >= imagePlugin.GetSectors()) return false;
+                if(location + run + sectorOffset >= imagePlugin.ImageInfo.Sectors) return false;
 
                 byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
                 foreach(uint offset in labelOffsets)
@@ -141,9 +141,9 @@ namespace DiscImageChef.Partitions
                                           dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
                 Partition part = new Partition
                 {
-                    Start = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.GetSectorSize(),
+                    Start = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.ImageInfo.SectorSize,
                     Offset = dl.d_partitions[i].p_offset * dl.d_secsize,
-                    Length = dl.d_partitions[i].p_size * dl.d_secsize / imagePlugin.GetSectorSize(),
+                    Length = dl.d_partitions[i].p_size * dl.d_secsize / imagePlugin.ImageInfo.SectorSize,
                     Size = dl.d_partitions[i].p_size * dl.d_secsize,
                     Type = fsTypeToString(dl.d_partitions[i].p_fstype),
                     Sequence = counter,
@@ -156,7 +156,7 @@ namespace DiscImageChef.Partitions
                 if(addSectorOffset)
                 {
                     part.Start += sectorOffset;
-                    part.Offset += sectorOffset * imagePlugin.GetSectorSize();
+                    part.Offset += sectorOffset * imagePlugin.ImageInfo.SectorSize;
                 }
                 DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
                 DicConsole.DebugWriteLine("BSD plugin", "Adding it...");

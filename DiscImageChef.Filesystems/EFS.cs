@@ -70,15 +70,15 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
             // Misaligned
             if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 EFS_Superblock efsSb = new EFS_Superblock();
 
-                uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x200) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(efsSb) + 0x200) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x200) / imagePlugin.ImageInfo.SectorSize);
+                if((Marshal.SizeOf(efsSb) + 0x200) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
                 if(sector.Length < Marshal.SizeOf(efsSb)) return false;
@@ -98,8 +98,8 @@ namespace DiscImageChef.Filesystems
             {
                 EFS_Superblock efsSb = new EFS_Superblock();
 
-                uint sbSize = (uint)(Marshal.SizeOf(efsSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(efsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(efsSb) / imagePlugin.ImageInfo.SectorSize);
+                if(Marshal.SizeOf(efsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
                 if(sector.Length < Marshal.SizeOf(efsSb)) return false;
@@ -118,15 +118,15 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512) return;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return;
 
             EFS_Superblock efsSb = new EFS_Superblock();
 
             // Misaligned
             if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x400) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(efsSb) + 0x400) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x400) / imagePlugin.ImageInfo.SectorSize);
+                if((Marshal.SizeOf(efsSb) + 0x400) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
                 if(sector.Length < Marshal.SizeOf(efsSb)) return;
@@ -142,8 +142,8 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                uint sbSize = (uint)(Marshal.SizeOf(efsSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(efsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(efsSb) / imagePlugin.ImageInfo.SectorSize);
+                if(Marshal.SizeOf(efsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
                 if(sector.Length < Marshal.SizeOf(efsSb)) return;

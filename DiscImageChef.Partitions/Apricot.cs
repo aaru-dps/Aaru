@@ -79,7 +79,7 @@ namespace DiscImageChef.Partitions
             Marshal.FreeHGlobal(lblPtr);
 
             // Not much to check but...
-            ulong deviceSectors = imagePlugin.GetSectors();
+            ulong deviceSectors = imagePlugin.ImageInfo.Sectors;
             ulong deviceSizeAccordingToLabel = label.cylinders * label.heads * label.spt;
             if(label.operatingSystem > 4 || label.bootType > 5 || label.partitionCount > 8 ||
                deviceSizeAccordingToLabel > deviceSectors || label.firstDataBlock > deviceSectors) return false;

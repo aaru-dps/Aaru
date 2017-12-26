@@ -58,8 +58,8 @@ namespace DiscImageChef.Core
             List<ulong> checkedLocations = new List<ulong>();
 
             // Getting all partitions from device (e.g. tracks)
-            if(image.ImageInfo.ImageHasPartitions)
-                foreach(Partition imagePartition in image.GetPartitions())
+            if(image.ImageInfo.HasPartitions)
+                foreach(Partition imagePartition in image.Partitions)
                 {
                     foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
                         if(partitionPlugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
@@ -130,14 +130,13 @@ namespace DiscImageChef.Core
             }
 
             // Be sure that device partitions are not excluded if not mapped by any scheme...
-            if(image.ImageInfo.ImageHasPartitions)
+            if(image.ImageInfo.HasPartitions)
             {
                 List<ulong> startLocations =
                     childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
-                childPartitions.AddRange(image.GetPartitions()
-                                              .Where(imagePartition =>
-                                                         !startLocations.Contains(imagePartition.Start)));
+                childPartitions.AddRange(image.Partitions.Where(imagePartition =>
+                                                                    !startLocations.Contains(imagePartition.Start)));
             }
 
             Partition[] childArray = childPartitions

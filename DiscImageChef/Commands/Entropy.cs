@@ -70,7 +70,7 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(inputFilter);
-            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
             Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
             double entropy = 0;
@@ -80,7 +80,7 @@ namespace DiscImageChef.Commands
             if(options.SeparatedTracks)
                 try
                 {
-                    List<Track> inputTracks = inputFormat.GetTracks();
+                    List<Track> inputTracks = inputFormat.Tracks;
 
                     foreach(Track currentTrack in inputTracks)
                     {
@@ -134,7 +134,7 @@ namespace DiscImageChef.Commands
             ulong diskSize = 0;
             List<string> uniqueSectors = new List<string>();
 
-            sectors = inputFormat.GetSectors();
+            sectors = inputFormat.ImageInfo.Sectors;
             DicConsole.WriteLine("Sectors {0}", sectors);
 
             sha1Ctx.Init();

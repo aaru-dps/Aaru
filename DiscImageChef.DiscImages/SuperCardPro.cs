@@ -116,7 +116,7 @@ namespace DiscImageChef.DiscImages
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public ScpHeader Header;
         Stream scpStream;
-        public Dictionary<byte, TrackHeader> Tracks;
+        public Dictionary<byte, TrackHeader> ScpTracks;
 
         public SuperCardPro()
         {
@@ -126,13 +126,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -146,6 +146,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "SuperCardPro";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -196,7 +207,7 @@ namespace DiscImageChef.DiscImages
 
             if(!scpSignature.SequenceEqual(Header.signature)) return false;
 
-            Tracks = new Dictionary<byte, TrackHeader>();
+            ScpTracks = new Dictionary<byte, TrackHeader>();
 
             for(byte t = Header.start; t <= Header.end; t++)
             {
@@ -237,7 +248,7 @@ namespace DiscImageChef.DiscImages
                     trk.Entries[r].dataOffset += Header.offsets[t];
                 }
 
-                Tracks.Add(t, trk);
+                ScpTracks.Add(t, trk);
             }
 
             if(Header.flags.HasFlag(ScpFlags.HasFooter))
@@ -296,9 +307,9 @@ namespace DiscImageChef.DiscImages
                         ImageInfo.DriveManufacturer = ReadPStringUtf8(scpStream, footer.manufacturerOffset);
                         ImageInfo.DriveModel = ReadPStringUtf8(scpStream, footer.modelOffset);
                         ImageInfo.DriveSerialNumber = ReadPStringUtf8(scpStream, footer.serialOffset);
-                        ImageInfo.ImageCreator = ReadPStringUtf8(scpStream, footer.creatorOffset);
-                        ImageInfo.ImageApplication = ReadPStringUtf8(scpStream, footer.applicationOffset);
-                        ImageInfo.ImageComments = ReadPStringUtf8(scpStream, footer.commentsOffset);
+                        ImageInfo.Creator = ReadPStringUtf8(scpStream, footer.creatorOffset);
+                        ImageInfo.Application = ReadPStringUtf8(scpStream, footer.applicationOffset);
+                        ImageInfo.Comments = ReadPStringUtf8(scpStream, footer.commentsOffset);
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"",
                                                   ImageInfo.DriveManufacturer);
@@ -307,31 +318,31 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveSerialNumber = \"{0}\"",
                                                   ImageInfo.DriveSerialNumber);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreator = \"{0}\"",
-                                                  ImageInfo.ImageCreator);
+                                                  ImageInfo.Creator);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageApplication = \"{0}\"",
-                                                  ImageInfo.ImageApplication);
+                                                  ImageInfo.Application);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
-                                                  ImageInfo.ImageComments);
+                                                  ImageInfo.Comments);
 
-                        ImageInfo.ImageCreationTime = footer.creationTime != 0
+                        ImageInfo.CreationTime = footer.creationTime != 0
                                                           ? DateHandlers.UnixToDateTime(footer.creationTime)
                                                           : imageFilter.GetCreationTime();
 
-                        ImageInfo.ImageLastModificationTime =
+                        ImageInfo.LastModificationTime =
                             footer.modificationTime != 0
                                 ? DateHandlers.UnixToDateTime(footer.modificationTime)
                                 : imageFilter.GetLastWriteTime();
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
-                                                  ImageInfo.ImageCreationTime);
+                                                  ImageInfo.CreationTime);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageLastModificationTime = {0}",
-                                                  ImageInfo.ImageLastModificationTime);
+                                                  ImageInfo.LastModificationTime);
 
-                        ImageInfo.ImageApplicationVersion =
+                        ImageInfo.ApplicationVersion =
                             $"{(footer.applicationVersion & 0xF0) >> 4}.{footer.applicationVersion & 0xF}";
                         ImageInfo.DriveFirmwareRevision =
                             $"{(footer.firmwareVersion & 0xF0) >> 4}.{footer.firmwareVersion & 0xF}";
-                        ImageInfo.ImageVersion = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
+                        ImageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
 
                         break;
                     }
@@ -341,11 +352,11 @@ namespace DiscImageChef.DiscImages
             }
             else
             {
-                ImageInfo.ImageApplication = "SuperCardPro";
-                ImageInfo.ImageApplicationVersion = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
-                ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-                ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-                ImageInfo.ImageVersion = "1.5";
+                ImageInfo.Application = "SuperCardPro";
+                ImageInfo.ApplicationVersion = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
+                ImageInfo.CreationTime = imageFilter.GetCreationTime();
+                ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                ImageInfo.Version = "1.5";
             }
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
@@ -366,26 +377,6 @@ namespace DiscImageChef.DiscImages
             stream.Read(str, 0, len);
 
             return Encoding.UTF8.GetString(str);
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -426,107 +417,6 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
-
-        public override string GetImageFormat()
-        {
-            return "SuperCardPro";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        // TODO: Check if it exists. If so, read it.
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -580,27 +470,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

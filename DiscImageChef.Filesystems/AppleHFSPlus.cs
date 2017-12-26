@@ -104,7 +104,7 @@ namespace DiscImageChef.Filesystems
 
                     ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
+                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.ImageInfo.SectorSize);
                 }
                 else hfspOffset = 0;
             }
@@ -145,7 +145,7 @@ namespace DiscImageChef.Filesystems
 
                     ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
+                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.ImageInfo.SectorSize);
                     wrapped = true;
                 }
                 else

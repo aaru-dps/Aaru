@@ -70,20 +70,20 @@ namespace DiscImageChef.Core
                     Checksums = imgChecksums.ToArray(),
                     Image = new ImageType
                     {
-                        format = image.GetImageFormat(),
+                        format = image.ImageFormat,
                         offset = 0,
                         offsetSpecified = true,
                         Value = Path.GetFileName(imagePath)
                     },
                     Size = fi.Length,
-                    Sequence = new SequenceType {MediaTitle = image.GetImageName()}
+                    Sequence = new SequenceType {MediaTitle = image.ImageInfo.MediaTitle}
                 }
             };
 
-            if(image.GetMediaSequence() != 0 && image.GetLastDiskSequence() != 0)
+            if(image.ImageInfo.MediaSequence != 0 && image.ImageInfo.LastMediaSequence != 0)
             {
-                sidecar.BlockMedia[0].Sequence.MediaSequence = image.GetMediaSequence();
-                sidecar.BlockMedia[0].Sequence.TotalMedia = image.GetMediaSequence();
+                sidecar.BlockMedia[0].Sequence.MediaSequence = image.ImageInfo.MediaSequence;
+                sidecar.BlockMedia[0].Sequence.TotalMedia = image.ImageInfo.LastMediaSequence;
             }
             else
             {
@@ -253,7 +253,7 @@ namespace DiscImageChef.Core
                 //goto skipImageChecksum;
 
                 uint sectorsToRead = 512;
-                ulong sectors = image.GetSectors();
+                ulong sectors = image.ImageInfo.Sectors;
                 ulong doneSectors = 0;
 
                 InitProgress2();
@@ -294,10 +294,10 @@ namespace DiscImageChef.Core
 
             sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(image.ImageInfo.MediaType);
 
-            sidecar.BlockMedia[0].LogicalBlocks = (long)image.GetSectors();
-            sidecar.BlockMedia[0].LogicalBlockSize = (int)image.GetSectorSize();
+            sidecar.BlockMedia[0].LogicalBlocks = (long)image.ImageInfo.Sectors;
+            sidecar.BlockMedia[0].LogicalBlockSize = (int)image.ImageInfo.SectorSize;
             // TODO: Detect it
-            sidecar.BlockMedia[0].PhysicalBlockSize = (int)image.GetSectorSize();
+            sidecar.BlockMedia[0].PhysicalBlockSize = (int)image.ImageInfo.SectorSize;
 
             UpdateStatus("Checking filesystems...");
 
@@ -342,14 +342,17 @@ namespace DiscImageChef.Core
             }
             else
             {
-                sidecar.BlockMedia[0].FileSystemInformation[0] =
-                    new PartitionType {StartSector = 0, EndSector = (int)(image.GetSectors() - 1)};
+                sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType
+                {
+                    StartSector = 0,
+                    EndSector = (int)(image.ImageInfo.Sectors - 1)
+                };
 
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = image.GetSectors(),
-                    Size = image.GetSectors() * image.GetSectorSize()
+                    Length = image.ImageInfo.Sectors,
+                    Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
 
                 List<FileSystemType> lstFs = new List<FileSystemType>();
@@ -559,7 +562,7 @@ namespace DiscImageChef.Core
                                     Head = t % image.ImageInfo.Heads,
                                     Image = new ImageType
                                     {
-                                        format = scpImage.GetImageFormat(),
+                                        format = scpImage.ImageFormat,
                                         Value = Path.GetFileName(scpFilePath),
                                         offset = scpImage.Header.offsets[t]
                                     }
@@ -575,7 +578,7 @@ namespace DiscImageChef.Core
                                     scpBlockTrackType.Format = trkFormat;
                                 }
 
-                                if(scpImage.Tracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
+                                if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                                 {
                                     byte[] trackContents =
                                         new byte[scpTrack.Entries.Last().dataOffset +
@@ -647,7 +650,7 @@ namespace DiscImageChef.Core
                                     Head = kvp.Key % image.ImageInfo.Heads,
                                     Image = new ImageType
                                     {
-                                        format = kfImage.GetImageFormat(),
+                                        format = kfImage.ImageFormat,
                                         Value = kfDir
                                                     ? Path
                                                         .Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.GetBasePath())),
@@ -720,11 +723,7 @@ namespace DiscImageChef.Core
                         {
                             Cylinder = t / image.ImageInfo.Heads,
                             Head = t % image.ImageInfo.Heads,
-                            Image = new ImageType
-                            {
-                                format = dfiImage.GetImageFormat(),
-                                Value = Path.GetFileName(dfiFilePath)
-                            }
+                            Image = new ImageType {format = dfiImage.ImageFormat, Value = Path.GetFileName(dfiFilePath)}
                         };
 
                         if(dfiBlockTrackType.Cylinder < image.ImageInfo.Cylinders)

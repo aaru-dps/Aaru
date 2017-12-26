@@ -75,8 +75,8 @@ namespace DiscImageChef.Filesystems
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             int sbSizeInBytes = Marshal.SizeOf(typeof(XiaSuperBlock));
-            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.GetSectorSize());
-            if(sbSizeInBytes % imagePlugin.GetSectorSize() > 0) sbSizeInSectors++;
+            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.ImageInfo.SectorSize);
+            if(sbSizeInBytes % imagePlugin.ImageInfo.SectorSize > 0) sbSizeInSectors++;
             if(sbSizeInSectors + partition.Start >= partition.End) return false;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
@@ -95,8 +95,8 @@ namespace DiscImageChef.Filesystems
             StringBuilder sb = new StringBuilder();
 
             int sbSizeInBytes = Marshal.SizeOf(typeof(XiaSuperBlock));
-            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.GetSectorSize());
-            if(sbSizeInBytes % imagePlugin.GetSectorSize() > 0) sbSizeInSectors++;
+            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.ImageInfo.SectorSize);
+            if(sbSizeInBytes % imagePlugin.ImageInfo.SectorSize > 0) sbSizeInSectors++;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
             IntPtr sbPtr = Marshal.AllocHGlobal(sbSizeInBytes);

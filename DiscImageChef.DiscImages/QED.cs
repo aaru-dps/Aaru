@@ -96,13 +96,13 @@ namespace DiscImageChef.DiscImages
             ImageInfo = new ImageInfo();
             ImageInfo.ReadableSectorTags = new List<SectorTagType>();
             ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = "1";
-            ImageInfo.ImageApplication = "QEMU";
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
+            ImageInfo.HasPartitions = false;
+            ImageInfo.HasSessions = false;
+            ImageInfo.Version = "1";
+            ImageInfo.Application = "QEMU";
+            ImageInfo.ApplicationVersion = null;
+            ImageInfo.Creator = null;
+            ImageInfo.Comments = null;
             ImageInfo.MediaManufacturer = null;
             ImageInfo.MediaModel = null;
             ImageInfo.MediaSerialNumber = null;
@@ -115,6 +115,17 @@ namespace DiscImageChef.DiscImages
             ImageInfo.DriveSerialNumber = null;
             ImageInfo.DriveFirmwareRevision = null;
         }
+
+        public override string ImageFormat => "QEMU Enhanced Disk";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -232,9 +243,9 @@ namespace DiscImageChef.DiscImages
             l2TableCache = new Dictionary<ulong, ulong[]>();
             clusterCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.Sectors = qHdr.image_size / 512;
             ImageInfo.SectorSize = 512;
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
@@ -329,76 +340,6 @@ namespace DiscImageChef.DiscImages
             }
 
             return ms.ToArray();
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return false;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "QEMU Enhanced Disk";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
         }
 
         static bool IsPowerOfTwo(uint x)
@@ -496,77 +437,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetMediaManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetMediaModel()
-        {
-            return null;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return null;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return null;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return 0;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return 0;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetDriveModel()
-        {
-            return null;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return null;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

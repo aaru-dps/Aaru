@@ -106,25 +106,25 @@ namespace DiscImageChef.Filesystems
                                   .AppendLine();
             superBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
             superBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
-            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
-               imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.ImageInfo.SectorSize == 2336 || imagePlugin.ImageInfo.SectorSize == 2352 ||
+               imagePlugin.ImageInfo.SectorSize == 2448)
             {
                 if(sb.block_size != 2048)
                     superBlockMetadata
                         .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
                                       sb.block_size, 2048);
             }
-            else if(imagePlugin.GetSectorSize() != sb.block_size)
+            else if(imagePlugin.ImageInfo.SectorSize != sb.block_size)
                 superBlockMetadata
                     .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
-                                  sb.block_size, imagePlugin.GetSectorSize());
+                                  sb.block_size, imagePlugin.ImageInfo.SectorSize);
             superBlockMetadata
                 .AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count)
                 .AppendLine();
-            if((ulong)sb.block_count > imagePlugin.GetSectors())
+            if((ulong)sb.block_count > imagePlugin.ImageInfo.Sectors)
                 superBlockMetadata
                     .AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks",
-                                  sb.block_count, imagePlugin.GetSectors());
+                                  sb.block_count, imagePlugin.ImageInfo.Sectors);
             superBlockMetadata.AppendFormat("Root directory identifier: 0x{0:X8}", sb.root_dirid).AppendLine();
             superBlockMetadata.AppendFormat("Root directory block size: {0} bytes", sb.rootdir_bsize).AppendLine();
             superBlockMetadata.AppendFormat("Root directory size: {0} blocks, {1} bytes", sb.rootdir_blocks,

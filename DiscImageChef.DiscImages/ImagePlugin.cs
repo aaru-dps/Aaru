@@ -60,6 +60,36 @@ namespace DiscImageChef.DiscImages
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUuid;
 
+        // Image information functions
+
+        /// <summary>
+        ///     Gets the image format.
+        /// </summary>
+        /// <value>The image format.</value>
+        public abstract string ImageFormat { get; }
+
+        // Partitioning functions
+
+        /// <summary>
+        ///     Gets an array partitions. Typically only useful for optical disc
+        ///     images where each track and index means a different partition, as
+        ///     reads can be relative to them.
+        /// </summary>
+        /// <value>The partitions.</value>
+        public abstract List<Partition> Partitions { get; }
+
+        /// <summary>
+        ///     Gets the disc track extents (start, length).
+        /// </summary>
+        /// <value>The track extents.</value>
+        public abstract List<Track> Tracks { get; }
+
+        /// <summary>
+        ///     Gets the sessions (optical discs only).
+        /// </summary>
+        /// <value>The sessions.</value>
+        public abstract List<Session> Sessions { get; }
+
         // Basic image handling functions
 
         /// <summary>
@@ -75,32 +105,6 @@ namespace DiscImageChef.DiscImages
         /// <returns><c>true</c>, if image was opened, <c>false</c> otherwise.</returns>
         /// <param name="imageFilter">Image filter.</param>
         public abstract bool OpenImage(Filter imageFilter);
-
-        /// <summary>
-        ///     Asks the disk image plugin if the image contains partitions
-        /// </summary>
-        /// <returns><c>true</c>, if the image contains partitions, <c>false</c> otherwise.</returns>
-        public abstract bool ImageHasPartitions();
-
-        // Image size functions
-
-        /// <summary>
-        ///     Gets the size of the image, without headers.
-        /// </summary>
-        /// <returns>The image size.</returns>
-        public abstract ulong GetImageSize();
-
-        /// <summary>
-        ///     Gets the number of sectors in the image.
-        /// </summary>
-        /// <returns>Sectors in image.</returns>
-        public abstract ulong GetSectors();
-
-        /// <summary>
-        ///     Returns the size of the biggest sector, counting user data only.
-        /// </summary>
-        /// <returns>Biggest sector size (user data only).</returns>
-        public abstract uint GetSectorSize();
 
         // Image reading functions
 
@@ -211,148 +215,6 @@ namespace DiscImageChef.DiscImages
         /// <param name="track">Track.</param>
         public abstract byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track);
 
-        // Image information functions
-
-        /// <summary>
-        ///     Gets the image format.
-        /// </summary>
-        /// <returns>The image format.</returns>
-        public abstract string GetImageFormat();
-
-        /// <summary>
-        ///     Gets the image version.
-        /// </summary>
-        /// <returns>The image version.</returns>
-        public abstract string GetImageVersion();
-
-        /// <summary>
-        ///     Gets the application that created the image.
-        /// </summary>
-        /// <returns>The application that created the image.</returns>
-        public abstract string GetImageApplication();
-
-        /// <summary>
-        ///     Gets the version of the application that created the image.
-        /// </summary>
-        /// <returns>The version of the application that created the image.</returns>
-        public abstract string GetImageApplicationVersion();
-
-        /// <summary>
-        ///     Gets the image creator.
-        /// </summary>
-        /// <returns>Who created the image.</returns>
-        public abstract string GetImageCreator();
-
-        /// <summary>
-        ///     Gets the image creation time.
-        /// </summary>
-        /// <returns>The image creation time.</returns>
-        public abstract DateTime GetImageCreationTime();
-
-        /// <summary>
-        ///     Gets the image last modification time.
-        /// </summary>
-        /// <returns>The image last modification time.</returns>
-        public abstract DateTime GetImageLastModificationTime();
-
-        /// <summary>
-        ///     Gets the name of the image.
-        /// </summary>
-        /// <returns>The image name.</returns>
-        public abstract string GetImageName();
-
-        /// <summary>
-        ///     Gets the image comments.
-        /// </summary>
-        /// <returns>The image comments.</returns>
-        public abstract string GetImageComments();
-
-        // Functions to get information from disk represented by image
-
-        /// <summary>
-        ///     Gets the media manufacturer.
-        /// </summary>
-        /// <returns>The media manufacturer.</returns>
-        public abstract string GetMediaManufacturer();
-
-        /// <summary>
-        ///     Gets the media model.
-        /// </summary>
-        /// <returns>The media model.</returns>
-        public abstract string GetMediaModel();
-
-        /// <summary>
-        ///     Gets the media serial number.
-        /// </summary>
-        /// <returns>The media serial number.</returns>
-        public abstract string GetMediaSerialNumber();
-
-        /// <summary>
-        ///     Gets the media (or product) barcode.
-        /// </summary>
-        /// <returns>The media barcode.</returns>
-        public abstract string GetMediaBarcode();
-
-        /// <summary>
-        ///     Gets the media part number.
-        /// </summary>
-        /// <returns>The media part number.</returns>
-        public abstract string GetMediaPartNumber();
-
-        /// <summary>
-        ///     Gets the type of the media.
-        /// </summary>
-        /// <returns>The media type.</returns>
-        public abstract MediaType GetMediaType();
-
-        /// <summary>
-        ///     Gets the media sequence.
-        /// </summary>
-        /// <returns>The media sequence, starting at 1.</returns>
-        public abstract int GetMediaSequence();
-
-        /// <summary>
-        ///     Gets the last media in the sequence.
-        /// </summary>
-        /// <returns>The last media in the sequence.</returns>
-        public abstract int GetLastDiskSequence();
-
-        // Functions to get information from drive used to create image
-
-        /// <summary>
-        ///     Gets the manufacturer of the drive used to create the image.
-        /// </summary>
-        /// <returns>The drive manufacturer.</returns>
-        public abstract string GetDriveManufacturer();
-
-        /// <summary>
-        ///     Gets the model of the drive used to create the image.
-        /// </summary>
-        /// <returns>The drive model.</returns>
-        public abstract string GetDriveModel();
-
-        /// <summary>
-        ///     Gets the serial number of the drive used to create the image.
-        /// </summary>
-        /// <returns>The drive serial number.</returns>
-        public abstract string GetDriveSerialNumber();
-
-        // Partitioning functions
-
-        /// <summary>
-        ///     Gets an array partitions. Typically only useful for optical disc
-        ///     images where each track and index means a different partition, as
-        ///     reads can be relative to them.
-        /// </summary>
-        /// <returns>The partitions.</returns>
-        public abstract List<Partition> GetPartitions();
-
-        /// <summary>
-        ///     Gets the disc track extents (start, length).
-        /// </summary>
-        /// <returns>The track extents.</returns>
-        public abstract List<Track> GetTracks();
-
         /// <summary>
         ///     Gets the disc track extents for a specified session.
         /// </summary>
@@ -366,12 +228,6 @@ namespace DiscImageChef.DiscImages
         /// <returns>The track exents for that session.</returns>
         /// <param name="session">Session.</param>
         public abstract List<Track> GetSessionTracks(ushort session);
-
-        /// <summary>
-        ///     Gets the sessions (optical discs only).
-        /// </summary>
-        /// <returns>The sessions.</returns>
-        public abstract List<Session> GetSessions();
 
         /// <summary>
         ///     Verifies a sector.

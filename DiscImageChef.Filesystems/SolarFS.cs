@@ -141,22 +141,22 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("Solar_OS filesystem");
             sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
             sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
-            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
-               imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.ImageInfo.SectorSize == 2336 || imagePlugin.ImageInfo.SectorSize == 2352 ||
+               imagePlugin.ImageInfo.SectorSize == 2448)
             {
-                if(bpb.bps != imagePlugin.GetSectorSize())
+                if(bpb.bps != imagePlugin.ImageInfo.SectorSize)
                     sb
                         .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
                                       bpb.bps, 2048).AppendLine();
             }
-            else if(bpb.bps != imagePlugin.GetSectorSize())
+            else if(bpb.bps != imagePlugin.ImageInfo.SectorSize)
                 sb
                     .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
-                                  bpb.bps, imagePlugin.GetSectorSize()).AppendLine();
+                                  bpb.bps, imagePlugin.ImageInfo.SectorSize).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", bpb.sectors, bpb.sectors * bpb.bps).AppendLine();
-            if(bpb.sectors > imagePlugin.GetSectors())
+            if(bpb.sectors > imagePlugin.ImageInfo.Sectors)
                 sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)",
-                                bpb.sectors, imagePlugin.GetSectors());
+                                bpb.sectors, imagePlugin.ImageInfo.Sectors);
             sb.AppendFormat("{0} heads", bpb.heads).AppendLine();
             sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
             sb.AppendFormat("Volume name: {0}", bpb.vol_name).AppendLine();

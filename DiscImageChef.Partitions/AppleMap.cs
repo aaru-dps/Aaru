@@ -63,12 +63,12 @@ namespace DiscImageChef.Partitions
         {
             uint sectorSize;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sectorSize = 2048;
-            else sectorSize = imagePlugin.GetSectorSize();
+            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448) sectorSize = 2048;
+            else sectorSize = imagePlugin.ImageInfo.SectorSize;
 
             partitions = new List<Partition>();
 
-            if(sectorOffset + 2 >= imagePlugin.GetSectors()) return false;
+            if(sectorOffset + 2 >= imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] ddmSector = imagePlugin.ReadSector(sectorOffset);
 

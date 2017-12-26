@@ -121,9 +121,12 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Start = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.GetSectorSize(),
+                    Start =
+                        dvh.partitions[i].first_block * dvh.device_params.dp_secbytes /
+                        imagePlugin.ImageInfo.SectorSize,
                     Offset = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
-                    Length = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.GetSectorSize(),
+                    Length =
+                        dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.ImageInfo.SectorSize,
                     Size = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
                     Type = TypeToString(dvh.partitions[i].type),
                     Sequence = counter,

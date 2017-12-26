@@ -90,9 +90,9 @@ namespace DiscImageChef.Filesystems
 
             byte sb_size_in_sectors;
 
-            if(imagePlugin.GetSectorSize() <= 0x400
+            if(imagePlugin.ImageInfo.SectorSize <= 0x400
             ) // Check if underlying device sector size is smaller than SuperBlock size
-                sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
+                sb_size_in_sectors = (byte)(0x400 / imagePlugin.ImageInfo.SectorSize);
             else sb_size_in_sectors = 1; // If not a single sector can store it
 
             if(partition.End <= partition.Start + 4 * (ulong)sb_size_in_sectors + sb_size_in_sectors
@@ -158,8 +158,8 @@ namespace DiscImageChef.Filesystems
 
                 if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD) continue;
 
-                if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
-                   s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize()) return true;
+                if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.ImageInfo.SectorSize ||
+                   s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.ImageInfo.SectorSize) return true;
             }
 
             return false;
@@ -182,9 +182,9 @@ namespace DiscImageChef.Filesystems
             byte sb_size_in_sectors;
             int offset = 0;
 
-            if(imagePlugin.GetSectorSize() <= 0x400
+            if(imagePlugin.ImageInfo.SectorSize <= 0x400
             ) // Check if underlying device sector size is smaller than SuperBlock size
-                sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
+                sb_size_in_sectors = (byte)(0x400 / imagePlugin.ImageInfo.SectorSize);
             else sb_size_in_sectors = 1; // If not a single sector can store it
             // Sectors in a cylinder
             int spc = (int)(imagePlugin.ImageInfo.Heads * imagePlugin.ImageInfo.SectorsPerTrack);
@@ -301,8 +301,8 @@ namespace DiscImageChef.Filesystems
 
                 if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD) continue;
 
-                if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.GetSectorSize() &&
-                   s_fsize * 512 != (partition.End - partition.Start) * imagePlugin.GetSectorSize()) continue;
+                if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.ImageInfo.SectorSize &&
+                   s_fsize * 512 != (partition.End - partition.Start) * imagePlugin.ImageInfo.SectorSize) continue;
 
                 sys7th = true;
                 BigEndianBitConverter.IsLittleEndian = true;
@@ -395,8 +395,8 @@ namespace DiscImageChef.Filesystems
                         break;
                 }
 
-                if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
-                   imagePlugin.GetSectorSize() == 2448)
+                if(imagePlugin.ImageInfo.SectorSize == 2336 || imagePlugin.ImageInfo.SectorSize == 2352 ||
+                   imagePlugin.ImageInfo.SectorSize == 2448)
                 {
                     if(bs != 2048)
                         sb
@@ -405,10 +405,10 @@ namespace DiscImageChef.Filesystems
                 }
                 else
                 {
-                    if(bs != imagePlugin.GetSectorSize())
+                    if(bs != imagePlugin.ImageInfo.SectorSize)
                         sb
                             .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                          bs, imagePlugin.GetSectorSize()).AppendLine();
+                                          bs, imagePlugin.ImageInfo.SectorSize).AppendLine();
                 }
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
                 sb.AppendFormat("{0} free zones on volume ({1} bytes)", xnx_sb.s_tfree, xnx_sb.s_tfree * bs)
@@ -593,7 +593,7 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.Clusters = coh_sb.s_fsize;
 
                 sb.AppendLine("Coherent UNIX filesystem");
-                if(imagePlugin.GetSectorSize() != 512)
+                if(imagePlugin.ImageInfo.SectorSize != 512)
                     sb
                         .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
                                       512, 2048).AppendLine();
@@ -649,7 +649,7 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.ClusterSize = 512;
                 XmlFsType.Clusters = v7_sb.s_fsize;
                 sb.AppendLine("UNIX 7th Edition filesystem");
-                if(imagePlugin.GetSectorSize() != 512)
+                if(imagePlugin.ImageInfo.SectorSize != 512)
                     sb
                         .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
                                       512, 2048).AppendLine();

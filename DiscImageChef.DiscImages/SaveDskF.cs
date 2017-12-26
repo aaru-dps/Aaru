@@ -59,13 +59,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -79,6 +79,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "IBM SaveDskF";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -139,7 +150,7 @@ namespace DiscImageChef.DiscImages
             byte[] cmt = new byte[header.dataOffset - header.commentOffset];
             stream.Seek(header.commentOffset, SeekOrigin.Begin);
             stream.Read(cmt, 0, cmt.Length);
-            if(cmt.Length > 1) ImageInfo.ImageComments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
+            if(cmt.Length > 1) ImageInfo.Comments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
 
             calculatedChk = 0;
             stream.Seek(0, SeekOrigin.Begin);
@@ -155,10 +166,10 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
                                       calculatedChk == header.checksum);
 
-            ImageInfo.ImageApplication = "SaveDskF";
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = imageFilter.GetFilename();
+            ImageInfo.Application = "SaveDskF";
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = imageFilter.GetFilename();
             ImageInfo.ImageSize = (ulong)(stream.Length - header.dataOffset);
             ImageInfo.Sectors = (ulong)(header.sectorsPerTrack * header.heads * header.cylinders);
             ImageInfo.SectorSize = header.sectorSize;
@@ -261,8 +272,8 @@ namespace DiscImageChef.DiscImages
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             DicConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", ImageInfo.MediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
-                DicConsole.VerboseWriteLine("SaveDskF comments: {0}", ImageInfo.ImageComments);
+            if(!string.IsNullOrEmpty(ImageInfo.Comments))
+                DicConsole.VerboseWriteLine("SaveDskF comments: {0}", ImageInfo.Comments);
 
             // TODO: Support compressed images
             if(header.magic == SDF_MAGIC_COMPRESSED)
@@ -318,26 +329,6 @@ namespace DiscImageChef.DiscImages
             return calculatedChk == header.checksum;
         }
 
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
         public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
@@ -357,106 +348,6 @@ namespace DiscImageChef.DiscImages
                        length * ImageInfo.SectorSize);
 
             return buffer;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "IBM SaveDskF";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
         }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
@@ -484,27 +375,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

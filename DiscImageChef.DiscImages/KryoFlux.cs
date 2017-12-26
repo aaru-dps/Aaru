@@ -68,13 +68,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -199,8 +199,8 @@ namespace DiscImageChef.DiscImages
                 trackFilter.Open(trackfile);
                 if(!trackFilter.IsOpened()) throw new IOException("Could not open KryoFlux track file.");
 
-                ImageInfo.ImageCreationTime = DateTime.MaxValue;
-                ImageInfo.ImageLastModificationTime = DateTime.MinValue;
+                ImageInfo.CreationTime = DateTime.MaxValue;
+                ImageInfo.LastModificationTime = DateTime.MinValue;
 
                 Stream trackStream = trackFilter.GetDataForkStream();
                 while(trackStream.Position < trackStream.Length)
@@ -260,10 +260,10 @@ namespace DiscImageChef.DiscImages
                                                                DateTimeStyles.AssumeLocal, out blockTime);
                                         break;
                                     case kfName:
-                                        ImageInfo.ImageApplication = kvp[1];
+                                        ImageInfo.Application = kvp[1];
                                         break;
                                     case kfVersion:
-                                        ImageInfo.ImageApplicationVersion = kvp[1];
+                                        ImageInfo.ApplicationVersion = kvp[1];
                                         break;
                                 }
                             }
@@ -274,10 +274,10 @@ namespace DiscImageChef.DiscImages
                                                                        blockTime.Hour, blockTime.Minute,
                                                                        blockTime.Second);
                                 DicConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
-                                if(blockTimestamp < ImageInfo.ImageCreationTime)
-                                    ImageInfo.ImageCreationTime = blockTimestamp;
-                                if(blockTimestamp > ImageInfo.ImageLastModificationTime)
-                                    ImageInfo.ImageLastModificationTime = blockTimestamp;
+                                if(blockTimestamp < ImageInfo.CreationTime)
+                                    ImageInfo.CreationTime = blockTimestamp;
+                                if(blockTimestamp > ImageInfo.LastModificationTime)
+                                    ImageInfo.LastModificationTime = blockTimestamp;
                             }
 
                             break;
@@ -308,26 +308,6 @@ namespace DiscImageChef.DiscImages
             ImageInfo.Cylinders = (uint)(tracks.Count / heads);
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -370,105 +350,7 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override string GetImageFormat()
-        {
-            return "KryoFlux STREAM";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
+        public override string ImageFormat => "KryoFlux STREAM";
 
         public override bool? VerifySector(ulong sectorAddress)
         {
@@ -506,15 +388,11 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Partition> GetPartitions()
-        {
+        public override List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public override List<Track> GetTracks()
-        {
+        public override List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
         public override List<Track> GetSessionTracks(Session session)
         {
@@ -526,10 +404,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Session> GetSessions()
-        {
+        public override List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {

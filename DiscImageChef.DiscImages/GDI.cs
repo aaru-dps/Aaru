@@ -47,8 +47,7 @@ namespace DiscImageChef.DiscImages
     public class Gdi : ImagePlugin
     {
         const string REGEX_TRACK =
-                @"\s?(?<track>\d+)\s+(?<start>\d+)\s(?<flags>\d)\s(?<type>2352|2048)\s(?<filename>.+)\s(?<offset>\d+)$"
-            ;
+            @"\s?(?<track>\d+)\s+(?<start>\d+)\s(?<flags>\d)\s(?<type>2352|2048)\s(?<filename>.+)\s(?<offset>\d+)$";
 
         ulong densitySeparationSectors;
         GdiDisc discimage;
@@ -66,12 +65,12 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = true,
-                ImageHasSessions = true,
-                ImageVersion = null,
-                ImageApplicationVersion = null,
-                ImageName = null,
-                ImageCreator = null,
+                HasPartitions = true,
+                HasSessions = true,
+                Version = null,
+                ApplicationVersion = null,
+                MediaTitle = null,
+                Creator = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaPartNumber = null,
@@ -83,6 +82,47 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "Dreamcast GDI image";
+
+        public override List<Partition> Partitions => partitions;
+
+        public override List<Track> Tracks
+        {
+            get
+            {
+                List<Track> tracks = new List<Track>();
+
+                foreach(GdiTrack gdiTrack in discimage.Tracks)
+                {
+                    Track track = new Track
+                    {
+                        Indexes = new Dictionary<int, ulong>(),
+                        TrackDescription = null,
+                        TrackStartSector = gdiTrack.StartSector,
+                        TrackPregap = gdiTrack.Pregap,
+                        TrackSession = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                        TrackSequence = gdiTrack.Sequence,
+                        TrackType = gdiTrack.Tracktype,
+                        TrackFilter = gdiTrack.Trackfilter,
+                        TrackFile = gdiTrack.Trackfile,
+                        TrackFileOffset = (ulong)gdiTrack.Offset,
+                        TrackFileType = "BINARY",
+                        TrackRawBytesPerSector = gdiTrack.Bps,
+                        TrackBytesPerSector = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
+                        TrackSubchannelType = TrackSubchannelType.None
+                    };
+
+                    track.TrackEndSector = track.TrackStartSector + gdiTrack.Sectors - 1;
+
+                    tracks.Add(track);
+                }
+
+                return tracks;
+            }
+        }
+
+        public override List<Session> Sessions => discimage.Sessions;
 
         // Due to .gdi format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
         public override bool IdentifyImage(Filter imageFilter)
@@ -368,8 +408,8 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                 }
 
-                ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-                ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+                ImageInfo.CreationTime = imageFilter.GetCreationTime();
+                ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
                 ImageInfo.MediaType = discimage.Disktype;
 
@@ -388,26 +428,6 @@ namespace DiscImageChef.DiscImages
                 DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
                 return false;
             }
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -848,93 +868,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override string GetImageFormat()
-        {
-            return "Dreamcast GDI image";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            return partitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            List<Track> tracks = new List<Track>();
-
-            foreach(GdiTrack gdiTrack in discimage.Tracks)
-            {
-                Track track = new Track
-                {
-                    Indexes = new Dictionary<int, ulong>(),
-                    TrackDescription = null,
-                    TrackStartSector = gdiTrack.StartSector,
-                    TrackPregap = gdiTrack.Pregap,
-                    TrackSession = (ushort)(gdiTrack.HighDensity ? 2 : 1),
-                    TrackSequence = gdiTrack.Sequence,
-                    TrackType = gdiTrack.Tracktype,
-                    TrackFilter = gdiTrack.Trackfilter,
-                    TrackFile = gdiTrack.Trackfile,
-                    TrackFileOffset = (ulong)gdiTrack.Offset,
-                    TrackFileType = "BINARY",
-                    TrackRawBytesPerSector = gdiTrack.Bps,
-                    TrackBytesPerSector = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
-                    TrackSubchannelType = TrackSubchannelType.None
-                };
-
-                track.TrackEndSector = track.TrackStartSector + gdiTrack.Sectors - 1;
-
-                tracks.Add(track);
-            }
-
-            return tracks;
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             if(discimage.Sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
@@ -985,11 +918,6 @@ namespace DiscImageChef.DiscImages
                 }
 
             return tracks;
-        }
-
-        public override List<Session> GetSessions()
-        {
-            return discimage.Sessions;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -1067,56 +995,6 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifyMediaImage()
         {
             return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
         }
 
         struct GdiTrack

@@ -100,11 +100,11 @@ namespace DiscImageChef.Partitions
                     Sequence = counter,
                     Scheme = Name
                 };
-                part.Offset = part.Start * imagePlugin.GetSectorSize();
+                part.Offset = part.Start * imagePlugin.ImageInfo.SectorSize;
                 part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
                                         imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack) -
                               part.Start;
-                part.Size = part.Length * imagePlugin.GetSectorSize();
+                part.Size = part.Length * imagePlugin.ImageInfo.SectorSize;
 
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);

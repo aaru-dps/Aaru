@@ -149,7 +149,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType.FreeClusters = rootBlock.blocksfree;
             XmlFsType.FreeClustersSpecified = true;
             XmlFsType.Clusters = rootBlock.diskSize;
-            XmlFsType.ClusterSize = (int)imagePlugin.GetSectorSize();
+            XmlFsType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
             XmlFsType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding);
         }
 

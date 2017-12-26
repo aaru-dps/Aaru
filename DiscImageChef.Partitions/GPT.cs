@@ -55,7 +55,7 @@ namespace DiscImageChef.Partitions
         {
             partitions = new List<Partition>();
 
-            if(sectorOffset + 2 >= imagePlugin.GetSectors()) return false;
+            if(sectorOffset + 2 >= imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
             GptHeader hdr;
@@ -121,11 +121,11 @@ namespace DiscImageChef.Partitions
             {
                 divisor = 1;
                 modulo = 0;
-                sectorSize = imagePlugin.GetSectorSize();
+                sectorSize = imagePlugin.ImageInfo.SectorSize;
             }
 
-            uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.GetSectorSize();
-            if(hdr.entries * hdr.entriesSize % imagePlugin.GetSectorSize() > 0) totalEntriesSectors++;
+            uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.ImageInfo.SectorSize;
+            if(hdr.entries * hdr.entriesSize % imagePlugin.ImageInfo.SectorSize > 0) totalEntriesSectors++;
 
             byte[] temp = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
             byte[] entriesBytes = new byte[temp.Length - modulo * 512];
@@ -165,8 +165,8 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
 
-                if(entry.startLBA / divisor > imagePlugin.GetSectors() ||
-                   entry.endLBA / divisor > imagePlugin.GetSectors()) return false;
+                if(entry.startLBA / divisor > imagePlugin.ImageInfo.Sectors ||
+                   entry.endLBA / divisor > imagePlugin.ImageInfo.Sectors) return false;
 
                 Partition part = new Partition
                 {

@@ -72,16 +72,16 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < F2FS_MIN_SECTOR || imagePlugin.GetSectorSize() > F2FS_MAX_SECTOR)
-                return false;
+            if(imagePlugin.ImageInfo.SectorSize < F2FS_MIN_SECTOR ||
+               imagePlugin.ImageInfo.SectorSize > F2FS_MAX_SECTOR) return false;
 
-            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.GetSectorSize();
+            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             F2FS_Superblock f2fsSb = new F2FS_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(f2fsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr >= partition.End) return false;
 
@@ -99,15 +99,16 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < F2FS_MIN_SECTOR || imagePlugin.GetSectorSize() > F2FS_MAX_SECTOR) return;
+            if(imagePlugin.ImageInfo.SectorSize < F2FS_MIN_SECTOR ||
+               imagePlugin.ImageInfo.SectorSize > F2FS_MAX_SECTOR) return;
 
-            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.GetSectorSize();
+            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             F2FS_Superblock f2fsSb = new F2FS_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.ImageInfo.SectorSize);
+            if(Marshal.SizeOf(f2fsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(f2fsSb)) return;

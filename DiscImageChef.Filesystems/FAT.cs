@@ -242,7 +242,7 @@ namespace DiscImageChef.Filesystems
             if(partition.Start != 0) return false;
 
             // DEC Rainbow, lacks a BPB but has a very concrete structure...
-            if(imagePlugin.GetSectors() == 800 && imagePlugin.GetSectorSize() == 512)
+            if(imagePlugin.ImageInfo.Sectors == 800 && imagePlugin.ImageInfo.SectorSize == 512)
             {
                 // DEC Rainbow boots up with a Z80, first byte should be DI (disable interrupts)
                 byte z80Di = bpbSector[0];
@@ -598,9 +598,9 @@ namespace DiscImageChef.Filesystems
             uint sectorsForRootDirectory = 0;
 
             // DEC Rainbow, lacks a BPB but has a very concrete structure...
-            if(imagePlugin.GetSectors() == 800 && imagePlugin.GetSectorSize() == 512 && !useAtariBpb && !useMsxBpb &&
-               !useDos2Bpb && !useDos3Bpb && !useDos32Bpb && !useDos33Bpb && !userShortExtendedBpb && !useExtendedBpb &&
-               !useShortFat32 && !useLongFat32 && !useApricotBpb)
+            if(imagePlugin.ImageInfo.Sectors == 800 && imagePlugin.ImageInfo.SectorSize == 512 && !useAtariBpb &&
+               !useMsxBpb && !useDos2Bpb && !useDos3Bpb && !useDos32Bpb && !useDos33Bpb && !userShortExtendedBpb &&
+               !useExtendedBpb && !useShortFat32 && !useLongFat32 && !useApricotBpb)
             {
                 // DEC Rainbow boots up with a Z80, first byte should be DI (disable interrupts)
                 byte z80Di = bpbSector[0];
@@ -1132,10 +1132,10 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.Bootable = apricotBpb.bootType > 0;
 
                 if(apricotBpb.bootLocation > 0 &&
-                   apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.GetSectors())
+                   apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.ImageInfo.Sectors)
                     fakeBpb.boot_code = imagePlugin.ReadSectors(apricotBpb.bootLocation,
                                                                 (uint)(apricotBpb.sectorSize * apricotBpb.bootSize) /
-                                                                imagePlugin.GetSectorSize());
+                                                                imagePlugin.ImageInfo.SectorSize);
             }
 
             if(!isFat32)

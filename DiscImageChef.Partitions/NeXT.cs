@@ -68,8 +68,8 @@ namespace DiscImageChef.Partitions
 
             uint sectorSize;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sectorSize = 2048;
-            else sectorSize = imagePlugin.GetSectorSize();
+            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448) sectorSize = 2048;
+            else sectorSize = imagePlugin.ImageInfo.SectorSize;
 
             partitions = new List<Partition>();
 
@@ -77,7 +77,8 @@ namespace DiscImageChef.Partitions
 
             ulong labelPosition = 0;
 
-            foreach(ulong i in new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors()))
+            foreach(ulong i in
+                new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.ImageInfo.Sectors))
             {
                 labelSector = imagePlugin.ReadSector(i + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);

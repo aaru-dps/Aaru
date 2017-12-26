@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start + 1 >= imagePlugin.GetSectors()) return false;
+            if(partition.Start + 1 >= imagePlugin.ImageInfo.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return false;

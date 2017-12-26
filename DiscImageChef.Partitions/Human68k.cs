@@ -57,11 +57,11 @@ namespace DiscImageChef.Partitions
             byte[] sector;
             ulong sectsPerUnit;
 
-            DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.GetSectorSize());
+            DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.ImageInfo.SectorSize);
 
-            if(sectorOffset + 4 >= imagePlugin.GetSectors()) return false;
+            if(sectorOffset + 4 >= imagePlugin.ImageInfo.Sectors) return false;
 
-            switch(imagePlugin.GetSectorSize())
+            switch(imagePlugin.ImageInfo.SectorSize)
             {
                 case 256:
                     sector = imagePlugin.ReadSector(4 + sectorOffset);
@@ -100,7 +100,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}", entry.length);
                 DicConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
-                                          imagePlugin.GetSectorSize());
+                                          imagePlugin.ImageInfo.SectorSize);
 
                 Partition part = new Partition
                 {

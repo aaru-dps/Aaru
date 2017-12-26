@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             // Last volume record block must be after first block, and before end of device
             if(volEntry.lastBlock <= volEntry.firstBlock ||
-               (ulong)volEntry.lastBlock > imagePlugin.GetSectors() - 2) return false;
+               (ulong)volEntry.lastBlock > imagePlugin.ImageInfo.Sectors - 2) return false;
 
             // Volume record entry type must be volume or secure
             if(volEntry.entryType != PascalFileKind.Volume && volEntry.entryType != PascalFileKind.Secure) return false;
@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(volEntry.volumeName[0] > 7) return false;
 
             // Volume blocks is equal to volume sectors
-            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.GetSectors()) return false;
+            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.ImageInfo.Sectors) return false;
 
             // There can be not less than zero files
             return volEntry.files >= 0;
@@ -88,7 +88,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             StringBuilder sbInformation = new StringBuilder();
             information = "";
 
-            if(imagePlugin.GetSectors() < 3) return;
+            if(imagePlugin.ImageInfo.Sectors < 3) return;
 
             // Blocks 0 and 1 are boot code
             byte[] volBlock = imagePlugin.ReadSector(2 + partition.Start);
@@ -113,7 +113,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             // Last volume record block must be after first block, and before end of device
             if(volEntry.lastBlock <= volEntry.firstBlock ||
-               (ulong)volEntry.lastBlock > imagePlugin.GetSectors() - 2) return;
+               (ulong)volEntry.lastBlock > imagePlugin.ImageInfo.Sectors - 2) return;
 
             // Volume record entry type must be volume or secure
             if(volEntry.entryType != PascalFileKind.Volume && volEntry.entryType != PascalFileKind.Secure) return;
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(volEntry.volumeName[0] > 7) return;
 
             // Volume blocks is equal to volume sectors
-            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.GetSectors()) return;
+            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.ImageInfo.Sectors) return;
 
             // There can be not less than zero files
             if(volEntry.files < 0) return;
@@ -144,7 +144,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             {
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2)),
                 Clusters = volEntry.blocks,
-                ClusterSize = (int)imagePlugin.GetSectorSize(),
+                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
                 Files = volEntry.files,
                 FilesSpecified = true,
                 Type = "UCSD Pascal",

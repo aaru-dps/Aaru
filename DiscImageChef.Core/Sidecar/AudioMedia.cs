@@ -61,20 +61,20 @@ namespace DiscImageChef.Core
                     Checksums = imgChecksums.ToArray(),
                     Image = new ImageType
                     {
-                        format = image.GetImageFormat(),
+                        format = image.ImageFormat,
                         offset = 0,
                         offsetSpecified = true,
                         Value = Path.GetFileName(imagePath)
                     },
                     Size = fi.Length,
-                    Sequence = new SequenceType {MediaTitle = image.GetImageName()}
+                    Sequence = new SequenceType {MediaTitle = image.ImageInfo.MediaTitle}
                 }
             };
 
-            if(image.GetMediaSequence() != 0 && image.GetLastDiskSequence() != 0)
+            if(image.ImageInfo.MediaSequence != 0 && image.ImageInfo.LastMediaSequence != 0)
             {
-                sidecar.AudioMedia[0].Sequence.MediaSequence = image.GetMediaSequence();
-                sidecar.AudioMedia[0].Sequence.TotalMedia = image.GetMediaSequence();
+                sidecar.AudioMedia[0].Sequence.MediaSequence = image.ImageInfo.MediaSequence;
+                sidecar.AudioMedia[0].Sequence.TotalMedia = image.ImageInfo.LastMediaSequence;
             }
             else
             {

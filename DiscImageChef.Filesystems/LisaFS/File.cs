@@ -194,7 +194,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(count == 0) return Errno.NoSuchFile;
 
-            buf = !tags ? new byte[count * device.GetSectorSize()] : new byte[count * devTagSize];
+            buf = !tags ? new byte[count * device.ImageInfo.SectorSize] : new byte[count * devTagSize];
 
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
@@ -325,7 +325,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             int sectorSize;
             if(tags) sectorSize = devTagSize;
-            else sectorSize = (int)device.GetSectorSize();
+            else sectorSize = (int)device.ImageInfo.SectorSize;
 
             byte[] temp = new byte[file.length * sectorSize];
 

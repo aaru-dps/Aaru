@@ -186,12 +186,12 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = true,
-                ImageHasSessions = true,
-                ImageVersion = null,
-                ImageApplicationVersion = null,
-                ImageName = null,
-                ImageCreator = null,
+                HasPartitions = true,
+                HasSessions = true,
+                Version = null,
+                ApplicationVersion = null,
+                MediaTitle = null,
+                Creator = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaPartNumber = null,
@@ -203,6 +203,59 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "CDRWin CUESheet";
+
+        public override List<Partition> Partitions => partitions;
+
+        public override List<Track> Tracks
+        {
+            get
+            {
+                List<Track> tracks = new List<Track>();
+
+                ulong previousStartSector = 0;
+
+                foreach(CdrWinTrack cdrTrack in discimage.Tracks)
+                {
+                    Track dicTrack = new Track
+                    {
+                        Indexes = cdrTrack.Indexes,
+                        TrackDescription = cdrTrack.Title,
+                        TrackStartSector = previousStartSector,
+                        TrackPregap = cdrTrack.Pregap,
+                        TrackSession = cdrTrack.Session,
+                        TrackSequence = cdrTrack.Sequence,
+                        TrackType = CdrWinTrackTypeToTrackType(cdrTrack.Tracktype),
+                        TrackFile = cdrTrack.Trackfile.Datafilter.GetFilename(),
+                        TrackFilter = cdrTrack.Trackfile.Datafilter,
+                        TrackFileOffset = cdrTrack.Trackfile.Offset,
+                        TrackFileType = cdrTrack.Trackfile.Filetype,
+                        TrackRawBytesPerSector = cdrTrack.Bps,
+                        TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.Tracktype)
+                    };
+                    dicTrack.TrackEndSector = dicTrack.TrackStartSector + cdrTrack.Sectors - 1;
+
+                    if(!cdrTrack.Indexes.TryGetValue(0, out dicTrack.TrackStartSector))
+                        cdrTrack.Indexes.TryGetValue(1, out dicTrack.TrackStartSector);
+                    if(cdrTrack.Bps == 2448)
+                    {
+                        dicTrack.TrackSubchannelFilter = cdrTrack.Trackfile.Datafilter;
+                        dicTrack.TrackSubchannelFile = cdrTrack.Trackfile.Datafilter.GetFilename();
+                        dicTrack.TrackSubchannelOffset = cdrTrack.Trackfile.Offset;
+                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                    }
+                    else dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+
+                    tracks.Add(dicTrack);
+                    previousStartSector = dicTrack.TrackEndSector + 1;
+                }
+
+                return tracks;
+            }
+        }
+
+        public override List<Session> Sessions => discimage.Sessions;
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
         public override bool IdentifyImage(Filter imageFilter)
@@ -1046,13 +1099,13 @@ namespace DiscImageChef.DiscImages
 
                 // Detect ISOBuster extensions
                 if(discimage.Disktypestr != null || discimage.Comment.ToLower().Contains("isobuster") ||
-                   discimage.Sessions.Count > 1) ImageInfo.ImageApplication = "ISOBuster";
-                else ImageInfo.ImageApplication = "CDRWin";
+                   discimage.Sessions.Count > 1) ImageInfo.Application = "ISOBuster";
+                else ImageInfo.Application = "CDRWin";
 
-                ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-                ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+                ImageInfo.CreationTime = imageFilter.GetCreationTime();
+                ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-                ImageInfo.ImageComments = discimage.Comment;
+                ImageInfo.Comments = discimage.Comment;
                 ImageInfo.MediaSerialNumber = discimage.Mcn;
                 ImageInfo.MediaBarcode = discimage.Barcode;
                 ImageInfo.MediaType = discimage.Disktype;
@@ -1121,8 +1174,8 @@ namespace DiscImageChef.DiscImages
                 ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                 DicConsole.VerboseWriteLine("CDRWIN image describes a disc of type {0}", ImageInfo.MediaType);
-                if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
-                    DicConsole.VerboseWriteLine("CDRWIN comments: {0}", ImageInfo.ImageComments);
+                if(!string.IsNullOrEmpty(ImageInfo.Comments))
+                    DicConsole.VerboseWriteLine("CDRWIN comments: {0}", ImageInfo.Comments);
 
                 return true;
             }
@@ -1133,26 +1186,6 @@ namespace DiscImageChef.DiscImages
                 DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
                 return false;
             }
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -1621,105 +1654,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override string GetImageFormat()
-        {
-            return "CDRWin CUESheet";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            return partitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            List<Track> tracks = new List<Track>();
-
-            ulong previousStartSector = 0;
-
-            foreach(CdrWinTrack cdrTrack in discimage.Tracks)
-            {
-                Track dicTrack = new Track
-                {
-                    Indexes = cdrTrack.Indexes,
-                    TrackDescription = cdrTrack.Title,
-                    TrackStartSector = previousStartSector,
-                    TrackPregap = cdrTrack.Pregap,
-                    TrackSession = cdrTrack.Session,
-                    TrackSequence = cdrTrack.Sequence,
-                    TrackType = CdrWinTrackTypeToTrackType(cdrTrack.Tracktype),
-                    TrackFile = cdrTrack.Trackfile.Datafilter.GetFilename(),
-                    TrackFilter = cdrTrack.Trackfile.Datafilter,
-                    TrackFileOffset = cdrTrack.Trackfile.Offset,
-                    TrackFileType = cdrTrack.Trackfile.Filetype,
-                    TrackRawBytesPerSector = cdrTrack.Bps,
-                    TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.Tracktype)
-                };
-                dicTrack.TrackEndSector = dicTrack.TrackStartSector + cdrTrack.Sectors - 1;
-
-                if(!cdrTrack.Indexes.TryGetValue(0, out dicTrack.TrackStartSector))
-                    cdrTrack.Indexes.TryGetValue(1, out dicTrack.TrackStartSector);
-                if(cdrTrack.Bps == 2448)
-                {
-                    dicTrack.TrackSubchannelFilter = cdrTrack.Trackfile.Datafilter;
-                    dicTrack.TrackSubchannelFile = cdrTrack.Trackfile.Datafilter.GetFilename();
-                    dicTrack.TrackSubchannelOffset = cdrTrack.Trackfile.Offset;
-                    dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                }
-                else dicTrack.TrackSubchannelType = TrackSubchannelType.None;
-
-                tracks.Add(dicTrack);
-                previousStartSector = dicTrack.TrackEndSector + 1;
-            }
-
-            return tracks;
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             if(discimage.Sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
@@ -1766,11 +1700,6 @@ namespace DiscImageChef.DiscImages
                 }
 
             return tracks;
-        }
-
-        public override List<Session> GetSessions()
-        {
-            return discimage.Sessions;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -1956,56 +1885,6 @@ namespace DiscImageChef.DiscImages
                 case CDRWIN_DISK_TYPE_BDREDL: return MediaType.BDRE;
                 default: return MediaType.Unknown;
             }
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
         }
 
         struct CdrWinTrackFile

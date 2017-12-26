@@ -48,7 +48,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             // ISO9660 is designed for 2048 bytes/sector devices
-            if(imagePlugin.GetSectorSize() < 2048) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 2048) return false;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
             if(partition.End <= 16 + partition.Start) return false;
@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             ElToritoBootRecord? torito = null;
 
             // ISO9660 is designed for 2048 bytes/sector devices
-            if(imagePlugin.GetSectorSize() < 2048) return;
+            if(imagePlugin.ImageInfo.SectorSize < 2048) return;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
             if(partition.End < 16) return;

@@ -100,13 +100,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -120,6 +120,17 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "Apple New Disk Image Format";
+
+        public override List<Partition> Partitions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Track> Tracks =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public override List<Session> Sessions =>
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -299,17 +310,17 @@ namespace DiscImageChef.DiscImages
 
                     if(dev != null) pre = $"{version.PreReleaseVersion}";
 
-                    ImageInfo.ImageApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                    ImageInfo.ImageApplication = version.VersionString;
-                    ImageInfo.ImageComments = version.VersionMessage;
+                    ImageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                    ImageInfo.Application = version.VersionString;
+                    ImageInfo.Comments = version.VersionMessage;
 
-                    if(version.MajorVersion == 3) ImageInfo.ImageApplication = "ShrinkWrap™";
-                    else if(version.MajorVersion == 6) ImageInfo.ImageApplication = "DiskCopy";
+                    if(version.MajorVersion == 3) ImageInfo.Application = "ShrinkWrap™";
+                    else if(version.MajorVersion == 6) ImageInfo.Application = "DiskCopy";
                 }
             }
 
-            DicConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", ImageInfo.ImageApplication,
-                                      ImageInfo.ImageApplicationVersion);
+            DicConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", ImageInfo.Application,
+                                      ImageInfo.ApplicationVersion);
 
             sectorCache = new Dictionary<ulong, byte[]>();
             chunkCache = new Dictionary<ulong, byte[]>();
@@ -317,14 +328,14 @@ namespace DiscImageChef.DiscImages
             imageStream = imageFilter.GetDataForkStream();
             buffersize = header.maxSectorsPerChunk * SECTOR_SIZE;
 
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh"));
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh"));
             ImageInfo.SectorSize = SECTOR_SIZE;
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
-            ImageInfo.ImageApplicationVersion = "6";
-            ImageInfo.ImageApplication = "Apple DiskCopy";
+            ImageInfo.ApplicationVersion = "6";
+            ImageInfo.Application = "Apple DiskCopy";
 
             switch(ImageInfo.MediaType)
             {
@@ -469,76 +480,6 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override bool ImageHasPartitions()
-        {
-            return false;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "Apple New Disk Image Format";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -594,77 +535,12 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetMediaManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetMediaModel()
-        {
-            return null;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return null;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return null;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return null;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return 0;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return 0;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return null;
-        }
-
-        public override string GetDriveModel()
-        {
-            return null;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return null;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override List<Track> GetSessionTracks(ushort session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

@@ -54,13 +54,13 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = false,
-                ImageHasSessions = false,
-                ImageVersion = null,
-                ImageApplication = null,
-                ImageApplicationVersion = null,
-                ImageCreator = null,
-                ImageComments = null,
+                HasPartitions = false,
+                HasSessions = false,
+                Version = null,
+                Application = null,
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaSerialNumber = null,
@@ -73,6 +73,76 @@ namespace DiscImageChef.DiscImages
                 DriveSerialNumber = null,
                 DriveFirmwareRevision = null
             };
+        }
+
+        public override string ImageFormat => "Raw disk image (sector by sector copy)";
+
+        public override List<Track> Tracks
+        {
+            get
+            {
+                if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                    throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+                Track trk = new Track
+                {
+                    TrackBytesPerSector = (int)ImageInfo.SectorSize,
+                    TrackEndSector = ImageInfo.Sectors - 1,
+                    TrackFile = rawImageFilter.GetFilename(),
+                    TrackFileOffset = 0,
+                    TrackFileType = "BINARY",
+                    TrackRawBytesPerSector = (int)ImageInfo.SectorSize,
+                    TrackSequence = 1,
+                    TrackStartSector = 0,
+                    TrackSubchannelType = TrackSubchannelType.None,
+                    TrackType = TrackType.Data,
+                    TrackSession = 1
+                };
+                List<Track> lst = new List<Track> {trk};
+                return lst;
+            }
+        }
+
+        public override List<Session> Sessions
+        {
+            get
+            {
+                if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                    throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+                Session sess = new Session
+                {
+                    EndSector = ImageInfo.Sectors - 1,
+                    EndTrack = 1,
+                    SessionSequence = 1,
+                    StartSector = 0,
+                    StartTrack = 1
+                };
+                List<Session> lst = new List<Session> {sess};
+                return lst;
+            }
+        }
+
+        public override List<Partition> Partitions
+        {
+            get
+            {
+                if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                    throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+                List<Partition> parts = new List<Partition>();
+                Partition part = new Partition
+                {
+                    Start = 0,
+                    Length = ImageInfo.Sectors,
+                    Offset = 0,
+                    Sequence = 0,
+                    Type = "MODE1/2048",
+                    Size = ImageInfo.Sectors * ImageInfo.SectorSize
+                };
+                parts.Add(part);
+                return parts;
+            }
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -196,9 +266,9 @@ namespace DiscImageChef.DiscImages
             }
 
             ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             differentTrackZeroSize = false;
             rawImageFilter = imageFilter;
 
@@ -322,8 +392,8 @@ namespace DiscImageChef.DiscImages
 
             if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                ImageInfo.ImageHasSessions = true;
-                ImageInfo.ImageHasPartitions = true;
+                ImageInfo.HasSessions = true;
+                ImageInfo.HasPartitions = true;
             }
 
             DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", ImageInfo.MediaType);
@@ -651,26 +721,6 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
-        }
-
         public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
@@ -695,31 +745,6 @@ namespace DiscImageChef.DiscImages
             stream.Read(buffer, 0, (int)(length * ImageInfo.SectorSize));
 
             return buffer;
-        }
-
-        public override string GetImageFormat()
-        {
-            return "Raw disk image (sector by sector copy)";
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -757,29 +782,6 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifyMediaImage()
         {
             return null;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-            Track trk = new Track
-            {
-                TrackBytesPerSector = (int)ImageInfo.SectorSize,
-                TrackEndSector = ImageInfo.Sectors - 1,
-                TrackFile = rawImageFilter.GetFilename(),
-                TrackFileOffset = 0,
-                TrackFileType = "BINARY",
-                TrackRawBytesPerSector = (int)ImageInfo.SectorSize,
-                TrackSequence = 1,
-                TrackStartSector = 0,
-                TrackSubchannelType = TrackSubchannelType.None,
-                TrackType = TrackType.Data,
-                TrackSession = 1
-            };
-            List<Track> lst = new List<Track> {trk};
-            return lst;
         }
 
         public override List<Track> GetSessionTracks(Session session)
@@ -833,23 +835,6 @@ namespace DiscImageChef.DiscImages
                 TrackSession = 1
             };
             List<Track> lst = new List<Track> {trk};
-            return lst;
-        }
-
-        public override List<Session> GetSessions()
-        {
-            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-            Session sess = new Session
-            {
-                EndSector = ImageInfo.Sectors - 1,
-                EndTrack = 1,
-                SessionSequence = 1,
-                StartSector = 0,
-                StartTrack = 1
-            };
-            List<Session> lst = new List<Session> {sess};
             return lst;
         }
 
@@ -1026,103 +1011,9 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.MediaSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-            List<Partition> parts = new List<Partition>();
-            Partition part = new Partition
-            {
-                Start = 0,
-                Length = ImageInfo.Sectors,
-                Offset = 0,
-                Sequence = 0,
-                Type = "MODE1/2048",
-                Size = ImageInfo.Sectors * ImageInfo.SectorSize
-            };
-            parts.Add(part);
-            return parts;
         }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)

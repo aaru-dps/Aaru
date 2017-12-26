@@ -61,12 +61,12 @@ namespace DiscImageChef.DiscImages
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
-                ImageHasPartitions = true,
-                ImageHasSessions = true,
-                ImageVersion = null,
-                ImageApplicationVersion = null,
-                ImageName = null,
-                ImageCreator = null,
+                HasPartitions = true,
+                HasSessions = true,
+                Version = null,
+                ApplicationVersion = null,
+                MediaTitle = null,
+                Creator = null,
                 MediaManufacturer = null,
                 MediaModel = null,
                 MediaPartNumber = null,
@@ -78,6 +78,14 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
+
+        public override string ImageFormat => "DiscJuggler";
+
+        public override List<Partition> Partitions => partitions;
+
+        public override List<Track> Tracks => tracks;
+
+        public override List<Session> Sessions => sessions;
 
         public override bool IdentifyImage(Filter imageFilter)
         {
@@ -619,10 +627,10 @@ namespace DiscImageChef.DiscImages
                 else ImageInfo.MediaType = MediaType.CD;
             }
 
-            ImageInfo.ImageApplication = "DiscJuggler";
+            ImageInfo.Application = "DiscJuggler";
             ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
-            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.CreationTime = imageFilter.GetCreationTime();
+            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
             return true;
@@ -636,26 +644,6 @@ namespace DiscImageChef.DiscImages
                 case 152: return MediaType.CDROM;
                 default: return MediaType.Unknown;
             }
-        }
-
-        public override bool ImageHasPartitions()
-        {
-            return ImageInfo.ImageHasPartitions;
-        }
-
-        public override ulong GetImageSize()
-        {
-            return ImageInfo.ImageSize;
-        }
-
-        public override ulong GetSectors()
-        {
-            return ImageInfo.Sectors;
-        }
-
-        public override uint GetSectorSize()
-        {
-            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -1100,116 +1088,6 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override string GetImageFormat()
-        {
-            return "DiscJuggler";
-        }
-
-        public override string GetImageVersion()
-        {
-            return ImageInfo.ImageVersion;
-        }
-
-        public override string GetImageApplication()
-        {
-            return ImageInfo.ImageApplication;
-        }
-
-        public override string GetImageApplicationVersion()
-        {
-            return ImageInfo.ImageApplicationVersion;
-        }
-
-        public override string GetImageCreator()
-        {
-            return ImageInfo.ImageCreator;
-        }
-
-        public override DateTime GetImageCreationTime()
-        {
-            return ImageInfo.ImageCreationTime;
-        }
-
-        public override DateTime GetImageLastModificationTime()
-        {
-            return ImageInfo.ImageLastModificationTime;
-        }
-
-        public override string GetImageName()
-        {
-            return ImageInfo.ImageName;
-        }
-
-        public override string GetImageComments()
-        {
-            return ImageInfo.ImageComments;
-        }
-
-        public override string GetMediaManufacturer()
-        {
-            return ImageInfo.MediaManufacturer;
-        }
-
-        public override string GetMediaModel()
-        {
-            return ImageInfo.MediaModel;
-        }
-
-        public override string GetMediaSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override string GetMediaBarcode()
-        {
-            return ImageInfo.MediaBarcode;
-        }
-
-        public override string GetMediaPartNumber()
-        {
-            return ImageInfo.MediaPartNumber;
-        }
-
-        public override MediaType GetMediaType()
-        {
-            return ImageInfo.MediaType;
-        }
-
-        public override int GetMediaSequence()
-        {
-            return ImageInfo.MediaSequence;
-        }
-
-        public override int GetLastDiskSequence()
-        {
-            return ImageInfo.LastMediaSequence;
-        }
-
-        public override string GetDriveManufacturer()
-        {
-            return ImageInfo.DriveManufacturer;
-        }
-
-        public override string GetDriveModel()
-        {
-            return ImageInfo.DriveModel;
-        }
-
-        public override string GetDriveSerialNumber()
-        {
-            return ImageInfo.DriveSerialNumber;
-        }
-
-        public override List<Partition> GetPartitions()
-        {
-            return partitions;
-        }
-
-        public override List<Track> GetTracks()
-        {
-            return tracks;
-        }
-
         public override List<Track> GetSessionTracks(Session session)
         {
             if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
@@ -1220,11 +1098,6 @@ namespace DiscImageChef.DiscImages
         public override List<Track> GetSessionTracks(ushort session)
         {
             return tracks.Where(track => track.TrackSession == session).ToList();
-        }
-
-        public override List<Session> GetSessions()
-        {
-            return sessions;
         }
 
         public override bool? VerifySector(ulong sectorAddress)

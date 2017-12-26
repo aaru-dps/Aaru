@@ -73,8 +73,8 @@ namespace DiscImageChef.Filesystems
         {
             if(partition.Start >= partition.End) return false;
 
-            ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
-            uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
+            ulong sbSectorOff = 0x10000 / imagePlugin.ImageInfo.SectorSize;
+            uint sbSectorSize = 0x1000 / imagePlugin.ImageInfo.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return false;
 
@@ -103,8 +103,8 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType();
             information = "";
 
-            ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
-            uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
+            ulong sbSectorOff = 0x10000 / imagePlugin.ImageInfo.SectorSize;
+            uint sbSectorSize = 0x1000 / imagePlugin.ImageInfo.SectorSize;
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
 
