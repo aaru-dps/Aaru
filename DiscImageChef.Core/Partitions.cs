@@ -49,7 +49,7 @@ namespace DiscImageChef.Core
         /// </summary>
         /// <param name="image">Image</param>
         /// <returns>List of found partitions</returns>
-        public static List<Partition> GetAll(ImagePlugin image)
+        public static List<Partition> GetAll(IMediaImage image)
         {
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
@@ -58,10 +58,10 @@ namespace DiscImageChef.Core
             List<ulong> checkedLocations = new List<ulong>();
 
             // Getting all partitions from device (e.g. tracks)
-            if(image.ImageInfo.HasPartitions)
+            if(image.Info.HasPartitions)
                 foreach(Partition imagePartition in image.Partitions)
                 {
-                    foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
+                    foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
                         if(partitionPlugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
                         {
                             foundPartitions.AddRange(partitions);
@@ -74,7 +74,7 @@ namespace DiscImageChef.Core
             // Getting all partitions at start of device
             else
             {
-                foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
+                foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
                     if(partitionPlugin.GetInformation(image, out List<Partition> partitions, 0))
                     {
                         foundPartitions.AddRange(partitions);
@@ -95,7 +95,7 @@ namespace DiscImageChef.Core
 
                 List<Partition> childs = new List<Partition>();
 
-                foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
+                foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
                 {
                     DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name,
                                               foundPartitions[0].Start);
@@ -130,7 +130,7 @@ namespace DiscImageChef.Core
             }
 
             // Be sure that device partitions are not excluded if not mapped by any scheme...
-            if(image.ImageInfo.HasPartitions)
+            if(image.Info.HasPartitions)
             {
                 List<ulong> startLocations =
                     childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();

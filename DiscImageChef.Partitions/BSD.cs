@@ -40,7 +40,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class BSD : PartitionPlugin
+    public class BSD : IPartition
     {
         const uint DISKMAGIC = 0x82564557;
         const uint DISKCIGAM = 0x57455682;
@@ -51,24 +51,21 @@ namespace DiscImageChef.Partitions
         /// <summary>Known byte offsets for BSD disklabel</summary>
         readonly uint[] labelOffsets = {0, 9, 64, 128, 516};
 
-        public BSD()
-        {
-            Name = "BSD disklabel";
-            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
-        }
+        public virtual string Name => "BSD disklabel";
+        public virtual Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.ImageInfo.SectorSize;
-            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.ImageInfo.SectorSize > 0) run++;
+            uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.Info.SectorSize;
+            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0) run++;
 
             DiskLabel dl = new DiskLabel();
             bool found = false;
 
             foreach(ulong location in labelLocations)
             {
-                if(location + run + sectorOffset >= imagePlugin.ImageInfo.Sectors) return false;
+                if(location + run + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
                 byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
                 foreach(uint offset in labelOffsets)
@@ -141,9 +138,9 @@ namespace DiscImageChef.Partitions
                                           dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
                 Partition part = new Partition
                 {
-                    Start = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.ImageInfo.SectorSize,
+                    Start = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.Info.SectorSize,
                     Offset = dl.d_partitions[i].p_offset * dl.d_secsize,
-                    Length = dl.d_partitions[i].p_size * dl.d_secsize / imagePlugin.ImageInfo.SectorSize,
+                    Length = dl.d_partitions[i].p_size * dl.d_secsize / imagePlugin.Info.SectorSize,
                     Size = dl.d_partitions[i].p_size * dl.d_secsize,
                     Type = fsTypeToString(dl.d_partitions[i].p_fstype),
                     Sequence = counter,
@@ -156,7 +153,7 @@ namespace DiscImageChef.Partitions
                 if(addSectorOffset)
                 {
                     part.Start += sectorOffset;
-                    part.Offset += sectorOffset * imagePlugin.ImageInfo.SectorSize;
+                    part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
                 }
                 DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
                 DicConsole.DebugWriteLine("BSD plugin", "Adding it...");

@@ -1,15 +1,15 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : ImageInfo.cs
+// Filename       : IMediaImage.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines a common structure with information about a disk image.
+//     Defines structures to be used by disc image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
@@ -104,5 +105,65 @@ namespace DiscImageChef.DiscImages
         public uint Heads;
         /// <summary>Sectors per track of the media represented by the image (for variable image, the smallest)</summary>
         public uint SectorsPerTrack;
+    }
+
+    /// <summary>
+    ///     Session defining structure.
+    /// </summary>
+    public struct Session
+    {
+        /// <summary>Session number, 1-started</summary>
+        public ushort SessionSequence;
+        /// <summary>First track present on this session</summary>
+        public uint StartTrack;
+        /// <summary>Last track present on this session</summary>
+        public uint EndTrack;
+        /// <summary>First sector present on this session</summary>
+        public ulong StartSector;
+        /// <summary>Last sector present on this session</summary>
+        public ulong EndSector;
+    }
+
+    /// <summary>
+    ///     Track defining structure.
+    /// </summary>
+    public struct Track
+    {
+        /// <summary>Track number, 1-started</summary>
+        public uint TrackSequence;
+        /// <summary>Partition type</summary>
+        public TrackType TrackType;
+        /// <summary>Track starting sector</summary>
+        public ulong TrackStartSector;
+        /// <summary>Track ending sector</summary>
+        public ulong TrackEndSector;
+        /// <summary>Track pre-gap</summary>
+        public ulong TrackPregap;
+        /// <summary>Session this track belongs to</summary>
+        public ushort TrackSession;
+        /// <summary>Information that does not find space in this struct</summary>
+        public string TrackDescription;
+        /// <summary>Indexes, 00 to 99 and sector offset</summary>
+        public Dictionary<int, ulong> Indexes;
+        /// <summary>Which filter stores this track</summary>
+        public IFilter TrackFilter;
+        /// <summary>Which file stores this track</summary>
+        public string TrackFile;
+        /// <summary>Starting at which byte is this track stored</summary>
+        public ulong TrackFileOffset;
+        /// <summary>What kind of file is storing this track</summary>
+        public string TrackFileType;
+        /// <summary>How many main channel / user data bytes are per sector in this track</summary>
+        public int TrackBytesPerSector;
+        /// <summary>How many main channel bytes per sector are in the file with this track</summary>
+        public int TrackRawBytesPerSector;
+        /// <summary>Which filter stores this track's subchannel</summary>
+        public IFilter TrackSubchannelFilter;
+        /// <summary>Which file stores this track's subchannel</summary>
+        public string TrackSubchannelFile;
+        /// <summary>Starting at which byte are this track's subchannel stored</summary>
+        public ulong TrackSubchannelOffset;
+        /// <summary>Type of subchannel stored for this track</summary>
+        public TrackSubchannelType TrackSubchannelType;
     }
 }

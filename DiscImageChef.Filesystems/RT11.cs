@@ -42,34 +42,21 @@ namespace DiscImageChef.Filesystems
 {
     // Information from http://www.trailing-edge.com/~shoppa/rt11fs/
     // TODO: Implement Radix-50
-    public class RT11 : Filesystem
+    public class RT11 : IFilesystem
     {
-        public RT11()
-        {
-            Name = "RT-11 file system";
-            PluginUuid = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public RT11(Encoding encoding)
-        {
-            Name = "RT-11 file system";
-            PluginUuid = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "RT-11 file system";
+        public virtual Guid Id => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
 
-        public RT11(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "RT-11 file system";
-            PluginUuid = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End) return false;
 
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             byte[] magicB = new byte[12];
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
@@ -80,8 +67,9 @@ namespace DiscImageChef.Filesystems
             return magic == "DECRT11A    ";
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -106,86 +94,81 @@ namespace DiscImageChef.Filesystems
             for(int i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hbSector, i);
 
             sb.AppendFormat("Volume format is {0}",
-                            StringHandlers.SpacePaddedToString(homeblock.format, CurrentEncoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.format, currentEncoding)).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512)
               .AppendLine();
             sb.AppendFormat("First directory segment starts at block {0}", homeblock.rootBlock).AppendLine();
             sb.AppendFormat("Volume owner is \"{0}\"",
-                            StringHandlers.SpacePaddedToString(homeblock.ownername, CurrentEncoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.ownername, currentEncoding)).AppendLine();
             sb.AppendFormat("Volume label: \"{0}\"",
-                            StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding)).AppendLine();
             sb.AppendFormat("Checksum: 0x{0:X4} (calculated 0x{1:X4})", homeblock.checksum, check).AppendLine();
 
             byte[] bootBlock = imagePlugin.ReadSector(0);
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "RT-11",
                 ClusterSize = homeblock.cluster * 512,
                 Clusters = homeblock.cluster,
-                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding),
+                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding),
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
             };
 
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

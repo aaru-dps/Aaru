@@ -44,11 +44,11 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
             // It's ugly, but will stop a lot of false positives
-            switch(imagePlugin.ImageInfo.MediaType)
+            switch(imagePlugin.Info.MediaType)
             {
                 case MediaType.Unknown:
                 case MediaType.Apple32SS:
@@ -203,8 +203,8 @@ namespace DiscImageChef.Filesystems.CPM
                         sectorSize = (ulong)(128 << amsSb.psh);
 
                         // Compare device limits from superblock to real limits
-                        if(sectorSize == imagePlugin.ImageInfo.SectorSize &&
-                           sectorCount == imagePlugin.ImageInfo.Sectors)
+                        if(sectorSize == imagePlugin.Info.SectorSize &&
+                           sectorCount == imagePlugin.Info.Sectors)
                         {
                             cpmFound = true;
                             firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
@@ -319,7 +319,7 @@ namespace DiscImageChef.Filesystems.CPM
                             (ulong)((hddSb.firstCylinder * hddSb.heads + hddSb.heads) * hddSb.sectorsPerTrack);
 
                         // If volume size corresponds with working partition (this variant will be inside MBR partitioning)
-                        if(sectorSize == imagePlugin.ImageInfo.SectorSize && startingSector == partition.Start &&
+                        if(sectorSize == imagePlugin.Info.SectorSize && startingSector == partition.Start &&
                            sectorsInPartition + partition.Start <= partition.End)
                         {
                             cpmFound = true;
@@ -405,7 +405,7 @@ namespace DiscImageChef.Filesystems.CPM
                     switch((FormatByte)formatByte)
                     {
                         case FormatByte.k160:
-                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 320)
+                            if(imagePlugin.Info.SectorSize == 512 && imagePlugin.Info.Sectors == 320)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 8;
@@ -453,7 +453,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.k320:
-                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 640)
+                            if(imagePlugin.Info.SectorSize == 512 && imagePlugin.Info.Sectors == 640)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 16;
@@ -506,7 +506,7 @@ namespace DiscImageChef.Filesystems.CPM
                         case FormatByte.k360:
                         case FormatByte.k360Alt:
                         case FormatByte.k360Alt2:
-                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 720)
+                            if(imagePlugin.Info.SectorSize == 512 && imagePlugin.Info.Sectors == 720)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
@@ -558,7 +558,7 @@ namespace DiscImageChef.Filesystems.CPM
                             break;
                         case FormatByte.k720:
                         case FormatByte.k720Alt:
-                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 1440)
+                            if(imagePlugin.Info.SectorSize == 512 && imagePlugin.Info.Sectors == 1440)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
@@ -609,7 +609,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.f720:
-                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 1440)
+                            if(imagePlugin.Info.SectorSize == 512 && imagePlugin.Info.Sectors == 1440)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 18;
@@ -660,7 +660,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.f1200:
-                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 2400)
+                            if(imagePlugin.Info.SectorSize == 512 && imagePlugin.Info.Sectors == 2400)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 30;
@@ -711,7 +711,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                             break;
                         case FormatByte.f1440:
-                            if(imagePlugin.ImageInfo.SectorSize == 512 && imagePlugin.ImageInfo.Sectors == 2880)
+                            if(imagePlugin.Info.SectorSize == 512 && imagePlugin.Info.Sectors == 2880)
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
@@ -765,7 +765,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                     if(cpmFound)
                     {
-                        uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / imagePlugin.ImageInfo.SectorSize);
+                        uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
                         directory = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength);
                         DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
@@ -794,8 +794,8 @@ namespace DiscImageChef.Filesystems.CPM
                         foreach(CpmDefinition def in from def in definitions.definitions
                                                      let sectors =
                                                          (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
-                                                     where sectors == imagePlugin.ImageInfo.Sectors &&
-                                                           def.bytesPerSector == imagePlugin.ImageInfo.SectorSize
+                                                     where sectors == imagePlugin.Info.Sectors &&
+                                                           def.bytesPerSector == imagePlugin.Info.SectorSize
                                                      select def)
                         {
                             // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
@@ -976,8 +976,9 @@ namespace DiscImageChef.Filesystems.CPM
             }
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
             information = "";
             // As the identification is so complex, just call Identify() and relay on its findings
             if(!Identify(imagePlugin, partition) || !cpmFound || workingDefinition == null || dpb == null) return;
@@ -1050,23 +1051,23 @@ namespace DiscImageChef.Filesystems.CPM
             if(labelUpdateDate != null)
                 sb.AppendFormat("Volume updated on {0}", DateHandlers.CpmToDateTime(labelUpdateDate)).AppendLine();
 
-            XmlFsType = new FileSystemType();
-            XmlFsType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
-            XmlFsType.ClusterSize = 128 << dpb.bsh;
-            if(dpb.dsm > 0) XmlFsType.Clusters = dpb.dsm;
-            else XmlFsType.Clusters = (long)(partition.End - partition.Start);
+            xmlFsType = new FileSystemType();
+            xmlFsType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
+            xmlFsType.ClusterSize = 128 << dpb.bsh;
+            if(dpb.dsm > 0) xmlFsType.Clusters = dpb.dsm;
+            else xmlFsType.Clusters = (long)(partition.End - partition.Start);
             if(labelCreationDate != null)
             {
-                XmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
-                XmlFsType.CreationDateSpecified = true;
+                xmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
+                xmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                XmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
-                XmlFsType.ModificationDateSpecified = true;
+                xmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
+                xmlFsType.ModificationDateSpecified = true;
             }
-            XmlFsType.Type = "CP/M";
-            XmlFsType.VolumeName = label;
+            xmlFsType.Type = "CP/M";
+            xmlFsType.VolumeName = label;
 
             information = sb.ToString();
         }

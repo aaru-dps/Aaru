@@ -44,7 +44,7 @@ using Encoding = System.Text.Encoding;
 namespace DiscImageChef.Filesystems
 {
     // Information from Apple ProDOS 8 Technical Reference
-    public class ProDOSPlugin : Filesystem
+    public class ProDOSPlugin : IFilesystem
     {
         const byte EMPTY_STORAGE_TYPE = 0x00;
         /// <summary>
@@ -84,30 +84,15 @@ namespace DiscImageChef.Filesystems
         const byte ENTRY_LENGTH = 0x27;
         const byte ENTRIES_PER_BLOCK = 0x0D;
 
-        public ProDOSPlugin()
-        {
-            Name = "Apple ProDOS filesystem";
-            PluginUuid = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
-            CurrentEncoding = new LisaRoman();
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public ProDOSPlugin(Encoding encoding)
-        {
-            Name = "Apple ProDOS filesystem";
-            PluginUuid = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
-            // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new LisaRoman();
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Apple ProDOS filesystem";
+        public virtual Guid Id => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
 
-        public ProDOSPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Apple ProDOS filesystem";
-            PluginUuid = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
-            // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new LisaRoman();
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -115,8 +100,8 @@ namespace DiscImageChef.Filesystems
             byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.Start);
             bool APMFromHDDOnCD = false;
 
-            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448 ||
-               imagePlugin.ImageInfo.SectorSize == 2048)
+            if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
+               imagePlugin.Info.SectorSize == 2048)
             {
                 byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
 
@@ -169,8 +154,10 @@ namespace DiscImageChef.Filesystems
             return totalBlocks <= partition.End - partition.Start + 1;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            // TODO: Until Apple ][ encoding is implemented
+            currentEncoding = new LisaRoman();
             StringBuilder sbInformation = new StringBuilder();
 
             // Blocks 0 and 1 are boot code
@@ -178,8 +165,8 @@ namespace DiscImageChef.Filesystems
 
             bool APMFromHDDOnCD = false;
 
-            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448 ||
-               imagePlugin.ImageInfo.SectorSize == 2048)
+            if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
+               imagePlugin.Info.SectorSize == 2048)
             {
                 byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
 
@@ -214,7 +201,7 @@ namespace DiscImageChef.Filesystems
             rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & NAME_LENGTH_MASK);
             byte[] temporal = new byte[rootDirectoryKeyBlock.header.name_length];
             Array.Copy(rootDirectoryKeyBlockBytes, 0x05, temporal, 0, rootDirectoryKeyBlock.header.name_length);
-            rootDirectoryKeyBlock.header.volume_name = CurrentEncoding.GetString(temporal);
+            rootDirectoryKeyBlock.header.volume_name = currentEncoding.GetString(temporal);
             rootDirectoryKeyBlock.header.reserved = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
 
             ushort tempTimestampLeft = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
@@ -309,77 +296,72 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType();
-            XmlFsType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
+            xmlFsType = new FileSystemType();
+            xmlFsType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
             if(dateCorrect)
             {
-                XmlFsType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
-                XmlFsType.CreationDateSpecified = true;
+                xmlFsType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
+                xmlFsType.CreationDateSpecified = true;
             }
-            XmlFsType.Files = rootDirectoryKeyBlock.header.file_count;
-            XmlFsType.FilesSpecified = true;
-            XmlFsType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            XmlFsType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
-                                          (ulong)XmlFsType.Clusters);
-            XmlFsType.Type = "ProDOS";
+            xmlFsType.Files = rootDirectoryKeyBlock.header.file_count;
+            xmlFsType.FilesSpecified = true;
+            xmlFsType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
+            xmlFsType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                          (ulong)xmlFsType.Clusters);
+            xmlFsType.Type = "ProDOS";
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

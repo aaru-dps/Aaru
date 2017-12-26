@@ -44,17 +44,14 @@ using DiscImageChef.DiscImages;
 namespace DiscImageChef.Partitions
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class SGI : PartitionPlugin
+    public class SGI : IPartition
     {
         const int SGI_MAGIC = 0x0BE5A941;
 
-        public SGI()
-        {
-            Name = "SGI Disk Volume Header";
-            PluginUuid = new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
-        }
+        public virtual string Name => "SGI Disk Volume Header";
+        public virtual Guid Id => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -121,12 +118,9 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Start =
-                        dvh.partitions[i].first_block * dvh.device_params.dp_secbytes /
-                        imagePlugin.ImageInfo.SectorSize,
+                    Start = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
                     Offset = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
-                    Length =
-                        dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.ImageInfo.SectorSize,
+                    Length = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
                     Size = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
                     Type = TypeToString(dvh.partitions[i].type),
                     Sequence = counter,

@@ -377,9 +377,9 @@ namespace DiscImageChef.Tests.Partitions
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "partitions", "pc98", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new T98();
+                IMediaImage image = new T98();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

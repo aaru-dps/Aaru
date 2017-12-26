@@ -79,7 +79,7 @@ namespace DiscImageChef.Commands
                 }
 
                 FiltersList filtersList = new FiltersList();
-                Filter inputFilter = filtersList.GetFilter(options.InputFile);
+                IFilter inputFilter = filtersList.GetFilter(options.InputFile);
 
                 if(inputFilter == null)
                 {
@@ -89,7 +89,7 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    ImagePlugin imageFormat = ImageFormat.Detect(inputFilter);
+                    IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
 
                     if(imageFormat == null)
                     {
@@ -99,7 +99,7 @@ namespace DiscImageChef.Commands
 
                     if(options.Verbose)
                         DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                    imageFormat.PluginUuid);
+                                                    imageFormat.Id);
                     else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
                     try
@@ -124,7 +124,7 @@ namespace DiscImageChef.Commands
                     Core.Statistics.AddFilter(inputFilter.Name);
 
                     CICMMetadataType sidecar =
-                        Sidecar.Create(imageFormat, options.InputFile, inputFilter.UUID, encoding);
+                        Sidecar.Create(imageFormat, options.InputFile, inputFilter.Id, encoding);
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 

@@ -40,7 +40,7 @@ namespace DiscImageChef.Filters
     /// <summary>
     ///     Decodes AppleSingle files
     /// </summary>
-    public class AppleSingle : Filter
+    public class AppleSingle : IFilter
     {
         const uint AppleSingleMagic = 0x00051600;
         const uint AppleSingleVersion = 0x00010000;
@@ -69,13 +69,10 @@ namespace DiscImageChef.Filters
         AppleSingleEntry rsrcFork;
         Stream stream;
 
-        public AppleSingle()
-        {
-            Name = "AppleSingle";
-            UUID = new Guid("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
-        }
+        public virtual string Name => "AppleSingle";
+        public virtual Guid Id => new Guid("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
 
-        public override void Close()
+        public virtual void Close()
         {
             bytes = null;
             stream?.Close();
@@ -85,22 +82,22 @@ namespace DiscImageChef.Filters
             opened = false;
         }
 
-        public override string GetBasePath()
+        public virtual string GetBasePath()
         {
             return basePath;
         }
 
-        public override DateTime GetCreationTime()
+        public virtual DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public override long GetDataForkLength()
+        public virtual long GetDataForkLength()
         {
             return dataFork.length;
         }
 
-        public override Stream GetDataForkStream()
+        public virtual Stream GetDataForkStream()
         {
             if(dataFork.length == 0) return null;
 
@@ -113,37 +110,37 @@ namespace DiscImageChef.Filters
             return null;
         }
 
-        public override string GetFilename()
+        public virtual string GetFilename()
         {
             return Path.GetFileName(basePath);
         }
 
-        public override DateTime GetLastWriteTime()
+        public virtual DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public override long GetLength()
+        public virtual long GetLength()
         {
             return dataFork.length + rsrcFork.length;
         }
 
-        public override string GetParentFolder()
+        public virtual string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public override string GetPath()
+        public virtual string GetPath()
         {
             return basePath;
         }
 
-        public override long GetResourceForkLength()
+        public virtual long GetResourceForkLength()
         {
             return rsrcFork.length;
         }
 
-        public override Stream GetResourceForkStream()
+        public virtual Stream GetResourceForkStream()
         {
             if(rsrcFork.length == 0) return null;
 
@@ -156,12 +153,12 @@ namespace DiscImageChef.Filters
             return null;
         }
 
-        public override bool HasResourceFork()
+        public virtual bool HasResourceFork()
         {
             return rsrcFork.length > 0;
         }
 
-        public override bool Identify(byte[] buffer)
+        public virtual bool Identify(byte[] buffer)
         {
             if(buffer == null || buffer.Length < 26) return false;
 
@@ -173,7 +170,7 @@ namespace DiscImageChef.Filters
                    (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
         }
 
-        public override bool Identify(Stream stream)
+        public virtual bool Identify(Stream stream)
         {
             if(stream == null || stream.Length < 26) return false;
 
@@ -186,7 +183,7 @@ namespace DiscImageChef.Filters
                    (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
         }
 
-        public override bool Identify(string path)
+        public virtual bool Identify(string path)
         {
             FileStream fstream = new FileStream(path, FileMode.Open, FileAccess.Read);
             if(fstream.Length < 26) return false;
@@ -200,12 +197,12 @@ namespace DiscImageChef.Filters
                    (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
         }
 
-        public override bool IsOpened()
+        public virtual bool IsOpened()
         {
             return opened;
         }
 
-        public override void Open(byte[] buffer)
+        public virtual void Open(byte[] buffer)
         {
             MemoryStream ms = new MemoryStream(buffer);
             ms.Seek(0, SeekOrigin.Begin);
@@ -283,7 +280,7 @@ namespace DiscImageChef.Filters
             bytes = buffer;
         }
 
-        public override void Open(Stream stream)
+        public virtual void Open(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -360,7 +357,7 @@ namespace DiscImageChef.Filters
             this.stream = stream;
         }
 
-        public override void Open(string path)
+        public virtual void Open(string path)
         {
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);

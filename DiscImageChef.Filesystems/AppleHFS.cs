@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems
 {
     // Information from Inside Macintosh
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-    public class AppleHFS : Filesystem
+    public class AppleHFS : IFilesystem
     {
         /// <summary>
         ///     "BD", HFS magic
@@ -56,37 +56,23 @@ namespace DiscImageChef.Filesystems
         ///     "LK", HFS bootblock magic
         /// </summary>
         const ushort HFSBB_MAGIC = 0x4C4B;
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public AppleHFS()
-        {
-            Name = "Apple Hierarchical File System";
-            PluginUuid = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
-            CurrentEncoding = Encoding.GetEncoding("macintosh");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Apple Hierarchical File System";
+        public virtual Guid Id => new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
 
-        public AppleHFS(Encoding encoding)
-        {
-            Name = "Apple Hierarchical File System";
-            PluginUuid = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
-        }
-
-        public AppleHFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Apple Hierarchical File System";
-            PluginUuid = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
             byte[] mdbSector;
             ushort drSigWord;
 
-            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448 ||
-               imagePlugin.ImageInfo.SectorSize == 2048)
+            if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
+               imagePlugin.Info.SectorSize == 2048)
             {
                 mdbSector = imagePlugin.ReadSectors(partition.Start, 2);
 
@@ -116,8 +102,10 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -128,8 +116,8 @@ namespace DiscImageChef.Filesystems
 
             bool APMFromHDDOnCD = false;
 
-            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448 ||
-               imagePlugin.ImageInfo.SectorSize == 2048)
+            if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
+               imagePlugin.Info.SectorSize == 2048)
             {
                 byte[] tmpSector = imagePlugin.ReadSectors(partition.Start, 2);
 
@@ -205,7 +193,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} bytes in the Extents B-Tree", MDB.drXTFlSize).AppendLine();
             sb.AppendFormat("{0} bytes in the Catalog B-Tree", MDB.drCTFlSize).AppendLine();
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(MDB.drVN, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(MDB.drVN, currentEncoding)).AppendLine();
 
             sb.AppendLine("Finder info:");
             sb.AppendFormat("CNID of bootable system's directory: {0}", MDB.drFndrInfo0).AppendLine();
@@ -242,19 +230,19 @@ namespace DiscImageChef.Filesystems
                     else if(BB.boot_flags < 0) sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
                     sb.AppendFormat("System filename: {0}",
-                                    StringHandlers.PascalToString(BB.system_name, CurrentEncoding)).AppendLine();
+                                    StringHandlers.PascalToString(BB.system_name, currentEncoding)).AppendLine();
                     sb.AppendFormat("Finder filename: {0}",
-                                    StringHandlers.PascalToString(BB.finder_name, CurrentEncoding)).AppendLine();
+                                    StringHandlers.PascalToString(BB.finder_name, currentEncoding)).AppendLine();
                     sb.AppendFormat("Debugger filename: {0}",
-                                    StringHandlers.PascalToString(BB.debug_name, CurrentEncoding)).AppendLine();
+                                    StringHandlers.PascalToString(BB.debug_name, currentEncoding)).AppendLine();
                     sb.AppendFormat("Disassembler filename: {0}",
-                                    StringHandlers.PascalToString(BB.disasm_name, CurrentEncoding)).AppendLine();
+                                    StringHandlers.PascalToString(BB.disasm_name, currentEncoding)).AppendLine();
                     sb.AppendFormat("Startup screen filename: {0}",
-                                    StringHandlers.PascalToString(BB.stupscr_name, CurrentEncoding)).AppendLine();
+                                    StringHandlers.PascalToString(BB.stupscr_name, currentEncoding)).AppendLine();
                     sb.AppendFormat("First program to execute at boot: {0}",
-                                    StringHandlers.PascalToString(BB.bootup_name, CurrentEncoding)).AppendLine();
+                                    StringHandlers.PascalToString(BB.bootup_name, currentEncoding)).AppendLine();
                     sb.AppendFormat("Clipboard filename: {0}",
-                                    StringHandlers.PascalToString(BB.clipbrd_name, CurrentEncoding)).AppendLine();
+                                    StringHandlers.PascalToString(BB.clipbrd_name, currentEncoding)).AppendLine();
                     sb.AppendFormat("Maximum opened files: {0}", BB.max_files * 4).AppendLine();
                     sb.AppendFormat("Event queue size: {0}", BB.queue_size).AppendLine();
                     sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", BB.heap_128k).AppendLine();
@@ -268,38 +256,38 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
             if(MDB.drVolBkUp > 0)
             {
-                XmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
-                XmlFsType.BackupDateSpecified = true;
+                xmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
+                xmlFsType.BackupDateSpecified = true;
             }
-            XmlFsType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 ||
+            xmlFsType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 ||
                                  MDB.drFndrInfo5 != 0;
-            XmlFsType.Clusters = MDB.drNmAlBlks;
-            XmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
+            xmlFsType.Clusters = MDB.drNmAlBlks;
+            xmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
             if(MDB.drCrDate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
-                XmlFsType.CreationDateSpecified = true;
+                xmlFsType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+                xmlFsType.CreationDateSpecified = true;
             }
-            XmlFsType.Dirty = (MDB.drAtrb & 0x100) != 0x100;
-            XmlFsType.Files = MDB.drFilCnt;
-            XmlFsType.FilesSpecified = true;
-            XmlFsType.FreeClusters = MDB.drFreeBks;
-            XmlFsType.FreeClustersSpecified = true;
+            xmlFsType.Dirty = (MDB.drAtrb & 0x100) != 0x100;
+            xmlFsType.Files = MDB.drFilCnt;
+            xmlFsType.FilesSpecified = true;
+            xmlFsType.FreeClusters = MDB.drFreeBks;
+            xmlFsType.FreeClustersSpecified = true;
             if(MDB.drLsMod > 0)
             {
-                XmlFsType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
-                XmlFsType.ModificationDateSpecified = true;
+                xmlFsType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
+                xmlFsType.ModificationDateSpecified = true;
             }
-            XmlFsType.Type = "HFS";
-            XmlFsType.VolumeName = StringHandlers.PascalToString(MDB.drVN, CurrentEncoding);
+            xmlFsType.Type = "HFS";
+            xmlFsType.VolumeName = StringHandlers.PascalToString(MDB.drVN, currentEncoding);
             if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
-                XmlFsType.VolumeSerial = $"{MDB.drFndrInfo6:X8}{MDB.drFndrInfo7:X8}";
+                xmlFsType.VolumeSerial = $"{MDB.drFndrInfo6:X8}{MDB.drFndrInfo7:X8}";
         }
 
-        static byte[] Read2048SectorAs512(ImagePlugin imagePlugin, ulong lba)
+        static byte[] Read2048SectorAs512(IMediaImage imagePlugin, ulong lba)
         {
             ulong lba2K = lba / 4;
             int remainder = (int)(lba % 4);
@@ -312,62 +300,57 @@ namespace DiscImageChef.Filesystems
             return sector;
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

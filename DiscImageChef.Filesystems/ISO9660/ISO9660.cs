@@ -34,31 +34,19 @@ using System;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
     // This is coded following ECMA-119.
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660 : IFilesystem
     {
-        public ISO9660()
-        {
-            Name = "ISO9660 Filesystem";
-            PluginUuid = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            CurrentEncoding = Encoding.ASCII;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public ISO9660(Encoding encoding)
-        {
-            Name = "ISO9660 Filesystem";
-            PluginUuid = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            CurrentEncoding = encoding ?? Encoding.ASCII;
-        }
-
-        public ISO9660(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "ISO9660 Filesystem";
-            PluginUuid = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            CurrentEncoding = encoding ?? Encoding.ASCII;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "ISO9660 Filesystem";
+        public virtual Guid Id => new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
     }
 }

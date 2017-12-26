@@ -45,18 +45,18 @@ namespace DiscImageChef.Core
         /// </summary>
         /// <param name="imageFilter">Filter</param>
         /// <returns>Detected image plugin</returns>
-        public static ImagePlugin Detect(Filter imageFilter)
+        public static IMediaImage Detect(IFilter imageFilter)
         {
             try
             {
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins();
 
-                ImagePlugin imageFormat = null;
+                IMediaImage imageFormat = null;
 
                 // Check all but RAW plugin
-                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin =>
-                                                                                             imageplugin.PluginUuid !=
+                foreach(IMediaImage imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin =>
+                                                                                             imageplugin.Id !=
                                                                                              new
                                                                                                  Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 )
@@ -77,8 +77,8 @@ namespace DiscImageChef.Core
                 if(imageFormat != null) return imageFormat;
 
                 // Check only RAW plugin
-                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin =>
-                                                                                             imageplugin.PluginUuid ==
+                foreach(IMediaImage imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin =>
+                                                                                             imageplugin.Id ==
                                                                                              new
                                                                                                  Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 )

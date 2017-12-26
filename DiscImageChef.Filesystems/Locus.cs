@@ -56,7 +56,7 @@ using time_t = System.Int32;
 
 namespace DiscImageChef.Filesystems
 {
-    public class Locus : Filesystem
+    public class Locus : IFilesystem
     {
         const int NICINOD = 325;
         const int NICFREE = 600;
@@ -68,39 +68,26 @@ namespace DiscImageChef.Filesystems
         const uint Locus_OldMagic = 0xFFEEDDCC;
         const uint Locus_OldCigam = 0xCCDDEEFF;
 
-        public Locus()
-        {
-            Name = "Locus Filesystem Plugin";
-            PluginUuid = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public Locus(Encoding encoding)
-        {
-            Name = "Locus Filesystem Plugin";
-            PluginUuid = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Locus Filesystem Plugin";
+        public virtual Guid Id => new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
 
-        public Locus(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "Locus Filesystem Plugin";
-            PluginUuid = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             for(ulong location = 0; location <= 8; location++)
             {
                 Locus_Superblock LocusSb = new Locus_Superblock();
 
-                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.ImageInfo.SectorSize);
-                if(Marshal.SizeOf(LocusSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf(LocusSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-                if(partition.Start + location + sbSize >= imagePlugin.ImageInfo.Sectors) break;
+                if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(LocusSb)) return false;
@@ -119,18 +106,19 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
             Locus_Superblock LocusSb = new Locus_Superblock();
             byte[] sector = null;
 
             for(ulong location = 0; location <= 8; location++)
             {
-                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.ImageInfo.SectorSize);
-                if(Marshal.SizeOf(LocusSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf(LocusSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(LocusSb)) return;
@@ -161,8 +149,8 @@ namespace DiscImageChef.Filesystems
 
             int blockSize = LocusSb.s_version == LocusVersion.SB_SB4096 ? 4096 : 1024;
 
-            string s_fsmnt = StringHandlers.CToString(LocusSb.s_fsmnt, CurrentEncoding);
-            string s_fpack = StringHandlers.CToString(LocusSb.s_fpack, CurrentEncoding);
+            string s_fsmnt = StringHandlers.CToString(LocusSb.s_fsmnt, currentEncoding);
+            string s_fpack = StringHandlers.CToString(LocusSb.s_fpack, currentEncoding);
 
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_magic = 0x{0:X8}", LocusSb.s_magic);
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_gfs = {0}", LocusSb.s_gfs);
@@ -215,7 +203,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "Locus filesystem",
                 ClusterSize = blockSize,
@@ -230,62 +218,57 @@ namespace DiscImageChef.Filesystems
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

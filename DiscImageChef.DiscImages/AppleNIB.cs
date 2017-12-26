@@ -42,7 +42,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Checksum sectors
-    public class AppleNib : ImagePlugin
+    public class AppleNib : IMediaImage
     {
         readonly byte[] apple3_sign = {0x8D, 0xD0, 0x03, 0x4C, 0xC7, 0xA4};
         readonly byte[] cpm_sign = {0xA2, 0x55, 0xA9, 0x00, 0x9D, 0x00, 0x0D, 0xCA};
@@ -61,13 +61,12 @@ namespace DiscImageChef.DiscImages
         readonly byte[] sos_sign = {0xC9, 0x20, 0xF0, 0x3E};
         Dictionary<ulong, byte[]> addressFields;
         Dictionary<ulong, byte[]> cookedSectors;
+        ImageInfo imageInfo;
         Dictionary<ulong, byte[]> longSectors;
 
         public AppleNib()
         {
-            Name = "Apple NIB";
-            PluginUuid = new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -92,18 +91,23 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "Apple nibbles";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions =>
+        public virtual string Name => "Apple NIB";
+        public virtual Guid Id => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
+
+        public virtual string ImageFormat => "Apple nibbles";
+
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -116,7 +120,7 @@ namespace DiscImageChef.DiscImages
             return Apple2.IsApple2GCR(test);
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -203,15 +207,15 @@ namespace DiscImageChef.DiscImages
                                                   "Hardware sector {0} of track {1} goes to logical sector {2}",
                                                   sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
                         rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
-                        ImageInfo.Sectors++;
+                        imageInfo.Sectors++;
                     }
                     else
                     {
-                        rawSectors.Add(ImageInfo.Sectors, sector);
-                        ImageInfo.Sectors++;
+                        rawSectors.Add(imageInfo.Sectors, sector);
+                        imageInfo.Sectors++;
                     }
 
-            DicConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", ImageInfo.Sectors);
+            DicConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", imageInfo.Sectors);
 
             DicConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
 
@@ -229,27 +233,27 @@ namespace DiscImageChef.DiscImages
                 addressFields.Add(kvp.Key, addr);
             }
 
-            ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
-            ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            if(ImageInfo.Sectors == 455) ImageInfo.MediaType = MediaType.Apple32SS;
-            else if(ImageInfo.Sectors == 560) ImageInfo.MediaType = MediaType.Apple33SS;
-            else ImageInfo.MediaType = MediaType.Unknown;
-            ImageInfo.SectorSize = 256;
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
-            switch(ImageInfo.MediaType)
+            imageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            if(imageInfo.Sectors == 455) imageInfo.MediaType = MediaType.Apple32SS;
+            else if(imageInfo.Sectors == 560) imageInfo.MediaType = MediaType.Apple33SS;
+            else imageInfo.MediaType = MediaType.Unknown;
+            imageInfo.SectorSize = 256;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
+            switch(imageInfo.MediaType)
             {
                 case MediaType.Apple32SS:
-                    ImageInfo.Cylinders = 35;
-                    ImageInfo.Heads = 1;
-                    ImageInfo.SectorsPerTrack = 13;
+                    imageInfo.Cylinders = 35;
+                    imageInfo.Heads = 1;
+                    imageInfo.SectorsPerTrack = 13;
                     break;
                 case MediaType.Apple33SS:
-                    ImageInfo.Cylinders = 35;
-                    ImageInfo.Heads = 1;
-                    ImageInfo.SectorsPerTrack = 16;
+                    imageInfo.Cylinders = 35;
+                    imageInfo.Heads = 1;
+                    imageInfo.SectorsPerTrack = 16;
                     break;
             }
 
@@ -258,7 +262,7 @@ namespace DiscImageChef.DiscImages
 
         MediaType GetMediaType()
         {
-            switch(ImageInfo.Sectors)
+            switch(imageInfo.Sectors)
             {
                 case 455: return MediaType.Apple32SS;
                 case 560: return MediaType.Apple33SS;
@@ -266,9 +270,9 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -276,13 +280,13 @@ namespace DiscImageChef.DiscImages
             return temp;
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -296,9 +300,9 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -309,13 +313,13 @@ namespace DiscImageChef.DiscImages
             return temp;
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             if(tag != SectorTagType.FloppyAddressMark)
@@ -332,9 +336,9 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -342,13 +346,13 @@ namespace DiscImageChef.DiscImages
             return temp;
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -362,78 +366,78 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
+            for(ulong i = 0; i < imageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }

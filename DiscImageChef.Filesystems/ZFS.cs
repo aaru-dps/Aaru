@@ -61,7 +61,7 @@ namespace DiscImageChef.Filesystems
      * Because of this variations, ZFS stored a header indicating the used encoding and endianess before the encoded nvlist.
      */
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class ZFS : Filesystem
+    public class ZFS : IFilesystem
     {
         const ulong ZEC_MAGIC = 0x0210DA7AB10C7A11;
         const ulong ZEC_CIGAM = 0x117A0CB17ADA1002;
@@ -76,32 +76,16 @@ namespace DiscImageChef.Filesystems
 
         const uint ZFS_MAGIC = 0x58465342;
 
-        public ZFS()
-        {
-            Name = "ZFS Filesystem Plugin";
-            PluginUuid = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "ZFS Filesystem Plugin";
+        public virtual Guid Id => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
 
-        public ZFS(Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "ZFS Filesystem Plugin";
-            PluginUuid = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
-            // ZFS is always UTF-8
-            CurrentEncoding = Encoding.UTF8;
-        }
-
-        public ZFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "ZFS Filesystem Plugin";
-            PluginUuid = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
-            // ZFS is always UTF-8
-            CurrentEncoding = Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             byte[] sector;
             ulong magic;
@@ -120,16 +104,19 @@ namespace DiscImageChef.Filesystems
             return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            // ZFS is always UTF-8
+            currentEncoding = Encoding.UTF8;
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
             byte[] sector;
             ulong magic;
 
             ulong nvlistOff = 32;
-            uint nvlistLen = 114688 / imagePlugin.ImageInfo.SectorSize;
+            uint nvlistLen = 114688 / imagePlugin.Info.SectorSize;
 
             if(partition.Start + 31 < partition.End)
             {
@@ -156,11 +143,11 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType {Type = "ZFS filesystem"};
-            if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) XmlFsType.VolumeName = (string)tmpObj.value;
-            if(decodedNvList.TryGetValue("guid", out tmpObj)) XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
+            xmlFsType = new FileSystemType {Type = "ZFS filesystem"};
+            if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) xmlFsType.VolumeName = (string)tmpObj.value;
+            if(decodedNvList.TryGetValue("guid", out tmpObj)) xmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
-                XmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
+                xmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
         }
 
         static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList)
@@ -639,62 +626,57 @@ namespace DiscImageChef.Filesystems
             return sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

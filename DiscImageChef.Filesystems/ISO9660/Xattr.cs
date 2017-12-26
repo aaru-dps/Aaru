@@ -36,12 +36,12 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }

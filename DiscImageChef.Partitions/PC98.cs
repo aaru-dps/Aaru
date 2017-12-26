@@ -41,15 +41,12 @@ using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Partitions
 {
-    public class PC98 : PartitionPlugin
+    public class PC98 : IPartition
     {
-        public PC98()
-        {
-            Name = "NEC PC-9800 partition table";
-            PluginUuid = new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
-        }
+        public virtual string Name => "NEC PC-9800 partition table";
+        public virtual Guid Id => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -84,27 +81,25 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"",
                                           StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
-                if(entry.dp_scyl == entry.dp_ecyl || entry.dp_ecyl <= 0 ||
-                   entry.dp_scyl > imagePlugin.ImageInfo.Cylinders || entry.dp_ecyl > imagePlugin.ImageInfo.Cylinders ||
-                   entry.dp_shd > imagePlugin.ImageInfo.Heads || entry.dp_ehd > imagePlugin.ImageInfo.Heads ||
-                   entry.dp_ssect > imagePlugin.ImageInfo.SectorsPerTrack ||
-                   entry.dp_esect > imagePlugin.ImageInfo.SectorsPerTrack) continue;
+                if(entry.dp_scyl == entry.dp_ecyl || entry.dp_ecyl <= 0 || entry.dp_scyl > imagePlugin.Info.Cylinders ||
+                   entry.dp_ecyl > imagePlugin.Info.Cylinders || entry.dp_shd > imagePlugin.Info.Heads ||
+                   entry.dp_ehd > imagePlugin.Info.Heads || entry.dp_ssect > imagePlugin.Info.SectorsPerTrack ||
+                   entry.dp_esect > imagePlugin.Info.SectorsPerTrack) continue;
 
                 Partition part = new Partition
                 {
                     Start =
-                        CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.ImageInfo.Heads,
-                                  imagePlugin.ImageInfo.SectorsPerTrack),
+                        CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.Info.Heads,
+                                  imagePlugin.Info.SectorsPerTrack),
                     Type = DecodePC98Sid(entry.dp_sid),
                     Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                     Sequence = counter,
                     Scheme = Name
                 };
-                part.Offset = part.Start * imagePlugin.ImageInfo.SectorSize;
-                part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
-                                        imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack) -
-                              part.Start;
-                part.Size = part.Length * imagePlugin.ImageInfo.SectorSize;
+                part.Offset = part.Start * imagePlugin.Info.SectorSize;
+                part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1), imagePlugin.Info.Heads,
+                                        imagePlugin.Info.SectorsPerTrack) - part.Start;
+                part.Size = part.Length * imagePlugin.Info.SectorSize;
 
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);
@@ -115,7 +110,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
 
                 if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
-                   part.Start >= imagePlugin.ImageInfo.Sectors || part.End > imagePlugin.ImageInfo.Sectors) continue;
+                   part.Start >= imagePlugin.Info.Sectors || part.End > imagePlugin.Info.Sectors) continue;
 
                 partitions.Add(part);
                 counter++;

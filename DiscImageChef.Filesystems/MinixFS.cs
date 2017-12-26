@@ -41,7 +41,7 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
-    public class MinixFS : Filesystem
+    public class MinixFS : IFilesystem
     {
         /// <summary>Minix v1, 14 char filenames</summary>
         const ushort MINIX_MAGIC = 0x137F;
@@ -64,34 +64,20 @@ namespace DiscImageChef.Filesystems
         const ushort MINIX2_CIGAM2 = 0x7824;
         /// <summary>Minix v3, 60 char filenames</summary>
         const ushort MINIX3_CIGAM = 0x5A4D;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public MinixFS()
-        {
-            Name = "Minix Filesystem";
-            PluginUuid = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Minix Filesystem";
+        public virtual Guid Id => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
 
-        public MinixFS(Encoding encoding)
-        {
-            Name = "Minix Filesystem";
-            PluginUuid = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public MinixFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Minix Filesystem";
-            PluginUuid = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint sector = 2;
             uint offset = 0;
 
-            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 sector = 0;
                 offset = 0x400;
@@ -124,8 +110,10 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -133,7 +121,7 @@ namespace DiscImageChef.Filesystems
             uint sector = 2;
             uint offset = 0;
 
-            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 sector = 0;
                 offset = 0x400;
@@ -155,7 +143,7 @@ namespace DiscImageChef.Filesystems
 
             magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
 
             bool littleEndian;
 
@@ -170,16 +158,16 @@ namespace DiscImageChef.Filesystems
                     case MINIX3_MAGIC:
                     case MINIX3_CIGAM:
                         minixVersion = "Minix v3 filesystem";
-                        XmlFsType.Type = "Minix v3";
+                        xmlFsType.Type = "Minix v3";
                         break;
                     case MINIX2_MAGIC:
                     case MINIX2_CIGAM:
                         minixVersion = "Minix 3 v2 filesystem";
-                        XmlFsType.Type = "Minix 3 v2";
+                        xmlFsType.Type = "Minix 3 v2";
                         break;
                     default:
                         minixVersion = "Minix 3 v1 filesystem";
-                        XmlFsType.Type = "Minix 3 v1";
+                        xmlFsType.Type = "Minix 3 v1";
                         break;
                 }
 
@@ -195,49 +183,49 @@ namespace DiscImageChef.Filesystems
                         filenamesize = 14;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        XmlFsType.Type = "Minix v1";
+                        xmlFsType.Type = "Minix v1";
                         break;
                     case MINIX_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        XmlFsType.Type = "Minix v1";
+                        xmlFsType.Type = "Minix v1";
                         break;
                     case MINIX2_MAGIC:
                         filenamesize = 14;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        XmlFsType.Type = "Minix v2";
+                        xmlFsType.Type = "Minix v2";
                         break;
                     case MINIX2_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        XmlFsType.Type = "Minix v2";
+                        xmlFsType.Type = "Minix v2";
                         break;
                     case MINIX_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        XmlFsType.Type = "Minix v1";
+                        xmlFsType.Type = "Minix v1";
                         break;
                     case MINIX_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        XmlFsType.Type = "Minix v1";
+                        xmlFsType.Type = "Minix v1";
                         break;
                     case MINIX2_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        XmlFsType.Type = "Minix v2";
+                        xmlFsType.Type = "Minix v2";
                         break;
                     case MINIX2_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        XmlFsType.Type = "Minix v2";
+                        xmlFsType.Type = "Minix v2";
                         break;
                     default: return;
                 }
@@ -277,8 +265,8 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
                 sb.AppendFormat("On-disk filesystem version: {0}", mnxSb.s_disk_version).AppendLine();
 
-                XmlFsType.ClusterSize = mnxSb.s_blocksize;
-                XmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
+                xmlFsType.ClusterSize = mnxSb.s_blocksize;
+                xmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
             }
             else
             {
@@ -310,68 +298,63 @@ namespace DiscImageChef.Filesystems
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
                 sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
                 sb.AppendFormat("Filesystem state: {0:X4}", mnxSb.s_state).AppendLine();
-                XmlFsType.ClusterSize = 1024;
-                XmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
+                xmlFsType.ClusterSize = 1024;
+                xmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
             }
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

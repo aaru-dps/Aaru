@@ -42,34 +42,31 @@ using DiscImageChef.DiscImages;
 // Information learnt from XNU source and testing against real disks
 namespace DiscImageChef.Partitions
 {
-    public class NeXTDisklabel : PartitionPlugin
+    public class NeXTDisklabel : IPartition
     {
+        /// <summary>"NeXT"</summary>
         const uint NEXT_MAGIC1 = 0x4E655854;
-        // "NeXT"
+        /// <summary>"dlV2"</summary>
         const uint NEXT_MAGIC2 = 0x646C5632;
-        // "dlV2"
+        /// <summary>"dlV3"</summary>
         const uint NEXT_MAGIC3 = 0x646C5633;
-        // "dlV3"
+        /// <summary>180</summary>
         const ushort DISKTAB_START = 0xB4;
-        // 180
+        /// <summary>44</summary>
         const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
-        // 44
-        public NeXTDisklabel()
-        {
-            Name = "NeXT Disklabel";
-            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
-        }
+        public virtual string Name => "NeXT Disklabel";
+        public virtual Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             bool magicFound = false;
             byte[] labelSector;
 
             uint sectorSize;
 
-            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448) sectorSize = 2048;
-            else sectorSize = imagePlugin.ImageInfo.SectorSize;
+            if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448) sectorSize = 2048;
+            else sectorSize = imagePlugin.Info.SectorSize;
 
             partitions = new List<Partition>();
 
@@ -77,8 +74,7 @@ namespace DiscImageChef.Partitions
 
             ulong labelPosition = 0;
 
-            foreach(ulong i in
-                new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.ImageInfo.Sectors))
+            foreach(ulong i in new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
             {
                 labelSector = imagePlugin.ReadSector(i + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
@@ -91,8 +87,8 @@ namespace DiscImageChef.Partitions
 
             if(!magicFound) return false;
 
-            uint sectorsToRead = 7680 / imagePlugin.ImageInfo.SectorSize;
-            if(7680 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+            uint sectorsToRead = 7680 / imagePlugin.Info.SectorSize;
+            if(7680 % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
             labelSector = imagePlugin.ReadSectors(labelPosition, sectorsToRead);
 
@@ -184,10 +180,10 @@ namespace DiscImageChef.Partitions
                     Scheme = Name
                 };
 
-                if(part.Start + part.Length > imagePlugin.ImageInfo.Sectors)
+                if(part.Start + part.Length > imagePlugin.Info.Sectors)
                 {
                     DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
-                    part.Length = imagePlugin.ImageInfo.Sectors - part.Start;
+                    part.Length = imagePlugin.Info.Sectors - part.Start;
                     part.Size = part.Length * sectorSize;
                     DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
                                               part.Length);

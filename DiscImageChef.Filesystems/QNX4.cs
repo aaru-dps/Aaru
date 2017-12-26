@@ -41,35 +41,21 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class QNX4 : Filesystem
+    public class QNX4 : IFilesystem
     {
         readonly byte[] QNX4_RootDir_Fname =
             {0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        public QNX4()
-        {
-            Name = "QNX4 Plugin";
-            PluginUuid = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "QNX4 Plugin";
+        public virtual Guid Id => new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
 
-        public QNX4(Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "QNX4 Plugin";
-            PluginUuid = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public QNX4(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "QNX4 Plugin";
-            PluginUuid = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(partition.Start + 1 >= imagePlugin.ImageInfo.Sectors) return false;
+            if(partition.Start + 1 >= imagePlugin.Info.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return false;
@@ -100,8 +86,10 @@ namespace DiscImageChef.Filesystems
             return true;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return;
@@ -189,7 +177,7 @@ namespace DiscImageChef.Filesystems
             information =
                 $"QNX4 filesystem\nCreated on {DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)}\n";
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "QNX4 filesystem",
                 Clusters = (long)partition.Length,
@@ -199,65 +187,60 @@ namespace DiscImageChef.Filesystems
                 ModificationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime),
                 ModificationDateSpecified = true
             };
-            XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
+            xmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

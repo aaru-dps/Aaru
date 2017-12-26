@@ -35,13 +35,15 @@ using System.Collections.Generic;
 using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Schemas;
 using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    public partial class AppleDOS : Filesystem
+    public partial class AppleDOS : IFilesystem
     {
-        readonly ImagePlugin device;
+        IMediaImage device;
+        Encoding currentEncoding;
         bool debug;
         bool mounted;
         int sectorsPerTrack;
@@ -53,30 +55,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         Vtoc vtoc;
 
-        public AppleDOS()
-        {
-            Name = "Apple DOS File System";
-            PluginUuid = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
-            CurrentEncoding = new LisaRoman();
-        }
-
-        public AppleDOS(Encoding encoding)
-        {
-            Name = "Apple DOS File System";
-            PluginUuid = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
-            // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new LisaRoman();
-        }
-
-        public AppleDOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            device = imagePlugin;
-            start = partition.Start;
-            Name = "Apple DOS File System";
-            PluginUuid = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
-            // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new LisaRoman();
-        }
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Apple DOS File System";
+        public virtual Guid Id => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
 
         #region Caches
         /// <summary>Caches track/sector lists</summary>

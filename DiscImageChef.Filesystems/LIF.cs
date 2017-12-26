@@ -42,34 +42,21 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from http://www.hp9845.net/9845/projects/hpdir/#lif_filesystem
-    public class LIF : Filesystem
+    public class LIF : IFilesystem
     {
         const uint LIF_MAGIC = 0x8000;
 
-        public LIF()
-        {
-            Name = "HP Logical Interchange Format Plugin";
-            PluginUuid = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public LIF(Encoding encoding)
-        {
-            Name = "HP Logical Interchange Format Plugin";
-            PluginUuid = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "HP Logical Interchange Format Plugin";
+        public virtual Guid Id => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
 
-        public LIF(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "HP Logical Interchange Format Plugin";
-            PluginUuid = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 256) return false;
+            if(imagePlugin.Info.SectorSize < 256) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
@@ -78,11 +65,12 @@ namespace DiscImageChef.Filesystems
             return lifSb.magic == LIF_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            if(imagePlugin.ImageInfo.SectorSize < 256) return;
+            if(imagePlugin.Info.SectorSize < 256) return;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
@@ -100,79 +88,74 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} tracks", lifSb.tracks).AppendLine();
             sb.AppendFormat("{0} heads", lifSb.heads).AppendLine();
             sb.AppendFormat("{0} sectors", lifSb.sectors).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(lifSb.volumeLabel, CurrentEncoding))
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(lifSb.volumeLabel, currentEncoding))
               .AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.LifToDateTime(lifSb.creationDate)).AppendLine();
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "HP Logical Interchange Format",
                 ClusterSize = 256,
                 Clusters = (long)(partition.Size / 256),
                 CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate),
                 CreationDateSpecified = true,
-                VolumeName = StringHandlers.CToString(lifSb.volumeLabel, CurrentEncoding)
+                VolumeName = StringHandlers.CToString(lifSb.volumeLabel, currentEncoding)
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

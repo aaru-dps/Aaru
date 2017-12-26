@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class AtheOS : Filesystem
+    public class AtheOS : IFilesystem
     {
         // Little endian constants (that is, as read by .NET :p)
         const uint AFS_MAGIC1 = 0x41465331;
@@ -49,36 +49,22 @@ namespace DiscImageChef.Filesystems
         // Common constants
         const uint AFS_SUPERBLOCK_SIZE = 1024;
         const uint AFS_BOOTBLOCK_SIZE = AFS_SUPERBLOCK_SIZE;
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public AtheOS()
-        {
-            Name = "AtheOS Filesystem";
-            PluginUuid = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "AtheOS Filesystem";
+        public virtual Guid Id => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
 
-        public AtheOS(Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "AtheOS Filesystem";
-            PluginUuid = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public AtheOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "AtheOS Filesystem";
-            PluginUuid = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.ImageInfo.SectorSize;
+            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.Info.SectorSize;
+            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
             uint run = 1;
 
-            if(imagePlugin.ImageInfo.SectorSize < AFS_SUPERBLOCK_SIZE)
-                run = AFS_SUPERBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
+                run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
             if(sector + partition.Start >= partition.End) return false;
 
@@ -93,18 +79,20 @@ namespace DiscImageChef.Filesystems
             return magic == AFS_MAGIC1;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
-            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.ImageInfo.SectorSize;
+            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.Info.SectorSize;
+            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
             uint run = 1;
 
-            if(imagePlugin.ImageInfo.SectorSize < AFS_SUPERBLOCK_SIZE)
-                run = AFS_SUPERBLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
+                run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
             byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
@@ -119,7 +107,7 @@ namespace DiscImageChef.Filesystems
 
             if(afsSb.flags == 1) sb.AppendLine("Filesystem is read-only");
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, currentEncoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", afsSb.block_size).AppendLine();
             sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks, afsSb.num_blocks * afsSb.block_size)
               .AppendLine();
@@ -151,7 +139,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Clusters = afsSb.num_blocks,
                 ClusterSize = (int)afsSb.block_size,
@@ -159,66 +147,61 @@ namespace DiscImageChef.Filesystems
                 FreeClusters = afsSb.num_blocks - afsSb.used_blocks,
                 FreeClustersSpecified = true,
                 Type = "AtheOS filesystem",
-                VolumeName = StringHandlers.CToString(afsSb.name, CurrentEncoding)
+                VolumeName = StringHandlers.CToString(afsSb.name, currentEncoding)
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

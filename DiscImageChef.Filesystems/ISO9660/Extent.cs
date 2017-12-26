@@ -34,7 +34,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }

@@ -41,40 +41,26 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class BTRFS : Filesystem
+    public class BTRFS : IFilesystem
     {
         /// <summary>
         ///     BTRFS magic "_BHRfS_M"
         /// </summary>
         const ulong btrfsMagic = 0x4D5F53665248425F;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public BTRFS()
-        {
-            Name = "B-tree file system";
-            PluginUuid = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "B-tree file system";
+        public virtual Guid Id => new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
 
-        public BTRFS(Encoding encoding)
-        {
-            Name = "B-tree file system";
-            PluginUuid = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public BTRFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "B-tree file system";
-            PluginUuid = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
-            ulong sbSectorOff = 0x10000 / imagePlugin.ImageInfo.SectorSize;
-            uint sbSectorSize = 0x1000 / imagePlugin.ImageInfo.SectorSize;
+            ulong sbSectorOff = 0x10000 / imagePlugin.Info.SectorSize;
+            uint sbSectorSize = 0x1000 / imagePlugin.Info.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return false;
 
@@ -97,14 +83,16 @@ namespace DiscImageChef.Filesystems
             return btrfsSb.magic == btrfsMagic;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             StringBuilder sbInformation = new StringBuilder();
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
             information = "";
 
-            ulong sbSectorOff = 0x10000 / imagePlugin.ImageInfo.SectorSize;
-            uint sbSectorSize = 0x1000 / imagePlugin.ImageInfo.SectorSize;
+            ulong sbSectorOff = 0x10000 / imagePlugin.Info.SectorSize;
+            uint sbSectorSize = 0x1000 / imagePlugin.Info.SectorSize;
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
 
@@ -183,7 +171,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Clusters = (long)(btrfsSb.total_bytes / btrfsSb.sectorsize),
                 ClusterSize = (int)btrfsSb.sectorsize,
@@ -193,65 +181,60 @@ namespace DiscImageChef.Filesystems
                 VolumeSetIdentifier = $"{btrfsSb.dev_item.device_uuid}",
                 Type = Name
             };
-            XmlFsType.FreeClusters = XmlFsType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
+            xmlFsType.FreeClusters = xmlFsType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

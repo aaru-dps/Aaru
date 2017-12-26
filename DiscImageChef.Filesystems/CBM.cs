@@ -42,41 +42,28 @@ using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems
 {
-    public class CBM : Filesystem
+    public class CBM : IFilesystem
     {
-        public CBM()
-        {
-            Name = "Commodore file system";
-            PluginUuid = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-            CurrentEncoding = new PETSCII();
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public CBM(Encoding encoding)
-        {
-            Name = "Commodore file system";
-            PluginUuid = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-            CurrentEncoding = new PETSCII();
-        }
+        public virtual string Name => "Commodore file system";
+        public virtual Guid Id => new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+        public virtual Encoding Encoding => currentEncoding;
 
-        public CBM(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Commodore file system";
-            PluginUuid = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-            CurrentEncoding = new PETSCII();
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start > 0) return false;
 
-            if(imagePlugin.ImageInfo.SectorSize != 256) return false;
+            if(imagePlugin.Info.SectorSize != 256) return false;
 
-            if(imagePlugin.ImageInfo.Sectors != 683 && imagePlugin.ImageInfo.Sectors != 768 &&
-               imagePlugin.ImageInfo.Sectors != 1366 && imagePlugin.ImageInfo.Sectors != 3200) return false;
+            if(imagePlugin.Info.Sectors != 683 && imagePlugin.Info.Sectors != 768 && imagePlugin.Info.Sectors != 1366 &&
+               imagePlugin.Info.Sectors != 3200) return false;
 
             byte[] sector;
 
-            if(imagePlugin.ImageInfo.Sectors == 3200)
+            if(imagePlugin.Info.Sectors == 3200)
             {
                 sector = imagePlugin.ReadSector(1560);
                 CommodoreHeader cbmHdr = new CommodoreHeader();
@@ -104,22 +91,23 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = new PETSCII();
             byte[] sector;
 
             StringBuilder sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Commodore file system");
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "Commodore file system",
-                Clusters = (long)imagePlugin.ImageInfo.Sectors,
+                Clusters = (long)imagePlugin.Info.Sectors,
                 ClusterSize = 256
             };
 
-            if(imagePlugin.ImageInfo.Sectors == 3200)
+            if(imagePlugin.Info.Sectors == 3200)
             {
                 sector = imagePlugin.ReadSector(1560);
                 CommodoreHeader cbmHdr = new CommodoreHeader();
@@ -138,11 +126,11 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new[] {cbmHdr.diskVersion}))
                              .AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
-                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding))
+                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, currentEncoding))
                              .AppendLine();
 
-                XmlFsType.VolumeName = StringHandlers.CToString(cbmHdr.name, CurrentEncoding);
-                XmlFsType.VolumeSerial = $"{cbmHdr.diskId}";
+                xmlFsType.VolumeName = StringHandlers.CToString(cbmHdr.name, currentEncoding);
+                xmlFsType.VolumeSerial = $"{cbmHdr.diskId}";
             }
             else
             {
@@ -161,72 +149,67 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new[] {cbmBam.dosVersion}))
                              .AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmBam.diskId).AppendLine();
-                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, CurrentEncoding))
+                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, currentEncoding))
                              .AppendLine();
 
-                XmlFsType.VolumeName = StringHandlers.CToString(cbmBam.name, CurrentEncoding);
-                XmlFsType.VolumeSerial = $"{cbmBam.diskId}";
+                xmlFsType.VolumeName = StringHandlers.CToString(cbmBam.name, currentEncoding);
+                xmlFsType.VolumeSerial = $"{cbmBam.diskId}";
             }
 
             information = sbInformation.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

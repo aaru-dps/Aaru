@@ -39,18 +39,15 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class RioKarma : PartitionPlugin
+    public class RioKarma : IPartition
     {
         const ushort KARMA_MAGIC = 0xAB56;
         const byte ENTRY_MAGIC = 0x4D;
 
-        public RioKarma()
-        {
-            Name = "Rio Karma partitioning";
-            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
-        }
+        public virtual string Name => "Rio Karma partitioning";
+        public virtual Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

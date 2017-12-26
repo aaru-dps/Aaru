@@ -44,7 +44,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Implement track flags
-    public class CdrWin : ImagePlugin
+    public class CdrWin : IMediaImage
     {
         // Type for FILE entity
         /// <summary>Data as-is in little-endian</summary>
@@ -170,9 +170,10 @@ namespace DiscImageChef.DiscImages
         const string REGEX_POSTGAP = @"\bPOSTGAP\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
         const string REGEX_FLAGS = @"\bFLAGS\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\s*)+$";
 
-        Filter cdrwinFilter;
+        IFilter cdrwinFilter;
         StreamReader cueStream;
         CdrWinDisc discimage;
+        ImageInfo imageInfo;
         Stream imageStream;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
         Dictionary<uint, ulong> offsetmap;
@@ -180,9 +181,7 @@ namespace DiscImageChef.DiscImages
 
         public CdrWin()
         {
-            Name = "CDRWin cuesheet";
-            PluginUuid = new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -204,11 +203,16 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "CDRWin CUESheet";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions => partitions;
+        public virtual string Name => "CDRWin cuesheet";
+        public virtual Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
 
-        public override List<Track> Tracks
+        public virtual string ImageFormat => "CDRWin CUESheet";
+
+        public virtual List<Partition> Partitions => partitions;
+
+        public virtual List<Track> Tracks
         {
             get
             {
@@ -255,10 +259,10 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override List<Session> Sessions => discimage.Sessions;
+        public virtual List<Session> Sessions => discimage.Sessions;
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             cdrwinFilter = imageFilter;
 
@@ -319,7 +323,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             if(imageFilter == null) return false;
 
@@ -1083,99 +1087,99 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition size in bytes: {0}", partition.Size);
                 }
 
-                foreach(CdrWinTrack track in discimage.Tracks) ImageInfo.ImageSize += track.Bps * track.Sectors;
-                foreach(CdrWinTrack track in discimage.Tracks) ImageInfo.Sectors += track.Sectors;
+                foreach(CdrWinTrack track in discimage.Tracks) imageInfo.ImageSize += track.Bps * track.Sectors;
+                foreach(CdrWinTrack track in discimage.Tracks) imageInfo.Sectors += track.Sectors;
 
                 if(discimage.Disktype == MediaType.CDG || discimage.Disktype == MediaType.CDEG ||
                    discimage.Disktype == MediaType.CDMIDI)
-                    ImageInfo.SectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
+                    imageInfo.SectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
                 else if(discimage.Disktype != MediaType.CDROMXA && discimage.Disktype != MediaType.CDDA &&
                         discimage.Disktype != MediaType.CDI &&
-                        discimage.Disktype != MediaType.CDPLUS) ImageInfo.SectorSize = 2048; // Only data tracks
-                else ImageInfo.SectorSize = 2352; // All others
+                        discimage.Disktype != MediaType.CDPLUS) imageInfo.SectorSize = 2048; // Only data tracks
+                else imageInfo.SectorSize = 2352; // All others
 
-                if(discimage.Mcn != null) ImageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
-                if(discimage.Cdtextfile != null) ImageInfo.ReadableMediaTags.Add(MediaTagType.CD_TEXT);
+                if(discimage.Mcn != null) imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
+                if(discimage.Cdtextfile != null) imageInfo.ReadableMediaTags.Add(MediaTagType.CD_TEXT);
 
                 // Detect ISOBuster extensions
                 if(discimage.Disktypestr != null || discimage.Comment.ToLower().Contains("isobuster") ||
-                   discimage.Sessions.Count > 1) ImageInfo.Application = "ISOBuster";
-                else ImageInfo.Application = "CDRWin";
+                   discimage.Sessions.Count > 1) imageInfo.Application = "ISOBuster";
+                else imageInfo.Application = "CDRWin";
 
-                ImageInfo.CreationTime = imageFilter.GetCreationTime();
-                ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                imageInfo.CreationTime = imageFilter.GetCreationTime();
+                imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-                ImageInfo.Comments = discimage.Comment;
-                ImageInfo.MediaSerialNumber = discimage.Mcn;
-                ImageInfo.MediaBarcode = discimage.Barcode;
-                ImageInfo.MediaType = discimage.Disktype;
+                imageInfo.Comments = discimage.Comment;
+                imageInfo.MediaSerialNumber = discimage.Mcn;
+                imageInfo.MediaBarcode = discimage.Barcode;
+                imageInfo.MediaType = discimage.Disktype;
 
-                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
                 foreach(CdrWinTrack track in discimage.Tracks)
                     switch(track.Tracktype)
                     {
                         case CDRWIN_TRACK_TYPE_AUDIO:
                         {
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
                             break;
                         }
                         case CDRWIN_TRACK_TYPE_CDG:
                         {
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                             break;
                         }
                         case CDRWIN_TRACK_TYPE_MODE2_FORMLESS:
                         case CDRWIN_TRACK_TYPE_CDI:
                         {
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             break;
                         }
                         case CDRWIN_TRACK_TYPE_MODE2_RAW:
                         case CDRWIN_TRACK_TYPE_CDI_RAW:
                         {
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             break;
                         }
                         case CDRWIN_TRACK_TYPE_MODE1_RAW:
                         {
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             break;
                         }
                     }
 
-                ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                DicConsole.VerboseWriteLine("CDRWIN image describes a disc of type {0}", ImageInfo.MediaType);
-                if(!string.IsNullOrEmpty(ImageInfo.Comments))
-                    DicConsole.VerboseWriteLine("CDRWIN comments: {0}", ImageInfo.Comments);
+                DicConsole.VerboseWriteLine("CDRWIN image describes a disc of type {0}", imageInfo.MediaType);
+                if(!string.IsNullOrEmpty(imageInfo.Comments))
+                    DicConsole.VerboseWriteLine("CDRWIN comments: {0}", imageInfo.Comments);
 
                 return true;
             }
@@ -1188,7 +1192,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             switch(tag)
             {
@@ -1211,27 +1215,27 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             return ReadSectors(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1244,7 +1248,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1257,7 +1261,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             CdrWinTrack dicTrack = new CdrWinTrack {Sequence = 0};
 
@@ -1361,7 +1365,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             CdrWinTrack dicTrack = new CdrWinTrack {Sequence = 0};
 
@@ -1542,17 +1546,17 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             return ReadSectorsLong(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1565,7 +1569,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             CdrWinTrack dicTrack = new CdrWinTrack {Sequence = 0};
 
@@ -1654,14 +1658,14 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             if(discimage.Sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             List<Track> tracks = new List<Track>();
 
@@ -1702,19 +1706,19 @@ namespace DiscImageChef.DiscImages
             return tracks;
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
@@ -1744,7 +1748,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
@@ -1774,7 +1778,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }
@@ -1892,7 +1896,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>Track #</summary>
             public uint Sequence;
             /// <summary>Filter of file containing track</summary>
-            public Filter Datafilter;
+            public IFilter Datafilter;
             /// <summary>Offset of track start in file</summary>
             public ulong Offset;
             /// <summary>Type of file</summary>

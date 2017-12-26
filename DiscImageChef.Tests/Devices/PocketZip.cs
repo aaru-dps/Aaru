@@ -51,13 +51,13 @@ namespace DiscImageChef.Tests.Devices
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "devices", "pocketzip", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new ZZZRawImage();
+                IMediaImage image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
             }
         }
     }

@@ -39,30 +39,16 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class PCEnginePlugin : Filesystem
+    public class PCEnginePlugin : IFilesystem
     {
-        public PCEnginePlugin()
-        {
-            Name = "PC Engine CD Plugin";
-            PluginUuid = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-            CurrentEncoding = Encoding.GetEncoding("shift_jis");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "PC Engine CD Plugin";
+        public virtual Guid Id => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
 
-        public PCEnginePlugin(Encoding encoding)
-        {
-            Name = "PC Engine CD Plugin";
-            PluginUuid = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
-        }
-
-        public PCEnginePlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "PC Engine CD Plugin";
-            PluginUuid = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -74,73 +60,70 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(systemDescriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
             information = "";
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "PC Engine filesystem",
-                Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.ImageInfo.SectorSize * 2048),
+                Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048),
                 ClusterSize = 2048
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

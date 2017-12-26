@@ -48,7 +48,7 @@ using SharpCompress.Compressors.Deflate;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Implement PCMCIA support
-    public class Chd : ImagePlugin
+    public class Chd : IMediaImage
     {
         /// <summary>"GDDD"</summary>
         const uint HARD_DISK_METADATA = 0x47444444;
@@ -119,6 +119,7 @@ namespace DiscImageChef.DiscImages
         ulong[] hunkTable;
         uint[] hunkTableSmall;
         byte[] identify;
+        ImageInfo imageInfo;
         Stream imageStream;
         bool isCdrom;
         bool isGdrom;
@@ -136,9 +137,7 @@ namespace DiscImageChef.DiscImages
 
         public Chd()
         {
-            Name = "MAME Compressed Hunks of Data";
-            PluginUuid = new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -161,9 +160,14 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "Compressed Hunks of Data";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions
+        public virtual string Name => "MAME Compressed Hunks of Data";
+        public virtual Guid Id => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
+
+        public virtual string ImageFormat => "Compressed Hunks of Data";
+
+        public virtual List<Partition> Partitions
         {
             get
             {
@@ -175,7 +179,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override List<Track> Tracks
+        public virtual List<Track> Tracks
         {
             get
             {
@@ -187,7 +191,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override List<Session> Sessions
+        public virtual List<Session> Sessions
         {
             get
             {
@@ -199,7 +203,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -209,7 +213,7 @@ namespace DiscImageChef.DiscImages
             return chdTag.SequenceEqual(magic);
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -282,12 +286,12 @@ namespace DiscImageChef.DiscImages
                     DateTime end = DateTime.UtcNow;
                     System.Console.WriteLine("Took {0} seconds", (end - start).TotalSeconds);
 
-                    ImageInfo.MediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.Sectors = hdrV1.hunksize * hdrV1.totalhunks;
-                    ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                    ImageInfo.SectorSize = 512;
-                    ImageInfo.Version = "1";
-                    ImageInfo.ImageSize = ImageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
+                    imageInfo.MediaType = MediaType.GENERIC_HDD;
+                    imageInfo.Sectors = hdrV1.hunksize * hdrV1.totalhunks;
+                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    imageInfo.SectorSize = 512;
+                    imageInfo.Version = "1";
+                    imageInfo.ImageSize = imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
 
                     totalHunks = hdrV1.totalhunks;
                     sectorsPerHunk = hdrV1.hunksize;
@@ -295,9 +299,9 @@ namespace DiscImageChef.DiscImages
                     mapVersion = 1;
                     isHdd = true;
 
-                    ImageInfo.Cylinders = hdrV1.cylinders;
-                    ImageInfo.Heads = hdrV1.heads;
-                    ImageInfo.SectorsPerTrack = hdrV1.sectors;
+                    imageInfo.Cylinders = hdrV1.cylinders;
+                    imageInfo.Heads = hdrV1.heads;
+                    imageInfo.SectorsPerTrack = hdrV1.sectors;
 
                     break;
                 }
@@ -353,12 +357,12 @@ namespace DiscImageChef.DiscImages
                     DateTime end = DateTime.UtcNow;
                     System.Console.WriteLine("Took {0} seconds", (end - start).TotalSeconds);
 
-                    ImageInfo.MediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.Sectors = hdrV2.hunksize * hdrV2.totalhunks;
-                    ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                    ImageInfo.SectorSize = hdrV2.seclen;
-                    ImageInfo.Version = "2";
-                    ImageInfo.ImageSize = ImageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
+                    imageInfo.MediaType = MediaType.GENERIC_HDD;
+                    imageInfo.Sectors = hdrV2.hunksize * hdrV2.totalhunks;
+                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    imageInfo.SectorSize = hdrV2.seclen;
+                    imageInfo.Version = "2";
+                    imageInfo.ImageSize = imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
 
                     totalHunks = hdrV2.totalhunks;
                     sectorsPerHunk = hdrV2.hunksize;
@@ -366,9 +370,9 @@ namespace DiscImageChef.DiscImages
                     mapVersion = 1;
                     isHdd = true;
 
-                    ImageInfo.Cylinders = hdrV2.cylinders;
-                    ImageInfo.Heads = hdrV2.heads;
-                    ImageInfo.SectorsPerTrack = hdrV2.sectors;
+                    imageInfo.Cylinders = hdrV2.cylinders;
+                    imageInfo.Heads = hdrV2.heads;
+                    imageInfo.SectorsPerTrack = hdrV2.sectors;
 
                     break;
                 }
@@ -409,8 +413,8 @@ namespace DiscImageChef.DiscImages
 
                     nextMetaOff = hdrV3.metaoffset;
 
-                    ImageInfo.ImageSize = hdrV3.logicalbytes;
-                    ImageInfo.Version = "3";
+                    imageInfo.ImageSize = hdrV3.logicalbytes;
+                    imageInfo.Version = "3";
 
                     totalHunks = hdrV3.totalhunks;
                     bytesPerHunk = hdrV3.hunkbytes;
@@ -453,8 +457,8 @@ namespace DiscImageChef.DiscImages
 
                     nextMetaOff = hdrV4.metaoffset;
 
-                    ImageInfo.ImageSize = hdrV4.logicalbytes;
-                    ImageInfo.Version = "4";
+                    imageInfo.ImageSize = hdrV4.logicalbytes;
+                    imageInfo.Version = "4";
 
                     totalHunks = hdrV4.totalhunks;
                     bytesPerHunk = hdrV4.hunkbytes;
@@ -536,8 +540,8 @@ namespace DiscImageChef.DiscImages
 
                     nextMetaOff = hdrV5.metaoffset;
 
-                    ImageInfo.ImageSize = hdrV5.logicalbytes;
-                    ImageInfo.Version = "5";
+                    imageInfo.ImageSize = hdrV5.logicalbytes;
+                    imageInfo.Version = "5";
 
                     totalHunks = (uint)(hdrV5.logicalbytes / hdrV5.hunkbytes);
                     bytesPerHunk = hdrV5.hunkbytes;
@@ -591,10 +595,10 @@ namespace DiscImageChef.DiscImages
                             if(gdddMatch.Success)
                             {
                                 isHdd = true;
-                                ImageInfo.SectorSize = uint.Parse(gdddMatch.Groups["bps"].Value);
-                                ImageInfo.Cylinders = uint.Parse(gdddMatch.Groups["cylinders"].Value);
-                                ImageInfo.Heads = uint.Parse(gdddMatch.Groups["heads"].Value);
-                                ImageInfo.SectorsPerTrack = uint.Parse(gdddMatch.Groups["sectors"].Value);
+                                imageInfo.SectorSize = uint.Parse(gdddMatch.Groups["bps"].Value);
+                                imageInfo.Cylinders = uint.Parse(gdddMatch.Groups["cylinders"].Value);
+                                imageInfo.Heads = uint.Parse(gdddMatch.Groups["heads"].Value);
+                                imageInfo.SectorsPerTrack = uint.Parse(gdddMatch.Groups["sectors"].Value);
                             }
                             break;
                         // "CHCD"
@@ -1054,33 +1058,33 @@ namespace DiscImageChef.DiscImages
                             Identify.IdentifyDevice? idnt = Identify.Decode(meta);
                             if(idnt.HasValue)
                             {
-                                ImageInfo.MediaManufacturer = idnt.Value.MediaManufacturer;
-                                ImageInfo.MediaSerialNumber = idnt.Value.MediaSerial;
-                                ImageInfo.DriveModel = idnt.Value.Model;
-                                ImageInfo.DriveSerialNumber = idnt.Value.SerialNumber;
-                                ImageInfo.DriveFirmwareRevision = idnt.Value.FirmwareRevision;
+                                imageInfo.MediaManufacturer = idnt.Value.MediaManufacturer;
+                                imageInfo.MediaSerialNumber = idnt.Value.MediaSerial;
+                                imageInfo.DriveModel = idnt.Value.Model;
+                                imageInfo.DriveSerialNumber = idnt.Value.SerialNumber;
+                                imageInfo.DriveFirmwareRevision = idnt.Value.FirmwareRevision;
                                 if(idnt.Value.CurrentCylinders > 0 && idnt.Value.CurrentHeads > 0 &&
                                    idnt.Value.CurrentSectorsPerTrack > 0)
                                 {
-                                    ImageInfo.Cylinders = idnt.Value.CurrentCylinders;
-                                    ImageInfo.Heads = idnt.Value.CurrentHeads;
-                                    ImageInfo.SectorsPerTrack = idnt.Value.CurrentSectorsPerTrack;
+                                    imageInfo.Cylinders = idnt.Value.CurrentCylinders;
+                                    imageInfo.Heads = idnt.Value.CurrentHeads;
+                                    imageInfo.SectorsPerTrack = idnt.Value.CurrentSectorsPerTrack;
                                 }
                                 else
                                 {
-                                    ImageInfo.Cylinders = idnt.Value.Cylinders;
-                                    ImageInfo.Heads = idnt.Value.Heads;
-                                    ImageInfo.SectorsPerTrack = idnt.Value.SectorsPerTrack;
+                                    imageInfo.Cylinders = idnt.Value.Cylinders;
+                                    imageInfo.Heads = idnt.Value.Heads;
+                                    imageInfo.SectorsPerTrack = idnt.Value.SectorsPerTrack;
                                 }
                             }
                             identify = meta;
-                            if(!ImageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
-                                ImageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
+                            if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+                                imageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
                             break;
                         case PCMCIA_CIS_METADATA:
                             cis = meta;
-                            if(!ImageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
-                                ImageInfo.ReadableMediaTags.Add(MediaTagType.PCMCIA_CIS);
+                            if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+                                imageInfo.ReadableMediaTags.Add(MediaTagType.PCMCIA_CIS);
                             break;
                     }
 
@@ -1089,30 +1093,30 @@ namespace DiscImageChef.DiscImages
 
                 if(isHdd)
                 {
-                    sectorsPerHunk = bytesPerHunk / ImageInfo.SectorSize;
-                    ImageInfo.Sectors = ImageInfo.ImageSize / ImageInfo.SectorSize;
-                    ImageInfo.MediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    sectorsPerHunk = bytesPerHunk / imageInfo.SectorSize;
+                    imageInfo.Sectors = imageInfo.ImageSize / imageInfo.SectorSize;
+                    imageInfo.MediaType = MediaType.GENERIC_HDD;
+                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
                 }
                 else if(isCdrom)
                 {
                     // Hardcoded on MAME for CD-ROM
                     sectorsPerHunk = 8;
-                    ImageInfo.MediaType = MediaType.CDROM;
-                    ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                    imageInfo.MediaType = MediaType.CDROM;
+                    imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                     foreach(Track dicTrack in tracks.Values)
-                        ImageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
+                        imageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
                 }
                 else if(isGdrom)
                 {
                     // Hardcoded on MAME for GD-ROM
                     sectorsPerHunk = 8;
-                    ImageInfo.MediaType = MediaType.GDROM;
-                    ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                    imageInfo.MediaType = MediaType.GDROM;
+                    imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                     foreach(Track dicTrack in tracks.Values)
-                        ImageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
+                        imageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
                 }
                 else throw new ImageNotSupportedException("Image does not represent a known media, aborting");
             }
@@ -1140,8 +1144,8 @@ namespace DiscImageChef.DiscImages
                     offsetmap.Add(dicTrack.TrackStartSector, dicTrack.TrackSequence);
 
                     if(dicTrack.TrackSubchannelType != TrackSubchannelType.None)
-                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
                     switch(dicTrack.TrackType)
                     {
@@ -1149,58 +1153,58 @@ namespace DiscImageChef.DiscImages
                         case TrackType.CdMode2Form1:
                             if(dicTrack.TrackRawBytesPerSector == 2352)
                             {
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             }
                             break;
                         case TrackType.CdMode2Form2:
                             if(dicTrack.TrackRawBytesPerSector == 2352)
                             {
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             }
                             break;
                         case TrackType.CdMode2Formless:
                             if(dicTrack.TrackRawBytesPerSector == 2352)
                             {
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                             }
                             break;
                     }
 
-                    if(dicTrack.TrackBytesPerSector > ImageInfo.SectorSize)
-                        ImageInfo.SectorSize = (uint)dicTrack.TrackBytesPerSector;
+                    if(dicTrack.TrackBytesPerSector > imageInfo.SectorSize)
+                        imageInfo.SectorSize = (uint)dicTrack.TrackBytesPerSector;
 
                     partitions.Add(partition);
                 }
 
-                ImageInfo.HasPartitions = true;
-                ImageInfo.HasSessions = true;
+                imageInfo.HasPartitions = true;
+                imageInfo.HasSessions = true;
             }
 
-            maxBlockCache = (int)(MAX_CACHE_SIZE / (ImageInfo.SectorSize * sectorsPerHunk));
-            maxSectorCache = (int)(MAX_CACHE_SIZE / ImageInfo.SectorSize);
+            maxBlockCache = (int)(MAX_CACHE_SIZE / (imageInfo.SectorSize * sectorsPerHunk));
+            maxSectorCache = (int)(MAX_CACHE_SIZE / imageInfo.SectorSize);
 
             imageStream = stream;
 
@@ -1209,7 +1213,7 @@ namespace DiscImageChef.DiscImages
 
             // TODO: Detect CompactFlash
             // TODO: Get manufacturer and drive name from CIS if applicable
-            if(cis != null) ImageInfo.MediaType = MediaType.PCCardTypeI;
+            if(cis != null) imageInfo.MediaType = MediaType.PCCardTypeI;
 
             return true;
         }
@@ -1243,7 +1247,7 @@ namespace DiscImageChef.DiscImages
                     imageStream.Seek((long)offset, SeekOrigin.Begin);
                     imageStream.Read(compHunk, 0, compHunk.Length);
 
-                    if(length == sectorsPerHunk * ImageInfo.SectorSize) hunk = compHunk;
+                    if(length == sectorsPerHunk * imageInfo.SectorSize) hunk = compHunk;
                     else if((ChdCompression)hdrCompression > ChdCompression.Zlib)
                         throw new
                             ImageNotSupportedException($"Unsupported compression {(ChdCompression)hdrCompression}");
@@ -1251,11 +1255,11 @@ namespace DiscImageChef.DiscImages
                     {
                         DeflateStream zStream =
                             new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
-                        hunk = new byte[sectorsPerHunk * ImageInfo.SectorSize];
-                        int read = zStream.Read(hunk, 0, (int)(sectorsPerHunk * ImageInfo.SectorSize));
-                        if(read != sectorsPerHunk * ImageInfo.SectorSize)
+                        hunk = new byte[sectorsPerHunk * imageInfo.SectorSize];
+                        int read = zStream.Read(hunk, 0, (int)(sectorsPerHunk * imageInfo.SectorSize));
+                        if(read != sectorsPerHunk * imageInfo.SectorSize)
                             throw new
-                                IOException($"Unable to decompress hunk correctly, got {read} bytes, expected {sectorsPerHunk * ImageInfo.SectorSize}");
+                                IOException($"Unable to decompress hunk correctly, got {read} bytes, expected {sectorsPerHunk * imageInfo.SectorSize}");
 
                         zStream.Close();
                     }
@@ -1344,7 +1348,7 @@ namespace DiscImageChef.DiscImages
             return hunk;
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             if(isHdd) return null;
 
@@ -1352,7 +1356,7 @@ namespace DiscImageChef.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1360,7 +1364,7 @@ namespace DiscImageChef.DiscImages
             return VerifySector(GetAbsoluteSector(sectorAddress, track));
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             unknownLbas = new List<ulong>();
@@ -1392,7 +1396,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             unknownLbas = new List<ulong>();
@@ -1424,7 +1428,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             byte[] calculated;
             if(mapVersion >= 3)
@@ -1447,9 +1451,9 @@ namespace DiscImageChef.DiscImages
             return expectedChecksum.SequenceEqual(calculated);
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -1458,7 +1462,7 @@ namespace DiscImageChef.DiscImages
 
             if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-                if(isHdd) sectorSize = ImageInfo.SectorSize;
+                if(isHdd) sectorSize = imageInfo.SectorSize;
                 else
                 {
                     track = GetTrack(sectorAddress);
@@ -1470,7 +1474,7 @@ namespace DiscImageChef.DiscImages
 
                 byte[] hunk = GetHunk(hunkNo);
 
-                sector = new byte[ImageInfo.SectorSize];
+                sector = new byte[imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
                 if(sectorCache.Count >= maxSectorCache) sectorCache.Clear();
@@ -1549,11 +1553,11 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(isHdd) throw new FeatureNotPresentImageException("Hard disk images do not have sector tags");
 
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -1571,7 +1575,7 @@ namespace DiscImageChef.DiscImages
 
                 byte[] hunk = GetHunk(hunkNo);
 
-                sector = new byte[ImageInfo.SectorSize];
+                sector = new byte[imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
                 if(sectorCache.Count >= maxSectorCache) sectorCache.Clear();
@@ -1765,15 +1769,15 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({ImageInfo.Sectors})");
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 
@@ -1786,15 +1790,15 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({ImageInfo.Sectors})");
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 
@@ -1807,11 +1811,11 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             if(isHdd) return ReadSector(sectorAddress);
 
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -1829,7 +1833,7 @@ namespace DiscImageChef.DiscImages
 
                 byte[] hunk = GetHunk(hunkNo);
 
-                sector = new byte[ImageInfo.SectorSize];
+                sector = new byte[imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
                 if(sectorCache.Count >= maxSectorCache) sectorCache.Clear();
@@ -1850,15 +1854,15 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({ImageInfo.Sectors})");
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 
@@ -1871,16 +1875,16 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(ImageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY)) return identify;
+            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY)) return identify;
 
-            if(ImageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS)) return cis;
+            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS)) return cis;
 
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1888,7 +1892,7 @@ namespace DiscImageChef.DiscImages
             return GetSessionTracks(session.SessionSequence);
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1896,7 +1900,7 @@ namespace DiscImageChef.DiscImages
             return tracks.Values.Where(track => track.TrackSession == session).ToList();
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1904,7 +1908,7 @@ namespace DiscImageChef.DiscImages
             return ReadSector(GetAbsoluteSector(sectorAddress, track));
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1912,7 +1916,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectorTag(GetAbsoluteSector(sectorAddress, track), tag);
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1920,7 +1924,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectors(GetAbsoluteSector(sectorAddress, track), length);
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1928,7 +1932,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectorsTag(GetAbsoluteSector(sectorAddress, track), length, tag);
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1936,7 +1940,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectorLong(GetAbsoluteSector(sectorAddress, track));
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");

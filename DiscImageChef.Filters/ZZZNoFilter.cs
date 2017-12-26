@@ -38,7 +38,7 @@ namespace DiscImageChef.Filters
     /// <summary>
     ///     No filter for reading files not recognized by any filter
     /// </summary>
-    public class ZZZNoFilter : Filter
+    public class ZZZNoFilter : IFilter
     {
         string basePath;
         DateTime creationTime;
@@ -46,13 +46,10 @@ namespace DiscImageChef.Filters
         DateTime lastWriteTime;
         bool opened;
 
-        public ZZZNoFilter()
-        {
-            Name = "No filter";
-            UUID = new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
-        }
+        public virtual string Name => "No filter";
+        public virtual Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
 
-        public override void Close()
+        public virtual void Close()
         {
             dataStream?.Close();
             dataStream = null;
@@ -60,48 +57,48 @@ namespace DiscImageChef.Filters
             opened = false;
         }
 
-        public override string GetBasePath()
+        public virtual string GetBasePath()
         {
             return basePath;
         }
 
-        public override Stream GetDataForkStream()
+        public virtual Stream GetDataForkStream()
         {
             return dataStream;
         }
 
-        public override string GetPath()
+        public virtual string GetPath()
         {
             return basePath;
         }
 
-        public override Stream GetResourceForkStream()
+        public virtual Stream GetResourceForkStream()
         {
             return null;
         }
 
-        public override bool HasResourceFork()
+        public virtual bool HasResourceFork()
         {
             // TODO: Implement support for xattrs/ADS
             return false;
         }
 
-        public override bool Identify(byte[] buffer)
+        public virtual bool Identify(byte[] buffer)
         {
             return buffer != null && buffer.Length > 0;
         }
 
-        public override bool Identify(Stream stream)
+        public virtual bool Identify(Stream stream)
         {
             return stream != null && stream.Length > 0;
         }
 
-        public override bool Identify(string path)
+        public virtual bool Identify(string path)
         {
             return File.Exists(path);
         }
 
-        public override void Open(byte[] buffer)
+        public virtual void Open(byte[] buffer)
         {
             dataStream = new MemoryStream(buffer);
             basePath = null;
@@ -110,7 +107,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public override void Open(Stream stream)
+        public virtual void Open(Stream stream)
         {
             dataStream = stream;
             basePath = null;
@@ -119,7 +116,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public override void Open(string path)
+        public virtual void Open(string path)
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
@@ -129,42 +126,42 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public override DateTime GetCreationTime()
+        public virtual DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public override long GetDataForkLength()
+        public virtual long GetDataForkLength()
         {
             return dataStream.Length;
         }
 
-        public override DateTime GetLastWriteTime()
+        public virtual DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public override long GetLength()
+        public virtual long GetLength()
         {
             return dataStream.Length;
         }
 
-        public override long GetResourceForkLength()
+        public virtual long GetResourceForkLength()
         {
             return 0;
         }
 
-        public override string GetFilename()
+        public virtual string GetFilename()
         {
             return Path.GetFileName(basePath);
         }
 
-        public override string GetParentFolder()
+        public virtual string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public override bool IsOpened()
+        public virtual bool IsOpened()
         {
             return opened;
         }

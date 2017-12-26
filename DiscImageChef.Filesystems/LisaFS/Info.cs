@@ -42,19 +42,19 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             try
             {
-                if(imagePlugin.ImageInfo.ReadableSectorTags == null) return false;
+                if(imagePlugin.Info.ReadableSectorTags == null) return false;
 
-                if(!imagePlugin.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return false;
+                if(!imagePlugin.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return false;
 
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if(imagePlugin.ImageInfo.Sectors < 800) return false;
+                if(imagePlugin.Info.Sectors < 800) return false;
 
                 int beforeMddf = -1;
 
@@ -84,19 +84,19 @@ namespace DiscImageChef.Filesystems.LisaFS
                     DicConsole.DebugWriteLine("LisaFS plugin", "Current sector = {0}", i);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.mddf_block = {0}", infoMddf.mddf_block);
                     DicConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors",
-                                              imagePlugin.ImageInfo.Sectors);
+                                              imagePlugin.Info.Sectors);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size = {0} sectors", infoMddf.vol_size);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - 1 = {0}", infoMddf.volsize_minus_one);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - mddf.mddf_block -1 = {0}",
                                               infoMddf.volsize_minus_mddf_minus_one);
                     DicConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes",
-                                              imagePlugin.ImageInfo.SectorSize);
+                                              imagePlugin.Info.SectorSize);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.blocksize = {0} bytes", infoMddf.blocksize);
                     DicConsole.DebugWriteLine("LisaFS plugin", "mddf.datasize = {0} bytes", infoMddf.datasize);
 
                     if(infoMddf.mddf_block != i - beforeMddf) return false;
 
-                    if(infoMddf.vol_size > imagePlugin.ImageInfo.Sectors) return false;
+                    if(infoMddf.vol_size > imagePlugin.Info.Sectors) return false;
 
                     if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one) return false;
 
@@ -104,9 +104,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     if(infoMddf.datasize > infoMddf.blocksize) return false;
 
-                    if(infoMddf.blocksize < imagePlugin.ImageInfo.SectorSize) return false;
+                    if(infoMddf.blocksize < imagePlugin.Info.SectorSize) return false;
 
-                    return infoMddf.datasize == imagePlugin.ImageInfo.SectorSize;
+                    return infoMddf.datasize == imagePlugin.Info.SectorSize;
                 }
 
                 return false;
@@ -118,22 +118,22 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             information = "";
             StringBuilder sb = new StringBuilder();
 
             try
             {
-                if(imagePlugin.ImageInfo.ReadableSectorTags == null) return;
+                if(imagePlugin.Info.ReadableSectorTags == null) return;
 
-                if(!imagePlugin.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return;
+                if(!imagePlugin.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return;
 
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if(imagePlugin.ImageInfo.Sectors < 800) return;
+                if(imagePlugin.Info.Sectors < 800) return;
 
                 int beforeMddf = -1;
 
@@ -158,11 +158,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                     infoMddf.volid = BigEndianBitConverter.ToUInt64(sector, 0x02);
                     infoMddf.volnum = BigEndianBitConverter.ToUInt16(sector, 0x0A);
                     Array.Copy(sector, 0x0C, pString, 0, 33);
-                    infoMddf.volname = StringHandlers.PascalToString(pString, CurrentEncoding);
+                    infoMddf.volname = StringHandlers.PascalToString(pString, currentEncoding);
                     infoMddf.unknown1 = sector[0x2D];
                     Array.Copy(sector, 0x2E, pString, 0, 33);
                     // Prevent garbage
-                    infoMddf.password = pString[0] <= 32 ? StringHandlers.PascalToString(pString, CurrentEncoding) : "";
+                    infoMddf.password = pString[0] <= 32 ? StringHandlers.PascalToString(pString, currentEncoding) : "";
                     infoMddf.unknown2 = sector[0x4F];
                     infoMddf.machine_id = BigEndianBitConverter.ToUInt32(sector, 0x50);
                     infoMddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
@@ -276,7 +276,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     if(infoMddf.mddf_block != i - beforeMddf) return;
 
-                    if(infoMddf.vol_size > imagePlugin.ImageInfo.Sectors) return;
+                    if(infoMddf.vol_size > imagePlugin.Info.Sectors) return;
 
                     if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one) return;
 
@@ -284,9 +284,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     if(infoMddf.datasize > infoMddf.blocksize) return;
 
-                    if(infoMddf.blocksize < imagePlugin.ImageInfo.SectorSize) return;
+                    if(infoMddf.blocksize < imagePlugin.Info.SectorSize) return;
 
-                    if(infoMddf.datasize != imagePlugin.ImageInfo.SectorSize) return;
+                    if(infoMddf.datasize != imagePlugin.Info.SectorSize) return;
 
                     switch(infoMddf.fsversion)
                     {
@@ -348,27 +348,27 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     information = sb.ToString();
 
-                    XmlFsType = new FileSystemType();
+                    xmlFsType = new FileSystemType();
                     if(DateTime.Compare(infoMddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        XmlFsType.BackupDate = infoMddf.dtvb;
-                        XmlFsType.BackupDateSpecified = true;
+                        xmlFsType.BackupDate = infoMddf.dtvb;
+                        xmlFsType.BackupDateSpecified = true;
                     }
-                    XmlFsType.Clusters = infoMddf.vol_size;
-                    XmlFsType.ClusterSize = infoMddf.clustersize * infoMddf.datasize;
+                    xmlFsType.Clusters = infoMddf.vol_size;
+                    xmlFsType.ClusterSize = infoMddf.clustersize * infoMddf.datasize;
                     if(DateTime.Compare(infoMddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        XmlFsType.CreationDate = infoMddf.dtvc;
-                        XmlFsType.CreationDateSpecified = true;
+                        xmlFsType.CreationDate = infoMddf.dtvc;
+                        xmlFsType.CreationDateSpecified = true;
                     }
-                    XmlFsType.Dirty = infoMddf.vol_left_mounted != 0;
-                    XmlFsType.Files = infoMddf.filecount;
-                    XmlFsType.FilesSpecified = true;
-                    XmlFsType.FreeClusters = infoMddf.freecount;
-                    XmlFsType.FreeClustersSpecified = true;
-                    XmlFsType.Type = "LisaFS";
-                    XmlFsType.VolumeName = infoMddf.volname;
-                    XmlFsType.VolumeSerial = $"{infoMddf.volid:X16}";
+                    xmlFsType.Dirty = infoMddf.vol_left_mounted != 0;
+                    xmlFsType.Files = infoMddf.filecount;
+                    xmlFsType.FilesSpecified = true;
+                    xmlFsType.FreeClusters = infoMddf.freecount;
+                    xmlFsType.FreeClustersSpecified = true;
+                    xmlFsType.Type = "LisaFS";
+                    xmlFsType.VolumeName = infoMddf.volname;
+                    xmlFsType.VolumeSerial = $"{infoMddf.volid:X16}";
 
                     return;
                 }

@@ -40,28 +40,25 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class Human68K : PartitionPlugin
+    public class Human68K : IPartition
     {
         const uint X68K_MAGIC = 0x5836384B;
 
-        public Human68K()
-        {
-            Name = "Human 68k partitions";
-            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
-        }
+        public virtual string Name => "Human 68k partitions";
+        public virtual Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
             byte[] sector;
             ulong sectsPerUnit;
 
-            DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.ImageInfo.SectorSize);
+            DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
-            if(sectorOffset + 4 >= imagePlugin.ImageInfo.Sectors) return false;
+            if(sectorOffset + 4 >= imagePlugin.Info.Sectors) return false;
 
-            switch(imagePlugin.ImageInfo.SectorSize)
+            switch(imagePlugin.Info.SectorSize)
             {
                 case 256:
                     sector = imagePlugin.ReadSector(4 + sectorOffset);
@@ -100,7 +97,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}", entry.length);
                 DicConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
-                                          imagePlugin.ImageInfo.SectorSize);
+                                          imagePlugin.Info.SectorSize);
 
                 Partition part = new Partition
                 {

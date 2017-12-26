@@ -40,7 +40,7 @@ using DiscImageChef.DiscImages;
 namespace DiscImageChef.Partitions
 {
     // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
-    public class XENIX : PartitionPlugin
+    public class XENIX : IPartition
     {
         const ushort PAMAGIC = 0x1234;
         const int MAXPARTS = 16;
@@ -48,17 +48,14 @@ namespace DiscImageChef.Partitions
         // Can't find this in any documentation but everything is aligned to this offset (in sectors)
         const uint XENIX_OFFSET = 977;
 
-        public XENIX()
-        {
-            Name = "XENIX";
-            PluginUuid = new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
-        }
+        public virtual string Name => "XENIX";
+        public virtual Guid Id => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
-            if(42 + sectorOffset >= imagePlugin.ImageInfo.Sectors) return false;
+            if(42 + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
             byte[] tblsector = imagePlugin.ReadSector(42 + sectorOffset);
 
@@ -80,19 +77,19 @@ namespace DiscImageChef.Partitions
                 Partition part = new Partition
                 {
                     Start =
-                        (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.ImageInfo.SectorSize +
+                        (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize +
                         sectorOffset,
-                    Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.ImageInfo.SectorSize,
+                    Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.Info.SectorSize,
                     Offset =
                         (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
-                        imagePlugin.ImageInfo.SectorSize * sectorOffset,
+                        imagePlugin.Info.SectorSize * sectorOffset,
                     Size = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
                     Sequence = (ulong)i,
                     Type = "XENIX",
                     Scheme = Name
                 };
 
-                if(part.End < imagePlugin.ImageInfo.Sectors) partitions.Add(part);
+                if(part.End < imagePlugin.Info.Sectors) partitions.Add(part);
             }
 
             return partitions.Count > 0;

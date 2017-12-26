@@ -65,7 +65,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", options.DoSpamSum);
 
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -73,7 +73,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            ImagePlugin inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
 
             if(inputFormat == null)
             {
@@ -83,7 +83,7 @@ namespace DiscImageChef.Commands
 
             inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
-            Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
+            Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
             EnableChecksum enabledChecksums = new EnableChecksum();
 
@@ -101,7 +101,7 @@ namespace DiscImageChef.Commands
 
             Core.Checksum mediaChecksum = null;
 
-            if(inputFormat.ImageInfo.HasPartitions)
+            if(inputFormat.Info.HasPartitions)
                 try
                 {
                     Core.Checksum trackChecksum = null;
@@ -171,8 +171,8 @@ namespace DiscImageChef.Commands
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
-                    if(inputFormat.ImageInfo.Sectors - previousTrackEnd != 0 && options.WholeDisc)
-                        for(ulong i = previousTrackEnd + 1; i < inputFormat.ImageInfo.Sectors; i++)
+                    if(inputFormat.Info.Sectors - previousTrackEnd != 0 && options.WholeDisc)
+                        for(ulong i = previousTrackEnd + 1; i < inputFormat.Info.Sectors; i++)
                         {
                             DicConsole.Write("\rHashing track-less sector {0}", i);
 
@@ -194,7 +194,7 @@ namespace DiscImageChef.Commands
             {
                 mediaChecksum = new Core.Checksum(enabledChecksums);
 
-                ulong sectors = inputFormat.ImageInfo.Sectors;
+                ulong sectors = inputFormat.Info.Sectors;
                 DicConsole.WriteLine("Sectors {0}", sectors);
                 ulong doneSectors = 0;
 

@@ -40,7 +40,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class AtariPartitions : PartitionPlugin
+    public class AtariPartitions : IPartition
     {
         const uint TypeGEMDOS = 0x0047454D;
         const uint TypeBigGEMDOS = 0x0042474D;
@@ -55,17 +55,14 @@ namespace DiscImageChef.Partitions
         const uint TypeMinix = 0x004D4958;
         const uint TypeMinix2 = 0x004D4E58;
 
-        public AtariPartitions()
-        {
-            Name = "Atari partitions";
-            PluginUuid = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
-        }
+        public virtual string Name => "Atari partitions";
+        public virtual Guid Id => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -159,13 +156,13 @@ namespace DiscImageChef.Partitions
                     case TypeMinix2:
                         validTable = true;
 
-                        if(table.entries[i].start <= imagePlugin.ImageInfo.Sectors)
+                        if(table.entries[i].start <= imagePlugin.Info.Sectors)
                         {
-                            if(table.entries[i].start + table.entries[i].length > imagePlugin.ImageInfo.Sectors)
+                            if(table.entries[i].start + table.entries[i].length > imagePlugin.Info.Sectors)
                                 DicConsole.DebugWriteLine("Atari partition plugin",
                                                           "WARNING: End of partition goes beyond device size");
 
-                            ulong sectorSize = imagePlugin.ImageInfo.SectorSize;
+                            ulong sectorSize = imagePlugin.Info.SectorSize;
                             if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                             byte[] partType = new byte[3];
@@ -253,14 +250,14 @@ namespace DiscImageChef.Partitions
                                extendedType != TypeMinix2) continue;
 
                             validTable = true;
-                            if(extendedTable.entries[j].start > imagePlugin.ImageInfo.Sectors) continue;
+                            if(extendedTable.entries[j].start > imagePlugin.Info.Sectors) continue;
 
                             if(extendedTable.entries[j].start + extendedTable.entries[j].length >
-                               imagePlugin.ImageInfo.Sectors)
+                               imagePlugin.Info.Sectors)
                                 DicConsole.DebugWriteLine("Atari partition plugin",
                                                           "WARNING: End of partition goes beyond device size");
 
-                            ulong sectorSize = imagePlugin.ImageInfo.SectorSize;
+                            ulong sectorSize = imagePlugin.Info.SectorSize;
                             if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                             byte[] partType = new byte[3];
@@ -335,13 +332,13 @@ namespace DiscImageChef.Partitions
                    type != TypeRAW && type != TypeNetBSD && type != TypeNetBSDSwap && type != TypeSysV &&
                    type != TypeMac && type != TypeMinix && type != TypeMinix2) continue;
 
-                if(table.icdEntries[i].start > imagePlugin.ImageInfo.Sectors) continue;
+                if(table.icdEntries[i].start > imagePlugin.Info.Sectors) continue;
 
-                if(table.icdEntries[i].start + table.icdEntries[i].length > imagePlugin.ImageInfo.Sectors)
+                if(table.icdEntries[i].start + table.icdEntries[i].length > imagePlugin.Info.Sectors)
                     DicConsole.DebugWriteLine("Atari partition plugin",
                                               "WARNING: End of partition goes beyond device size");
 
-                ulong sectorSize = imagePlugin.ImageInfo.SectorSize;
+                ulong sectorSize = imagePlugin.Info.SectorSize;
                 if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                 byte[] partType = new byte[3];

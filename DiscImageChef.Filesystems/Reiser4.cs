@@ -41,45 +41,32 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class Reiser4 : Filesystem
+    public class Reiser4 : IFilesystem
     {
         const uint REISER4_SUPER_OFFSET = 0x10000;
 
         readonly byte[] Reiser4_Magic =
             {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-        public Reiser4()
-        {
-            Name = "Reiser4 Filesystem Plugin";
-            PluginUuid = new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public Reiser4(Encoding encoding)
-        {
-            Name = "Reiser4 Filesystem Plugin";
-            PluginUuid = new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Reiser4 Filesystem Plugin";
+        public virtual Guid Id => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
 
-        public Reiser4(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "Reiser4 Filesystem Plugin";
-            PluginUuid = new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
-
-            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
+            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(reiserSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
@@ -94,18 +81,19 @@ namespace DiscImageChef.Filesystems
             return Reiser4_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
-            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
+            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(reiserSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(reiserSb)) return;
@@ -123,77 +111,71 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
             sb.AppendFormat("Volume disk format: {0}", reiserSb.diskformat).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", reiserSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(reiserSb.label, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(reiserSb.label, currentEncoding)).AppendLine();
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "Reiser 4 filesystem",
                 ClusterSize = reiserSb.blocksize,
-                Clusters =
-                    (long)((partition.End - partition.Start) * imagePlugin.ImageInfo.SectorSize / reiserSb.blocksize),
-                VolumeName = StringHandlers.CToString(reiserSb.label, CurrentEncoding),
+                Clusters = (long)((partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize),
+                VolumeName = StringHandlers.CToString(reiserSb.label, currentEncoding),
                 VolumeSerial = reiserSb.uuid.ToString()
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

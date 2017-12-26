@@ -44,7 +44,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.DiscImages
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class KryoFlux : ImagePlugin
+    public class KryoFlux : IMediaImage
     {
         const string hostDate = "host_date";
         const string hostTime = "host_time";
@@ -58,13 +58,16 @@ namespace DiscImageChef.DiscImages
         const string kfIck = "ick";
 
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public SortedDictionary<byte, Filter> tracks;
+        public SortedDictionary<byte, IFilter> tracks;
+        public ImageInfo imageInfo;
+        public virtual ImageInfo Info => imageInfo;
+
+        public virtual string Name => "KryoFlux STREAM";
+        public virtual Guid Id => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
 
         public KryoFlux()
         {
-            Name = "KryoFlux STREAM";
-            PluginUuid = new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -89,7 +92,7 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
@@ -119,7 +122,7 @@ namespace DiscImageChef.DiscImages
                    footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF && footer.length == 0x0D0D;
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
@@ -150,7 +153,7 @@ namespace DiscImageChef.DiscImages
                footer.length != 0x0D0D) return false;
 
             // TODO: This is supposing NoFilter, shouldn't
-            tracks = new SortedDictionary<byte, Filter>();
+            tracks = new SortedDictionary<byte, IFilter>();
             byte step = 1;
             byte heads = 2;
             bool topHead = false;
@@ -199,8 +202,8 @@ namespace DiscImageChef.DiscImages
                 trackFilter.Open(trackfile);
                 if(!trackFilter.IsOpened()) throw new IOException("Could not open KryoFlux track file.");
 
-                ImageInfo.CreationTime = DateTime.MaxValue;
-                ImageInfo.LastModificationTime = DateTime.MinValue;
+                imageInfo.CreationTime = DateTime.MaxValue;
+                imageInfo.LastModificationTime = DateTime.MinValue;
 
                 Stream trackStream = trackFilter.GetDataForkStream();
                 while(trackStream.Position < trackStream.Length)
@@ -260,10 +263,10 @@ namespace DiscImageChef.DiscImages
                                                                DateTimeStyles.AssumeLocal, out blockTime);
                                         break;
                                     case kfName:
-                                        ImageInfo.Application = kvp[1];
+                                        imageInfo.Application = kvp[1];
                                         break;
                                     case kfVersion:
-                                        ImageInfo.ApplicationVersion = kvp[1];
+                                        imageInfo.ApplicationVersion = kvp[1];
                                         break;
                                 }
                             }
@@ -274,10 +277,9 @@ namespace DiscImageChef.DiscImages
                                                                        blockTime.Hour, blockTime.Minute,
                                                                        blockTime.Second);
                                 DicConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
-                                if(blockTimestamp < ImageInfo.CreationTime)
-                                    ImageInfo.CreationTime = blockTimestamp;
-                                if(blockTimestamp > ImageInfo.LastModificationTime)
-                                    ImageInfo.LastModificationTime = blockTimestamp;
+                                if(blockTimestamp < Info.CreationTime) imageInfo.CreationTime = blockTimestamp;
+                                if(blockTimestamp > Info.LastModificationTime)
+                                    imageInfo.LastModificationTime = blockTimestamp;
                             }
 
                             break;
@@ -304,121 +306,121 @@ namespace DiscImageChef.DiscImages
                 tracks.Add(t, trackFilter);
             }
 
-            ImageInfo.Heads = heads;
-            ImageInfo.Cylinders = (uint)(tracks.Count / heads);
+            imageInfo.Heads = heads;
+            imageInfo.Cylinders = (uint)(tracks.Count / heads);
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override string ImageFormat => "KryoFlux STREAM";
+        public virtual string ImageFormat => "KryoFlux STREAM";
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Partition> Partitions =>
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

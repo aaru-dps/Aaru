@@ -41,32 +41,19 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
-    public class BFS : Filesystem
+    public class BFS : IFilesystem
     {
         const uint BFS_MAGIC = 0x1BADFACE;
 
-        public BFS()
-        {
-            Name = "UNIX Boot filesystem";
-            PluginUuid = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public BFS(Encoding encoding)
-        {
-            Name = "UNIX Boot filesystem";
-            PluginUuid = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "UNIX Boot filesystem";
+        public virtual Guid Id => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
 
-        public BFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "UNIX Boot filesystem";
-            PluginUuid = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -77,8 +64,9 @@ namespace DiscImageChef.Filesystems
             return magic == BFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -97,9 +85,9 @@ namespace DiscImageChef.Filesystems
             };
 
             Array.Copy(bfsSbSector, 0x1C, sbStrings, 0, 6);
-            bfsSb.s_fsname = StringHandlers.CToString(sbStrings, CurrentEncoding);
+            bfsSb.s_fsname = StringHandlers.CToString(sbStrings, currentEncoding);
             Array.Copy(bfsSbSector, 0x22, sbStrings, 0, 6);
-            bfsSb.s_volume = StringHandlers.CToString(sbStrings, CurrentEncoding);
+            bfsSb.s_volume = StringHandlers.CToString(sbStrings, currentEncoding);
 
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
@@ -117,71 +105,66 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Filesystem name: {0}", bfsSb.s_fsname).AppendLine();
             sb.AppendFormat("Volume name: {0}", bfsSb.s_volume).AppendLine();
 
-            XmlFsType = new FileSystemType();
-            XmlFsType.Type = "BFS";
-            XmlFsType.VolumeName = bfsSb.s_volume;
-            XmlFsType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
-            XmlFsType.Clusters = (long)(partition.End - partition.Start + 1);
+            xmlFsType = new FileSystemType();
+            xmlFsType.Type = "BFS";
+            xmlFsType.VolumeName = bfsSb.s_volume;
+            xmlFsType.ClusterSize = (int)imagePlugin.Info.SectorSize;
+            xmlFsType.Clusters = (long)(partition.End - partition.Start + 1);
 
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

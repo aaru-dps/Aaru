@@ -53,7 +53,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Analyze command", "--partitions={0}", options.SearchForPartitions);
 
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -76,13 +76,12 @@ namespace DiscImageChef.Commands
                 }
 
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins(encoding);
 
             bool checkraw = false;
 
             try
             {
-                ImagePlugin imageFormat = ImageFormat.Detect(inputFilter);
+                IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
 
                 if(imageFormat == null)
                 {
@@ -92,7 +91,7 @@ namespace DiscImageChef.Commands
 
                 if(options.Verbose)
                     DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                imageFormat.PluginUuid);
+                                                imageFormat.Id);
                 else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
                 try
@@ -106,13 +105,13 @@ namespace DiscImageChef.Commands
 
                     DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
                     DicConsole.DebugWriteLine("Analyze command", "Image without headers is {0} bytes.",
-                                              imageFormat.ImageInfo.ImageSize);
-                    DicConsole.DebugWriteLine("Analyze command", "Image has {0} sectors.", imageFormat.ImageInfo.Sectors);
+                                              imageFormat.Info.ImageSize);
+                    DicConsole.DebugWriteLine("Analyze command", "Image has {0} sectors.", imageFormat.Info.Sectors);
                     DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.",
-                                              imageFormat.ImageInfo.MediaType);
+                                              imageFormat.Info.MediaType);
 
                     Core.Statistics.AddMediaFormat(imageFormat.ImageFormat);
-                    Core.Statistics.AddMedia(imageFormat.ImageInfo.MediaType, false);
+                    Core.Statistics.AddMedia(imageFormat.Info.MediaType, false);
                     Core.Statistics.AddFilter(inputFilter.Name);
                 }
                 catch(Exception ex)
@@ -124,7 +123,7 @@ namespace DiscImageChef.Commands
                 }
 
                 List<string> idPlugins;
-                Filesystem plugin;
+                IFilesystem plugin;
                 string information;
                 if(options.SearchForPartitions)
                 {
@@ -174,9 +173,9 @@ namespace DiscImageChef.Commands
                                     if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                     {
                                         DicConsole.WriteLine($"As identified by {plugin.Name}.");
-                                        plugin.GetInformation(imageFormat, partitions[i], out information);
+                                        plugin.GetInformation(imageFormat, partitions[i], out information, encoding);
                                         DicConsole.Write(information);
-                                        Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                        Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
                                     }
                             }
                             else
@@ -185,9 +184,9 @@ namespace DiscImageChef.Commands
                                 if(plugin == null) continue;
 
                                 DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                                plugin.GetInformation(imageFormat, partitions[i], out information);
+                                plugin.GetInformation(imageFormat, partitions[i], out information, encoding);
                                 DicConsole.Write(information);
-                                Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
                             }
                         }
                     }
@@ -198,8 +197,8 @@ namespace DiscImageChef.Commands
                     Partition wholePart = new Partition
                     {
                         Name = "Whole device",
-                        Length = imageFormat.ImageInfo.Sectors,
-                        Size = imageFormat.ImageInfo.Sectors * imageFormat.ImageInfo.SectorSize
+                        Length = imageFormat.Info.Sectors,
+                        Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                     };
 
                     Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
@@ -212,9 +211,9 @@ namespace DiscImageChef.Commands
                             if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                             {
                                 DicConsole.WriteLine($"As identified by {plugin.Name}.");
-                                plugin.GetInformation(imageFormat, wholePart, out information);
+                                plugin.GetInformation(imageFormat, wholePart, out information, encoding);
                                 DicConsole.Write(information);
-                                Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
                             }
                     }
                     else
@@ -223,9 +222,9 @@ namespace DiscImageChef.Commands
                         if(plugin != null)
                         {
                             DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                            plugin.GetInformation(imageFormat, wholePart, out information);
+                            plugin.GetInformation(imageFormat, wholePart, out information, encoding);
                             DicConsole.Write(information);
-                            Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                            Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
                         }
                     }
                 }

@@ -47,7 +47,7 @@ namespace DiscImageChef.DiscImages
 {
     // Created following notes from Dave Dunfield
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-    public class TeleDisk : ImagePlugin
+    public class TeleDisk : IMediaImage
     {
         // "TD" as little endian uint.
         const ushort TD_MAGIC = 0x4454;
@@ -113,6 +113,7 @@ namespace DiscImageChef.DiscImages
         TeleDiskCommentBlockHeader commentHeader;
 
         TeleDiskHeader header;
+        ImageInfo imageInfo;
         Stream inStream;
         byte[] leadOut;
         // Cylinder by head, sector data matrix
@@ -123,9 +124,7 @@ namespace DiscImageChef.DiscImages
 
         public TeleDisk()
         {
-            Name = "Sydex TeleDisk";
-            PluginUuid = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -150,18 +149,23 @@ namespace DiscImageChef.DiscImages
             sectorsWhereCrcHasFailed = new List<ulong>();
         }
 
-        public override string ImageFormat => "Sydex TeleDisk";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions =>
+        public virtual string Name => "Sydex TeleDisk";
+        public virtual Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+
+        public virtual string ImageFormat => "Sydex TeleDisk";
+
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             header = new TeleDiskHeader();
             byte[] headerBytes = new byte[12];
@@ -217,7 +221,7 @@ namespace DiscImageChef.DiscImages
                    header.DriveType == DRIVE_TYPE_8_INCH;
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             header = new TeleDiskHeader();
             byte[] headerBytes = new byte[12];
@@ -242,9 +246,9 @@ namespace DiscImageChef.DiscImages
             header.Sides = headerBytes[9];
             header.Crc = BitConverter.ToUInt16(headerBytes, 10);
 
-            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.Version = $"{(header.Version & 0xF0) >> 4}.{header.Version & 0x0F}";
-            ImageInfo.Application = ImageInfo.Version;
+            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Version = $"{(header.Version & 0xF0) >> 4}.{header.Version & 0x0F}";
+            imageInfo.Application = imageInfo.Version;
 
             byte[] headerBytesForCrc = new byte[10];
             Array.Copy(headerBytes, headerBytesForCrc, 10);
@@ -303,7 +307,7 @@ namespace DiscImageChef.DiscImages
 
             stream.Seek(12, SeekOrigin.Begin);
 
-            ImageInfo.CreationTime = DateTime.MinValue;
+            imageInfo.CreationTime = DateTime.MinValue;
 
             if((header.Stepping & COMMENT_BLOCK_PRESENT) == COMMENT_BLOCK_PRESENT)
             {
@@ -348,35 +352,34 @@ namespace DiscImageChef.DiscImages
                     // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
                     if(commentBlock[i] == 0x00) commentBlock[i] = 0x0A;
 
-                ImageInfo.Comments = Encoding.ASCII.GetString(commentBlock);
+                imageInfo.Comments = Encoding.ASCII.GetString(commentBlock);
 
                 DicConsole.DebugWriteLine("TeleDisk plugin", "Comment");
-                DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", ImageInfo.Comments);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", imageInfo.Comments);
 
-                ImageInfo.CreationTime = new DateTime(commentHeader.Year + 1900, commentHeader.Month + 1,
-                                                           commentHeader.Day, commentHeader.Hour, commentHeader.Minute,
-                                                           commentHeader.Second, DateTimeKind.Unspecified);
+                imageInfo.CreationTime = new DateTime(commentHeader.Year + 1900, commentHeader.Month + 1,
+                                                      commentHeader.Day, commentHeader.Hour, commentHeader.Minute,
+                                                      commentHeader.Second, DateTimeKind.Unspecified);
             }
 
-            if(ImageInfo.CreationTime == DateTime.MinValue)
-                ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            if(imageInfo.CreationTime == DateTime.MinValue) imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-            DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", ImageInfo.CreationTime);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", ImageInfo.LastModificationTime);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", imageInfo.CreationTime);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", imageInfo.LastModificationTime);
 
             DicConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
 
             totalDiskSize = 0;
-            ImageInfo.ImageSize = 0;
+            imageInfo.ImageSize = 0;
 
             int totalCylinders = -1;
             int totalHeads = -1;
             int maxSector = -1;
             int totalSectors = 0;
             long currentPos = stream.Position;
-            ImageInfo.SectorSize = uint.MaxValue;
-            ImageInfo.SectorsPerTrack = uint.MaxValue;
+            imageInfo.SectorSize = uint.MaxValue;
+            imageInfo.SectorsPerTrack = uint.MaxValue;
 
             // Count cylinders
             while(true)
@@ -421,8 +424,8 @@ namespace DiscImageChef.DiscImages
                         stream.Read(data, 0, teleDiskData.DataSize);
                     }
 
-                    if(128 << teleDiskSector.SectorSize < ImageInfo.SectorSize)
-                        ImageInfo.SectorSize = (uint)(128 << teleDiskSector.SectorSize);
+                    if(128 << teleDiskSector.SectorSize < imageInfo.SectorSize)
+                        imageInfo.SectorSize = (uint)(128 << teleDiskSector.SectorSize);
 
                     totalSectors++;
                 }
@@ -436,8 +439,8 @@ namespace DiscImageChef.DiscImages
 
             bool hasLeadOutOnHead0 = false;
             bool hasLeadOutOnHead1 = false;
-            ImageInfo.Cylinders = (ushort)totalCylinders;
-            ImageInfo.Heads = (byte)totalHeads;
+            imageInfo.Cylinders = (ushort)totalCylinders;
+            imageInfo.Heads = (byte)totalHeads;
 
             // Count sectors per track
             stream.Seek(currentPos, SeekOrigin.Begin);
@@ -454,14 +457,14 @@ namespace DiscImageChef.DiscImages
                 if(teleDiskTrack.Sectors == 0xFF) // End of disk image
                     break;
 
-                if(teleDiskTrack.Sectors < ImageInfo.SectorsPerTrack)
+                if(teleDiskTrack.Sectors < imageInfo.SectorsPerTrack)
                     if(teleDiskTrack.Cylinder + 1 == totalCylinders)
                     {
                         hasLeadOutOnHead0 |= teleDiskTrack.Head == 0;
                         hasLeadOutOnHead1 |= teleDiskTrack.Head == 1;
-                        if(ImageInfo.Cylinders == totalCylinders) ImageInfo.Cylinders--;
+                        if(imageInfo.Cylinders == totalCylinders) imageInfo.Cylinders--;
                     }
-                    else ImageInfo.SectorsPerTrack = teleDiskTrack.Sectors;
+                    else imageInfo.SectorsPerTrack = teleDiskTrack.Sectors;
                 for(byte processedSectors = 0; processedSectors < teleDiskTrack.Sectors; processedSectors++)
                 {
                     TeleDiskSectorHeader teleDiskSector = new TeleDiskSectorHeader();
@@ -566,8 +569,8 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}",
                                               teleDiskSector.Crc);
 
-                    uint lba = (uint)(teleDiskSector.Cylinder * header.Sides * ImageInfo.SectorsPerTrack +
-                                      teleDiskSector.Head * ImageInfo.SectorsPerTrack +
+                    uint lba = (uint)(teleDiskSector.Cylinder * header.Sides * imageInfo.SectorsPerTrack +
+                                      teleDiskSector.Head * imageInfo.SectorsPerTrack +
                                       (teleDiskSector.SectorNumber - 1));
                     if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&
                        (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED) != FLAGS_SECTOR_SKIPPED)
@@ -575,7 +578,7 @@ namespace DiscImageChef.DiscImages
                         stream.Read(dataSizeBytes, 0, 2);
                         teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                         teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
-                        ImageInfo.ImageSize += teleDiskData.DataSize;
+                        imageInfo.ImageSize += teleDiskData.DataSize;
                         teleDiskData.DataEncoding = (byte)stream.ReadByte();
                         byte[] data = new byte[teleDiskData.DataSize];
                         stream.Read(data, 0, teleDiskData.DataSize);
@@ -636,17 +639,17 @@ namespace DiscImageChef.DiscImages
             if(leadOutMs.Length != 0)
             {
                 leadOut = leadOutMs.ToArray();
-                ImageInfo.ReadableMediaTags.Add(MediaTagType.Floppy_LeadOut);
+                imageInfo.ReadableMediaTags.Add(MediaTagType.Floppy_LeadOut);
             }
 
-            ImageInfo.Sectors = ImageInfo.Cylinders * ImageInfo.Heads * ImageInfo.SectorsPerTrack;
-            ImageInfo.MediaType = DecodeTeleDiskDiskType();
+            imageInfo.Sectors = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
+            imageInfo.MediaType = DecodeTeleDiskDiskType();
 
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", ImageInfo.MediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.Comments))
-                DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.Comments);
+            DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", imageInfo.MediaType);
+            if(!string.IsNullOrEmpty(imageInfo.Comments))
+                DicConsole.VerboseWriteLine("TeleDisk comments: {0}", imageInfo.Comments);
 
             inStream.Dispose();
             stream.Dispose();
@@ -661,7 +664,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
@@ -677,18 +680,18 @@ namespace DiscImageChef.DiscImages
             return sectorsData[cylinder][head][sector];
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream buffer = new MemoryStream();
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i) ?? new byte[ImageInfo.SectorSize];
+                byte[] sector = ReadSector(sectorAddress + i) ?? new byte[imageInfo.SectorSize];
                 buffer.Write(sector, 0, sector.Length);
             }
 
@@ -697,34 +700,34 @@ namespace DiscImageChef.DiscImages
 
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
-            ushort cylinder = (ushort)(lba / (ImageInfo.Heads * ImageInfo.SectorsPerTrack));
-            byte head = (byte)(lba / ImageInfo.SectorsPerTrack % ImageInfo.Heads);
-            byte sector = (byte)(lba % ImageInfo.SectorsPerTrack + 1);
+            ushort cylinder = (ushort)(lba / (imageInfo.Heads * imageInfo.SectorsPerTrack));
+            byte head = (byte)(lba / imageInfo.SectorsPerTrack % imageInfo.Heads);
+            byte sector = (byte)(lba % imageInfo.SectorsPerTrack + 1);
 
             return (cylinder, head, sector);
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             return ReadSectors(sectorAddress, length);
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return !sectorsWhereCrcHasFailed.Contains(sectorAddress);
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -736,7 +739,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -747,7 +750,7 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return aDiskCrcHasFailed;
         }
@@ -891,7 +894,7 @@ namespace DiscImageChef.DiscImages
                         case 163840:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            return ImageInfo.SectorSize == 256
+                            return imageInfo.SectorSize == 256
                                        ? MediaType.ACORN_525_SS_DD_40
                                        : MediaType.DOS_525_SS_DD_8;
                             // DOS disks use 512 bytes/sector
@@ -899,13 +902,13 @@ namespace DiscImageChef.DiscImages
                         case 184320:
                         {
                             // Atari disk uses 256 bytes/sector
-                            return ImageInfo.SectorSize == 256 ? MediaType.ATARI_525_DD : MediaType.DOS_525_SS_DD_9;
+                            return imageInfo.SectorSize == 256 ? MediaType.ATARI_525_DD : MediaType.DOS_525_SS_DD_9;
                             // DOS disks use 512 bytes/sector
                         }
                         case 327680:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            return ImageInfo.SectorSize == 256
+                            return imageInfo.SectorSize == 256
                                        ? MediaType.ACORN_525_SS_DD_80
                                        : MediaType.DOS_525_DS_DD_8;
                             // DOS disks use 512 bytes/sector
@@ -986,7 +989,7 @@ namespace DiscImageChef.DiscImages
                         case 512512:
                         {
                             // DEC disk uses 256 bytes/sector
-                            return ImageInfo.SectorSize == 256 ? MediaType.RX02 : MediaType.ECMA_59;
+                            return imageInfo.SectorSize == 256 ? MediaType.RX02 : MediaType.ECMA_59;
                             // ECMA disks use 128 bytes/sector
                         }
                         case 1261568: return MediaType.NEC_8_DD;
@@ -1010,7 +1013,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             if(tag != MediaTagType.Floppy_LeadOut)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -1020,52 +1023,52 @@ namespace DiscImageChef.DiscImages
             throw new FeatureNotPresentImageException("Lead-out not present in disk image");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

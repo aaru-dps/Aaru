@@ -35,57 +35,41 @@ using System.Collections.Generic;
 using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Schemas;
 using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin : Filesystem
+    public partial class PascalPlugin : IFilesystem
     {
-        readonly ImagePlugin device;
+        IMediaImage device;
         byte[] bootBlocks;
         byte[] catalogBlocks;
+        Encoding currentEncoding;
         bool debug;
         List<PascalFileEntry> fileEntries;
         bool mounted;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
         PascalVolumeEntry mountedVolEntry;
 
-        public PascalPlugin()
-        {
-            Name = "U.C.S.D. Pascal filesystem";
-            PluginUuid = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
-            CurrentEncoding = new LisaRoman();
-        }
+        public virtual string Name => "U.C.S.D. Pascal filesystem";
+        public virtual Guid Id => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+        public virtual Encoding Encoding => currentEncoding;
 
-        public PascalPlugin(Encoding encoding)
-        {
-            Name = "U.C.S.D. Pascal filesystem";
-            PluginUuid = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
-            // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new LisaRoman();
-        }
-
-        public PascalPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            device = imagePlugin;
-            Name = "U.C.S.D. Pascal filesystem";
-            PluginUuid = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
-            // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new LisaRoman();
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotSupported;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotSupported;
         }
 
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotSupported;
         }

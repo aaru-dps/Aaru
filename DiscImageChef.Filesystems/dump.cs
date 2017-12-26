@@ -44,7 +44,7 @@ using ufs_daddr_t = System.Int32;
 namespace DiscImageChef.Filesystems
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class dump : Filesystem
+    public class dump : IFilesystem
     {
         /// <summary>Magic number for old dump</summary>
         const ushort OFS_MAGIC = 60011;
@@ -99,30 +99,16 @@ namespace DiscImageChef.Filesystems
         const int NDADDR = 12;
         const int NIADDR = 3;
 
-        public dump()
-        {
-            Name = "dump(8) Plugin";
-            PluginUuid = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "dump(8) Plugin";
+        public virtual Guid Id => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public dump(Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "dump(8) Plugin";
-            PluginUuid = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public dump(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "dump(8) Plugin";
-            PluginUuid = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             // It should be start of a tape or floppy or file
             if(partition.Start != 0) return false;
@@ -131,8 +117,8 @@ namespace DiscImageChef.Filesystems
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
-            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(newHdr) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(newHdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return false;
@@ -161,10 +147,12 @@ namespace DiscImageChef.Filesystems
                    newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
             if(partition.Start != 0) return;
 
@@ -172,8 +160,8 @@ namespace DiscImageChef.Filesystems
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
-            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(newHdr) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(newHdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return;
@@ -225,78 +213,78 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            XmlFsType = new FileSystemType {ClusterSize = 1024, Clusters = (long)(partition.Size / 1024)};
+            xmlFsType = new FileSystemType {ClusterSize = 1024, Clusters = (long)(partition.Size / 1024)};
 
             if(useOld)
             {
-                XmlFsType.Type = "Old 16-bit dump(8)";
-                sb.AppendLine(XmlFsType.Type);
+                xmlFsType.Type = "Old 16-bit dump(8)";
+                sb.AppendLine(xmlFsType.Type);
                 if(oldHdr.c_date > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(oldHdr.c_date);
-                    XmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
+                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(oldHdr.c_date);
+                    xmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
                 }
                 if(oldHdr.c_ddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(oldHdr.c_ddate);
-                    XmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
+                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(oldHdr.c_ddate);
+                    xmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
                 }
                 sb.AppendFormat("Dump volume number: {0}", oldHdr.c_volume).AppendLine();
             }
             else if(useAix)
             {
-                XmlFsType.Type = "AIX dump(8)";
-                sb.AppendLine(XmlFsType.Type);
+                xmlFsType.Type = "AIX dump(8)";
+                sb.AppendLine(xmlFsType.Type);
                 if(aixHdr.c_date > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(aixHdr.c_date);
-                    XmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
+                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(aixHdr.c_date);
+                    xmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
                 }
                 if(aixHdr.c_ddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(aixHdr.c_ddate);
-                    XmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
+                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(aixHdr.c_ddate);
+                    xmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
                 }
                 sb.AppendFormat("Dump volume number: {0}", aixHdr.c_volume).AppendLine();
             }
             else
             {
-                XmlFsType.Type = "dump(8)";
-                sb.AppendLine(XmlFsType.Type);
+                xmlFsType.Type = "dump(8)";
+                sb.AppendLine(xmlFsType.Type);
                 if(newHdr.c_ndate > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_ndate);
-                    XmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
+                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_ndate);
+                    xmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
                 }
                 else if(newHdr.c_date > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_date);
-                    XmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
+                    xmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_date);
+                    xmlFsType.CreationDateSpecified = true;
+                    sb.AppendFormat("Dump created on {0}", xmlFsType.CreationDate).AppendLine();
                 }
                 if(newHdr.c_nddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_nddate);
-                    XmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
+                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_nddate);
+                    xmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
                 }
                 else if(newHdr.c_ddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_ddate);
-                    XmlFsType.BackupDateSpecified = true;
-                    sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
+                    xmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_ddate);
+                    xmlFsType.BackupDateSpecified = true;
+                    sb.AppendFormat("Previous dump created on {0}", xmlFsType.BackupDate).AppendLine();
                 }
                 sb.AppendFormat("Dump volume number: {0}", newHdr.c_volume).AppendLine();
                 sb.AppendFormat("Dump level: {0}", newHdr.c_level).AppendLine();
                 string dumpname = StringHandlers.CToString(newHdr.c_label);
                 if(!string.IsNullOrEmpty(dumpname))
                 {
-                    XmlFSType.VolumeName = dumpname;
+                    XmlFsType.VolumeName = dumpname;
                     sb.AppendFormat("Dump label: {0}", dumpname).AppendLine();
                 }
 
@@ -311,62 +299,57 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

@@ -40,7 +40,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class Qed : ImagePlugin
+    public class Qed : IMediaImage
     {
         /// <summary>
         ///     Magic number: 'Q', 'E', 'D', 0x00
@@ -72,6 +72,7 @@ namespace DiscImageChef.DiscImages
         int clusterBits;
         Dictionary<ulong, byte[]> clusterCache;
         uint clusterSectors;
+        ImageInfo imageInfo;
 
         Stream imageStream;
 
@@ -91,43 +92,48 @@ namespace DiscImageChef.DiscImages
 
         public Qed()
         {
-            Name = "QEMU Enhanced Disk image";
-            PluginUuid = new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.HasPartitions = false;
-            ImageInfo.HasSessions = false;
-            ImageInfo.Version = "1";
-            ImageInfo.Application = "QEMU";
-            ImageInfo.ApplicationVersion = null;
-            ImageInfo.Creator = null;
-            ImageInfo.Comments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            imageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                HasPartitions = false,
+                HasSessions = false,
+                Version = "1",
+                Application = "QEMU",
+                ApplicationVersion = null,
+                Creator = null,
+                Comments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
-        public override string ImageFormat => "QEMU Enhanced Disk";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions =>
+        public virtual string Name => "QEMU Enhanced Disk image";
+        public virtual Guid Id => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
+
+        public virtual string ImageFormat => "QEMU Enhanced Disk";
+
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -145,7 +151,7 @@ namespace DiscImageChef.DiscImages
             return qHdr.magic == QED_MAGIC;
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -243,25 +249,25 @@ namespace DiscImageChef.DiscImages
             l2TableCache = new Dictionary<ulong, ulong[]>();
             clusterCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.Sectors = qHdr.image_size / 512;
-            ImageInfo.SectorSize = 512;
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.MediaType = MediaType.GENERIC_HDD;
-            ImageInfo.ImageSize = qHdr.image_size;
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors = qHdr.image_size / 512;
+            imageInfo.SectorSize = 512;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.MediaType = MediaType.GENERIC_HDD;
+            imageInfo.ImageSize = qHdr.image_size;
 
-            ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
-            ImageInfo.Heads = 16;
-            ImageInfo.SectorsPerTrack = 63;
+            imageInfo.Cylinders = (uint)(imageInfo.Sectors / 16 / 63);
+            imageInfo.Heads = 16;
+            imageInfo.SectorsPerTrack = 63;
 
             return true;
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -322,13 +328,13 @@ namespace DiscImageChef.DiscImages
             return sector;
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -382,98 +388,98 @@ namespace DiscImageChef.DiscImages
             return cnt;
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
+            for(ulong i = 0; i < imageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }

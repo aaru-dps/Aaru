@@ -46,39 +46,26 @@ using hammer_tid_t = System.UInt64;
 
 namespace DiscImageChef.Filesystems
 {
-    public class HAMMER : Filesystem
+    public class HAMMER : IFilesystem
     {
         const ulong HAMMER_FSBUF_VOLUME = 0xC8414D4DC5523031;
         const ulong HAMMER_FSBUF_VOLUME_REV = 0x313052C54D4D41C8;
         const uint HAMMER_VOLHDR_SIZE = 1928;
         const int HAMMER_BIGBLOCK_SIZE = 8192 * 1024;
 
-        public HAMMER()
-        {
-            Name = "HAMMER Filesystem";
-            PluginUuid = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public HAMMER(Encoding encoding)
-        {
-            Name = "HAMMER Filesystem";
-            PluginUuid = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "HAMMER Filesystem";
+        public virtual Guid Id => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
 
-        public HAMMER(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "HAMMER Filesystem";
-            PluginUuid = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.ImageInfo.SectorSize;
-
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.ImageInfo.SectorSize > 0) run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0) run++;
 
             if(run + partition.Start >= partition.End) return false;
 
@@ -91,17 +78,18 @@ namespace DiscImageChef.Filesystems
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
             HammerSuperBlock hammerSb;
 
-            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.ImageInfo.SectorSize;
+            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.ImageInfo.SectorSize > 0) run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0) run++;
 
             ulong magic;
 
@@ -123,7 +111,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume version: {0}", hammerSb.vol_version).AppendLine();
             sb.AppendFormat("Volume {0} of {1} on this filesystem", hammerSb.vol_no + 1, hammerSb.vol_count)
               .AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammerSb.vol_label, CurrentEncoding))
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammerSb.vol_label, currentEncoding))
               .AppendLine();
             sb.AppendFormat("Volume serial: {0}", hammerSb.vol_fsid).AppendLine();
             sb.AppendFormat("Filesystem type: {0}", hammerSb.vol_fstype).AppendLine();
@@ -132,13 +120,13 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("First volume buffer starts at {0}", hammerSb.vol_buf_beg).AppendLine();
             sb.AppendFormat("Volume ends at {0}", hammerSb.vol_buf_end).AppendLine();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Clusters = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
                 ClusterSize = HAMMER_BIGBLOCK_SIZE,
                 Dirty = false,
                 Type = "HAMMER",
-                VolumeName = StringHandlers.CToString(hammerSb.vol_label, CurrentEncoding),
+                VolumeName = StringHandlers.CToString(hammerSb.vol_label, currentEncoding),
                 VolumeSerial = hammerSb.vol_fsid.ToString()
             };
 
@@ -150,11 +138,11 @@ namespace DiscImageChef.Filesystems
                                 hammerSb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
                 sb.AppendFormat("Filesystem has {0} inode used", hammerSb.vol0_stat_inodes).AppendLine();
 
-                XmlFsType.Clusters = hammerSb.vol0_stat_bigblocks;
-                XmlFsType.FreeClusters = hammerSb.vol0_stat_freebigblocks;
-                XmlFsType.FreeClustersSpecified = true;
-                XmlFsType.Files = hammerSb.vol0_stat_inodes;
-                XmlFsType.FilesSpecified = true;
+                xmlFsType.Clusters = hammerSb.vol0_stat_bigblocks;
+                xmlFsType.FreeClusters = hammerSb.vol0_stat_freebigblocks;
+                xmlFsType.FreeClustersSpecified = true;
+                xmlFsType.Files = hammerSb.vol0_stat_inodes;
+                xmlFsType.FilesSpecified = true;
             }
             // 0 ?
             //sb.AppendFormat("Volume header CRC: 0x{0:X8}", afs_sb.vol_crc).AppendLine();
@@ -162,62 +150,57 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

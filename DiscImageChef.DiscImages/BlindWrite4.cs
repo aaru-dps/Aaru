@@ -44,7 +44,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class BlindWrite4 : ImagePlugin
+    public class BlindWrite4 : IMediaImage
     {
         /// <summary>"BLINDWRITE TOC FILE"</summary>
         readonly byte[] bw4Signature =
@@ -53,9 +53,10 @@ namespace DiscImageChef.DiscImages
             0x45
         };
         List<Bw4TrackDescriptor> bwTracks;
-        Filter dataFilter, subFilter;
+        IFilter dataFilter, subFilter;
 
         Bw4Header header;
+        ImageInfo imageInfo;
         Stream imageStream;
         Dictionary<uint, ulong> offsetmap;
         List<Partition> partitions;
@@ -65,9 +66,7 @@ namespace DiscImageChef.DiscImages
 
         public BlindWrite4()
         {
-            Name = "BlindWrite 4";
-            PluginUuid = new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -89,15 +88,20 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "BlindWrite 4 TOC file";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions => partitions;
+        public virtual string Name => "BlindWrite 4";
+        public virtual Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
 
-        public override List<Track> Tracks => tracks;
+        public virtual string ImageFormat => "BlindWrite 4 TOC file";
 
-        public override List<Session> Sessions => sessions;
+        public virtual List<Partition> Partitions => partitions;
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual List<Track> Tracks => tracks;
+
+        public virtual List<Session> Sessions => sessions;
+
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -109,7 +113,7 @@ namespace DiscImageChef.DiscImages
             return bw4Signature.SequenceEqual(signature);
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -580,8 +584,8 @@ namespace DiscImageChef.DiscImages
                     if(subFilter != null && bwTrack.subchannel > 0)
                     {
                         track.TrackSubchannelType = TrackSubchannelType.Packed;
-                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                     }
                     else track.TrackSubchannelType = TrackSubchannelType.None;
 
@@ -589,41 +593,41 @@ namespace DiscImageChef.DiscImages
                     {
                         case Bw4TrackType.Audio:
                             track.TrackType = TrackType.Audio;
-                            ImageInfo.SectorSize = 2352;
+                            imageInfo.SectorSize = 2352;
                             track.TrackBytesPerSector = 2352;
                             break;
                         case Bw4TrackType.Mode1:
                             track.TrackType = TrackType.CdMode1;
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-                            if(ImageInfo.SectorSize < 2048) ImageInfo.SectorSize = 2048;
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(imageInfo.SectorSize < 2048) imageInfo.SectorSize = 2048;
                             track.TrackBytesPerSector = 2048;
                             break;
                         case Bw4TrackType.Mode2:
                             track.TrackType = TrackType.CdMode2Formless;
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                            if(ImageInfo.SectorSize < 2336) ImageInfo.SectorSize = 2336;
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(imageInfo.SectorSize < 2336) imageInfo.SectorSize = 2336;
                             track.TrackBytesPerSector = 2336;
                             break;
                         default:
                             track.TrackType = TrackType.Data;
                             track.TrackRawBytesPerSector = 2048;
-                            ImageInfo.SectorSize = 2048;
+                            imageInfo.SectorSize = 2048;
                             track.TrackBytesPerSector = 2048;
                             break;
                     }
@@ -652,17 +656,17 @@ namespace DiscImageChef.DiscImages
                     if(!trackFlags.ContainsKey(track.TrackSequence))
                         trackFlags.Add(track.TrackSequence, (byte)(bwTrack.adrCtl & 0x0F));
 
-                    ImageInfo.Sectors += (ulong)(bwTrack.lastSector - bwTrack.startSector + 1);
+                    imageInfo.Sectors += (ulong)(bwTrack.lastSector - bwTrack.startSector + 1);
                 }
                 else
                 {
-                    ImageInfo.MediaBarcode = bwTrack.isrcUpc;
-                    ImageInfo.MediaSerialNumber = bwTrack.discId;
-                    ImageInfo.MediaTitle = bwTrack.title;
+                    imageInfo.MediaBarcode = bwTrack.isrcUpc;
+                    imageInfo.MediaSerialNumber = bwTrack.discId;
+                    imageInfo.MediaTitle = bwTrack.title;
 
                     if(!string.IsNullOrEmpty(bwTrack.isrcUpc) &&
-                       !ImageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
-                        ImageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
+                       !imageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
+                        imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
                 }
 
             sessions = new List<Session>();
@@ -686,16 +690,16 @@ namespace DiscImageChef.DiscImages
                 sessions.Add(session);
             }
 
-            ImageInfo.MediaType = MediaType.CD;
+            imageInfo.MediaType = MediaType.CD;
 
-            ImageInfo.Application = "BlindWrite";
-            ImageInfo.ApplicationVersion = "4";
-            ImageInfo.Version = "4";
+            imageInfo.Application = "BlindWrite";
+            imageInfo.ApplicationVersion = "4";
+            imageInfo.Version = "4";
 
-            ImageInfo.ImageSize = (ulong)dataFilter.GetDataForkLength();
-            ImageInfo.CreationTime = dataFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = dataFilter.GetLastWriteTime();
-            ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            imageInfo.ImageSize = (ulong)dataFilter.GetDataForkLength();
+            imageInfo.CreationTime = dataFilter.GetCreationTime();
+            imageInfo.LastModificationTime = dataFilter.GetLastWriteTime();
+            imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
             bool data = false;
             bool mode2 = false;
@@ -725,28 +729,28 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            if(!data && !firstdata) ImageInfo.MediaType = MediaType.CDDA;
-            else if(firstaudio && data && sessions.Count > 1 && mode2) ImageInfo.MediaType = MediaType.CDPLUS;
-            else if(firstdata && audio || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
-            else if(!audio) ImageInfo.MediaType = MediaType.CDROM;
-            else ImageInfo.MediaType = MediaType.CD;
+            if(!data && !firstdata) imageInfo.MediaType = MediaType.CDDA;
+            else if(firstaudio && data && sessions.Count > 1 && mode2) imageInfo.MediaType = MediaType.CDPLUS;
+            else if(firstdata && audio || mode2) imageInfo.MediaType = MediaType.CDROMXA;
+            else if(!audio) imageInfo.MediaType = MediaType.CDROM;
+            else imageInfo.MediaType = MediaType.CD;
 
-            ImageInfo.Comments = header.Comments;
+            imageInfo.Comments = header.Comments;
 
-            DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", ImageInfo.MediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.Comments))
-                DicConsole.VerboseWriteLine("BlindrWrite comments: {0}", ImageInfo.Comments);
+            DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
+            if(!string.IsNullOrEmpty(imageInfo.Comments))
+                DicConsole.VerboseWriteLine("BlindrWrite comments: {0}", imageInfo.Comments);
 
             return true;
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             switch(tag)
             {
                 case MediaTagType.CD_MCN:
                 {
-                    if(ImageInfo.MediaSerialNumber != null) return Encoding.ASCII.GetBytes(ImageInfo.MediaSerialNumber);
+                    if(imageInfo.MediaSerialNumber != null) return Encoding.ASCII.GetBytes(imageInfo.MediaSerialNumber);
 
                     throw new FeatureNotPresentImageException("Image does not contain MCN information.");
                 }
@@ -755,27 +759,27 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             return ReadSectors(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -789,7 +793,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -803,7 +807,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
@@ -877,7 +881,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
@@ -1036,17 +1040,17 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             return ReadSectorsLong(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1060,7 +1064,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
@@ -1106,31 +1110,31 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             return tracks.Where(track => track.TrackSession == session).ToList();
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
@@ -1160,7 +1164,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
@@ -1190,7 +1194,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }
@@ -1220,8 +1224,8 @@ namespace DiscImageChef.DiscImages
             public string VolumeIdentifier;
             public string SystemIdentifier;
             public string Comments;
-            public Filter DataFilter;
-            public Filter SubchannelFilter;
+            public IFilter DataFilter;
+            public IFilter SubchannelFilter;
             public string DataFile;
             public string SubchannelFile;
 #pragma warning restore 649

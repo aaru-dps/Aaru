@@ -30,26 +30,25 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+
 namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }

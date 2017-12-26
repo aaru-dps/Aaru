@@ -42,30 +42,16 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from Inside Windows NT
-    public class NTFS : Filesystem
+    public class NTFS : IFilesystem
     {
-        public NTFS()
-        {
-            Name = "New Technology File System (NTFS)";
-            PluginUuid = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
-            CurrentEncoding = Encoding.Unicode;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "New Technology File System (NTFS)";
+        public virtual Guid Id => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
 
-        public NTFS(Encoding encoding)
-        {
-            Name = "New Technology File System (NTFS)";
-            PluginUuid = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
-            CurrentEncoding = Encoding.Unicode;
-        }
-
-        public NTFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "New Technology File System (NTFS)";
-            PluginUuid = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
-            CurrentEncoding = Encoding.Unicode;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -93,8 +79,9 @@ namespace DiscImageChef.Filesystems
             return signature == 0xAA55;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = Encoding.Unicode;
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -138,11 +125,11 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume serial number: {0:X16}", ntfsBb.serial_no).AppendLine();
             //          sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
 
             if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 && ntfsBb.signature2 == 0xAA55)
             {
-                XmlFsType.Bootable = true;
+                xmlFsType.Bootable = true;
                 Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 string bootChk = sha1Ctx.Data(ntfsBb.boot_code, out _);
@@ -150,70 +137,65 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }
 
-            XmlFsType.ClusterSize = ntfsBb.spc * ntfsBb.bps;
-            XmlFsType.Clusters = ntfsBb.sectors / ntfsBb.spc;
-            XmlFsType.VolumeSerial = $"{ntfsBb.serial_no:X16}";
-            XmlFsType.Type = "NTFS";
+            xmlFsType.ClusterSize = ntfsBb.spc * ntfsBb.bps;
+            xmlFsType.Clusters = ntfsBb.sectors / ntfsBb.spc;
+            xmlFsType.VolumeSerial = $"{ntfsBb.serial_no:X16}";
+            xmlFsType.Type = "NTFS";
 
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

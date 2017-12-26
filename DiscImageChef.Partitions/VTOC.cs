@@ -40,7 +40,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class VTOC : PartitionPlugin
+    public class VTOC : IPartition
     {
         const uint PD_MAGIC = 0xCA5E600D;
         const uint VTOC_SANE = 0x600DDEEE;
@@ -49,13 +49,10 @@ namespace DiscImageChef.Partitions
         const int V_NUMPAR = 16;
         const uint XPDVERS = 3; /* 1st version of extended pdinfo */
 
-        public VTOC()
-        {
-            Name = "UNIX VTOC";
-            PluginUuid = new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
-        }
+        public virtual string Name => "UNIX VTOC";
+        public virtual Guid Id => new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -65,8 +62,7 @@ namespace DiscImageChef.Partitions
             bool magicFound = false;
             bool absolute = false;
 
-            foreach(ulong i in
-                new ulong[] {0, 1, 8, 29}.TakeWhile(i => i + sectorOffset < imagePlugin.ImageInfo.Sectors))
+            foreach(ulong i in new ulong[] {0, 1, 8, 29}.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
             {
                 pdsector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BitConverter.ToUInt32(pdsector, 4);
@@ -205,14 +201,14 @@ namespace DiscImageChef.Partitions
             if(!magicFound)
             {
                 DicConsole.DebugWriteLine("VTOC plugin", "Searching for VTOC on relative byte {0}", pd.vtoc_ptr);
-                ulong relSecPtr = pd.vtoc_ptr / imagePlugin.ImageInfo.SectorSize;
-                uint relSecOff = pd.vtoc_ptr % imagePlugin.ImageInfo.SectorSize;
-                uint secCount = (relSecOff + pd.vtoc_len) / imagePlugin.ImageInfo.SectorSize;
-                if((relSecOff + pd.vtoc_len) % imagePlugin.ImageInfo.SectorSize > 0) secCount++;
+                ulong relSecPtr = pd.vtoc_ptr / imagePlugin.Info.SectorSize;
+                uint relSecOff = pd.vtoc_ptr % imagePlugin.Info.SectorSize;
+                uint secCount = (relSecOff + pd.vtoc_len) / imagePlugin.Info.SectorSize;
+                if((relSecOff + pd.vtoc_len) % imagePlugin.Info.SectorSize > 0) secCount++;
                 DicConsole.DebugWriteLine("VTOC plugin",
                                           "Going to read {0} sectors from sector {1}, getting VTOC from byte {2}",
                                           secCount, relSecPtr + sectorOffset, relSecOff);
-                if(relSecPtr + sectorOffset + secCount >= imagePlugin.ImageInfo.Sectors)
+                if(relSecPtr + sectorOffset + secCount >= imagePlugin.Info.Sectors)
                 {
                     DicConsole.DebugWriteLine("VTOC plugin", "Going to read past device size, aborting...");
                     return false;
@@ -331,8 +327,8 @@ namespace DiscImageChef.Partitions
                 {
                     Partition part = new Partition
                     {
-                        Start = (ulong)(parts[i].p_start * bps) / imagePlugin.ImageInfo.SectorSize,
-                        Length = (ulong)(parts[i].p_size * bps) / imagePlugin.ImageInfo.SectorSize,
+                        Start = (ulong)(parts[i].p_start * bps) / imagePlugin.Info.SectorSize,
+                        Length = (ulong)(parts[i].p_size * bps) / imagePlugin.Info.SectorSize,
                         Offset = (ulong)(parts[i].p_start * bps),
                         Size = (ulong)(parts[i].p_size * bps),
                         Sequence = (ulong)i,
@@ -345,7 +341,7 @@ namespace DiscImageChef.Partitions
                     if(!useOld && !absolute)
                     {
                         part.Start += sectorOffset;
-                        part.Offset += sectorOffset * imagePlugin.ImageInfo.SectorSize;
+                        part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
                     }
 
                     if(parts[i].p_flag.HasFlag(pFlag.V_VALID)) info += " (valid)";
@@ -357,7 +353,7 @@ namespace DiscImageChef.Partitions
 
                     part.Description = "UNIX slice" + info + ".";
 
-                    if(part.End < imagePlugin.ImageInfo.Sectors) partitions.Add(part);
+                    if(part.End < imagePlugin.Info.Sectors) partitions.Add(part);
                 }
 
             return partitions.Count > 0;

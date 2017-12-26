@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class PFS : Filesystem
+    public class PFS : IFilesystem
     {
         /// <summary>
         ///     Identifier for AFS (PFS v1)
@@ -63,28 +63,15 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const uint MUPFS_DISK = 0x6D755046;
 
-        public PFS()
-        {
-            Name = "Professional File System";
-            PluginUuid = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public PFS(Encoding encoding)
-        {
-            Name = "Professional File System";
-            PluginUuid = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Professional File System";
+        public virtual Guid Id => new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
 
-        public PFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Professional File System";
-            PluginUuid = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -98,29 +85,30 @@ namespace DiscImageChef.Filesystems
                    magic == MUPFS_DISK;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] rootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
             RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
             StringBuilder sbInformation = new StringBuilder();
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
 
             switch(rootBlock.diskType)
             {
                 case AFS_DISK:
                 case MUAF_DISK:
                     sbInformation.Append("Professional File System v1");
-                    XmlFsType.Type = "PFS v1";
+                    xmlFsType.Type = "PFS v1";
                     break;
                 case PFS2_DISK:
                     sbInformation.Append("Professional File System v2");
-                    XmlFsType.Type = "PFS v2";
+                    xmlFsType.Type = "PFS v2";
                     break;
                 case PFS_DISK:
                 case MUPFS_DISK:
                     sbInformation.Append("Professional File System v3");
-                    XmlFsType.Type = "PFS v3";
+                    xmlFsType.Type = "PFS v3";
                     break;
             }
 
@@ -130,7 +118,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendLine();
 
             sbInformation
-                .AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding))
+                .AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, currentEncoding))
                 .AppendLine();
             sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize)
                          .AppendLine();
@@ -143,72 +131,67 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType.CreationDate =
+            xmlFsType.CreationDate =
                 DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
-            XmlFsType.CreationDateSpecified = true;
-            XmlFsType.FreeClusters = rootBlock.blocksfree;
-            XmlFsType.FreeClustersSpecified = true;
-            XmlFsType.Clusters = rootBlock.diskSize;
-            XmlFsType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
-            XmlFsType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding);
+            xmlFsType.CreationDateSpecified = true;
+            xmlFsType.FreeClusters = rootBlock.blocksfree;
+            xmlFsType.FreeClustersSpecified = true;
+            xmlFsType.Clusters = rootBlock.diskSize;
+            xmlFsType.ClusterSize = (int)imagePlugin.Info.SectorSize;
+            xmlFsType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, currentEncoding);
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

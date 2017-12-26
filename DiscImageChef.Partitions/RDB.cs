@@ -41,7 +41,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class AmigaRigidDiskBlock : PartitionPlugin
+    public class AmigaRigidDiskBlock : IPartition
     {
         /// <summary>
         ///     RDB magic number "RDSK"
@@ -275,13 +275,10 @@ namespace DiscImageChef.Partitions
         /// </summary>
         const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
-        public AmigaRigidDiskBlock()
-        {
-            Name = "Amiga Rigid Disk Block";
-            PluginUuid = new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
-        }
+        public virtual string Name => "Amiga Rigid Disk Block";
+        public virtual Guid Id => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -290,9 +287,9 @@ namespace DiscImageChef.Partitions
 
             while(rdbBlock < 16)
             {
-                if(imagePlugin.ImageInfo.Sectors <= rdbBlock) return false;
+                if(imagePlugin.Info.Sectors <= rdbBlock) return false;
 
-                if(rdbBlock + sectorOffset >= imagePlugin.ImageInfo.Sectors) break;
+                if(rdbBlock + sectorOffset >= imagePlugin.Info.Sectors) break;
 
                 byte[] tmpSector = imagePlugin.ReadSector(rdbBlock + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);

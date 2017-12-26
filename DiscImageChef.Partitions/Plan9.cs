@@ -43,19 +43,16 @@ namespace DiscImageChef.Partitions
     // "part type start end\n"
     // One line per partition, start and end relative to offset
     // e.g.: "part nvram 10110 10112\npart fossil 10112 3661056\n"
-    public class Plan9 : PartitionPlugin
+    public class Plan9 : IPartition
     {
-        public Plan9()
-        {
-            Name = "Plan9 partition table";
-            PluginUuid = new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
-        }
+        public virtual string Name => "Plan9 partition table";
+        public virtual Guid Id => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
-            if(sectorOffset + 2 >= imagePlugin.ImageInfo.Sectors) return false;
+            if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset + 1);
             // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
@@ -69,10 +66,10 @@ namespace DiscImageChef.Partitions
                 Partition part = new Partition
                 {
                     Length = end - start + 1,
-                    Offset = (start + sectorOffset) * imagePlugin.ImageInfo.SectorSize,
+                    Offset = (start + sectorOffset) * imagePlugin.Info.SectorSize,
                     Scheme = Name,
                     Sequence = (ulong)partitions.Count,
-                    Size = (end - start + 1) * imagePlugin.ImageInfo.SectorSize,
+                    Size = (end - start + 1) * imagePlugin.Info.SectorSize,
                     Start = start + sectorOffset,
                     Type = tokens[1]
                 };

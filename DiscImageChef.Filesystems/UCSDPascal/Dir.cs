@@ -39,14 +39,14 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = fileEntries.Select(ent => StringHandlers.PascalToString(ent.filename, CurrentEncoding)).ToList();
+            contents = fileEntries.Select(ent => StringHandlers.PascalToString(ent.filename, currentEncoding)).ToList();
 
             if(debug)
             {

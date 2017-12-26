@@ -39,7 +39,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class Apricot : PartitionPlugin
+    public class Apricot : IPartition
     {
         readonly int[] baudRates = {50, 75, 110, 134, 150, 300, 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 19200};
         readonly string[] bootTypeCodes =
@@ -56,13 +56,10 @@ namespace DiscImageChef.Partitions
         readonly string[] printDevices = {"Parallel", "Serial"};
         readonly double[] stopBits = {1, 1.5, 2};
 
-        public Apricot()
-        {
-            Name = "ACT Apricot partitions";
-            PluginUuid = new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
-        }
+        public virtual string Name => "ACT Apricot partitions";
+        public virtual Guid Id => new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -79,7 +76,7 @@ namespace DiscImageChef.Partitions
             Marshal.FreeHGlobal(lblPtr);
 
             // Not much to check but...
-            ulong deviceSectors = imagePlugin.ImageInfo.Sectors;
+            ulong deviceSectors = imagePlugin.Info.Sectors;
             ulong deviceSizeAccordingToLabel = label.cylinders * label.heads * label.spt;
             if(label.operatingSystem > 4 || label.bootType > 5 || label.partitionCount > 8 ||
                deviceSizeAccordingToLabel > deviceSectors || label.firstDataBlock > deviceSectors) return false;

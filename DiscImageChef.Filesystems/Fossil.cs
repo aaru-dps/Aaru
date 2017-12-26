@@ -41,43 +41,28 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class Fossil : Filesystem
+    public class Fossil : IFilesystem
     {
         const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
         const uint FOSSIL_SB_MAGIC = 0x2340A3B1;
         // Fossil header starts at 128KiB
         const ulong HEADER_POS = 128 * 1024;
 
-        public Fossil()
-        {
-            Name = "Fossil Filesystem Plugin";
-            PluginUuid = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public Fossil(Encoding encoding)
-        {
-            Name = "Fossil Filesystem Plugin";
-            PluginUuid = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
-            // Technically everything on Plan 9 from Bell Labs is in UTF-8
-            CurrentEncoding = Encoding.UTF8;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Fossil Filesystem Plugin";
+        public virtual Guid Id => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
 
-        public Fossil(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "Fossil Filesystem Plugin";
-            PluginUuid = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
-            // Technically everything on Plan 9 from Bell Labs is in UTF-8
-            CurrentEncoding = Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            ulong hdrSector = HEADER_POS / imagePlugin.ImageInfo.SectorSize;
+            ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
             FossilHeader hdr;
 
-            if(partition.Start + hdrSector > imagePlugin.ImageInfo.Sectors) return false;
+            if(partition.Start + hdrSector > imagePlugin.Info.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
@@ -88,12 +73,14 @@ namespace DiscImageChef.Filesystems
             return hdr.magic == FOSSIL_HDR_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            // Technically everything on Plan 9 from Bell Labs is in UTF-8
+            currentEncoding = Encoding.UTF8;
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
-            ulong hdrSector = HEADER_POS / imagePlugin.ImageInfo.SectorSize;
+            ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
             FossilHeader hdr;
 
@@ -113,9 +100,9 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Data starts at block {0}", hdr.data).AppendLine();
             sb.AppendFormat("Volume has {0} blocks", hdr.end).AppendLine();
 
-            ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.ImageInfo.SectorSize) + partition.Start;
+            ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize) + partition.Start;
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "Fossil filesystem",
                 ClusterSize = hdr.blockSize,
@@ -138,71 +125,66 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Active root block {0}", fsb.active).AppendLine();
                     sb.AppendFormat("Next root block {0}", fsb.next).AppendLine();
                     sb.AppendFormat("Curren root block {0}", fsb.current).AppendLine();
-                    sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, CurrentEncoding))
+                    sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, currentEncoding))
                       .AppendLine();
-                    XmlFsType.VolumeName = StringHandlers.CToString(fsb.name, CurrentEncoding);
+                    xmlFsType.VolumeName = StringHandlers.CToString(fsb.name, currentEncoding);
                 }
             }
 
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

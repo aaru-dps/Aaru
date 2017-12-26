@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using Schemas;
 
@@ -39,8 +41,11 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public override Errno Mount(bool debug)
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
+            device = imagePlugin;
+            partitionStart = partition.Start;
+            currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
             this.debug = debug;
             volMDB = new MFS_MasterDirectoryBlock();
 
@@ -67,14 +72,14 @@ namespace DiscImageChef.Filesystems.AppleMFS
             volMDB.drVNSiz = mdbBlocks[0x024];
             byte[] variableSize = new byte[volMDB.drVNSiz + 1];
             Array.Copy(mdbBlocks, 0x024, variableSize, 0, volMDB.drVNSiz + 1);
-            volMDB.drVN = StringHandlers.PascalToString(variableSize, CurrentEncoding);
+            volMDB.drVN = StringHandlers.PascalToString(variableSize, currentEncoding);
 
             directoryBlocks = device.ReadSectors(volMDB.drDirSt + partitionStart, volMDB.drBlLen);
             int bytesInBlockMap = volMDB.drNmAlBlks * 12 / 8 + volMDB.drNmAlBlks * 12 % 8;
             const int BYTES_BEFORE_BLOCK_MAP = 64;
             int bytesInWholeMdb = bytesInBlockMap + BYTES_BEFORE_BLOCK_MAP;
-            int sectorsInWholeMdb = bytesInWholeMdb / (int)device.ImageInfo.SectorSize +
-                                    bytesInWholeMdb % (int)device.ImageInfo.SectorSize;
+            int sectorsInWholeMdb = bytesInWholeMdb / (int)device.Info.SectorSize +
+                                    bytesInWholeMdb % (int)device.Info.SectorSize;
             byte[] wholeMdb = device.ReadSectors(partitionStart + 2, (uint)sectorsInWholeMdb);
             blockMapBytes = new byte[bytesInBlockMap];
             Array.Copy(wholeMdb, BYTES_BEFORE_BLOCK_MAP, blockMapBytes, 0, blockMapBytes.Length);
@@ -105,7 +110,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 offset += 12;
             }
 
-            if(device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+            if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
             {
                 mdbTags = device.ReadSectorTag(2 + partitionStart, SectorTagType.AppleSectorTag);
                 bootTags = device.ReadSectorTag(0 + partitionStart, SectorTagType.AppleSectorTag);
@@ -115,7 +120,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                                                    SectorTagType.AppleSectorTag);
             }
 
-            sectorsPerBlock = (int)(volMDB.drAlBlkSiz / device.ImageInfo.SectorSize);
+            sectorsPerBlock = (int)(volMDB.drAlBlkSiz / device.Info.SectorSize);
 
             if(!FillDirectory()) return Errno.InvalidArgument;
 
@@ -125,36 +130,31 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(bbSig != MFSBB_MAGIC) bootBlocks = null;
 
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
             if(volMDB.drLsBkUp > 0)
             {
-                XmlFsType.BackupDate = DateHandlers.MacToDateTime(volMDB.drLsBkUp);
-                XmlFsType.BackupDateSpecified = true;
+                xmlFsType.BackupDate = DateHandlers.MacToDateTime(volMDB.drLsBkUp);
+                xmlFsType.BackupDateSpecified = true;
             }
-            XmlFsType.Bootable = bbSig == MFSBB_MAGIC;
-            XmlFsType.Clusters = volMDB.drNmAlBlks;
-            XmlFsType.ClusterSize = (int)volMDB.drAlBlkSiz;
+            xmlFsType.Bootable = bbSig == MFSBB_MAGIC;
+            xmlFsType.Clusters = volMDB.drNmAlBlks;
+            xmlFsType.ClusterSize = (int)volMDB.drAlBlkSiz;
             if(volMDB.drCrDate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.MacToDateTime(volMDB.drCrDate);
-                XmlFsType.CreationDateSpecified = true;
+                xmlFsType.CreationDate = DateHandlers.MacToDateTime(volMDB.drCrDate);
+                xmlFsType.CreationDateSpecified = true;
             }
-            XmlFsType.Files = volMDB.drNmFls;
-            XmlFsType.FilesSpecified = true;
-            XmlFsType.FreeClusters = volMDB.drFreeBks;
-            XmlFsType.FreeClustersSpecified = true;
-            XmlFsType.Type = "MFS";
-            XmlFsType.VolumeName = volMDB.drVN;
+            xmlFsType.Files = volMDB.drNmFls;
+            xmlFsType.FilesSpecified = true;
+            xmlFsType.FreeClusters = volMDB.drFreeBks;
+            xmlFsType.FreeClustersSpecified = true;
+            xmlFsType.Type = "MFS";
+            xmlFsType.VolumeName = volMDB.drVN;
 
             return Errno.NoError;
         }
 
-        public override Errno Mount()
-        {
-            return Mount(false);
-        }
-
-        public override Errno Unmount()
+        public virtual Errno Unmount()
         {
             mounted = false;
             idToFilename = null;
@@ -165,7 +165,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {
@@ -173,7 +173,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 FilenameLength = 255,
                 Files = volMDB.drNmFls,
                 FreeBlocks = volMDB.drFreeBks,
-                PluginId = PluginUuid,
+                PluginId = Id,
                 Type = "Apple MFS"
             };
             stat.FreeFiles = uint.MaxValue - stat.Files;

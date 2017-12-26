@@ -40,33 +40,19 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class APFS : Filesystem
+    public class APFS : IFilesystem
     {
         const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
         const uint APFS_VOLUME_MAGIC = 0x42535041; // "APSB"
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public APFS()
-        {
-            Name = "Apple File System";
-            PluginUuid = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Apple File System";
+        public virtual Guid Id => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
 
-        public APFS(Encoding encoding)
-        {
-            Name = "Apple File System";
-            PluginUuid = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
-            CurrentEncoding = Encoding.UTF8;
-        }
-
-        public APFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Apple File System";
-            PluginUuid = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
-            CurrentEncoding = Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -85,10 +71,12 @@ namespace DiscImageChef.Filesystems
             return nxSb.magic == APFS_CONTAINER_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = Encoding.UTF8;
             StringBuilder sbInformation = new StringBuilder();
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
             information = "";
 
             if(partition.Start >= partition.End) return;
@@ -115,7 +103,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Bootable = false,
                 Clusters = (long)nxSb.containerBlocks,
@@ -124,62 +112,57 @@ namespace DiscImageChef.Filesystems
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

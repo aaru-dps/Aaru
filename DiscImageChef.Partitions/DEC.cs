@@ -39,22 +39,19 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class DEC : PartitionPlugin
+    public class DEC : IPartition
     {
         const int PT_MAGIC = 0x032957;
         const int PT_VALID = 1;
 
-        public DEC()
-        {
-            Name = "DEC disklabel";
-            PluginUuid = new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
-        }
+        public virtual string Name => "DEC disklabel";
+        public virtual Guid Id => new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
-            if(31 + sectorOffset >= imagePlugin.ImageInfo.Sectors) return false;
+            if(31 + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
             if(sector.Length < 512) return false;

@@ -50,34 +50,21 @@ namespace DiscImageChef.Filesystems
     // There is an ODS with signature "DECFILES11A", yet to be seen
     // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
     // TODO: Implement checksum
-    public class ODS : Filesystem
+    public class ODS : IFilesystem
     {
-        public ODS()
-        {
-            Name = "Files-11 On-Disk Structure";
-            PluginUuid = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public ODS(Encoding encoding)
-        {
-            Name = "Files-11 On-Disk Structure";
-            PluginUuid = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Files-11 On-Disk Structure";
+        public virtual Guid Id => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
 
-        public ODS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Files-11 On-Disk Structure";
-            PluginUuid = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             byte[] magicB = new byte[12];
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
@@ -90,7 +77,7 @@ namespace DiscImageChef.Filesystems
             if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
 
             // Optical disc
-            if(imagePlugin.ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc) return false;
+            if(imagePlugin.Info.XmlMediaType != XmlMediaType.OpticalDisc) return false;
 
             if(hbSector.Length < 0x400) return false;
 
@@ -104,8 +91,9 @@ namespace DiscImageChef.Filesystems
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -118,7 +106,7 @@ namespace DiscImageChef.Filesystems
             handle.Free();
 
             // Optical disc
-            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc &&
+            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
             {
@@ -142,7 +130,7 @@ namespace DiscImageChef.Filesystems
             if(homeblock.resfiles < 5 || homeblock.devtype != 0) sb.AppendLine("This volume may be corrupted.");
 
             sb.AppendFormat("Volume format is {0}",
-                            StringHandlers.SpacePaddedToString(homeblock.format, CurrentEncoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.format, currentEncoding)).AppendLine();
             sb.AppendFormat("Volume is Level {0} revision {1}", (homeblock.struclev & 0xFF00) >> 8,
                             homeblock.struclev & 0xFF).AppendLine();
             sb.AppendFormat("Lowest structure in the volume is Level {0}, revision {1}",
@@ -166,12 +154,12 @@ namespace DiscImageChef.Filesystems
             if(homeblock.rvn > 0 && homeblock.setcount > 0 &&
                StringHandlers.CToString(homeblock.strucname) != "            ")
                 sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount,
-                                StringHandlers.SpacePaddedToString(homeblock.strucname, CurrentEncoding)).AppendLine();
+                                StringHandlers.SpacePaddedToString(homeblock.strucname, currentEncoding)).AppendLine();
             sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})",
-                            StringHandlers.SpacePaddedToString(homeblock.ownername, CurrentEncoding),
+                            StringHandlers.SpacePaddedToString(homeblock.ownername, currentEncoding),
                             homeblock.volowner).AppendLine();
             sb.AppendFormat("Volume label: \"{0}\"",
-                            StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding)).AppendLine();
             sb.AppendFormat("Drive serial number: 0x{0:X8}", homeblock.serialnum).AppendLine();
             sb.AppendFormat("Volume was created on {0}", DateHandlers.VmsToDateTime(homeblock.credate)).AppendLine();
             if(homeblock.revdate > 0)
@@ -219,84 +207,79 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
             sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "FILES-11",
                 ClusterSize = homeblock.cluster * 512,
                 Clusters = (long)partition.Size / (homeblock.cluster * 512),
-                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding),
+                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, currentEncoding),
                 VolumeSerial = $"{homeblock.serialnum:X8}"
             };
             if(homeblock.credate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
-                XmlFsType.CreationDateSpecified = true;
+                xmlFsType.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
+                xmlFsType.CreationDateSpecified = true;
             }
             if(homeblock.revdate > 0)
             {
-                XmlFsType.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
-                XmlFsType.ModificationDateSpecified = true;
+                xmlFsType.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
+                xmlFsType.ModificationDateSpecified = true;
             }
 
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

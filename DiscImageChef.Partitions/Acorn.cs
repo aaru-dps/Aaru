@@ -39,7 +39,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class Acorn : PartitionPlugin
+    public class Acorn : IPartition
     {
         const ulong ADFS_SB_POS = 0xC00;
         const uint LINUX_MAGIC = 0xDEAFA1DE;
@@ -50,13 +50,10 @@ namespace DiscImageChef.Partitions
         const uint TYPE_RISCIX_SCSI = 2;
         const uint TYPE_MASK = 15;
 
-        public Acorn()
-        {
-            Name = "Acorn FileCore partitions";
-            PluginUuid = new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
-        }
+        public virtual string Name => "Acorn FileCore partitions";
+        public virtual Guid Id => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -65,8 +62,8 @@ namespace DiscImageChef.Partitions
             // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
             if(sectorOffset != 0) return false;
 
-            if(imagePlugin.ImageInfo.SectorSize > ADFS_SB_POS) sbSector = 0;
-            else sbSector = ADFS_SB_POS / imagePlugin.ImageInfo.SectorSize;
+            if(imagePlugin.Info.SectorSize > ADFS_SB_POS) sbSector = 0;
+            else sbSector = ADFS_SB_POS / imagePlugin.Info.SectorSize;
 
             byte[] sector = imagePlugin.ReadSector(sbSector);
 
@@ -84,7 +81,7 @@ namespace DiscImageChef.Partitions
             int secCyl = bootBlock.discRecord.spt * heads;
             int mapSector = bootBlock.startCylinder * secCyl;
 
-            if((ulong)mapSector >= imagePlugin.ImageInfo.Sectors) return false;
+            if((ulong)mapSector >= imagePlugin.Info.Sectors) return false;
 
             byte[] map = imagePlugin.ReadSector((ulong)mapSector);
 
@@ -97,7 +94,7 @@ namespace DiscImageChef.Partitions
                     Size = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
                     Length =
                         ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) /
-                        imagePlugin.ImageInfo.SectorSize,
+                        imagePlugin.Info.SectorSize,
                     Type = "ADFS",
                     Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
                 };

@@ -41,7 +41,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class AcornADFS : Filesystem
+    public class AcornADFS : IFilesystem
     {
         /// <summary>
         ///     Location for boot block, in bytes
@@ -76,37 +76,23 @@ namespace DiscImageChef.Filesystems
         ///     Old directory format magic number, "Hugo"
         /// </summary>
         const uint OLD_DIR_MAGIC = 0x6F677548;
+        Encoding currentEncoding;
 
-        public AcornADFS()
-        {
-            Name = "Acorn Advanced Disc Filing System";
-            PluginUuid = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public AcornADFS(Encoding encoding)
-        {
-            Name = "Acorn Advanced Disc Filing System";
-            PluginUuid = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public AcornADFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Acorn Advanced Disc Filing System";
-            PluginUuid = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual string Name => "Acorn Advanced Disc Filing System";
+        public virtual Guid Id => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+        public virtual Encoding Encoding => currentEncoding;
 
         // TODO: BBC Master hard disks are untested...
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
             ulong sbSector;
             uint sectorsToRead;
 
-            if(imagePlugin.ImageInfo.SectorSize < 256) return false;
+            if(imagePlugin.Info.SectorSize < 256) return false;
 
             byte[] sector;
             GCHandle ptr;
@@ -146,9 +132,9 @@ namespace DiscImageChef.Filesystems
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum == oldChk1 && oldMap0.checksum != 0 &&
                    oldMap1.checksum != 0)
                 {
-                    sbSector = OLD_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
-                    sectorsToRead = OLD_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
-                    if(OLD_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                    sbSector = OLD_DIRECTORY_LOCATION / imagePlugin.Info.SectorSize;
+                    sectorsToRead = OLD_DIRECTORY_SIZE / imagePlugin.Info.SectorSize;
+                    if(OLD_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
                     sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                     if(sector.Length > OLD_DIRECTORY_SIZE)
@@ -174,9 +160,9 @@ namespace DiscImageChef.Filesystems
                        oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC) return true;
 
                     // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
-                    sbSector = NEW_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
-                    sectorsToRead = NEW_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
-                    if(NEW_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                    sbSector = NEW_DIRECTORY_LOCATION / imagePlugin.Info.SectorSize;
+                    sectorsToRead = NEW_DIRECTORY_SIZE / imagePlugin.Info.SectorSize;
+                    if(NEW_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
                     sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                     if(sector.Length > OLD_DIRECTORY_SIZE)
@@ -210,9 +196,9 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
-            sbSector = BOOT_BLOCK_LOCATION / imagePlugin.ImageInfo.SectorSize;
-            sectorsToRead = BOOT_BLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
-            if(BOOT_BLOCK_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+            sbSector = BOOT_BLOCK_LOCATION / imagePlugin.Info.SectorSize;
+            sectorsToRead = BOOT_BLOCK_SIZE / imagePlugin.Info.SectorSize;
+            if(BOOT_BLOCK_SIZE % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
             if(sbSector + partition.Start + sectorsToRead >= partition.End) return false;
 
@@ -258,16 +244,17 @@ namespace DiscImageChef.Filesystems
             bytes *= 0x100000000;
             bytes += drSb.disc_size;
 
-            return bytes <= imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize;
+            return bytes <= imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize;
         }
 
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             StringBuilder sbInformation = new StringBuilder();
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
             information = "";
 
             ulong sbSector;
@@ -313,19 +300,19 @@ namespace DiscImageChef.Filesystems
                         namebytes[i * 2 + 1] = oldMap1.name[i];
                     }
 
-                    XmlFsType = new FileSystemType
+                    xmlFsType = new FileSystemType
                     {
                         Bootable = oldMap1.boot != 0, // Or not?
-                        Clusters = (long)(bytes / imagePlugin.ImageInfo.SectorSize),
-                        ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
+                        Clusters = (long)(bytes / imagePlugin.Info.SectorSize),
+                        ClusterSize = (int)imagePlugin.Info.SectorSize,
                         Type = "Acorn Advanced Disc Filing System"
                     };
 
                     if(ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
                     {
-                        sbSector = OLD_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
-                        sectorsToRead = OLD_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
-                        if(OLD_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                        sbSector = OLD_DIRECTORY_LOCATION / imagePlugin.Info.SectorSize;
+                        sectorsToRead = OLD_DIRECTORY_SIZE / imagePlugin.Info.SectorSize;
+                        if(OLD_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
                         sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                         if(sector.Length > OLD_DIRECTORY_SIZE)
@@ -344,9 +331,9 @@ namespace DiscImageChef.Filesystems
                         else
                         {
                             // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
-                            sbSector = NEW_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
-                            sectorsToRead = NEW_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
-                            if(NEW_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                            sbSector = NEW_DIRECTORY_LOCATION / imagePlugin.Info.SectorSize;
+                            sectorsToRead = NEW_DIRECTORY_SIZE / imagePlugin.Info.SectorSize;
+                            if(NEW_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
                             sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                             if(sector.Length > OLD_DIRECTORY_SIZE)
@@ -384,17 +371,17 @@ namespace DiscImageChef.Filesystems
 
                     sbInformation.AppendLine("Acorn Advanced Disc Filing System");
                     sbInformation.AppendLine();
-                    sbInformation.AppendFormat("{0} bytes per sector", imagePlugin.ImageInfo.SectorSize).AppendLine();
+                    sbInformation.AppendFormat("{0} bytes per sector", imagePlugin.Info.SectorSize).AppendLine();
                     sbInformation.AppendFormat("Volume has {0} bytes", bytes).AppendLine();
-                    sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(namebytes, CurrentEncoding))
+                    sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(namebytes, currentEncoding))
                                  .AppendLine();
                     if(oldMap1.discId > 0)
                     {
-                        XmlFsType.VolumeSerial = $"{oldMap1.discId:X4}";
+                        xmlFsType.VolumeSerial = $"{oldMap1.discId:X4}";
                         sbInformation.AppendFormat("Volume ID: {0:X4}", oldMap1.discId).AppendLine();
                     }
                     if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
-                        XmlFsType.VolumeName = StringHandlers.CToString(namebytes, CurrentEncoding);
+                        xmlFsType.VolumeName = StringHandlers.CToString(namebytes, currentEncoding);
 
                     information = sbInformation.ToString();
 
@@ -410,9 +397,9 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
-            sbSector = BOOT_BLOCK_LOCATION / imagePlugin.ImageInfo.SectorSize;
-            sectorsToRead = BOOT_BLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
-            if(BOOT_BLOCK_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+            sbSector = BOOT_BLOCK_LOCATION / imagePlugin.Info.SectorSize;
+            sectorsToRead = BOOT_BLOCK_SIZE / imagePlugin.Info.SectorSize;
+            if(BOOT_BLOCK_SIZE % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
             byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
             int bootChk = 0;
@@ -452,7 +439,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size = {0}", drSb.disc_size);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_id = {0}", drSb.disc_id);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_name = {0}",
-                                      StringHandlers.CToString(drSb.disc_name, CurrentEncoding));
+                                      StringHandlers.CToString(drSb.disc_name, currentEncoding));
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_type = {0}", drSb.disc_type);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.flags = {0}", drSb.flags);
@@ -476,9 +463,9 @@ namespace DiscImageChef.Filesystems
             zones *= 0x100000000;
             zones += drSb.nzones;
 
-            if(bytes > imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize) return;
+            if(bytes > imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) return;
 
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
 
             sbInformation.AppendLine("Acorn Advanced Disc Filing System");
             sbInformation.AppendLine();
@@ -496,80 +483,75 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume flags: 0x{0:X4}", drSb.flags).AppendLine();
             if(drSb.disc_id > 0)
             {
-                XmlFsType.VolumeSerial = $"{drSb.disc_id:X4}";
+                xmlFsType.VolumeSerial = $"{drSb.disc_id:X4}";
                 sbInformation.AppendFormat("Volume ID: {0:X4}", drSb.disc_id).AppendLine();
             }
             if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))
             {
-                string discname = StringHandlers.CToString(drSb.disc_name, CurrentEncoding);
-                XmlFsType.VolumeName = discname;
+                string discname = StringHandlers.CToString(drSb.disc_name, currentEncoding);
+                xmlFsType.VolumeName = discname;
                 sbInformation.AppendFormat("Volume name: {0}", discname).AppendLine();
             }
 
             information = sbInformation.ToString();
 
-            XmlFsType.Bootable |= drSb.bootoption != 0; // Or not?
-            XmlFsType.Clusters = (long)(bytes / (ulong)(1 << drSb.log2secsize));
-            XmlFsType.ClusterSize = 1 << drSb.log2secsize;
-            XmlFsType.Type = "Acorn Advanced Disc Filing System";
+            xmlFsType.Bootable |= drSb.bootoption != 0; // Or not?
+            xmlFsType.Clusters = (long)(bytes / (ulong)(1 << drSb.log2secsize));
+            xmlFsType.ClusterSize = 1 << drSb.log2secsize;
+            xmlFsType.Type = "Acorn Advanced Disc Filing System";
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

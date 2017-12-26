@@ -40,36 +40,22 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class Cram : Filesystem
+    public class Cram : IFilesystem
     {
         /// <summary>
         ///     Identifier for Cram
         /// </summary>
         const uint CRAM_MAGIC = 0x28CD3D45;
         const uint CRAM_CIGAM = 0x453DCD28;
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public Cram()
-        {
-            Name = "Cram filesystem";
-            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Cram filesystem";
+        public virtual Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
 
-        public Cram(Encoding encoding)
-        {
-            Name = "Cram filesystem";
-            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public Cram(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Cram filesystem";
-            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -80,8 +66,9 @@ namespace DiscImageChef.Filesystems
             return magic == CRAM_MAGIC || magic == CRAM_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -107,7 +94,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendLine("Cram file system");
             sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
             sbInformation.AppendFormat("Volume edition {0}", crSb.edition).AppendLine();
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, CurrentEncoding))
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, currentEncoding))
                          .AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", crSb.size).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", crSb.blocks).AppendLine();
@@ -115,9 +102,9 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
-                VolumeName = StringHandlers.CToString(crSb.name, CurrentEncoding),
+                VolumeName = StringHandlers.CToString(crSb.name, currentEncoding),
                 Type = "Cram file system",
                 Clusters = crSb.blocks,
                 Files = crSb.files,
@@ -127,62 +114,57 @@ namespace DiscImageChef.Filesystems
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

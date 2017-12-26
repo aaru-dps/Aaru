@@ -80,22 +80,22 @@ namespace DiscImageChef.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hpfs", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new Vdi();
+                IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new HPFS();
+                IFilesystem fs = new HPFS();
                 Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
-                fs.GetInformation(image, partitions[0], out _);
-                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HPFS", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+                fs.GetInformation(image, partitions[0], out _, null);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("HPFS", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }

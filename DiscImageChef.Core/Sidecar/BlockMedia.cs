@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
@@ -60,8 +61,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void BlockMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void BlockMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.BlockMedia = new[]
             {
@@ -76,14 +77,14 @@ namespace DiscImageChef.Core
                         Value = Path.GetFileName(imagePath)
                     },
                     Size = fi.Length,
-                    Sequence = new SequenceType {MediaTitle = image.ImageInfo.MediaTitle}
+                    Sequence = new SequenceType {MediaTitle = image.Info.MediaTitle}
                 }
             };
 
-            if(image.ImageInfo.MediaSequence != 0 && image.ImageInfo.LastMediaSequence != 0)
+            if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
             {
-                sidecar.BlockMedia[0].Sequence.MediaSequence = image.ImageInfo.MediaSequence;
-                sidecar.BlockMedia[0].Sequence.TotalMedia = image.ImageInfo.LastMediaSequence;
+                sidecar.BlockMedia[0].Sequence.MediaSequence = image.Info.MediaSequence;
+                sidecar.BlockMedia[0].Sequence.TotalMedia = image.Info.LastMediaSequence;
             }
             else
             {
@@ -91,7 +92,7 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].Sequence.TotalMedia = 1;
             }
 
-            foreach(MediaTagType tagType in image.ImageInfo.ReadableMediaTags)
+            foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
                 switch(tagType)
                 {
                     case MediaTagType.ATAPI_IDENTIFY:
@@ -242,7 +243,7 @@ namespace DiscImageChef.Core
                 }
 
             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
-            if(image.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
+            if(image.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
                filterId == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
             else
@@ -253,7 +254,7 @@ namespace DiscImageChef.Core
                 //goto skipImageChecksum;
 
                 uint sectorsToRead = 512;
-                ulong sectors = image.ImageInfo.Sectors;
+                ulong sectors = image.Info.Sectors;
                 ulong doneSectors = 0;
 
                 InitProgress2();
@@ -287,17 +288,17 @@ namespace DiscImageChef.Core
                 EndProgress2();
             }
 
-            MediaType.MediaTypeToString(image.ImageInfo.MediaType, out string dskType, out string dskSubType);
+            MediaType.MediaTypeToString(image.Info.MediaType, out string dskType, out string dskSubType);
             sidecar.BlockMedia[0].DiskType = dskType;
             sidecar.BlockMedia[0].DiskSubType = dskSubType;
-            Statistics.AddMedia(image.ImageInfo.MediaType, false);
+            Statistics.AddMedia(image.Info.MediaType, false);
 
-            sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(image.ImageInfo.MediaType);
+            sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
 
-            sidecar.BlockMedia[0].LogicalBlocks = (long)image.ImageInfo.Sectors;
-            sidecar.BlockMedia[0].LogicalBlockSize = (int)image.ImageInfo.SectorSize;
+            sidecar.BlockMedia[0].LogicalBlocks = (long)image.Info.Sectors;
+            sidecar.BlockMedia[0].LogicalBlockSize = (int)image.Info.SectorSize;
             // TODO: Detect it
-            sidecar.BlockMedia[0].PhysicalBlockSize = (int)image.ImageInfo.SectorSize;
+            sidecar.BlockMedia[0].PhysicalBlockSize = (int)image.Info.SectorSize;
 
             UpdateStatus("Checking filesystems...");
 
@@ -321,14 +322,14 @@ namespace DiscImageChef.Core
                     };
                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                    foreach(Filesystem plugin in plugins.PluginsList.Values)
+                    foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
                         {
                             if(!plugin.Identify(image, partitions[i])) continue;
 
-                            plugin.GetInformation(image, partitions[i], out _);
-                            lstFs.Add(plugin.XmlFSType);
-                            Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                            plugin.GetInformation(image, partitions[i], out _, encoding);
+                            lstFs.Add(plugin.XmlFsType);
+                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch
@@ -345,26 +346,26 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType
                 {
                     StartSector = 0,
-                    EndSector = (int)(image.ImageInfo.Sectors - 1)
+                    EndSector = (int)(image.Info.Sectors - 1)
                 };
 
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = image.ImageInfo.Sectors,
-                    Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
+                    Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
 
                 List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                foreach(Filesystem plugin in plugins.PluginsList.Values)
+                foreach(IFilesystem plugin in plugins.PluginsList.Values)
                     try
                     {
                         if(!plugin.Identify(image, wholePart)) continue;
 
-                        plugin.GetInformation(image, wholePart, out _);
-                        lstFs.Add(plugin.XmlFSType);
-                        Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                        plugin.GetInformation(image, wholePart, out _, encoding);
+                        lstFs.Add(plugin.XmlFsType);
+                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
                     }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
@@ -376,17 +377,17 @@ namespace DiscImageChef.Core
                 if(lstFs.Count > 0) sidecar.BlockMedia[0].FileSystemInformation[0].FileSystems = lstFs.ToArray();
             }
 
-            if(image.ImageInfo.Cylinders > 0 && image.ImageInfo.Heads > 0 && image.ImageInfo.SectorsPerTrack > 0)
+            if(image.Info.Cylinders > 0 && image.Info.Heads > 0 && image.Info.SectorsPerTrack > 0)
             {
                 sidecar.BlockMedia[0].CylindersSpecified = true;
                 sidecar.BlockMedia[0].HeadsSpecified = true;
                 sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
-                sidecar.BlockMedia[0].Cylinders = image.ImageInfo.Cylinders;
-                sidecar.BlockMedia[0].Heads = image.ImageInfo.Heads;
-                sidecar.BlockMedia[0].SectorsPerTrack = image.ImageInfo.SectorsPerTrack;
+                sidecar.BlockMedia[0].Cylinders = image.Info.Cylinders;
+                sidecar.BlockMedia[0].Heads = image.Info.Heads;
+                sidecar.BlockMedia[0].SectorsPerTrack = image.Info.SectorsPerTrack;
             }
 
-            if(image.ImageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+            if(image.Info.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
             {
                 Identify.IdentifyDevice? ataId = Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
                 if(ataId.HasValue)
@@ -414,7 +415,7 @@ namespace DiscImageChef.Core
             // TODO: This is more of a hack, redo it planned for >4.0
             string trkFormat = null;
 
-            switch(image.ImageInfo.MediaType)
+            switch(image.Info.MediaType)
             {
                 case CommonTypes.MediaType.Apple32SS:
                 case CommonTypes.MediaType.Apple32DS:
@@ -541,14 +542,14 @@ namespace DiscImageChef.Core
                 ZZZNoFilter scpFilter = new ZZZNoFilter();
                 scpFilter.Open(scpFilePath);
 
-                if(image.ImageInfo.Heads <= 2 && scpImage.IdentifyImage(scpFilter))
+                if(image.Info.Heads <= 2 && scpImage.IdentifyImage(scpFilter))
                 {
                     try { scpImage.OpenImage(scpFilter); }
                     catch(NotImplementedException) { }
 
-                    if(image.ImageInfo.Heads == 2 && scpImage.Header.heads == 0 || image.ImageInfo.Heads == 1 &&
+                    if(image.Info.Heads == 2 && scpImage.Header.heads == 0 || image.Info.Heads == 1 &&
                        (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
-                        if(scpImage.Header.end + 1 >= image.ImageInfo.Cylinders)
+                        if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                         {
                             List<BlockTrackType> scpBlockTrackTypes = new List<BlockTrackType>();
                             long currentSector = 0;
@@ -558,8 +559,8 @@ namespace DiscImageChef.Core
                             {
                                 BlockTrackType scpBlockTrackType = new BlockTrackType
                                 {
-                                    Cylinder = t / image.ImageInfo.Heads,
-                                    Head = t % image.ImageInfo.Heads,
+                                    Cylinder = t / image.Info.Heads,
+                                    Head = t % image.Info.Heads,
                                     Image = new ImageType
                                     {
                                         format = scpImage.ImageFormat,
@@ -568,13 +569,13 @@ namespace DiscImageChef.Core
                                     }
                                 };
 
-                                if(scpBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
+                                if(scpBlockTrackType.Cylinder < image.Info.Cylinders)
                                 {
                                     scpBlockTrackType.StartSector = currentSector;
-                                    currentSector += image.ImageInfo.SectorsPerTrack;
+                                    currentSector += image.Info.SectorsPerTrack;
                                     scpBlockTrackType.EndSector = currentSector - 1;
-                                    scpBlockTrackType.Sectors = image.ImageInfo.SectorsPerTrack;
-                                    scpBlockTrackType.BytesPerSector = (int)image.ImageInfo.SectorSize;
+                                    scpBlockTrackType.Sectors = image.Info.SectorsPerTrack;
+                                    scpBlockTrackType.BytesPerSector = (int)image.Info.SectorSize;
                                     scpBlockTrackType.Format = trkFormat;
                                 }
 
@@ -598,11 +599,11 @@ namespace DiscImageChef.Core
                         else
                             DicConsole
                                 .ErrorWriteLine("SuperCardPro image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
-                                                scpImage.Header.end + 1, image.ImageInfo.Cylinders);
+                                                scpImage.Header.end + 1, image.Info.Cylinders);
                     else
                         DicConsole
                             .ErrorWriteLine("SuperCardPro image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                                            2, image.ImageInfo.Heads);
+                                            2, image.Info.Heads);
                 }
             }
             #endregion
@@ -630,24 +631,24 @@ namespace DiscImageChef.Core
                 KryoFlux kfImage = new KryoFlux();
                 ZZZNoFilter kfFilter = new ZZZNoFilter();
                 kfFilter.Open(kfFile);
-                if(image.ImageInfo.Heads <= 2 && kfImage.IdentifyImage(kfFilter))
+                if(image.Info.Heads <= 2 && kfImage.IdentifyImage(kfFilter))
                 {
                     try { kfImage.OpenImage(kfFilter); }
                     catch(NotImplementedException) { }
 
-                    if(kfImage.ImageInfo.Heads == image.ImageInfo.Heads)
-                        if(kfImage.ImageInfo.Cylinders >= image.ImageInfo.Cylinders)
+                    if(kfImage.Info.Heads == image.Info.Heads)
+                        if(kfImage.Info.Cylinders >= image.Info.Cylinders)
                         {
                             List<BlockTrackType> kfBlockTrackTypes = new List<BlockTrackType>();
 
                             long currentSector = 0;
 
-                            foreach(KeyValuePair<byte, Filter> kvp in kfImage.tracks)
+                            foreach(KeyValuePair<byte, IFilter> kvp in kfImage.tracks)
                             {
                                 BlockTrackType kfBlockTrackType = new BlockTrackType
                                 {
-                                    Cylinder = kvp.Key / image.ImageInfo.Heads,
-                                    Head = kvp.Key % image.ImageInfo.Heads,
+                                    Cylinder = kvp.Key / image.Info.Heads,
+                                    Head = kvp.Key % image.Info.Heads,
                                     Image = new ImageType
                                     {
                                         format = kfImage.ImageFormat,
@@ -660,13 +661,13 @@ namespace DiscImageChef.Core
                                     }
                                 };
 
-                                if(kfBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
+                                if(kfBlockTrackType.Cylinder < image.Info.Cylinders)
                                 {
                                     kfBlockTrackType.StartSector = currentSector;
-                                    currentSector += image.ImageInfo.SectorsPerTrack;
+                                    currentSector += image.Info.SectorsPerTrack;
                                     kfBlockTrackType.EndSector = currentSector - 1;
-                                    kfBlockTrackType.Sectors = image.ImageInfo.SectorsPerTrack;
-                                    kfBlockTrackType.BytesPerSector = (int)image.ImageInfo.SectorSize;
+                                    kfBlockTrackType.Sectors = image.Info.SectorsPerTrack;
+                                    kfBlockTrackType.BytesPerSector = (int)image.Info.SectorSize;
                                     kfBlockTrackType.Format = trkFormat;
                                 }
 
@@ -686,11 +687,11 @@ namespace DiscImageChef.Core
                         else
                             DicConsole
                                 .ErrorWriteLine("KryoFlux image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
-                                                kfImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
+                                                kfImage.Info.Cylinders, image.Info.Cylinders);
                     else
                         DicConsole
                             .ErrorWriteLine("KryoFluximage do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                                            kfImage.ImageInfo.Heads, image.ImageInfo.Heads);
+                                            kfImage.Info.Heads, image.Info.Heads);
                 }
             }
             #endregion
@@ -710,8 +711,8 @@ namespace DiscImageChef.Core
             try { dfiImage.OpenImage(dfiFilter); }
             catch(NotImplementedException) { }
 
-            if(image.ImageInfo.Heads == dfiImage.ImageInfo.Heads)
-                if(dfiImage.ImageInfo.Cylinders >= image.ImageInfo.Cylinders)
+            if(image.Info.Heads == dfiImage.Info.Heads)
+                if(dfiImage.Info.Cylinders >= image.Info.Cylinders)
                 {
                     List<BlockTrackType> dfiBlockTrackTypes = new List<BlockTrackType>();
                     long currentSector = 0;
@@ -721,18 +722,18 @@ namespace DiscImageChef.Core
                     {
                         BlockTrackType dfiBlockTrackType = new BlockTrackType
                         {
-                            Cylinder = t / image.ImageInfo.Heads,
-                            Head = t % image.ImageInfo.Heads,
+                            Cylinder = t / image.Info.Heads,
+                            Head = t % image.Info.Heads,
                             Image = new ImageType {format = dfiImage.ImageFormat, Value = Path.GetFileName(dfiFilePath)}
                         };
 
-                        if(dfiBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
+                        if(dfiBlockTrackType.Cylinder < image.Info.Cylinders)
                         {
                             dfiBlockTrackType.StartSector = currentSector;
-                            currentSector += image.ImageInfo.SectorsPerTrack;
+                            currentSector += image.Info.SectorsPerTrack;
                             dfiBlockTrackType.EndSector = currentSector - 1;
-                            dfiBlockTrackType.Sectors = image.ImageInfo.SectorsPerTrack;
-                            dfiBlockTrackType.BytesPerSector = (int)image.ImageInfo.SectorSize;
+                            dfiBlockTrackType.Sectors = image.Info.SectorsPerTrack;
+                            dfiBlockTrackType.BytesPerSector = (int)image.Info.SectorSize;
                             dfiBlockTrackType.Format = trkFormat;
                         }
 
@@ -756,11 +757,11 @@ namespace DiscImageChef.Core
                 else
                     DicConsole
                         .ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
-                                        dfiImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
+                                        dfiImage.Info.Cylinders, image.Info.Cylinders);
             else
                 DicConsole
                     .ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                                    dfiImage.ImageInfo.Heads, image.ImageInfo.Heads);
+                                    dfiImage.Info.Heads, image.Info.Heads);
             #endregion
 
             // TODO: Implement support for getting CHS from SCSI mode pages

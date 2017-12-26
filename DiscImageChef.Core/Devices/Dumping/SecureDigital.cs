@@ -451,10 +451,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins(encoding);
+            plugins.RegisterAllPlugins();
 
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(outputPrefix + ".bin");
+            IFilter inputFilter = filtersList.GetFilter(outputPrefix + ".bin");
 
             if(inputFilter == null)
             {
@@ -462,7 +462,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            ImagePlugin imageFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
             PartitionType[] xmlFileSysInfo = null;
 
             try { if(!imageFormat.OpenImage(inputFilter)) imageFormat = null; }
@@ -494,15 +494,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           i, partitions[i].Start, partitions[i].End, partitions[i].Type,
                                           partitions[i].Scheme);
 
-                        foreach(Filesystem plugin in plugins.PluginsList.Values)
+                        foreach(IFilesystem plugin in plugins.PluginsList.Values)
                             try
                             {
                                 if(!plugin.Identify(imageFormat, partitions[i])) continue;
 
-                                plugin.GetInformation(imageFormat, partitions[i], out _);
-                                lstFs.Add(plugin.XmlFSType);
-                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
+                                plugin.GetInformation(imageFormat, partitions[i], out _, encoding);
+                                lstFs.Add(plugin.XmlFsType);
+                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFsType.Type);
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             catch
@@ -525,15 +525,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Partition wholePart =
                         new Partition {Name = "Whole device", Length = blocks, Size = blocks * blockSize};
 
-                    foreach(Filesystem plugin in plugins.PluginsList.Values)
+                    foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
                         {
                             if(!plugin.Identify(imageFormat, wholePart)) continue;
 
-                            plugin.GetInformation(imageFormat, wholePart, out _);
-                            lstFs.Add(plugin.XmlFSType);
-                            Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                            dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
+                            plugin.GetInformation(imageFormat, wholePart, out _, encoding);
+                            lstFs.Add(plugin.XmlFsType);
+                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                            dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFsType.Type);
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch

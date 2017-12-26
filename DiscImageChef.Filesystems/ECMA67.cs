@@ -41,32 +41,18 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class ECMA67 : Filesystem
+    public class ECMA67 : IFilesystem
     {
         readonly byte[] ECMA67_Magic = {0x56, 0x4F, 0x4C};
 
-        public ECMA67()
-        {
-            Name = "ECMA-67";
-            PluginUuid = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-        }
+        Encoding currentEncoding;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "ECMA-67";
+        public virtual Guid Id => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public ECMA67(Encoding encoding)
-        {
-            Name = "ECMA-67";
-            PluginUuid = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public ECMA67(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "ECMA-67";
-            PluginUuid = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start > 0) return false;
 
@@ -85,8 +71,10 @@ namespace DiscImageChef.Filesystems
             return ECMA67_Magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] sector = imagePlugin.ReadSector(6);
 
             StringBuilder sbInformation = new StringBuilder();
@@ -102,7 +90,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(vol.volumeIdentifier)).AppendLine();
             sbInformation.AppendFormat("Volume owner: {0}", Encoding.ASCII.GetString(vol.owner)).AppendLine();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "ECMA-67",
                 ClusterSize = 256,
@@ -113,62 +101,57 @@ namespace DiscImageChef.Filesystems
             information = sbInformation.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

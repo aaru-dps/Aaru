@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -64,7 +64,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             return Errno.NoError;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -103,7 +103,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             return Errno.NoError;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -148,7 +148,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             return Errno.NoError;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             // TODO: Not really important.
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;

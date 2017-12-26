@@ -41,7 +41,7 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
-    public class AppleHFSPlus : Filesystem
+    public class AppleHFSPlus : IFilesystem
     {
         /// <summary>
         ///     "BD", HFS magic
@@ -56,37 +56,25 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const ushort HFSX_MAGIC = 0x4858;
 
-        public AppleHFSPlus()
-        {
-            Name = "Apple HFS+ filesystem";
-            PluginUuid = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
-            CurrentEncoding = Encoding.BigEndianUnicode;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public AppleHFSPlus(Encoding encoding)
-        {
-            Name = "Apple HFS+ filesystem";
-            PluginUuid = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
-            CurrentEncoding = Encoding.BigEndianUnicode;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Apple HFS+ filesystem";
+        public virtual Guid Id => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
 
-        public AppleHFSPlus(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "Apple HFS+ filesystem";
-            PluginUuid = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
-            CurrentEncoding = Encoding.BigEndianUnicode;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
+            currentEncoding = Encoding.BigEndianUnicode;
             if(2 + partition.Start >= partition.End) return false;
 
             ushort drSigWord;
 
             ulong hfspOffset;
 
-            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
-            if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+            uint sectorsToRead = 0x800 / imagePlugin.Info.SectorSize;
+            if(0x800 % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
             byte[] vhSector = imagePlugin.ReadSectors(partition.Start, sectorsToRead);
 
@@ -104,7 +92,7 @@ namespace DiscImageChef.Filesystems
 
                     ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.ImageInfo.SectorSize);
+                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
                 }
                 else hfspOffset = 0;
             }
@@ -116,7 +104,8 @@ namespace DiscImageChef.Filesystems
             return drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
             information = "";
 
@@ -126,8 +115,8 @@ namespace DiscImageChef.Filesystems
             ulong hfspOffset;
             bool wrapped;
 
-            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
-            if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+            uint sectorsToRead = 0x800 / imagePlugin.Info.SectorSize;
+            if(0x800 % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
             byte[] vhSector = imagePlugin.ReadSectors(partition.Start, sectorsToRead);
 
@@ -145,7 +134,7 @@ namespace DiscImageChef.Filesystems
 
                     ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.ImageInfo.SectorSize);
+                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
                     wrapped = true;
                 }
                 else
@@ -230,35 +219,35 @@ namespace DiscImageChef.Filesystems
                         sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7)
                           .AppendLine();
 
-                    XmlFsType = new FileSystemType();
+                    xmlFsType = new FileSystemType();
                     if(HPVH.backupDate > 0)
                     {
-                        XmlFsType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
-                        XmlFsType.BackupDateSpecified = true;
+                        xmlFsType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
+                        xmlFsType.BackupDateSpecified = true;
                     }
-                    XmlFsType.Bootable |= HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0;
-                    XmlFsType.Clusters = HPVH.totalBlocks;
-                    XmlFsType.ClusterSize = (int)HPVH.blockSize;
+                    xmlFsType.Bootable |= HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0;
+                    xmlFsType.Clusters = HPVH.totalBlocks;
+                    xmlFsType.ClusterSize = (int)HPVH.blockSize;
                     if(HPVH.createDate > 0)
                     {
-                        XmlFsType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
-                        XmlFsType.CreationDateSpecified = true;
+                        xmlFsType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
+                        xmlFsType.CreationDateSpecified = true;
                     }
-                    XmlFsType.Dirty = (HPVH.attributes & 0x100) != 0x100;
-                    XmlFsType.Files = HPVH.fileCount;
-                    XmlFsType.FilesSpecified = true;
-                    XmlFsType.FreeClusters = HPVH.freeBlocks;
-                    XmlFsType.FreeClustersSpecified = true;
+                    xmlFsType.Dirty = (HPVH.attributes & 0x100) != 0x100;
+                    xmlFsType.Files = HPVH.fileCount;
+                    xmlFsType.FilesSpecified = true;
+                    xmlFsType.FreeClusters = HPVH.freeBlocks;
+                    xmlFsType.FreeClustersSpecified = true;
                     if(HPVH.modifyDate > 0)
                     {
-                        XmlFsType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
-                        XmlFsType.ModificationDateSpecified = true;
+                        xmlFsType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
+                        xmlFsType.ModificationDateSpecified = true;
                     }
-                    if(HPVH.signature == 0x482B) XmlFsType.Type = "HFS+";
-                    if(HPVH.signature == 0x4858) XmlFsType.Type = "HFSX";
+                    if(HPVH.signature == 0x482B) xmlFsType.Type = "HFS+";
+                    if(HPVH.signature == 0x4858) xmlFsType.Type = "HFSX";
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
-                        XmlFsType.VolumeSerial = $"{HPVH.drFndrInfo6:X8}{HPVH.drFndrInfo7:X8}";
-                    XmlFsType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
+                        xmlFsType.VolumeSerial = $"{HPVH.drFndrInfo6:X8}{HPVH.drFndrInfo7:X8}";
+                    xmlFsType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
                 }
                 else
                 {
@@ -271,62 +260,57 @@ namespace DiscImageChef.Filesystems
             else return;
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

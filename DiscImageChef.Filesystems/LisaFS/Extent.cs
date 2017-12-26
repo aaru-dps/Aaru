@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             // TODO: Not really important.
             return Errno.NotImplemented;
@@ -78,11 +78,11 @@ namespace DiscImageChef.Filesystems.LisaFS
             // This happens on some disks.
             // This is a filesystem corruption that makes LisaOS crash on scavenge.
             // This code just allow to ignore that corruption by searching the Extents File using sector tags
-            if(ptr >= device.ImageInfo.Sectors)
+            if(ptr >= device.Info.Sectors)
             {
                 bool found = false;
 
-                for(ulong i = 0; i < device.ImageInfo.Sectors; i++)
+                for(ulong i = 0; i < device.Info.Sectors; i++)
                 {
                     DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out extTag);
                     if(extTag.FileId != fileId * -1) continue;
@@ -185,7 +185,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId,
-                                      StringHandlers.CToString(file.filename, CurrentEncoding));
+                                      StringHandlers.CToString(file.filename, currentEncoding));
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);
@@ -219,7 +219,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password_valid = {1}", fileId,
                                       file.password_valid > 0);
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId,
-                                      CurrentEncoding.GetString(file.password));
+                                      currentEncoding.GetString(file.password));
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId,
                                       file.unknown7[0], file.unknown7[1], file.unknown7[2]);
             DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);

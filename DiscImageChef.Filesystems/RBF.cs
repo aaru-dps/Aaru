@@ -41,36 +41,23 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class RBF : Filesystem
+    public class RBF : IFilesystem
     {
         /// <summary>Magic number for OS-9. Same for OS-9000?</summary>
         const uint RBF_SYNC = 0x4372757A;
         const uint RBF_CNYS = 0x7A757243;
 
-        public RBF()
-        {
-            Name = "OS-9 Random Block File Plugin";
-            PluginUuid = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public RBF(Encoding encoding)
-        {
-            Name = "OS-9 Random Block File Plugin";
-            PluginUuid = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "OS-9 Random Block File Plugin";
+        public virtual Guid Id => new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
 
-        public RBF(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "OS-9 Random Block File Plugin";
-            PluginUuid = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 256) return false;
+            if(imagePlugin.Info.SectorSize < 256) return false;
 
             // Documentation says ID should be sector 0
             // I've found that OS-9/X68000 has it on sector 4
@@ -79,10 +66,10 @@ namespace DiscImageChef.Filesystems
             {
                 RBF_IdSector rbfSb = new RBF_IdSector();
 
-                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.ImageInfo.SectorSize);
-                if(Marshal.SizeOf(rbfSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf(rbfSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-                if(partition.Start + location + sbSize >= imagePlugin.ImageInfo.Sectors) break;
+                if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(rbfSb)) return false;
@@ -101,18 +88,19 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 256) return;
+            if(imagePlugin.Info.SectorSize < 256) return;
 
             RBF_IdSector rbfSb = new RBF_IdSector();
             RBF_NewIdSector rbf9000Sb = new RBF_NewIdSector();
 
             foreach(ulong location in new[] {0, 4, 15})
             {
-                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.ImageInfo.SectorSize);
-                if(Marshal.SizeOf(rbfSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf(rbfSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(rbfSb)) return;
@@ -166,10 +154,10 @@ namespace DiscImageChef.Filesystems
                   .AppendLine();
                 sb.AppendFormat("Volume's identification block was last written on {0}",
                                 DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime)).AppendLine();
-                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbf9000Sb.rid_name, CurrentEncoding))
+                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbf9000Sb.rid_name, currentEncoding))
                   .AppendLine();
 
-                XmlFsType = new FileSystemType
+                xmlFsType = new FileSystemType
                 {
                     Type = "OS-9 Random Block File",
                     Bootable = rbf9000Sb.rid_bootfile > 0,
@@ -179,7 +167,7 @@ namespace DiscImageChef.Filesystems
                     CreationDateSpecified = true,
                     ModificationDate = DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime),
                     ModificationDateSpecified = true,
-                    VolumeName = StringHandlers.CToString(rbf9000Sb.rid_name, CurrentEncoding),
+                    VolumeName = StringHandlers.CToString(rbf9000Sb.rid_name, currentEncoding),
                     VolumeSerial = $"{rbf9000Sb.rid_diskid:X8}"
                 };
             }
@@ -210,12 +198,12 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Disk is owned by user {0}", rbfSb.dd_own).AppendLine();
                 sb.AppendFormat("Volume was created on {0}", DateHandlers.Os9ToDateTime(rbfSb.dd_dat)).AppendLine();
                 sb.AppendFormat("Volume attributes: {0:X2}", rbfSb.dd_att).AppendLine();
-                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbfSb.dd_nam, CurrentEncoding))
+                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbfSb.dd_nam, currentEncoding))
                   .AppendLine();
-                sb.AppendFormat("Path descriptor options: {0}", StringHandlers.CToString(rbfSb.dd_opt, CurrentEncoding))
+                sb.AppendFormat("Path descriptor options: {0}", StringHandlers.CToString(rbfSb.dd_opt, currentEncoding))
                   .AppendLine();
 
-                XmlFsType = new FileSystemType
+                xmlFsType = new FileSystemType
                 {
                     Type = "OS-9 Random Block File",
                     Bootable = LSNToUInt32(rbfSb.dd_bt) > 0 && rbfSb.dd_bsz > 0,
@@ -223,7 +211,7 @@ namespace DiscImageChef.Filesystems
                     Clusters = LSNToUInt32(rbfSb.dd_tot),
                     CreationDate = DateHandlers.Os9ToDateTime(rbfSb.dd_dat),
                     CreationDateSpecified = true,
-                    VolumeName = StringHandlers.CToString(rbfSb.dd_nam, CurrentEncoding),
+                    VolumeName = StringHandlers.CToString(rbfSb.dd_nam, currentEncoding),
                     VolumeSerial = $"{rbfSb.dd_dsk:X4}"
                 };
             }
@@ -238,62 +226,57 @@ namespace DiscImageChef.Filesystems
             return (uint)((lsn[0] << 16) + (lsn[1] << 8) + lsn[2]);
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

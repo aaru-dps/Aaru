@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.DiscImages;
 using Schemas;
 
@@ -51,8 +52,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void LinearMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void LinearMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.LinearMedia = new[]
             {

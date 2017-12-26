@@ -46,7 +46,7 @@ namespace DiscImageChef.Core
         /// <param name="imagePlugin">Media image</param>
         /// <param name="idPlugins">List of plugins recognizing the filesystem</param>
         /// <param name="partition">Partition</param>
-        public static void Identify(ImagePlugin imagePlugin, out List<string> idPlugins, Partition partition)
+        public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition)
         {
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();

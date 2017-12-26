@@ -46,7 +46,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
@@ -61,7 +61,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <param name="path">File path.</param>
         /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
         /// <param name="buf">Buffer.</param>
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;

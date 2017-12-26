@@ -44,7 +44,7 @@ namespace DiscImageChef.DiscImages
 {
     // TODO: There seems no be no clear definition on how to treat pregaps that are not included in the file, so this is just appending it to start of track
     // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
-    public class Gdi : ImagePlugin
+    public class Gdi : IMediaImage
     {
         const string REGEX_TRACK =
             @"\s?(?<track>\d+)\s+(?<start>\d+)\s(?<flags>\d)\s(?<type>2352|2048)\s(?<filename>.+)\s(?<offset>\d+)$";
@@ -52,6 +52,7 @@ namespace DiscImageChef.DiscImages
         ulong densitySeparationSectors;
         GdiDisc discimage;
         StreamReader gdiStream;
+        ImageInfo imageInfo;
         Stream imageStream;
         /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
         Dictionary<uint, ulong> offsetmap;
@@ -59,9 +60,7 @@ namespace DiscImageChef.DiscImages
 
         public Gdi()
         {
-            Name = "Dreamcast GDI image";
-            PluginUuid = new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -83,11 +82,15 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "Dreamcast GDI image";
+        public virtual string Name => "Dreamcast GDI image";
+        public virtual Guid Id => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions => partitions;
+        public virtual string ImageFormat => "Dreamcast GDI image";
 
-        public override List<Track> Tracks
+        public virtual List<Partition> Partitions => partitions;
+
+        public virtual List<Track> Tracks
         {
             get
             {
@@ -122,10 +125,10 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override List<Session> Sessions => discimage.Sessions;
+        public virtual List<Session> Sessions => discimage.Sessions;
 
         // Due to .gdi format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             try
             {
@@ -187,7 +190,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             if(imageFilter == null) return false;
 
@@ -389,35 +392,35 @@ namespace DiscImageChef.DiscImages
                     partitions.Add(partition);
                 }
 
-                foreach(GdiTrack track in discimage.Tracks) ImageInfo.ImageSize += track.Bps * track.Sectors;
-                foreach(GdiTrack track in discimage.Tracks) ImageInfo.Sectors += track.Sectors;
+                foreach(GdiTrack track in discimage.Tracks) imageInfo.ImageSize += track.Bps * track.Sectors;
+                foreach(GdiTrack track in discimage.Tracks) imageInfo.Sectors += track.Sectors;
 
-                ImageInfo.Sectors += densitySeparationSectors;
+                imageInfo.Sectors += densitySeparationSectors;
 
-                ImageInfo.SectorSize = 2352; // All others
+                imageInfo.SectorSize = 2352; // All others
 
                 foreach(GdiTrack unused in
                     discimage.Tracks.Where(track => (track.Flags & 0x40) == 0x40 && track.Bps == 2352))
                 {
-                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
-                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                 }
 
-                ImageInfo.CreationTime = imageFilter.GetCreationTime();
-                ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                imageInfo.CreationTime = imageFilter.GetCreationTime();
+                imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-                ImageInfo.MediaType = discimage.Disktype;
+                imageInfo.MediaType = discimage.Disktype;
 
-                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
-                ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                DicConsole.VerboseWriteLine("GDI image describes a disc of type {0}", ImageInfo.MediaType);
+                DicConsole.VerboseWriteLine("GDI image describes a disc of type {0}", imageInfo.MediaType);
 
                 return true;
             }
@@ -430,32 +433,32 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             return ReadSectors(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -472,7 +475,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -489,7 +492,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(track == 0)
             {
@@ -589,7 +592,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(track == 0)
             {
@@ -745,17 +748,17 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             return ReadSectorsLong(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -768,7 +771,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(track == 0)
             {
@@ -868,14 +871,14 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             if(discimage.Sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             List<Track> tracks = new List<Track>();
             bool expectedDensity;
@@ -920,19 +923,19 @@ namespace DiscImageChef.DiscImages
             return tracks;
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
@@ -962,7 +965,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
@@ -992,7 +995,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }
@@ -1002,7 +1005,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>Track #</summary>
             public uint Sequence;
             /// <summary>Track filter</summary>
-            public Filter Trackfilter;
+            public IFilter Trackfilter;
             /// <summary>Track file</summary>
             public string Trackfile;
             /// <summary>Track byte offset in file</summary>

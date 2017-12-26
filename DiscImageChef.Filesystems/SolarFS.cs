@@ -41,30 +41,17 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Based on FAT's BPB, cannot find a FAT or directory
-    public class SolarFS : Filesystem
+    public class SolarFS : IFilesystem
     {
-        public SolarFS()
-        {
-            Name = "Solar_OS filesystem";
-            PluginUuid = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public SolarFS(Encoding encoding)
-        {
-            Name = "Solar_OS filesystem";
-            PluginUuid = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Solar_OS filesystem";
+        public virtual Guid Id => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
 
-        public SolarFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Solar_OS filesystem";
-            PluginUuid = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -81,8 +68,9 @@ namespace DiscImageChef.Filesystems
             return signature == 0x29 && fsType == "SOL_FS  ";
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -104,10 +92,10 @@ namespace DiscImageChef.Filesystems
             bpb.OEMName = StringHandlers.CToString(bpbStrings);
             bpbStrings = new byte[8];
             Array.Copy(bpbSector, 0x2A, bpbStrings, 0, 11);
-            bpb.vol_name = StringHandlers.CToString(bpbStrings, CurrentEncoding);
+            bpb.vol_name = StringHandlers.CToString(bpbStrings, currentEncoding);
             bpbStrings = new byte[8];
             Array.Copy(bpbSector, 0x35, bpbStrings, 0, 8);
-            bpb.fs_type = StringHandlers.CToString(bpbStrings, CurrentEncoding);
+            bpb.fs_type = StringHandlers.CToString(bpbStrings, currentEncoding);
 
             bpb.x86_jump = new byte[3];
             Array.Copy(bpbSector, 0x00, bpb.x86_jump, 0, 3);
@@ -141,27 +129,27 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("Solar_OS filesystem");
             sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
             sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
-            if(imagePlugin.ImageInfo.SectorSize == 2336 || imagePlugin.ImageInfo.SectorSize == 2352 ||
-               imagePlugin.ImageInfo.SectorSize == 2448)
+            if(imagePlugin.Info.SectorSize == 2336 || imagePlugin.Info.SectorSize == 2352 ||
+               imagePlugin.Info.SectorSize == 2448)
             {
-                if(bpb.bps != imagePlugin.ImageInfo.SectorSize)
+                if(bpb.bps != imagePlugin.Info.SectorSize)
                     sb
                         .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
                                       bpb.bps, 2048).AppendLine();
             }
-            else if(bpb.bps != imagePlugin.ImageInfo.SectorSize)
+            else if(bpb.bps != imagePlugin.Info.SectorSize)
                 sb
                     .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
-                                  bpb.bps, imagePlugin.ImageInfo.SectorSize).AppendLine();
+                                  bpb.bps, imagePlugin.Info.SectorSize).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", bpb.sectors, bpb.sectors * bpb.bps).AppendLine();
-            if(bpb.sectors > imagePlugin.ImageInfo.Sectors)
+            if(bpb.sectors > imagePlugin.Info.Sectors)
                 sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)",
-                                bpb.sectors, imagePlugin.ImageInfo.Sectors);
+                                bpb.sectors, imagePlugin.Info.Sectors);
             sb.AppendFormat("{0} heads", bpb.heads).AppendLine();
             sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
             sb.AppendFormat("Volume name: {0}", bpb.vol_name).AppendLine();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "SolarFS",
                 Clusters = bpb.sectors,
@@ -172,62 +160,57 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

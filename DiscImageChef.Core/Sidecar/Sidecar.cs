@@ -49,11 +49,11 @@ namespace DiscImageChef.Core
         /// <param name="filterId">Filter uuid</param>
         /// <param name="encoding">Encoding for analysis</param>
         /// <returns>The metadata sidecar</returns>
-        public static CICMMetadataType Create(ImagePlugin image, string imagePath, Guid filterId, Encoding encoding)
+        public static CICMMetadataType Create(IMediaImage image, string imagePath, Guid filterId, Encoding encoding)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins(encoding);
+            plugins.RegisterAllPlugins();
 
             FileInfo fi = new FileInfo(imagePath);
             FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
@@ -93,19 +93,19 @@ namespace DiscImageChef.Core
 
             List<ChecksumType> imgChecksums = imgChkWorker.End();
 
-            switch(image.ImageInfo.XmlMediaType)
+            switch(image.Info.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc:
-                    OpticalDisc(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar);
+                    OpticalDisc(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
                     break;
                 case XmlMediaType.BlockMedia:
-                    BlockMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar);
+                    BlockMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
                     break;
                 case XmlMediaType.LinearMedia:
-                    LinearMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar);
+                    LinearMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
                     break;
                 case XmlMediaType.AudioMedia:
-                    AudioMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar);
+                    AudioMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
                     break;
             }
 

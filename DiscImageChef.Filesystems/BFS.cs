@@ -41,7 +41,7 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from Practical Filesystem Design, ISBN 1-55860-497-9
-    public class BeFS : Filesystem
+    public class BeFS : IFilesystem
     {
         // Little endian constants (that is, as read by .NET :p)
         const uint BEFS_MAGIC1 = 0x42465331;
@@ -54,29 +54,15 @@ namespace DiscImageChef.Filesystems
         // Common constants
         const uint BEFS_CLEAN = 0x434C454E;
         const uint BEFS_DIRTY = 0x44495254;
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public BeFS()
-        {
-            Name = "Be Filesystem";
-            PluginUuid = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Be Filesystem";
+        public virtual Guid Id => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
 
-        public BeFS(Encoding encoding)
-        {
-            Name = "Be Filesystem";
-            PluginUuid = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public BeFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Be Filesystem";
-            PluginUuid = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -106,8 +92,9 @@ namespace DiscImageChef.Filesystems
             return magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -183,7 +170,7 @@ namespace DiscImageChef.Filesystems
                     break;
             }
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, currentEncoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();
             sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size)
               .AppendLine();
@@ -209,7 +196,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Clusters = besb.num_blocks,
                 ClusterSize = (int)besb.block_size,
@@ -217,66 +204,61 @@ namespace DiscImageChef.Filesystems
                 FreeClusters = besb.num_blocks - besb.used_blocks,
                 FreeClustersSpecified = true,
                 Type = "BeFS",
-                VolumeName = StringHandlers.CToString(besb.name, CurrentEncoding)
+                VolumeName = StringHandlers.CToString(besb.name, currentEncoding)
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

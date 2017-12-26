@@ -41,7 +41,7 @@ namespace DiscImageChef.Partitions
     // These partitions are hardwired in kernel sources for some UNIX versions predating System V.
     // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.
     // Currently only DEC devices used in Ultrix are added, probably it's missing a lot of entries.
-    public class UNIX : PartitionPlugin
+    public class UNIX : IPartition
     {
         readonly Partition[] RA60 =
         {
@@ -1369,20 +1369,17 @@ namespace DiscImageChef.Partitions
             }
         };
 
-        public UNIX()
-        {
-            Name = "UNIX hardwired";
-            PluginUuid = new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
-        }
+        public virtual string Name => "UNIX hardwired";
+        public virtual Guid Id => new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
             Partition[] parts;
 
             if(sectorOffset != 0) return false;
 
-            switch(imagePlugin.ImageInfo.MediaType)
+            switch(imagePlugin.Info.MediaType)
             {
                 case MediaType.RA60:
                     parts = RA60;

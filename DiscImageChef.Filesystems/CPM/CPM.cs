@@ -35,12 +35,12 @@ using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM : IFilesystem
     {
-        readonly ImagePlugin device;
         /// <summary>
         ///     True if <see cref="Identify" /> thinks this is a CP/M filesystem
         /// </summary>
@@ -50,6 +50,8 @@ namespace DiscImageChef.Filesystems.CPM
         ///     Cached <see cref="FileSystemInfo" />
         /// </summary>
         FileSystemInfo cpmStat;
+
+        Encoding currentEncoding;
         /// <summary>
         ///     Cached file passwords, decoded
         /// </summary>
@@ -59,6 +61,7 @@ namespace DiscImageChef.Filesystems.CPM
         ///     Stores all known CP/M disk definitions
         /// </summary>
         CpmDefinitions definitions;
+        IMediaImage device;
         /// <summary>
         ///     Cached directory listing
         /// </summary>
@@ -109,28 +112,10 @@ namespace DiscImageChef.Filesystems.CPM
         ///     If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it
         /// </summary>
         CpmDefinition workingDefinition;
-
-        public CPM()
-        {
-            Name = "CP/M File System";
-            PluginUuid = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
-            CurrentEncoding = Encoding.GetEncoding("IBM437");
-        }
-
-        public CPM(Encoding encoding)
-        {
-            Name = "CP/M File System";
-            PluginUuid = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
-        }
-
-        public CPM(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            device = imagePlugin;
-            this.partition = partition;
-            Name = "CP/M File System";
-            PluginUuid = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
-        }
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "CP/M File System";
+        public virtual Guid Id => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
     }
 }

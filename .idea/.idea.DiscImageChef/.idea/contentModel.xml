@@ -413,11 +413,12 @@
         <e p="DiscJuggler.cs" t="Include" />
         <e p="DiskCopy42.cs" t="Include" />
         <e p="DriDiskCopy.cs" t="Include" />
+        <e p="Enums.cs" t="Include" />
+        <e p="Exceptions.cs" t="Include" />
         <e p="GDI.cs" t="Include" />
         <e p="HDCopy.cs" t="Include" />
         <e p="IMD.cs" t="Include" />
-        <e p="ImageInfo.cs" t="Include" />
-        <e p="ImagePlugin.cs" t="Include" />
+        <e p="IMediaImage.cs" t="Include" />
         <e p="KryoFlux.cs" t="Include" />
         <e p="MaxiDisk.cs" t="Include" />
         <e p="NDIF.cs" t="Include" />
@@ -435,6 +436,7 @@
         <e p="RayDIM.cs" t="Include" />
         <e p="RsIde.cs" t="Include" />
         <e p="SaveDskF.cs" t="Include" />
+        <e p="Structs.cs" t="Include" />
         <e p="SuperCardPro.cs" t="Include" />
         <e p="T98.cs" t="Include" />
         <e p="TeleDisk.cs" t="Include" />
@@ -500,10 +502,10 @@
         <e p="FAT.cs" t="Include" />
         <e p="FATX.cs" t="Include" />
         <e p="FFS.cs" t="Include" />
-        <e p="Filesystem.cs" t="Include" />
         <e p="Fossil.cs" t="Include" />
         <e p="HAMMER.cs" t="Include" />
         <e p="HPFS.cs" t="Include" />
+        <e p="IFilesystem.cs" t="Include" />
         <e p="ISO9660" t="Include">
           <e p="Consts" t="Include">
             <e p="AAIP.cs" t="Include" />
@@ -609,10 +611,10 @@
         <e p="AppleSingle.cs" t="Include" />
         <e p="BZip2.cs" t="Include" />
         <e p="DiscImageChef.Filters.csproj" t="IncludeRecursive" />
-        <e p="Filter.cs" t="Include" />
         <e p="Filters.cs" t="Include" />
         <e p="ForcedSeekStream.cs" t="Include" />
         <e p="GZip.cs" t="Include" />
+        <e p="IFilter.cs" t="Include" />
         <e p="LZip.cs" t="Include" />
         <e p="MacBinary.cs" t="Include" />
         <e p="OffsetStream.cs" t="Include" />
@@ -690,10 +692,10 @@
         <e p="DragonFlyBSD.cs" t="Include" />
         <e p="GPT.cs" t="Include" />
         <e p="Human68k.cs" t="Include" />
+        <e p="IPartition.cs" t="Include" />
         <e p="MBR.cs" t="Include" />
         <e p="NeXT.cs" t="Include" />
         <e p="PC98.cs" t="Include" />
-        <e p="PartitionPlugin.cs" t="Include" />
         <e p="Plan9.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />

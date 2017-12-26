@@ -40,34 +40,21 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class FATX : Filesystem
+    public class FATX : IFilesystem
     {
         const uint FATX_MAGIC = 0x58544146;
 
-        public FATX()
-        {
-            Name = "FATX Filesystem Plugin";
-            PluginUuid = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public FATX(Encoding encoding)
-        {
-            Name = "FATX Filesystem Plugin";
-            PluginUuid = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "FATX Filesystem Plugin";
+        public virtual Guid Id => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
 
-        public FATX(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "FATX Filesystem Plugin";
-            PluginUuid = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
-            CurrentEncoding = Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             FATX_Superblock fatxSb;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
@@ -77,10 +64,12 @@ namespace DiscImageChef.Filesystems
             return fatxSb.magic == FATX_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = Encoding.UTF8;
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
             FATX_Superblock fatxSb;
 
@@ -95,76 +84,71 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("FATX filesystem");
             sb.AppendFormat("Filesystem id {0}", fatxSb.id).AppendLine();
             sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
-                            fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.SectorSize).AppendLine();
+                            fatxSb.sectorsPerCluster * imagePlugin.Info.SectorSize).AppendLine();
             sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "FATX filesystem",
-                ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.SectorSize)
+                ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.Info.SectorSize)
             };
-            XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
-                                        (ulong)XmlFsType.ClusterSize);
+            xmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                        (ulong)xmlFsType.ClusterSize);
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

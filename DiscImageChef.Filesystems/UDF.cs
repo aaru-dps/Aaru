@@ -43,7 +43,7 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // TODO: Detect bootable
-    public class UDF : Filesystem
+    public class UDF : IFilesystem
     {
         readonly byte[] UDF_Magic =
         {
@@ -51,36 +51,21 @@ namespace DiscImageChef.Filesystems
             0x74, 0x00, 0x00, 0x00, 0x00
         };
 
-        public UDF()
-        {
-            Name = "Universal Disk Format";
-            PluginUuid = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public UDF(Encoding encoding)
-        {
-            Name = "Universal Disk Format";
-            PluginUuid = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
-            // UDF is always UTF-8
-            CurrentEncoding = Encoding.UTF8;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Universal Disk Format";
+        public virtual Guid Id => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
 
-        public UDF(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Universal Disk Format";
-            PluginUuid = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
-            // UDF is always UTF-8
-            CurrentEncoding = Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // UDF needs at least that
             if(partition.End - partition.Start < 256) return false;
 
             // UDF needs at least that
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             byte[] sector;
             AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
@@ -161,8 +146,10 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            // UDF is always UTF-8
+            currentEncoding = Encoding.UTF8;
             byte[] sector;
 
             StringBuilder sbInformation = new StringBuilder();
@@ -268,10 +255,10 @@ namespace DiscImageChef.Filesystems
                 .AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories)
                 .AppendLine();
             sbInformation.AppendFormat("Volume conforms to {0}",
-                                       CurrentEncoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000'))
+                                       currentEncoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000'))
                          .AppendLine();
             sbInformation.AppendFormat("Volume was last written by: {0}",
-                                       CurrentEncoding
+                                       currentEncoding
                                            .GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'))
                          .AppendLine();
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read",
@@ -284,12 +271,12 @@ namespace DiscImageChef.Filesystems
                                        Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10),
                                        Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10)).AppendLine();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type =
                     $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}",
                 ApplicationIdentifier =
-                    CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
+                    currentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
                 ClusterSize = (int)lvd.logicalBlockSize,
                 ModificationDate = EcmaToDateTime(lvid.recordingDateTime),
                 ModificationDateSpecified = true,
@@ -297,10 +284,10 @@ namespace DiscImageChef.Filesystems
                 FilesSpecified = true,
                 VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
                 VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
-                SystemIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
+                SystemIdentifier = currentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
             };
-            XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
-                                        (ulong)XmlFsType.ClusterSize);
+            xmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                        (ulong)xmlFsType.ClusterSize);
 
             information = sbInformation.ToString();
         }
@@ -313,62 +300,57 @@ namespace DiscImageChef.Filesystems
                                                timestamp.microseconds);
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

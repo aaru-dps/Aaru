@@ -50,7 +50,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("PrintHex command", "--WidthBytes={0}", options.WidthBytes);
 
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -58,7 +58,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            ImagePlugin inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
 
             if(inputFormat == null)
             {
@@ -72,7 +72,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Sector {0}", options.StartSector + i);
 
-                if(inputFormat.ImageInfo.ReadableSectorTags == null)
+                if(inputFormat.Info.ReadableSectorTags == null)
                 {
                     DicConsole
                         .WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
@@ -80,7 +80,7 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    if(inputFormat.ImageInfo.ReadableSectorTags.Count == 0)
+                    if(inputFormat.Info.ReadableSectorTags.Count == 0)
                     {
                         DicConsole
                             .WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");

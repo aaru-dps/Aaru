@@ -40,38 +40,25 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class NintendoPlugin : Filesystem
+    public class NintendoPlugin : IFilesystem
     {
-        public NintendoPlugin()
-        {
-            Name = "Nintendo optical filesystems";
-            PluginUuid = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
-            CurrentEncoding = Encoding.GetEncoding("shift_jis");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public NintendoPlugin(Encoding encoding)
-        {
-            Name = "Nintendo optical filesystems";
-            PluginUuid = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Nintendo optical filesystems";
+        public virtual Guid Id => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
 
-        public NintendoPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Nintendo optical filesystems";
-            PluginUuid = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start != 0) return false;
 
-            if(imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize < 0x50000) return false;
+            if(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize < 0x50000) return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.ImageInfo.SectorSize);
+            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
 
             uint magicGc = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
@@ -79,16 +66,17 @@ namespace DiscImageChef.Filesystems
             return magicGc == 0xC2339F3D || magicWii == 0x5D1C9EA3;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
             StringBuilder sbInformation = new StringBuilder();
             information = "";
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
 
             NintendoFields fields = new NintendoFields();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.ImageInfo.SectorSize);
+            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
 
             bool wii = false;
 
@@ -109,7 +97,7 @@ namespace DiscImageChef.Filesystems
             fields.StreamBufferSize = header[9];
             byte[] temp = new byte[64];
             Array.Copy(header, 0x20, temp, 0, 64);
-            fields.Title = StringHandlers.CToString(temp, CurrentEncoding);
+            fields.Title = StringHandlers.CToString(temp, currentEncoding);
 
             if(!wii)
             {
@@ -303,12 +291,12 @@ namespace DiscImageChef.Filesystems
                              .AppendLine();
 
             information = sbInformation.ToString();
-            XmlFsType.Bootable = true;
-            XmlFsType.Clusters = (long)(imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize / 2048);
-            XmlFsType.ClusterSize = 2048;
-            XmlFsType.Type = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
-            XmlFsType.VolumeName = fields.Title;
-            XmlFsType.VolumeSerial = fields.DiscId;
+            xmlFsType.Bootable = true;
+            xmlFsType.Clusters = (long)(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048);
+            xmlFsType.ClusterSize = 2048;
+            xmlFsType.Type = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
+            xmlFsType.VolumeName = fields.Title;
+            xmlFsType.VolumeSerial = fields.DiscId;
         }
 
         static string DiscTypeToString(string discType)
@@ -408,62 +396,57 @@ namespace DiscImageChef.Filesystems
             return $"unknown type {type}";
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

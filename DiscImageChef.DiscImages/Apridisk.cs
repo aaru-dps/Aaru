@@ -41,7 +41,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class Apridisk : ImagePlugin
+    public class Apridisk : IMediaImage
     {
         readonly byte[] signature =
         {
@@ -54,15 +54,14 @@ namespace DiscImageChef.DiscImages
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00
         };
+        ImageInfo imageInfo;
 
         // Cylinder by head, sector data matrix
         byte[][][][] sectorsData;
 
         public Apridisk()
         {
-            Name = "ACT Apricot Disk Image";
-            PluginUuid = new Guid("43408CF3-6DB3-449F-A779-2B0E497C5B14");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -87,18 +86,23 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "ACT Apricot disk image";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions =>
+        public virtual string Name => "ACT Apricot Disk Image";
+        public virtual Guid Id => new Guid("43408CF3-6DB3-449F-A779-2B0E497C5B14");
+
+        public virtual string ImageFormat => "ACT Apricot disk image";
+
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -111,7 +115,7 @@ namespace DiscImageChef.DiscImages
             return sigB.SequenceEqual(signature);
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -147,16 +151,16 @@ namespace DiscImageChef.DiscImages
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                         byte[] commentB = new byte[record.dataSize];
                         stream.Read(commentB, 0, commentB.Length);
-                        ImageInfo.Comments = StringHandlers.CToString(commentB);
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", ImageInfo.Comments);
+                        imageInfo.Comments = StringHandlers.CToString(commentB);
+                        DicConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", imageInfo.Comments);
                         break;
                     case RecordType.Creator:
                         DicConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                         byte[] creatorB = new byte[record.dataSize];
                         stream.Read(creatorB, 0, creatorB.Length);
-                        ImageInfo.Creator = StringHandlers.CToString(creatorB);
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", ImageInfo.Creator);
+                        imageInfo.Creator = StringHandlers.CToString(creatorB);
+                        DicConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", imageInfo.Creator);
                         break;
                     case RecordType.Sector:
                         if(record.compression != CompressType.Compressed &&
@@ -193,8 +197,8 @@ namespace DiscImageChef.DiscImages
             // Total sectors per track
             uint[][] spts = new uint[totalCylinders][];
 
-            ImageInfo.Cylinders = (ushort)totalCylinders;
-            ImageInfo.Heads = (byte)totalHeads;
+            imageInfo.Cylinders = (ushort)totalCylinders;
+            imageInfo.Heads = (byte)totalHeads;
 
             DicConsole.DebugWriteLine("Apridisk plugin",
                                       "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
@@ -209,7 +213,7 @@ namespace DiscImageChef.DiscImages
                 for(int j = 0; j < totalHeads; j++) sectorsData[i][j] = new byte[maxSector + 1][];
             }
 
-            ImageInfo.SectorSize = uint.MaxValue;
+            imageInfo.SectorSize = uint.MaxValue;
 
             ulong headersizes = 0;
 
@@ -247,7 +251,7 @@ namespace DiscImageChef.DiscImages
                             realLength = Decompress(data, out sectorsData[record.cylinder][record.head][record.sector]);
                         else sectorsData[record.cylinder][record.head][record.sector] = data;
 
-                        if(realLength < ImageInfo.SectorSize) ImageInfo.SectorSize = realLength;
+                        if(realLength < imageInfo.SectorSize) imageInfo.SectorSize = realLength;
 
                         headersizes += record.headerSize + record.dataSize;
 
@@ -256,33 +260,33 @@ namespace DiscImageChef.DiscImages
             }
 
             DicConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} bytes per sector",
-                                      ImageInfo.SectorSize);
+                                      imageInfo.SectorSize);
 
             // Count sectors per track
             uint spt = uint.MaxValue;
-            for(ushort cyl = 0; cyl < ImageInfo.Cylinders; cyl++)
+            for(ushort cyl = 0; cyl < imageInfo.Cylinders; cyl++)
             {
-                for(ushort head = 0; head < ImageInfo.Heads; head++) if(spts[cyl][head] < spt) spt = spts[cyl][head];
+                for(ushort head = 0; head < imageInfo.Heads; head++) if(spts[cyl][head] < spt) spt = spts[cyl][head];
             }
 
-            ImageInfo.SectorsPerTrack = spt;
+            imageInfo.SectorsPerTrack = spt;
 
             DicConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} sectors per track",
-                                      ImageInfo.SectorsPerTrack);
+                                      imageInfo.SectorsPerTrack);
 
-            if(ImageInfo.Cylinders == 70 && ImageInfo.Heads == 1 && ImageInfo.SectorsPerTrack == 9)
-                ImageInfo.MediaType = MediaType.Apricot_35;
-            else if(ImageInfo.Cylinders == 80 && ImageInfo.Heads == 1 && ImageInfo.SectorsPerTrack == 9)
-                ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-            else if(ImageInfo.Cylinders == 80 && ImageInfo.Heads == 2 && ImageInfo.SectorsPerTrack == 9)
-                ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+            if(imageInfo.Cylinders == 70 && imageInfo.Heads == 1 && imageInfo.SectorsPerTrack == 9)
+                imageInfo.MediaType = MediaType.Apricot_35;
+            else if(imageInfo.Cylinders == 80 && imageInfo.Heads == 1 && imageInfo.SectorsPerTrack == 9)
+                imageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
+            else if(imageInfo.Cylinders == 80 && imageInfo.Heads == 2 && imageInfo.SectorsPerTrack == 9)
+                imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
 
-            ImageInfo.ImageSize = (ulong)stream.Length - headersizes;
-            ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.Sectors = ImageInfo.Cylinders * ImageInfo.Heads * ImageInfo.SectorsPerTrack;
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.ImageSize = (ulong)stream.Length - headersizes;
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             /*
             FileStream debugFs = new FileStream("debug.img", FileMode.CreateNew, FileAccess.Write);
@@ -318,7 +322,7 @@ namespace DiscImageChef.DiscImages
             return uLen;
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
@@ -334,12 +338,12 @@ namespace DiscImageChef.DiscImages
             return sectorsData[cylinder][head][sector];
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream buffer = new MemoryStream();
@@ -354,105 +358,105 @@ namespace DiscImageChef.DiscImages
 
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
-            ushort cylinder = (ushort)(lba / (ImageInfo.Heads * ImageInfo.SectorsPerTrack));
-            byte head = (byte)(lba / ImageInfo.SectorsPerTrack % ImageInfo.Heads);
-            byte sector = (byte)(lba % ImageInfo.SectorsPerTrack + 1);
+            ushort cylinder = (ushort)(lba / (imageInfo.Heads * imageInfo.SectorsPerTrack));
+            byte head = (byte)(lba / imageInfo.SectorsPerTrack % imageInfo.Heads);
+            byte sector = (byte)(lba % imageInfo.SectorsPerTrack + 1);
 
             return (cylinder, head, sector);
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
+            for(ulong i = 0; i < imageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }

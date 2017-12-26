@@ -39,7 +39,7 @@ namespace DiscImageChef.Filters
     /// <summary>
     ///     Decompress xz files while reading
     /// </summary>
-    public class XZ : Filter
+    public class XZ : IFilter
     {
         string basePath;
         DateTime creationTime;
@@ -49,13 +49,10 @@ namespace DiscImageChef.Filters
         DateTime lastWriteTime;
         bool opened;
 
-        public XZ()
-        {
-            Name = "XZ";
-            UUID = new Guid("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
-        }
+        public virtual string Name => "XZ";
+        public virtual Guid Id => new Guid("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
 
-        public override void Close()
+        public virtual void Close()
         {
             dataStream?.Close();
             dataStream = null;
@@ -63,39 +60,39 @@ namespace DiscImageChef.Filters
             opened = false;
         }
 
-        public override string GetBasePath()
+        public virtual string GetBasePath()
         {
             return basePath;
         }
 
-        public override Stream GetDataForkStream()
+        public virtual Stream GetDataForkStream()
         {
             return innerStream;
         }
 
-        public override string GetPath()
+        public virtual string GetPath()
         {
             return basePath;
         }
 
-        public override Stream GetResourceForkStream()
+        public virtual Stream GetResourceForkStream()
         {
             return null;
         }
 
-        public override bool HasResourceFork()
+        public virtual bool HasResourceFork()
         {
             return false;
         }
 
-        public override bool Identify(byte[] buffer)
+        public virtual bool Identify(byte[] buffer)
         {
             return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
                    buffer[4] == 0x5A && buffer[5] == 0x00 && buffer[buffer.Length - 2] == 0x59 &&
                    buffer[buffer.Length - 1] == 0x5A;
         }
 
-        public override bool Identify(Stream stream)
+        public virtual bool Identify(Stream stream)
         {
             byte[] buffer = new byte[6];
             byte[] footer = new byte[2];
@@ -110,7 +107,7 @@ namespace DiscImageChef.Filters
                    buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
         }
 
-        public override bool Identify(string path)
+        public virtual bool Identify(string path)
         {
             if(!File.Exists(path)) return false;
 
@@ -175,7 +172,7 @@ namespace DiscImageChef.Filters
             return i;
         }
 
-        public override void Open(byte[] buffer)
+        public virtual void Open(byte[] buffer)
         {
             dataStream = new MemoryStream(buffer);
             basePath = null;
@@ -186,7 +183,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public override void Open(Stream stream)
+        public virtual void Open(Stream stream)
         {
             dataStream = stream;
             basePath = null;
@@ -197,7 +194,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public override void Open(string path)
+        public virtual void Open(string path)
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
@@ -213,32 +210,32 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public override DateTime GetCreationTime()
+        public virtual DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public override long GetDataForkLength()
+        public virtual long GetDataForkLength()
         {
             return decompressedSize;
         }
 
-        public override DateTime GetLastWriteTime()
+        public virtual DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public override long GetLength()
+        public virtual long GetLength()
         {
             return decompressedSize;
         }
 
-        public override long GetResourceForkLength()
+        public virtual long GetResourceForkLength()
         {
             return 0;
         }
 
-        public override string GetFilename()
+        public virtual string GetFilename()
         {
             if(basePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 3);
@@ -248,12 +245,12 @@ namespace DiscImageChef.Filters
                        : basePath;
         }
 
-        public override string GetParentFolder()
+        public virtual string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public override bool IsOpened()
+        public virtual bool IsOpened()
         {
             return opened;
         }

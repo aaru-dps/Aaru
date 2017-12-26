@@ -35,15 +35,16 @@ using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS : Filesystem
+    public partial class AppleMFS : IFilesystem
     {
         bool mounted;
         bool debug;
-        ImagePlugin device;
+        IMediaImage device;
         ulong partitionStart;
 
         Dictionary<uint, string> idToFilename;
@@ -61,28 +62,29 @@ namespace DiscImageChef.Filesystems.AppleMFS
         byte[] mdbTags;
         byte[] directoryTags;
         byte[] bitmapTags;
+        Encoding currentEncoding;
+
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual string Name => "Apple Macintosh File System";
+        public virtual Guid Id => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+        public virtual Encoding Encoding => currentEncoding;
 
         public AppleMFS()
         {
-            Name = "Apple Macintosh File System";
-            PluginUuid = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-            CurrentEncoding = Encoding.GetEncoding("macintosh");
+            currentEncoding = Encoding.GetEncoding("macintosh");
         }
 
         public AppleMFS(Encoding encoding)
         {
-            Name = "Apple Macintosh File System";
-            PluginUuid = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
+            currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
 
-        public AppleMFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AppleMFS(IMediaImage imagePlugin, Partition partition, Encoding encoding)
         {
-            Name = "Apple Macintosh File System";
-            PluginUuid = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
             device = imagePlugin;
             partitionStart = partition.Start;
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
+            currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
     }
 }

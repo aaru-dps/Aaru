@@ -42,7 +42,7 @@ namespace DiscImageChef.Partitions
 {
     // Information about structures learnt from Inside Macintosh
     // Constants from image testing
-    public class AppleMap : PartitionPlugin
+    public class AppleMap : IPartition
     {
         /// <summary>"ER", driver descriptor magic</summary>
         const ushort DDM_MAGIC = 0x4552;
@@ -53,22 +53,19 @@ namespace DiscImageChef.Partitions
         /// <summary>Old indicator for HFS partition, "TFS1"</summary>
         const uint HFS_MAGIC_OLD = 0x54465331;
 
-        public AppleMap()
-        {
-            Name = "Apple Partition Map";
-            PluginUuid = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
-        }
+        public virtual string Name => "Apple Partition Map";
+        public virtual Guid Id => new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             uint sectorSize;
 
-            if(imagePlugin.ImageInfo.SectorSize == 2352 || imagePlugin.ImageInfo.SectorSize == 2448) sectorSize = 2048;
-            else sectorSize = imagePlugin.ImageInfo.SectorSize;
+            if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448) sectorSize = 2048;
+            else sectorSize = imagePlugin.Info.SectorSize;
 
             partitions = new List<Partition>();
 
-            if(sectorOffset + 2 >= imagePlugin.ImageInfo.Sectors) return false;
+            if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
             byte[] ddmSector = imagePlugin.ReadSector(sectorOffset);
 
@@ -313,24 +310,24 @@ namespace DiscImageChef.Partitions
                 }
 
                 _partition.Description = sb.ToString();
-                if(_partition.Start < imagePlugin.ImageInfo.Sectors && _partition.End < imagePlugin.ImageInfo.Sectors)
+                if(_partition.Start < imagePlugin.Info.Sectors && _partition.End < imagePlugin.Info.Sectors)
                 {
                     partitions.Add(_partition);
                     sequence++;
                 }
                 // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
-                else if(_partition.Start < imagePlugin.ImageInfo.Sectors)
+                else if(_partition.Start < imagePlugin.Info.Sectors)
                 {
                     DicConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
-                                              _partition.End, imagePlugin.ImageInfo.Sectors - 1);
-                    _partition.Length = imagePlugin.ImageInfo.Sectors - _partition.Start;
+                                              _partition.End, imagePlugin.Info.Sectors - 1);
+                    _partition.Length = imagePlugin.Info.Sectors - _partition.Start;
                     partitions.Add(_partition);
                     sequence++;
                 }
                 else
                     DicConsole.DebugWriteLine("AppleMap Plugin",
                                               "Not adding partition becaus start ({0}) is outside media size ({1})",
-                                              _partition.Start, imagePlugin.ImageInfo.Sectors - 1);
+                                              _partition.Start, imagePlugin.Info.Sectors - 1);
             }
 
             return partitions.Count > 0;

@@ -40,7 +40,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class DiscFerret : ImagePlugin
+    public class DiscFerret : IMediaImage
     {
         /// <summary>
         ///     "DFER"
@@ -50,15 +50,14 @@ namespace DiscImageChef.DiscImages
         ///     "DFE2"
         /// </summary>
         const uint DFI_MAGIC2 = 0x32454644;
+        ImageInfo imageInfo;
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<int, long> TrackLengths;
         public SortedDictionary<int, long> TrackOffsets;
 
         public DiscFerret()
         {
-            Name = "DiscFerret";
-            PluginUuid = new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -83,18 +82,22 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "DiscFerret";
+        public virtual string Name => "DiscFerret";
+        public virtual Guid Id => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions =>
+        public virtual string ImageFormat => "DiscFerret";
+
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             byte[] magicB = new byte[4];
             Stream stream = imageFilter.GetDataForkStream();
@@ -104,7 +107,7 @@ namespace DiscImageChef.DiscImages
             return magic == DFI_MAGIC || magic == DFI_MAGIC2;
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             byte[] magicB = new byte[4];
             Stream stream = imageFilter.GetDataForkStream();
@@ -162,117 +165,117 @@ namespace DiscImageChef.DiscImages
                     t++;
                 }
 
-                if(blockHeader.cylinder > ImageInfo.Cylinders) ImageInfo.Cylinders = blockHeader.cylinder;
-                if(blockHeader.head > ImageInfo.Heads) ImageInfo.Heads = blockHeader.head;
+                if(blockHeader.cylinder > imageInfo.Cylinders) imageInfo.Cylinders = blockHeader.cylinder;
+                if(blockHeader.head > imageInfo.Heads) imageInfo.Heads = blockHeader.head;
             }
 
-            ImageInfo.Heads++;
-            ImageInfo.Cylinders++;
+            imageInfo.Heads++;
+            imageInfo.Cylinders++;
 
-            ImageInfo.Application = "DiscFerret";
-            ImageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
+            imageInfo.Application = "DiscFerret";
+            imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

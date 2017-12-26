@@ -43,41 +43,26 @@ namespace DiscImageChef.Filesystems
 {
     // Information has been extracted looking at available disk images
     // This may be missing fields, or not, I don't know russian so any help is appreciated
-    public class AODOS : Filesystem
+    public class AODOS : IFilesystem
     {
         readonly byte[] AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual string Name => "Alexander Osipov DOS file system";
+        public virtual Guid Id => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+        public virtual Encoding Encoding => currentEncoding;
 
-        public AODOS()
-        {
-            Name = "Alexander Osipov DOS file system";
-            PluginUuid = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
-            CurrentEncoding = Encoding.GetEncoding("koi8-r");
-        }
-
-        public AODOS(Encoding encoding)
-        {
-            Name = "Alexander Osipov DOS file system";
-            PluginUuid = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
-            CurrentEncoding = Encoding.GetEncoding("koi8-r");
-        }
-
-        public AODOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Alexander Osipov DOS file system";
-            PluginUuid = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
-            CurrentEncoding = Encoding.GetEncoding("koi8-r");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // Does AO-DOS support hard disks?
             if(partition.Start > 0) return false;
 
             // How is it really?
-            if(imagePlugin.ImageInfo.SectorSize != 512) return false;
+            if(imagePlugin.Info.SectorSize != 512) return false;
 
             // Does AO-DOS support any other kind of disk?
-            if(imagePlugin.ImageInfo.Sectors != 800 && imagePlugin.ImageInfo.Sectors != 1600) return false;
+            if(imagePlugin.Info.Sectors != 800 && imagePlugin.Info.Sectors != 1600) return false;
 
             byte[] sector = imagePlugin.ReadSector(0);
             AODOS_BootBlock bb = new AODOS_BootBlock();
@@ -89,8 +74,9 @@ namespace DiscImageChef.Filesystems
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = Encoding.GetEncoding("koi8-r");
             byte[] sector = imagePlugin.ReadSector(0);
             AODOS_BootBlock bb = new AODOS_BootBlock();
             IntPtr bbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(bb));
@@ -102,83 +88,78 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine("Alexander Osipov DOS file system");
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "Alexander Osipov DOS file system",
-                Clusters = (long)imagePlugin.ImageInfo.Sectors,
-                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
+                Clusters = (long)imagePlugin.Info.Sectors,
+                ClusterSize = (int)imagePlugin.Info.SectorSize,
                 Files = bb.files,
                 FilesSpecified = true,
-                FreeClusters = (long)(imagePlugin.ImageInfo.Sectors - bb.usedSectors),
+                FreeClusters = (long)(imagePlugin.Info.Sectors - bb.usedSectors),
                 FreeClustersSpecified = true,
-                VolumeName = StringHandlers.SpacePaddedToString(bb.volumeLabel, CurrentEncoding),
+                VolumeName = StringHandlers.SpacePaddedToString(bb.volumeLabel, currentEncoding),
                 Bootable = true
             };
 
             sbInformation.AppendFormat("{0} files on volume", bb.files).AppendLine();
             sbInformation.AppendFormat("{0} used sectors on volume", bb.usedSectors).AppendLine();
-            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, CurrentEncoding))
+            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, currentEncoding))
                          .AppendLine();
 
             information = sbInformation.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

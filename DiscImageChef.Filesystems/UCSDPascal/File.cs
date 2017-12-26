@@ -38,12 +38,12 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -60,7 +60,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return error;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -79,7 +79,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 if(error != Errno.NoError) return error;
 
                 byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock));
-                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.ImageInfo.SectorSize +
+                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.Info.SectorSize +
                                 entry.lastBytes];
                 Array.Copy(tmp, 0, file, 0, file.Length);
             }
@@ -95,7 +95,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                     stat = new FileEntryInfo
                     {
                         Attributes = FileAttributes.System,
-                        BlockSize = device.ImageInfo.SectorSize,
+                        BlockSize = device.Info.SectorSize,
                         DeviceNo = 0,
                         GID = 0,
                         Inode = 0,
@@ -142,12 +142,12 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             {
                 Attributes = FileAttributes.File,
                 Blocks = entry.lastBlock - entry.firstBlock,
-                BlockSize = device.ImageInfo.SectorSize,
+                BlockSize = device.Info.SectorSize,
                 DeviceNo = 0,
                 GID = 0,
                 Inode = 0,
                 LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.mtime),
-                Length = (entry.lastBlock - entry.firstBlock) * device.ImageInfo.SectorSize + entry.lastBytes,
+                Length = (entry.lastBlock - entry.firstBlock) * device.Info.SectorSize + entry.lastBytes,
                 Links = 1,
                 Mode = 0x124,
                 UID = 0
@@ -164,7 +164,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                                                                  string.Compare(path,
                                                                                 StringHandlers
                                                                                     .PascalToString(ent.filename,
-                                                                                                    CurrentEncoding),
+                                                                                                    currentEncoding),
                                                                                 StringComparison
                                                                                     .InvariantCultureIgnoreCase) == 0))
             {

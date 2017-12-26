@@ -40,22 +40,19 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class GuidPartitionTable : PartitionPlugin
+    public class GuidPartitionTable : IPartition
     {
         const ulong GPT_MAGIC = 0x5452415020494645;
         const uint GPT_REVISION1 = 0x00010000;
 
-        public GuidPartitionTable()
-        {
-            Name = "GUID Partition Table";
-            PluginUuid = new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
-        }
+        public virtual string Name => "GUID Partition Table";
+        public virtual Guid Id => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
-            if(sectorOffset + 2 >= imagePlugin.ImageInfo.Sectors) return false;
+            if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
             byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
             GptHeader hdr;
@@ -66,7 +63,7 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
 
             if(signature != GPT_MAGIC)
-                if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+                if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
                     hdrBytes = imagePlugin.ReadSector(sectorOffset);
                     signature = BitConverter.ToUInt64(hdrBytes, 512);
@@ -121,11 +118,11 @@ namespace DiscImageChef.Partitions
             {
                 divisor = 1;
                 modulo = 0;
-                sectorSize = imagePlugin.ImageInfo.SectorSize;
+                sectorSize = imagePlugin.Info.SectorSize;
             }
 
-            uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.ImageInfo.SectorSize;
-            if(hdr.entries * hdr.entriesSize % imagePlugin.ImageInfo.SectorSize > 0) totalEntriesSectors++;
+            uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.Info.SectorSize;
+            if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0) totalEntriesSectors++;
 
             byte[] temp = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
             byte[] entriesBytes = new byte[temp.Length - modulo * 512];
@@ -165,8 +162,8 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
 
-                if(entry.startLBA / divisor > imagePlugin.ImageInfo.Sectors ||
-                   entry.endLBA / divisor > imagePlugin.ImageInfo.Sectors) return false;
+                if(entry.startLBA / divisor > imagePlugin.Info.Sectors ||
+                   entry.endLBA / divisor > imagePlugin.Info.Sectors) return false;
 
                 Partition part = new Partition
                 {

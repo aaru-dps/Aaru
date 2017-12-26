@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class VxFS : Filesystem
+    public class VxFS : IFilesystem
     {
         /// <summary>
         ///     Identifier for VxFS
@@ -48,30 +48,17 @@ namespace DiscImageChef.Filesystems
         const uint VXFS_MAGIC = 0xA501FCF5;
         const uint VXFS_BASE = 0x400;
 
-        public VxFS()
-        {
-            Name = "Veritas filesystem";
-            PluginUuid = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public VxFS(Encoding encoding)
-        {
-            Name = "Veritas filesystem";
-            PluginUuid = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Veritas filesystem";
+        public virtual Guid Id => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
 
-        public VxFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "Veritas filesystem";
-            PluginUuid = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            ulong vmfsSuperOff = VXFS_BASE / imagePlugin.ImageInfo.SectorSize;
+            ulong vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
 
             if(partition.Start + vmfsSuperOff >= partition.End) return false;
 
@@ -82,9 +69,10 @@ namespace DiscImageChef.Filesystems
             return magic == VXFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
-            ulong vmfsSuperOff = VXFS_BASE / imagePlugin.ImageInfo.SectorSize;
+            currentEncoding = encoding ?? Encoding.UTF8;
+            ulong vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             VxSuperBlock vxSb = new VxSuperBlock();
@@ -98,7 +86,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendLine("Veritas file system");
 
             sbInformation.AppendFormat("Volume version {0}", vxSb.vs_version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, CurrentEncoding))
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, currentEncoding))
                          .AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size)
                          .AppendLine();
@@ -113,7 +101,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "Veritas file system",
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
@@ -128,62 +116,57 @@ namespace DiscImageChef.Filesystems
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

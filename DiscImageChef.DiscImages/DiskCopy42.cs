@@ -46,7 +46,7 @@ namespace DiscImageChef.DiscImages
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class DiskCopy42 : ImagePlugin
+    public class DiskCopy42 : IMediaImage
     {
         // format byte
         /// <summary>3.5", single side, double density, GCR</summary>
@@ -97,7 +97,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>Start of data sectors in disk image, should be 0x58</summary>
         uint dataOffset;
         /// <summary>Disk image file</summary>
-        Filter dc42ImageFilter;
+        IFilter dc42ImageFilter;
         /// <summary>Header of opened image</summary>
         Dc42Header header;
         /// <summary>Start of tags in disk image, after data sectors</summary>
@@ -105,12 +105,15 @@ namespace DiscImageChef.DiscImages
         bool twiggy;
         byte[] twiggyCache;
         byte[] twiggyCacheTags;
+        ImageInfo imageInfo;
+        public virtual ImageInfo Info => imageInfo;
+
+        public virtual string Name => "Apple DiskCopy 4.2";
+        public virtual Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
 
         public DiskCopy42()
         {
-            Name = "Apple DiskCopy 4.2";
-            PluginUuid = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -135,7 +138,7 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -216,7 +219,7 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -295,15 +298,15 @@ namespace DiscImageChef.DiscImages
 
             dataOffset = 0x54;
             tagOffset = header.TagSize != 0 ? 0x54 + header.DataSize : 0;
-            ImageInfo.SectorSize = 512;
+            imageInfo.SectorSize = 512;
             bptag = (uint)(header.TagSize != 0 ? 12 : 0);
             dc42ImageFilter = imageFilter;
 
-            ImageInfo.Sectors = header.DataSize / 512;
+            imageInfo.Sectors = header.DataSize / 512;
 
             if(header.TagSize != 0)
             {
-                bptag = (uint)(header.TagSize / ImageInfo.Sectors);
+                bptag = (uint)(header.TagSize / imageInfo.Sectors);
                 DicConsole.DebugWriteLine("DC42 plugin", "bptag = {0} bytes", bptag);
 
                 if(bptag != 12 && bptag != 20 && bptag != 24)
@@ -312,61 +315,61 @@ namespace DiscImageChef.DiscImages
                     return false;
                 }
 
-                ImageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
+                imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
             }
 
-            ImageInfo.ImageSize = ImageInfo.Sectors * ImageInfo.SectorSize + ImageInfo.Sectors * bptag;
-            ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.MediaTitle = header.DiskName;
+            imageInfo.ImageSize = imageInfo.Sectors * imageInfo.SectorSize + imageInfo.Sectors * bptag;
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.MediaTitle = header.DiskName;
 
             switch(header.Format)
             {
                 case kSonyFormat400K:
-                    ImageInfo.MediaType = ImageInfo.Sectors == 1600 ? MediaType.AppleSonyDS : MediaType.AppleSonySS;
+                    imageInfo.MediaType = imageInfo.Sectors == 1600 ? MediaType.AppleSonyDS : MediaType.AppleSonySS;
                     break;
                 case kSonyFormat800K:
-                    ImageInfo.MediaType = MediaType.AppleSonyDS;
+                    imageInfo.MediaType = MediaType.AppleSonyDS;
                     break;
                 case kSonyFormat720K:
-                    ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                    imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
                     break;
                 case kSonyFormat1440K:
-                    ImageInfo.MediaType = MediaType.DOS_35_HD;
+                    imageInfo.MediaType = MediaType.DOS_35_HD;
                     break;
                 case kSonyFormat1680K:
-                    ImageInfo.MediaType = MediaType.DMF;
+                    imageInfo.MediaType = MediaType.DMF;
                     break;
                 case kSigmaFormatTwiggy:
-                    ImageInfo.MediaType = MediaType.AppleFileWare;
+                    imageInfo.MediaType = MediaType.AppleFileWare;
                     break;
                 case kNotStandardFormat:
-                    switch(ImageInfo.Sectors)
+                    switch(imageInfo.Sectors)
                     {
                         case 9728:
-                            ImageInfo.MediaType = MediaType.AppleProfile;
+                            imageInfo.MediaType = MediaType.AppleProfile;
                             break;
                         case 19456:
-                            ImageInfo.MediaType = MediaType.AppleProfile;
+                            imageInfo.MediaType = MediaType.AppleProfile;
                             break;
                         case 38912:
-                            ImageInfo.MediaType = MediaType.AppleWidget;
+                            imageInfo.MediaType = MediaType.AppleWidget;
                             break;
                         case 39040:
-                            ImageInfo.MediaType = MediaType.AppleHD20;
+                            imageInfo.MediaType = MediaType.AppleHD20;
                             break;
                         default:
-                            ImageInfo.MediaType = MediaType.Unknown;
+                            imageInfo.MediaType = MediaType.Unknown;
                             break;
                     }
 
                     break;
                 default:
-                    ImageInfo.MediaType = MediaType.Unknown;
+                    imageInfo.MediaType = MediaType.Unknown;
                     break;
             }
 
-            if(ImageInfo.MediaType == MediaType.AppleFileWare)
+            if(imageInfo.MediaType == MediaType.AppleFileWare)
             {
                 byte[] data = new byte[header.DataSize];
                 byte[] tags = new byte[header.TagSize];
@@ -465,9 +468,9 @@ namespace DiscImageChef.DiscImages
 
                             if(dev != null) pre = $"{version.PreReleaseVersion}";
 
-                            ImageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                            ImageInfo.Application = version.VersionString;
-                            ImageInfo.Comments = version.VersionMessage;
+                            imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                            imageInfo.Application = version.VersionString;
+                            imageInfo.Comments = version.VersionMessage;
                         }
                     }
 
@@ -485,12 +488,11 @@ namespace DiscImageChef.DiscImages
 
                             if(dCpyMatch.Success)
                             {
-                                ImageInfo.Application = dCpyMatch.Groups["application"].Value;
-                                ImageInfo.ApplicationVersion = dCpyMatch.Groups["version"].Value;
+                                imageInfo.Application = dCpyMatch.Groups["application"].Value;
+                                imageInfo.ApplicationVersion = dCpyMatch.Groups["version"].Value;
 
                                 // Until MacRoman is implemented
-                                if(ImageInfo.Application == "ShrinkWrap?")
-                                    ImageInfo.Application = "ShrinkWrap™";
+                                if(imageInfo.Application == "ShrinkWrap?") imageInfo.Application = "ShrinkWrap™";
                             }
                         }
                     }
@@ -498,84 +500,84 @@ namespace DiscImageChef.DiscImages
             }
             catch(InvalidCastException) { }
 
-            DicConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", ImageInfo.Application,
-                                      ImageInfo.ApplicationVersion);
+            DicConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", imageInfo.Application,
+                                      imageInfo.ApplicationVersion);
 
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            DicConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", ImageInfo.MediaType);
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            DicConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", imageInfo.MediaType);
 
-            switch(ImageInfo.MediaType)
+            switch(imageInfo.MediaType)
             {
                 case MediaType.AppleSonySS:
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.Heads = 1;
-                    ImageInfo.SectorsPerTrack = 10;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.Heads = 1;
+                    imageInfo.SectorsPerTrack = 10;
                     break;
                 case MediaType.AppleSonyDS:
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.SectorsPerTrack = 10;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.Heads = 2;
+                    imageInfo.SectorsPerTrack = 10;
                     break;
                 case MediaType.DOS_35_DS_DD_9:
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.SectorsPerTrack = 9;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.Heads = 2;
+                    imageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_35_HD:
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.SectorsPerTrack = 18;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.Heads = 2;
+                    imageInfo.SectorsPerTrack = 18;
                     break;
                 case MediaType.DMF:
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.SectorsPerTrack = 21;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.Heads = 2;
+                    imageInfo.SectorsPerTrack = 21;
                     break;
                 case MediaType.AppleProfile:
-                    switch(ImageInfo.Sectors)
+                    switch(imageInfo.Sectors)
                     {
                         case 9728:
-                            ImageInfo.Cylinders = 152;
+                            imageInfo.Cylinders = 152;
                             break;
                         case 19456:
-                            ImageInfo.Cylinders = 304;
+                            imageInfo.Cylinders = 304;
                             break;
                     }
 
-                    ImageInfo.Heads = 4;
-                    ImageInfo.SectorsPerTrack = 16;
+                    imageInfo.Heads = 4;
+                    imageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.AppleWidget:
-                    ImageInfo.Cylinders = 608;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.SectorsPerTrack = 16;
+                    imageInfo.Cylinders = 608;
+                    imageInfo.Heads = 2;
+                    imageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.AppleHD20:
-                    ImageInfo.Cylinders = 610;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.SectorsPerTrack = 16;
+                    imageInfo.Cylinders = 610;
+                    imageInfo.Heads = 2;
+                    imageInfo.SectorsPerTrack = 16;
                     break;
                 default:
-                    ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
-                    ImageInfo.Heads = 16;
-                    ImageInfo.SectorsPerTrack = 63;
+                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / 16 / 63);
+                    imageInfo.Heads = 16;
+                    imageInfo.SectorsPerTrack = 63;
                     break;
             }
 
             return true;
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -586,7 +588,7 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -597,7 +599,7 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             byte[] data = new byte[header.DataSize];
             byte[] tags = new byte[header.TagSize];
@@ -629,50 +631,50 @@ namespace DiscImageChef.DiscImages
             return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.SectorSize];
+            byte[] buffer = new byte[length * imageInfo.SectorSize];
 
             if(twiggy)
-                Array.Copy(twiggyCache, (int)sectorAddress * ImageInfo.SectorSize, buffer, 0,
-                           length * ImageInfo.SectorSize);
+                Array.Copy(twiggyCache, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
+                           length * imageInfo.SectorSize);
             else
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();
-                stream.Seek((long)(dataOffset + sectorAddress * ImageInfo.SectorSize), SeekOrigin.Begin);
-                stream.Read(buffer, 0, (int)(length * ImageInfo.SectorSize));
+                stream.Seek((long)(dataOffset + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+                stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
             }
 
             return buffer;
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(tag != SectorTagType.AppleSectorTag)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
             if(header.TagSize == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
 
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] buffer = new byte[length * bptag];
@@ -688,17 +690,17 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] data = ReadSectors(sectorAddress, length);
@@ -707,66 +709,66 @@ namespace DiscImageChef.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * ImageInfo.SectorSize, buffer, i * (ImageInfo.SectorSize + bptag),
-                           ImageInfo.SectorSize);
-                Array.Copy(tags, i * bptag, buffer, i * (ImageInfo.SectorSize + bptag) + ImageInfo.SectorSize, bptag);
+                Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + bptag),
+                           imageInfo.SectorSize);
+                Array.Copy(tags, i * bptag, buffer, i * (imageInfo.SectorSize + bptag) + imageInfo.SectorSize, bptag);
             }
 
             return buffer;
         }
 
-        public override string ImageFormat => "Apple DiskCopy 4.2";
+        public virtual string ImageFormat => "Apple DiskCopy 4.2";
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Partition> Partitions =>
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

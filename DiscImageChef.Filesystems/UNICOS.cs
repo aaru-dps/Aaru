@@ -49,7 +49,7 @@ using time_t = System.Int64;
 
 namespace DiscImageChef.Filesystems
 {
-    public class UNICOS : Filesystem
+    public class UNICOS : IFilesystem
     {
         const int NC1MAXPART = 64;
         const int NC1MAXIREG = 4;
@@ -57,35 +57,22 @@ namespace DiscImageChef.Filesystems
         const ulong UNICOS_Magic = 0x6e6331667331636e;
         const ulong UNICOS_Secure = 0xcd076d1771d670cd;
 
-        public UNICOS()
-        {
-            Name = "UNICOS Filesystem Plugin";
-            PluginUuid = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public UNICOS(Encoding encoding)
-        {
-            Name = "UNICOS Filesystem Plugin";
-            PluginUuid = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "UNICOS Filesystem Plugin";
+        public virtual Guid Id => new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
 
-        public UNICOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "UNICOS Filesystem Plugin";
-            PluginUuid = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             UNICOS_Superblock unicosSb = new UNICOS_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(unicosSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(unicosSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return false;
@@ -98,15 +85,16 @@ namespace DiscImageChef.Filesystems
             return unicosSb.s_magic == UNICOS_Magic;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
             UNICOS_Superblock unicosSb = new UNICOS_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(unicosSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(unicosSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return;
@@ -128,79 +116,74 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume last updated on {0}", DateHandlers.UnixToDateTime(unicosSb.s_time)).AppendLine();
             if(unicosSb.s_error > 0)
                 sb.AppendFormat("Volume is dirty, error code = 0x{0:X16}", unicosSb.s_error).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(unicosSb.s_fname, CurrentEncoding))
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(unicosSb.s_fname, currentEncoding))
               .AppendLine();
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "UNICOS filesystem",
                 ClusterSize = 4096,
                 Clusters = unicosSb.s_fsize,
-                VolumeName = StringHandlers.CToString(unicosSb.s_fname, CurrentEncoding),
+                VolumeName = StringHandlers.CToString(unicosSb.s_fname, currentEncoding),
                 ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time),
                 ModificationDateSpecified = true
             };
-            XmlFsType.Dirty |= unicosSb.s_error > 0;
+            xmlFsType.Dirty |= unicosSb.s_error > 0;
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

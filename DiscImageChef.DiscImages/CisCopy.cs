@@ -55,15 +55,14 @@ namespace DiscImageChef.DiscImages
      * 2) High compression, algorithm unknown
      * Then the data for whole tracks follow.
      */
-    public class CisCopy : ImagePlugin
+    public class CisCopy : IMediaImage
     {
         byte[] decodedDisk;
+        ImageInfo imageInfo;
 
         public CisCopy()
         {
-            Name = "CisCopy Disk Image (DC-File)";
-            PluginUuid = new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -88,18 +87,22 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "CisCopy";
+        public virtual string Name => "CisCopy Disk Image (DC-File)";
+        public virtual Guid Id => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
 
-        public override List<Partition> Partitions =>
+        public virtual string ImageFormat => "CisCopy";
+
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public virtual ImageInfo Info => imageInfo;
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -169,7 +172,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -243,87 +246,87 @@ namespace DiscImageChef.DiscImages
                         debugStream.Close();
             */
 
-            ImageInfo.Application = "CisCopy";
-            ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.MediaTitle = imageFilter.GetFilename();
-            ImageInfo.ImageSize = (ulong)(stream.Length - 2 - trackBytes.Length);
-            ImageInfo.SectorSize = 512;
+            imageInfo.Application = "CisCopy";
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.MediaTitle = imageFilter.GetFilename();
+            imageInfo.ImageSize = (ulong)(stream.Length - 2 - trackBytes.Length);
+            imageInfo.SectorSize = 512;
 
             switch(type)
             {
                 case DiskType.MD1DD8:
-                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                    ImageInfo.Sectors = 40 * 1 * 8;
-                    ImageInfo.Heads = 1;
-                    ImageInfo.Cylinders = 40;
-                    ImageInfo.SectorsPerTrack = 8;
+                    imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
+                    imageInfo.Sectors = 40 * 1 * 8;
+                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders = 40;
+                    imageInfo.SectorsPerTrack = 8;
                     break;
                 case DiskType.MD2DD8:
-                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-                    ImageInfo.Sectors = 40 * 2 * 8;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.Cylinders = 40;
-                    ImageInfo.SectorsPerTrack = 8;
+                    imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
+                    imageInfo.Sectors = 40 * 2 * 8;
+                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders = 40;
+                    imageInfo.SectorsPerTrack = 8;
                     break;
                 case DiskType.MD1DD:
-                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                    ImageInfo.Sectors = 40 * 1 * 9;
-                    ImageInfo.Heads = 1;
-                    ImageInfo.Cylinders = 40;
-                    ImageInfo.SectorsPerTrack = 9;
+                    imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
+                    imageInfo.Sectors = 40 * 1 * 9;
+                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders = 40;
+                    imageInfo.SectorsPerTrack = 9;
                     break;
                 case DiskType.MD2DD:
-                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                    ImageInfo.Sectors = 40 * 2 * 9;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.Cylinders = 40;
-                    ImageInfo.SectorsPerTrack = 9;
+                    imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
+                    imageInfo.Sectors = 40 * 2 * 9;
+                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders = 40;
+                    imageInfo.SectorsPerTrack = 9;
                     break;
                 case DiskType.MF2DD:
-                    ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                    ImageInfo.Sectors = 80 * 2 * 9;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.SectorsPerTrack = 9;
+                    imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                    imageInfo.Sectors = 80 * 2 * 9;
+                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.SectorsPerTrack = 9;
                     break;
                 case DiskType.MD2HD:
-                    ImageInfo.MediaType = MediaType.DOS_525_HD;
-                    ImageInfo.Sectors = 80 * 2 * 15;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.SectorsPerTrack = 15;
+                    imageInfo.MediaType = MediaType.DOS_525_HD;
+                    imageInfo.Sectors = 80 * 2 * 15;
+                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.SectorsPerTrack = 15;
                     break;
                 case DiskType.MF2HD:
-                    ImageInfo.MediaType = MediaType.DOS_35_HD;
-                    ImageInfo.Sectors = 80 * 2 * 18;
-                    ImageInfo.Heads = 2;
-                    ImageInfo.Cylinders = 80;
-                    ImageInfo.SectorsPerTrack = 18;
+                    imageInfo.MediaType = MediaType.DOS_35_HD;
+                    imageInfo.Sectors = 80 * 2 * 18;
+                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders = 80;
+                    imageInfo.SectorsPerTrack = 18;
                     break;
             }
 
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             decodedDisk = decodedImage.ToArray();
 
             decodedImage.Close();
 
-            DicConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", ImageInfo.MediaType);
+            DicConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", imageInfo.MediaType);
 
             return true;
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -334,7 +337,7 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -345,93 +348,93 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.SectorSize];
+            byte[] buffer = new byte[length * imageInfo.SectorSize];
 
-            Array.Copy(decodedDisk, (int)sectorAddress * ImageInfo.SectorSize, buffer, 0,
-                       length * ImageInfo.SectorSize);
+            Array.Copy(decodedDisk, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
+                       length * imageInfo.SectorSize);
 
             return buffer;
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             // LisaFS does not support symbolic links (afaik)
             return Errno.NotSupported;
@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // as '-' is the path separator in Lisa OS
             contents = (from entry in catalogCache
                         where entry.parentID == dirId
-                        select StringHandlers.CToString(entry.filename, CurrentEncoding).Replace('/', '-')).ToList();
+                        select StringHandlers.CToString(entry.filename, currentEncoding).Replace('/', '-')).ToList();
 
             return Errno.NoError;
         }
@@ -164,7 +164,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Search for the first sector describing the catalog
             // While root catalog is not stored in S-Records, probably rest are? (unchecked)
             // If root catalog is not pointed in MDDF (unchecked) maybe it's always following S-Records File?
-            for(ulong i = 0; i < device.ImageInfo.Sectors; i++)
+            for(ulong i = 0; i < device.Info.Sectors; i++)
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag catTag);
 

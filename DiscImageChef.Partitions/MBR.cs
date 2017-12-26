@@ -41,7 +41,7 @@ using DiscImageChef.Helpers;
 namespace DiscImageChef.Partitions
 {
     // TODO: Support AAP extensions
-    public class MBR : PartitionPlugin
+    public class MBR : IPartition
     {
         const ulong GPT_MAGIC = 0x5452415020494645;
 
@@ -184,25 +184,22 @@ namespace DiscImageChef.Partitions
             "VMWare VMKCORE", "Linux RAID, FreeDOS", "SpeedStor, LANStep, PS/2 IML", "Xenix bad block"
         };
 
-        public MBR()
-        {
-            Name = "Master Boot Record";
-            PluginUuid = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
-        }
+        public virtual string Name => "Master Boot Record";
+        public virtual Guid Id => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             ulong counter = 0;
 
             partitions = new List<Partition>();
 
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
-            uint sectorSize = imagePlugin.ImageInfo.SectorSize;
+            uint sectorSize = imagePlugin.Info.SectorSize;
             // Divider of sector size in MBR between real sector size
             ulong divider = 1;
 
-            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 sectorSize = 512;
                 divider = 4;
@@ -229,7 +226,7 @@ namespace DiscImageChef.Partitions
                                                                     typeof(DiskManagerMasterBootRecord));
             handle.Free();
 
-            DicConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}", imagePlugin.ImageInfo.XmlMediaType);
+            DicConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}", imagePlugin.Info.XmlMediaType);
             DicConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
 
             if(mbr.magic != MBR_MAGIC) return false; // Not MBR
@@ -242,7 +239,7 @@ namespace DiscImageChef.Partitions
 
             if(signature == GPT_MAGIC) return false;
 
-            if(signature != GPT_MAGIC && imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(signature != GPT_MAGIC && imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 hdrBytes = imagePlugin.ReadSector(sectorOffset);
                 signature = BitConverter.ToUInt64(hdrBytes, 512);
@@ -288,10 +285,10 @@ namespace DiscImageChef.Partitions
                          entry.end_head != 0 || entry.end_sector != 0;
                 if(entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
                 {
-                    lbaStart = CHS.ToLBA(startCylinder, entry.start_head, startSector, imagePlugin.ImageInfo.Heads,
-                                         imagePlugin.ImageInfo.SectorsPerTrack);
-                    lbaSectors = CHS.ToLBA(endCylinder, entry.end_head, entry.end_sector, imagePlugin.ImageInfo.Heads,
-                                           imagePlugin.ImageInfo.SectorsPerTrack) - lbaStart;
+                    lbaStart = CHS.ToLBA(startCylinder, entry.start_head, startSector, imagePlugin.Info.Heads,
+                                         imagePlugin.Info.SectorsPerTrack);
+                    lbaSectors = CHS.ToLBA(endCylinder, entry.end_head, entry.end_sector, imagePlugin.Info.Heads,
+                                           imagePlugin.Info.SectorsPerTrack) - lbaStart;
                 }
 
                 // For optical media
@@ -300,15 +297,15 @@ namespace DiscImageChef.Partitions
 
                 if(minix && lbaStart == sectorOffset) minix = false;
 
-                if(lbaStart > imagePlugin.ImageInfo.Sectors)
+                if(lbaStart > imagePlugin.Info.Sectors)
                 {
                     valid = false;
                     extended = false;
                 }
 
                 // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-                if(lbaStart + lbaSectors > imagePlugin.ImageInfo.Sectors)
-                    lbaSectors = imagePlugin.ImageInfo.Sectors - lbaStart;
+                if(lbaStart + lbaSectors > imagePlugin.Info.Sectors)
+                    lbaSectors = imagePlugin.Info.Sectors - lbaStart;
 
                 DicConsole.DebugWriteLine("MBR plugin", "entry.status {0}", entry.status);
                 DicConsole.DebugWriteLine("MBR plugin", "entry.type {0}", entry.type);
@@ -334,7 +331,7 @@ namespace DiscImageChef.Partitions
                 if(valid && !minix)
                 {
                     Partition part = new Partition();
-                    if((lbaStart > 0 || imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc) &&
+                    if((lbaStart > 0 || imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc) &&
                        lbaSectors > 0)
                     {
                         part.Start = lbaStart + sectorOffset;
@@ -413,9 +410,9 @@ namespace DiscImageChef.Partitions
                         if(ebrEntry.lba_start == 0 && ebrEntry.lba_sectors == 0 && extValid)
                         {
                             extStart = CHS.ToLBA(startCylinder, ebrEntry.start_head, startSector,
-                                                 imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack);
+                                                 imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack);
                             extSectors = CHS.ToLBA(endCylinder, ebrEntry.end_head, ebrEntry.end_sector,
-                                                   imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack) -
+                                                   imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) -
                                          extStart;
                         }
                         extMinix |= ebrEntry.type == 0x81 || ebrEntry.type == 0x80;
@@ -437,11 +434,11 @@ namespace DiscImageChef.Partitions
                         }
 
                         extStart += lbaStart;
-                        extValid &= extStart <= imagePlugin.ImageInfo.Sectors;
+                        extValid &= extStart <= imagePlugin.Info.Sectors;
 
                         // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-                        if(extStart + extSectors > imagePlugin.ImageInfo.Sectors)
-                            extSectors = imagePlugin.ImageInfo.Sectors - extStart;
+                        if(extStart + extSectors > imagePlugin.Info.Sectors)
+                            extSectors = imagePlugin.Info.Sectors - extStart;
 
                         if(extValid && extMinix) // Let's mix the fun
                             if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize,
@@ -474,7 +471,7 @@ namespace DiscImageChef.Partitions
 
                     DicConsole.DebugWriteLine("MBR plugin", "next_start {0}", nextStart);
                     processingExtended &= nextStart != 0;
-                    processingExtended &= nextStart <= imagePlugin.ImageInfo.Sectors;
+                    processingExtended &= nextStart <= imagePlugin.Info.Sectors;
                     lbaStart = nextStart;
                 }
             }
@@ -483,7 +480,7 @@ namespace DiscImageChef.Partitions
             return partitions.Count != 0;
         }
 
-        static bool GetMinix(ImagePlugin imagePlugin, ulong start, ulong divider, ulong sectorOffset, uint sectorSize,
+        static bool GetMinix(IMediaImage imagePlugin, ulong start, ulong divider, ulong sectorOffset, uint sectorSize,
                              out List<Partition> partitions)
         {
             partitions = new List<Partition>();
@@ -529,10 +526,10 @@ namespace DiscImageChef.Partitions
                             mnxEntry.end_head != 0 || mnxEntry.end_sector != 0;
                 if(mnxEntry.lba_start == 0 && mnxEntry.lba_sectors == 0 && mnxValid)
                 {
-                    mnxStart = CHS.ToLBA(startCylinder, mnxEntry.start_head, startSector, imagePlugin.ImageInfo.Heads,
-                                         imagePlugin.ImageInfo.SectorsPerTrack);
+                    mnxStart = CHS.ToLBA(startCylinder, mnxEntry.start_head, startSector, imagePlugin.Info.Heads,
+                                         imagePlugin.Info.SectorsPerTrack);
                     mnxSectors = CHS.ToLBA(endCylinder, mnxEntry.end_head, mnxEntry.end_sector,
-                                           imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack) -
+                                           imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) -
                                  mnxStart;
                 }
 

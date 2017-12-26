@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             fileSizeCache = new Dictionary<string, int>();
             lockedFiles = new List<string>();
 
-            if(lba == 0 || lba > device.ImageInfo.Sectors) return Errno.InvalidArgument;
+            if(lba == 0 || lba > device.Info.Sectors) return Errno.InvalidArgument;
 
             while(lba != 0)
             {
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                     // Apple DOS has high byte set over ASCII.
                     for(int i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
-                    string filename = StringHandlers.SpacePaddedToString(filenameB, CurrentEncoding);
+                    string filename = StringHandlers.SpacePaddedToString(filenameB, currentEncoding);
 
                     if(!catalogCache.ContainsKey(filename)) catalogCache.Add(filename, ts);
 
@@ -127,7 +127,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
                 lba = (ulong)(catSector.trackOfNext * sectorsPerTrack + catSector.sectorOfNext);
 
-                if(lba > device.ImageInfo.Sectors) break;
+                if(lba > device.Info.Sectors) break;
             }
 
             if(debug) catalogBlocks = catalogMs.ToArray();

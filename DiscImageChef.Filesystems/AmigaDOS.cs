@@ -43,36 +43,22 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class AmigaDOSPlugin : Filesystem
+    public class AmigaDOSPlugin : IFilesystem
     {
         const uint FFS_MASK = 0x444F5300;
         const uint MUFS_MASK = 0x6D754600;
 
         const uint TYPE_HEADER = 2;
         const uint SUBTYPE_ROOT = 1;
+        Encoding currentEncoding;
 
-        public AmigaDOSPlugin()
-        {
-            Name = "Amiga DOS filesystem";
-            PluginUuid = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-        }
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual string Name => "Amiga DOS filesystem";
+        public virtual Guid Id => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+        public virtual Encoding Encoding => currentEncoding;
 
-        public AmigaDOSPlugin(Encoding encoding)
-        {
-            Name = "Amiga DOS filesystem";
-            PluginUuid = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public AmigaDOSPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Amiga DOS filesystem";
-            PluginUuid = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -168,10 +154,11 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             StringBuilder sbInformation = new StringBuilder();
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
             information = null;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -255,41 +242,41 @@ namespace DiscImageChef.Filesystems
 
             rootBlk = MarshalRootBlock(rootBlockSector);
 
-            string diskName = StringHandlers.PascalToString(rootBlk.diskName, CurrentEncoding);
+            string diskName = StringHandlers.PascalToString(rootBlk.diskName, currentEncoding);
 
             switch(bootBlk.diskType & 0xFF)
             {
                 case 0:
                     sbInformation.Append("Amiga Original File System");
-                    XmlFsType.Type = "Amiga OFS";
+                    xmlFsType.Type = "Amiga OFS";
                     break;
                 case 1:
                     sbInformation.Append("Amiga Fast File System");
-                    XmlFsType.Type = "Amiga FFS";
+                    xmlFsType.Type = "Amiga FFS";
                     break;
                 case 2:
                     sbInformation.Append("Amiga Original File System with international characters");
-                    XmlFsType.Type = "Amiga OFS";
+                    xmlFsType.Type = "Amiga OFS";
                     break;
                 case 3:
                     sbInformation.Append("Amiga Fast File System with international characters");
-                    XmlFsType.Type = "Amiga FFS";
+                    xmlFsType.Type = "Amiga FFS";
                     break;
                 case 4:
                     sbInformation.Append("Amiga Original File System with directory cache");
-                    XmlFsType.Type = "Amiga OFS";
+                    xmlFsType.Type = "Amiga OFS";
                     break;
                 case 5:
                     sbInformation.Append("Amiga Fast File System with directory cache");
-                    XmlFsType.Type = "Amiga FFS";
+                    xmlFsType.Type = "Amiga FFS";
                     break;
                 case 6:
                     sbInformation.Append("Amiga Original File System with long filenames");
-                    XmlFsType.Type = "Amiga OFS2";
+                    xmlFsType.Type = "Amiga OFS2";
                     break;
                 case 7:
                     sbInformation.Append("Amiga Fast File System with long filenames");
-                    XmlFsType.Type = "Amiga FFS2";
+                    xmlFsType.Type = "Amiga FFS2";
                     break;
             }
 
@@ -316,7 +303,7 @@ namespace DiscImageChef.Filesystems
             if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
-            long blocks = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize / blockSize);
+            long blocks = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize);
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", blocks).AppendLine();
@@ -332,17 +319,17 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Root block checksum is 0x{0:X8}", rootBlk.checksum).AppendLine();
             information = sbInformation.ToString();
 
-            XmlFsType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
-            XmlFsType.CreationDateSpecified = true;
-            XmlFsType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
-            XmlFsType.ModificationDateSpecified = true;
-            XmlFsType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
-            XmlFsType.Clusters = blocks;
-            XmlFsType.ClusterSize = (int)blockSize;
-            XmlFsType.VolumeName = diskName;
-            XmlFsType.Bootable = bsum == bootBlk.checksum;
+            xmlFsType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
+            xmlFsType.CreationDateSpecified = true;
+            xmlFsType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
+            xmlFsType.ModificationDateSpecified = true;
+            xmlFsType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
+            xmlFsType.Clusters = blocks;
+            xmlFsType.ClusterSize = (int)blockSize;
+            xmlFsType.VolumeName = diskName;
+            xmlFsType.Bootable = bsum == bootBlk.checksum;
             // Useful as a serial
-            XmlFsType.VolumeSerial = $"{rootBlk.checksum:X8}";
+            xmlFsType.VolumeSerial = $"{rootBlk.checksum:X8}";
         }
 
         static RootBlock MarshalRootBlock(byte[] block)
@@ -384,62 +371,57 @@ namespace DiscImageChef.Filesystems
             return ~sum;
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

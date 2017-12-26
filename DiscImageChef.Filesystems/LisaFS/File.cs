@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
@@ -52,7 +52,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(size == 0)
             {
@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
@@ -194,7 +194,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(count == 0) return Errno.NoSuchFile;
 
-            buf = !tags ? new byte[count * device.ImageInfo.SectorSize] : new byte[count * devTagSize];
+            buf = !tags ? new byte[count * device.Info.SectorSize] : new byte[count * devTagSize];
 
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
@@ -325,7 +325,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             int sectorSize;
             if(tags) sectorSize = devTagSize;
-            else sectorSize = (int)device.ImageInfo.SectorSize;
+            else sectorSize = (int)device.Info.SectorSize;
 
             byte[] temp = new byte[file.length * sectorSize];
 
@@ -423,7 +423,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 foreach(CatalogEntry entry in catalogCache)
                 {
-                    string filename = StringHandlers.CToString(entry.filename, CurrentEncoding);
+                    string filename = StringHandlers.CToString(entry.filename, currentEncoding);
 
                     // LisaOS is case insensitive
                     if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) != 0 ||

@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class VMfs : Filesystem
+    public class VMfs : IFilesystem
     {
         /// <summary>
         ///     Identifier for VMfs
@@ -48,32 +48,19 @@ namespace DiscImageChef.Filesystems
         const uint VMFS_MAGIC = 0xC001D00D;
         const uint VMFS_BASE = 0x00100000;
 
-        public VMfs()
-        {
-            Name = "VMware filesystem";
-            PluginUuid = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public VMfs(Encoding encoding)
-        {
-            Name = "VMware filesystem";
-            PluginUuid = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "VMware filesystem";
+        public virtual Guid Id => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
 
-        public VMfs(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "VMware filesystem";
-            PluginUuid = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
-            ulong vmfsSuperOff = VMFS_BASE / imagePlugin.ImageInfo.SectorSize;
+            ulong vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
 
             if(partition.Start + vmfsSuperOff > partition.End) return false;
 
@@ -84,9 +71,10 @@ namespace DiscImageChef.Filesystems
             return magic == VMFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
-            ulong vmfsSuperOff = VMFS_BASE / imagePlugin.ImageInfo.SectorSize;
+            currentEncoding = encoding ?? Encoding.UTF8;
+            ulong vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             VolumeInfo volInfo = new VolumeInfo();
@@ -105,7 +93,7 @@ namespace DiscImageChef.Filesystems
             uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
             sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, CurrentEncoding))
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, currentEncoding))
                          .AppendLine();
             sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
             sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
@@ -117,75 +105,70 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "VMware file system",
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
                 CreationDateSpecified = true,
                 ModificationDate = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
                 ModificationDateSpecified = true,
-                Clusters = volInfo.size * 256 / imagePlugin.ImageInfo.SectorSize,
-                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
+                Clusters = volInfo.size * 256 / imagePlugin.Info.SectorSize,
+                ClusterSize = (int)imagePlugin.Info.SectorSize,
                 VolumeSerial = volInfo.uuid.ToString()
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

@@ -32,8 +32,12 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Claunia.Encoding;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
@@ -42,17 +46,14 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <summary>
         ///     Mounts an Apple DOS filesystem
         /// </summary>
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
-            return Mount(false);
-        }
-
-        /// <summary>
-        ///     Mounts an Apple DOS filesystem
-        /// </summary>
-        public override Errno Mount(bool debug)
-        {
-            if(device.ImageInfo.Sectors != 455 && device.ImageInfo.Sectors != 560)
+            device = imagePlugin;
+            start = partition.Start;
+            // TODO: Until Apple ][ encoding is implemented
+            currentEncoding = new LisaRoman();
+            
+            if(device.Info.Sectors != 455 && device.Info.Sectors != 560)
             {
                 DicConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
                 return Errno.InOutError;
@@ -64,13 +65,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 return Errno.InOutError;
             }
 
-            if(device.ImageInfo.SectorSize != 256)
+            if(device.Info.SectorSize != 256)
             {
                 DicConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
                 return Errno.InOutError;
             }
 
-            sectorsPerTrack = device.ImageInfo.Sectors == 455 ? 13 : 16;
+            sectorsPerTrack = device.Info.Sectors == 455 ? 13 : 16;
 
             // Read the VTOC
             vtocBlocks = device.ReadSector((ulong)(17 * sectorsPerTrack));
@@ -99,17 +100,17 @@ namespace DiscImageChef.Filesystems.AppleDOS
             }
 
             // Create XML metadata for mounted filesystem
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Bootable = true,
-                Clusters = (long)device.ImageInfo.Sectors,
+                Clusters = (long)device.Info.Sectors,
                 ClusterSize = vtoc.bytesPerSector,
                 Files = catalogCache.Count,
                 FilesSpecified = true,
                 FreeClustersSpecified = true,
                 Type = "Apple DOS"
             };
-            XmlFsType.FreeClusters = XmlFsType.Clusters - usedSectors;
+            xmlFsType.FreeClusters = xmlFsType.Clusters - usedSectors;
 
             this.debug = debug;
             mounted = true;
@@ -119,7 +120,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <summary>
         ///     Umounts this DOS filesystem
         /// </summary>
-        public override Errno Unmount()
+        public virtual Errno Unmount()
         {
             mounted = false;
             extentCache = null;
@@ -134,14 +135,14 @@ namespace DiscImageChef.Filesystems.AppleDOS
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {
-                Blocks = (long)device.ImageInfo.Sectors,
+                Blocks = (long)device.Info.Sectors,
                 FilenameLength = 30,
                 Files = (ulong)catalogCache.Count,
-                PluginId = PluginUuid,
+                PluginId = Id,
                 Type = "Apple DOS"
             };
             stat.FreeFiles = totalFileEntries - stat.Files;

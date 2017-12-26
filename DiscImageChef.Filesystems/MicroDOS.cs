@@ -42,37 +42,23 @@ namespace DiscImageChef.Filesystems
 {
     // Information from http://www.owg.ru/mkt/BK/MKDOS.TXT
     // Thanks to tarlabnor for translating it
-    public class MicroDOS : Filesystem
+    public class MicroDOS : IFilesystem
     {
         const ushort MAGIC = 0xA72E;
         const ushort MAGIC2 = 0x530C;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public MicroDOS()
-        {
-            Name = "MicroDOS file system";
-            PluginUuid = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
-            CurrentEncoding = Encoding.GetEncoding("koi8-r");
-        }
+        Encoding currentEncoding;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "MicroDOS file system";
+        public virtual Guid Id => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
 
-        public MicroDOS(Encoding encoding)
-        {
-            Name = "MicroDOS file system";
-            PluginUuid = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("koi8-r");
-        }
-
-        public MicroDOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "MicroDOS file system";
-            PluginUuid = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("koi8-r");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End) return false;
 
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -84,8 +70,10 @@ namespace DiscImageChef.Filesystems
             return block0.label == MAGIC && block0.mklabel == MAGIC2;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("koi8-r");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -104,7 +92,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume contains {0} files", block0.files).AppendLine();
             sb.AppendFormat("First used block is {0}", block0.firstUsedBlock).AppendLine();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "MicroDOS",
                 ClusterSize = 512,
@@ -118,62 +106,57 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

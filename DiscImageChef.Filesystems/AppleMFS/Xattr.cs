@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                 {
-                    if(device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                    if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                         xattrs.Add("com.apple.macintosh.tags");
 
                     return Errno.NoError;
@@ -68,13 +68,13 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(entry.flRLgLen > 0)
             {
                 xattrs.Add("com.apple.ResourceFork");
-                if(debug && device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                if(debug && device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                     xattrs.Add("com.apple.ResourceFork.tags");
             }
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds)) xattrs.Add("com.apple.FinderInfo");
 
-            if(debug && device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) && entry.flLgLen > 0)
+            if(debug && device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) && entry.flLgLen > 0)
                 xattrs.Add("com.apple.macintosh.tags");
 
             xattrs.Sort();
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-                    if(device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
+                    if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                        string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                     {
                         if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
@@ -155,7 +155,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 return Errno.NoError;
             }
 
-            if(!debug || !device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
+            if(!debug || !device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
                string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 

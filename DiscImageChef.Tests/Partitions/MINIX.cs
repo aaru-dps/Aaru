@@ -98,9 +98,9 @@ namespace DiscImageChef.Tests.Partitions
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "partitions", "minix", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new Vdi();
+                IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

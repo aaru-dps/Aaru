@@ -40,43 +40,30 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class NILFS2 : Filesystem
+    public class NILFS2 : IFilesystem
     {
         const ushort NILFS2_MAGIC = 0x3434;
         const uint NILFS2_SUPER_OFFSET = 1024;
 
-        public NILFS2()
-        {
-            Name = "NILFS2 Plugin";
-            PluginUuid = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public NILFS2(Encoding encoding)
-        {
-            Name = "NILFS2 Plugin";
-            PluginUuid = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "NILFS2 Plugin";
+        public virtual Guid Id => new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
 
-        public NILFS2(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "NILFS2 Plugin";
-            PluginUuid = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
-
-            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(nilfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
@@ -91,18 +78,19 @@ namespace DiscImageChef.Filesystems
             return nilfsSb.magic == NILFS2_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.UTF8;
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
-            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.ImageInfo.SectorSize;
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
 
-            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.ImageInfo.SectorSize);
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf(nilfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(nilfsSb)) return;
@@ -126,7 +114,7 @@ namespace DiscImageChef.Filesystems
             else sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
             sb.AppendFormat("{0} bytes per inode", nilfsSb.inode_size).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", nilfsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding))
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, currentEncoding))
               .AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
             sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime))
@@ -136,77 +124,72 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "NILFS2 filesystem",
                 ClusterSize = 1 << (int)(nilfsSb.log_block_size + 10),
-                VolumeName = StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding),
+                VolumeName = StringHandlers.CToString(nilfsSb.volume_name, currentEncoding),
                 VolumeSerial = nilfsSb.uuid.ToString(),
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
                 CreationDateSpecified = true,
                 ModificationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime),
                 ModificationDateSpecified = true
             };
-            if(nilfsSb.creator_os == 0) XmlFsType.SystemIdentifier = "Linux";
-            XmlFsType.Clusters = (long)nilfsSb.dev_size / XmlFsType.ClusterSize;
+            if(nilfsSb.creator_os == 0) xmlFsType.SystemIdentifier = "Linux";
+            xmlFsType.Clusters = (long)nilfsSb.dev_size / xmlFsType.ClusterSize;
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

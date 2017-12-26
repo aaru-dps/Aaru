@@ -33,22 +33,24 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.ImageInfo.Sectors != 455 && imagePlugin.ImageInfo.Sectors != 560) return false;
+            if(imagePlugin.Info.Sectors != 455 && imagePlugin.Info.Sectors != 560) return false;
 
-            if(partition.Start > 0 || imagePlugin.ImageInfo.SectorSize != 256) return false;
+            if(partition.Start > 0 || imagePlugin.Info.SectorSize != 256) return false;
 
             int spt;
-            spt = imagePlugin.ImageInfo.Sectors == 455 ? 13 : 16;
+            spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
             vtoc = new Vtoc();
@@ -61,13 +63,15 @@ namespace DiscImageChef.Filesystems.AppleDOS
                    vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector == 256;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            // TODO: Until Apple ][ encoding is implemented
+            currentEncoding = new LisaRoman();
             information = "";
             StringBuilder sb = new StringBuilder();
 
             int spt;
-            spt = imagePlugin.ImageInfo.Sectors == 455 ? 13 : 16;
+            spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
             vtoc = new Vtoc();
@@ -91,11 +95,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Bootable = true,
-                Clusters = (long)imagePlugin.ImageInfo.Sectors,
-                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
+                Clusters = (long)imagePlugin.Info.Sectors,
+                ClusterSize = (int)imagePlugin.Info.SectorSize,
                 Type = "Apple DOS"
             };
         }

@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             // Last volume record block must be after first block, and before end of device
             if(volEntry.lastBlock <= volEntry.firstBlock ||
-               (ulong)volEntry.lastBlock > imagePlugin.ImageInfo.Sectors - 2) return false;
+               (ulong)volEntry.lastBlock > imagePlugin.Info.Sectors - 2) return false;
 
             // Volume record entry type must be volume or secure
             if(volEntry.entryType != PascalFileKind.Volume && volEntry.entryType != PascalFileKind.Secure) return false;
@@ -77,18 +77,18 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(volEntry.volumeName[0] > 7) return false;
 
             // Volume blocks is equal to volume sectors
-            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.ImageInfo.Sectors) return false;
+            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.Info.Sectors) return false;
 
             // There can be not less than zero files
             return volEntry.files >= 0;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             StringBuilder sbInformation = new StringBuilder();
             information = "";
 
-            if(imagePlugin.ImageInfo.Sectors < 3) return;
+            if(imagePlugin.Info.Sectors < 3) return;
 
             // Blocks 0 and 1 are boot code
             byte[] volBlock = imagePlugin.ReadSector(2 + partition.Start);
@@ -113,7 +113,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             // Last volume record block must be after first block, and before end of device
             if(volEntry.lastBlock <= volEntry.firstBlock ||
-               (ulong)volEntry.lastBlock > imagePlugin.ImageInfo.Sectors - 2) return;
+               (ulong)volEntry.lastBlock > imagePlugin.Info.Sectors - 2) return;
 
             // Volume record entry type must be volume or secure
             if(volEntry.entryType != PascalFileKind.Volume && volEntry.entryType != PascalFileKind.Secure) return;
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(volEntry.volumeName[0] > 7) return;
 
             // Volume blocks is equal to volume sectors
-            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.ImageInfo.Sectors) return;
+            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.Info.Sectors) return;
 
             // There can be not less than zero files
             if(volEntry.files < 0) return;
@@ -130,7 +130,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             sbInformation.AppendFormat("Volume record spans from block {0} to block {1}", volEntry.firstBlock,
                                        volEntry.lastBlock).AppendLine();
             sbInformation.AppendFormat("Volume name: {0}",
-                                       StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding))
+                                       StringHandlers.PascalToString(volEntry.volumeName, currentEncoding))
                          .AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", volEntry.blocks).AppendLine();
             sbInformation.AppendFormat("Volume has {0} files", volEntry.files).AppendLine();
@@ -140,15 +140,15 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2)),
                 Clusters = volEntry.blocks,
-                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
+                ClusterSize = (int)imagePlugin.Info.SectorSize,
                 Files = volEntry.files,
                 FilesSpecified = true,
                 Type = "UCSD Pascal",
-                VolumeName = StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding)
+                VolumeName = StringHandlers.PascalToString(volEntry.volumeName, currentEncoding)
             };
         }
     }

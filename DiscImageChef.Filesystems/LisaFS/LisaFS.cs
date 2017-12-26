@@ -35,15 +35,17 @@ using System.Collections.Generic;
 using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Schemas;
 using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
     // All information by Natalia Portillo
     // Variable names from Lisa API
-    public partial class LisaFS : Filesystem
+    public partial class LisaFS : IFilesystem
     {
-        readonly ImagePlugin device;
+        IMediaImage device;
+        Encoding currentEncoding;
         bool debug;
         int devTagSize;
 
@@ -52,27 +54,11 @@ namespace DiscImageChef.Filesystems.LisaFS
         SRecord[] srecords;
         ulong volumePrefix;
 
-        public LisaFS()
-        {
-            Name = "Apple Lisa File System";
-            PluginUuid = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-            CurrentEncoding = new LisaRoman();
-        }
-
-        public LisaFS(Encoding encoding)
-        {
-            Name = "Apple Lisa File System";
-            PluginUuid = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-            CurrentEncoding = new LisaRoman();
-        }
-
-        public LisaFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            device = imagePlugin;
-            Name = "Apple Lisa File System";
-            PluginUuid = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-            CurrentEncoding = new LisaRoman();
-        }
+        public virtual string Name => "Apple Lisa File System";
+        public virtual Guid Id => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+        public virtual Encoding Encoding => currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
         #region Caches
         /// <summary>Caches Extents Files</summary>

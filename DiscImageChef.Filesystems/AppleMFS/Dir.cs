@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 entry.flNam = new byte[directoryBlocks[offset + 50] + 1];
                 Array.Copy(directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
                 string lowerFilename = StringHandlers
-                    .PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant().Replace('/', ':');
+                    .PascalToString(entry.flNam, currentEncoding).ToLowerInvariant().Replace('/', ':');
 
                 if(entry.flFlags.HasFlag(MFS_FileFlags.Used) && !idToFilename.ContainsKey(entry.flFlNum) &&
                    !idToEntry.ContainsKey(entry.flFlNum) && !filenameToId.ContainsKey(lowerFilename) &&
@@ -100,7 +100,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 {
                     idToEntry.Add(entry.flFlNum, entry);
                     idToFilename.Add(entry.flFlNum,
-                                     StringHandlers.PascalToString(entry.flNam, CurrentEncoding).Replace('/', ':'));
+                                     StringHandlers.PascalToString(entry.flNam, currentEncoding).Replace('/', ':'));
                     filenameToId.Add(lowerFilename, entry.flFlNum);
 
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
@@ -117,7 +117,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}",
                                               DateHandlers.MacToDateTime(entry.flMdDat));
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}",
-                                              StringHandlers.PascalToString(entry.flNam, CurrentEncoding));
+                                              StringHandlers.PascalToString(entry.flNam, currentEncoding));
                 }
 
                 offset += 50 + entry.flNam.Length;

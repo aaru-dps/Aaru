@@ -32,22 +32,24 @@
 
 using System;
 using System.Collections.Generic;
+using Claunia.Encoding;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
-            return Mount(false);
-        }
-
-        public override Errno Mount(bool debug)
-        {
+            device = imagePlugin;
+            // TODO: Until Apple ][ encoding is implemented
+            currentEncoding = new LisaRoman();
             this.debug = debug;
-            if(device.ImageInfo.Sectors < 3) return Errno.InvalidArgument;
+            if(device.Info.Sectors < 3) return Errno.InvalidArgument;
 
             // Blocks 0 and 1 are boot code
             catalogBlocks = device.ReadSector(2);
@@ -66,10 +68,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             mountedVolEntry.tail = BigEndianBitConverter.ToInt32(catalogBlocks, 0x16);
 
             if(mountedVolEntry.firstBlock != 0 || mountedVolEntry.lastBlock <= mountedVolEntry.firstBlock ||
-               (ulong)mountedVolEntry.lastBlock > device.ImageInfo.Sectors - 2 ||
+               (ulong)mountedVolEntry.lastBlock > device.Info.Sectors - 2 ||
                mountedVolEntry.entryType != PascalFileKind.Volume &&
                mountedVolEntry.entryType != PascalFileKind.Secure || mountedVolEntry.volumeName[0] > 7 ||
-               mountedVolEntry.blocks < 0 || (ulong)mountedVolEntry.blocks != device.ImageInfo.Sectors ||
+               mountedVolEntry.blocks < 0 || (ulong)mountedVolEntry.blocks != device.Info.Sectors ||
                mountedVolEntry.files < 0) return Errno.InvalidArgument;
 
             catalogBlocks = device.ReadSectors(2, (uint)(mountedVolEntry.lastBlock - mountedVolEntry.firstBlock - 2));
@@ -96,15 +98,15 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             bootBlocks = device.ReadSectors(0, 2);
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
                 Clusters = mountedVolEntry.blocks,
-                ClusterSize = (int)device.ImageInfo.SectorSize,
+                ClusterSize = (int)device.Info.SectorSize,
                 Files = mountedVolEntry.files,
                 FilesSpecified = true,
                 Type = "UCSD Pascal",
-                VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, CurrentEncoding)
+                VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, currentEncoding)
             };
 
             mounted = true;
@@ -112,14 +114,14 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
-        public override Errno Unmount()
+        public virtual Errno Unmount()
         {
             mounted = false;
             fileEntries = null;
             return Errno.NoError;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {
@@ -127,7 +129,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 FilenameLength = 16,
                 Files = (ulong)mountedVolEntry.files,
                 FreeBlocks = 0,
-                PluginId = PluginUuid,
+                PluginId = Id,
                 Type = "UCSD Pascal"
             };
 

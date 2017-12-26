@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.DiscImages;
 using Schemas;
 
@@ -51,8 +52,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void AudioMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void AudioMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.AudioMedia = new[]
             {
@@ -67,14 +68,14 @@ namespace DiscImageChef.Core
                         Value = Path.GetFileName(imagePath)
                     },
                     Size = fi.Length,
-                    Sequence = new SequenceType {MediaTitle = image.ImageInfo.MediaTitle}
+                    Sequence = new SequenceType {MediaTitle = image.Info.MediaTitle}
                 }
             };
 
-            if(image.ImageInfo.MediaSequence != 0 && image.ImageInfo.LastMediaSequence != 0)
+            if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
             {
-                sidecar.AudioMedia[0].Sequence.MediaSequence = image.ImageInfo.MediaSequence;
-                sidecar.AudioMedia[0].Sequence.TotalMedia = image.ImageInfo.LastMediaSequence;
+                sidecar.AudioMedia[0].Sequence.MediaSequence = image.Info.MediaSequence;
+                sidecar.AudioMedia[0].Sequence.TotalMedia = image.Info.LastMediaSequence;
             }
             else
             {

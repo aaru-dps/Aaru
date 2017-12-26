@@ -41,42 +41,29 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class XFS : Filesystem
+    public class XFS : IFilesystem
     {
         const uint XFS_MAGIC = 0x58465342;
 
-        public XFS()
-        {
-            Name = "XFS Filesystem Plugin";
-            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public XFS(Encoding encoding)
-        {
-            Name = "XFS Filesystem Plugin";
-            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "XFS Filesystem Plugin";
+        public virtual Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
 
-        public XFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            Name = "XFS Filesystem Plugin";
-            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
-        {
-            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512) return false;
 
             // Misaligned
-            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 XFS_Superblock xfsSb = new XFS_Superblock();
 
-                uint sbSize = (uint)((Marshal.SizeOf(xfsSb) + 0x400) / imagePlugin.ImageInfo.SectorSize);
-                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)((Marshal.SizeOf(xfsSb) + 0x400) / imagePlugin.Info.SectorSize);
+                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
                 if(sector.Length < Marshal.SizeOf(xfsSb)) return false;
@@ -100,8 +87,8 @@ namespace DiscImageChef.Filesystems
                 {
                     XFS_Superblock xfsSb = new XFS_Superblock();
 
-                    uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.ImageInfo.SectorSize);
-                    if(Marshal.SizeOf(xfsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                    uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.Info.SectorSize);
+                    if(Marshal.SizeOf(xfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                     if(sector.Length < Marshal.SizeOf(xfsSb)) return false;
@@ -117,18 +104,19 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.ImageInfo.SectorSize < 512) return;
+            if(imagePlugin.Info.SectorSize < 512) return;
 
             XFS_Superblock xfsSb = new XFS_Superblock();
 
             // Misaligned
-            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                uint sbSize = (uint)((Marshal.SizeOf(xfsSb) + 0x400) / imagePlugin.ImageInfo.SectorSize);
-                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)((Marshal.SizeOf(xfsSb) + 0x400) / imagePlugin.Info.SectorSize);
+                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
                 if(sector.Length < Marshal.SizeOf(xfsSb)) return;
@@ -150,8 +138,8 @@ namespace DiscImageChef.Filesystems
             else
                 foreach(ulong location in new[] {0, 1, 2})
                 {
-                    uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.ImageInfo.SectorSize);
-                    if(Marshal.SizeOf(xfsSb) % imagePlugin.ImageInfo.SectorSize != 0) sbSize++;
+                    uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.Info.SectorSize);
+                    if(Marshal.SizeOf(xfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                     if(sector.Length < Marshal.SizeOf(xfsSb)) return;
@@ -178,12 +166,12 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} allocation groups in volume", xfsSb.agcount).AppendLine();
             sb.AppendFormat("{0} inodes in volume, {1} free", xfsSb.icount, xfsSb.ifree).AppendLine();
             if(xfsSb.inprogress > 0) sb.AppendLine("fsck in progress");
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(xfsSb.fname, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(xfsSb.fname, currentEncoding)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", xfsSb.uuid).AppendLine();
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "XFS filesystem",
                 ClusterSize = (int)xfsSb.blocksize,
@@ -193,67 +181,62 @@ namespace DiscImageChef.Filesystems
                 Files = (long)(xfsSb.icount - xfsSb.ifree),
                 FilesSpecified = true,
                 Dirty = xfsSb.inprogress > 0,
-                VolumeName = StringHandlers.CToString(xfsSb.fname, CurrentEncoding),
+                VolumeName = StringHandlers.CToString(xfsSb.fname, currentEncoding),
                 VolumeSerial = xfsSb.uuid.ToString()
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

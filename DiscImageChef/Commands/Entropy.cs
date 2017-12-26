@@ -53,7 +53,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", options.DuplicatedSectors);
 
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -61,7 +61,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            ImagePlugin inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
 
             if(inputFormat == null)
             {
@@ -71,7 +71,7 @@ namespace DiscImageChef.Commands
 
             inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
-            Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
+            Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
             double entropy = 0;
             ulong[] entTable;
@@ -134,7 +134,7 @@ namespace DiscImageChef.Commands
             ulong diskSize = 0;
             List<string> uniqueSectors = new List<string>();
 
-            sectors = inputFormat.ImageInfo.Sectors;
+            sectors = inputFormat.Info.Sectors;
             DicConsole.WriteLine("Sectors {0}", sectors);
 
             sha1Ctx.Init();

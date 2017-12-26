@@ -58,26 +58,26 @@ namespace DiscImageChef.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "zfs", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new Vdi();
+                IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Filesystem fs = new ZFS();
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                IFilesystem fs = new ZFS();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = image.ImageInfo.Sectors,
-                    Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
+                    Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out _);
-                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("ZFS filesystem", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                fs.GetInformation(image, wholePart, out _, null);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("ZFS filesystem", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
     }

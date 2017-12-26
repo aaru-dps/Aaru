@@ -42,34 +42,20 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
-    public class exFAT : Filesystem
+    public class exFAT : IFilesystem
     {
         readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 
         readonly byte[] Signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public exFAT()
-        {
-            Name = "Microsoft Extended File Allocation Table";
-            PluginUuid = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
-            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-        }
+        Encoding currentEncoding;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Microsoft Extended File Allocation Table";
+        public virtual Guid Id => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
 
-        public exFAT(Encoding encoding)
-        {
-            Name = "Microsoft Extended File Allocation Table";
-            PluginUuid = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public exFAT(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Microsoft Extended File Allocation Table";
-            PluginUuid = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(12 + partition.Start >= partition.End) return false;
 
@@ -84,12 +70,14 @@ namespace DiscImageChef.Filesystems
             return Signature.SequenceEqual(vbr.signature);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             IntPtr vbrPtr = Marshal.AllocHGlobal(512);
@@ -151,71 +139,66 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendFormat("Checksum 0x{0:X8}", chksector.checksum[0]).AppendLine();
 
-            XmlFsType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
-            XmlFsType.Clusters = vbr.clusterHeapLength;
-            XmlFsType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
-            XmlFsType.Type = "exFAT";
-            XmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
+            xmlFsType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
+            xmlFsType.Clusters = vbr.clusterHeapLength;
+            xmlFsType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
+            xmlFsType.Type = "exFAT";
+            xmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
             information = sb.ToString();
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             throw new NotImplementedException();
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Errno Unmount()
+        public virtual Errno Unmount()
         {
             throw new NotImplementedException();
         }

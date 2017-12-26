@@ -42,30 +42,17 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from an old unnamed document
-    public class HPFS : Filesystem
+    public class HPFS : IFilesystem
     {
-        public HPFS()
-        {
-            Name = "OS/2 High Performance File System";
-            PluginUuid = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
-            CurrentEncoding = Encoding.GetEncoding("ibm850");
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
 
-        public HPFS(Encoding encoding)
-        {
-            Name = "OS/2 High Performance File System";
-            PluginUuid = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("ibm850");
-        }
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "OS/2 High Performance File System";
+        public virtual Guid Id => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
 
-        public HPFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "OS/2 High Performance File System";
-            PluginUuid = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
-            CurrentEncoding = encoding ?? Encoding.GetEncoding("ibm850");
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(16 + partition.Start >= partition.End) return false;
 
@@ -79,8 +66,9 @@ namespace DiscImageChef.Filesystems
             return magic1 == 0xF995E849 && magic2 == 0xFA53E9C5;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.GetEncoding("ibm850");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -138,7 +126,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("NT Flags: 0x{0:X2}", hpfsBpb.nt_flags).AppendLine();
             sb.AppendFormat("Signature: 0x{0:X2}", hpfsBpb.signature).AppendLine();
             sb.AppendFormat("Serial number: 0x{0:X8}", hpfsBpb.serial_no).AppendLine();
-            sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(hpfsBpb.volume_label, CurrentEncoding))
+            sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(hpfsBpb.volume_label, currentEncoding))
               .AppendLine();
             //          sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 
@@ -189,13 +177,13 @@ namespace DiscImageChef.Filesystems
             if((hpfsSp.flags2 & 0x40) == 0x40) sb.AppendLine("Unknown flag 0x40 on flags2 is active");
             if((hpfsSp.flags2 & 0x80) == 0x80) sb.AppendLine("Unknown flag 0x80 on flags2 is active");
 
-            XmlFsType = new FileSystemType();
+            xmlFsType = new FileSystemType();
 
             // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
             if(hpfsBpb.jump[0] == 0xEB && hpfsBpb.jump[1] > 0x3C && hpfsBpb.jump[1] < 0x80 &&
                hpfsBpb.signature2 == 0xAA55)
             {
-                XmlFsType.Bootable = true;
+                xmlFsType.Bootable = true;
                 Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 string bootChk = sha1Ctx.Data(hpfsBpb.boot_code, out byte[] sha1_out);
@@ -203,73 +191,68 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }
 
-            XmlFsType.Dirty |= (hpfsSp.flags1 & 0x01) == 0x01;
-            XmlFsType.Clusters = hpfsSb.sectors;
-            XmlFsType.ClusterSize = hpfsBpb.bps;
-            XmlFsType.Type = "HPFS";
-            XmlFsType.VolumeName = StringHandlers.CToString(hpfsBpb.volume_label, CurrentEncoding);
-            XmlFsType.VolumeSerial = $"{hpfsBpb.serial_no:X8}";
-            XmlFsType.SystemIdentifier = StringHandlers.CToString(hpfsBpb.oem_name);
+            xmlFsType.Dirty |= (hpfsSp.flags1 & 0x01) == 0x01;
+            xmlFsType.Clusters = hpfsSb.sectors;
+            xmlFsType.ClusterSize = hpfsBpb.bps;
+            xmlFsType.Type = "HPFS";
+            xmlFsType.VolumeName = StringHandlers.CToString(hpfsBpb.volume_label, currentEncoding);
+            xmlFsType.VolumeSerial = $"{hpfsBpb.serial_no:X8}";
+            xmlFsType.SystemIdentifier = StringHandlers.CToString(hpfsBpb.oem_name);
 
             information = sb.ToString();
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

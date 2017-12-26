@@ -74,7 +74,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class HdCopy : ImagePlugin
+    public class HdCopy : IMediaImage
     {
         readonly MediaTypeTableEntry[] mediaTypes =
         {
@@ -95,7 +95,8 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     The ImageFilter we're reading from, after the file has been opened
         /// </summary>
-        Filter hdcpImageFilter;
+        IFilter hdcpImageFilter;
+        ImageInfo imageInfo;
 
         /// <summary>
         ///     Every track that has been read is cached here
@@ -109,9 +110,7 @@ namespace DiscImageChef.DiscImages
 
         public HdCopy()
         {
-            Name = "HD-Copy disk image";
-            PluginUuid = new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -136,17 +135,22 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "HD-Copy image";
-        public override List<Partition> Partitions =>
+        public virtual ImageInfo Info => imageInfo;
+
+        public virtual string Name => "HD-Copy disk image";
+        public virtual Guid Id => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
+
+        public virtual string ImageFormat => "HD-Copy image";
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -180,7 +184,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             long currentOffset;
 
@@ -198,28 +202,28 @@ namespace DiscImageChef.DiscImages
                                       "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
                                       fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
-            ImageInfo.Cylinders = (uint)fheader.lastCylinder + 1;
-            ImageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
-            ImageInfo.SectorSize = 512; // only 512 bytes per sector supported
-            ImageInfo.Heads = 2; // only 2-sided floppies are supported
-            ImageInfo.Sectors = 2 * ImageInfo.Cylinders * ImageInfo.SectorsPerTrack;
-            ImageInfo.ImageSize = ImageInfo.Sectors * ImageInfo.SectorSize;
+            imageInfo.Cylinders = (uint)fheader.lastCylinder + 1;
+            imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
+            imageInfo.SectorSize = 512; // only 512 bytes per sector supported
+            imageInfo.Heads = 2; // only 2-sided floppies are supported
+            imageInfo.Sectors = 2 * imageInfo.Cylinders * imageInfo.SectorsPerTrack;
+            imageInfo.ImageSize = imageInfo.Sectors * imageInfo.SectorSize;
 
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.MediaType =
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.MediaType =
                 (from ent in mediaTypes
-                 where ent.Tracks == ImageInfo.Cylinders && ent.SectorsPerTrack == ImageInfo.SectorsPerTrack
+                 where ent.Tracks == imageInfo.Cylinders && ent.SectorsPerTrack == imageInfo.SectorsPerTrack
                  select ent.MediaType).FirstOrDefault();
 
             // the start offset of the track data
             currentOffset = 2 + 2 * 82;
 
             // build table of track offsets
-            for(int i = 0; i < ImageInfo.Cylinders * 2; i++)
+            for(int i = 0; i < imageInfo.Cylinders * 2; i++)
                 if(fheader.trackMap[i] == 0) trackOffset[i] = -1;
                 else
                 {
@@ -254,7 +258,7 @@ namespace DiscImageChef.DiscImages
 
         void ReadTrackIntoCache(Stream stream, int tracknum)
         {
-            byte[] trackData = new byte[ImageInfo.SectorSize * ImageInfo.SectorsPerTrack];
+            byte[] trackData = new byte[imageInfo.SectorSize * imageInfo.SectorsPerTrack];
             byte[] blkHeader = new byte[3];
             byte escapeByte;
             short compressedLength;
@@ -288,142 +292,142 @@ namespace DiscImageChef.DiscImages
                 else trackData[dIndex++] = cBuffer[sIndex++];
 
             // check that the number of bytes decompressed matches a whole track
-            if(dIndex != ImageInfo.SectorSize * ImageInfo.SectorsPerTrack)
+            if(dIndex != imageInfo.SectorSize * imageInfo.SectorsPerTrack)
                 throw new InvalidDataException("Track decompression yielded incomplete data");
 
             // store track in cache
             trackCache[tracknum] = trackData;
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
-            int trackNum = (int)(sectorAddress / ImageInfo.SectorsPerTrack);
-            int sectorOffset = (int)(sectorAddress % (ImageInfo.SectorsPerTrack * ImageInfo.SectorSize));
+            int trackNum = (int)(sectorAddress / imageInfo.SectorsPerTrack);
+            int sectorOffset = (int)(sectorAddress % (imageInfo.SectorsPerTrack * imageInfo.SectorSize));
 
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(trackNum > 2 * ImageInfo.Cylinders)
+            if(trackNum > 2 * imageInfo.Cylinders)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            byte[] result = new byte[ImageInfo.SectorSize];
-            if(trackOffset[trackNum] == -1) Array.Clear(result, 0, (int)ImageInfo.SectorSize);
+            byte[] result = new byte[imageInfo.SectorSize];
+            if(trackOffset[trackNum] == -1) Array.Clear(result, 0, (int)imageInfo.SectorSize);
             else
             {
                 // track is present in file, make sure it has been loaded
                 if(!trackCache.ContainsKey(trackNum)) ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
 
-                Array.Copy(trackCache[trackNum], sectorOffset, result, 0, ImageInfo.SectorSize);
+                Array.Copy(trackCache[trackNum], sectorOffset, result, 0, imageInfo.SectorSize);
             }
 
             return result;
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            byte[] result = new byte[length * ImageInfo.SectorSize];
+            byte[] result = new byte[length * imageInfo.SectorSize];
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             for(int i = 0; i < length; i++)
-                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.SectorSize);
+                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * imageInfo.SectorSize);
 
             return result;
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
+            for(ulong i = 0; i < imageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }

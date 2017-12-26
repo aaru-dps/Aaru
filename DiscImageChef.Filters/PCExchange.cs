@@ -42,7 +42,7 @@ namespace DiscImageChef.Filters
     /// <summary>
     ///     Decodes PCExchange files
     /// </summary>
-    public class PCExchange : Filter
+    public class PCExchange : IFilter
     {
         const string FILE_ID = "FILEID.DAT";
         const string FINDER_INFO = "FINDER.DAT";
@@ -57,89 +57,86 @@ namespace DiscImageChef.Filters
         long rsrcLen;
         string rsrcPath;
 
-        public PCExchange()
-        {
-            Name = "PCExchange";
-            UUID = new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
-        }
+        public virtual string Name => "PCExchange";
+        public virtual Guid Id => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
 
-        public override void Close()
+        public virtual void Close()
         {
             opened = false;
         }
 
-        public override string GetBasePath()
+        public virtual string GetBasePath()
         {
             return basePath;
         }
 
-        public override DateTime GetCreationTime()
+        public virtual DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public override long GetDataForkLength()
+        public virtual long GetDataForkLength()
         {
             return dataLen;
         }
 
-        public override Stream GetDataForkStream()
+        public virtual Stream GetDataForkStream()
         {
             return new FileStream(dataPath, FileMode.Open, FileAccess.Read);
         }
 
-        public override string GetFilename()
+        public virtual string GetFilename()
         {
             return Path.GetFileName(basePath);
         }
 
-        public override DateTime GetLastWriteTime()
+        public virtual DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public override long GetLength()
+        public virtual long GetLength()
         {
             return dataLen + rsrcLen;
         }
 
-        public override string GetParentFolder()
+        public virtual string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public override string GetPath()
+        public virtual string GetPath()
         {
             return basePath;
         }
 
-        public override long GetResourceForkLength()
+        public virtual long GetResourceForkLength()
         {
             return rsrcLen;
         }
 
-        public override Stream GetResourceForkStream()
+        public virtual Stream GetResourceForkStream()
         {
             return new FileStream(rsrcPath, FileMode.Open, FileAccess.Read);
         }
 
-        public override bool HasResourceFork()
+        public virtual bool HasResourceFork()
         {
             return rsrcPath != null;
         }
 
-        public override bool Identify(byte[] buffer)
+        public virtual bool Identify(byte[] buffer)
         {
             return false;
         }
 
-        public override bool Identify(Stream stream)
+        public virtual bool Identify(Stream stream)
         {
             System.Console.WriteLine("parentFolder");
             return false;
         }
 
-        public override bool Identify(string path)
+        public virtual bool Identify(string path)
         {
             string parentFolder = Path.GetDirectoryName(path);
 
@@ -190,22 +187,22 @@ namespace DiscImageChef.Filters
             return dataFound && rsrcFound;
         }
 
-        public override bool IsOpened()
+        public virtual bool IsOpened()
         {
             return opened;
         }
 
-        public override void Open(byte[] buffer)
+        public virtual void Open(byte[] buffer)
         {
             throw new NotSupportedException();
         }
 
-        public override void Open(Stream stream)
+        public virtual void Open(Stream stream)
         {
             throw new NotSupportedException();
         }
 
-        public override void Open(string path)
+        public virtual void Open(string path)
         {
             string parentFolder = Path.GetDirectoryName(path);
             string baseFilename = Path.GetFileName(path);

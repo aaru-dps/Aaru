@@ -66,13 +66,13 @@ namespace DiscImageChef.Tests.Images
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "images", "2mg", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new DiscImages.Apple2Mg();
+                IMediaImage image = new DiscImages.Apple2Mg();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
 
                 // How many sectors to read at once
                 const uint SECTORS_TO_READ = 256;
@@ -81,19 +81,19 @@ namespace DiscImageChef.Tests.Images
                 Md5Context ctx = new Md5Context();
                 ctx.Init();
 
-                while(doneSectors < image.ImageInfo.Sectors)
+                while(doneSectors < image.Info.Sectors)
                 {
                     byte[] sector;
 
-                    if(image.ImageInfo.Sectors - doneSectors >= SECTORS_TO_READ)
+                    if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                     {
                         sector = image.ReadSectors(doneSectors, SECTORS_TO_READ);
                         doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
-                        sector = image.ReadSectors(doneSectors, (uint)(image.ImageInfo.Sectors - doneSectors));
-                        doneSectors += image.ImageInfo.Sectors - doneSectors;
+                        sector = image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
+                        doneSectors += image.Info.Sectors - doneSectors;
                     }
 
                     ctx.Update(sector);

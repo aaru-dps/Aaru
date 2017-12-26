@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
@@ -57,8 +58,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void OpticalDisc(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void OpticalDisc(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.OpticalDisc = new[]
             {
@@ -73,14 +74,14 @@ namespace DiscImageChef.Core
                         Value = Path.GetFileName(imagePath)
                     },
                     Size = fi.Length,
-                    Sequence = new SequenceType {MediaTitle = image.ImageInfo.MediaTitle}
+                    Sequence = new SequenceType {MediaTitle = image.Info.MediaTitle}
                 }
             };
 
-            if(image.ImageInfo.MediaSequence != 0 && image.ImageInfo.LastMediaSequence != 0)
+            if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
             {
-                sidecar.OpticalDisc[0].Sequence.MediaSequence = image.ImageInfo.MediaSequence;
-                sidecar.OpticalDisc[0].Sequence.TotalMedia = image.ImageInfo.LastMediaSequence;
+                sidecar.OpticalDisc[0].Sequence.MediaSequence = image.Info.MediaSequence;
+                sidecar.OpticalDisc[0].Sequence.TotalMedia = image.Info.LastMediaSequence;
             }
             else
             {
@@ -88,9 +89,9 @@ namespace DiscImageChef.Core
                 sidecar.OpticalDisc[0].Sequence.TotalMedia = 1;
             }
 
-            MediaType dskType = image.ImageInfo.MediaType;
+            MediaType dskType = image.Info.MediaType;
 
-            foreach(MediaTagType tagType in image.ImageInfo.ReadableMediaTags)
+            foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
                 switch(tagType)
                 {
                     case MediaTagType.CD_ATIP:
@@ -341,7 +342,7 @@ namespace DiscImageChef.Core
                 ulong doneSectors = 0;
 
                 // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
-                if(image.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
+                if(image.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
                    // Only if filter is none...
                    (filterId == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") ||
                     // ...or AppleDouble
@@ -483,16 +484,16 @@ namespace DiscImageChef.Core
                         };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                        foreach(Filesystem plugin in plugins.PluginsList.Values)
+                        foreach(IFilesystem plugin in plugins.PluginsList.Values)
                             try
                             {
                                 if(!plugin.Identify(image, partitions[i])) continue;
 
-                                plugin.GetInformation(image, partitions[i], out _);
-                                lstFs.Add(plugin.XmlFSType);
-                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                plugin.GetInformation(image, partitions[i], out _, encoding);
+                                lstFs.Add(plugin.XmlFsType);
+                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
 
-                                switch(plugin.XmlFSType.Type)
+                                switch(plugin.XmlFsType.Type)
                                 {
                                     case "Opera":
                                         dskType = MediaType.ThreeDO;
@@ -535,16 +536,16 @@ namespace DiscImageChef.Core
                         Size = (ulong)xmlTrk.Size,
                         Sequence = (ulong)xmlTrk.Sequence.TrackNumber
                     };
-                    foreach(Filesystem plugin in plugins.PluginsList.Values)
+                    foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
                         {
                             if(!plugin.Identify(image, xmlPart)) continue;
 
-                            plugin.GetInformation(image, xmlPart, out _);
-                            lstFs.Add(plugin.XmlFSType);
-                            Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                            plugin.GetInformation(image, xmlPart, out _, encoding);
+                            lstFs.Add(plugin.XmlFsType);
+                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
 
-                            switch(plugin.XmlFSType.Type)
+                            switch(plugin.XmlFsType.Type)
                             {
                                 case "Opera":
                                     dskType = MediaType.ThreeDO;
@@ -593,23 +594,23 @@ namespace DiscImageChef.Core
             sidecar.OpticalDisc[0].DiscSubType = dscSubType;
             Statistics.AddMedia(dskType, false);
 
-            if(!string.IsNullOrEmpty(image.ImageInfo.DriveManufacturer) ||
-               !string.IsNullOrEmpty(image.ImageInfo.DriveModel) ||
-               !string.IsNullOrEmpty(image.ImageInfo.DriveFirmwareRevision) ||
-               !string.IsNullOrEmpty(image.ImageInfo.DriveSerialNumber))
+            if(!string.IsNullOrEmpty(image.Info.DriveManufacturer) ||
+               !string.IsNullOrEmpty(image.Info.DriveModel) ||
+               !string.IsNullOrEmpty(image.Info.DriveFirmwareRevision) ||
+               !string.IsNullOrEmpty(image.Info.DriveSerialNumber))
                 sidecar.OpticalDisc[0].DumpHardwareArray = new[]
                 {
                     new DumpHardwareType
                     {
-                        Extents = new[] {new ExtentType {Start = 0, End = image.ImageInfo.Sectors}},
-                        Manufacturer = image.ImageInfo.DriveManufacturer,
-                        Model = image.ImageInfo.DriveModel,
-                        Firmware = image.ImageInfo.DriveFirmwareRevision,
-                        Serial = image.ImageInfo.DriveSerialNumber,
+                        Extents = new[] {new ExtentType {Start = 0, End = image.Info.Sectors}},
+                        Manufacturer = image.Info.DriveManufacturer,
+                        Model = image.Info.DriveModel,
+                        Firmware = image.Info.DriveFirmwareRevision,
+                        Serial = image.Info.DriveSerialNumber,
                         Software = new SoftwareType
                         {
-                            Name = image.ImageInfo.Application,
-                            Version = image.ImageInfo.ApplicationVersion
+                            Name = image.Info.Application,
+                            Version = image.Info.ApplicationVersion
                         }
                     }
                 };

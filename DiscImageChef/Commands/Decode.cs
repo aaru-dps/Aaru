@@ -54,7 +54,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Decode command", "--sector-tags={0}", options.SectorTags);
 
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -62,7 +62,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            ImagePlugin inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
 
             if(inputFormat == null)
             {
@@ -72,14 +72,14 @@ namespace DiscImageChef.Commands
 
             inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
-            Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
+            Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
 
             if(options.DiskTags)
-                if(inputFormat.ImageInfo.ReadableMediaTags.Count == 0)
+                if(inputFormat.Info.ReadableMediaTags.Count == 0)
                     DicConsole.WriteLine("There are no disk tags in chosen disc image.");
                 else
-                    foreach(MediaTagType tag in inputFormat.ImageInfo.ReadableMediaTags)
+                    foreach(MediaTagType tag in inputFormat.Info.ReadableMediaTags)
                         switch(tag)
                         {
                             case MediaTagType.SCSI_INQUIRY:
@@ -232,7 +232,7 @@ namespace DiscImageChef.Commands
             {
                 ulong length;
 
-                if(options.Length.ToLowerInvariant() == "all") length = inputFormat.ImageInfo.Sectors - 1;
+                if(options.Length.ToLowerInvariant() == "all") length = inputFormat.Info.Sectors - 1;
                 else
                 {
                     if(!ulong.TryParse(options.Length, out length))
@@ -243,10 +243,10 @@ namespace DiscImageChef.Commands
                     }
                 }
 
-                if(inputFormat.ImageInfo.ReadableSectorTags.Count == 0)
+                if(inputFormat.Info.ReadableSectorTags.Count == 0)
                     DicConsole.WriteLine("There are no sector tags in chosen disc image.");
                 else
-                    foreach(SectorTagType tag in inputFormat.ImageInfo.ReadableSectorTags)
+                    foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
                         switch(tag)
                         {
                             default:

@@ -41,7 +41,7 @@ namespace DiscImageChef.Filters
     /// <summary>
     ///     Decodes MacBinary files
     /// </summary>
-    public class MacBinary : Filter
+    public class MacBinary : IFilter
     {
         const uint MACBINARY_MAGIC = 0x6D42494E;
         string basePath;
@@ -56,13 +56,10 @@ namespace DiscImageChef.Filters
         long rsrcForkOff;
         Stream stream;
 
-        public MacBinary()
-        {
-            Name = "MacBinary";
-            UUID = new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
-        }
+        public virtual string Name => "MacBinary";
+        public virtual Guid Id => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
 
-        public override void Close()
+        public virtual void Close()
         {
             bytes = null;
             stream?.Close();
@@ -72,22 +69,22 @@ namespace DiscImageChef.Filters
             opened = false;
         }
 
-        public override string GetBasePath()
+        public virtual string GetBasePath()
         {
             return basePath;
         }
 
-        public override DateTime GetCreationTime()
+        public virtual DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public override long GetDataForkLength()
+        public virtual long GetDataForkLength()
         {
             return header.dataLength;
         }
 
-        public override Stream GetDataForkStream()
+        public virtual Stream GetDataForkStream()
         {
             if(header.dataLength == 0) return null;
 
@@ -100,37 +97,37 @@ namespace DiscImageChef.Filters
             return null;
         }
 
-        public override string GetFilename()
+        public virtual string GetFilename()
         {
             return filename;
         }
 
-        public override DateTime GetLastWriteTime()
+        public virtual DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public override long GetLength()
+        public virtual long GetLength()
         {
             return header.dataLength + header.resourceLength;
         }
 
-        public override string GetParentFolder()
+        public virtual string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public override string GetPath()
+        public virtual string GetPath()
         {
             return basePath;
         }
 
-        public override long GetResourceForkLength()
+        public virtual long GetResourceForkLength()
         {
             return header.resourceLength;
         }
 
-        public override Stream GetResourceForkStream()
+        public virtual Stream GetResourceForkStream()
         {
             if(header.resourceLength == 0) return null;
 
@@ -143,12 +140,12 @@ namespace DiscImageChef.Filters
             return null;
         }
 
-        public override bool HasResourceFork()
+        public virtual bool HasResourceFork()
         {
             return header.resourceLength > 0;
         }
 
-        public override bool Identify(byte[] buffer)
+        public virtual bool Identify(byte[] buffer)
         {
             if(buffer == null || buffer.Length < 128) return false;
 
@@ -161,7 +158,7 @@ namespace DiscImageChef.Filters
                    (header.dataLength > 0 || header.resourceLength > 0);
         }
 
-        public override bool Identify(Stream stream)
+        public virtual bool Identify(Stream stream)
         {
             if(stream == null || stream.Length < 128) return false;
 
@@ -175,7 +172,7 @@ namespace DiscImageChef.Filters
                    (header.dataLength > 0 || header.resourceLength > 0);
         }
 
-        public override bool Identify(string path)
+        public virtual bool Identify(string path)
         {
             FileStream fstream = new FileStream(path, FileMode.Open, FileAccess.Read);
             if(fstream.Length < 128) return false;
@@ -190,12 +187,12 @@ namespace DiscImageChef.Filters
                    (header.dataLength > 0 || header.resourceLength > 0);
         }
 
-        public override bool IsOpened()
+        public virtual bool IsOpened()
         {
             return opened;
         }
 
-        public override void Open(byte[] buffer)
+        public virtual void Open(byte[] buffer)
         {
             MemoryStream ms = new MemoryStream(buffer);
             ms.Seek(0, SeekOrigin.Begin);
@@ -222,7 +219,7 @@ namespace DiscImageChef.Filters
             bytes = buffer;
         }
 
-        public override void Open(Stream stream)
+        public virtual void Open(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -248,7 +245,7 @@ namespace DiscImageChef.Filters
             this.stream = stream;
         }
 
-        public override void Open(string path)
+        public virtual void Open(string path)
         {
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);

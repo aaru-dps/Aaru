@@ -36,7 +36,7 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -59,12 +59,12 @@ namespace DiscImageChef.Filesystems.CPM
         }
 
         // TODO: Implementing this would require storing the interleaving
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -90,12 +90,12 @@ namespace DiscImageChef.Filesystems.CPM
             return Errno.NoError;
         }
 
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -107,7 +107,7 @@ namespace DiscImageChef.Filesystems.CPM
                 if(labelCreationDate != null) stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
                 if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
                 stat.Attributes = FileAttributes.Directory;
-                stat.BlockSize = XmlFsType.ClusterSize;
+                stat.BlockSize = xmlFsType.ClusterSize;
                 return Errno.NoError;
             }
 

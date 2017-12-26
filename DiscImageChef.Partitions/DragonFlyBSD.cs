@@ -38,23 +38,20 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
-    public class DragonFlyBSD : PartitionPlugin
+    public class DragonFlyBSD : IPartition
     {
         const uint DISK_MAGIC64 = 0xC4464C59;
 
-        public DragonFlyBSD()
-        {
-            Name = "DragonFly BSD 64-bit disklabel";
-            PluginUuid = new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
-        }
+        public virtual string Name => "DragonFly BSD 64-bit disklabel";
+        public virtual Guid Id => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            uint nSectors = 2048 / imagePlugin.ImageInfo.SectorSize;
-            if(2048 % imagePlugin.ImageInfo.SectorSize > 0) nSectors++;
+            uint nSectors = 2048 / imagePlugin.Info.SectorSize;
+            if(2048 % imagePlugin.Info.SectorSize > 0) nSectors++;
 
-            if(sectorOffset + nSectors >= imagePlugin.ImageInfo.Sectors) return false;
+            if(sectorOffset + nSectors >= imagePlugin.Info.Sectors) return false;
 
             byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
             if(sectors.Length < 2048) return false;
@@ -72,10 +69,10 @@ namespace DiscImageChef.Partitions
             {
                 Partition part = new Partition
                 {
-                    Start = entry.p_boffset / imagePlugin.ImageInfo.SectorSize + sectorOffset,
-                    Offset = entry.p_boffset + sectorOffset * imagePlugin.ImageInfo.SectorSize,
+                    Start = entry.p_boffset / imagePlugin.Info.SectorSize + sectorOffset,
+                    Offset = entry.p_boffset + sectorOffset * imagePlugin.Info.SectorSize,
                     Size = entry.p_bsize,
-                    Length = entry.p_bsize / imagePlugin.ImageInfo.SectorSize,
+                    Length = entry.p_bsize / imagePlugin.Info.SectorSize,
                     Name = entry.p_stor_uuid.ToString(),
                     Sequence = counter,
                     Scheme = Name,
@@ -84,7 +81,7 @@ namespace DiscImageChef.Partitions
                                : BSD.fsTypeToString((BSD.fsType)entry.p_fstype)
                 };
 
-                if(entry.p_bsize % imagePlugin.ImageInfo.SectorSize > 0) part.Length++;
+                if(entry.p_bsize % imagePlugin.Info.SectorSize > 0) part.Length++;
 
                 if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
 

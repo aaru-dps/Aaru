@@ -38,20 +38,21 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition1, Encoding encoding, bool debug)
         {
-            return Mount(false);
-        }
+            device = imagePlugin;
+            this.partition = partition;
+            currentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
 
-        public override Errno Mount(bool debug)
-        {
             // As the identification is so complex, just call Identify() and relay on its findings
             if(!Identify(device, partition) || !cpmFound || workingDefinition == null || dpb == null)
                 return Errno.InvalidArgument;
@@ -651,11 +652,11 @@ namespace DiscImageChef.Filesystems.CPM
             cpmStat.FilenameLength = 11;
             cpmStat.Files = (ulong)fileCache.Count;
             cpmStat.FreeBlocks = cpmStat.Blocks - usedBlocks;
-            cpmStat.PluginId = PluginUuid;
+            cpmStat.PluginId = Id;
             cpmStat.Type = "CP/M filesystem";
 
             // Generate XML info
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Clusters = cpmStat.Blocks,
                 ClusterSize = blockSize,
@@ -667,15 +668,15 @@ namespace DiscImageChef.Filesystems.CPM
             };
             if(labelCreationDate != null)
             {
-                XmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
-                XmlFsType.CreationDateSpecified = true;
+                xmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
+                xmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                XmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
-                XmlFsType.ModificationDateSpecified = true;
+                xmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
+                xmlFsType.ModificationDateSpecified = true;
             }
-            if(!string.IsNullOrEmpty(label)) XmlFsType.VolumeName = label;
+            if(!string.IsNullOrEmpty(label)) xmlFsType.VolumeName = label;
 
             mounted = true;
             return Errno.NoError;
@@ -685,7 +686,7 @@ namespace DiscImageChef.Filesystems.CPM
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -694,7 +695,7 @@ namespace DiscImageChef.Filesystems.CPM
             return Errno.NoError;
         }
 
-        public override Errno Unmount()
+        public virtual Errno Unmount()
         {
             mounted = false;
             definitions = null;

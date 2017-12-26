@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
-    public class Squash : Filesystem
+    public class Squash : IFilesystem
     {
         /// <summary>
         ///     Identifier for Squash
@@ -48,28 +48,14 @@ namespace DiscImageChef.Filesystems
         const uint SQUASH_MAGIC = 0x73717368;
         const uint SQUASH_CIGAM = 0x68737173;
 
-        public Squash()
-        {
-            Name = "Squash filesystem";
-            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            CurrentEncoding = Encoding.UTF8;
-        }
+        Encoding currentEncoding;
+        FileSystemType xmlFsType;
+        public virtual FileSystemType XmlFsType => xmlFsType;
+        public virtual Encoding Encoding => currentEncoding;
+        public virtual string Name => "Squash filesystem";
+        public virtual Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
 
-        public Squash(Encoding encoding)
-        {
-            Name = "Squash filesystem";
-            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
-
-        public Squash(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "Squash filesystem";
-            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            CurrentEncoding = encoding ?? Encoding.UTF8;
-        }
-
-        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
+        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -80,8 +66,10 @@ namespace DiscImageChef.Filesystems
             return magic == SQUASH_MAGIC || magic == SQUASH_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
+        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                                            Encoding encoding)
         {
+            currentEncoding = encoding ?? Encoding.UTF8;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -140,13 +128,13 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType
+            xmlFsType = new FileSystemType
             {
                 Type = "Squash file system",
                 CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
                 CreationDateSpecified = true,
                 Clusters =
-                    (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize / sqSb.block_size),
+                    (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size),
                 ClusterSize = (int)sqSb.block_size,
                 Files = sqSb.inodes,
                 FilesSpecified = true,
@@ -155,62 +143,57 @@ namespace DiscImageChef.Filesystems
             };
         }
 
-        public override Errno Mount()
+        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Mount(bool debug)
+        public virtual Errno Unmount()
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Unmount()
+        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        public virtual Errno ReadDir(string path, ref List<string> contents)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public virtual Errno StatFs(ref FileSystemInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno StatFs(ref FileSystemInfo stat)
+        public virtual Errno Stat(string path, ref FileEntryInfo stat)
         {
             return Errno.NotImplemented;
         }
 
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
+        public virtual Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotImplemented;
         }

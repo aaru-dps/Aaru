@@ -42,7 +42,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class VMware : ImagePlugin
+    public class VMware : IMediaImage
     {
         const uint VMWARE_EXTENT_MAGIC = 0x564D444B;
         const uint VMWARE_COW_MAGIC = 0x44574F43;
@@ -103,17 +103,18 @@ namespace DiscImageChef.DiscImages
 
         uint cid;
         Dictionary<ulong, VMwareExtent> extents;
-        Filter gdFilter;
+        IFilter gdFilter;
         Dictionary<ulong, byte[]> grainCache;
 
         ulong grainSize;
         uint[] gTable;
         bool hasParent;
+        ImageInfo imageInfo;
         string imageType;
         uint maxCachedGrains;
         uint parentCid;
 
-        ImagePlugin parentImage;
+        IMediaImage parentImage;
         string parentName;
 
         Dictionary<ulong, byte[]> sectorCache;
@@ -124,9 +125,7 @@ namespace DiscImageChef.DiscImages
 
         public VMware()
         {
-            Name = "VMware disk image";
-            PluginUuid = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
-            ImageInfo = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
@@ -151,18 +150,23 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public override string ImageFormat => "VMware";
+        public virtual ImageInfo Info => imageInfo;
 
-        public override List<Partition> Partitions =>
+        public virtual string Name => "VMware disk image";
+        public virtual Guid Id => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+
+        public virtual string ImageFormat => "VMware";
+
+        public virtual List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Track> Tracks =>
+        public virtual List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override List<Session> Sessions =>
+        public virtual List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public override bool IdentifyImage(Filter imageFilter)
+        public virtual bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -205,7 +209,7 @@ namespace DiscImageChef.DiscImages
             return ddfMagicBytes.SequenceEqual(ddfMagic);
         }
 
-        public override bool OpenImage(Filter imageFilter)
+        public virtual bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -292,7 +296,7 @@ namespace DiscImageChef.DiscImages
 
                     if(!File.Exists(curPath)) break;
 
-                    Filter extentFilter = new FiltersList().GetFilter(curPath);
+                    IFilter extentFilter = new FiltersList().GetFilter(curPath);
                     Stream extentStream = extentFilter.GetDataForkStream();
 
                     if(stream.Length > Marshal.SizeOf(vmCHdr))
@@ -409,17 +413,17 @@ namespace DiscImageChef.DiscImages
                     }
                     else if(matchCylinders.Success)
                     {
-                        uint.TryParse(matchCylinders.Groups["cylinders"].Value, out ImageInfo.Cylinders);
+                        uint.TryParse(matchCylinders.Groups["cylinders"].Value, out imageInfo.Cylinders);
                         matchedCyls = true;
                     }
                     else if(matchHeads.Success)
                     {
-                        uint.TryParse(matchHeads.Groups["heads"].Value, out ImageInfo.Heads);
+                        uint.TryParse(matchHeads.Groups["heads"].Value, out imageInfo.Heads);
                         matchedHds = true;
                     }
                     else if(matchSectors.Success)
                     {
-                        uint.TryParse(matchSectors.Groups["sectors"].Value, out ImageInfo.SectorsPerTrack);
+                        uint.TryParse(matchSectors.Groups["sectors"].Value, out imageInfo.SectorsPerTrack);
                         matchedSpt = true;
                     }
                 }
@@ -500,7 +504,7 @@ namespace DiscImageChef.DiscImages
                 throw new
                     Exception("There are sparse extents but there is no header to find the grain tables, cannot proceed.");
 
-            ImageInfo.Sectors = currentSector;
+            imageInfo.Sectors = currentSector;
 
             uint grains = 0;
             uint gdEntries = 0;
@@ -531,7 +535,7 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", vmEHdr.compression);
 
                 grainSize = vmEHdr.grainSize;
-                grains = (uint)(ImageInfo.Sectors / vmEHdr.grainSize) + 1;
+                grains = (uint)(imageInfo.Sectors / vmEHdr.grainSize) + 1;
                 gdEntries = grains / vmEHdr.GTEsPerGT;
                 gtEsPerGt = vmEHdr.GTEsPerGT;
 
@@ -560,12 +564,12 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", vmCHdr.uncleanShutdown);
 
                 grainSize = vmCHdr.grainSize;
-                grains = (uint)(ImageInfo.Sectors / vmCHdr.grainSize) + 1;
+                grains = (uint)(imageInfo.Sectors / vmCHdr.grainSize) + 1;
                 gdEntries = vmCHdr.numGDEntries;
                 gdOffset = vmCHdr.gdOffset;
                 gtEsPerGt = grains / gdEntries;
-                ImageInfo.MediaTitle = StringHandlers.CToString(vmCHdr.name);
-                ImageInfo.Comments = StringHandlers.CToString(vmCHdr.description);
+                imageInfo.MediaTitle = StringHandlers.CToString(vmCHdr.name);
+                imageInfo.Comments = StringHandlers.CToString(vmCHdr.description);
                 version = vmCHdr.version;
             }
 
@@ -573,7 +577,7 @@ namespace DiscImageChef.DiscImages
             {
                 if(grains == 0 || gdEntries == 0) throw new Exception("Some error ocurred setting GD sizes");
 
-                DicConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", ImageInfo.Sectors,
+                DicConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", imageInfo.Sectors,
                                           grains, gdEntries);
 
                 Stream gdStream = gdFilter.GetDataForkStream();
@@ -608,7 +612,7 @@ namespace DiscImageChef.DiscImages
 
             if(hasParent)
             {
-                Filter parentFilter =
+                IFilter parentFilter =
                     new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentName));
                 if(parentFilter == null) throw new Exception($"Cannot find parent \"{parentName}\".");
 
@@ -619,35 +623,35 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.CreationTime = imageFilter.GetCreationTime();
-            ImageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.SectorSize = SECTOR_SIZE;
-            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.MediaType = MediaType.GENERIC_HDD;
-            ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.SectorSize = SECTOR_SIZE;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.MediaType = MediaType.GENERIC_HDD;
+            imageInfo.ImageSize = imageInfo.Sectors * SECTOR_SIZE;
             // VMDK version 1 started on VMware 4, so there is a previous version, "COWD"
-            ImageInfo.Version = cowD ? $"{version}" : $"{version + 3}";
+            imageInfo.Version = cowD ? $"{version}" : $"{version + 3}";
 
             if(cowD)
             {
-                ImageInfo.Cylinders = vmCHdr.cylinders;
-                ImageInfo.Heads = vmCHdr.heads;
-                ImageInfo.SectorsPerTrack = vmCHdr.spt;
+                imageInfo.Cylinders = vmCHdr.cylinders;
+                imageInfo.Heads = vmCHdr.heads;
+                imageInfo.SectorsPerTrack = vmCHdr.spt;
             }
             else if(!matchedCyls || !matchedHds || !matchedSpt)
             {
-                ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
-                ImageInfo.Heads = 16;
-                ImageInfo.SectorsPerTrack = 63;
+                imageInfo.Cylinders = (uint)(imageInfo.Sectors / 16 / 63);
+                imageInfo.Heads = 16;
+                imageInfo.SectorsPerTrack = 63;
             }
 
             return true;
         }
 
-        public override byte[] ReadSector(ulong sectorAddress)
+        public virtual byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -732,13 +736,13 @@ namespace DiscImageChef.DiscImages
             return sector;
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.Sectors - 1)
+            if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > ImageInfo.Sectors)
+            if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -752,98 +756,98 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadDiskTag(MediaTagType tag)
+        public virtual byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(Session session)
+        public virtual List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(ushort session)
+        public virtual List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySector(ulong sectorAddress)
+        public virtual bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(ulong sectorAddress, uint track)
+        public virtual bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
+            for(ulong i = 0; i < imageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyMediaImage()
+        public virtual bool? VerifyMediaImage()
         {
             return null;
         }
@@ -902,7 +906,7 @@ namespace DiscImageChef.DiscImages
             public string Access;
             public uint Sectors;
             public string Type;
-            public Filter Filter;
+            public IFilter Filter;
             public string Filename;
             public uint Offset;
         }

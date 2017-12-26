@@ -60,15 +60,15 @@ namespace DiscImageChef.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "f2fs", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new Vdi();
+                IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                PartitionPlugin parts = new MBR();
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                IPartition parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), testfiles[i]);
-                Filesystem fs = new F2FS();
+                IFilesystem fs = new F2FS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83")
@@ -79,12 +79,12 @@ namespace DiscImageChef.Tests.Filesystems
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out _);
-                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("F2FS filesystem", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _, null);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("F2FS filesystem", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
     }

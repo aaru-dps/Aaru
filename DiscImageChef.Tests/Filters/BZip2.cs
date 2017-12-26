@@ -59,14 +59,14 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckFilterId()
         {
-            Filter filter = new DiscImageChef.Filters.BZip2();
+            IFilter filter = new DiscImageChef.Filters.BZip2();
             Assert.AreEqual(true, filter.Identify(location));
         }
 
         [Test]
         public void Test()
         {
-            Filter filter = new DiscImageChef.Filters.BZip2();
+            IFilter filter = new DiscImageChef.Filters.BZip2();
             filter.Open(location);
             Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(1048576, filter.GetDataForkLength());
@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckContents()
         {
-            Filter filter = new DiscImageChef.Filters.BZip2();
+            IFilter filter = new DiscImageChef.Filters.BZip2();
             filter.Open(location);
             Stream str = filter.GetDataForkStream();
             byte[] data = new byte[1048576];

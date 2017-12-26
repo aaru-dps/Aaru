@@ -40,7 +40,7 @@ namespace DiscImageChef.Filters
     /// <summary>
     ///     Decodes AppleDouble files
     /// </summary>
-    public class AppleDouble : Filter
+    public class AppleDouble : IFilter
     {
         const uint AppleDoubleMagic = 0x00051607;
         const uint AppleDoubleVersion = 0x00010000;
@@ -68,68 +68,65 @@ namespace DiscImageChef.Filters
         bool opened;
         AppleDoubleEntry rsrcFork;
 
-        public AppleDouble()
-        {
-            Name = "AppleDouble";
-            UUID = new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
-        }
+        public virtual string Name => "AppleDouble";
+        public virtual Guid Id => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
 
-        public override void Close()
+        public virtual void Close()
         {
             opened = false;
         }
 
-        public override string GetBasePath()
+        public virtual string GetBasePath()
         {
             return basePath;
         }
 
-        public override DateTime GetCreationTime()
+        public virtual DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public override long GetDataForkLength()
+        public virtual long GetDataForkLength()
         {
             return dataFork.length;
         }
 
-        public override Stream GetDataForkStream()
+        public virtual Stream GetDataForkStream()
         {
             return new FileStream(basePath, FileMode.Open, FileAccess.Read);
         }
 
-        public override string GetFilename()
+        public virtual string GetFilename()
         {
             return Path.GetFileName(basePath);
         }
 
-        public override DateTime GetLastWriteTime()
+        public virtual DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public override long GetLength()
+        public virtual long GetLength()
         {
             return dataFork.length + rsrcFork.length;
         }
 
-        public override string GetParentFolder()
+        public virtual string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public override string GetPath()
+        public virtual string GetPath()
         {
             return basePath;
         }
 
-        public override long GetResourceForkLength()
+        public virtual long GetResourceForkLength()
         {
             return rsrcFork.length;
         }
 
-        public override Stream GetResourceForkStream()
+        public virtual Stream GetResourceForkStream()
         {
             if(rsrcFork.length == 0) return null;
 
@@ -137,24 +134,24 @@ namespace DiscImageChef.Filters
                                     rsrcFork.offset + rsrcFork.length - 1);
         }
 
-        public override bool HasResourceFork()
+        public virtual bool HasResourceFork()
         {
             return rsrcFork.length > 0;
         }
 
-        public override bool Identify(byte[] buffer)
+        public virtual bool Identify(byte[] buffer)
         {
             // Now way to have two files in a single byte array
             return false;
         }
 
-        public override bool Identify(Stream stream)
+        public virtual bool Identify(Stream stream)
         {
             // Now way to have two files in a single stream
             return false;
         }
 
-        public override bool Identify(string path)
+        public virtual bool Identify(string path)
         {
             // Prepend data fork name with "R."
             string ProDosAppleDouble;
@@ -306,24 +303,24 @@ namespace DiscImageChef.Filters
                    (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2);
         }
 
-        public override bool IsOpened()
+        public virtual bool IsOpened()
         {
             return opened;
         }
 
-        public override void Open(byte[] buffer)
+        public virtual void Open(byte[] buffer)
         {
             // Now way to have two files in a single byte array
             throw new NotSupportedException();
         }
 
-        public override void Open(Stream stream)
+        public virtual void Open(Stream stream)
         {
             // Now way to have two files in a single stream
             throw new NotSupportedException();
         }
 
-        public override void Open(string path)
+        public virtual void Open(string path)
         {
             // Prepend data fork name with "R."
             string ProDosAppleDouble;

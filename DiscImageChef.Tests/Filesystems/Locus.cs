@@ -62,28 +62,28 @@ namespace DiscImageChef.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "locus", testfiles[i]);
-                Filter filter = new LZip();
+                IFilter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new ZZZRawImage();
+                IMediaImage image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.Locus();
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                IFilesystem fs = new DiscImageChef.Filesystems.Locus();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = image.ImageInfo.Sectors,
-                    Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
+                    Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out _);
-                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Locus filesystem", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+                fs.GetInformation(image, wholePart, out _, null);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
