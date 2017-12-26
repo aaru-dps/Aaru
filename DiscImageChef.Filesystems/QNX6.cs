@@ -48,12 +48,12 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "QNX6 Plugin";
-        public virtual Guid Id => new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding => currentEncoding;
+        public string Name => "QNX6 Plugin";
+        public Guid Id => new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
             uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
@@ -79,7 +79,7 @@ namespace DiscImageChef.Filesystems
             return qnxSb.magic == QNX6_MAGIC || audiSb.magic == QNX6_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");

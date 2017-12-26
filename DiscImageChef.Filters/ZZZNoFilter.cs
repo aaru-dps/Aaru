@@ -46,10 +46,10 @@ namespace DiscImageChef.Filters
         DateTime lastWriteTime;
         bool opened;
 
-        public virtual string Name => "No filter";
-        public virtual Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public string Name => "No filter";
+        public Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
 
-        public virtual void Close()
+        public void Close()
         {
             dataStream?.Close();
             dataStream = null;
@@ -57,48 +57,48 @@ namespace DiscImageChef.Filters
             opened = false;
         }
 
-        public virtual string GetBasePath()
+        public string GetBasePath()
         {
             return basePath;
         }
 
-        public virtual Stream GetDataForkStream()
+        public Stream GetDataForkStream()
         {
             return dataStream;
         }
 
-        public virtual string GetPath()
+        public string GetPath()
         {
             return basePath;
         }
 
-        public virtual Stream GetResourceForkStream()
+        public Stream GetResourceForkStream()
         {
             return null;
         }
 
-        public virtual bool HasResourceFork()
+        public bool HasResourceFork()
         {
             // TODO: Implement support for xattrs/ADS
             return false;
         }
 
-        public virtual bool Identify(byte[] buffer)
+        public bool Identify(byte[] buffer)
         {
             return buffer != null && buffer.Length > 0;
         }
 
-        public virtual bool Identify(Stream stream)
+        public bool Identify(Stream stream)
         {
             return stream != null && stream.Length > 0;
         }
 
-        public virtual bool Identify(string path)
+        public bool Identify(string path)
         {
             return File.Exists(path);
         }
 
-        public virtual void Open(byte[] buffer)
+        public void Open(byte[] buffer)
         {
             dataStream = new MemoryStream(buffer);
             basePath = null;
@@ -107,7 +107,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual void Open(Stream stream)
+        public void Open(Stream stream)
         {
             dataStream = stream;
             basePath = null;
@@ -116,7 +116,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual void Open(string path)
+        public void Open(string path)
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
@@ -126,42 +126,42 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual DateTime GetCreationTime()
+        public DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public virtual long GetDataForkLength()
+        public long GetDataForkLength()
         {
             return dataStream.Length;
         }
 
-        public virtual DateTime GetLastWriteTime()
+        public DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public virtual long GetLength()
+        public long GetLength()
         {
             return dataStream.Length;
         }
 
-        public virtual long GetResourceForkLength()
+        public long GetResourceForkLength()
         {
             return 0;
         }
 
-        public virtual string GetFilename()
+        public string GetFilename()
         {
             return Path.GetFileName(basePath);
         }
 
-        public virtual string GetParentFolder()
+        public string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public virtual bool IsOpened()
+        public bool IsOpened()
         {
             return opened;
         }

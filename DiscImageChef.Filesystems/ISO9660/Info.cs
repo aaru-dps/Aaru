@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // ISO9660 is designed for 2048 bytes/sector devices
             if(imagePlugin.Info.SectorSize < 2048) return false;
@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                    Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.ASCII;
             information = "";

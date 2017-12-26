@@ -42,10 +42,10 @@ namespace DiscImageChef.Partitions
     {
         const uint DISK_MAGIC64 = 0xC4464C59;
 
-        public virtual string Name => "DragonFly BSD 64-bit disklabel";
-        public virtual Guid Id => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+        public string Name => "DragonFly BSD 64-bit disklabel";
+        public Guid Id => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
             uint nSectors = 2048 / imagePlugin.Info.SectorSize;

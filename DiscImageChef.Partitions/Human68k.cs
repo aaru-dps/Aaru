@@ -44,10 +44,10 @@ namespace DiscImageChef.Partitions
     {
         const uint X68K_MAGIC = 0x5836384B;
 
-        public virtual string Name => "Human 68k partitions";
-        public virtual Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public string Name => "Human 68k partitions";
+        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

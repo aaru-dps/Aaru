@@ -55,10 +55,10 @@ namespace DiscImageChef.Partitions
         const uint TypeMinix = 0x004D4958;
         const uint TypeMinix2 = 0x004D4E58;
 
-        public virtual string Name => "Atari partitions";
-        public virtual Guid Id => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
+        public string Name => "Atari partitions";
+        public Guid Id => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

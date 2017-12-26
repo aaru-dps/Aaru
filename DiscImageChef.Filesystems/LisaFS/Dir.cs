@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
-        public virtual Errno ReadLink(string path, ref string dest)
+        public Errno ReadLink(string path, ref string dest)
         {
             // LisaFS does not support symbolic links (afaik)
             return Errno.NotSupported;
@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
-        public virtual Errno ReadDir(string path, ref List<string> contents)
+        public Errno ReadDir(string path, ref List<string> contents)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;

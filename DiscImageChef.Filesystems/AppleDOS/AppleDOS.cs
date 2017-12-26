@@ -56,10 +56,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
         Vtoc vtoc;
 
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Apple DOS File System";
-        public virtual Guid Id => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Apple DOS File System";
+        public Guid Id => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
 
         #region Caches
         /// <summary>Caches track/sector lists</summary>

@@ -184,10 +184,10 @@ namespace DiscImageChef.Partitions
             "VMWare VMKCORE", "Linux RAID, FreeDOS", "SpeedStor, LANStep, PS/2 IML", "Xenix bad block"
         };
 
-        public virtual string Name => "Master Boot Record";
-        public virtual Guid Id => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+        public string Name => "Master Boot Record";
+        public Guid Id => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             ulong counter = 0;
 

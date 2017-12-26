@@ -78,12 +78,12 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "ZFS Filesystem Plugin";
-        public virtual Guid Id => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding => currentEncoding;
+        public string Name => "ZFS Filesystem Plugin";
+        public Guid Id => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -104,7 +104,7 @@ namespace DiscImageChef.Filesystems
             return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             // ZFS is always UTF-8

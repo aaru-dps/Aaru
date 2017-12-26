@@ -47,13 +47,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "JFS Plugin";
-        public virtual Guid Id => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "JFS Plugin";
+        public Guid Id => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
             if(partition.Start + bootSectors >= partition.End) return false;
@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems
             return jfsSb.s_magic == JFS_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

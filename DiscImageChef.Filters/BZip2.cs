@@ -50,10 +50,10 @@ namespace DiscImageChef.Filters
         DateTime lastWriteTime;
         bool opened;
 
-        public virtual string Name => "BZip2";
-        public virtual Guid Id => new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+        public string Name => "BZip2";
+        public Guid Id => new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
 
-        public virtual void Close()
+        public void Close()
         {
             dataStream?.Close();
             dataStream = null;
@@ -61,32 +61,32 @@ namespace DiscImageChef.Filters
             opened = false;
         }
 
-        public virtual string GetBasePath()
+        public string GetBasePath()
         {
             return basePath;
         }
 
-        public virtual Stream GetDataForkStream()
+        public Stream GetDataForkStream()
         {
             return innerStream;
         }
 
-        public virtual string GetPath()
+        public string GetPath()
         {
             return basePath;
         }
 
-        public virtual Stream GetResourceForkStream()
+        public Stream GetResourceForkStream()
         {
             return null;
         }
 
-        public virtual bool HasResourceFork()
+        public bool HasResourceFork()
         {
             return false;
         }
 
-        public virtual bool Identify(byte[] buffer)
+        public bool Identify(byte[] buffer)
         {
             if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 ||
                buffer[3] > 0x39) return false;
@@ -97,7 +97,7 @@ namespace DiscImageChef.Filters
                    buffer[buffer.Length - 510] != 0x6C || buffer[buffer.Length - 509] != 0x79;
         }
 
-        public virtual bool Identify(Stream stream)
+        public bool Identify(Stream stream)
         {
             byte[] buffer = new byte[4];
 
@@ -117,7 +117,7 @@ namespace DiscImageChef.Filters
             return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
         }
 
-        public virtual bool Identify(string path)
+        public bool Identify(string path)
         {
             if(!File.Exists(path)) return false;
 
@@ -142,7 +142,7 @@ namespace DiscImageChef.Filters
             return true;
         }
 
-        public virtual void Open(byte[] buffer)
+        public void Open(byte[] buffer)
         {
             dataStream = new MemoryStream(buffer);
             basePath = null;
@@ -153,7 +153,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual void Open(Stream stream)
+        public void Open(Stream stream)
         {
             dataStream = stream;
             basePath = null;
@@ -164,7 +164,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual void Open(string path)
+        public void Open(string path)
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
@@ -180,32 +180,32 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual DateTime GetCreationTime()
+        public DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public virtual long GetDataForkLength()
+        public long GetDataForkLength()
         {
             return decompressedSize;
         }
 
-        public virtual DateTime GetLastWriteTime()
+        public DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public virtual long GetLength()
+        public long GetLength()
         {
             return decompressedSize;
         }
 
-        public virtual long GetResourceForkLength()
+        public long GetResourceForkLength()
         {
             return 0;
         }
 
-        public virtual string GetFilename()
+        public string GetFilename()
         {
             if(basePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 4);
@@ -215,12 +215,12 @@ namespace DiscImageChef.Filters
             return basePath;
         }
 
-        public virtual string GetParentFolder()
+        public string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public virtual bool IsOpened()
+        public bool IsOpened()
         {
             return opened;
         }

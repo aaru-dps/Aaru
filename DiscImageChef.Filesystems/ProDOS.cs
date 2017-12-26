@@ -86,13 +86,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Apple ProDOS filesystem";
-        public virtual Guid Id => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Apple ProDOS filesystem";
+        public Guid Id => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -154,7 +154,7 @@ namespace DiscImageChef.Filesystems
             return totalBlocks <= partition.End - partition.Start + 1;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             // TODO: Until Apple ][ encoding is implemented
             currentEncoding = new LisaRoman();

@@ -113,9 +113,9 @@ namespace DiscImageChef.Filesystems.CPM
         /// </summary>
         CpmDefinition workingDefinition;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "CP/M File System";
-        public virtual Guid Id => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding => currentEncoding;
+        public string Name => "CP/M File System";
+        public Guid Id => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
     }
 }

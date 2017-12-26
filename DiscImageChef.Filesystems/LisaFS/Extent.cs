@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             // TODO: Not really important.
             return Errno.NotImplemented;

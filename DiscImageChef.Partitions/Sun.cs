@@ -70,10 +70,10 @@ namespace DiscImageChef.Partitions
         const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456 + // sizeof(dk_vtoc16)
                                                    4 * 4 + 12 * 2 + 2 * 2);
 
-        public virtual string Name => "Sun Disklabel";
-        public virtual Guid Id => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
+        public string Name => "Sun Disklabel";
+        public Guid Id => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

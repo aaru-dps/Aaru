@@ -56,10 +56,10 @@ namespace DiscImageChef.Partitions
         readonly string[] printDevices = {"Parallel", "Serial"};
         readonly double[] stopBits = {1, 1.5, 2};
 
-        public virtual string Name => "ACT Apricot partitions";
-        public virtual Guid Id => new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
+        public string Name => "ACT Apricot partitions";
+        public Guid Id => new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

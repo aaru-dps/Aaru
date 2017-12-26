@@ -55,13 +55,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Microsoft File Allocation Table";
-        public virtual Guid Id => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Microsoft File Allocation Table";
+        public Guid Id => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -314,7 +314,7 @@ namespace DiscImageChef.Filesystems
             return fatId == fat2Sector[0];
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
             information = "";

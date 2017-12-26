@@ -46,12 +46,12 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "New Technology File System (NTFS)";
-        public virtual Guid Id => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding => currentEncoding;
+        public string Name => "New Technology File System (NTFS)";
+        public Guid Id => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -79,7 +79,7 @@ namespace DiscImageChef.Filesystems
             return signature == 0xAA55;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = Encoding.Unicode;
             information = "";

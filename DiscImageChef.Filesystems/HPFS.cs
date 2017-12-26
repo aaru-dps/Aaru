@@ -46,13 +46,13 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "OS/2 High Performance File System";
-        public virtual Guid Id => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "OS/2 High Performance File System";
+        public Guid Id => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(16 + partition.Start >= partition.End) return false;
 
@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems
             return magic1 == 0xF995E849 && magic2 == 0xFA53E9C5;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("ibm850");
             information = "";

@@ -43,10 +43,10 @@ namespace DiscImageChef.Filesystems.ISO9660
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "ISO9660 Filesystem";
-        public virtual Guid Id => new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "ISO9660 Filesystem";
+        public Guid Id => new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
     }
 }

@@ -44,7 +44,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = new LisaRoman();
             information = "";

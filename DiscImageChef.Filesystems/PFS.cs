@@ -65,13 +65,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Professional File System";
-        public virtual Guid Id => new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Professional File System";
+        public Guid Id => new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems
                    magic == MUPFS_DISK;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] rootBlockSector = imagePlugin.ReadSector(2 + partition.Start);

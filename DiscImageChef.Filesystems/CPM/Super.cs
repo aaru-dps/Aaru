@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition1, Encoding encoding, bool debug)
+        public Errno Mount(IMediaImage imagePlugin, Partition partition1, Encoding encoding, bool debug)
         {
             device = imagePlugin;
             this.partition = partition;
@@ -686,7 +686,7 @@ namespace DiscImageChef.Filesystems.CPM
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        public virtual Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(ref FileSystemInfo stat)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -695,7 +695,7 @@ namespace DiscImageChef.Filesystems.CPM
             return Errno.NoError;
         }
 
-        public virtual Errno Unmount()
+        public Errno Unmount()
         {
             mounted = false;
             definitions = null;

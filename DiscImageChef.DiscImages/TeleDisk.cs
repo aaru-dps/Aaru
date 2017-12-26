@@ -149,23 +149,23 @@ namespace DiscImageChef.DiscImages
             sectorsWhereCrcHasFailed = new List<ulong>();
         }
 
-        public virtual ImageInfo Info => imageInfo;
+        public ImageInfo Info => imageInfo;
 
-        public virtual string Name => "Sydex TeleDisk";
-        public virtual Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public string Name => "Sydex TeleDisk";
+        public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
 
-        public virtual string ImageFormat => "Sydex TeleDisk";
+        public string ImageFormat => "Sydex TeleDisk";
 
-        public virtual List<Partition> Partitions =>
+        public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public virtual List<Track> Tracks =>
+        public List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public virtual List<Session> Sessions =>
+        public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public virtual bool IdentifyImage(IFilter imageFilter)
+        public bool IdentifyImage(IFilter imageFilter)
         {
             header = new TeleDiskHeader();
             byte[] headerBytes = new byte[12];
@@ -221,7 +221,7 @@ namespace DiscImageChef.DiscImages
                    header.DriveType == DRIVE_TYPE_8_INCH;
         }
 
-        public virtual bool OpenImage(IFilter imageFilter)
+        public bool OpenImage(IFilter imageFilter)
         {
             header = new TeleDiskHeader();
             byte[] headerBytes = new byte[12];
@@ -664,7 +664,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress)
+        public byte[] ReadSector(ulong sectorAddress)
         {
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
@@ -680,7 +680,7 @@ namespace DiscImageChef.DiscImages
             return sectorsData[cylinder][head][sector];
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
+        public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -707,27 +707,27 @@ namespace DiscImageChef.DiscImages
             return (cylinder, head, sector);
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress)
+        public byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             return ReadSectors(sectorAddress, length);
         }
 
-        public virtual bool? VerifySector(ulong sectorAddress)
+        public bool? VerifySector(ulong sectorAddress)
         {
             return !sectorsWhereCrcHasFailed.Contains(sectorAddress);
         }
 
-        public virtual bool? VerifySector(ulong sectorAddress, uint track)
+        public bool? VerifySector(ulong sectorAddress, uint track)
         {
             return null;
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -739,7 +739,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
@@ -750,7 +750,7 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public virtual bool? VerifyMediaImage()
+        public bool? VerifyMediaImage()
         {
             return aDiskCrcHasFailed;
         }
@@ -1013,7 +1013,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public virtual byte[] ReadDiskTag(MediaTagType tag)
+        public byte[] ReadDiskTag(MediaTagType tag)
         {
             if(tag != MediaTagType.Floppy_LeadOut)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -1023,52 +1023,52 @@ namespace DiscImageChef.DiscImages
             throw new FeatureNotPresentImageException("Lead-out not present in disk image");
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual List<Track> GetSessionTracks(Session session)
+        public List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual List<Track> GetSessionTracks(ushort session)
+        public List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
+        public byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

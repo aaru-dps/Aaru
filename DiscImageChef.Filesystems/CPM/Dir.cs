@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public virtual Errno ReadDir(string path, ref List<string> contents)
+        public Errno ReadDir(string path, ref List<string> contents)
         {
             if(!mounted) return Errno.AccessDenied;
 

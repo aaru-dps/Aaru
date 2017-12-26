@@ -46,13 +46,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "FATX Filesystem Plugin";
-        public virtual Guid Id => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "FATX Filesystem Plugin";
+        public Guid Id => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -64,7 +64,7 @@ namespace DiscImageChef.Filesystems
             return fatxSb.magic == FATX_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = Encoding.UTF8;

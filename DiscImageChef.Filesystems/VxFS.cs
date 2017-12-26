@@ -50,13 +50,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Veritas filesystem";
-        public virtual Guid Id => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Veritas filesystem";
+        public Guid Id => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
 
@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems
             return magic == VXFS_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.UTF8;
             ulong vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;

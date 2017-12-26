@@ -48,12 +48,12 @@ namespace DiscImageChef.Filesystems
         readonly byte[] AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual string Name => "Alexander Osipov DOS file system";
-        public virtual Guid Id => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
-        public virtual Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType => xmlFsType;
+        public string Name => "Alexander Osipov DOS file system";
+        public Guid Id => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+        public Encoding Encoding => currentEncoding;
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // Does AO-DOS support hard disks?
             if(partition.Start > 0) return false;
@@ -74,7 +74,7 @@ namespace DiscImageChef.Filesystems
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = Encoding.GetEncoding("koi8-r");
             byte[] sector = imagePlugin.ReadSector(0);

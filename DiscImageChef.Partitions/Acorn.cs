@@ -50,10 +50,10 @@ namespace DiscImageChef.Partitions
         const uint TYPE_RISCIX_SCSI = 2;
         const uint TYPE_MASK = 15;
 
-        public virtual string Name => "Acorn FileCore partitions";
-        public virtual Guid Id => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+        public string Name => "Acorn FileCore partitions";
+        public Guid Id => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

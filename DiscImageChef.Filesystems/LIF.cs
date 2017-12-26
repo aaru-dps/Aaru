@@ -48,13 +48,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "HP Logical Interchange Format Plugin";
-        public virtual Guid Id => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "HP Logical Interchange Format Plugin";
+        public Guid Id => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 256) return false;
 
@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems
             return lifSb.magic == LIF_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

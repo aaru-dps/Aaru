@@ -164,13 +164,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Linux extended Filesystem 2, 3 and 4";
-        public virtual Guid Id => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Linux extended Filesystem 2, 3 and 4";
+        public Guid Id => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
             uint sbOff = SB_POS % imagePlugin.Info.SectorSize;
@@ -190,7 +190,7 @@ namespace DiscImageChef.Filesystems
             return magic == EXT2_MAGIC || magic == EXT2_MAGIC_OLD;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

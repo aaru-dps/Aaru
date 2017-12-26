@@ -53,10 +53,10 @@ namespace DiscImageChef.Partitions
         /// <summary>Old indicator for HFS partition, "TFS1"</summary>
         const uint HFS_MAGIC_OLD = 0x54465331;
 
-        public virtual string Name => "Apple Partition Map";
-        public virtual Guid Id => new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
+        public string Name => "Apple Partition Map";
+        public Guid Id => new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             uint sectorSize;
 

@@ -45,13 +45,13 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Solar_OS filesystem";
-        public virtual Guid Id => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Solar_OS filesystem";
+        public Guid Id => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems
             return signature == 0x29 && fsType == "SOL_FS  ";
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

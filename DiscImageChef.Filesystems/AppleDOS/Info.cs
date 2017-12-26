@@ -43,7 +43,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.Sectors != 455 && imagePlugin.Info.Sectors != 560) return false;
 
@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                    vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector == 256;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             // TODO: Until Apple ][ encoding is implemented
             currentEncoding = new LisaRoman();

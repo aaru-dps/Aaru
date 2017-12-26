@@ -54,13 +54,13 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Files-11 On-Disk Structure";
-        public virtual Guid Id => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Files-11 On-Disk Structure";
+        public Guid Id => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -91,7 +91,7 @@ namespace DiscImageChef.Filesystems
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             information = "";

@@ -48,10 +48,10 @@ namespace DiscImageChef.Partitions
     {
         const int SGI_MAGIC = 0x0BE5A941;
 
-        public virtual string Name => "SGI Disk Volume Header";
-        public virtual Guid Id => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+        public string Name => "SGI Disk Volume Header";
+        public Guid Id => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

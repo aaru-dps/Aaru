@@ -100,13 +100,13 @@ namespace DiscImageChef.Filesystems
         const int NIADDR = 3;
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "dump(8) Plugin";
-        public virtual Guid Id => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "dump(8) Plugin";
+        public Guid Id => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -147,7 +147,7 @@ namespace DiscImageChef.Filesystems
                    newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");

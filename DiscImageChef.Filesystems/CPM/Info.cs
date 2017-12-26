@@ -44,7 +44,7 @@ namespace DiscImageChef.Filesystems.CPM
 {
     partial class CPM
     {
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
             // It's ugly, but will stop a lot of false positives
@@ -976,7 +976,7 @@ namespace DiscImageChef.Filesystems.CPM
             }
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
             information = "";

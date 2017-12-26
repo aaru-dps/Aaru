@@ -47,14 +47,14 @@ namespace DiscImageChef.Filesystems
         /// <summary>Identifier for SFS v2</summary>
         const uint SFS2_MAGIC = 0x53465302;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "SmartFileSystem";
-        public virtual Guid Id => new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "SmartFileSystem";
+        public Guid Id => new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems
             return magic == SFS_MAGIC || magic == SFS2_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] rootBlockSector = imagePlugin.ReadSector(partition.Start);

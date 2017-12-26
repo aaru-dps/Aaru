@@ -46,13 +46,13 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual string Name => "Commodore file system";
-        public virtual Guid Id => new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-        public virtual Encoding Encoding => currentEncoding;
+        public string Name => "Commodore file system";
+        public Guid Id => new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+        public Encoding Encoding => currentEncoding;
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start > 0) return false;
 
@@ -91,7 +91,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = new PETSCII();
             byte[] sector;

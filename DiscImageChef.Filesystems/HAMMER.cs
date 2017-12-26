@@ -55,13 +55,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "HAMMER Filesystem";
-        public virtual Guid Id => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "HAMMER Filesystem";
+        public Guid Id => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
@@ -78,7 +78,7 @@ namespace DiscImageChef.Filesystems
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

@@ -49,10 +49,10 @@ namespace DiscImageChef.Filters
         bool opened;
         Stream zStream;
 
-        public virtual string Name => "GZip";
-        public virtual Guid Id => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
+        public string Name => "GZip";
+        public Guid Id => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
 
-        public virtual void Close()
+        public void Close()
         {
             dataStream?.Close();
             dataStream = null;
@@ -60,37 +60,37 @@ namespace DiscImageChef.Filters
             opened = false;
         }
 
-        public virtual string GetBasePath()
+        public string GetBasePath()
         {
             return basePath;
         }
 
-        public virtual Stream GetDataForkStream()
+        public Stream GetDataForkStream()
         {
             return zStream;
         }
 
-        public virtual string GetPath()
+        public string GetPath()
         {
             return basePath;
         }
 
-        public virtual Stream GetResourceForkStream()
+        public Stream GetResourceForkStream()
         {
             return null;
         }
 
-        public virtual bool HasResourceFork()
+        public bool HasResourceFork()
         {
             return false;
         }
 
-        public virtual bool Identify(byte[] buffer)
+        public bool Identify(byte[] buffer)
         {
             return buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
         }
 
-        public virtual bool Identify(Stream stream)
+        public bool Identify(Stream stream)
         {
             byte[] buffer = new byte[3];
 
@@ -101,7 +101,7 @@ namespace DiscImageChef.Filters
             return buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
         }
 
-        public virtual bool Identify(string path)
+        public bool Identify(string path)
         {
             if(!File.Exists(path)) return false;
 
@@ -115,7 +115,7 @@ namespace DiscImageChef.Filters
             return buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
         }
 
-        public virtual void Open(byte[] buffer)
+        public void Open(byte[] buffer)
         {
             byte[] mtime_b = new byte[4];
             byte[] isize_b = new byte[4];
@@ -141,7 +141,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual void Open(Stream stream)
+        public void Open(Stream stream)
         {
             byte[] mtime_b = new byte[4];
             byte[] isize_b = new byte[4];
@@ -167,7 +167,7 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual void Open(string path)
+        public void Open(string path)
         {
             byte[] mtime_b = new byte[4];
             byte[] isize_b = new byte[4];
@@ -194,32 +194,32 @@ namespace DiscImageChef.Filters
             opened = true;
         }
 
-        public virtual DateTime GetCreationTime()
+        public DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public virtual long GetDataForkLength()
+        public long GetDataForkLength()
         {
             return decompressedSize;
         }
 
-        public virtual DateTime GetLastWriteTime()
+        public DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public virtual long GetLength()
+        public long GetLength()
         {
             return decompressedSize;
         }
 
-        public virtual long GetResourceForkLength()
+        public long GetResourceForkLength()
         {
             return 0;
         }
 
-        public virtual string GetFilename()
+        public string GetFilename()
         {
             if(basePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 3);
@@ -229,12 +229,12 @@ namespace DiscImageChef.Filters
             return basePath;
         }
 
-        public virtual string GetParentFolder()
+        public string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public virtual bool IsOpened()
+        public bool IsOpened()
         {
             return opened;
         }

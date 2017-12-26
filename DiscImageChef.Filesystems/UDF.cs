@@ -53,13 +53,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Universal Disk Format";
-        public virtual Guid Id => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Universal Disk Format";
+        public Guid Id => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // UDF needs at least that
             if(partition.End - partition.Start < 256) return false;
@@ -146,7 +146,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             // UDF is always UTF-8
             currentEncoding = Encoding.UTF8;

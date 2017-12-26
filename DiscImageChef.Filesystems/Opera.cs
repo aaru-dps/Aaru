@@ -44,13 +44,13 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Opera Filesystem Plugin";
-        public virtual Guid Id => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Opera Filesystem Plugin";
+        public Guid Id => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(syncBytes) == "ZZZZZ";
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             // TODO: Find correct default encoding
             currentEncoding = Encoding.ASCII;

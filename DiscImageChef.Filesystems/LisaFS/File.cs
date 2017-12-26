@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
+        public Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
@@ -52,7 +52,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
+        public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(size == 0)
             {
@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        public virtual Errno Stat(string path, ref FileEntryInfo stat)
+        public Errno Stat(string path, ref FileEntryInfo stat)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;

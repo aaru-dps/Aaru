@@ -51,13 +51,13 @@ namespace DiscImageChef.Filesystems
         const ushort EXT_MAGIC = 0x137D;
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual string Name => "Linux extended Filesystem";
-        public virtual Guid Id => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
-        public virtual Encoding Encoding => currentEncoding;
+        public string Name => "Linux extended Filesystem";
+        public Guid Id => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+        public Encoding Encoding => currentEncoding;
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -75,7 +75,7 @@ namespace DiscImageChef.Filesystems
             return magic == EXT_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");

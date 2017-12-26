@@ -44,13 +44,13 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Nintendo optical filesystems";
-        public virtual Guid Id => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Nintendo optical filesystems";
+        public Guid Id => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start != 0) return false;
 
@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems
             return magicGc == 0xC2339F3D || magicWii == 0x5D1C9EA3;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
             StringBuilder sbInformation = new StringBuilder();

@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <summary>
         ///     Mounts an Apple Lisa filesystem
         /// </summary>
-        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
+        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             try
             {
@@ -319,7 +319,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <summary>
         ///     Umounts this Lisa filesystem
         /// </summary>
-        public virtual Errno Unmount()
+        public Errno Unmount()
         {
             mounted = false;
             extentCache = null;
@@ -340,7 +340,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        public virtual Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(ref FileSystemInfo stat)
         {
             if(!mounted) return Errno.AccessDenied;
 

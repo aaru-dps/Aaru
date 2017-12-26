@@ -44,10 +44,10 @@ namespace DiscImageChef.Partitions
         const int PT_MAGIC = 0x032957;
         const int PT_VALID = 1;
 
-        public virtual string Name => "DEC disklabel";
-        public virtual Guid Id => new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
+        public string Name => "DEC disklabel";
+        public Guid Id => new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

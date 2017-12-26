@@ -47,13 +47,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "UNIX Boot filesystem";
-        public virtual Guid Id => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "UNIX Boot filesystem";
+        public Guid Id => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -64,7 +64,7 @@ namespace DiscImageChef.Filesystems
             return magic == BFS_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

@@ -47,13 +47,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "NILFS2 Plugin";
-        public virtual Guid Id => new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "NILFS2 Plugin";
+        public Guid Id => new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -78,7 +78,7 @@ namespace DiscImageChef.Filesystems
             return nilfsSb.magic == NILFS2_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.UTF8;
             information = "";

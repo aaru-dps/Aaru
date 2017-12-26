@@ -83,13 +83,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "BSD Fast File System (aka UNIX File System, UFS)";
-        public virtual Guid Id => new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "BSD Fast File System (aka UNIX File System, UFS)";
+        public Guid Id => new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -114,7 +114,7 @@ namespace DiscImageChef.Filesystems
                                           magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

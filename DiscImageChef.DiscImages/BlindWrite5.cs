@@ -106,20 +106,20 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public virtual ImageInfo Info => imageInfo;
+        public ImageInfo Info => imageInfo;
 
-        public virtual string Name => "BlindWrite 5";
-        public virtual Guid Id => new Guid("9CB7A381-0509-4F9F-B801-3F65434BC3EE");
+        public string Name => "BlindWrite 5";
+        public Guid Id => new Guid("9CB7A381-0509-4F9F-B801-3F65434BC3EE");
 
-        public virtual string ImageFormat => "BlindWrite 5 TOC file";
+        public string ImageFormat => "BlindWrite 5 TOC file";
 
-        public virtual List<Partition> Partitions => partitions;
+        public List<Partition> Partitions => partitions;
 
-        public virtual List<Track> Tracks => tracks;
+        public List<Track> Tracks => tracks;
 
-        public virtual List<Session> Sessions => sessions;
+        public List<Session> Sessions => sessions;
 
-        public virtual bool IdentifyImage(IFilter imageFilter)
+        public bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -135,7 +135,7 @@ namespace DiscImageChef.DiscImages
             return bw5Signature.SequenceEqual(signature) && bw5Footer.SequenceEqual(footer);
         }
 
-        public virtual bool OpenImage(IFilter imageFilter)
+        public bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -1035,7 +1035,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public virtual byte[] ReadDiskTag(MediaTagType tag)
+        public byte[] ReadDiskTag(MediaTagType tag)
         {
             switch(tag)
             {
@@ -1093,27 +1093,27 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress)
+        public byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
+        public byte[] ReadSector(ulong sectorAddress, uint track)
         {
             return ReadSectors(sectorAddress, 1, track);
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
+        public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1127,7 +1127,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1141,7 +1141,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             // TODO: Cross data files
             Track dicTrack = new Track();
@@ -1260,7 +1260,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             // TODO: Cross data files
             Track dicTrack = new Track();
@@ -1544,17 +1544,17 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress)
+        public byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             return ReadSectorsLong(sectorAddress, 1, track);
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1568,7 +1568,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             // TODO: Cross data files
             Track dicTrack = new Track();
@@ -1662,31 +1662,31 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual List<Track> GetSessionTracks(Session session)
+        public List<Track> GetSessionTracks(Session session)
         {
             if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public virtual List<Track> GetSessionTracks(ushort session)
+        public List<Track> GetSessionTracks(ushort session)
         {
             return tracks.Where(dicTrack => dicTrack.TrackSession == session).ToList();
         }
 
-        public virtual bool? VerifySector(ulong sectorAddress)
+        public bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public virtual bool? VerifySector(ulong sectorAddress, uint track)
+        public bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
@@ -1716,7 +1716,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
@@ -1746,7 +1746,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public virtual bool? VerifyMediaImage()
+        public bool? VerifyMediaImage()
         {
             return null;
         }

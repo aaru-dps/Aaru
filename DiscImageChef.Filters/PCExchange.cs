@@ -57,86 +57,86 @@ namespace DiscImageChef.Filters
         long rsrcLen;
         string rsrcPath;
 
-        public virtual string Name => "PCExchange";
-        public virtual Guid Id => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+        public string Name => "PCExchange";
+        public Guid Id => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
 
-        public virtual void Close()
+        public void Close()
         {
             opened = false;
         }
 
-        public virtual string GetBasePath()
+        public string GetBasePath()
         {
             return basePath;
         }
 
-        public virtual DateTime GetCreationTime()
+        public DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public virtual long GetDataForkLength()
+        public long GetDataForkLength()
         {
             return dataLen;
         }
 
-        public virtual Stream GetDataForkStream()
+        public Stream GetDataForkStream()
         {
             return new FileStream(dataPath, FileMode.Open, FileAccess.Read);
         }
 
-        public virtual string GetFilename()
+        public string GetFilename()
         {
             return Path.GetFileName(basePath);
         }
 
-        public virtual DateTime GetLastWriteTime()
+        public DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public virtual long GetLength()
+        public long GetLength()
         {
             return dataLen + rsrcLen;
         }
 
-        public virtual string GetParentFolder()
+        public string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public virtual string GetPath()
+        public string GetPath()
         {
             return basePath;
         }
 
-        public virtual long GetResourceForkLength()
+        public long GetResourceForkLength()
         {
             return rsrcLen;
         }
 
-        public virtual Stream GetResourceForkStream()
+        public Stream GetResourceForkStream()
         {
             return new FileStream(rsrcPath, FileMode.Open, FileAccess.Read);
         }
 
-        public virtual bool HasResourceFork()
+        public bool HasResourceFork()
         {
             return rsrcPath != null;
         }
 
-        public virtual bool Identify(byte[] buffer)
+        public bool Identify(byte[] buffer)
         {
             return false;
         }
 
-        public virtual bool Identify(Stream stream)
+        public bool Identify(Stream stream)
         {
             System.Console.WriteLine("parentFolder");
             return false;
         }
 
-        public virtual bool Identify(string path)
+        public bool Identify(string path)
         {
             string parentFolder = Path.GetDirectoryName(path);
 
@@ -187,22 +187,22 @@ namespace DiscImageChef.Filters
             return dataFound && rsrcFound;
         }
 
-        public virtual bool IsOpened()
+        public bool IsOpened()
         {
             return opened;
         }
 
-        public virtual void Open(byte[] buffer)
+        public void Open(byte[] buffer)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void Open(Stream stream)
+        public void Open(Stream stream)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void Open(string path)
+        public void Open(string path)
         {
             string parentFolder = Path.GetDirectoryName(path);
             string baseFilename = Path.GetFileName(path);

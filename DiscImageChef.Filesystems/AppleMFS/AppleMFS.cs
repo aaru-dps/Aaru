@@ -65,10 +65,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
         Encoding currentEncoding;
 
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual string Name => "Apple Macintosh File System";
-        public virtual Guid Id => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-        public virtual Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType => xmlFsType;
+        public string Name => "Apple Macintosh File System";
+        public Guid Id => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+        public Encoding Encoding => currentEncoding;
 
         public AppleMFS()
         {

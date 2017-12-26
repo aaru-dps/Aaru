@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ushort drSigWord;
 
@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return drSigWord == MFS_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             information = "";
 

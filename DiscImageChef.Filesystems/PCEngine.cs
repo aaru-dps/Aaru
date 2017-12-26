@@ -43,12 +43,12 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "PC Engine CD Plugin";
-        public virtual Guid Id => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding => currentEncoding;
+        public string Name => "PC Engine CD Plugin";
+        public Guid Id => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -60,7 +60,7 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(systemDescriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");

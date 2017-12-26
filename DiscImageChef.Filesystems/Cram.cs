@@ -49,13 +49,13 @@ namespace DiscImageChef.Filesystems
         const uint CRAM_CIGAM = 0x453DCD28;
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Cram filesystem";
-        public virtual Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Cram filesystem";
+        public Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems
             return magic == CRAM_MAGIC || magic == CRAM_CIGAM;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             byte[] sector = imagePlugin.ReadSector(partition.Start);

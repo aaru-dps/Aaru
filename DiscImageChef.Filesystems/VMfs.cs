@@ -50,13 +50,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "VMware filesystem";
-        public virtual Guid Id => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "VMware filesystem";
+        public Guid Id => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems
             return magic == VMFS_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.UTF8;
             ulong vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;

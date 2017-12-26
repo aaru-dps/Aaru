@@ -58,13 +58,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Apple HFS+ filesystem";
-        public virtual Guid Id => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Apple HFS+ filesystem";
+        public Guid Id => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -103,7 +103,7 @@ namespace DiscImageChef.Filesystems
             return drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = Encoding.BigEndianUnicode;

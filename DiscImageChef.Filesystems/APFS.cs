@@ -45,14 +45,14 @@ namespace DiscImageChef.Filesystems
         const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
         const uint APFS_VOLUME_MAGIC = 0x42535041; // "APSB"
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Apple File System";
-        public virtual Guid Id => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Apple File System";
+        public Guid Id => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems
             return nxSb.magic == APFS_CONTAINER_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = Encoding.UTF8;

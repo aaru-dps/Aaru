@@ -49,10 +49,10 @@ namespace DiscImageChef.Partitions
         const int V_NUMPAR = 16;
         const uint XPDVERS = 3; /* 1st version of extended pdinfo */
 
-        public virtual string Name => "UNIX VTOC";
-        public virtual Guid Id => new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
+        public string Name => "UNIX VTOC";
+        public Guid Id => new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

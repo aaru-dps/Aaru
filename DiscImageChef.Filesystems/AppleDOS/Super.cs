@@ -46,7 +46,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <summary>
         ///     Mounts an Apple DOS filesystem
         /// </summary>
-        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
+        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             device = imagePlugin;
             start = partition.Start;
@@ -120,7 +120,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <summary>
         ///     Umounts this DOS filesystem
         /// </summary>
-        public virtual Errno Unmount()
+        public Errno Unmount()
         {
             mounted = false;
             extentCache = null;
@@ -135,7 +135,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        public virtual Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(ref FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {

@@ -44,10 +44,10 @@ namespace DiscImageChef.Partitions
         const ushort KARMA_MAGIC = 0xAB56;
         const byte ENTRY_MAGIC = 0x4D;
 
-        public virtual string Name => "Rio Karma partitioning";
-        public virtual Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public string Name => "Rio Karma partitioning";
+        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

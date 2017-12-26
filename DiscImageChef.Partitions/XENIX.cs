@@ -48,10 +48,10 @@ namespace DiscImageChef.Partitions
         // Can't find this in any documentation but everything is aligned to this offset (in sectors)
         const uint XENIX_OFFSET = 977;
 
-        public virtual string Name => "XENIX";
-        public virtual Guid Id => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
+        public string Name => "XENIX";
+        public Guid Id => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

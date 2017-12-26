@@ -48,14 +48,14 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const ulong btrfsMagic = 0x4D5F53665248425F;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "B-tree file system";
-        public virtual Guid Id => new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "B-tree file system";
+        public Guid Id => new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems
             return btrfsSb.magic == btrfsMagic;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");

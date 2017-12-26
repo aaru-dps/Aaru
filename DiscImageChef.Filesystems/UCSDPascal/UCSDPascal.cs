@@ -51,25 +51,25 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         List<PascalFileEntry> fileEntries;
         bool mounted;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         PascalVolumeEntry mountedVolEntry;
 
-        public virtual string Name => "U.C.S.D. Pascal filesystem";
-        public virtual Guid Id => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
-        public virtual Encoding Encoding => currentEncoding;
+        public string Name => "U.C.S.D. Pascal filesystem";
+        public Guid Id => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+        public Encoding Encoding => currentEncoding;
 
-        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
+        public Errno ListXAttr(string path, ref List<string> xattrs)
         {
             return Errno.NotSupported;
         }
 
-        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             return Errno.NotSupported;
         }
 
-        public virtual Errno ReadLink(string path, ref string dest)
+        public Errno ReadLink(string path, ref string dest)
         {
             return Errno.NotSupported;
         }

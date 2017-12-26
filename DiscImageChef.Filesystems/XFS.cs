@@ -47,13 +47,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "XFS Filesystem Plugin";
-        public virtual Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "XFS Filesystem Plugin";
+        public Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -104,7 +104,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

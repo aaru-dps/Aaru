@@ -47,14 +47,14 @@ namespace DiscImageChef.Filesystems
         const ushort MAGIC = 0xA72E;
         const ushort MAGIC2 = 0x530C;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "MicroDOS file system";
-        public virtual Guid Id => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "MicroDOS file system";
+        public Guid Id => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End) return false;
 
@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems
             return block0.label == MAGIC && block0.mklabel == MAGIC2;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("koi8-r");

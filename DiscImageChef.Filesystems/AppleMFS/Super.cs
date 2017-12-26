@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
+        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             device = imagePlugin;
             partitionStart = partition.Start;
@@ -154,7 +154,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public virtual Errno Unmount()
+        public Errno Unmount()
         {
             mounted = false;
             idToFilename = null;
@@ -165,7 +165,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public virtual Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(ref FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {

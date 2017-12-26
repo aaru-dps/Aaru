@@ -54,11 +54,11 @@ namespace DiscImageChef.Filesystems.LisaFS
         SRecord[] srecords;
         ulong volumePrefix;
 
-        public virtual string Name => "Apple Lisa File System";
-        public virtual Guid Id => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-        public virtual Encoding Encoding => currentEncoding;
+        public string Name => "Apple Lisa File System";
+        public Guid Id => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+        public Encoding Encoding => currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         #region Caches
         /// <summary>Caches Extents Files</summary>

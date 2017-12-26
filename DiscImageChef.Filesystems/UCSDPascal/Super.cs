@@ -43,7 +43,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public virtual Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
+        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
         {
             device = imagePlugin;
             // TODO: Until Apple ][ encoding is implemented
@@ -114,14 +114,14 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
-        public virtual Errno Unmount()
+        public Errno Unmount()
         {
             mounted = false;
             fileEntries = null;
             return Errno.NoError;
         }
 
-        public virtual Errno StatFs(ref FileSystemInfo stat)
+        public Errno StatFs(ref FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {

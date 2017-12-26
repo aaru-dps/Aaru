@@ -46,13 +46,13 @@ namespace DiscImageChef.Filesystems
     {
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "RT-11 file system";
-        public virtual Guid Id => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "RT-11 file system";
+        public Guid Id => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End) return false;
 
@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems
             return magic == "DECRT11A    ";
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             information = "";

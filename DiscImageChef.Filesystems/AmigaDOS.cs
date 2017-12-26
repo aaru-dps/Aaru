@@ -53,12 +53,12 @@ namespace DiscImageChef.Filesystems
         Encoding currentEncoding;
 
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual string Name => "Amiga DOS filesystem";
-        public virtual Guid Id => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
-        public virtual Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType => xmlFsType;
+        public string Name => "Amiga DOS filesystem";
+        public Guid Id => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+        public Encoding Encoding => currentEncoding;
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -154,7 +154,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             StringBuilder sbInformation = new StringBuilder();

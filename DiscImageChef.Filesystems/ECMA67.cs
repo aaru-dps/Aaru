@@ -46,13 +46,13 @@ namespace DiscImageChef.Filesystems
         readonly byte[] ECMA67_Magic = {0x56, 0x4F, 0x4C};
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "ECMA-67";
-        public virtual Guid Id => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "ECMA-67";
+        public Guid Id => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start > 0) return false;
 
@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems
             return ECMA67_Magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");

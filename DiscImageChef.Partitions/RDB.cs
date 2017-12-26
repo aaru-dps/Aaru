@@ -275,10 +275,10 @@ namespace DiscImageChef.Partitions
         /// </summary>
         const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
-        public virtual string Name => "Amiga Rigid Disk Block";
-        public virtual Guid Id => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+        public string Name => "Amiga Rigid Disk Block";
+        public Guid Id => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;

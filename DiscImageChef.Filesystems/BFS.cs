@@ -56,13 +56,13 @@ namespace DiscImageChef.Filesystems
         const uint BEFS_DIRTY = 0x44495254;
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Be Filesystem";
-        public virtual Guid Id => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Be Filesystem";
+        public Guid Id => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems
             return magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

@@ -50,13 +50,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Reiser4 Filesystem Plugin";
-        public virtual Guid Id => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Reiser4 Filesystem Plugin";
+        public Guid Id => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems
             return Reiser4_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

@@ -99,7 +99,7 @@ namespace DiscImageChef.DiscImages
         List<Session> imageSessions;
         Stream imageStream;
         ImageInfo imageInfo;
-        public virtual ImageInfo Info => imageInfo;
+        public ImageInfo Info => imageInfo;
 
         List<Track> imageTracks;
         NeroCdText neroCdtxt;
@@ -121,8 +121,8 @@ namespace DiscImageChef.DiscImages
         Dictionary<uint, byte[]> trackIsrCs;
         byte[] upc;
 
-        public virtual string Name => "Nero Burning ROM image";
-        public virtual Guid Id => new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
+        public string Name => "Nero Burning ROM image";
+        public Guid Id => new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
 
         public Nero()
         {
@@ -140,7 +140,7 @@ namespace DiscImageChef.DiscImages
         }
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public virtual bool IdentifyImage(IFilter imageFilter)
+        public bool IdentifyImage(IFilter imageFilter)
         {
             imageStream = imageFilter.GetDataForkStream();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -171,7 +171,7 @@ namespace DiscImageChef.DiscImages
             return footerV1.ChunkId == NERO_FOOTER_V1 && footerV1.FirstChunkOffset < (ulong)imageStream.Length;
         }
 
-        public virtual bool OpenImage(IFilter imageFilter)
+        public bool OpenImage(IFilter imageFilter)
         {
             try
             {
@@ -1042,7 +1042,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public virtual byte[] ReadDiskTag(MediaTagType tag)
+        public byte[] ReadDiskTag(MediaTagType tag)
         {
             switch(tag)
             {
@@ -1053,27 +1053,27 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress)
+        public byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
+        public byte[] ReadSector(ulong sectorAddress, uint track)
         {
             return ReadSectors(sectorAddress, 1, track);
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
+        public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1087,7 +1087,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1101,7 +1101,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(!neroTracks.TryGetValue(track, out NeroTrack dicTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
@@ -1196,7 +1196,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(!neroTracks.TryGetValue(track, out NeroTrack dicTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
@@ -1419,17 +1419,17 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress)
+        public byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             return ReadSectorsLong(sectorAddress, 1, track);
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
@@ -1443,7 +1443,7 @@ namespace DiscImageChef.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(!neroTracks.TryGetValue(track, out NeroTrack dicTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
@@ -1516,37 +1516,37 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual string ImageFormat => "Nero Burning ROM";
+        public string ImageFormat => "Nero Burning ROM";
 
-        public virtual List<Partition> Partitions => imagePartitions;
+        public List<Partition> Partitions => imagePartitions;
 
-        public virtual List<Track> Tracks => imageTracks;
+        public List<Track> Tracks => imageTracks;
 
-        public virtual List<Track> GetSessionTracks(Session session)
+        public List<Track> GetSessionTracks(Session session)
         {
             return GetSessionTracks(session.SessionSequence);
         }
 
-        public virtual List<Track> GetSessionTracks(ushort session)
+        public List<Track> GetSessionTracks(ushort session)
         {
             return imageTracks.Where(track => track.TrackSession == session).ToList();
         }
 
-        public virtual List<Session> Sessions => imageSessions;
+        public List<Session> Sessions => imageSessions;
 
-        public virtual bool? VerifySector(ulong sectorAddress)
+        public bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public virtual bool? VerifySector(ulong sectorAddress, uint track)
+        public bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
@@ -1576,7 +1576,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
@@ -1606,7 +1606,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public virtual bool? VerifyMediaImage()
+        public bool? VerifyMediaImage()
         {
             return null;
         }

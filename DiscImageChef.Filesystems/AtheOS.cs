@@ -51,13 +51,13 @@ namespace DiscImageChef.Filesystems
         const uint AFS_BOOTBLOCK_SIZE = AFS_SUPERBLOCK_SIZE;
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "AtheOS Filesystem";
-        public virtual Guid Id => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "AtheOS Filesystem";
+        public Guid Id => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.Info.SectorSize;
             uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
@@ -79,7 +79,7 @@ namespace DiscImageChef.Filesystems
             return magic == AFS_MAGIC1;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");

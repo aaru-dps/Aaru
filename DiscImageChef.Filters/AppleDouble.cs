@@ -68,65 +68,65 @@ namespace DiscImageChef.Filters
         bool opened;
         AppleDoubleEntry rsrcFork;
 
-        public virtual string Name => "AppleDouble";
-        public virtual Guid Id => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
+        public string Name => "AppleDouble";
+        public Guid Id => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
 
-        public virtual void Close()
+        public void Close()
         {
             opened = false;
         }
 
-        public virtual string GetBasePath()
+        public string GetBasePath()
         {
             return basePath;
         }
 
-        public virtual DateTime GetCreationTime()
+        public DateTime GetCreationTime()
         {
             return creationTime;
         }
 
-        public virtual long GetDataForkLength()
+        public long GetDataForkLength()
         {
             return dataFork.length;
         }
 
-        public virtual Stream GetDataForkStream()
+        public Stream GetDataForkStream()
         {
             return new FileStream(basePath, FileMode.Open, FileAccess.Read);
         }
 
-        public virtual string GetFilename()
+        public string GetFilename()
         {
             return Path.GetFileName(basePath);
         }
 
-        public virtual DateTime GetLastWriteTime()
+        public DateTime GetLastWriteTime()
         {
             return lastWriteTime;
         }
 
-        public virtual long GetLength()
+        public long GetLength()
         {
             return dataFork.length + rsrcFork.length;
         }
 
-        public virtual string GetParentFolder()
+        public string GetParentFolder()
         {
             return Path.GetDirectoryName(basePath);
         }
 
-        public virtual string GetPath()
+        public string GetPath()
         {
             return basePath;
         }
 
-        public virtual long GetResourceForkLength()
+        public long GetResourceForkLength()
         {
             return rsrcFork.length;
         }
 
-        public virtual Stream GetResourceForkStream()
+        public Stream GetResourceForkStream()
         {
             if(rsrcFork.length == 0) return null;
 
@@ -134,24 +134,24 @@ namespace DiscImageChef.Filters
                                     rsrcFork.offset + rsrcFork.length - 1);
         }
 
-        public virtual bool HasResourceFork()
+        public bool HasResourceFork()
         {
             return rsrcFork.length > 0;
         }
 
-        public virtual bool Identify(byte[] buffer)
+        public bool Identify(byte[] buffer)
         {
             // Now way to have two files in a single byte array
             return false;
         }
 
-        public virtual bool Identify(Stream stream)
+        public bool Identify(Stream stream)
         {
             // Now way to have two files in a single stream
             return false;
         }
 
-        public virtual bool Identify(string path)
+        public bool Identify(string path)
         {
             // Prepend data fork name with "R."
             string ProDosAppleDouble;
@@ -303,24 +303,24 @@ namespace DiscImageChef.Filters
                    (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2);
         }
 
-        public virtual bool IsOpened()
+        public bool IsOpened()
         {
             return opened;
         }
 
-        public virtual void Open(byte[] buffer)
+        public void Open(byte[] buffer)
         {
             // Now way to have two files in a single byte array
             throw new NotSupportedException();
         }
 
-        public virtual void Open(Stream stream)
+        public void Open(Stream stream)
         {
             // Now way to have two files in a single stream
             throw new NotSupportedException();
         }
 
-        public virtual void Open(string path)
+        public void Open(string path)
         {
             // Prepend data fork name with "R."
             string ProDosAppleDouble;

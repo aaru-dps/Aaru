@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS
     {
-        public virtual Errno ListXAttr(string path, ref List<string> xattrs)
+        public Errno ListXAttr(string path, ref List<string> xattrs)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public virtual Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!mounted) return Errno.AccessDenied;
 

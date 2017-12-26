@@ -51,13 +51,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "F2FS Plugin";
-        public virtual Guid Id => new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "F2FS Plugin";
+        public Guid Id => new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR || imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR)
                 return false;
@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems
             return f2fsSb.magic == F2FS_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = Encoding.Unicode;

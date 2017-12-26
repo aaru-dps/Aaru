@@ -79,13 +79,13 @@ namespace DiscImageChef.Filesystems
         Encoding currentEncoding;
 
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual string Name => "Acorn Advanced Disc Filing System";
-        public virtual Guid Id => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-        public virtual Encoding Encoding => currentEncoding;
+        public FileSystemType XmlFsType => xmlFsType;
+        public string Name => "Acorn Advanced Disc Filing System";
+        public Guid Id => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+        public Encoding Encoding => currentEncoding;
 
         // TODO: BBC Master hard disks are untested...
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -250,7 +250,7 @@ namespace DiscImageChef.Filesystems
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             StringBuilder sbInformation = new StringBuilder();

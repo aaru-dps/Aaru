@@ -50,13 +50,13 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Fossil Filesystem Plugin";
-        public virtual Guid Id => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Fossil Filesystem Plugin";
+        public Guid Id => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems
             return hdr.magic == FOSSIL_HDR_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             // Technically everything on Plan 9 from Bell Labs is in UTF-8
             currentEncoding = Encoding.UTF8;

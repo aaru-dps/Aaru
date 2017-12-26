@@ -160,14 +160,14 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public virtual ImageInfo Info => imageInfo;
+        public ImageInfo Info => imageInfo;
 
-        public virtual string Name => "MAME Compressed Hunks of Data";
-        public virtual Guid Id => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
+        public string Name => "MAME Compressed Hunks of Data";
+        public Guid Id => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
 
-        public virtual string ImageFormat => "Compressed Hunks of Data";
+        public string ImageFormat => "Compressed Hunks of Data";
 
-        public virtual List<Partition> Partitions
+        public List<Partition> Partitions
         {
             get
             {
@@ -179,7 +179,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public virtual List<Track> Tracks
+        public List<Track> Tracks
         {
             get
             {
@@ -191,7 +191,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public virtual List<Session> Sessions
+        public List<Session> Sessions
         {
             get
             {
@@ -203,7 +203,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public virtual bool IdentifyImage(IFilter imageFilter)
+        public bool IdentifyImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -213,7 +213,7 @@ namespace DiscImageChef.DiscImages
             return chdTag.SequenceEqual(magic);
         }
 
-        public virtual bool OpenImage(IFilter imageFilter)
+        public bool OpenImage(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -1348,7 +1348,7 @@ namespace DiscImageChef.DiscImages
             return hunk;
         }
 
-        public virtual bool? VerifySector(ulong sectorAddress)
+        public bool? VerifySector(ulong sectorAddress)
         {
             if(isHdd) return null;
 
@@ -1356,7 +1356,7 @@ namespace DiscImageChef.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public virtual bool? VerifySector(ulong sectorAddress, uint track)
+        public bool? VerifySector(ulong sectorAddress, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1364,7 +1364,7 @@ namespace DiscImageChef.DiscImages
             return VerifySector(GetAbsoluteSector(sectorAddress, track));
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             unknownLbas = new List<ulong>();
@@ -1396,7 +1396,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public virtual bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                             out List<ulong> unknownLbas)
         {
             unknownLbas = new List<ulong>();
@@ -1428,7 +1428,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public virtual bool? VerifyMediaImage()
+        public bool? VerifyMediaImage()
         {
             byte[] calculated;
             if(mapVersion >= 3)
@@ -1451,7 +1451,7 @@ namespace DiscImageChef.DiscImages
             return expectedChecksum.SequenceEqual(calculated);
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress)
+        public byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
@@ -1553,7 +1553,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(isHdd) throw new FeatureNotPresentImageException("Hard disk images do not have sector tags");
 
@@ -1769,7 +1769,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length)
+        public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
@@ -1790,7 +1790,7 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
@@ -1811,7 +1811,7 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress)
+        public byte[] ReadSectorLong(ulong sectorAddress)
         {
             if(isHdd) return ReadSector(sectorAddress);
 
@@ -1854,7 +1854,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
@@ -1875,7 +1875,7 @@ namespace DiscImageChef.DiscImages
             return ms.ToArray();
         }
 
-        public virtual byte[] ReadDiskTag(MediaTagType tag)
+        public byte[] ReadDiskTag(MediaTagType tag)
         {
             if(imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY)) return identify;
 
@@ -1884,7 +1884,7 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public virtual List<Track> GetSessionTracks(Session session)
+        public List<Track> GetSessionTracks(Session session)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1892,7 +1892,7 @@ namespace DiscImageChef.DiscImages
             return GetSessionTracks(session.SessionSequence);
         }
 
-        public virtual List<Track> GetSessionTracks(ushort session)
+        public List<Track> GetSessionTracks(ushort session)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1900,7 +1900,7 @@ namespace DiscImageChef.DiscImages
             return tracks.Values.Where(track => track.TrackSession == session).ToList();
         }
 
-        public virtual byte[] ReadSector(ulong sectorAddress, uint track)
+        public byte[] ReadSector(ulong sectorAddress, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1908,7 +1908,7 @@ namespace DiscImageChef.DiscImages
             return ReadSector(GetAbsoluteSector(sectorAddress, track));
         }
 
-        public virtual byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1916,7 +1916,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectorTag(GetAbsoluteSector(sectorAddress, track), tag);
         }
 
-        public virtual byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1924,7 +1924,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectors(GetAbsoluteSector(sectorAddress, track), length);
         }
 
-        public virtual byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1932,7 +1932,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectorsTag(GetAbsoluteSector(sectorAddress, track), length, tag);
         }
 
-        public virtual byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
@@ -1940,7 +1940,7 @@ namespace DiscImageChef.DiscImages
             return ReadSectorLong(GetAbsoluteSector(sectorAddress, track));
         }
 
-        public virtual byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");

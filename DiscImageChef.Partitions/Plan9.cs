@@ -45,10 +45,10 @@ namespace DiscImageChef.Partitions
     // e.g.: "part nvram 10110 10112\npart fossil 10112 3661056\n"
     public class Plan9 : IPartition
     {
-        public virtual string Name => "Plan9 partition table";
-        public virtual Guid Id => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+        public string Name => "Plan9 partition table";
+        public Guid Id => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

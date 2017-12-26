@@ -55,10 +55,10 @@ namespace DiscImageChef.Partitions
         /// <summary>44</summary>
         const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
-        public virtual string Name => "NeXT Disklabel";
-        public virtual Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public string Name => "NeXT Disklabel";
+        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             bool magicFound = false;
             byte[] labelSector;

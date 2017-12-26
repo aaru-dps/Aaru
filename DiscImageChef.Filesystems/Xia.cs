@@ -53,12 +53,12 @@ namespace DiscImageChef.Filesystems
 
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Xia filesystem";
-        public virtual Guid Id => new Guid("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
+        public FileSystemType XmlFsType => xmlFsType;
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Xia filesystem";
+        public Guid Id => new Guid("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             int sbSizeInBytes = Marshal.SizeOf(typeof(XiaSuperBlock));
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
@@ -74,7 +74,7 @@ namespace DiscImageChef.Filesystems
             return supblk.s_magic == XIAFS_SUPER_MAGIC;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";

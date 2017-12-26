@@ -65,14 +65,14 @@ namespace DiscImageChef.Filesystems
         /// <summary>Minix v3, 60 char filenames</summary>
         const ushort MINIX3_CIGAM = 0x5A4D;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Minix Filesystem";
-        public virtual Guid Id => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Minix Filesystem";
+        public Guid Id => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint sector = 2;
             uint offset = 0;
@@ -110,7 +110,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");

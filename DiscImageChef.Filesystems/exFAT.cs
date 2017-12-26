@@ -48,14 +48,14 @@ namespace DiscImageChef.Filesystems
 
         readonly byte[] Signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
         Encoding currentEncoding;
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Microsoft Extended File Allocation Table";
-        public virtual Guid Id => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Microsoft Extended File Allocation Table";
+        public Guid Id => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(12 + partition.Start >= partition.End) return false;
 
@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems
             return Signature.SequenceEqual(vbr.signature);
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");

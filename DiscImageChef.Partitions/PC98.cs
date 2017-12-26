@@ -43,10 +43,10 @@ namespace DiscImageChef.Partitions
 {
     public class PC98 : IPartition
     {
-        public virtual string Name => "NEC PC-9800 partition table";
-        public virtual Guid Id => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
+        public string Name => "NEC PC-9800 partition table";
+        public Guid Id => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
 
-        public virtual bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 

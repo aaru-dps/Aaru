@@ -58,13 +58,13 @@ namespace DiscImageChef.Filesystems
         const ushort HFSBB_MAGIC = 0x4C4B;
         Encoding currentEncoding;
         FileSystemType xmlFsType;
-        public virtual FileSystemType XmlFsType => xmlFsType;
+        public FileSystemType XmlFsType => xmlFsType;
 
-        public virtual Encoding Encoding => currentEncoding;
-        public virtual string Name => "Apple Hierarchical File System";
-        public virtual Guid Id => new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+        public Encoding Encoding => currentEncoding;
+        public string Name => "Apple Hierarchical File System";
+        public Guid Id => new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
 
-        public virtual bool Identify(IMediaImage imagePlugin, Partition partition)
+        public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public virtual void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                             Encoding encoding)
         {
             currentEncoding = encoding ?? Encoding.GetEncoding("macintosh");

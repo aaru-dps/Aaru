@@ -38,12 +38,12 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public virtual Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        public Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
-        public virtual Errno GetAttributes(string path, ref FileAttributes attributes)
+        public Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -60,7 +60,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return error;
         }
 
-        public virtual Errno Read(string path, long offset, long size, ref byte[] buf)
+        public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!mounted) return Errno.AccessDenied;
 
@@ -95,7 +95,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
-        public virtual Errno Stat(string path, ref FileEntryInfo stat)
+        public Errno Stat(string path, ref FileEntryInfo stat)
         {
             if(!mounted) return Errno.AccessDenied;
 
