@@ -33,9 +33,11 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems
 {
@@ -66,7 +68,7 @@ namespace DiscImageChef.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding = new Radix50();
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -90,15 +92,13 @@ namespace DiscImageChef.Filesystems
             ushort check = 0;
             for(int i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hbSector, i);
 
-            sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, Encoding))
-              .AppendLine();
+            sb.AppendFormat("Volume format is {0}",
+                            StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512)
               .AppendLine();
             sb.AppendFormat("First directory segment starts at block {0}", homeblock.rootBlock).AppendLine();
-            sb.AppendFormat("Volume owner is \"{0}\"",
-                            StringHandlers.SpacePaddedToString(homeblock.ownername, Encoding)).AppendLine();
-            sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.SpacePaddedToString(homeblock.volname, Encoding))
-              .AppendLine();
+            sb.AppendFormat("Volume owner is \"{0}\"", Encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();
+            sb.AppendFormat("Volume label: \"{0}\"", Encoding.GetString(homeblock.volname).TrimEnd()).AppendLine();
             sb.AppendFormat("Checksum: 0x{0:X4} (calculated 0x{1:X4})", homeblock.checksum, check).AppendLine();
 
             byte[] bootBlock = imagePlugin.ReadSector(0);

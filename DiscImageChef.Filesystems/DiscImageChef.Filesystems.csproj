@@ -31,8 +31,8 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Claunia.Encoding, Version=1.0.6569.33160, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Claunia.Encoding.1.3.0\lib\portable40-net40+sl5+win8+wp8\Claunia.Encoding.dll</HintPath>
+    <Reference Include="Claunia.Encoding, Version=1.4.6570.38892, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Claunia.Encoding.1.4.0\lib\portable40-net40+sl5+win8+wp8\Claunia.Encoding.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -214,6 +214,9 @@
       <Link>LICENSE.LGPL</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="CPM\cpmdefs.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
