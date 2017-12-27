@@ -46,12 +46,14 @@ namespace DiscImageChef.Commands
     {
         internal static void DoLs(LsOptions options)
         {
-            DicConsole.DebugWriteLine("Ls command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Ls command", "--debug={0}",   options.Debug);
             DicConsole.DebugWriteLine("Ls command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Ls command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("Ls command", "--input={0}",   options.InputFile);
 
-            FiltersList filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
+            FiltersList                filtersList = new FiltersList();
+            IFilter                    inputFilter = filtersList.GetFilter(options.InputFile);
+            Dictionary<string, string> optionsDict =
+                new Dictionary<string, string> {{"debug", options.Debug.ToString()}};
 
             if(inputFilter == null)
             {
@@ -120,9 +122,9 @@ namespace DiscImageChef.Commands
                 List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
                 Core.Partitions.AddSchemesToStats(partitions);
 
-                List<string> idPlugins;
+                List<string>        idPlugins;
                 IReadOnlyFilesystem plugin;
-                Errno error;
+                Errno               error;
                 if(partitions.Count == 0) DicConsole.DebugWriteLine("Ls command", "No partitions found");
                 else
                 {
@@ -136,7 +138,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Identifying filesystem on partition");
 
                         Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
-                        if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                        if(idPlugins.Count      == 0) DicConsole.WriteLine("Filesystem not identified");
                         else if(idPlugins.Count > 1)
                         {
                             DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
@@ -146,17 +148,20 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine($"As identified by {plugin.Name}.");
                                     IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
-                                        .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                                                                                 .GetType()
+                                                                                 .GetConstructor(Type.EmptyTypes)
+                                                                                ?.Invoke(new object[] { });
 
                                     if(fs == null) continue;
 
-                                    error = fs.Mount(imageFormat, partitions[i], encoding, options.Debug);
+                                    error = fs.Mount(imageFormat, partitions[i], encoding, optionsDict);
                                     if(error == Errno.NoError)
                                     {
                                         List<string> rootDir = new List<string>();
-                                        error = fs.ReadDir("/", out rootDir);
+                                        error                = fs.ReadDir("/", out rootDir);
                                         if(error == Errno.NoError)
-                                            foreach(string entry in rootDir) DicConsole.WriteLine("{0}", entry);
+                                            foreach(string entry in rootDir)
+                                                DicConsole.WriteLine("{0}", entry);
                                         else
                                             DicConsole.ErrorWriteLine("Error {0} reading root directory {0}",
                                                                       error.ToString());
@@ -175,16 +180,18 @@ namespace DiscImageChef.Commands
 
                             DicConsole.WriteLine($"Identified by {plugin.Name}.");
                             IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
-                                .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                                                                         .GetType().GetConstructor(Type.EmptyTypes)
+                                                                        ?.Invoke(new object[] { });
                             if(fs == null) continue;
 
-                            error = fs.Mount(imageFormat, partitions[i], encoding, options.Debug);
+                            error = fs.Mount(imageFormat, partitions[i], encoding, optionsDict);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
-                                error = fs.ReadDir("/", out rootDir);
+                                error                = fs.ReadDir("/", out rootDir);
                                 if(error == Errno.NoError)
-                                    foreach(string entry in rootDir) DicConsole.WriteLine("{0}", entry);
+                                    foreach(string entry in rootDir)
+                                        DicConsole.WriteLine("{0}", entry);
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
@@ -197,13 +204,13 @@ namespace DiscImageChef.Commands
 
                 Partition wholePart = new Partition
                 {
-                    Name = "Whole device",
+                    Name   = "Whole device",
                     Length = imageFormat.Info.Sectors,
-                    Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
+                    Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                 };
 
                 Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
-                if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                if(idPlugins.Count      == 0) DicConsole.WriteLine("Filesystem not identified");
                 else if(idPlugins.Count > 1)
                 {
                     DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
@@ -213,16 +220,18 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.WriteLine($"As identified by {plugin.Name}.");
                             IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
-                                .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                                                                         .GetType().GetConstructor(Type.EmptyTypes)
+                                                                        ?.Invoke(new object[] { });
                             if(fs == null) continue;
 
-                            error = fs.Mount(imageFormat, wholePart, encoding, options.Debug);
+                            error = fs.Mount(imageFormat, wholePart, encoding, optionsDict);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
-                                error = fs.ReadDir("/", out rootDir);
+                                error                = fs.ReadDir("/", out rootDir);
                                 if(error == Errno.NoError)
-                                    foreach(string entry in rootDir) DicConsole.WriteLine("{0}", entry);
+                                    foreach(string entry in rootDir)
+                                        DicConsole.WriteLine("{0}", entry);
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
@@ -237,21 +246,22 @@ namespace DiscImageChef.Commands
                     if(plugin != null)
                     {
                         DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                        IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
-                            .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                        IReadOnlyFilesystem fs =
+                            (IReadOnlyFilesystem)plugin
+                                                .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                         if(fs != null)
                         {
-                            error = fs.Mount(imageFormat, wholePart, encoding, options.Debug);
+                            error = fs.Mount(imageFormat, wholePart, encoding, optionsDict);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
-                                error = fs.ReadDir("/", out rootDir);
+                                error                = fs.ReadDir("/", out rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                         if(options.Long)
                                         {
-                                            FileEntryInfo stat = new FileEntryInfo();
-                                            List<string> xattrs = new List<string>();
+                                            FileEntryInfo stat   = new FileEntryInfo();
+                                            List<string>  xattrs = new List<string>();
 
                                             error = fs.Stat(entry, out stat);
                                             if(error == Errno.NoError)
@@ -265,7 +275,7 @@ namespace DiscImageChef.Commands
                                                 foreach(string xattr in xattrs)
                                                 {
                                                     byte[] xattrBuf = new byte[0];
-                                                    error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                    error           = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                     if(error == Errno.NoError)
                                                         DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr,
                                                                              xattrBuf.Length);
@@ -273,7 +283,8 @@ namespace DiscImageChef.Commands
                                             }
                                             else DicConsole.WriteLine("{0}", entry);
                                         }
-                                        else DicConsole.WriteLine("{0}", entry);
+                                        else
+                                            DicConsole.WriteLine("{0}", entry);
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
