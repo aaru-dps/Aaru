@@ -42,35 +42,40 @@ namespace DiscImageChef.Filesystems.LisaFS
     // Variable names from Lisa API
     public partial class LisaFS : IReadOnlyFilesystem
     {
-        bool debug;
+        bool        debug;
         IMediaImage device;
-        int devTagSize;
+        int         devTagSize;
 
-        MDDF mddf;
-        bool mounted;
+        MDDF      mddf;
+        bool      mounted;
         SRecord[] srecords;
-        ulong volumePrefix;
+        ulong     volumePrefix;
 
-        public string Name => "Apple Lisa File System";
-        public Guid Id => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-        public Encoding Encoding { get; private set; }
+        public string         Name      => "Apple Lisa File System";
+        public Guid           Id        => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+        public Encoding       Encoding  { get; private set; }
         public FileSystemType XmlFsType { get; private set; }
+
+        static Dictionary<string, string> GetDefaultOptions()
+        {
+            return new Dictionary<string, string> {{"debug", false.ToString()}};
+        }
 
         #region Caches
         /// <summary>Caches Extents Files</summary>
         Dictionary<short, ExtentFile> extentCache;
         /// <summary>Caches system files</summary>
-        Dictionary<short, byte[]> systemFileCache;
+        Dictionary<short, byte[]>     systemFileCache;
         /// <summary>Caches user files files</summary>
-        Dictionary<short, byte[]> fileCache;
+        Dictionary<short, byte[]>     fileCache;
         /// <summary>Caches catalogs</summary>
-        List<CatalogEntry> catalogCache;
+        List<CatalogEntry>            catalogCache;
         /// <summary>Caches file size</summary>
-        Dictionary<short, int> fileSizeCache;
+        Dictionary<short, int>        fileSizeCache;
         /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
-        List<short> printedExtents;
+        List<short>                   printedExtents;
         /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
-        Dictionary<short, DateTime> directoryDtcCache;
+        Dictionary<short, DateTime>   directoryDtcCache;
         #endregion Caches
     }
 }

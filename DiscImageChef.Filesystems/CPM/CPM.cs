@@ -60,7 +60,7 @@ namespace DiscImageChef.Filesystems.CPM
         ///     Stores all known CP/M disk definitions
         /// </summary>
         CpmDefinitions definitions;
-        IMediaImage device;
+        IMediaImage    device;
         /// <summary>
         ///     Cached directory listing
         /// </summary>
@@ -84,8 +84,8 @@ namespace DiscImageChef.Filesystems.CPM
         /// <summary>
         ///     Timestamp in volume label for update
         /// </summary>
-        byte[] labelUpdateDate;
-        bool mounted;
+        byte[]    labelUpdateDate;
+        bool      mounted;
         Partition partition;
         /// <summary>
         ///     Cached file passwords
@@ -113,8 +113,13 @@ namespace DiscImageChef.Filesystems.CPM
         CpmDefinition workingDefinition;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "CP/M File System";
-        public Guid Id => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "CP/M File System";
+        public Guid           Id        => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+
+        static Dictionary<string, string> GetDefaultOptions()
+        {
+            return new Dictionary<string, string> {{"debug", false.ToString()}};
+        }
     }
 }

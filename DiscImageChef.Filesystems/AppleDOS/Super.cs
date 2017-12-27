@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
@@ -46,10 +47,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <summary>
         ///     Mounts an Apple DOS filesystem
         /// </summary>
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
+        public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                           Dictionary<string, string> options)
         {
-            device = imagePlugin;
-            start = partition.Start;
+            device   = imagePlugin;
+            start    = partition.Start;
             Encoding = encoding ?? new Apple2();
 
             if(device.Info.Sectors != 455 && device.Info.Sectors != 560)
@@ -73,8 +75,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             sectorsPerTrack = device.Info.Sectors == 455 ? 13 : 16;
 
             // Read the VTOC
-            vtocBlocks = device.ReadSector((ulong)(17 * sectorsPerTrack));
-            vtoc = new Vtoc();
+            vtocBlocks     = device.ReadSector((ulong)(17 * sectorsPerTrack));
+            vtoc           = new Vtoc();
             IntPtr vtocPtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(vtocBlocks, 0, vtocPtr, 256);
             vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
@@ -82,7 +84,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             track1UsedByFiles = false;
             track2UsedByFiles = false;
-            usedSectors = 1;
+            usedSectors       = 1;
 
             Errno error = ReadCatalog();
             if(error != Errno.NoError)
@@ -101,17 +103,18 @@ namespace DiscImageChef.Filesystems.AppleDOS
             // Create XML metadata for mounted filesystem
             XmlFsType = new FileSystemType
             {
-                Bootable = true,
-                Clusters = (long)device.Info.Sectors,
-                ClusterSize = vtoc.bytesPerSector,
-                Files = catalogCache.Count,
-                FilesSpecified = true,
+                Bootable              = true,
+                Clusters              = (long)device.Info.Sectors,
+                ClusterSize           = vtoc.bytesPerSector,
+                Files                 = catalogCache.Count,
+                FilesSpecified        = true,
                 FreeClustersSpecified = true,
-                Type = "Apple DOS"
+                Type                  = "Apple DOS"
             };
             XmlFsType.FreeClusters = XmlFsType.Clusters - usedSectors;
 
-            this.debug = debug;
+            if(options == null) options = GetDefaultOptions();
+            if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
             mounted = true;
             return Errno.NoError;
         }
@@ -121,10 +124,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// </summary>
         public Errno Unmount()
         {
-            mounted = false;
-            extentCache = null;
-            fileCache = null;
-            catalogCache = null;
+            mounted       = false;
+            extentCache   = null;
+            fileCache     = null;
+            catalogCache  = null;
             fileSizeCache = null;
 
             return Errno.NoError;
@@ -138,14 +141,14 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             stat = new FileSystemInfo
             {
-                Blocks = (long)device.Info.Sectors,
+                Blocks         = (long)device.Info.Sectors,
                 FilenameLength = 30,
-                Files = (ulong)catalogCache.Count,
-                PluginId = Id,
-                Type = "Apple DOS"
+                Files          = (ulong)catalogCache.Count,
+                PluginId       = Id,
+                Type           = "Apple DOS"
             };
-            stat.FreeFiles = totalFileEntries - stat.Files;
-            stat.FreeBlocks = stat.Blocks - usedSectors;
+            stat.FreeFiles  = totalFileEntries - stat.Files;
+            stat.FreeBlocks = stat.Blocks      - usedSectors;
 
             return Errno.NoError;
         }

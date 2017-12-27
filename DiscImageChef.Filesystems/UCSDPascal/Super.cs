@@ -43,11 +43,13 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin
     {
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug)
+        public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                           Dictionary<string, string> options)
         {
-            device = imagePlugin;
-            Encoding = encoding ?? new Apple2();
-            this.debug = debug;
+            device                      = imagePlugin;
+            Encoding                    = encoding ?? new Apple2();
+            if(options == null) options = GetDefaultOptions();
+            if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
             if(device.Info.Sectors < 3) return Errno.InvalidArgument;
 
             // Blocks 0 and 1 are boot code
@@ -55,38 +57,41 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            mountedVolEntry.firstBlock = BigEndianBitConverter.ToInt16(catalogBlocks, 0x00);
-            mountedVolEntry.lastBlock = BigEndianBitConverter.ToInt16(catalogBlocks, 0x02);
-            mountedVolEntry.entryType = (PascalFileKind)BigEndianBitConverter.ToInt16(catalogBlocks, 0x04);
+            mountedVolEntry.firstBlock = BigEndianBitConverter.ToInt16(catalogBlocks,                 0x00);
+            mountedVolEntry.lastBlock  = BigEndianBitConverter.ToInt16(catalogBlocks,                 0x02);
+            mountedVolEntry.entryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(catalogBlocks, 0x04);
             mountedVolEntry.volumeName = new byte[8];
             Array.Copy(catalogBlocks, 0x06, mountedVolEntry.volumeName, 0, 8);
-            mountedVolEntry.blocks = BigEndianBitConverter.ToInt16(catalogBlocks, 0x0E);
-            mountedVolEntry.files = BigEndianBitConverter.ToInt16(catalogBlocks, 0x10);
-            mountedVolEntry.dummy = BigEndianBitConverter.ToInt16(catalogBlocks, 0x12);
+            mountedVolEntry.blocks   = BigEndianBitConverter.ToInt16(catalogBlocks, 0x0E);
+            mountedVolEntry.files    = BigEndianBitConverter.ToInt16(catalogBlocks, 0x10);
+            mountedVolEntry.dummy    = BigEndianBitConverter.ToInt16(catalogBlocks, 0x12);
             mountedVolEntry.lastBoot = BigEndianBitConverter.ToInt16(catalogBlocks, 0x14);
-            mountedVolEntry.tail = BigEndianBitConverter.ToInt32(catalogBlocks, 0x16);
+            mountedVolEntry.tail     = BigEndianBitConverter.ToInt32(catalogBlocks, 0x16);
 
-            if(mountedVolEntry.firstBlock != 0 || mountedVolEntry.lastBlock <= mountedVolEntry.firstBlock ||
-               (ulong)mountedVolEntry.lastBlock > device.Info.Sectors - 2 ||
-               mountedVolEntry.entryType != PascalFileKind.Volume &&
-               mountedVolEntry.entryType != PascalFileKind.Secure || mountedVolEntry.volumeName[0] > 7 ||
-               mountedVolEntry.blocks < 0 || (ulong)mountedVolEntry.blocks != device.Info.Sectors ||
-               mountedVolEntry.files < 0) return Errno.InvalidArgument;
+            if(mountedVolEntry.firstBlock       != 0                          ||
+               mountedVolEntry.lastBlock        <= mountedVolEntry.firstBlock ||
+               (ulong)mountedVolEntry.lastBlock > device.Info.Sectors - 2     ||
+               mountedVolEntry.entryType        != PascalFileKind.Volume &&
+               mountedVolEntry.entryType        != PascalFileKind.Secure ||
+               mountedVolEntry.volumeName[0]    > 7                      ||
+               mountedVolEntry.blocks           < 0                      ||
+               (ulong)mountedVolEntry.blocks    != device.Info.Sectors   ||
+               mountedVolEntry.files            < 0) return Errno.InvalidArgument;
 
             catalogBlocks = device.ReadSectors(2, (uint)(mountedVolEntry.lastBlock - mountedVolEntry.firstBlock - 2));
-            int offset = 26;
+            int offset    = 26;
 
             fileEntries = new List<PascalFileEntry>();
             while(offset + 26 < catalogBlocks.Length)
             {
                 PascalFileEntry entry = new PascalFileEntry
                 {
-                    filename = new byte[16],
-                    firstBlock = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x00),
-                    lastBlock = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x02),
-                    entryType = (PascalFileKind)BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x04),
-                    lastBytes = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x16),
-                    mtime = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x18)
+                    filename   = new byte[16],
+                    firstBlock = BigEndianBitConverter.ToInt16(catalogBlocks,                 offset + 0x00),
+                    lastBlock  = BigEndianBitConverter.ToInt16(catalogBlocks,                 offset + 0x02),
+                    entryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x04),
+                    lastBytes  = BigEndianBitConverter.ToInt16(catalogBlocks,                 offset + 0x16),
+                    mtime      = BigEndianBitConverter.ToInt16(catalogBlocks,                 offset + 0x18)
                 };
                 Array.Copy(catalogBlocks, offset + 0x06, entry.filename, 0, 16);
 
@@ -99,13 +104,13 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             XmlFsType = new FileSystemType
             {
-                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
-                Clusters = mountedVolEntry.blocks,
-                ClusterSize = (int)device.Info.SectorSize,
-                Files = mountedVolEntry.files,
+                Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
+                Clusters       = mountedVolEntry.blocks,
+                ClusterSize    = (int)device.Info.SectorSize,
+                Files          = mountedVolEntry.files,
                 FilesSpecified = true,
-                Type = "UCSD Pascal",
-                VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, Encoding)
+                Type           = "UCSD Pascal",
+                VolumeName     = StringHandlers.PascalToString(mountedVolEntry.volumeName, Encoding)
             };
 
             mounted = true;
@@ -115,7 +120,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
         public Errno Unmount()
         {
-            mounted = false;
+            mounted     = false;
             fileEntries = null;
             return Errno.NoError;
         }
@@ -124,15 +129,16 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             stat = new FileSystemInfo
             {
-                Blocks = mountedVolEntry.blocks,
+                Blocks         = mountedVolEntry.blocks,
                 FilenameLength = 16,
-                Files = (ulong)mountedVolEntry.files,
-                FreeBlocks = 0,
-                PluginId = Id,
-                Type = "UCSD Pascal"
+                Files          = (ulong)mountedVolEntry.files,
+                FreeBlocks     = 0,
+                PluginId       = Id,
+                Type           = "UCSD Pascal"
             };
 
             stat.FreeBlocks = mountedVolEntry.blocks - (mountedVolEntry.lastBlock - mountedVolEntry.firstBlock);
+
             foreach(PascalFileEntry entry in fileEntries) stat.FreeBlocks -= entry.lastBlock - entry.firstBlock;
 
             return Errno.NotImplemented;

@@ -31,12 +31,10 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
-using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -52,13 +50,13 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin"></param>
         /// <param name="partition"></param>
         /// <param name="encoding">Which encoding to use for this filesystem.</param>
-        /// <param name="debug">If <c>true</c> enable debug.</param>
-        Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, bool debug);
+        /// <param name="options">Dictionary of key=value pairs containing options to pass to the filesystem</param>
+        Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                    Dictionary<string, string> options);
 
         /// <summary>
         ///     Frees all internal structures created by
-        ///     <see
-        ///         cref="M:DiscImageChef.Filesystems.Filesystem.Mount(DiscImageChef.DiscImages.IMediaImage,DiscImageChef.CommonTypes.Partition,System.Text.Encoding,System.Boolean)" />
+        ///     <see cref="Mount" />
         /// </summary>
         Errno Unmount();
 

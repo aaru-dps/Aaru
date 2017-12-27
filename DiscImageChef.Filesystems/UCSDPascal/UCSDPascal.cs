@@ -44,17 +44,17 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         byte[] bootBlocks;
         byte[] catalogBlocks;
 
-        bool debug;
-        IMediaImage device;
+        bool                  debug;
+        IMediaImage           device;
         List<PascalFileEntry> fileEntries;
-        bool mounted;
+        bool                  mounted;
 
         PascalVolumeEntry mountedVolEntry;
 
         public FileSystemType XmlFsType { get; private set; }
-        public string Name => "U.C.S.D. Pascal filesystem";
-        public Guid Id => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
-        public Encoding Encoding { get; private set; }
+        public string         Name      => "U.C.S.D. Pascal filesystem";
+        public Guid           Id        => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+        public Encoding       Encoding  { get; private set; }
 
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
@@ -71,6 +71,11 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             dest = null;
             return Errno.NotSupported;
+        }
+
+        static Dictionary<string, string> GetDefaultOptions()
+        {
+            return new Dictionary<string, string> {{"debug", false.ToString()}};
         }
     }
 }

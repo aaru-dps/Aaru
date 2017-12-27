@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using Schemas;
 
@@ -42,47 +41,35 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS : IReadOnlyFilesystem
     {
-        bool mounted;
-        bool debug;
+        bool        mounted;
+        bool        debug;
         IMediaImage device;
-        ulong partitionStart;
+        ulong       partitionStart;
 
-        Dictionary<uint, string> idToFilename;
+        Dictionary<uint, string>        idToFilename;
         Dictionary<uint, MFS_FileEntry> idToEntry;
-        Dictionary<string, uint> filenameToId;
+        Dictionary<string, uint>        filenameToId;
 
         MFS_MasterDirectoryBlock volMDB;
-        byte[] bootBlocks;
-        byte[] mdbBlocks;
-        byte[] directoryBlocks;
-        byte[] blockMapBytes;
-        uint[] blockMap;
-        int sectorsPerBlock;
-        byte[] bootTags;
-        byte[] mdbTags;
-        byte[] directoryTags;
-        byte[] bitmapTags;
+        byte[]                   bootBlocks;
+        byte[]                   mdbBlocks;
+        byte[]                   directoryBlocks;
+        byte[]                   blockMapBytes;
+        uint[]                   blockMap;
+        int                      sectorsPerBlock;
+        byte[]                   bootTags;
+        byte[]                   mdbTags;
+        byte[]                   directoryTags;
+        byte[]                   bitmapTags;
 
         public FileSystemType XmlFsType { get; private set; }
-        public string Name => "Apple Macintosh File System";
-        public Guid Id => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-        public Encoding Encoding { get; private set; }
+        public string         Name      => "Apple Macintosh File System";
+        public Guid           Id        => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+        public Encoding       Encoding  { get; private set; }
 
-        public AppleMFS()
+        static Dictionary<string, string> GetDefaultOptions()
         {
-            Encoding = Encoding.GetEncoding("macintosh");
-        }
-
-        public AppleMFS(Encoding encoding)
-        {
-            Encoding = encoding ?? Encoding.GetEncoding("macintosh");
-        }
-
-        public AppleMFS(IMediaImage imagePlugin, Partition partition, Encoding encoding)
-        {
-            device = imagePlugin;
-            partitionStart = partition.Start;
-            Encoding = encoding ?? Encoding.GetEncoding("macintosh");
+            return new Dictionary<string, string> {{"debug", false.ToString()}};
         }
     }
 }
