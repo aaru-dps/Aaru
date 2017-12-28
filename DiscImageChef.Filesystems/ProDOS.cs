@@ -57,36 +57,36 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         ///     A file that occupies between 257 and 32768 blocks
         /// </summary>
-        const byte TREE_FILE_TYPE = 0x03;
-        const byte PASCAL_AREA_TYPE = 0x04;
-        const byte SUBDIRECTORY_TYPE = 0x0D;
+        const byte TREE_FILE_TYPE           = 0x03;
+        const byte PASCAL_AREA_TYPE         = 0x04;
+        const byte SUBDIRECTORY_TYPE        = 0x0D;
         const byte SUBDIRECTORY_HEADER_TYPE = 0x0E;
-        const byte ROOT_DIRECTORY_TYPE = 0x0F;
+        const byte ROOT_DIRECTORY_TYPE      = 0x0F;
 
         const byte VERSION1 = 0x00;
 
-        const uint YEAR_MASK = 0xFE000000;
-        const uint MONTH_MASK = 0x1E00000;
-        const uint DAY_MASK = 0x1F0000;
-        const uint HOUR_MASK = 0x1F00;
+        const uint YEAR_MASK   = 0xFE000000;
+        const uint MONTH_MASK  = 0x1E00000;
+        const uint DAY_MASK    = 0x1F0000;
+        const uint HOUR_MASK   = 0x1F00;
         const uint MINUTE_MASK = 0x3F;
 
-        const byte DESTROY_ATTRIBUTE = 0x80;
-        const byte RENAME_ATTRIBUTE = 0x40;
-        const byte BACKUP_ATTRIBUTE = 0x20;
-        const byte WRITE_ATTRIBUTE = 0x02;
-        const byte READ_ATTRIBUTE = 0x01;
+        const byte DESTROY_ATTRIBUTE       = 0x80;
+        const byte RENAME_ATTRIBUTE        = 0x40;
+        const byte BACKUP_ATTRIBUTE        = 0x20;
+        const byte WRITE_ATTRIBUTE         = 0x02;
+        const byte READ_ATTRIBUTE          = 0x01;
         const byte RESERVED_ATTRIBUTE_MASK = 0x1C;
 
         const byte STORAGE_TYPE_MASK = 0xF0;
-        const byte NAME_LENGTH_MASK = 0x0F;
-        const byte ENTRY_LENGTH = 0x27;
+        const byte NAME_LENGTH_MASK  = 0x0F;
+        const byte ENTRY_LENGTH      = 0x27;
         const byte ENTRIES_PER_BLOCK = 0x0D;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Apple ProDOS filesystem";
-        public Guid Id => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Apple ProDOS filesystem";
+        public Guid           Id        => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems
 
             // Blocks 0 and 1 are boot code
             byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.Start);
-            bool APMFromHDDOnCD = false;
+            bool   APMFromHDDOnCD        = false;
 
             if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
@@ -103,8 +103,8 @@ namespace DiscImageChef.Filesystems
 
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00}.Where(offset =>
                                                                                              BitConverter
-                                                                                                 .ToUInt16(tmp,
-                                                                                                           offset) ==
+                                                                                                .ToUInt16(tmp,
+                                                                                                          offset) ==
                                                                                              0 &&
                                                                                              (byte)
                                                                                              ((tmp[offset + 0x04] &
@@ -142,18 +142,18 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ProDOS plugin", "bit_map_pointer = {0}", bitMapPointer);
             if(bitMapPointer > partition.End) return false;
 
-            ushort totalBlocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
+            ushort totalBlocks             = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
             if(APMFromHDDOnCD) totalBlocks /= 4;
 
             DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
                                       partition.Start, totalBlocks <= partition.End - partition.Start + 1);
-            return totalBlocks <= partition.End - partition.Start + 1;
+            return totalBlocks                                     <= partition.End - partition.Start + 1;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? new Apple2gs();
+            Encoding                    = encoding ?? new Apple2c();
             StringBuilder sbInformation = new StringBuilder();
 
             // Blocks 0 and 1 are boot code
@@ -168,8 +168,8 @@ namespace DiscImageChef.Filesystems
 
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00}.Where(offset =>
                                                                                              BitConverter
-                                                                                                 .ToUInt16(tmp,
-                                                                                                           offset) ==
+                                                                                                .ToUInt16(tmp,
+                                                                                                          offset) ==
                                                                                              0 &&
                                                                                              (byte)
                                                                                              ((tmp[offset + 0x04] &
@@ -188,54 +188,55 @@ namespace DiscImageChef.Filesystems
             }
 
             ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock =
-                new ProDOSRootDirectoryKeyBlock {header = new ProDOSRootDirectoryHeader()};
+                new ProDOSRootDirectoryKeyBlock {header       = new ProDOSRootDirectoryHeader()};
 
-            rootDirectoryKeyBlock.zero = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00);
-            rootDirectoryKeyBlock.next_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02);
+            rootDirectoryKeyBlock.zero                = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00);
+            rootDirectoryKeyBlock.next_pointer        = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02);
             rootDirectoryKeyBlock.header.storage_type =
-                (byte)((rootDirectoryKeyBlockBytes[0x04] & STORAGE_TYPE_MASK) >> 4);
+                (byte)((rootDirectoryKeyBlockBytes[0x04] & STORAGE_TYPE_MASK) >>
+                       4);
             rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & NAME_LENGTH_MASK);
-            byte[] temporal = new byte[rootDirectoryKeyBlock.header.name_length];
+            byte[] temporal                          = new byte[rootDirectoryKeyBlock.header.name_length];
             Array.Copy(rootDirectoryKeyBlockBytes, 0x05, temporal, 0, rootDirectoryKeyBlock.header.name_length);
             rootDirectoryKeyBlock.header.volume_name = Encoding.GetString(temporal);
-            rootDirectoryKeyBlock.header.reserved = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
+            rootDirectoryKeyBlock.header.reserved    = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
 
-            ushort tempTimestampLeft = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
+            ushort tempTimestampLeft  = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
             ushort tempTimestampRight = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1E);
 
             bool dateCorrect;
             try
             {
-                uint tempTimestamp = (uint)((tempTimestampLeft << 16) + tempTimestampRight);
-                int year = (int)((tempTimestamp & YEAR_MASK) >> 25);
-                int month = (int)((tempTimestamp & MONTH_MASK) >> 21);
-                int day = (int)((tempTimestamp & DAY_MASK) >> 16);
-                int hour = (int)((tempTimestamp & HOUR_MASK) >> 8);
-                int minute = (int)(tempTimestamp & MINUTE_MASK);
-                year += 1900;
+                uint tempTimestamp   = (uint)((tempTimestampLeft          << 16) + tempTimestampRight);
+                int  year            = (int)((tempTimestamp & YEAR_MASK)  >> 25);
+                int  month           = (int)((tempTimestamp & MONTH_MASK) >> 21);
+                int  day             = (int)((tempTimestamp & DAY_MASK)   >> 16);
+                int  hour            = (int)((tempTimestamp & HOUR_MASK)  >> 8);
+                int  minute          = (int)(tempTimestamp  & MINUTE_MASK);
+                year                 += 1900;
                 if(year < 1940) year += 100;
 
-                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}", tempTimestampLeft);
+                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}",  tempTimestampLeft);
                 DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_right = 0x{0:X4}", tempTimestampRight);
-                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}", tempTimestamp);
+                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}",       tempTimestamp);
                 DicConsole.DebugWriteLine("ProDOS plugin",
                                           "Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year,
                                           month, day, hour, minute);
 
                 rootDirectoryKeyBlock.header.creation_time = new DateTime(year, month, day, hour, minute, 0);
-                dateCorrect = true;
+                dateCorrect                                = true;
             }
             catch(ArgumentOutOfRangeException) { dateCorrect = false; }
 
-            rootDirectoryKeyBlock.header.version = rootDirectoryKeyBlockBytes[0x20];
-            rootDirectoryKeyBlock.header.min_version = rootDirectoryKeyBlockBytes[0x21];
-            rootDirectoryKeyBlock.header.access = rootDirectoryKeyBlockBytes[0x22];
-            rootDirectoryKeyBlock.header.entry_length = rootDirectoryKeyBlockBytes[0x23];
+            rootDirectoryKeyBlock.header.version           = rootDirectoryKeyBlockBytes[0x20];
+            rootDirectoryKeyBlock.header.min_version       = rootDirectoryKeyBlockBytes[0x21];
+            rootDirectoryKeyBlock.header.access            = rootDirectoryKeyBlockBytes[0x22];
+            rootDirectoryKeyBlock.header.entry_length      = rootDirectoryKeyBlockBytes[0x23];
             rootDirectoryKeyBlock.header.entries_per_block = rootDirectoryKeyBlockBytes[0x24];
 
-            rootDirectoryKeyBlock.header.file_count = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x25);
+            rootDirectoryKeyBlock.header.file_count      = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x25);
             rootDirectoryKeyBlock.header.bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x27);
-            rootDirectoryKeyBlock.header.total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
+            rootDirectoryKeyBlock.header.total_blocks    = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
 
             if(APMFromHDDOnCD)
                 sbInformation.AppendLine("ProDOS uses 512 bytes/sector while devices uses 2048 bytes/sector.")
@@ -257,8 +258,8 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendLine("ProDOS version 1 at least required for reading this volume.");
             else
                 sbInformation
-                    .AppendFormat("Unknown ProDOS version with field {0} is at least required for reading this volume.",
-                                  rootDirectoryKeyBlock.header.min_version).AppendLine();
+                   .AppendFormat("Unknown ProDOS version with field {0} is at least required for reading this volume.",
+                                 rootDirectoryKeyBlock.header.min_version).AppendLine();
 
             sbInformation.AppendFormat("Volume name is {0}", rootDirectoryKeyBlock.header.volume_name).AppendLine();
             if(dateCorrect)
@@ -267,11 +268,12 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("{0} bytes per directory entry", rootDirectoryKeyBlock.header.entry_length)
                          .AppendLine();
             sbInformation
-                .AppendFormat("{0} entries per directory block", rootDirectoryKeyBlock.header.entries_per_block)
-                .AppendLine();
+               .AppendFormat("{0} entries per directory block", rootDirectoryKeyBlock.header.entries_per_block)
+               .AppendLine();
             sbInformation.AppendFormat("{0} files in root directory", rootDirectoryKeyBlock.header.file_count)
                          .AppendLine();
-            sbInformation.AppendFormat("{0} blocks in volume", rootDirectoryKeyBlock.header.total_blocks).AppendLine();
+            sbInformation.AppendFormat("{0} blocks in volume", rootDirectoryKeyBlock.header.total_blocks)
+                         .AppendLine();
             sbInformation.AppendFormat("Bitmap starts at block {0}", rootDirectoryKeyBlock.header.bit_map_pointer)
                          .AppendLine();
 
@@ -292,18 +294,19 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType = new FileSystemType();
+            XmlFsType            = new FileSystemType();
             XmlFsType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
             if(dateCorrect)
             {
-                XmlFsType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
+                XmlFsType.CreationDate          = rootDirectoryKeyBlock.header.creation_time;
                 XmlFsType.CreationDateSpecified = true;
             }
-            XmlFsType.Files = rootDirectoryKeyBlock.header.file_count;
+
+            XmlFsType.Files          = rootDirectoryKeyBlock.header.file_count;
             XmlFsType.FilesSpecified = true;
-            XmlFsType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            XmlFsType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                          (ulong)XmlFsType.Clusters);
+            XmlFsType.Clusters       = rootDirectoryKeyBlock.header.total_blocks;
+            XmlFsType.ClusterSize    = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                             (ulong)XmlFsType.Clusters);
             XmlFsType.Type = "ProDOS";
         }
 
