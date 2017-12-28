@@ -797,7 +797,7 @@ namespace DiscImageChef.DiscImages
         {
             header    = new Dc42Header();
             bool tags = false;
-            bool macosx;
+            bool macosx = false;
 
             if(options != null && options.TryGetValue("macosx", out string tmpOption))
                 bool.TryParse(tmpOption, out macosx);
