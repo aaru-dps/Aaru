@@ -121,7 +121,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "CloneCD";
         public Guid Id => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
 
-        public string ImageFormat => "CloneCD";
+        public string Format => "CloneCD";
 
         public List<Partition> Partitions => partitions;
 
@@ -129,7 +129,7 @@ namespace DiscImageChef.DiscImages
 
         public List<Session> Sessions => sessions;
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             ccdFilter = imageFilter;
 
@@ -176,7 +176,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             if(imageFilter == null) return false;
 

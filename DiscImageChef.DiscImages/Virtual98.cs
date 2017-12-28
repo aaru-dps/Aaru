@@ -83,7 +83,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Virtual98 Disk Image";
         public Guid Id => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
 
-        public string ImageFormat => "Virtual98 disk image";
+        public string Format => "Virtual98 disk image";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -94,7 +94,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -129,7 +129,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

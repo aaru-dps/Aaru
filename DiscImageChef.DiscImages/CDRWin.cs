@@ -208,7 +208,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "CDRWin cuesheet";
         public Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
 
-        public string ImageFormat => "CDRWin CUESheet";
+        public string Format => "CDRWin CUESheet";
 
         public List<Partition> Partitions => partitions;
 
@@ -262,7 +262,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions => discimage.Sessions;
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             cdrwinFilter = imageFilter;
 
@@ -323,7 +323,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             if(imageFilter == null) return false;
 

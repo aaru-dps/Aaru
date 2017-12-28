@@ -82,7 +82,7 @@ namespace DiscImageChef.DiscImages
         public Guid Id => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "DiscJuggler";
+        public string Format => "DiscJuggler";
 
         public List<Partition> Partitions => partitions;
 
@@ -90,7 +90,7 @@ namespace DiscImageChef.DiscImages
 
         public List<Session> Sessions => sessions;
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             imageStream = imageFilter.GetDataForkStream();
 
@@ -120,7 +120,7 @@ namespace DiscImageChef.DiscImages
             return descriptor[2] <= 99;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             imageStream = imageFilter.GetDataForkStream();
 

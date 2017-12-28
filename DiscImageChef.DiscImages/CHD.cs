@@ -165,7 +165,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "MAME Compressed Hunks of Data";
         public Guid Id => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
 
-        public string ImageFormat => "Compressed Hunks of Data";
+        public string Format => "Compressed Hunks of Data";
 
         public List<Partition> Partitions
         {
@@ -203,7 +203,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -213,7 +213,7 @@ namespace DiscImageChef.DiscImages
             return chdTag.SequenceEqual(magic);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -1055,7 +1055,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         // "IDNT"
                         case HARD_DISK_IDENT_METADATA:
-                            Identify.IdentifyDevice? idnt = Identify.Decode(meta);
+                            Identify.IdentifyDevice? idnt = Decoders.ATA.Identify.Decode(meta);
                             if(idnt.HasValue)
                             {
                                 imageInfo.MediaManufacturer = idnt.Value.MediaManufacturer;

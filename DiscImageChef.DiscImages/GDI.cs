@@ -86,7 +86,7 @@ namespace DiscImageChef.DiscImages
         public Guid Id => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "Dreamcast GDI image";
+        public string Format => "Dreamcast GDI image";
 
         public List<Partition> Partitions => partitions;
 
@@ -128,7 +128,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions => discimage.Sessions;
 
         // Due to .gdi format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             try
             {
@@ -190,7 +190,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             if(imageFilter == null) return false;
 

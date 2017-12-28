@@ -75,7 +75,7 @@ namespace DiscImageChef.DiscImages
         public Guid Id => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "T98 disk image";
+        public string Format => "T98 disk image";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -86,7 +86,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -107,7 +107,7 @@ namespace DiscImageChef.DiscImages
             return stream.Length == cylinders * 8 * 33 * 256 + 256;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

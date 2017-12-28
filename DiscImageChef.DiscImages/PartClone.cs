@@ -95,7 +95,7 @@ namespace DiscImageChef.DiscImages
         public Guid Id => new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "PartClone";
+        public string Format => "PartClone";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -106,7 +106,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -131,7 +131,7 @@ namespace DiscImageChef.DiscImages
             return partCloneMagic.SequenceEqual(pHdr.magic) && biTmAgIc.SequenceEqual(bitmagic);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

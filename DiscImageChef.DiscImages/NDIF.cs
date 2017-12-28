@@ -125,7 +125,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Apple New Disk Image Format";
         public Guid Id => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
 
-        public string ImageFormat => "Apple New Disk Image Format";
+        public string Format => "Apple New Disk Image Format";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -136,7 +136,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             if(!imageFilter.HasResourceFork() || imageFilter.GetResourceForkLength() == 0) return false;
 
@@ -154,7 +154,7 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             if(!imageFilter.HasResourceFork() || imageFilter.GetResourceForkLength() == 0) return false;
 

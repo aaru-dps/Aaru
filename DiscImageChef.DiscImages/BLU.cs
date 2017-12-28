@@ -83,7 +83,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Basic Lisa Utility";
         public Guid Id => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
 
-        public string ImageFormat => "Basic Lisa Utility";
+        public string Format => "Basic Lisa Utility";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -94,7 +94,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -117,7 +117,7 @@ namespace DiscImageChef.DiscImages
             return (tmpHdr.BytesPerBlock & 0xFE00) == 0x200;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

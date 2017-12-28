@@ -140,7 +140,7 @@ namespace DiscImageChef.DiscImages
         }
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             imageStream = imageFilter.GetDataForkStream();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -171,7 +171,7 @@ namespace DiscImageChef.DiscImages
             return footerV1.ChunkId == NERO_FOOTER_V1 && footerV1.FirstChunkOffset < (ulong)imageStream.Length;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             try
             {
@@ -1516,7 +1516,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public string ImageFormat => "Nero Burning ROM";
+        public string Format => "Nero Burning ROM";
 
         public List<Partition> Partitions => imagePartitions;
 

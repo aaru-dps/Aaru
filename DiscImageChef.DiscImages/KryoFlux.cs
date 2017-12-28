@@ -92,7 +92,7 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
@@ -122,7 +122,7 @@ namespace DiscImageChef.DiscImages
                    footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF && footer.length == 0x0D0D;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
@@ -352,7 +352,7 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public string ImageFormat => "KryoFlux STREAM";
+        public string Format => "KryoFlux STREAM";
 
         public bool? VerifySector(ulong sectorAddress)
         {

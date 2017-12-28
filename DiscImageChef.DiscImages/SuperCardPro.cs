@@ -151,7 +151,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "SuperCardPro";
         public Guid Id => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
 
-        public string ImageFormat => "SuperCardPro";
+        public string Format => "SuperCardPro";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -162,7 +162,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Header = new ScpHeader();
             Stream stream = imageFilter.GetDataForkStream();
@@ -180,7 +180,7 @@ namespace DiscImageChef.DiscImages
             return scpSignature.SequenceEqual(Header.signature);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Header = new ScpHeader();
             scpStream = imageFilter.GetDataForkStream();

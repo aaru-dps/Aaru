@@ -161,7 +161,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Microsoft VHDX";
         public Guid Id => new Guid("536B141B-D09C-4799-AB70-34631286EB9D");
 
-        public string ImageFormat => "VHDX";
+        public string Format => "VHDX";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -172,7 +172,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -190,7 +190,7 @@ namespace DiscImageChef.DiscImages
             return vhdxId.signature == VHDX_SIGNATURE;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -416,7 +416,7 @@ namespace DiscImageChef.DiscImages
                         {
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
-                            if(parentFilter != null && parentImage.OpenImage(parentFilter))
+                            if(parentFilter != null && parentImage.Open(parentFilter))
                             {
                                 parentWorks = true;
                                 break;
@@ -430,7 +430,7 @@ namespace DiscImageChef.DiscImages
                         {
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
-                            if(parentFilter == null || !parentImage.OpenImage(parentFilter)) continue;
+                            if(parentFilter == null || !parentImage.Open(parentFilter)) continue;
 
                             parentWorks = true;
                             break;
@@ -452,7 +452,7 @@ namespace DiscImageChef.DiscImages
                         {
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
-                            if(parentFilter == null || !parentImage.OpenImage(parentFilter)) continue;
+                            if(parentFilter == null || !parentImage.Open(parentFilter)) continue;
 
                             parentWorks = true;
                             break;

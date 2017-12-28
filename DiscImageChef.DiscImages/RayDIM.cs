@@ -79,7 +79,7 @@ namespace DiscImageChef.DiscImages
         public Guid      Id   => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "Ray Arachelian's Disk IMage";
+        public string Format => "Ray Arachelian's Disk IMage";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -90,7 +90,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -123,7 +123,7 @@ namespace DiscImageChef.DiscImages
             return sm.Success;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 

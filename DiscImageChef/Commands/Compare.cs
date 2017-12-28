@@ -91,11 +91,11 @@ namespace DiscImageChef.Commands
                                             input2Format.Id);
             else DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
 
-            input1Format.OpenImage(inputFilter1);
-            input2Format.OpenImage(inputFilter2);
+            input1Format.Open(inputFilter1);
+            input2Format.Open(inputFilter2);
 
-            Core.Statistics.AddMediaFormat(input1Format.ImageFormat);
-            Core.Statistics.AddMediaFormat(input2Format.ImageFormat);
+            Core.Statistics.AddMediaFormat(input1Format.Format);
+            Core.Statistics.AddMediaFormat(input2Format.Format);
             Core.Statistics.AddMedia(input1Format.Info.MediaType, false);
             Core.Statistics.AddMedia(input2Format.Info.MediaType, false);
             Core.Statistics.AddFilter(inputFilter1.Name);

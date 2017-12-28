@@ -96,7 +96,7 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    if(!imageFormat.OpenImage(inputFilter))
+                    if(!imageFormat.Open(inputFilter))
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
@@ -110,7 +110,7 @@ namespace DiscImageChef.Commands
                     DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.",
                                               imageFormat.Info.MediaType);
 
-                    Core.Statistics.AddMediaFormat(imageFormat.ImageFormat);
+                    Core.Statistics.AddMediaFormat(imageFormat.Format);
                     Core.Statistics.AddMedia(imageFormat.Info.MediaType, false);
                     Core.Statistics.AddFilter(inputFilter.Name);
                 }

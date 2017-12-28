@@ -120,7 +120,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Apple Universal Disk Image Format";
         public Guid Id => new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
 
-        public string ImageFormat => "Apple Universal Disk Image Format";
+        public string Format => "Apple Universal Disk Image Format";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -131,7 +131,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -155,7 +155,7 @@ namespace DiscImageChef.DiscImages
             return footer.signature == UDIF_SIGNATURE;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 

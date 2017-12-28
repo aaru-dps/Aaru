@@ -66,7 +66,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            inputFormat.OpenImage(inputFilter);
+            inputFormat.Open(inputFilter);
 
             for(ulong i = 0; i < options.Length; i++)
             {

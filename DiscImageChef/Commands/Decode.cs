@@ -70,8 +70,8 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            inputFormat.OpenImage(inputFilter);
-            Core.Statistics.AddMediaFormat(inputFormat.ImageFormat);
+            inputFormat.Open(inputFilter);
+            Core.Statistics.AddMediaFormat(inputFormat.Format);
             Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
 

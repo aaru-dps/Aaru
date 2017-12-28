@@ -128,7 +128,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Sydex CopyQM";
         public Guid   Id   => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
 
-        public string ImageFormat => "Sydex CopyQM";
+        public string Format => "Sydex CopyQM";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -139,7 +139,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -153,7 +153,7 @@ namespace DiscImageChef.DiscImages
             return magic == COPYQM_MAGIC && hdr[0x02] == COPYQM_MARK && 133 + hdr[0x6F] < stream.Length;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

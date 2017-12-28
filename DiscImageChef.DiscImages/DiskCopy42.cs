@@ -138,7 +138,7 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -219,7 +219,7 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -717,7 +717,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public string ImageFormat => "Apple DiskCopy 4.2";
+        public string Format => "Apple DiskCopy 4.2";
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {

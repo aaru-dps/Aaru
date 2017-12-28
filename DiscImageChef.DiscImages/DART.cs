@@ -120,7 +120,7 @@ namespace DiscImageChef.DiscImages
         public Guid Id => new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "Apple Disk Archival/Retrieval Tool";
+        public string Format => "Apple Disk Archival/Retrieval Tool";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -131,7 +131,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -182,7 +182,7 @@ namespace DiscImageChef.DiscImages
             return stream.Length <= expectedMaxSize;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 

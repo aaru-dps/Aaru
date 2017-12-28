@@ -141,7 +141,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "CDRDAO tocfile";
         public Guid Id => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
 
-        public string ImageFormat => "CDRDAO tocfile";
+        public string Format => "CDRDAO tocfile";
 
         public List<Partition> Partitions => partitions;
 
@@ -193,7 +193,7 @@ namespace DiscImageChef.DiscImages
 
         public List<Session> Sessions => throw new NotImplementedException();
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             try
             {
@@ -248,7 +248,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             if(imageFilter == null) return false;
 

@@ -97,7 +97,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Alcohol 120% Media Descriptor Structure";
         public Guid Id => new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
 
-        public string ImageFormat => "Alcohol 120% Media Descriptor Structure";
+        public string Format => "Alcohol 120% Media Descriptor Structure";
 
         public List<Partition> Partitions => partitions;
 
@@ -156,7 +156,7 @@ namespace DiscImageChef.DiscImages
 
         public List<Session> Sessions => sessions;
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -172,7 +172,7 @@ namespace DiscImageChef.DiscImages
             return header.signature == "MEDIA DESCRIPTO";
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

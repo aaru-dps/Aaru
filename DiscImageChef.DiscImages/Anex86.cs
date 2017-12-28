@@ -78,7 +78,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Anex86 Disk Image";
         public Guid   Id   => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
 
-        public string ImageFormat => "Anex86 disk image";
+        public string Format => "Anex86 disk image";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -89,7 +89,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -118,7 +118,7 @@ namespace DiscImageChef.DiscImages
                    fdihdr.dskSize == fdihdr.bps * fdihdr.spt * fdihdr.heads * fdihdr.cylinders;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

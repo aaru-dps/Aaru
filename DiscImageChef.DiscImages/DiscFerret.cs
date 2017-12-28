@@ -86,7 +86,7 @@ namespace DiscImageChef.DiscImages
         public Guid Id => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "DiscFerret";
+        public string Format => "DiscFerret";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -97,7 +97,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             byte[] magicB = new byte[4];
             Stream stream = imageFilter.GetDataForkStream();
@@ -107,7 +107,7 @@ namespace DiscImageChef.DiscImages
             return magic == DFI_MAGIC || magic == DFI_MAGIC2;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             byte[] magicB = new byte[4];
             Stream stream = imageFilter.GetDataForkStream();

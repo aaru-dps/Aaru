@@ -68,7 +68,7 @@ namespace DiscImageChef.Core
                     Checksums = imgChecksums.ToArray(),
                     Image = new ImageType
                     {
-                        format = image.ImageFormat,
+                        format = image.Format,
                         offset = 0,
                         offsetSpecified = true,
                         Value = Path.GetFileName(imagePath)

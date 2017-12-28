@@ -120,7 +120,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Apple 2IMG";
         public Guid Id => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
 
-        public string ImageFormat => "Apple 2IMG";
+        public string Format => "Apple 2IMG";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -131,7 +131,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -165,7 +165,7 @@ namespace DiscImageChef.DiscImages
             return creatoroff + creatorsize <= stream.Length;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

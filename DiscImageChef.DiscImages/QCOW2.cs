@@ -125,7 +125,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "QEMU Copy-On-Write disk image v2";
         public Guid Id => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
 
-        public string ImageFormat => "QEMU Copy-On-Write";
+        public string Format => "QEMU Copy-On-Write";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -136,7 +136,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -153,7 +153,7 @@ namespace DiscImageChef.DiscImages
             return qHdr.magic == QCOW_MAGIC && (qHdr.version == QCOW_VERSION2 || qHdr.version == QCOW_VERSION3);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

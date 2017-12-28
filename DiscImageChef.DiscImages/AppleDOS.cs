@@ -77,7 +77,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Apple ][ Interleaved Disk Image";
         public Guid Id => new Guid("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
 
-        public string ImageFormat => extension == ".po"
+        public string Format => extension == ".po"
                                                   ? "Apple ][ Interleaved Disk Image (ProDOS order)"
                                                   : "Apple ][ Interleaved Disk Image (DOS order)";
 
@@ -87,14 +87,14 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
             return imageFilter.GetDataForkLength() == 143360 && (extension == ".po" || extension == ".do");
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

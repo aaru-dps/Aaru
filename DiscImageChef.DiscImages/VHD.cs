@@ -227,7 +227,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "VirtualPC";
         public Guid Id => new Guid("8014d88f-64cd-4484-9441-7635c632958a");
 
-        public string ImageFormat
+        public string Format
         {
             get
             {
@@ -250,7 +250,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();
             ulong headerCookie;
@@ -273,7 +273,7 @@ namespace DiscImageChef.DiscImages
             return headerCookie == IMAGE_COOKIE || footerCookie == IMAGE_COOKIE;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();
             byte[] header = new byte[512];
@@ -785,11 +785,11 @@ namespace DiscImageChef.DiscImages
                                                     if (!plugins.ImagePluginsList.TryGetValue(Name.ToLower(), out parentImage))
                                                         throw new SystemException("(VirtualPC plugin): Unable to open myself");*/
 
-                        if(!parentImage.IdentifyImage(parentFilter))
+                        if(!parentImage.Identify(parentFilter))
                             throw new
                                 ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
 
-                        if(!parentImage.OpenImage(parentFilter))
+                        if(!parentImage.Open(parentFilter))
                             throw new ImageNotSupportedException("(VirtualPC plugin): Cannot open parent disk image");
 
                         // While specification says that parent and child disk images should contain UUID relationship

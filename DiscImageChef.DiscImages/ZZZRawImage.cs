@@ -78,7 +78,7 @@ namespace DiscImageChef.DiscImages
         public Guid      Id   => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "Raw disk image (sector by sector copy)";
+        public string Format => "Raw disk image (sector by sector copy)";
 
         public List<Track> Tracks
         {
@@ -148,7 +148,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             // Check if file is not multiple of 512
             if(imageFilter.GetDataForkLength() % 512 == 0) return true;
@@ -187,7 +187,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

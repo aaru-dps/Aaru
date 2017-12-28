@@ -111,7 +111,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "CPCEMU Disk-File and Extended CPC Disk-File";
         public Guid Id => new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
 
-        public string ImageFormat => extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
+        public string Format => extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -122,7 +122,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -143,7 +143,7 @@ namespace DiscImageChef.DiscImages
                    du54Id.SequenceEqual(header.magic);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

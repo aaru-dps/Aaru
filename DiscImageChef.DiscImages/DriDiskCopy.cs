@@ -83,7 +83,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Digital Research DiskCopy";
         public Guid   Id   => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
 
-        public string ImageFormat => "Digital Research DiskCopy";
+        public string Format => "Digital Research DiskCopy";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -94,7 +94,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -149,7 +149,7 @@ namespace DiscImageChef.DiscImages
             return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf(tmpFooter) == stream.Length;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 

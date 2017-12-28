@@ -606,7 +606,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
             PartitionType[] xmlFileSysInfo = null;
 
-            try { if(!imageFormat.OpenImage(inputFilter)) imageFormat = null; }
+            try { if(!imageFormat.Open(inputFilter)) imageFormat = null; }
             catch { imageFormat = null; }
 
             if(imageFormat != null)

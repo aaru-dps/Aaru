@@ -53,7 +53,7 @@ namespace DiscImageChef.DiscImages
         ///     Gets the image format.
         /// </summary>
         /// <value>The image format.</value>
-        string ImageFormat { get; }
+        string Format { get; }
         /// <summary>
         ///     Gets an array partitions. Typically only useful for optical disc
         ///     images where each track and index means a different partition, as
@@ -77,14 +77,14 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <returns><c>true</c>, if image was identified, <c>false</c> otherwise.</returns>
         /// <param name="imageFilter">Image filter.</param>
-        bool IdentifyImage(IFilter imageFilter);
+        bool Identify(IFilter imageFilter);
 
         /// <summary>
         ///     Opens the image.
         /// </summary>
         /// <returns><c>true</c>, if image was opened, <c>false</c> otherwise.</returns>
         /// <param name="imageFilter">Image filter.</param>
-        bool OpenImage(IFilter imageFilter);
+        bool Open(IFilter imageFilter);
 
         /// <summary>
         ///     Reads a disk tag.

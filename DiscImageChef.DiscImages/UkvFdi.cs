@@ -79,7 +79,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "Spectrum Floppy Disk Image";
         public Guid Id => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
 
-        public string ImageFormat => "Spectrum floppy disk image";
+        public string Format => "Spectrum floppy disk image";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -91,7 +91,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -110,7 +110,7 @@ namespace DiscImageChef.DiscImages
             return hdr.magic.SequenceEqual(signature);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

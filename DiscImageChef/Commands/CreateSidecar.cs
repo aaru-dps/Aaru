@@ -104,7 +104,7 @@ namespace DiscImageChef.Commands
 
                     try
                     {
-                        if(!imageFormat.OpenImage(inputFilter))
+                        if(!imageFormat.Open(inputFilter))
                         {
                             DicConsole.WriteLine("Unable to open image format");
                             DicConsole.WriteLine("No error given");
@@ -120,7 +120,7 @@ namespace DiscImageChef.Commands
                         return;
                     }
 
-                    Core.Statistics.AddMediaFormat(imageFormat.ImageFormat);
+                    Core.Statistics.AddMediaFormat(imageFormat.Format);
                     Core.Statistics.AddFilter(inputFilter.Name);
 
                     CICMMetadataType sidecar =

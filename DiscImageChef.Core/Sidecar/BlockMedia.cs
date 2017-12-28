@@ -71,7 +71,7 @@ namespace DiscImageChef.Core
                     Checksums = imgChecksums.ToArray(),
                     Image = new ImageType
                     {
-                        format = image.ImageFormat,
+                        format = image.Format,
                         offset = 0,
                         offsetSpecified = true,
                         Value = Path.GetFileName(imagePath)
@@ -542,9 +542,9 @@ namespace DiscImageChef.Core
                 ZZZNoFilter scpFilter = new ZZZNoFilter();
                 scpFilter.Open(scpFilePath);
 
-                if(image.Info.Heads <= 2 && scpImage.IdentifyImage(scpFilter))
+                if(image.Info.Heads <= 2 && scpImage.Identify(scpFilter))
                 {
-                    try { scpImage.OpenImage(scpFilter); }
+                    try { scpImage.Open(scpFilter); }
                     catch(NotImplementedException) { }
 
                     if(image.Info.Heads == 2 && scpImage.Header.heads == 0 || image.Info.Heads == 1 &&
@@ -563,7 +563,7 @@ namespace DiscImageChef.Core
                                     Head = t % image.Info.Heads,
                                     Image = new ImageType
                                     {
-                                        format = scpImage.ImageFormat,
+                                        format = scpImage.Format,
                                         Value = Path.GetFileName(scpFilePath),
                                         offset = scpImage.Header.offsets[t]
                                     }
@@ -631,9 +631,9 @@ namespace DiscImageChef.Core
                 KryoFlux kfImage = new KryoFlux();
                 ZZZNoFilter kfFilter = new ZZZNoFilter();
                 kfFilter.Open(kfFile);
-                if(image.Info.Heads <= 2 && kfImage.IdentifyImage(kfFilter))
+                if(image.Info.Heads <= 2 && kfImage.Identify(kfFilter))
                 {
-                    try { kfImage.OpenImage(kfFilter); }
+                    try { kfImage.Open(kfFilter); }
                     catch(NotImplementedException) { }
 
                     if(kfImage.Info.Heads == image.Info.Heads)
@@ -651,7 +651,7 @@ namespace DiscImageChef.Core
                                     Head = kvp.Key % image.Info.Heads,
                                     Image = new ImageType
                                     {
-                                        format = kfImage.ImageFormat,
+                                        format = kfImage.Format,
                                         Value = kfDir
                                                     ? Path
                                                         .Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.GetBasePath())),
@@ -706,9 +706,9 @@ namespace DiscImageChef.Core
             ZZZNoFilter dfiFilter = new ZZZNoFilter();
             dfiFilter.Open(dfiFilePath);
 
-            if(!dfiImage.IdentifyImage(dfiFilter)) return;
+            if(!dfiImage.Identify(dfiFilter)) return;
 
-            try { dfiImage.OpenImage(dfiFilter); }
+            try { dfiImage.Open(dfiFilter); }
             catch(NotImplementedException) { }
 
             if(image.Info.Heads == dfiImage.Info.Heads)
@@ -724,7 +724,7 @@ namespace DiscImageChef.Core
                         {
                             Cylinder = t / image.Info.Heads,
                             Head = t % image.Info.Heads,
-                            Image = new ImageType {format = dfiImage.ImageFormat, Value = Path.GetFileName(dfiFilePath)}
+                            Image = new ImageType {format = dfiImage.Format, Value = Path.GetFileName(dfiFilePath)}
                         };
 
                         if(dfiBlockTrackType.Cylinder < image.Info.Cylinders)

@@ -83,7 +83,7 @@ namespace DiscImageChef.DiscImages
         public Guid      Id   => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
         public ImageInfo Info => imageInfo;
 
-        public string ImageFormat => "IMageDisk";
+        public string Format => "IMageDisk";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -94,7 +94,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -109,7 +109,7 @@ namespace DiscImageChef.DiscImages
             return hm.Success;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

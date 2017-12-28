@@ -122,7 +122,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "QEMU Enhanced Disk image";
         public Guid Id => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
 
-        public string ImageFormat => "QEMU Enhanced Disk";
+        public string Format => "QEMU Enhanced Disk";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -133,7 +133,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -151,7 +151,7 @@ namespace DiscImageChef.DiscImages
             return qHdr.magic == QED_MAGIC;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

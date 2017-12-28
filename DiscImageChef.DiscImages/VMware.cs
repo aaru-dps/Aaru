@@ -155,7 +155,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "VMware disk image";
         public Guid Id => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
 
-        public string ImageFormat => "VMware";
+        public string Format => "VMware";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -166,7 +166,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -209,7 +209,7 @@ namespace DiscImageChef.DiscImages
             return ddfMagicBytes.SequenceEqual(ddfMagic);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -618,7 +618,7 @@ namespace DiscImageChef.DiscImages
 
                 parentImage = new VMware();
 
-                if(!parentImage.OpenImage(parentFilter)) throw new Exception($"Cannot open parent \"{parentName}\".");
+                if(!parentImage.Open(parentFilter)) throw new Exception($"Cannot open parent \"{parentName}\".");
             }
 
             sectorCache = new Dictionary<ulong, byte[]>();

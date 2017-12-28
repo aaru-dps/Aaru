@@ -93,7 +93,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "BlindWrite 4";
         public Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
 
-        public string ImageFormat => "BlindWrite 4 TOC file";
+        public string Format => "BlindWrite 4 TOC file";
 
         public List<Partition> Partitions => partitions;
 
@@ -101,7 +101,7 @@ namespace DiscImageChef.DiscImages
 
         public List<Session> Sessions => sessions;
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -113,7 +113,7 @@ namespace DiscImageChef.DiscImages
             return bw4Signature.SequenceEqual(signature);
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

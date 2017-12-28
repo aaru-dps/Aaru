@@ -90,7 +90,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "CisCopy Disk Image (DC-File)";
         public Guid Id => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
 
-        public string ImageFormat => "CisCopy";
+        public string Format => "CisCopy";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -102,7 +102,7 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public ImageInfo Info => imageInfo;
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -172,7 +172,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

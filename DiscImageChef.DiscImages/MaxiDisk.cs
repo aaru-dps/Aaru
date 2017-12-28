@@ -76,7 +76,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "MAXI Disk image";
         public Guid   Id   => new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");
 
-        public string ImageFormat => "MAXI Disk";
+        public string Format => "MAXI Disk";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -87,7 +87,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -132,7 +132,7 @@ namespace DiscImageChef.DiscImages
             return expectedFileSize == stream.Length;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 

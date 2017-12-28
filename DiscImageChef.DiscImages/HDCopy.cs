@@ -128,7 +128,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "HD-Copy disk image";
         public Guid   Id   => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
 
-        public string          ImageFormat => "HD-Copy image";
+        public string          Format => "HD-Copy image";
         public List<Partition> Partitions  =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
@@ -138,7 +138,7 @@ namespace DiscImageChef.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public bool IdentifyImage(IFilter imageFilter)
+        public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -174,7 +174,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool OpenImage(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
