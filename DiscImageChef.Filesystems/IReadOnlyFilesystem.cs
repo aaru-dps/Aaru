@@ -31,6 +31,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -129,5 +130,10 @@ namespace DiscImageChef.Filesystems
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
         Errno ReadLink(string path, out string dest);
+        
+        /// <summary>
+        /// Retrieves a list of options supported by the filesystem, with name, type and description 
+        /// </summary>
+        (string name, Type type, string description)[] ListOptions();
     }
 }

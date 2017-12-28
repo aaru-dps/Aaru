@@ -71,5 +71,11 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             return new Dictionary<string, string> {{"debug", false.ToString()}};
         }
+
+        // TODO: Implement Finder namespace (requires decoding Desktop database)
+        public (string name, Type type, string description)[] ListOptions()
+        {
+            return new(string name, Type type, string description)[] { };
+        }
     }
 }

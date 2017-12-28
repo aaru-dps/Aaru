@@ -57,6 +57,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
         public string         Name      => "Apple DOS File System";
         public Guid           Id        => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
 
+        public (string name, Type type, string description)[] ListOptions()
+        {
+            return new(string name, Type type, string description)[] { };
+        }
+
         static Dictionary<string, string> GetDefaultOptions()
         {
             return new Dictionary<string, string> {{"debug", false.ToString()}};
@@ -70,17 +75,17 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <summary>Caches catalog</summary>
         Dictionary<string, ushort> catalogCache;
         /// <summary>Caches file size</summary>
-        Dictionary<string, int>    fileSizeCache;
+        Dictionary<string, int> fileSizeCache;
         /// <summary>Caches VTOC</summary>
-        byte[]                     vtocBlocks;
+        byte[] vtocBlocks;
         /// <summary>Caches catalog</summary>
-        byte[]                     catalogBlocks;
+        byte[] catalogBlocks;
         /// <summary>Caches boot code</summary>
-        byte[]                     bootBlocks;
+        byte[] bootBlocks;
         /// <summary>Caches file type</summary>
-        Dictionary<string, byte>   fileTypeCache;
+        Dictionary<string, byte> fileTypeCache;
         /// <summary>Caches locked files</summary>
-        List<string>               lockedFiles;
+        List<string> lockedFiles;
         #endregion Caches
     }
 }

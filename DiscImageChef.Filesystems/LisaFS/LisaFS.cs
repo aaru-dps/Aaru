@@ -56,6 +56,12 @@ namespace DiscImageChef.Filesystems.LisaFS
         public Encoding       Encoding  { get; private set; }
         public FileSystemType XmlFsType { get; private set; }
 
+        // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
+        public (string name, Type type, string description)[] ListOptions()
+        {
+            return new(string name, Type type, string description)[] { };
+        }
+
         static Dictionary<string, string> GetDefaultOptions()
         {
             return new Dictionary<string, string> {{"debug", false.ToString()}};
@@ -65,17 +71,17 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <summary>Caches Extents Files</summary>
         Dictionary<short, ExtentFile> extentCache;
         /// <summary>Caches system files</summary>
-        Dictionary<short, byte[]>     systemFileCache;
+        Dictionary<short, byte[]> systemFileCache;
         /// <summary>Caches user files files</summary>
-        Dictionary<short, byte[]>     fileCache;
+        Dictionary<short, byte[]> fileCache;
         /// <summary>Caches catalogs</summary>
-        List<CatalogEntry>            catalogCache;
+        List<CatalogEntry> catalogCache;
         /// <summary>Caches file size</summary>
-        Dictionary<short, int>        fileSizeCache;
+        Dictionary<short, int> fileSizeCache;
         /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
-        List<short>                   printedExtents;
+        List<short> printedExtents;
         /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
-        Dictionary<short, DateTime>   directoryDtcCache;
+        Dictionary<short, DateTime> directoryDtcCache;
         #endregion Caches
     }
 }

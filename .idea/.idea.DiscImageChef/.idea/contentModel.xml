@@ -32,6 +32,7 @@
           <e p="Formats.cs" t="Include" />
           <e p="ListDevices.cs" t="Include" />
           <e p="ListEncodings.cs" t="Include" />
+          <e p="ListOptions.cs" t="Include" />
           <e p="Ls.cs" t="Include" />
           <e p="MediaInfo.cs" t="Include" />
           <e p="MediaScan.cs" t="Include" />

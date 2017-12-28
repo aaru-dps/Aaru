@@ -130,7 +130,8 @@ namespace DiscImageChef
     public class EntropyOptions : CommonOptions
     {
         [Option('p', "duplicated-sectors", Default = true,
-            HelpText = "Calculates how many sectors are duplicated (have same exact data in user area).")]
+            HelpText                               =
+                "Calculates how many sectors are duplicated (have same exact data in user area).")]
         public bool DuplicatedSectors { get; set; }
 
         [Option('t', "separated-tracks", Default = true, HelpText = "Calculates entropy for each track separately.")]
@@ -201,7 +202,7 @@ namespace DiscImageChef
         public string DevicePath { get; set; }
 
         [Option('w', "output-prefix", Required = false, Default = "",
-            HelpText = "Write binary responses from device with that prefix.")]
+            HelpText                           = "Write binary responses from device with that prefix.")]
         public string OutputPrefix { get; set; }
     }
 
@@ -212,7 +213,7 @@ namespace DiscImageChef
         public string DevicePath { get; set; }
 
         [Option('w', "output-prefix", Required = false, Default = "",
-            HelpText = "Write binary responses from device with that prefix.")]
+            HelpText                           = "Write binary responses from device with that prefix.")]
         public string OutputPrefix { get; set; }
     }
 
@@ -223,11 +224,11 @@ namespace DiscImageChef
         public string DevicePath { get; set; }
 
         [Option('m', "mhdd-log", Required = false, Default = "",
-            HelpText = "Write a log of the scan in the format used by MHDD.")]
+            HelpText                      = "Write a log of the scan in the format used by MHDD.")]
         public string MhddLogPath { get; set; }
 
         [Option('b', "ibg-log", Required = false, Default = "",
-            HelpText = "Write a log of the scan in the format used by ImgBurn.")]
+            HelpText                     = "Write a log of the scan in the format used by ImgBurn.")]
         public string IbgLogPath { get; set; }
     }
 
@@ -250,11 +251,11 @@ namespace DiscImageChef
         [Option('i', "input", Required = true, HelpText = "Disc image.")]
         public string InputFile { get; set; }
         [Option('t', "tape", Required = false, Default = false,
-            HelpText =
+            HelpText                  =
                 "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device).")]
         public bool Tape { get; set; }
         [Option('b', "block-size", Required = false, Default = 512,
-            HelpText =
+            HelpText                        =
                 "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.")]
         public int BlockSize { get; set; }
 
@@ -272,7 +273,7 @@ namespace DiscImageChef
         public string OutputPrefix { get; set; }
 
         [Option('r', "raw", Default = false,
-            HelpText = "Dump sectors with tags included. For optical media, dump scrambled sectors")]
+            HelpText                = "Dump sectors with tags included. For optical media, dump scrambled sectors")]
         public bool Raw { get; set; }
 
         [Option('s', "stop-on-error", Default = false, HelpText = "Stop media dump on first error.")]
@@ -288,7 +289,7 @@ namespace DiscImageChef
         public bool Persistent { get; set; }
 
         [Option("separate-subchannel", Default = false,
-            HelpText = "Save subchannel in a separate file. Only applicable to CD/DDCD/GD.")]
+            HelpText                           = "Save subchannel in a separate file. Only applicable to CD/DDCD/GD.")]
         public bool SeparateSubchannel { get; set; }
 
         [Option('m', "resume", Default = true, HelpText = "Create/use resume mapfile.")]
@@ -334,7 +335,7 @@ namespace DiscImageChef
         public string InputFile { get; set; }
 
         [Option('o', "output", Required = true,
-            HelpText = "Directory where extracted files will be created. Will abort if it exists.")]
+            HelpText                    = "Directory where extracted files will be created. Will abort if it exists.")]
         public string OutputDir { get; set; }
 
         [Option('x', "xattrs", Default = false, HelpText = "Extract extended attributes if present.")]
@@ -349,4 +350,7 @@ namespace DiscImageChef
 
     [Verb("list-encodings", HelpText = "Lists all supported text encodings and code pages.")]
     public class ListEncodingsOptions : CommonOptions { }
+
+    [Verb("list-options", HelpText = "Lists all options supported by read-only filesystems.")]
+    public class ListOptionsOptions : CommonOptions { }
 }

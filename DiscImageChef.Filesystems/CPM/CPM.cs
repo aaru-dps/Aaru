@@ -117,6 +117,11 @@ namespace DiscImageChef.Filesystems.CPM
         public string         Name      => "CP/M File System";
         public Guid           Id        => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
 
+        public (string name, Type type, string description)[] ListOptions()
+        {
+            return new(string name, Type type, string description)[] { };
+        }
+
         static Dictionary<string, string> GetDefaultOptions()
         {
             return new Dictionary<string, string> {{"debug", false.ToString()}};
