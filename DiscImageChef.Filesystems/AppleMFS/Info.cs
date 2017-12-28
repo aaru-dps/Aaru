@@ -32,9 +32,11 @@
 
 using System;
 using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
@@ -59,6 +61,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
+            Encoding = encoding ?? new MacRoman();
             information = "";
 
             StringBuilder sb = new StringBuilder();
