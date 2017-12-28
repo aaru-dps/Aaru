@@ -45,12 +45,13 @@ namespace DiscImageChef.DiscImages
 {
     // Information from Quasi88's FORMAT.TXT file
     // Japanese comments copied from there
+    // TODO: Solve media types
     public class D88 : IMediaImage
     {
         const byte READ_ONLY = 0x10;
 
         readonly byte[] reservedEmpty = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        ImageInfo imageInfo;
+        ImageInfo       imageInfo;
 
         List<byte[]> sectorsData;
 
@@ -58,31 +59,31 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "D88 Disk Image";
-        public Guid Id => new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
+        public string    Name => "D88 Disk Image";
+        public Guid      Id   => new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
         public ImageInfo Info => imageInfo;
 
         public string ImageFormat => "D88 disk image";
@@ -111,7 +112,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
+            d88Hdr          = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
             handle.Free();
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
@@ -158,7 +159,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
+            d88Hdr          = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
             handle.Free();
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
@@ -190,7 +191,7 @@ namespace DiscImageChef.DiscImages
             if(trkCounter == 0) return false;
 
             SectorHeader sechdr = new SectorHeader();
-            hdrB = new byte[Marshal.SizeOf(sechdr)];
+            hdrB                = new byte[Marshal.SizeOf(sechdr)];
             stream.Seek(d88Hdr.track_table[0], SeekOrigin.Begin);
             stream.Read(hdrB, 0, hdrB.Length);
 
@@ -198,20 +199,20 @@ namespace DiscImageChef.DiscImages
             sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
             handle.Free();
 
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}", sechdr.c);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}", sechdr.h);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.r = {0}", sechdr.r);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.n = {0}", sechdr.n);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.spt = {0}", sechdr.spt);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.density = {0}", sechdr.density);
+            DicConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}",            sechdr.c);
+            DicConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}",            sechdr.h);
+            DicConsole.DebugWriteLine("D88 plugin", "sechdr.r = {0}",            sechdr.r);
+            DicConsole.DebugWriteLine("D88 plugin", "sechdr.n = {0}",            sechdr.n);
+            DicConsole.DebugWriteLine("D88 plugin", "sechdr.spt = {0}",          sechdr.spt);
+            DicConsole.DebugWriteLine("D88 plugin", "sechdr.density = {0}",      sechdr.density);
             DicConsole.DebugWriteLine("D88 plugin", "sechdr.deleted_mark = {0}", sechdr.deleted_mark);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.status = {0}", sechdr.status);
+            DicConsole.DebugWriteLine("D88 plugin", "sechdr.status = {0}",       sechdr.status);
             DicConsole.DebugWriteLine("D88 plugin", "sechdr.size_of_data = {0}", sechdr.size_of_data);
 
-            short spt = sechdr.spt;
-            IBMSectorSizeCode bps = sechdr.n;
-            bool allEqual = true;
-            sectorsData = new List<byte[]>();
+            short             spt      = sechdr.spt;
+            IBMSectorSizeCode bps      = sechdr.n;
+            bool              allEqual = true;
+            sectorsData                = new List<byte[]>();
 
             for(int i = 0; i < trkCounter; i++)
             {
@@ -231,7 +232,7 @@ namespace DiscImageChef.DiscImages
                     allEqual = false;
                 }
 
-                short maxJ = sechdr.spt;
+                short  maxJ = sechdr.spt;
                 byte[] secB;
                 for(short j = 1; j < maxJ; j++)
                 {
@@ -345,81 +346,81 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", imageInfo.MediaType);
 
-            imageInfo.ImageSize = (ulong)d88Hdr.disk_size;
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.ImageSize            = (ulong)d88Hdr.disk_size;
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = (ulong)sectorsData.Count;
-            imageInfo.Comments = StringHandlers.CToString(d88Hdr.name, shiftjis);
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize = (uint)(128 << (int)bps);
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = (ulong)sectorsData.Count;
+            imageInfo.Comments             = StringHandlers.CToString(d88Hdr.name, shiftjis);
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.SectorSize           = (uint)(128 << (int)bps);
 
             switch(imageInfo.MediaType)
             {
                 case MediaType.NEC_525_SS:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.NEC_8_SD:
                 case MediaType.NEC_8_DD:
-                    imageInfo.Cylinders = 77;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 77;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 26;
                     break;
                 case MediaType.NEC_525_DS:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.NEC_525_HD:
-                    imageInfo.Cylinders = 77;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 77;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 8;
                     break;
                 case MediaType.DOS_525_SS_DD_8:
-                    imageInfo.Cylinders = 40;
-                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders       = 40;
+                    imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 8;
                     break;
                 case MediaType.DOS_525_SS_DD_9:
-                    imageInfo.Cylinders = 40;
-                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders       = 40;
+                    imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_525_DS_DD_8:
-                    imageInfo.Cylinders = 40;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 40;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 8;
                     break;
                 case MediaType.DOS_525_DS_DD_9:
-                    imageInfo.Cylinders = 40;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 40;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.NEC_35_HD_15:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 15;
                     break;
                 case MediaType.DOS_35_DS_DD_9:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_35_HD:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 18;
                     break;
                 case MediaType.DOS_35_ED:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 36;
                     break;
                 case MediaType.NEC_35_TD:
-                    imageInfo.Cylinders = 240;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 240;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 38;
                     break;
             }
@@ -523,7 +524,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -533,7 +534,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -545,7 +546,7 @@ namespace DiscImageChef.DiscImages
 
         enum DiskType : byte
         {
-            D2 = 0x00,
+            D2  = 0x00,
             Dd2 = 0x10,
             Hd2 = 0x20
         }
@@ -553,7 +554,7 @@ namespace DiscImageChef.DiscImages
         enum DensityType : byte
         {
             Mfm = 0x00,
-            Fm = 0x40
+            Fm  = 0x40
         }
 
         /// <summary>
@@ -601,12 +602,14 @@ namespace DiscImageChef.DiscImages
             ///     Disk name, nul-terminated ASCII
             ///     ディスクの名前(ASCII + '\0')
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte[] name;
             /// <summary>
             ///     Reserved
             ///     ディスクの名前(ASCII + '\0')
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
+            public byte[] reserved;
             /// <summary>
             ///     Write protect status
             ///     ライトプロテクト： 0x00 なし、0x10 あり
@@ -626,7 +629,8 @@ namespace DiscImageChef.DiscImages
             ///     Track pointers
             ///     トラック部のオフセットテーブル 0 Track ～ 163 Track
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 164)] public int[] track_table;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 164)]
+            public int[] track_table;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -676,7 +680,8 @@ namespace DiscImageChef.DiscImages
             ///     Reserved
             ///     リザーブ
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public byte[] reserved;
             /// <summary>
             ///     Size of data following this field
             ///     このセクタ部のデータサイズ

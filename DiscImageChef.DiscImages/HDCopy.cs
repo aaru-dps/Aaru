@@ -66,7 +66,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -76,17 +75,6 @@ namespace DiscImageChef.DiscImages
 {
     public class HdCopy : IMediaImage
     {
-        readonly MediaTypeTableEntry[] mediaTypes =
-        {
-            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 8, MediaType = MediaType.DOS_35_DS_DD_8},
-            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 9, MediaType = MediaType.DOS_35_DS_DD_9},
-            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 18, MediaType = MediaType.DOS_35_HD},
-            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 36, MediaType = MediaType.DOS_35_ED},
-            new MediaTypeTableEntry {Tracks = 40, SectorsPerTrack = 8, MediaType = MediaType.DOS_525_DS_DD_8},
-            new MediaTypeTableEntry {Tracks = 40, SectorsPerTrack = 9, MediaType = MediaType.DOS_525_DS_DD_9},
-            new MediaTypeTableEntry {Tracks = 80, SectorsPerTrack = 15, MediaType = MediaType.DOS_525_HD}
-        };
-
         /// <summary>
         ///     The HDCP file header after the image has been opened
         /// </summary>
@@ -95,7 +83,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     The ImageFilter we're reading from, after the file has been opened
         /// </summary>
-        IFilter hdcpImageFilter;
+        IFilter   hdcpImageFilter;
         ImageInfo imageInfo;
 
         /// <summary>
@@ -112,25 +100,25 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -138,10 +126,10 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "HD-Copy disk image";
-        public Guid Id => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
+        public Guid   Id   => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
 
-        public string ImageFormat => "HD-Copy image";
-        public List<Partition> Partitions =>
+        public string          ImageFormat => "HD-Copy image";
+        public List<Partition> Partitions  =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public List<Track> Tracks =>
@@ -158,10 +146,10 @@ namespace DiscImageChef.DiscImages
             if(stream.Length < 2 + 2 * 82) return false;
 
             byte[] header = new byte[2 + 2 * 82];
-            stream.Read(header, 0, 2 + 2 * 82);
+            stream.Read(header, 0, 2   + 2 * 82);
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
-            Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
+            Marshal.Copy(header, 0, hdrPtr, 2      + 2 * 82);
             HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
@@ -177,7 +165,9 @@ namespace DiscImageChef.DiscImages
             if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1) return false;
 
             // all other tracks must be either present (=1) or absent (=0)
-            for(int i = 0; i < 2 * 82; i++) if(fheader.trackMap[i] > 1) return false;
+            for(int i = 0; i           < 2 * 82; i++)
+                if(fheader.trackMap[i] > 1)
+                    return false;
 
             // TODO: validate the tracks
             // For now, having a valid header should be sufficient.
@@ -186,54 +176,51 @@ namespace DiscImageChef.DiscImages
 
         public bool OpenImage(IFilter imageFilter)
         {
-            long currentOffset;
-
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             byte[] header = new byte[2 + 2 * 82];
-            stream.Read(header, 0, 2 + 2 * 82);
+            stream.Read(header, 0, 2   + 2 * 82);
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
-            Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
+            Marshal.Copy(header, 0, hdrPtr, 2      + 2 * 82);
             HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
             DicConsole.DebugWriteLine("HDCP plugin",
                                       "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
                                       fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
-            imageInfo.Cylinders = (uint)fheader.lastCylinder + 1;
+            imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
             imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
-            imageInfo.SectorSize = 512; // only 512 bytes per sector supported
-            imageInfo.Heads = 2; // only 2-sided floppies are supported
-            imageInfo.Sectors = 2 * imageInfo.Cylinders * imageInfo.SectorsPerTrack;
-            imageInfo.ImageSize = imageInfo.Sectors * imageInfo.SectorSize;
+            imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
+            imageInfo.Heads           = 2;   // only 2-sided floppies are supported
+            imageInfo.Sectors         = 2                 * imageInfo.Cylinders * imageInfo.SectorsPerTrack;
+            imageInfo.ImageSize       = imageInfo.Sectors * imageInfo.SectorSize;
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.MediaType =
-                (from ent in mediaTypes
-                 where ent.Tracks == imageInfo.Cylinders && ent.SectorsPerTrack == imageInfo.SectorsPerTrack
-                 select ent.MediaType).FirstOrDefault();
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.MediaType            =
+                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, 2, (ushort)imageInfo.SectorsPerTrack, 512,
+                                      MediaEncoding.MFM, false));
 
             // the start offset of the track data
-            currentOffset = 2 + 2 * 82;
+            long currentOffset = 2 + 2 * 82;
 
             // build table of track offsets
-            for(int i = 0; i < imageInfo.Cylinders * 2; i++)
-                if(fheader.trackMap[i] == 0) trackOffset[i] = -1;
+            for(int i = 0; i           < imageInfo.Cylinders * 2; i++)
+                if(fheader.trackMap[i] == 0)
+                    trackOffset[i] = -1;
                 else
                 {
                     // track is present, read the block header
                     if(currentOffset + 3 >= stream.Length) return false;
 
                     byte[] blkHeader = new byte[2];
-                    short blkLength;
                     stream.Read(blkHeader, 0, 2);
-                    blkLength = BitConverter.ToInt16(blkHeader, 0);
+                    short blkLength = BitConverter.ToInt16(blkHeader, 0);
 
                     // assume block sizes are positive
                     if(blkLength < 0) return false;
@@ -251,57 +238,14 @@ namespace DiscImageChef.DiscImages
             if(currentOffset > stream.Length) return false;
 
             // save some variables for later use
-            fileHeader = fheader;
+            fileHeader      = fheader;
             hdcpImageFilter = imageFilter;
             return true;
         }
 
-        void ReadTrackIntoCache(Stream stream, int tracknum)
-        {
-            byte[] trackData = new byte[imageInfo.SectorSize * imageInfo.SectorsPerTrack];
-            byte[] blkHeader = new byte[3];
-            byte escapeByte;
-            short compressedLength;
-
-            // check that track is present
-            if(trackOffset[tracknum] == -1)
-                throw new InvalidDataException("Tried reading a track that is not present in image");
-
-            stream.Seek(trackOffset[tracknum], SeekOrigin.Begin);
-
-            // read the compressed track data
-            stream.Read(blkHeader, 0, 3);
-            compressedLength = (short)(BitConverter.ToInt16(blkHeader, 0) - 1);
-            escapeByte = blkHeader[2];
-
-            byte[] cBuffer = new byte[compressedLength];
-            stream.Read(cBuffer, 0, compressedLength);
-
-            // decompress the data
-            int sIndex = 0; // source buffer position
-            int dIndex = 0; // destination buffer position
-            while(sIndex < compressedLength)
-                if(cBuffer[sIndex] == escapeByte)
-                {
-                    sIndex++; // skip over escape byte
-                    byte fillByte = cBuffer[sIndex++];
-                    byte fillCount = cBuffer[sIndex++];
-                    // fill destination buffer
-                    for(int i = 0; i < fillCount; i++) trackData[dIndex++] = fillByte;
-                }
-                else trackData[dIndex++] = cBuffer[sIndex++];
-
-            // check that the number of bytes decompressed matches a whole track
-            if(dIndex != imageInfo.SectorSize * imageInfo.SectorsPerTrack)
-                throw new InvalidDataException("Track decompression yielded incomplete data");
-
-            // store track in cache
-            trackCache[tracknum] = trackData;
-        }
-
         public byte[] ReadSector(ulong sectorAddress)
         {
-            int trackNum = (int)(sectorAddress / imageInfo.SectorsPerTrack);
+            int trackNum     = (int)(sectorAddress / imageInfo.SectorsPerTrack);
             int sectorOffset = (int)(sectorAddress % (imageInfo.SectorsPerTrack * imageInfo.SectorSize));
 
             if(sectorAddress > imageInfo.Sectors - 1)
@@ -412,7 +356,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -422,7 +366,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -430,6 +374,48 @@ namespace DiscImageChef.DiscImages
         public bool? VerifyMediaImage()
         {
             return null;
+        }
+
+        void ReadTrackIntoCache(Stream stream, int tracknum)
+        {
+            byte[] trackData = new byte[imageInfo.SectorSize * imageInfo.SectorsPerTrack];
+            byte[] blkHeader = new byte[3];
+
+            // check that track is present
+            if(trackOffset[tracknum] == -1)
+                throw new InvalidDataException("Tried reading a track that is not present in image");
+
+            stream.Seek(trackOffset[tracknum], SeekOrigin.Begin);
+
+            // read the compressed track data
+            stream.Read(blkHeader, 0, 3);
+            short compressedLength = (short)(BitConverter.ToInt16(blkHeader, 0) - 1);
+            byte  escapeByte       = blkHeader[2];
+
+            byte[] cBuffer = new byte[compressedLength];
+            stream.Read(cBuffer, 0, compressedLength);
+
+            // decompress the data
+            int sIndex = 0; // source buffer position
+            int dIndex = 0; // destination buffer position
+            while(sIndex           < compressedLength)
+                if(cBuffer[sIndex] == escapeByte)
+                {
+                    sIndex++; // skip over escape byte
+                    byte fillByte  = cBuffer[sIndex++];
+                    byte fillCount = cBuffer[sIndex++];
+                    // fill destination buffer
+                    for(int i = 0; i < fillCount; i++) trackData[dIndex++] = fillByte;
+                }
+                else
+                    trackData[dIndex++] = cBuffer[sIndex++];
+
+            // check that the number of bytes decompressed matches a whole track
+            if(dIndex != imageInfo.SectorSize * imageInfo.SectorsPerTrack)
+                throw new InvalidDataException("Track decompression yielded incomplete data");
+
+            // store track in cache
+            trackCache[tracknum] = trackData;
         }
 
         /// <summary>
@@ -454,7 +440,8 @@ namespace DiscImageChef.DiscImages
             ///     0 means track is not present, 1 means it is present.
             ///     The first 2 tracks are always present.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)] public byte[] trackMap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)]
+            public byte[] trackMap;
         }
 
         /// <summary>
@@ -472,13 +459,6 @@ namespace DiscImageChef.DiscImages
             ///     The byte value used as RLE escape sequence
             /// </summary>
             public byte escape;
-        }
-
-        struct MediaTypeTableEntry
-        {
-            public byte Tracks;
-            public byte SectorsPerTrack;
-            public MediaType MediaType;
         }
     }
 }

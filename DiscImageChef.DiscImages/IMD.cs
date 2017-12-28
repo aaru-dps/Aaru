@@ -43,12 +43,11 @@ namespace DiscImageChef.DiscImages
 {
     public class Imd : IMediaImage
     {
-        const byte SECTOR_CYLINDER_MAP_MASK = 0x80;
-        const byte SECTOR_HEAD_MAP_MASK = 0x40;
-        const byte COMMENT_END = 0x1A;
-        const string REGEX_HEADER =
-                @"IMD (?<version>\d.\d+):\s+(?<day>\d+)\/\s*(?<month>\d+)\/(?<year>\d+)\s+(?<hour>\d+):(?<minute>\d+):(?<second>\d+)\r\n"
-            ;
+        const byte   SECTOR_CYLINDER_MAP_MASK = 0x80;
+        const byte   SECTOR_HEAD_MAP_MASK     = 0x40;
+        const byte   COMMENT_END              = 0x1A;
+        const string REGEX_HEADER             =
+            @"IMD (?<version>\d.\d+):\s+(?<day>\d+)\/\s*(?<month>\d+)\/(?<year>\d+)\s+(?<hour>\d+):(?<minute>\d+):(?<second>\d+)\r\n";
         ImageInfo imageInfo;
 
         List<byte[]> sectorsData;
@@ -57,31 +56,31 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "Dunfield's IMD";
-        public Guid Id => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
+        public string    Name => "Dunfield's IMD";
+        public Guid      Id   => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
         public ImageInfo Info => imageInfo;
 
         public string ImageFormat => "IMageDisk";
@@ -126,26 +125,26 @@ namespace DiscImageChef.DiscImages
             }
 
             imageInfo.Comments = StringHandlers.CToString(cmt.ToArray());
-            sectorsData = new List<byte[]>();
+            sectorsData        = new List<byte[]>();
 
             byte currentCylinder = 0;
-            imageInfo.Cylinders = 1;
-            imageInfo.Heads = 1;
-            ulong currentLba = 0;
+            imageInfo.Cylinders  = 1;
+            imageInfo.Heads      = 1;
+            ulong currentLba     = 0;
 
             TransferRate mode = TransferRate.TwoHundred;
 
             while(stream.Position + 5 < stream.Length)
             {
-                mode = (TransferRate)stream.ReadByte();
-                byte cylinder = (byte)stream.ReadByte();
-                byte head = (byte)stream.ReadByte();
-                byte spt = (byte)stream.ReadByte();
-                byte n = (byte)stream.ReadByte();
-                byte[] idmap = new byte[spt];
-                byte[] cylmap = new byte[spt];
-                byte[] headmap = new byte[spt];
-                ushort[] bps = new ushort[spt];
+                mode              = (TransferRate)stream.ReadByte();
+                byte     cylinder = (byte)stream.ReadByte();
+                byte     head     = (byte)stream.ReadByte();
+                byte     spt      = (byte)stream.ReadByte();
+                byte     n        = (byte)stream.ReadByte();
+                byte[]   idmap    = new byte[spt];
+                byte[]   cylmap   = new byte[spt];
+                byte[]   headmap  = new byte[spt];
+                ushort[] bps      = new ushort[spt];
 
                 if(cylinder != currentCylinder)
                 {
@@ -155,16 +154,19 @@ namespace DiscImageChef.DiscImages
 
                 if((head & 1) == 1) imageInfo.Heads = 2;
 
-                stream.Read(idmap, 0, idmap.Length);
+                stream.Read(idmap,                                                                    0, idmap.Length);
                 if((head & SECTOR_CYLINDER_MAP_MASK) == SECTOR_CYLINDER_MAP_MASK) stream.Read(cylmap, 0, cylmap.Length);
-                if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK) stream.Read(headmap, 0, headmap.Length);
+                if((head & SECTOR_HEAD_MAP_MASK)     == SECTOR_HEAD_MAP_MASK)
+                    stream.Read(headmap, 0, headmap.Length);
                 if(n == 0xFF)
                 {
                     byte[] bpsbytes = new byte[spt * 2];
                     stream.Read(bpsbytes, 0, bpsbytes.Length);
                     for(int i = 0; i < spt; i++) bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
                 }
-                else for(int i = 0; i < spt; i++) bps[i] = (ushort)(128 << n);
+                else
+                    for(int i = 0; i < spt; i++)
+                        bps[i] = (ushort)(128 << n);
 
                 if(spt > imageInfo.SectorsPerTrack) imageInfo.SectorsPerTrack = spt;
 
@@ -173,7 +175,7 @@ namespace DiscImageChef.DiscImages
                 for(int i = 0; i < spt; i++)
                 {
                     SectorType type = (SectorType)stream.ReadByte();
-                    byte[] data = new byte[bps[i]];
+                    byte[]     data = new byte[bps[i]];
 
                     // TODO; Handle disks with different bps in track 0
                     if(bps[i] > imageInfo.SectorSize) imageInfo.SectorSize = bps[i];
@@ -212,99 +214,31 @@ namespace DiscImageChef.DiscImages
 
             imageInfo.Application = "IMD";
             // TODO: The header is the date of dump or the date of the application compilation?
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Comments = StringHandlers.CToString(cmt.ToArray());
-            imageInfo.Sectors = currentLba;
-            imageInfo.MediaType = MediaType.Unknown;
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Comments             = StringHandlers.CToString(cmt.ToArray());
+            imageInfo.Sectors              = currentLba;
+            imageInfo.MediaType            = MediaType.Unknown;
 
-            switch(mode)
+            MediaEncoding mediaEncoding = MediaEncoding.MFM;
+            if(mode == TransferRate.TwoHundred || mode == TransferRate.ThreeHundred || mode == TransferRate.FiveHundred)
+                mediaEncoding = MediaEncoding.FM;
+
+            imageInfo.MediaType =
+                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
+                                      (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize, mediaEncoding, false));
+
+            switch(imageInfo.MediaType)
             {
-                case TransferRate.TwoHundred:
-                case TransferRate.ThreeHundred:
-                    if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 10 &&
-                       imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_SD_40;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 10 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_SD_80;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 18 &&
-                            imageInfo.SectorSize == 128) imageInfo.MediaType = MediaType.ATARI_525_SD;
+                case MediaType.NEC_525_HD when mode == TransferRate.FiveHundredMfm:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
                     break;
-                case TransferRate.FiveHundred:
-                    if(imageInfo.Heads == 1 && imageInfo.Cylinders == 32 && imageInfo.SectorsPerTrack == 8 &&
-                       imageInfo.SectorSize == 319) imageInfo.MediaType = MediaType.IBM23FD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 73 && imageInfo.SectorsPerTrack == 26 &&
-                            imageInfo.SectorSize == 128) imageInfo.MediaType = MediaType.IBM23FD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 77 && imageInfo.SectorsPerTrack == 26 &&
-                            imageInfo.SectorSize == 128) imageInfo.MediaType = MediaType.NEC_8_SD;
+                case MediaType.DOS_525_HD when mode == TransferRate.FiveHundredMfm:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
                     break;
-                case TransferRate.TwoHundredMfm:
-                case TransferRate.ThreeHundredMfm:
-                    if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 8 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 18 &&
-                            imageInfo.SectorSize == 128) imageInfo.MediaType = MediaType.ATARI_525_SD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 26 &&
-                            imageInfo.SectorSize == 128) imageInfo.MediaType = MediaType.ATARI_525_ED;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 18 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ATARI_525_DD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 16 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_DD_40;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 16 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_DD_80;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 18 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ATARI_525_DD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 10 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.RX50;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
-                    if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 9 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 5 &&
-                            imageInfo.SectorSize == 1024) imageInfo.MediaType = MediaType.ACORN_35_DS_DD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 82 && imageInfo.SectorsPerTrack == 10 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.FDFORMAT_35_DD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 70 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.Apricot_35;
-                    break;
-                case TransferRate.FiveHundredMfm:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 18 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_HD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 21 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DMF;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 82 && imageInfo.SectorsPerTrack == 21 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DMF_82;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 23 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.XDF_35;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 15 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_HD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 10 &&
-                            imageInfo.SectorSize == 1024) imageInfo.MediaType = MediaType.ACORN_35_DS_HD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 77 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 1024) imageInfo.MediaType = MediaType.NEC_525_HD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 1024) imageInfo.MediaType = MediaType.SHARP_525_9;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 10 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 10 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.ATARI_35_DS_DD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 11 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.ATARI_35_SS_DD_11;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 11 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.ATARI_35_DS_DD_11;
-                    break;
-                default:
-                    imageInfo.MediaType = MediaType.Unknown;
+                case MediaType.RX50 when mode == TransferRate.FiveHundredMfm:
+                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
                     break;
             }
 
@@ -335,7 +269,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -346,7 +280,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -464,14 +398,14 @@ namespace DiscImageChef.DiscImages
 
         enum SectorType : byte
         {
-            Unavailable = 0,
-            Normal = 1,
-            Compressed = 2,
-            Deleted = 3,
-            CompressedDeleted = 4,
-            Error = 5,
-            CompressedError = 6,
-            DeletedError = 7,
+            Unavailable            = 0,
+            Normal                 = 1,
+            Compressed             = 2,
+            Deleted                = 3,
+            CompressedDeleted      = 4,
+            Error                  = 5,
+            CompressedError        = 6,
+            DeletedError           = 7,
             CompressedDeletedError = 8
         }
     }

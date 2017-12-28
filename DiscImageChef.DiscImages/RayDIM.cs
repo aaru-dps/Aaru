@@ -45,39 +45,38 @@ namespace DiscImageChef.DiscImages
     public class RayDim : IMediaImage
     {
         const string REGEX_SIGNATURE =
-                @"Disk IMage VER (?<major>\d).(?<minor>\d) Copyright \(C\) (?<year>\d{4}) Ray Arachelian, All Rights Reserved\."
-            ;
+            @"Disk IMage VER (?<major>\d).(?<minor>\d) Copyright \(C\) (?<year>\d{4}) Ray Arachelian, All Rights Reserved\.";
 
         MemoryStream disk;
-        ImageInfo imageInfo;
+        ImageInfo    imageInfo;
 
         public RayDim()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Application = "Ray Arachelian's Disk IMage",
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Application           = "Ray Arachelian's Disk IMage",
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "Ray Arachelian's Disk IMage";
-        public Guid Id => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
+        public string    Name => "Ray Arachelian's Disk IMage";
+        public Guid      Id   => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
         public ImageInfo Info => imageInfo;
 
         public string ImageFormat => "Ray Arachelian's Disk IMage";
@@ -109,8 +108,8 @@ namespace DiscImageChef.DiscImages
             string signature = StringHandlers.CToString(header.signature);
 
             DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature = {0}", signature);
-            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.diskType = {0}", header.diskType);
-            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.heads = {0}", header.heads);
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.diskType = {0}",  header.diskType);
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.heads = {0}",     header.heads);
             DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.cylinders = {0}", header.cylinders);
             DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.sectorsPerTrack = {0}",
                                       header.sectorsPerTrack);
@@ -148,14 +147,14 @@ namespace DiscImageChef.DiscImages
 
             imageInfo.ApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
 
-            imageInfo.Cylinders = (uint)(header.cylinders + 1);
-            imageInfo.Heads = (uint)(header.heads + 1);
+            imageInfo.Cylinders       = (uint)(header.cylinders + 1);
+            imageInfo.Heads           = (uint)(header.heads     + 1);
             imageInfo.SectorsPerTrack = header.sectorsPerTrack;
-            imageInfo.Sectors = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
-            imageInfo.SectorSize = 512;
+            imageInfo.Sectors         = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
+            imageInfo.SectorSize      = 512;
 
             byte[] sectors = new byte[imageInfo.SectorsPerTrack * imageInfo.SectorSize];
-            disk = new MemoryStream();
+            disk           = new MemoryStream();
 
             for(int i = 0; i < imageInfo.SectorsPerTrack * imageInfo.SectorSize; i++)
             {
@@ -164,55 +163,22 @@ namespace DiscImageChef.DiscImages
                 disk.Write(sectors, 0, sectors.Length);
             }
 
-            switch(header.diskType)
+            imageInfo.MediaType =
+                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
+                                      (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM, false));
+
+            switch(imageInfo.MediaType)
             {
-                case RayDiskTypes.Md2hd:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 15)
-                        imageInfo.MediaType = MediaType.DOS_525_HD;
-                    else goto case RayDiskTypes.Md2dd;
+                case MediaType.NEC_525_HD when header.diskType == RayDiskTypes.Mf2hd ||
+                                               header.diskType == RayDiskTypes.Mf2ed:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
                     break;
-                case RayDiskTypes.Md2dd:
-                    if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 8)
-                        imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 9)
-                        imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 8)
-                        imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 9)
-                        imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                    else imageInfo.MediaType = MediaType.Unknown;
+                case MediaType.DOS_525_HD when header.diskType == RayDiskTypes.Mf2hd ||
+                                               header.diskType == RayDiskTypes.Mf2ed:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
                     break;
-                case RayDiskTypes.Mf2ed:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 36)
-                        imageInfo.MediaType = MediaType.DOS_35_ED;
-                    else goto case RayDiskTypes.Mf2hd;
-                    break;
-                case RayDiskTypes.Mf2hd:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 18)
-                        imageInfo.MediaType = MediaType.DOS_35_HD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 21)
-                        imageInfo.MediaType = MediaType.DMF;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 82 && imageInfo.SectorsPerTrack == 21)
-                        imageInfo.MediaType = MediaType.DMF_82;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 15)
-                        imageInfo.MediaType = MediaType.NEC_35_HD_15;
-                    else goto case RayDiskTypes.Mf2dd;
-                    break;
-                case RayDiskTypes.Mf2dd:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 9)
-                        imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 8)
-                        imageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 9)
-                        imageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 8)
-                        imageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 70 && imageInfo.SectorsPerTrack == 9)
-                        imageInfo.MediaType = MediaType.Apricot_35;
-                    else imageInfo.MediaType = MediaType.Unknown;
-                    break;
-                default:
-                    imageInfo.MediaType = MediaType.Unknown;
+                case MediaType.RX50 when header.diskType == RayDiskTypes.Md2dd || header.diskType == RayDiskTypes.Md2hd:
+                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
                     break;
             }
 
@@ -232,7 +198,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -243,7 +209,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -278,7 +244,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[length * imageInfo.SectorSize];
 
-            disk.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            disk.Seek((long)(sectorAddress    * imageInfo.SectorSize), SeekOrigin.Begin);
             disk.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
 
             return buffer;
@@ -347,11 +313,12 @@ namespace DiscImageChef.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RayHdr
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)] public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
+            public byte[]       signature;
             public RayDiskTypes diskType;
-            public byte cylinders;
-            public byte sectorsPerTrack;
-            public byte heads;
+            public byte         cylinders;
+            public byte         sectorsPerTrack;
+            public byte         heads;
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]

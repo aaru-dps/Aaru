@@ -35,6 +35,16 @@
 
 namespace DiscImageChef.CommonTypes
 {
+    public enum MediaEncoding
+    {
+        Unknown,
+        FM,
+        MFM,
+        M2FM,
+        AppleGCR,
+        CommodoreGCR
+    }
+
     /// <summary>
     ///     Contains an enumeration of all known types of media.
     /// </summary>
@@ -293,9 +303,13 @@ namespace DiscImageChef.CommonTypes
         #endregion Microsoft non standard floppy formats
 
         #region IBM non standard floppy formats
+        /// <summary>
+        ///     5.25", DS, HD, 80 tracks, ? spt, ??? + ??? + ??? bytes/sector, MFM track 0 = ??15 sectors, 512
+        ///     bytes/sector, falsified to DOS as 19 spt, 512 bps
+        /// </summary>
         XDF_525,
         /// <summary>
-        ///     3.5", DS, HD, 80 tracks, 4 spt, 8192 + 2048 + 1024 + 512 bytes/sector, MFMm track 0 = 19 sectors, 512
+        ///     3.5", DS, HD, 80 tracks, 4 spt, 8192 + 2048 + 1024 + 512 bytes/sector, MFM track 0 = 19 sectors, 512
         ///     bytes/sector, falsified to DOS as 23 spt, 512 bps
         /// </summary>
         XDF_35,

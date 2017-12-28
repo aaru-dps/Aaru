@@ -42,33 +42,33 @@ namespace DiscImageChef.DiscImages
 {
     public class Anex86 : IMediaImage
     {
-        IFilter anexImageFilter;
+        IFilter      anexImageFilter;
         Anex86Header fdihdr;
-        ImageInfo imageInfo;
+        ImageInfo    imageInfo;
 
         public Anex86()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -76,7 +76,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "Anex86 Disk Image";
-        public Guid Id => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+        public Guid   Id   => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
 
         public string ImageFormat => "Anex86 disk image";
 
@@ -102,19 +102,19 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            fdihdr = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
+            fdihdr          = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
             handle.Free();
 
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}", fdihdr.unknown);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}", fdihdr.hddtype);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}", fdihdr.hdrSize);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}", fdihdr.dskSize);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}", fdihdr.bps);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}", fdihdr.spt);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}", fdihdr.heads);
+            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}",   fdihdr.unknown);
+            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}",   fdihdr.hddtype);
+            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}",   fdihdr.hdrSize);
+            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}",   fdihdr.dskSize);
+            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}",       fdihdr.bps);
+            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}",       fdihdr.spt);
+            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}",     fdihdr.heads);
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", fdihdr.cylinders);
 
-            return stream.Length == fdihdr.hdrSize + fdihdr.dskSize &&
+            return stream.Length  == fdihdr.hdrSize + fdihdr.dskSize &&
                    fdihdr.dskSize == fdihdr.bps * fdihdr.spt * fdihdr.heads * fdihdr.cylinders;
         }
 
@@ -131,198 +131,26 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            fdihdr = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
+            fdihdr          = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
             handle.Free();
 
-            imageInfo.MediaType = MediaType.GENERIC_HDD;
-
-            switch(fdihdr.cylinders)
-            {
-                case 40:
-                    switch(fdihdr.bps)
-                    {
-                        case 512:
-                            switch(fdihdr.spt)
-                            {
-                                case 8:
-                                    switch(fdihdr.heads)
-                                    {
-                                        case 1:
-                                            imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                                            break;
-                                        case 2:
-                                            imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-                                            break;
-                                    }
-
-                                    break;
-                                case 9:
-                                    switch(fdihdr.heads)
-                                    {
-                                        case 1:
-                                            imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                                            break;
-                                        case 2:
-                                            imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                                            break;
-                                    }
-
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                case 70:
-                    switch(fdihdr.bps)
-                    {
-                        case 512:
-                            switch(fdihdr.spt)
-                            {
-                                case 9:
-                                    if(fdihdr.heads == 1) imageInfo.MediaType = MediaType.Apricot_35;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                case 77:
-                    switch(fdihdr.bps)
-                    {
-                        case 128:
-                            switch(fdihdr.spt)
-                            {
-                                case 26:
-                                    if(fdihdr.heads == 2) imageInfo.MediaType = MediaType.NEC_8_SD;
-                                    break;
-                            }
-
-                            break;
-                        case 256:
-                            switch(fdihdr.spt)
-                            {
-                                case 26:
-                                    if(fdihdr.heads == 2) imageInfo.MediaType = MediaType.NEC_8_DD;
-                                    break;
-                            }
-
-                            break;
-                        case 512:
-                            switch(fdihdr.spt)
-                            {
-                                case 8:
-                                    if(fdihdr.heads == 1) imageInfo.MediaType = MediaType.Apricot_35;
-                                    break;
-                            }
-
-                            break;
-                        case 1024:
-                            switch(fdihdr.spt)
-                            {
-                                case 8:
-                                    if(fdihdr.heads == 2) imageInfo.MediaType = MediaType.NEC_525_HD;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                case 80:
-                    switch(fdihdr.bps)
-                    {
-                        case 256:
-                            switch(fdihdr.spt)
-                            {
-                                case 16:
-                                    switch(fdihdr.heads)
-                                    {
-                                        case 1:
-                                            imageInfo.MediaType = MediaType.NEC_525_SS;
-                                            break;
-                                        case 2:
-                                            imageInfo.MediaType = MediaType.NEC_525_DS;
-                                            break;
-                                    }
-
-                                    break;
-                            }
-
-                            break;
-                        case 512:
-                            switch(fdihdr.spt)
-                            {
-                                case 8:
-                                    switch(fdihdr.heads)
-                                    {
-                                        case 1:
-                                            imageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
-                                            break;
-                                        case 2:
-                                            imageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
-                                            break;
-                                    }
-
-                                    break;
-                                case 9:
-                                    switch(fdihdr.heads)
-                                    {
-                                        case 1:
-                                            imageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-                                            break;
-                                        case 2:
-                                            imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                                            break;
-                                    }
-
-                                    break;
-                                case 15:
-                                    if(fdihdr.heads == 2) imageInfo.MediaType = MediaType.NEC_35_HD_15;
-                                    break;
-                                case 18:
-                                    if(fdihdr.heads == 2) imageInfo.MediaType = MediaType.DOS_35_HD;
-                                    break;
-                                case 36:
-                                    if(fdihdr.heads == 2) imageInfo.MediaType = MediaType.DOS_35_ED;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                case 240:
-                    switch(fdihdr.bps)
-                    {
-                        case 512:
-                            switch(fdihdr.spt)
-                            {
-                                case 38:
-                                    if(fdihdr.heads == 2) imageInfo.MediaType = MediaType.NEC_35_TD;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-            }
+            imageInfo.MediaType =
+                Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads, (ushort)fdihdr.spt,
+                                      (uint)fdihdr.bps, MediaEncoding.MFM, false));
+            if(imageInfo.MediaType == MediaType.Unknown) imageInfo.MediaType = MediaType.GENERIC_HDD;
 
             DicConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", imageInfo.MediaType);
 
-            imageInfo.ImageSize = (ulong)fdihdr.dskSize;
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.ImageSize            = (ulong)fdihdr.dskSize;
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = (ulong)(fdihdr.cylinders * fdihdr.heads * fdihdr.spt);
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize = (uint)fdihdr.bps;
-            imageInfo.Cylinders = (uint)fdihdr.cylinders;
-            imageInfo.Heads = (uint)fdihdr.heads;
-            imageInfo.SectorsPerTrack = (uint)fdihdr.spt;
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = (ulong)(fdihdr.cylinders * fdihdr.heads * fdihdr.spt);
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.SectorSize           = (uint)fdihdr.bps;
+            imageInfo.Cylinders            = (uint)fdihdr.cylinders;
+            imageInfo.Heads                = (uint)fdihdr.heads;
+            imageInfo.SectorsPerTrack      = (uint)fdihdr.spt;
 
             anexImageFilter = imageFilter;
 
@@ -429,7 +257,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -439,7 +267,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

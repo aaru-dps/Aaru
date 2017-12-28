@@ -72,6 +72,7 @@
       </e>
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
         <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
+        <e p="Geometry.cs" t="Include" />
         <e p="MediaType.cs" t="Include" />
         <e p="MediaTypeFromSCSI.cs" t="Include" />
         <e p="Partition.cs" t="Include" />
@@ -80,6 +81,7 @@
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Console" t="IncludeRecursive">
         <e p="DicConsole.cs" t="Include" />

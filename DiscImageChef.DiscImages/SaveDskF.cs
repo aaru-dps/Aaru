@@ -43,44 +43,44 @@ namespace DiscImageChef.DiscImages
 {
     public class SaveDskF : IMediaImage
     {
-        const ushort SDF_MAGIC_OLD = 0x58AA;
-        const ushort SDF_MAGIC = 0x59AA;
+        const ushort SDF_MAGIC_OLD        = 0x58AA;
+        const ushort SDF_MAGIC            = 0x59AA;
         const ushort SDF_MAGIC_COMPRESSED = 0x5AAA;
-        uint calculatedChk;
-        byte[] decodedDisk;
+        uint         calculatedChk;
+        byte[]       decodedDisk;
 
         SaveDskFHeader header;
-        ImageInfo imageInfo;
+        ImageInfo      imageInfo;
 
         public SaveDskF()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "IBM SaveDskF";
-        public Guid Id => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
+        public string    Name => "IBM SaveDskF";
+        public Guid      Id   => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
         public ImageInfo Info => imageInfo;
 
         public string ImageFormat => "IBM SaveDskF";
@@ -103,15 +103,15 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[40];
             stream.Read(hdr, 0, 40);
 
-            header = new SaveDskFHeader();
+            header        = new SaveDskFHeader();
             IntPtr hdrPtr = Marshal.AllocHGlobal(40);
             Marshal.Copy(hdr, 0, hdrPtr, 40);
             header = (SaveDskFHeader)Marshal.PtrToStructure(hdrPtr, typeof(SaveDskFHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
-            return (header.magic == SDF_MAGIC || header.magic == SDF_MAGIC_COMPRESSED ||
-                    header.magic == SDF_MAGIC_OLD) && header.fatCopies <= 2 && header.padding == 0 &&
-                   header.commentOffset < stream.Length && header.dataOffset < stream.Length;
+            return (header.magic        == SDF_MAGIC || header.magic           == SDF_MAGIC_COMPRESSED ||
+                    header.magic        == SDF_MAGIC_OLD) && header.fatCopies  <= 2 && header.padding == 0 &&
+                   header.commentOffset < stream.Length   && header.dataOffset < stream.Length;
         }
 
         public bool OpenImage(IFilter imageFilter)
@@ -122,31 +122,31 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[40];
 
             stream.Read(hdr, 0, 40);
-            header = new SaveDskFHeader();
+            header        = new SaveDskFHeader();
             IntPtr hdrPtr = Marshal.AllocHGlobal(40);
             Marshal.Copy(hdr, 0, hdrPtr, 40);
             header = (SaveDskFHeader)Marshal.PtrToStructure(hdrPtr, typeof(SaveDskFHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}", header.magic);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}", header.mediaType);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorSize = {0}", header.sectorSize);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clusterMask = {0}", header.clusterMask);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clusterShift = {0}", header.clusterShift);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}",      header.magic);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}",  header.mediaType);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorSize = {0}",      header.sectorSize);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clusterMask = {0}",     header.clusterMask);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clusterShift = {0}",    header.clusterShift);
             DicConsole.DebugWriteLine("SaveDskF plugin", "header.reservedSectors = {0}", header.reservedSectors);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.fatCopies = {0}", header.fatCopies);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.rootEntries = {0}", header.rootEntries);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.firstCluster = {0}", header.firstCluster);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clustersCopied = {0}", header.clustersCopied);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerFat = {0}", header.sectorsPerFat);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.checksum = 0x{0:X8}", header.checksum);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.cylinders = {0}", header.cylinders);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.heads = {0}", header.heads);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.fatCopies = {0}",       header.fatCopies);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.rootEntries = {0}",     header.rootEntries);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.firstCluster = {0}",    header.firstCluster);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clustersCopied = {0}",  header.clustersCopied);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerFat = {0}",   header.sectorsPerFat);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.checksum = 0x{0:X8}",   header.checksum);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.cylinders = {0}",       header.cylinders);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.heads = {0}",           header.heads);
             DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerTrack = {0}", header.sectorsPerTrack);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.padding = {0}", header.padding);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsCopied = {0}", header.sectorsCopied);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}", header.commentOffset);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}", header.dataOffset);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.padding = {0}",         header.padding);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsCopied = {0}",   header.sectorsCopied);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}",   header.commentOffset);
+            DicConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}",      header.dataOffset);
 
             if(header.dataOffset == 0 && header.magic == SDF_MAGIC_OLD) header.dataOffset = 512;
 
@@ -161,7 +161,7 @@ namespace DiscImageChef.DiscImages
             int b;
             do
             {
-                b = stream.ReadByte();
+                b                        =  stream.ReadByte();
                 if(b >= 0) calculatedChk += (uint)b;
             }
             while(b >= 0);
@@ -169,108 +169,17 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
                                       calculatedChk == header.checksum);
 
-            imageInfo.Application = "SaveDskF";
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.Application          = "SaveDskF";
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = imageFilter.GetFilename();
-            imageInfo.ImageSize = (ulong)(stream.Length - header.dataOffset);
-            imageInfo.Sectors = (ulong)(header.sectorsPerTrack * header.heads * header.cylinders);
-            imageInfo.SectorSize = header.sectorSize;
+            imageInfo.MediaTitle           = imageFilter.GetFilename();
+            imageInfo.ImageSize            = (ulong)(stream.Length - header.dataOffset);
+            imageInfo.Sectors              = (ulong)(header.sectorsPerTrack * header.heads * header.cylinders);
+            imageInfo.SectorSize           = header.sectorSize;
 
-            imageInfo.MediaType = MediaType.Unknown;
-            switch(header.cylinders)
-            {
-                case 40:
-                    switch(header.heads)
-                    {
-                        case 1:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                                    break;
-                                case 9:
-                                    imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                                    break;
-                            }
-
-                            break;
-                        case 2:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-                                    break;
-                                case 9:
-                                    imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                case 70:
-                    switch(header.heads)
-                    {
-                        case 1:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 9:
-                                    imageInfo.MediaType = MediaType.Apricot_35;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                case 80:
-                    switch(header.heads)
-                    {
-                        case 1:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    imageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
-                                    break;
-                                case 9:
-                                    imageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-                                    break;
-                            }
-
-                            break;
-                        case 2:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    imageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
-                                    break;
-                                case 9:
-                                    imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                                    break;
-                                case 15:
-                                    imageInfo.MediaType = MediaType.DOS_525_HD;
-                                    break;
-                                case 18:
-                                    imageInfo.MediaType = MediaType.DOS_35_HD;
-                                    break;
-                                case 23:
-                                    imageInfo.MediaType = MediaType.XDF_35;
-                                    break;
-                                case 36:
-                                    imageInfo.MediaType = MediaType.DOS_35_ED;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                default:
-                    imageInfo.MediaType = MediaType.Unknown;
-                    break;
-            }
+            imageInfo.MediaType =
+                Geometry.GetMediaType((header.cylinders, (byte)header.heads, header.sectorsPerTrack, header.sectorSize,
+                                      MediaEncoding.MFM, false));
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
@@ -288,8 +197,8 @@ namespace DiscImageChef.DiscImages
             decodedDisk = new byte[imageInfo.Sectors * imageInfo.SectorSize];
             stream.Read(decodedDisk, 0, (int)(stream.Length - header.dataOffset));
 
-            imageInfo.Cylinders = header.cylinders;
-            imageInfo.Heads = header.heads;
+            imageInfo.Cylinders       = header.cylinders;
+            imageInfo.Heads           = header.heads;
             imageInfo.SectorsPerTrack = header.sectorsPerTrack;
 
             return true;
@@ -306,7 +215,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -317,7 +226,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -348,7 +257,7 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[length * imageInfo.SectorSize];
 
             Array.Copy(decodedDisk, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
-                       length * imageInfo.SectorSize);
+                       length                          * imageInfo.SectorSize);
 
             return buffer;
         }

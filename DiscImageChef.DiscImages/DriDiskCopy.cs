@@ -57,23 +57,23 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Application = "DiskCopy",
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Application           = "DiskCopy",
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -81,7 +81,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "Digital Research DiskCopy";
-        public Guid Id => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
+        public Guid   Id   => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
 
         public string ImageFormat => "Digital Research DiskCopy";
 
@@ -112,21 +112,21 @@ namespace DiscImageChef.DiscImages
             string sig = StringHandlers.CToString(tmpFooter.signature);
 
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.signature = \"{0}\"", sig);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.five = {0}", tmpFooter.bpb.five);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.five = {0}",      tmpFooter.bpb.five);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.driveCode = {0}", tmpFooter.bpb.driveCode);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown = {0}", tmpFooter.bpb.unknown);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown = {0}",   tmpFooter.bpb.unknown);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.cylinders = {0}", tmpFooter.bpb.cylinders);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown2 = {0}", tmpFooter.bpb.unknown2);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.bps = {0}", tmpFooter.bpb.bps);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spc = {0}", tmpFooter.bpb.spc);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.rsectors = {0}", tmpFooter.bpb.rsectors);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.fats_no = {0}", tmpFooter.bpb.fats_no);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sectors = {0}", tmpFooter.bpb.sectors);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown2 = {0}",  tmpFooter.bpb.unknown2);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.bps = {0}",       tmpFooter.bpb.bps);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spc = {0}",       tmpFooter.bpb.spc);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.rsectors = {0}",  tmpFooter.bpb.rsectors);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.fats_no = {0}",   tmpFooter.bpb.fats_no);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sectors = {0}",   tmpFooter.bpb.sectors);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.media_descriptor = {0}",
                                       tmpFooter.bpb.media_descriptor);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spfat = {0}", tmpFooter.bpb.spfat);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sptrack = {0}", tmpFooter.bpb.sptrack);
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.heads = {0}", tmpFooter.bpb.heads);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spfat = {0}",    tmpFooter.bpb.spfat);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sptrack = {0}",  tmpFooter.bpb.sptrack);
+            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.heads = {0}",    tmpFooter.bpb.heads);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.hsectors = {0}", tmpFooter.bpb.hsectors);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.drive_no = {0}", tmpFooter.bpb.drive_no);
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown3 = {0}", tmpFooter.bpb.unknown3);
@@ -159,7 +159,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            footer = new DriFooter();
+            footer        = new DriFooter();
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
             footer = (DriFooter)Marshal.PtrToStructure(ftrPtr, typeof(DriFooter));
@@ -176,98 +176,51 @@ namespace DiscImageChef.DiscImages
 
             if(footer.bpb.sectors * footer.bpb.bps + Marshal.SizeOf(footer) != stream.Length) return false;
 
-            imageInfo.Cylinders = footer.bpb.cylinders;
-            imageInfo.Heads = footer.bpb.heads;
-            imageInfo.SectorsPerTrack = footer.bpb.sptrack;
-            imageInfo.Sectors = footer.bpb.sectors;
-            imageInfo.SectorSize = footer.bpb.bps;
+            imageInfo.Cylinders          = footer.bpb.cylinders;
+            imageInfo.Heads              = footer.bpb.heads;
+            imageInfo.SectorsPerTrack    = footer.bpb.sptrack;
+            imageInfo.Sectors            = footer.bpb.sectors;
+            imageInfo.SectorSize         = footer.bpb.bps;
             imageInfo.ApplicationVersion = matchSignature.Groups["version"].Value;
 
             driImageFilter = imageFilter;
 
-            imageInfo.ImageSize = (ulong)(stream.Length - Marshal.SizeOf(footer));
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf(footer));
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
             DicConsole.DebugWriteLine("DRI DiskCopy plugin", "Image application = {0} version {1}",
                                       imageInfo.Application, imageInfo.ApplicationVersion);
 
             // Correct some incorrect data in images of NEC 2HD disks
-            if(imageInfo.Cylinders == 77 && imageInfo.Heads == 2 && imageInfo.SectorsPerTrack == 16 &&
-               imageInfo.SectorSize == 512 &&
-               (footer.bpb.driveCode == DriDriveCodes.md2hd || footer.bpb.driveCode == DriDriveCodes.mf2hd))
+            if(imageInfo.Cylinders       == 77  && imageInfo.Heads == 2 &&
+               imageInfo.SectorsPerTrack == 16  &&
+               imageInfo.SectorSize      == 512 &&
+               (footer.bpb.driveCode     == DriDriveCodes.md2hd ||
+                footer.bpb.driveCode     == DriDriveCodes.mf2hd))
             {
                 imageInfo.SectorsPerTrack = 8;
-                imageInfo.SectorSize = 1024;
+                imageInfo.SectorSize      = 1024;
             }
 
-            switch(footer.bpb.driveCode)
+            imageInfo.MediaType =
+                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
+                                      (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize, MediaEncoding.MFM, false
+                                      ));
+
+            switch(imageInfo.MediaType)
             {
-                case DriDriveCodes.md2hd:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 15 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_HD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 16 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_DS_DD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 16 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_DD_80;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 10 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_SD_80;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 77 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 1024) imageInfo.MediaType = MediaType.NEC_525_HD;
-                    else goto case DriDriveCodes.md2dd;
+                case MediaType.NEC_525_HD when footer.bpb.driveCode == DriDriveCodes.mf2hd ||
+                                               footer.bpb.driveCode == DriDriveCodes.mf2ed:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
                     break;
-                case DriDriveCodes.md2dd:
-                    if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 8 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 18 &&
-                            imageInfo.SectorSize == 128) imageInfo.MediaType = MediaType.ATARI_525_SD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 26 &&
-                            imageInfo.SectorSize == 128) imageInfo.MediaType = MediaType.ATARI_525_ED;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 40 && imageInfo.SectorsPerTrack == 18 &&
-                            imageInfo.SectorSize == 256) imageInfo.MediaType = MediaType.ATARI_525_DD;
-                    else imageInfo.MediaType = MediaType.Unknown;
+                case MediaType.DOS_525_HD when footer.bpb.driveCode == DriDriveCodes.mf2hd ||
+                                               footer.bpb.driveCode == DriDriveCodes.mf2ed:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
                     break;
-                case DriDriveCodes.mf2ed:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 36 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_ED;
-                    else goto case DriDriveCodes.mf2hd;
-                    break;
-                case DriDriveCodes.mf2hd:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 18 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_HD;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 21 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DMF;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 82 && imageInfo.SectorsPerTrack == 21 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DMF_82;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 77 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 1024) imageInfo.MediaType = MediaType.NEC_35_HD_8;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 15 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.NEC_35_HD_15;
-                    else goto case DriDriveCodes.mf2dd;
-                    break;
-                case DriDriveCodes.mf2dd:
-                    if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 9 &&
-                       imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 8 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
-                    else if(imageInfo.Heads == 2 && imageInfo.Cylinders == 80 && imageInfo.SectorsPerTrack == 5 &&
-                            imageInfo.SectorSize == 1024) imageInfo.MediaType = MediaType.ACORN_35_DS_DD;
-                    else if(imageInfo.Heads == 1 && imageInfo.Cylinders == 70 && imageInfo.SectorsPerTrack == 9 &&
-                            imageInfo.SectorSize == 512) imageInfo.MediaType = MediaType.Apricot_35;
-                    else imageInfo.MediaType = MediaType.Unknown;
-                    break;
-                default:
-                    imageInfo.MediaType = MediaType.Unknown;
+                case MediaType.RX50 when footer.bpb.driveCode == DriDriveCodes.md2dd ||
+                                         footer.bpb.driveCode == DriDriveCodes.md2hd:
+                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
                     break;
             }
 
@@ -289,7 +242,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -300,7 +253,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -336,7 +289,7 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[length * imageInfo.SectorSize];
 
             Stream stream = driImageFilter.GetDataForkStream();
-            stream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(sectorAddress    * imageInfo.SectorSize), SeekOrigin.Begin);
             stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
 
             return buffer;
@@ -406,7 +359,8 @@ namespace DiscImageChef.DiscImages
         struct DriFooter
         {
             /// <summary>Signature: "DiskImage 2.01 (C) 1990,1991 Digital Research Inc\0"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 51)] public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 51)]
+            public byte[] signature;
             /// <summary>Information about the disk image, mostly imitates FAT BPB</summary>
             public DriBpb bpb;
             /// <summary>Information about the disk image, mostly imitates FAT BPB, copy</summary>
@@ -457,7 +411,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>Sectors per track (again?)</summary>
             public ushort sptrack2;
             /// <summary>Seems to be 0</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 144)] public byte[] unknown5;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 144)]
+            public byte[] unknown5;
         }
 
         /// <summary>

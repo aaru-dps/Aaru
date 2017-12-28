@@ -43,17 +43,17 @@ namespace DiscImageChef.DiscImages
     public class CopyQm : IMediaImage
     {
         const ushort COPYQM_MAGIC = 0x5143;
-        const byte COPYQM_MARK = 0x14;
+        const byte   COPYQM_MARK  = 0x14;
 
-        const byte COPYQM_FAT = 0;
+        const byte COPYQM_FAT   = 0;
         const byte COPYQM_BLIND = 1;
-        const byte COPYQM_HFS = 2;
+        const byte COPYQM_HFS   = 2;
 
         const byte COPYQM_525_DD = 1;
         const byte COPYQM_525_HD = 2;
-        const byte COPYQM_35_DD = 3;
-        const byte COPYQM_35_HD = 4;
-        const byte COPYQM_35_ED = 6;
+        const byte COPYQM_35_DD  = 3;
+        const byte COPYQM_35_HD  = 4;
+        const byte COPYQM_35_ED  = 6;
 
         readonly uint[] copyQmCrcTable =
         {
@@ -87,38 +87,38 @@ namespace DiscImageChef.DiscImages
             0x24B4A3A6, 0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
             0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
         };
-        uint calculatedDataCrc;
-        byte[] decodedDisk;
+        uint         calculatedDataCrc;
+        byte[]       decodedDisk;
         MemoryStream decodedImage;
 
         CopyQmHeader header;
 
-        bool headerChecksumOk;
+        bool      headerChecksumOk;
         ImageInfo imageInfo;
 
         public CopyQm()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -126,7 +126,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "Sydex CopyQM";
-        public Guid Id => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
+        public Guid   Id   => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
 
         public string ImageFormat => "Sydex CopyQM";
 
@@ -161,46 +161,46 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[133];
 
             stream.Read(hdr, 0, 133);
-            header = new CopyQmHeader();
+            header        = new CopyQmHeader();
             IntPtr hdrPtr = Marshal.AllocHGlobal(133);
             Marshal.Copy(hdr, 0, hdrPtr, 133);
             header = (CopyQmHeader)Marshal.PtrToStructure(hdrPtr, typeof(CopyQmHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}", header.magic);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}", header.mark);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorSize = {0}", header.sectorSize);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}",       header.magic);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}",        header.mark);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorSize = {0}",       header.sectorSize);
             DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorPerCluster = {0}", header.sectorPerCluster);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.reservedSectors = {0}", header.reservedSectors);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.fatCopy = {0}", header.fatCopy);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.rootEntries = {0}", header.rootEntries);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectors = {0}", header.sectors);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.mediaType = 0x{0:X2}", header.mediaType);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerFat = {0}", header.sectorsPerFat);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerTrack = {0}", header.sectorsPerTrack);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.heads = {0}", header.heads);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.hidden = {0}", header.hidden);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsBig = {0}", header.sectorsBig);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.description = {0}", header.description);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.blind = {0}", header.blind);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.density = {0}", header.density);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.imageCylinders = {0}", header.imageCylinders);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.totalCylinders = {0}", header.totalCylinders);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.crc = 0x{0:X8}", header.crc);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.volumeLabel = {0}", header.volumeLabel);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.time = 0x{0:X4}", header.time);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.date = 0x{0:X4}", header.date);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.commentLength = {0}", header.commentLength);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.secbs = {0}", header.secbs);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.unknown = 0x{0:X4}", header.unknown);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.interleave = {0}", header.interleave);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}", header.skew);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}", header.drive);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.reservedSectors = {0}",  header.reservedSectors);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.fatCopy = {0}",          header.fatCopy);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.rootEntries = {0}",      header.rootEntries);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectors = {0}",          header.sectors);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.mediaType = 0x{0:X2}",   header.mediaType);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerFat = {0}",    header.sectorsPerFat);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerTrack = {0}",  header.sectorsPerTrack);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.heads = {0}",            header.heads);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.hidden = {0}",           header.hidden);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsBig = {0}",       header.sectorsBig);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.description = {0}",      header.description);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.blind = {0}",            header.blind);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.density = {0}",          header.density);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.imageCylinders = {0}",   header.imageCylinders);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.totalCylinders = {0}",   header.totalCylinders);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.crc = 0x{0:X8}",         header.crc);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.volumeLabel = {0}",      header.volumeLabel);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.time = 0x{0:X4}",        header.time);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.date = 0x{0:X4}",        header.date);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.commentLength = {0}",    header.commentLength);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.secbs = {0}",            header.secbs);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.unknown = 0x{0:X4}",     header.unknown);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.interleave = {0}",       header.interleave);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}",             header.skew);
+            DicConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}",            header.drive);
 
             byte[] cmt = new byte[header.commentLength];
             stream.Read(cmt, 0, header.commentLength);
             imageInfo.Comments = StringHandlers.CToString(cmt);
-            decodedImage = new MemoryStream();
+            decodedImage       = new MemoryStream();
 
             calculatedDataCrc = 0;
 
@@ -213,7 +213,7 @@ namespace DiscImageChef.DiscImages
 
                 if(runLength < 0)
                 {
-                    byte repeatedByte = (byte)stream.ReadByte();
+                    byte   repeatedByte  = (byte)stream.ReadByte();
                     byte[] repeatedArray = new byte[runLength * -1];
                     ArrayHelpers.ArrayFill(repeatedArray, repeatedByte);
 
@@ -253,7 +253,7 @@ namespace DiscImageChef.DiscImages
             debugStream.Close();
             */
 
-            int sum = 0;
+            int sum                                     = 0;
             for(int i = 0; i < hdr.Length - 1; i++) sum += hdr[i];
 
             headerChecksumOk = ((-1 * sum) & 0xFF) == header.headerChecksum;
@@ -263,90 +263,33 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
                                       calculatedDataCrc == header.crc);
 
-            imageInfo.Application = "CopyQM";
-            imageInfo.CreationTime = DateHandlers.DosToDateTime(header.date, header.time);
+            imageInfo.Application          = "CopyQM";
+            imageInfo.CreationTime         = DateHandlers.DosToDateTime(header.date, header.time);
             imageInfo.LastModificationTime = imageInfo.CreationTime;
-            imageInfo.MediaTitle = header.volumeLabel;
-            imageInfo.ImageSize = (ulong)(stream.Length - 133 - header.commentLength);
-            imageInfo.Sectors = (ulong)sectors;
-            imageInfo.SectorSize = header.sectorSize;
+            imageInfo.MediaTitle           = header.volumeLabel;
+            imageInfo.ImageSize            = (ulong)(stream.Length - 133 - header.commentLength);
+            imageInfo.Sectors              = (ulong)sectors;
+            imageInfo.SectorSize           = header.sectorSize;
 
-            switch(header.drive)
+            imageInfo.MediaType =
+                Geometry.GetMediaType(((ushort)header.totalCylinders, (byte)header.heads, header.sectorsPerTrack,
+                                      (uint)header.sectorSize, MediaEncoding.MFM, false));
+            
+            switch(imageInfo.MediaType)
             {
-                case COPYQM_525_HD:
-                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 15 &&
-                       header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_HD;
-                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 16 &&
-                            header.sectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_DS_DD;
-                    else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 16 &&
-                            header.sectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_DD_80;
-                    else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 10 &&
-                            header.sectorSize == 256) imageInfo.MediaType = MediaType.ACORN_525_SS_SD_80;
-                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) imageInfo.MediaType = MediaType.NEC_525_HD;
-                    else if(header.heads == 2 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) imageInfo.MediaType = MediaType.SHARP_525;
-                    else goto case COPYQM_525_DD;
+                case MediaType.NEC_525_HD when header.drive == COPYQM_35_HD ||header.drive == COPYQM_35_ED:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
                     break;
-                case COPYQM_525_DD:
-                    if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 8 &&
-                       header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                    else if(header.heads == 2 && header.totalCylinders == 40 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-                    else if(header.heads == 2 && header.totalCylinders == 40 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 18 &&
-                            header.sectorSize == 128) imageInfo.MediaType = MediaType.ATARI_525_SD;
-                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 26 &&
-                            header.sectorSize == 128) imageInfo.MediaType = MediaType.ATARI_525_ED;
-                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 18 &&
-                            header.sectorSize == 256) imageInfo.MediaType = MediaType.ATARI_525_DD;
-                    else imageInfo.MediaType = MediaType.Unknown;
+                case MediaType.DOS_525_HD when header.drive == COPYQM_35_HD ||header.drive == COPYQM_35_ED:
+                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
                     break;
-                case COPYQM_35_ED:
-                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 36 &&
-                       header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_ED;
-                    else goto case COPYQM_35_HD;
-                    break;
-                case COPYQM_35_HD:
-                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 18 &&
-                       header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_HD;
-                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 21 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DMF;
-                    else if(header.heads == 2 && header.totalCylinders == 82 && header.sectorsPerTrack == 21 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DMF_82;
-                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) imageInfo.MediaType = MediaType.NEC_35_HD_8;
-                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 15 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.NEC_35_HD_15;
-                    else goto case COPYQM_35_DD;
-                    break;
-                case COPYQM_35_DD:
-                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 9 &&
-                       header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
-                    else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-                    else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
-                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 5 &&
-                            header.sectorSize == 1024) imageInfo.MediaType = MediaType.ACORN_35_DS_DD;
-                    else if(header.heads == 2 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) imageInfo.MediaType = MediaType.SHARP_35;
-                    else if(header.heads == 1 && header.totalCylinders == 70 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) imageInfo.MediaType = MediaType.Apricot_35;
-                    else imageInfo.MediaType = MediaType.Unknown;
-                    break;
-                default:
-                    imageInfo.MediaType = MediaType.Unknown;
+                case MediaType.RX50 when header.drive == COPYQM_525_DD || header.drive == COPYQM_525_HD:
+                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
                     break;
             }
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            decodedDisk = decodedImage.ToArray();
+            decodedDisk            = decodedImage.ToArray();
 
             decodedImage.Close();
 
@@ -354,8 +297,8 @@ namespace DiscImageChef.DiscImages
             if(!string.IsNullOrEmpty(imageInfo.Comments))
                 DicConsole.VerboseWriteLine("CopyQM comments: {0}", imageInfo.Comments);
 
-            imageInfo.Heads = header.heads;
-            imageInfo.Cylinders = header.imageCylinders;
+            imageInfo.Heads           = header.heads;
+            imageInfo.Cylinders       = header.totalCylinders;
             imageInfo.SectorsPerTrack = header.sectorsPerTrack;
 
             return true;
@@ -372,7 +315,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -383,7 +326,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -414,7 +357,7 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[length * imageInfo.SectorSize];
 
             Array.Copy(decodedDisk, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
-                       length * imageInfo.SectorSize);
+                       length                          * imageInfo.SectorSize);
 
             return buffer;
         }
@@ -516,7 +459,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>0x18 Sectors on disk (part of FAT's BPB)</summary>
             public uint sectorsBig;
             /// <summary>0x1C Description</summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 60)] public string description;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 60)]
+            public string description;
             /// <summary>0x58 Blind mode. 0 = DOS, 1 = blind, 2 = HFS</summary>
             public byte blind;
             /// <summary>0x59 Density. 0 = Double, 1 = High, 2 = Quad/Extra</summary>
@@ -528,7 +472,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>0x5C CRC32 of data</summary>
             public uint crc;
             /// <summary>0x60 DOS volume label</summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)] public string volumeLabel;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)]
+            public string volumeLabel;
             /// <summary>0x6B Modification time</summary>
             public ushort time;
             /// <summary>0x6D Modification date</summary>
@@ -546,7 +491,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>0x76 Source drive type. 1 = 5.25" DD, 2 = 5.25" HD, 3 = 3.5" DD, 4 = 3.5" HD, 6 = 3.5" ED</summary>
             public byte drive;
             /// <summary>0x77 Filling bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] fill;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
+            public byte[] fill;
             /// <summary>0x84 Header checksum</summary>
             public byte headerChecksum;
         }
