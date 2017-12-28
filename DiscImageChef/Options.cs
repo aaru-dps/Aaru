@@ -351,6 +351,6 @@ namespace DiscImageChef
     [Verb("list-encodings", HelpText = "Lists all supported text encodings and code pages.")]
     public class ListEncodingsOptions : CommonOptions { }
 
-    [Verb("list-options", HelpText = "Lists all options supported by read-only filesystems.")]
+    [Verb("list-options", HelpText = "Lists all options supported by read-only filesystems and writable media images.")]
     public class ListOptionsOptions : CommonOptions { }
 }

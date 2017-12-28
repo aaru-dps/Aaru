@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
@@ -60,23 +59,29 @@ namespace DiscImageChef.Core
         /// </summary>
         public readonly SortedDictionary<string, IFilesystem> PluginsList;
         /// <summary>
-        ///     List of all filesystem plugins
+        ///     List of read-only filesystem plugins
         /// </summary>
         public readonly SortedDictionary<string, IReadOnlyFilesystem> ReadOnlyFilesystems;
+        /// <summary>
+        ///     List of writable media image plugins
+        /// </summary>
+        public readonly SortedDictionary<string, IWritableImage> WritableImages;
 
         /// <summary>
         ///     Initializes the plugins lists
         /// </summary>
         public PluginBase()
         {
-            PluginsList = new SortedDictionary<string, IFilesystem>();
+            PluginsList         = new SortedDictionary<string, IFilesystem>();
             ReadOnlyFilesystems = new SortedDictionary<string, IReadOnlyFilesystem>();
-            PartPluginsList = new SortedDictionary<string, IPartition>();
-            ImagePluginsList = new SortedDictionary<string, IMediaImage>();
-            
+            PartPluginsList     = new SortedDictionary<string, IPartition>();
+            ImagePluginsList    = new SortedDictionary<string, IMediaImage>();
+            WritableImages      = new SortedDictionary<string, IWritableImage>();
+
             Assembly assembly = Assembly.GetAssembly(typeof(IMediaImage));
 
-            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMediaImage))).Where(t=>t.IsClass))
+            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMediaImage)))
+                                         .Where(t => t.IsClass))
                 try
                 {
                     IMediaImage plugin = (IMediaImage)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
@@ -86,33 +91,47 @@ namespace DiscImageChef.Core
 
             assembly = Assembly.GetAssembly(typeof(IPartition));
 
-            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IPartition))).Where(t=>t.IsClass))
+            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IPartition)))
+                                         .Where(t => t.IsClass))
                 try
                 {
-                    IPartition plugin =
-                        (IPartition)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                    IPartition plugin = (IPartition)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterPartPlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
 
             assembly = Assembly.GetAssembly(typeof(IFilesystem));
 
-            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilesystem))).Where(t=>t.IsClass))
+            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilesystem)))
+                                         .Where(t => t.IsClass))
                 try
                 {
                     IFilesystem plugin = (IFilesystem)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterPlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-            
-            
+
             assembly = Assembly.GetAssembly(typeof(IReadOnlyFilesystem));
 
-            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IReadOnlyFilesystem))).Where(t=>t.IsClass))
+            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IReadOnlyFilesystem)))
+                                         .Where(t => t.IsClass))
                 try
                 {
-                    IReadOnlyFilesystem plugin = (IReadOnlyFilesystem)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                    IReadOnlyFilesystem plugin =
+                        (IReadOnlyFilesystem)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterReadOnlyFilesystem(plugin);
+                }
+                catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
+
+            assembly = Assembly.GetAssembly(typeof(IWritableImage));
+
+            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IWritableImage)))
+                                         .Where(t => t.IsClass))
+                try
+                {
+                    IWritableImage plugin =
+                        (IWritableImage)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                    RegisterWritableMedia(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
         }
@@ -130,7 +149,13 @@ namespace DiscImageChef.Core
 
         void RegisterReadOnlyFilesystem(IReadOnlyFilesystem plugin)
         {
-            if(!ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower())) ReadOnlyFilesystems.Add(plugin.Name.ToLower(), plugin);
+            if(!ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower()))
+                ReadOnlyFilesystems.Add(plugin.Name.ToLower(), plugin);
+        }
+
+        void RegisterWritableMedia(IWritableImage plugin)
+        {
+            if(!WritableImages.ContainsKey(plugin.Name.ToLower())) WritableImages.Add(plugin.Name.ToLower(), plugin);
         }
 
         void RegisterPartPlugin(IPartition partplugin)

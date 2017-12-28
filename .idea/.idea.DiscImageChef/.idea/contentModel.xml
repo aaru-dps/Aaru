@@ -422,6 +422,7 @@
         <e p="HDCopy.cs" t="Include" />
         <e p="IMD.cs" t="Include" />
         <e p="IMediaImage.cs" t="Include" />
+        <e p="IWritableImage.cs" t="Include" />
         <e p="KryoFlux.cs" t="Include" />
         <e p="MaxiDisk.cs" t="Include" />
         <e p="NDIF.cs" t="Include" />
