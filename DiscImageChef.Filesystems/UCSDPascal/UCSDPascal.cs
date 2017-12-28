@@ -73,10 +73,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NotSupported;
         }
 
-        public (string name, Type type, string description)[] ListOptions()
-        {
-            return new(string name, Type type, string description)[] { };
-        }
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new(string name, Type type, string description)[] { };
 
         static Dictionary<string, string> GetDefaultOptions()
         {

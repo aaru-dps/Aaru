@@ -45,6 +45,11 @@ namespace DiscImageChef.Filesystems
     public interface IReadOnlyFilesystem : IFilesystem
     {
         /// <summary>
+        ///     Retrieves a list of options supported by the filesystem, with name, type and description
+        /// </summary>
+        IEnumerable<(string name, Type type, string description)> SupportedOptions { get; }
+
+        /// <summary>
         ///     Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories
         ///     from the filesystem.
         /// </summary>
@@ -130,10 +135,5 @@ namespace DiscImageChef.Filesystems
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
         Errno ReadLink(string path, out string dest);
-        
-        /// <summary>
-        /// Retrieves a list of options supported by the filesystem, with name, type and description 
-        /// </summary>
-        (string name, Type type, string description)[] ListOptions();
     }
 }

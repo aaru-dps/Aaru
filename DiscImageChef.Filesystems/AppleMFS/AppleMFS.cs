@@ -67,15 +67,13 @@ namespace DiscImageChef.Filesystems.AppleMFS
         public Guid           Id        => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         public Encoding       Encoding  { get; private set; }
 
+        // TODO: Implement Finder namespace (requires decoding Desktop database)
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new(string name, Type type, string description)[] { };
+
         static Dictionary<string, string> GetDefaultOptions()
         {
             return new Dictionary<string, string> {{"debug", false.ToString()}};
-        }
-
-        // TODO: Implement Finder namespace (requires decoding Desktop database)
-        public (string name, Type type, string description)[] ListOptions()
-        {
-            return new(string name, Type type, string description)[] { };
         }
     }
 }

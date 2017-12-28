@@ -47,7 +47,7 @@ namespace DiscImageChef.Commands
 
             foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
             {
-                List<(string name, Type type, string description)> options = kvp.Value.ListOptions().ToList();
+                List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
                 options.Add(("debug", typeof(bool), "Enables debug features if available"));
 
                 DicConsole.WriteLine("Options for {0}:",      kvp.Value.Name);
