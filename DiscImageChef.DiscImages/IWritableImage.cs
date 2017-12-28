@@ -45,15 +45,15 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     Gets a list of <see cref="MediaTagType" /> that are supported by the media image format
         /// </summary>
-        List<MediaTagType> SupportedMediaTags { get; }
+        IEnumerable<MediaTagType> SupportedMediaTags { get; }
         /// <summary>
         ///     Gets a list of <see cref="SectorTagType" /> that are supported by the media image format
         /// </summary>
-        List<SectorTagType> SupportedSectorTags { get; }
+        IEnumerable<SectorTagType> SupportedSectorTags { get; }
         /// <summary>
         ///     Gets a list of <see cref="MediaType" /> that are supported by the media image format
         /// </summary>
-        List<MediaType> SupportedMediaTypes { get; }
+        IEnumerable<MediaType> SupportedMediaTypes { get; }
         /// <summary>
         ///     Retrieves a list of options supported by the filesystem, with name, type and description
         /// </summary>
@@ -61,8 +61,11 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     Gets a list of known extensions for format auto-chosing
         /// </summary>
-        List<string> KnownExtensions { get; }
+        IEnumerable<string> KnownExtensions { get; }
 
+        bool IsWriting { get; }
+        string ErrorMessage { get; }
+        
         /// <summary>
         ///     Creates a new image in the specified path, for the specified <see cref="MediaType" />, with the
         ///     specified options to hold a media with the specified number of sectors
