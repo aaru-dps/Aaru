@@ -92,7 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
-      <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
+      <Project>{ccaa7afe-c094-4d82-a66d-630de8a3f545}</Project>
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj">
