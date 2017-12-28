@@ -51,14 +51,15 @@ namespace DiscImageChef
             Statistics.LoadStats();
             if(Settings.Settings.Current.Stats.ShareStats) Statistics.SubmitStats();
 
-            Parser.Default.ParseArguments(args, typeof(AnalyzeOptions), typeof(CompareOptions), typeof(ChecksumOptions),
-                                          typeof(EntropyOptions), typeof(VerifyOptions), typeof(PrintHexOptions),
-                                          typeof(DecodeOptions), typeof(DeviceInfoOptions), typeof(MediaInfoOptions),
-                                          typeof(MediaScanOptions), typeof(FormatsOptions), typeof(BenchmarkOptions),
-                                          typeof(CreateSidecarOptions), typeof(DumpMediaOptions),
-                                          typeof(DeviceReportOptions), typeof(ConfigureOptions), typeof(StatsOptions),
-                                          typeof(LsOptions), typeof(ExtractFilesOptions), typeof(ListDevicesOptions),
-                                          typeof(ListEncodingsOptions), typeof(ListOptionsOptions))
+            Parser.Default.ParseArguments(args, typeof(AnalyzeOptions), typeof(BenchmarkOptions),
+                                          typeof(ChecksumOptions), typeof(CompareOptions), typeof(ConfigureOptions),
+                                          typeof(CreateSidecarOptions), typeof(DecodeOptions),
+                                          typeof(DeviceInfoOptions), typeof(DeviceReportOptions),
+                                          typeof(DumpMediaOptions), typeof(EntropyOptions), typeof(ExtractFilesOptions),
+                                          typeof(FormatsOptions), typeof(ListDevicesOptions),
+                                          typeof(ListEncodingsOptions), typeof(ListOptionsOptions), typeof(LsOptions),
+                                          typeof(MediaInfoOptions), typeof(MediaScanOptions), typeof(PrintHexOptions),
+                                          typeof(StatsOptions), typeof(VerifyOptions))
                   .WithParsed<AnalyzeOptions>(opts =>
                    {
                        if(opts.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
