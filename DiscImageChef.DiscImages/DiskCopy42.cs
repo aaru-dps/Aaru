@@ -795,8 +795,8 @@ namespace DiscImageChef.DiscImages
 
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors)
         {
-            header    = new Dc42Header();
-            bool tags = false;
+            header      = new Dc42Header();
+            bool tags   = false;
             bool macosx = false;
 
             if(options != null && options.TryGetValue("macosx", out string tmpOption))
@@ -920,6 +920,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            IsWriting    = true;
             ErrorMessage = null;
             return true;
         }
@@ -935,6 +936,12 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length != 512)
+            {
+                ErrorMessage = "Incorrect data size";
                 return false;
             }
 
@@ -959,19 +966,13 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(data.Length != 512)
-            {
-                ErrorMessage = "Incorrect data size";
-                return false;
-            }
-
             if(data.Length % 512 != 0)
             {
                 ErrorMessage = "Incorrect data size";
                 return false;
             }
 
-            if(sectorAddress + length >= sectorsToWrite)
+            if(sectorAddress + length > sectorsToWrite)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
@@ -1039,7 +1040,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length >= sectorsToWrite)
+            if(sectorAddress + length > sectorsToWrite)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
@@ -1072,6 +1073,9 @@ namespace DiscImageChef.DiscImages
                 ErrorMessage = "Image is not opened for writing";
                 return false;
             }
+
+            // No tags where written
+            if(writingStream.Length == 0x54 + header.DataSize) header.TagSize = 0;
 
             writingStream.Seek(0x54, SeekOrigin.Begin);
             byte[] data = new byte[header.DataSize];
