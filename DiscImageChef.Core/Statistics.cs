@@ -41,6 +41,7 @@ using DiscImageChef.Devices;
 using DiscImageChef.Interop;
 using DiscImageChef.Metadata;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using Version = DiscImageChef.Interop.Version;
 
 namespace DiscImageChef.Core
 {
@@ -69,7 +70,7 @@ namespace DiscImageChef.Core
         {
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
             {
-                AllStats = new Stats();
+                AllStats     = new Stats();
                 CurrentStats = new Stats
                 {
                     OperatingSystems =
@@ -77,21 +78,21 @@ namespace DiscImageChef.Core
                         {
                             new OsStats
                             {
-                                name = DetectOS.GetRealPlatformID().ToString(),
-                                Value = 1,
+                                name    = DetectOS.GetRealPlatformID().ToString(),
+                                Value   = 1,
                                 version = DetectOS.GetVersion()
                             }
                         },
                     Versions = new List<NameValueStats> {new NameValueStats {name = Version.GetVersion(), Value = 1}}
                 };
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
-                StreamReader sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
-                AllStats = (Stats)xs.Deserialize(sr);
+                StreamReader  sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
+                AllStats         = (Stats)xs.Deserialize(sr);
                 sr.Close();
             }
             else if(Settings.Settings.Current.Stats != null)
             {
-                AllStats = new Stats();
+                AllStats     = new Stats();
                 CurrentStats = new Stats
                 {
                     OperatingSystems =
@@ -99,8 +100,8 @@ namespace DiscImageChef.Core
                         {
                             new OsStats
                             {
-                                name = DetectOS.GetRealPlatformID().ToString(),
-                                Value = 1,
+                                name    = DetectOS.GetRealPlatformID().ToString(),
+                                Value   = 1,
                                 version = DetectOS.GetVersion()
                             }
                         },
@@ -109,7 +110,7 @@ namespace DiscImageChef.Core
             }
             else
             {
-                AllStats = null;
+                AllStats     = null;
                 CurrentStats = null;
             }
         }
@@ -126,12 +127,13 @@ namespace DiscImageChef.Core
                 long count = 0;
 
                 OsStats old = null;
-                foreach(OsStats nvs in
-                    AllStats.OperatingSystems.Where(nvs => nvs.name == DetectOS.GetRealPlatformID().ToString() &&
-                                                           nvs.version == DetectOS.GetVersion()))
+                foreach(OsStats nvs in AllStats.OperatingSystems.Where(nvs =>
+                                                                           nvs.name == DetectOS
+                                                                                      .GetRealPlatformID().ToString() &&
+                                                                           nvs.version == DetectOS.GetVersion()))
                 {
                     count = nvs.Value + 1;
-                    old = nvs;
+                    old   = nvs;
                     break;
                 }
 
@@ -140,12 +142,13 @@ namespace DiscImageChef.Core
                 count++;
                 AllStats.OperatingSystems.Add(new OsStats
                 {
-                    name = DetectOS.GetRealPlatformID().ToString(),
-                    Value = count,
+                    name    = DetectOS.GetRealPlatformID().ToString(),
+                    Value   = count,
                     version = DetectOS.GetVersion()
                 });
             }
-            else if(CurrentStats != null) AllStats.OperatingSystems = CurrentStats.OperatingSystems;
+            else if(CurrentStats != null)
+                AllStats.OperatingSystems = CurrentStats.OperatingSystems;
 
             if(AllStats.Versions != null)
             {
@@ -155,7 +158,7 @@ namespace DiscImageChef.Core
                 foreach(NameValueStats nvs in AllStats.Versions.Where(nvs => nvs.name == Version.GetVersion()))
                 {
                     count = nvs.Value + 1;
-                    old = nvs;
+                    old   = nvs;
                     break;
                 }
 
@@ -164,7 +167,8 @@ namespace DiscImageChef.Core
                 count++;
                 AllStats.Versions.Add(new NameValueStats {name = Version.GetVersion(), Value = count});
             }
-            else if(CurrentStats != null) AllStats.Versions = CurrentStats.Versions;
+            else if(CurrentStats != null)
+                AllStats.Versions = CurrentStats.Versions;
 
             FileStream fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"),
                                            FileMode.Create);
@@ -208,31 +212,32 @@ namespace DiscImageChef.Core
                         Stats stats = new Stats();
 
                         // This can execute before debug console has been inited
-#if DEBUG
+                        #if DEBUG
                         System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
-#else
+                        #else
                     DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
-#endif
+                        #endif
 
-                        FileStream fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
+                        FileStream    fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
                         XmlSerializer xs = new XmlSerializer(stats.GetType());
                         xs.Deserialize(fs); // Just to test validity of stats file
                         fs.Seek(0, SeekOrigin.Begin);
 
-                        WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
+                        WebRequest request =
+                            WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
                         ((HttpWebRequest)request).UserAgent =
                             $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
-                        request.Method = "POST";
+                        request.Method        = "POST";
                         request.ContentLength = fs.Length;
-                        request.ContentType = "application/xml";
-                        Stream reqStream = request.GetRequestStream();
+                        request.ContentType   = "application/xml";
+                        Stream reqStream      = request.GetRequestStream();
                         fs.CopyTo(reqStream);
                         reqStream.Close();
                         WebResponse response = request.GetResponse();
 
                         if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
 
-                        Stream data = response.GetResponseStream();
+                        Stream       data   = response.GetResponseStream();
                         StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
 
                         string responseFromServer = reader.ReadToEnd();
@@ -248,12 +253,12 @@ namespace DiscImageChef.Core
                     }
                     catch
                     {
-#if DEBUG
+                        #if DEBUG
                         submitStatsLock = false;
                         throw;
-#else
+                        #else
                         continue;
-#endif
+                        #endif
                     }
 
                 submitStatsLock = false;
@@ -366,7 +371,7 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilesystemStats) return;
 
-            if(AllStats.Filesystems == null) AllStats.Filesystems = new List<NameValueStats>();
+            if(AllStats.Filesystems     == null) AllStats.Filesystems     = new List<NameValueStats>();
             if(CurrentStats.Filesystems == null) CurrentStats.Filesystems = new List<NameValueStats>();
 
             NameValueStats old = AllStats.Filesystems.FirstOrDefault(nvs => nvs.name == filesystem);
@@ -374,15 +379,16 @@ namespace DiscImageChef.Core
             NameValueStats nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 AllStats.Filesystems.Remove(old);
             }
             else
             {
-                nw.name = filesystem;
+                nw.name  = filesystem;
                 nw.Value = 1;
             }
+
             AllStats.Filesystems.Add(nw);
 
             old = CurrentStats.Filesystems.FirstOrDefault(nvs => nvs.name == filesystem);
@@ -390,15 +396,16 @@ namespace DiscImageChef.Core
             nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 CurrentStats.Filesystems.Remove(old);
             }
             else
             {
-                nw.name = filesystem;
+                nw.name  = filesystem;
                 nw.Value = 1;
             }
+
             CurrentStats.Filesystems.Add(nw);
         }
 
@@ -410,7 +417,7 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.PartitionStats) return;
 
-            if(AllStats.Partitions == null) AllStats.Partitions = new List<NameValueStats>();
+            if(AllStats.Partitions     == null) AllStats.Partitions     = new List<NameValueStats>();
             if(CurrentStats.Partitions == null) CurrentStats.Partitions = new List<NameValueStats>();
 
             NameValueStats old = AllStats.Partitions.FirstOrDefault(nvs => nvs.name == partition);
@@ -418,15 +425,16 @@ namespace DiscImageChef.Core
             NameValueStats nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 AllStats.Partitions.Remove(old);
             }
             else
             {
-                nw.name = partition;
+                nw.name  = partition;
                 nw.Value = 1;
             }
+
             AllStats.Partitions.Add(nw);
 
             old = CurrentStats.Partitions.FirstOrDefault(nvs => nvs.name == partition);
@@ -434,15 +442,16 @@ namespace DiscImageChef.Core
             nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 CurrentStats.Partitions.Remove(old);
             }
             else
             {
-                nw.name = partition;
+                nw.name  = partition;
                 nw.Value = 1;
             }
+
             CurrentStats.Partitions.Add(nw);
         }
 
@@ -454,7 +463,7 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilterStats) return;
 
-            if(AllStats.Filters == null) AllStats.Filters = new List<NameValueStats>();
+            if(AllStats.Filters     == null) AllStats.Filters     = new List<NameValueStats>();
             if(CurrentStats.Filters == null) CurrentStats.Filters = new List<NameValueStats>();
 
             NameValueStats old = AllStats.Filters.FirstOrDefault(nvs => nvs.name == format);
@@ -462,15 +471,16 @@ namespace DiscImageChef.Core
             NameValueStats nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 AllStats.Filters.Remove(old);
             }
             else
             {
-                nw.name = format;
+                nw.name  = format;
                 nw.Value = 1;
             }
+
             AllStats.Filters.Add(nw);
 
             old = CurrentStats.Filters.FirstOrDefault(nvs => nvs.name == format);
@@ -478,15 +488,16 @@ namespace DiscImageChef.Core
             nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 CurrentStats.Filters.Remove(old);
             }
             else
             {
-                nw.name = format;
+                nw.name  = format;
                 nw.Value = 1;
             }
+
             CurrentStats.Filters.Add(nw);
         }
 
@@ -498,7 +509,7 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaImageStats) return;
 
-            if(AllStats.MediaImages == null) AllStats.MediaImages = new List<NameValueStats>();
+            if(AllStats.MediaImages     == null) AllStats.MediaImages     = new List<NameValueStats>();
             if(CurrentStats.MediaImages == null) CurrentStats.MediaImages = new List<NameValueStats>();
 
             NameValueStats old = AllStats.MediaImages.FirstOrDefault(nvs => nvs.name == format);
@@ -506,15 +517,16 @@ namespace DiscImageChef.Core
             NameValueStats nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 AllStats.MediaImages.Remove(old);
             }
             else
             {
-                nw.name = format;
+                nw.name  = format;
                 nw.Value = 1;
             }
+
             AllStats.MediaImages.Add(nw);
 
             old = CurrentStats.MediaImages.FirstOrDefault(nvs => nvs.name == format);
@@ -522,15 +534,16 @@ namespace DiscImageChef.Core
             nw = new NameValueStats();
             if(old != null)
             {
-                nw.name = old.name;
+                nw.name  = old.name;
                 nw.Value = old.Value + 1;
                 CurrentStats.MediaImages.Remove(old);
             }
             else
             {
-                nw.name = format;
+                nw.name  = format;
                 nw.Value = 1;
             }
+
             CurrentStats.MediaImages.Add(nw);
         }
 
@@ -542,42 +555,46 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
 
-            if(AllStats.Devices == null) AllStats.Devices = new List<DeviceStats>();
+            if(AllStats.Devices     == null) AllStats.Devices     = new List<DeviceStats>();
             if(CurrentStats.Devices == null) CurrentStats.Devices = new List<DeviceStats>();
 
             string deviceBus;
             if(dev.IsUsb) deviceBus = "USB";
-            else if(dev.IsFireWire) deviceBus = "FireWire";
-            else deviceBus = dev.Type.ToString();
+            else if(dev.IsFireWire)
+                deviceBus = "FireWire";
+            else
+                deviceBus = dev.Type.ToString();
 
             DeviceStats old = AllStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer &&
-                                                                    ds.Model == dev.Model &&
-                                                                    ds.Revision == dev.Revision && ds.Bus == deviceBus);
+                                                                    ds.Model        == dev.Model        &&
+                                                                    ds.Revision     == dev.Revision     &&
+                                                                    ds.Bus          == deviceBus);
 
             if(old != null) AllStats.Devices.Remove(old);
 
             DeviceStats nw = new DeviceStats
             {
-                Model = dev.Model,
-                Manufacturer = dev.Manufacturer,
-                Revision = dev.Revision,
-                Bus = deviceBus,
+                Model                 = dev.Model,
+                Manufacturer          = dev.Manufacturer,
+                Revision              = dev.Revision,
+                Bus                   = deviceBus,
                 ManufacturerSpecified = true
             };
             AllStats.Devices.Add(nw);
 
             old = CurrentStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer &&
-                                                            ds.Model == dev.Model && ds.Revision == dev.Revision &&
-                                                            ds.Bus == deviceBus);
+                                                            ds.Model        == dev.Model        &&
+                                                            ds.Revision     == dev.Revision     &&
+                                                            ds.Bus          == deviceBus);
 
             if(old != null) CurrentStats.Devices.Remove(old);
 
             nw = new DeviceStats
             {
-                Model = dev.Model,
-                Manufacturer = dev.Manufacturer,
-                Revision = dev.Revision,
-                Bus = deviceBus,
+                Model                 = dev.Model,
+                Manufacturer          = dev.Manufacturer,
+                Revision              = dev.Revision,
+                Bus                   = deviceBus,
                 ManufacturerSpecified = true
             };
             CurrentStats.Devices.Add(nw);
@@ -592,7 +609,7 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaStats) return;
 
-            if(AllStats.Medias == null) AllStats.Medias = new List<MediaStats>();
+            if(AllStats.Medias     == null) AllStats.Medias     = new List<MediaStats>();
             if(CurrentStats.Medias == null) CurrentStats.Medias = new List<MediaStats>();
 
             MediaStats old = AllStats.Medias.FirstOrDefault(ms => ms.real == real && ms.type == type.ToString());
@@ -600,17 +617,18 @@ namespace DiscImageChef.Core
             MediaStats nw = new MediaStats();
             if(old != null)
             {
-                nw.type = old.type;
-                nw.real = old.real;
+                nw.type  = old.type;
+                nw.real  = old.real;
                 nw.Value = old.Value + 1;
                 AllStats.Medias.Remove(old);
             }
             else
             {
-                nw.type = type.ToString();
-                nw.real = real;
+                nw.type  = type.ToString();
+                nw.real  = real;
                 nw.Value = 1;
             }
+
             AllStats.Medias.Add(nw);
 
             old = CurrentStats.Medias.FirstOrDefault(ms => ms.real == real && ms.type == type.ToString());
@@ -618,17 +636,18 @@ namespace DiscImageChef.Core
             nw = new MediaStats();
             if(old != null)
             {
-                nw.type = old.type;
-                nw.real = old.real;
+                nw.type  = old.type;
+                nw.real  = old.real;
                 nw.Value = old.Value + 1;
                 CurrentStats.Medias.Remove(old);
             }
             else
             {
-                nw.type = type.ToString();
-                nw.real = real;
+                nw.type  = type.ToString();
+                nw.real  = real;
                 nw.Value = 1;
             }
+
             CurrentStats.Medias.Add(nw);
         }
 
@@ -642,33 +661,33 @@ namespace DiscImageChef.Core
         /// <param name="maxMemory">Maximum used memory</param>
         /// <param name="minMemory">Minimum used memory</param>
         public static void AddBenchmark(Dictionary<string, double> checksums, double entropy, double all,
-                                        double sequential, long maxMemory, long minMemory)
+                                        double                     sequential, long  maxMemory, long minMemory)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.BenchmarkStats) return;
 
             CurrentStats.Benchmark = new BenchmarkStats {Checksum = new List<ChecksumStats>()};
-            AllStats.Benchmark = new BenchmarkStats {Checksum = new List<ChecksumStats>()};
+            AllStats.Benchmark     = new BenchmarkStats {Checksum = new List<ChecksumStats>()};
 
             foreach(ChecksumStats st in checksums.Select(kvp => new ChecksumStats
             {
                 algorithm = kvp.Key,
-                Value = kvp.Value
+                Value     = kvp.Value
             }))
             {
                 CurrentStats.Benchmark.Checksum.Add(st);
                 AllStats.Benchmark.Checksum.Add(st);
             }
 
-            CurrentStats.Benchmark.All = all;
-            CurrentStats.Benchmark.Entropy = entropy;
-            CurrentStats.Benchmark.MaxMemory = maxMemory;
-            CurrentStats.Benchmark.MinMemory = minMemory;
+            CurrentStats.Benchmark.All        = all;
+            CurrentStats.Benchmark.Entropy    = entropy;
+            CurrentStats.Benchmark.MaxMemory  = maxMemory;
+            CurrentStats.Benchmark.MinMemory  = minMemory;
             CurrentStats.Benchmark.Sequential = sequential;
 
-            AllStats.Benchmark.All = all;
-            AllStats.Benchmark.Entropy = entropy;
-            AllStats.Benchmark.MaxMemory = maxMemory;
-            AllStats.Benchmark.MinMemory = minMemory;
+            AllStats.Benchmark.All        = all;
+            AllStats.Benchmark.Entropy    = entropy;
+            AllStats.Benchmark.MaxMemory  = maxMemory;
+            AllStats.Benchmark.MinMemory  = minMemory;
             AllStats.Benchmark.Sequential = sequential;
         }
 
@@ -685,7 +704,7 @@ namespace DiscImageChef.Core
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.VerifyStats) return;
 
             if(CurrentStats.Verify == null)
-                CurrentStats.Verify =
+                CurrentStats.Verify              =
                     new VerifyStats {MediaImages = new VerifiedItems(), Sectors = new ScannedSectors()};
 
             if(AllStats.Verify == null)
@@ -703,15 +722,15 @@ namespace DiscImageChef.Core
                     AllStats.Verify.MediaImages.Failed++;
                 }
 
-            CurrentStats.Verify.Sectors.Correct += correct;
-            CurrentStats.Verify.Sectors.Error += failed;
+            CurrentStats.Verify.Sectors.Correct      += correct;
+            CurrentStats.Verify.Sectors.Error        += failed;
             CurrentStats.Verify.Sectors.Unverifiable += unknown;
-            CurrentStats.Verify.Sectors.Total += total;
+            CurrentStats.Verify.Sectors.Total        += total;
 
-            AllStats.Verify.Sectors.Correct += correct;
-            AllStats.Verify.Sectors.Error += failed;
+            AllStats.Verify.Sectors.Correct      += correct;
+            AllStats.Verify.Sectors.Error        += failed;
             AllStats.Verify.Sectors.Unverifiable += unknown;
-            AllStats.Verify.Sectors.Total += total;
+            AllStats.Verify.Sectors.Total        += total;
         }
 
         /// <summary>
@@ -726,8 +745,9 @@ namespace DiscImageChef.Core
         /// <param name="total">Total sectors</param>
         /// <param name="error">Errored sectors</param>
         /// <param name="correct">Correct sectors</param>
-        public static void AddMediaScan(long lessThan3ms, long lessThan10ms, long lessThan50ms, long lessThan150ms,
-                                        long lessThan500ms, long moreThan500ms, long total, long error, long correct)
+        public static void AddMediaScan(long lessThan3ms, long   lessThan10ms, long  lessThan50ms, long lessThan150ms,
+                                        long lessThan500ms, long moreThan500ms, long total, long        error,
+                                        long correct)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaScanStats) return;
 
@@ -737,22 +757,22 @@ namespace DiscImageChef.Core
             if(AllStats.MediaScan == null)
                 AllStats.MediaScan = new MediaScanStats {Sectors = new ScannedSectors(), Times = new TimeStats()};
 
-            CurrentStats.MediaScan.Sectors.Correct += correct;
-            CurrentStats.MediaScan.Sectors.Error += error;
-            CurrentStats.MediaScan.Sectors.Total += total;
-            CurrentStats.MediaScan.Times.LessThan3ms += lessThan3ms;
-            CurrentStats.MediaScan.Times.LessThan10ms += lessThan10ms;
-            CurrentStats.MediaScan.Times.LessThan50ms += lessThan50ms;
+            CurrentStats.MediaScan.Sectors.Correct     += correct;
+            CurrentStats.MediaScan.Sectors.Error       += error;
+            CurrentStats.MediaScan.Sectors.Total       += total;
+            CurrentStats.MediaScan.Times.LessThan3ms   += lessThan3ms;
+            CurrentStats.MediaScan.Times.LessThan10ms  += lessThan10ms;
+            CurrentStats.MediaScan.Times.LessThan50ms  += lessThan50ms;
             CurrentStats.MediaScan.Times.LessThan150ms += lessThan150ms;
             CurrentStats.MediaScan.Times.LessThan500ms += lessThan500ms;
             CurrentStats.MediaScan.Times.MoreThan500ms += moreThan500ms;
 
-            AllStats.MediaScan.Sectors.Correct += correct;
-            AllStats.MediaScan.Sectors.Error += error;
-            AllStats.MediaScan.Sectors.Total += total;
-            AllStats.MediaScan.Times.LessThan3ms += lessThan3ms;
-            AllStats.MediaScan.Times.LessThan10ms += lessThan10ms;
-            AllStats.MediaScan.Times.LessThan50ms += lessThan50ms;
+            AllStats.MediaScan.Sectors.Correct     += correct;
+            AllStats.MediaScan.Sectors.Error       += error;
+            AllStats.MediaScan.Sectors.Total       += total;
+            AllStats.MediaScan.Times.LessThan3ms   += lessThan3ms;
+            AllStats.MediaScan.Times.LessThan10ms  += lessThan10ms;
+            AllStats.MediaScan.Times.LessThan50ms  += lessThan50ms;
             AllStats.MediaScan.Times.LessThan150ms += lessThan150ms;
             AllStats.MediaScan.Times.LessThan500ms += lessThan500ms;
             AllStats.MediaScan.Times.MoreThan500ms += moreThan500ms;

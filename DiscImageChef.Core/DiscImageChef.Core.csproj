@@ -70,7 +70,6 @@
     <Compile Include="Devices\Reader.cs" />
     <Compile Include="Devices\ReaderATA.cs" />
     <Compile Include="Devices\ReaderSCSI.cs" />
-    <Compile Include="Version.cs" />
     <Compile Include="Devices\Dumping\SSC.cs" />
     <Compile Include="Devices\Dumping\MMC.cs" />
     <Compile Include="Devices\Dumping\CompactDisc.cs" />

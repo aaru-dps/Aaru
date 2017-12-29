@@ -36,6 +36,7 @@ using DiscImageChef.Metadata;
 using Extents;
 using Schemas;
 using PlatformID = DiscImageChef.Interop.PlatformID;
+using Version = DiscImageChef.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -62,9 +63,11 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     If the provided resume does not correspond with the current in
         ///     progress dump
         /// </exception>
-        internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
-                                     string serial, PlatformID platform, ref Resume resume,
-                                     ref DumpHardwareType currentTry, ref ExtentsULong extents)
+        internal static void Process(bool   isLba, bool          removable, ulong blocks,
+                                     string manufacturer, string model,
+                                     string serial, PlatformID   platform, ref Resume           resume,
+                                     ref                                       DumpHardwareType currentTry,
+                                     ref                                       ExtentsULong     extents)
         {
             if(resume != null)
             {
@@ -98,15 +101,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(oldtry.Software == null)
                         throw new InvalidOperationException("Found corrupt resume file, cannot continue...");
 
-                    if(oldtry.Software.Name != "DiscImageChef" ||
+                    if(oldtry.Software.Name            != "DiscImageChef"     ||
                        oldtry.Software.OperatingSystem != platform.ToString() ||
-                       oldtry.Software.Version != Version.GetVersion()) continue;
+                       oldtry.Software.Version         != Version.GetVersion()) continue;
 
                     if(removable && (oldtry.Manufacturer != manufacturer || oldtry.Model != model ||
-                                     oldtry.Serial != serial)) continue;
+                                     oldtry.Serial       != serial)) continue;
 
                     currentTry = oldtry;
-                    extents = ExtentsConverter.FromMetadata(currentTry.Extents);
+                    extents    = ExtentsConverter.FromMetadata(currentTry.Extents);
                     break;
                 }
 
@@ -114,10 +117,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 currentTry = new DumpHardwareType
                 {
-                    Software = Version.GetSoftwareType(platform),
+                    Software     = Version.GetSoftwareType(platform),
                     Manufacturer = manufacturer,
-                    Model = model,
-                    Serial = serial
+                    Model        = model,
+                    Serial       = serial
                 };
                 resume.Tries.Add(currentTry);
                 extents = new ExtentsULong();
@@ -126,20 +129,20 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 resume = new Resume
                 {
-                    Tries = new List<DumpHardwareType>(),
+                    Tries        = new List<DumpHardwareType>(),
                     CreationDate = DateTime.UtcNow,
-                    BadBlocks = new List<ulong>(),
-                    LastBlock = blocks - 1
+                    BadBlocks    = new List<ulong>(),
+                    LastBlock    = blocks - 1
                 };
                 currentTry = new DumpHardwareType
                 {
-                    Software = Version.GetSoftwareType(platform),
+                    Software     = Version.GetSoftwareType(platform),
                     Manufacturer = manufacturer,
-                    Model = model,
-                    Serial = serial
+                    Model        = model,
+                    Serial       = serial
                 };
                 resume.Tries.Add(currentTry);
-                extents = new ExtentsULong();
+                extents          = new ExtentsULong();
                 resume.Removable = removable;
             }
         }
