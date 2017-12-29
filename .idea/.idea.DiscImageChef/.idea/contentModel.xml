@@ -679,6 +679,7 @@
         </e>
         <e p="Resume.cs" t="Include" />
         <e p="Statistics.cs" t="Include" />
+        <e p="Version.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
       </e>

@@ -117,7 +117,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 currentTry = new DumpHardwareType
                 {
-                    Software     = Version.GetSoftwareType(platform),
+                    Software     = Metadata.Version.GetSoftwareType(platform),
                     Manufacturer = manufacturer,
                     Model        = model,
                     Serial       = serial
@@ -136,7 +136,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 };
                 currentTry = new DumpHardwareType
                 {
-                    Software     = Version.GetSoftwareType(platform),
+                    Software     = Metadata.Version.GetSoftwareType(platform),
                     Manufacturer = manufacturer,
                     Model        = model,
                     Serial       = serial

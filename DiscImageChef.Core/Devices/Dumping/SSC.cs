@@ -43,7 +43,7 @@ using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Version = DiscImageChef.Interop.Version;
+using Version = DiscImageChef.Metadata.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {

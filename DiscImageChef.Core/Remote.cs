@@ -36,6 +36,7 @@ using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.Metadata;
+using Version = DiscImageChef.Interop.Version;
 
 namespace DiscImageChef.Core
 {
@@ -54,29 +55,30 @@ namespace DiscImageChef.Core
             {
                 try
                 {
-#if DEBUG
+                    #if DEBUG
                     System.Console.WriteLine("Uploading device report");
-#else
+                    #else
                     DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
-#endif
+                    #endif
 
-                    MemoryStream xmlStream = new MemoryStream();
-                    XmlSerializer xmlSer = new XmlSerializer(typeof(DeviceReport));
+                    MemoryStream  xmlStream = new MemoryStream();
+                    XmlSerializer xmlSer    = new XmlSerializer(typeof(DeviceReport));
                     xmlSer.Serialize(xmlStream, report);
                     xmlStream.Seek(0, SeekOrigin.Begin);
-                    WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreport");
+                    WebRequest request =
+                        WebRequest.Create("http://discimagechef.claunia.com/api/uploadreport");
                     ((HttpWebRequest)request).UserAgent = $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
-                    request.Method = "POST";
-                    request.ContentLength = xmlStream.Length;
-                    request.ContentType = "application/xml";
-                    Stream reqStream = request.GetRequestStream();
+                    request.Method                      = "POST";
+                    request.ContentLength               = xmlStream.Length;
+                    request.ContentType                 = "application/xml";
+                    Stream reqStream                    = request.GetRequestStream();
                     xmlStream.CopyTo(reqStream);
                     reqStream.Close();
                     WebResponse response = request.GetResponse();
 
                     if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
 
-                    Stream data = response.GetResponseStream();
+                    Stream       data   = response.GetResponseStream();
                     StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
 
                     reader.ReadToEnd();
@@ -91,9 +93,9 @@ namespace DiscImageChef.Core
                 // ReSharper disable once RedundantCatchClause
                 catch
                 {
-#if DEBUG
+                    #if DEBUG
                     throw;
-#endif
+                    #endif
                 }
             });
             submitThread.Start();

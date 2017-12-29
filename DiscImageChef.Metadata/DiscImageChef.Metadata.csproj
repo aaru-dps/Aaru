@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,6 +45,7 @@
     <Compile Include="Statistics.cs" />
     <Compile Include="Resume.cs" />
     <Compile Include="ExtentsConverter.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -59,6 +60,10 @@
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
+      <Project>{9183f2e0-a879-4f23-9ee3-c6908f1332b2}</Project>
+      <Name>DiscImageChef.Interop</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

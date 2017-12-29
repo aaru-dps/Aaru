@@ -44,12 +44,6 @@
       <Link>LICENSE.MIT</Link>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Metadata\DiscImageChef.Metadata.csproj">
-      <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
-      <Name>DiscImageChef.Metadata</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
