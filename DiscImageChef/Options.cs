@@ -375,5 +375,42 @@ namespace DiscImageChef
             HelpText                  =
                 "Continue conversion even if sector or media tags will be lost in the process.")]
         public bool Force { get; set; }
+
+        [Option("creator", Default = null, HelpText = "Who (person) created the image?")]
+        public string Creator { get; set; }
+        [Option("media-title", Default = null, HelpText = "Title of the media represented by the image")]
+        public string MediaTitle { get; set; }
+        [Option("comments", Default = null, HelpText = "Image comments")]
+        public string Comments { get; set; }
+        [Option("media-manufacturer", Default = null, HelpText = "Manufacturer of the media represented by the image")]
+        public string MediaManufacturer { get; set; }
+        [Option("media-model", Default = null, HelpText = "Model of the media represented by the image")]
+        public string MediaModel { get; set; }
+        [Option("media-serial", Default = null, HelpText = "Serial number of the media represented by the image")]
+        public string MediaSerialNumber { get; set; }
+        [Option("media-barcode", Default = null, HelpText = "Barcode of the media represented by the image")]
+        public string MediaBarcode { get; set; }
+        [Option("media-partnumber", Default = null, HelpText = "Part number of the media represented by the image")]
+        public string MediaPartNumber { get; set; }
+        [Option("media-sequence", Default = 0, HelpText = "Number in sequence for the media represented by the image")]
+        public int MediaSequence { get; set; }
+        [Option("media-lastsequence", Default = 0,
+            HelpText                          =
+                "Last media of the sequence the media represented by the image corresponds to")]
+        public int LastMediaSequence { get; set; }
+        [Option("drive-manufacturer", Default = null,
+            HelpText                          =
+                "Manufacturer of the drive used to read the media represented by the image")]
+        public string DriveManufacturer { get; set; }
+        [Option("drive-model", Default = null,
+            HelpText                   = "Model of the drive used to read the media represented by the image")]
+        public string DriveModel { get; set; }
+        [Option("drive-serial", Default = null,
+            HelpText                    = "Serial number of the drive used to read the media represented by the image")]
+        public string DriveSerialNumber { get; set; }
+        [Option("drive-revision", Default = null,
+            HelpText                      =
+                "Firmware revision of the drive used to read the media represented by the image")]
+        public string DriveFirmwareRevision { get; set; }
     }
 }

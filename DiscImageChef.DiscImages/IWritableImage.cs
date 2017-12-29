@@ -133,5 +133,12 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool Close();
+
+        /// <summary>
+        ///     Sets image metadata
+        /// </summary>
+        /// <param name="metadata"><see cref="ImageInfo"/> containing image metadata</param>
+        /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
+        bool SetMetadata(ImageInfo metadata);
     }
 }

@@ -1109,6 +1109,13 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
+        public bool SetMetadata(ImageInfo metadata)
+        {
+            header.DiskName = metadata.MediaTitle ?? "-DiscImageChef converted image-";
+
+            return true;
+        }
+
         static uint DC42CheckSum(byte[] buffer)
         {
             uint dc42Chk = 0;

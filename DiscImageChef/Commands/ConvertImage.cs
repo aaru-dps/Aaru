@@ -45,13 +45,27 @@ namespace DiscImageChef.Commands
     {
         public static void DoConvert(ConvertImageOptions options)
         {
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",   options.Debug);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}",   options.InputFile);
-            DicConsole.DebugWriteLine("Analyze command", "--output={0}",  options.OutputFile);
-            DicConsole.DebugWriteLine("Analyze command", "--format={0}",  options.OutputFormat);
-            DicConsole.DebugWriteLine("Analyze command", "--count={0}",   options.Count);
-            DicConsole.DebugWriteLine("Analyze command", "--force={0}",   options.Force);
+            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",              options.Debug);
+            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}",            options.Verbose);
+            DicConsole.DebugWriteLine("Analyze command", "--input={0}",              options.InputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--output={0}",             options.OutputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--format={0}",             options.OutputFormat);
+            DicConsole.DebugWriteLine("Analyze command", "--count={0}",              options.Count);
+            DicConsole.DebugWriteLine("Analyze command", "--force={0}",              options.Force);
+            DicConsole.DebugWriteLine("Analyze command", "--creator={0}",            options.Creator);
+            DicConsole.DebugWriteLine("Analyze command", "--media-title={0}",        options.MediaTitle);
+            DicConsole.DebugWriteLine("Analyze command", "--comments={0}",           options.Comments);
+            DicConsole.DebugWriteLine("Analyze command", "--media-manufacturer={0}", options.MediaManufacturer);
+            DicConsole.DebugWriteLine("Analyze command", "--media-model={0}",        options.MediaModel);
+            DicConsole.DebugWriteLine("Analyze command", "--media-serial={0}",       options.MediaSerialNumber);
+            DicConsole.DebugWriteLine("Analyze command", "--media-barcode={0}",      options.MediaBarcode);
+            DicConsole.DebugWriteLine("Analyze command", "--media-partnumber={0}",   options.MediaPartNumber);
+            DicConsole.DebugWriteLine("Analyze command", "--media-sequence={0}",     options.MediaSequence);
+            DicConsole.DebugWriteLine("Analyze command", "--media-lastsequence={0}", options.LastMediaSequence);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-manufacturer={0}", options.DriveManufacturer);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-model={0}",        options.DriveModel);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-serial={0}",       options.DriveSerialNumber);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-revision={0}",     options.DriveFirmwareRevision);
 
             if(options.Count == 0)
             {
@@ -141,15 +155,15 @@ namespace DiscImageChef.Commands
 
             IWritableImage outputFormat = candidates[0];
 
+            if(options.Verbose)
+                DicConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
+            else DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
+
             if(!outputFormat.SupportedMediaTypes.Contains(inputFormat.Info.MediaType))
             {
                 DicConsole.ErrorWriteLine("Output format does not support media type, cannot continue...");
                 return;
             }
-
-            if(options.Verbose)
-                DicConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
-            else DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
@@ -182,6 +196,38 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
                 return;
+            }
+
+            ImageInfo metadata = new ImageInfo
+            {
+                Application           = "DiscImageChef",
+                ApplicationVersion    = "", // TODO
+                Comments              = options.Comments,
+                Creator               = options.Creator,
+                DriveFirmwareRevision = options.DriveFirmwareRevision,
+                DriveManufacturer     = options.DriveManufacturer,
+                DriveModel            = options.DriveModel,
+                DriveSerialNumber     = options.DriveSerialNumber,
+                LastMediaSequence     = options.LastMediaSequence,
+                MediaBarcode          = options.MediaBarcode,
+                MediaManufacturer     = options.MediaManufacturer,
+                MediaModel            = options.MediaModel,
+                MediaPartNumber       = options.MediaPartNumber,
+                MediaSequence         = options.MediaSequence,
+                MediaSerialNumber     = options.MediaSerialNumber,
+                MediaTitle            = options.MediaTitle
+            };
+
+            if(!outputFormat.SetMetadata(metadata))
+            {
+                DicConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
+                if(!options.Force)
+                {
+                    DicConsole.ErrorWriteLine("not continuing...");
+                    return;
+                }
+
+                DicConsole.ErrorWriteLine("continuing...");
             }
 
             List<Track> tracks;
