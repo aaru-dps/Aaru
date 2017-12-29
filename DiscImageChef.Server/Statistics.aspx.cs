@@ -136,6 +136,7 @@ namespace DiscImageChef.Server
                     lblExtractFiles.Text = statistics.Commands.ExtractFiles.ToString();
                     lblListDevices.Text = statistics.Commands.ListDevices.ToString();
                     lblListEncodings.Text = statistics.Commands.ListEncodings.ToString();
+                    lblConvertImage.Text = statistics.Commands.ConvertImage.ToString();
                 }
                 else divCommands.Visible = false;
 

@@ -53,8 +53,8 @@ namespace DiscImageChef
 
             Parser.Default.ParseArguments(args, typeof(AnalyzeOptions), typeof(BenchmarkOptions),
                                           typeof(ChecksumOptions), typeof(CompareOptions), typeof(ConfigureOptions),
-                                          typeof(CreateSidecarOptions), typeof(DecodeOptions),
-                                          typeof(DeviceInfoOptions), typeof(DeviceReportOptions),
+                                          typeof(ConvertImageOptions), typeof(CreateSidecarOptions),
+                                          typeof(DecodeOptions), typeof(DeviceInfoOptions), typeof(DeviceReportOptions),
                                           typeof(DumpMediaOptions), typeof(EntropyOptions), typeof(ExtractFilesOptions),
                                           typeof(FormatsOptions), typeof(ListDevicesOptions),
                                           typeof(ListEncodingsOptions), typeof(ListOptionsOptions), typeof(LsOptions),
@@ -180,6 +180,12 @@ namespace DiscImageChef
                        if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                        PrintCopyright();
                        ListOptions.DoList();
+                   }).WithParsed<ConvertImageOptions>(opts =>
+                   {
+                       if(opts.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                       PrintCopyright();
+                       ConvertImage.DoConvert(opts);
                    }).WithParsed<ConfigureOptions>(opts =>
                    {
                        PrintCopyright();

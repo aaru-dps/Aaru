@@ -351,6 +351,10 @@ namespace DiscImageChef.Core
                     AllStats.Commands.ListEncodings++;
                     CurrentStats.Commands.ListEncodings++;
                     break;
+                case "convert-image":
+                    AllStats.Commands.ConvertImage++;
+                    CurrentStats.Commands.ConvertImage++;
+                    break;
             }
         }
 

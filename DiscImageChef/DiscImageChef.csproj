@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ConvertImage.cs" />
     <Compile Include="Commands\ListOptions.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />

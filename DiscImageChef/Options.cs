@@ -353,4 +353,27 @@ namespace DiscImageChef
 
     [Verb("list-options", HelpText = "Lists all options supported by read-only filesystems and writable media images.")]
     public class ListOptionsOptions : CommonOptions { }
+
+    [Verb("convert-image", HelpText = "Converts one image to another format.")]
+    public class ConvertImageOptions : CommonOptions
+    {
+        [Option('i', "input", Required = true, HelpText = "Input image.")]
+        public string InputFile { get; set; }
+
+        [Option('o', "output", Required = true, HelpText = "Output image.")]
+        public string OutputFile { get; set; }
+
+        [Option('p', "format", Default = null,
+            HelpText                   =
+                "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")]
+        public string OutputFormat { get; set; }
+
+        [Option('c', "count", Default = 64, HelpText = "How many sectors to convert at once.")]
+        public int Count { get; set; }
+
+        [Option('f', "force", Default = false,
+            HelpText                  =
+                "Continue conversion even if sector or media tags will be lost in the process.")]
+        public bool Force { get; set; }
+    }
 }

@@ -22,6 +22,7 @@
           <e p="Commands.cs" t="Include" />
           <e p="Compare.cs" t="Include" />
           <e p="Configure.cs" t="Include" />
+          <e p="ConvertImage.cs" t="Include" />
           <e p="CreateSidecar.cs" t="Include" />
           <e p="Decode.cs" t="Include" />
           <e p="DeviceInfo.cs" t="Include" />

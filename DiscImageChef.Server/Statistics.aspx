@@ -97,6 +97,7 @@
         <i>benchmark</i> command has been run <asp:Label id="lblBenchmark" runat="server"/> times<br/>
         <i>checksum</i> command has been run <asp:Label id="lblChecksum" runat="server"/> times<br/>
         <i>compare</i> command has been run <asp:Label id="lblCompare" runat="server"/> times<br/>
+        <i>convert-image</i> command has been run <asp:Label id="lblConvertImage" runat="server"/> times<br/>
         <i>create-sidecar</i> command has been run <asp:Label id="lblCreateSidecar" runat="server"/> times<br/>
         <i>decode</i> command has been run <asp:Label id="lblDecode" runat="server"/> times<br/>
         <i>device-info</i> command has been run <asp:Label id="lblDeviceInfo" runat="server"/> times<br/>

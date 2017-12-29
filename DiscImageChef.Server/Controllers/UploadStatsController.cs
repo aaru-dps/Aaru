@@ -109,6 +109,7 @@ namespace DiscImageChef.Server.Controllers
                         oldStats.Commands.ExtractFiles += newStats.Commands.ExtractFiles;
                         oldStats.Commands.ListDevices += newStats.Commands.ListDevices;
                         oldStats.Commands.ListEncodings += newStats.Commands.ListEncodings;
+                        oldStats.Commands.ConvertImage += newStats.Commands.ConvertImage;
                     }
 
                 if(newStats.OperatingSystems != null)

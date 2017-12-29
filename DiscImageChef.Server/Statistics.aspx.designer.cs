@@ -40,7 +40,9 @@ namespace DiscImageChef.Server {
 		
 		protected Label lblCompare;
 		
-		protected Label lblCreateSidecar;
+	    protected Label lblConvertImage;
+		
+	    protected Label lblCreateSidecar;
 		
 		protected Label lblDecode;
 		

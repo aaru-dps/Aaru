@@ -67,6 +67,7 @@ namespace DiscImageChef.Metadata
         public long Checksum;
         public long Compare;
         public long CreateSidecar;
+        public long ConvertImage;
         public long Decode;
         public long DeviceInfo;
         public long DeviceReport;
