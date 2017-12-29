@@ -670,7 +670,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             sidecar.BlockMedia[0].DumpHardwareArray[0].Model        = dev.Model;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Revision     = dev.Revision;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Serial       = dev.Serial;
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Software     = Version.GetSoftwareType(dev.PlatformId);
+            sidecar.BlockMedia[0].DumpHardwareArray[0].Software     = Version.GetSoftwareType();
             sidecar.BlockMedia[0].TapeInformation                   = partitions.ToArray();
 
             if(!aborted)

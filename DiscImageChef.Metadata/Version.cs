@@ -40,15 +40,13 @@ namespace DiscImageChef.Metadata
         /// <summary>
         ///     Gets XML software type for the running version
         /// </summary>
-        /// <param name="platform">Platform we are running in</param>
         /// <returns>XML software type</returns>
-        public static SoftwareType GetSoftwareType(PlatformID platform)
+        public static SoftwareType GetSoftwareType()
         {
-            // TODO: Platform should be get automatically
             return new SoftwareType
             {
                 Name            = "DiscImageChef",
-                OperatingSystem = platform.ToString(),
+                OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
                 Version         = typeof(Version).Assembly.GetName().Version.ToString()
             };
         }
