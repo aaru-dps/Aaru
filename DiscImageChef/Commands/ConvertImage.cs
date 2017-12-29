@@ -201,7 +201,7 @@ namespace DiscImageChef.Commands
             ImageInfo metadata = new ImageInfo
             {
                 Application           = "DiscImageChef",
-                ApplicationVersion    = "", // TODO
+                ApplicationVersion    = Interop.Version.GetVersion(),
                 Comments              = options.Comments,
                 Creator               = options.Creator,
                 DriveFirmwareRevision = options.DriveFirmwareRevision,
