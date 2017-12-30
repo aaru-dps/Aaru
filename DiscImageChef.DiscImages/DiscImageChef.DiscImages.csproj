@@ -137,6 +137,10 @@
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>DiscImageChef.Filters</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
+      <Project>{9183f2e0-a879-4f23-9ee3-c6908f1332b2}</Project>
+      <Name>DiscImageChef.Interop</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
