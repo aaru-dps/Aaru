@@ -33,8 +33,8 @@ Copyright © 2011-2018 Natalia Portillo
 #ifndef DISCIMAGECHEF_DEVICE_REPORT_MAIN_H
 #define DISCIMAGECHEF_DEVICE_REPORT_MAIN_H
 
-#define DIC_VERSION "4.0.0.0"
-#define DIC_COPYRIGHT "Copyright © 2011-2017 Natalia Portillo"
+#define DIC_VERSION "4.0.99.0"
+#define DIC_COPYRIGHT "Copyright © 2011-2018 Natalia Portillo"
 #define XML_ENCODING "UTF-8"
 #define DIC_REPORT_ROOT "DicDeviceReport"
 
