@@ -65,7 +65,7 @@ namespace DiscImageChef.DiscImages
 
         bool IsWriting { get; }
         string ErrorMessage { get; }
-        
+
         /// <summary>
         ///     Creates a new image in the specified path, for the specified <see cref="MediaType" />, with the
         ///     specified options to hold a media with the specified number of sectors
@@ -74,8 +74,10 @@ namespace DiscImageChef.DiscImages
         /// <param name="mediaType"><see cref="MediaType" /> that will be written in the image</param>
         /// <param name="options">Options to be used when creating new image</param>
         /// <param name="sectors">How many sectors the media has.</param>
+        /// <param name="sectorSize"></param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
-        bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors);
+        bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                    uint   sectorSize);
 
         /// <summary>
         ///     Writes a media tag to the image

@@ -793,7 +793,8 @@ namespace DiscImageChef.DiscImages
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }
 
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors)
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
         {
             header      = new Dc42Header();
             bool tags   = false;
@@ -802,6 +803,12 @@ namespace DiscImageChef.DiscImages
             if(options != null && options.TryGetValue("macosx", out string tmpOption))
                 bool.TryParse(tmpOption, out macosx);
 
+            if(sectorSize != 512)
+            {
+                ErrorMessage = "Unsupported sector size";
+                return false;
+            }
+            
             switch(mediaType)
             {
                 case MediaType.AppleFileWare:

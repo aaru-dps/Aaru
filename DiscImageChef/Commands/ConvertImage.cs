@@ -192,7 +192,7 @@ namespace DiscImageChef.Commands
             }
 
             if(!outputFormat.Create(options.OutputFile, inputFormat.Info.MediaType, new Dictionary<string, string>(),
-                                    inputFormat.Info.Sectors))
+                                    inputFormat.Info.Sectors, inputFormat.Info.SectorSize))
             {
                 DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
                 return;
