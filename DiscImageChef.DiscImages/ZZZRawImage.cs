@@ -33,18 +33,20 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class ZZZRawImage : IMediaImage
+    public class ZZZRawImage : IWritableImage
     {
-        bool      differentTrackZeroSize;
-        string    extension;
-        ImageInfo imageInfo;
-        IFilter   rawImageFilter;
+        bool       differentTrackZeroSize;
+        string     extension;
+        ImageInfo  imageInfo;
+        IFilter    rawImageFilter;
+        FileStream writingStream;
 
         public ZZZRawImage()
         {
@@ -916,6 +918,180 @@ namespace DiscImageChef.DiscImages
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        // TODO: Support media tags as separate files
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[] { };
+
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
+        public IEnumerable<MediaType>     SupportedMediaTypes
+        {
+            get
+            {
+                List<MediaType> types = new List<MediaType>();
+                foreach(MediaType type in Enum.GetValues(typeof(MediaType)))
+                    switch(type)
+                    {
+                        // TODO: Implement support for writing formats with different track 0 bytes per sector
+                        case MediaType.IBM33FD_256:
+                        case MediaType.IBM33FD_512:
+                        case MediaType.IBM43FD_128:
+                        case MediaType.IBM43FD_256:
+                        case MediaType.IBM53FD_256:
+                        case MediaType.IBM53FD_512:
+                        case MediaType.IBM53FD_1024:
+                        case MediaType.ECMA_99_8:
+                        case MediaType.ECMA_99_15:
+                        case MediaType.ECMA_99_26:
+                        case MediaType.ECMA_66:
+                        case MediaType.ECMA_69_8:
+                        case MediaType.ECMA_69_15:
+                        case MediaType.ECMA_69_26:
+                        case MediaType.ECMA_70:
+                        case MediaType.ECMA_78: continue;
+                        default:
+                            types.Add(type);
+                            break;
+                    }
+
+                return types;
+            }
+        }
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new (string name, Type type, string description)[] { };
+        public IEnumerable<string> KnownExtensions =>
+            new[] {".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st"};
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
+
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
+        {
+            if(sectorSize == 0)
+            {
+                ErrorMessage = "Unsupported sector size";
+                return false;
+            }
+
+            if(!SupportedMediaTypes.Contains(mediaType))
+            {
+                ErrorMessage = $"Unsupport media format {mediaType}";
+                return false;
+            }
+
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+
+            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            catch(IOException e)
+            {
+                ErrorMessage = $"Could not create new image file, exception {e.Message}";
+                return false;
+            }
+
+            IsWriting    = true;
+            ErrorMessage = null;
+            return true;
+        }
+
+        public bool WriteMediaTag(byte[] data, MediaTagType tag)
+        {
+            // TODO: Implement
+            ErrorMessage = "Writing media tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSector(byte[] data, ulong sectorAddress)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length != imageInfo.SectorSize)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress >= imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length % imageInfo.SectorSize != 0)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress + length > imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool SetTracks(List<Track> tracks)
+        {
+            if(tracks.Count <= 1) return true;
+
+            ErrorMessage = "This format supports only 1 track";
+            return false;
+        }
+
+        public bool Close()
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Image is not opened for writing";
+                return false;
+            }
+
+            writingStream.Flush();
+            writingStream.Close();
+            IsWriting = false;
+
+            return true;
+        }
+
+        public bool SetMetadata(ImageInfo metadata)
+        {
+            return true;
         }
 
         MediaType CalculateDiskType()
