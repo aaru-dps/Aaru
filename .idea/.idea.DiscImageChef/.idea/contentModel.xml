@@ -573,6 +573,7 @@
         <e p="QNX6.cs" t="Include" />
         <e p="RBF.cs" t="Include" />
         <e p="RT11.cs" t="Include" />
+        <e p="ReFS.cs" t="Include" />
         <e p="Reiser.cs" t="Include" />
         <e p="Reiser4.cs" t="Include" />
         <e p="SFS.cs" t="Include" />

@@ -26,11 +26,11 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using NUnit.Framework;
 
@@ -45,13 +45,13 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {8388096};
+        readonly long[] clusters = {8372224};
 
         readonly int[] clustersize = {4096};
 
         readonly string[] volumename = {null};
 
-        readonly string[] volumeserial = {"UNKNOWN"};
+        readonly string[] volumeserial = {null};
 
         readonly string[] oemid = {null};
 
@@ -60,16 +60,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "refs_mbr", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "refs_mbr", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
+                int             part       = -1;
+                for(int j = 0; j          < partitions.Count; j++)
                     if(partitions[j].Type == "0x07")
                     {
                         part = j;
@@ -77,17 +77,15 @@ namespace DiscImageChef.Tests.Filesystems
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
-                throw new NotImplementedException("ReFS is not yet implemented");
-                /*
-                Filesystem fs = new DiscImageChef.Filesystems.ReFS();
+                IFilesystem fs = new ReFS();
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out _);
-                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("ReFS", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);*/
+                fs.GetInformation(image, partitions[part], out _, null);
+                Assert.AreEqual(clusters[i],             fs.XmlFsType.Clusters,         testfiles[i]);
+                Assert.AreEqual(clustersize[i],          fs.XmlFsType.ClusterSize,      testfiles[i]);
+                Assert.AreEqual("Resilient File System", fs.XmlFsType.Type,             testfiles[i]);
+                Assert.AreEqual(volumename[i],           fs.XmlFsType.VolumeName,       testfiles[i]);
+                Assert.AreEqual(volumeserial[i],         fs.XmlFsType.VolumeSerial,     testfiles[i]);
+                Assert.AreEqual(oemid[i],                fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
