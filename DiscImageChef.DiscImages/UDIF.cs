@@ -195,8 +195,8 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChkType = {0}", footer.dataForkChkType);
             DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}", footer.dataForkLen);
             DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChk = 0x{0:X8}", footer.dataForkChk);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.xmlOff = {0}", footer.plistOff);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.xmlLen = {0}", footer.plistLen);
+            DicConsole.DebugWriteLine("UDIF plugin", "footer.plistOff = {0}", footer.plistOff);
+            DicConsole.DebugWriteLine("UDIF plugin", "footer.plistLen = {0}", footer.plistLen);
             DicConsole.DebugWriteLine("UDIF plugin", "footer.masterChkType = {0}", footer.masterChkType);
             DicConsole.DebugWriteLine("UDIF plugin", "footer.masterChkLen = {0}", footer.masterChkLen);
             DicConsole.DebugWriteLine("UDIF plugin", "footer.masterChk = 0x{0:X8}", footer.masterChk);
