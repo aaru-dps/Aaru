@@ -103,7 +103,6 @@ namespace DiscImageChef.DiscImages
         /// <summary>Header of opened image</summary>
         Dc42Header header;
         ImageInfo  imageInfo;
-        ulong      sectorsToWrite;
         /// <summary>Start of tags in disk image, after data sectors</summary>
         uint         tagOffset;
         bool         twiggy;
@@ -918,7 +917,8 @@ namespace DiscImageChef.DiscImages
             header.Valid            = 1;
             header.DataSize         = (uint)(sectors * 512);
             if(tags) header.TagSize = (uint)(sectors * 12);
-            sectorsToWrite          = sectors;
+
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
             try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
@@ -952,7 +952,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= sectorsToWrite)
+            if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
@@ -979,7 +979,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > sectorsToWrite)
+            if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
@@ -1012,7 +1012,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= sectorsToWrite)
+            if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
@@ -1047,7 +1047,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > sectorsToWrite)
+            if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
