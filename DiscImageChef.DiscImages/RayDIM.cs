@@ -51,6 +51,7 @@ namespace DiscImageChef.DiscImages
 
         MemoryStream disk;
         ImageInfo    imageInfo;
+        FileStream   writingStream;
 
         public RayDim()
         {
@@ -312,49 +313,28 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RayHdr
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
-            public byte[]       signature;
-            public RayDiskTypes diskType;
-            public byte         cylinders;
-            public byte         sectorsPerTrack;
-            public byte         heads;
-        }
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum RayDiskTypes : byte
-        {
-            Md2dd = 1,
-            Md2hd = 2,
-            Mf2dd = 3,
-            Mf2hd = 4,
-            Mf2ed = 5
-        }
-
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         // TODO: Test with real hardware to see real supported media
         public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
-                MediaType.Apricot_35, MediaType.ATARI_35_DS_DD,
-                MediaType.ATARI_35_DS_DD_11, MediaType.ATARI_35_SS_DD, MediaType.ATARI_35_SS_DD_11, MediaType.DMF,
-                MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED,
-                MediaType.DOS_35_HD, MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8,
-                MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
-                MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD,
-                MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
+                MediaType.Apricot_35, MediaType.ATARI_35_DS_DD, MediaType.ATARI_35_DS_DD_11, MediaType.ATARI_35_SS_DD,
+                MediaType.ATARI_35_SS_DD_11, MediaType.DMF, MediaType.DMF_82, MediaType.DOS_35_DS_DD_8,
+                MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED, MediaType.DOS_35_HD, MediaType.DOS_35_SS_DD_8,
+                MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD,
+                MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9, MediaType.FDFORMAT_35_DD,
+                MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50,
+                MediaType.XDF_35, MediaType.XDF_525
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new(string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dim"};
-        public bool   IsWriting    { get; private set; }
-        public string ErrorMessage { get; private set; }
-        FileStream writingStream;
+        public bool                IsWriting       { get; private set; }
+        public string              ErrorMessage    { get; private set; }
 
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors, uint sectorSize)
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
         {
             if(sectorSize == 512)
             {
@@ -362,7 +342,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectors > (255 * 255 * 255))
+            if(sectors > 255 * 255 * 255)
             {
                 ErrorMessage = $"Too many sectors";
                 return false;
@@ -376,13 +356,13 @@ namespace DiscImageChef.DiscImages
 
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
-            imageInfo = new ImageInfo
+            imageInfo                                             = new ImageInfo
             {
-                MediaType = mediaType,
-                SectorSize = sectorSize,
-                Sectors = sectors,
-                Cylinders = geometry.cylinders,
-                Heads = geometry.heads,
+                MediaType       = mediaType,
+                SectorSize      = sectorSize,
+                Sectors         = sectors,
+                Cylinders       = geometry.cylinders,
+                Heads           = geometry.heads,
                 SectorsPerTrack = geometry.sectorsPerTrack
             };
 
@@ -424,7 +404,8 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(RayHdr)) + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(RayHdr)) + sectorAddress * imageInfo.SectorSize),
+                               SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
@@ -451,7 +432,8 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(RayHdr)) + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(RayHdr)) + sectorAddress * imageInfo.SectorSize),
+                               SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
@@ -516,6 +498,27 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo.Comments = metadata.Comments;
             return true;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RayHdr
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
+            public byte[]       signature;
+            public RayDiskTypes diskType;
+            public byte         cylinders;
+            public byte         sectorsPerTrack;
+            public byte         heads;
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        enum RayDiskTypes : byte
+        {
+            Md2dd = 1,
+            Md2hd = 2,
+            Mf2dd = 3,
+            Mf2hd = 4,
+            Mf2ed = 5
         }
     }
 }

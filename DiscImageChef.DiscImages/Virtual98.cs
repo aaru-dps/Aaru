@@ -46,34 +46,35 @@ namespace DiscImageChef.DiscImages
     public class Virtual98 : IWritableImage
     {
         readonly byte[] signature = {0x56, 0x48, 0x44, 0x31, 0x2E, 0x30, 0x30, 0x00};
-        ImageInfo imageInfo;
-        IFilter nhdImageFilter;
+        ImageInfo       imageInfo;
+        IFilter         nhdImageFilter;
 
         Virtual98Header v98Hdr;
+        FileStream      writingStream;
 
         public Virtual98()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -81,7 +82,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "Virtual98 Disk Image";
-        public Guid Id => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
+        public Guid   Id   => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
 
         public string Format => "Virtual98 disk image";
 
@@ -109,7 +110,8 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            v98Hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
+            v98Hdr          =
+                (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
             handle.Free();
 
             if(!v98Hdr.signature.SequenceEqual(signature)) return false;
@@ -118,13 +120,13 @@ namespace DiscImageChef.DiscImages
                                       StringHandlers.CToString(v98Hdr.signature, shiftjis));
             DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"",
                                       StringHandlers.CToString(v98Hdr.comment, shiftjis));
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", v98Hdr.padding);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", v98Hdr.mbsize);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}",    v98Hdr.padding);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}",     v98Hdr.mbsize);
             DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98Hdr.sectorsize);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", v98Hdr.sectors);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", v98Hdr.surfaces);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", v98Hdr.cylinders);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", v98Hdr.totals);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}",    v98Hdr.sectors);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}",   v98Hdr.surfaces);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}",  v98Hdr.cylinders);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}",     v98Hdr.totals);
 
             return true;
         }
@@ -144,22 +146,23 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            v98Hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
+            v98Hdr          =
+                (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
             handle.Free();
 
             imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            imageInfo.ImageSize = (ulong)(stream.Length - 0xDC);
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.ImageSize            = (ulong)(stream.Length - 0xDC);
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = v98Hdr.totals;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize = v98Hdr.sectorsize;
-            imageInfo.Cylinders = v98Hdr.cylinders;
-            imageInfo.Heads = v98Hdr.surfaces;
-            imageInfo.SectorsPerTrack = v98Hdr.sectors;
-            imageInfo.Comments = StringHandlers.CToString(v98Hdr.comment, shiftjis);
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = v98Hdr.totals;
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.SectorSize           = v98Hdr.sectorsize;
+            imageInfo.Cylinders            = v98Hdr.cylinders;
+            imageInfo.Heads                = v98Hdr.surfaces;
+            imageInfo.SectorsPerTrack      = v98Hdr.sectors;
+            imageInfo.Comments             = StringHandlers.CToString(v98Hdr.comment, shiftjis);
 
             nhdImageFilter = imageFilter;
 
@@ -273,7 +276,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -283,7 +286,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -293,32 +296,18 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Virtual98Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] comment;
-            public uint padding;
-            public ushort mbsize;
-            public ushort sectorsize;
-            public byte sectors;
-            public byte surfaces;
-            public ushort cylinders;
-            public uint totals;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x44)] public byte[] padding2;
-        }
-
-        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[] { };
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType> SupportedMediaTypes => new []{MediaType.GENERIC_HDD, MediaType.Unknown};
+        public IEnumerable<MediaType>     SupportedMediaTypes =>
+            new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".v98"};
-        public bool IsWriting { get; private set; }
-        public string ErrorMessage { get; private set; }
-        FileStream writingStream;
+        public bool                IsWriting       { get; private set; }
+        public string              ErrorMessage    { get; private set; }
 
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors, uint sectorSize)
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
         {
             if(sectorSize == 0)
             {
@@ -460,9 +449,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] commentsBytes = null;
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-            {
                 commentsBytes = Encoding.GetEncoding("shift_jis").GetBytes(imageInfo.Comments);
-            }
 
             v98Hdr = new Virtual98Header
             {
@@ -479,7 +466,7 @@ namespace DiscImageChef.DiscImages
             if(commentsBytes != null)
                 Array.Copy(commentsBytes, 0, v98Hdr.comment, 0,
                            commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
-            
+
             byte[] hdr    = new byte[Marshal.SizeOf(v98Hdr)];
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(v98Hdr));
             Marshal.StructureToPtr(v98Hdr, hdrPtr, true);
@@ -500,6 +487,24 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo.Comments = metadata.Comments;
             return true;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Virtual98Header
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public byte[] comment;
+            public uint   padding;
+            public ushort mbsize;
+            public ushort sectorsize;
+            public byte   sectors;
+            public byte   surfaces;
+            public ushort cylinders;
+            public uint   totals;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x44)]
+            public byte[] padding2;
         }
     }
 }
