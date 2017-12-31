@@ -447,10 +447,6 @@ namespace DiscImageChef.DiscImages
                                         : commentsBytes.Length);
             }
 
-            int cylinders = (int)(imageInfo.Sectors / 33 / 8);
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(BitConverter.GetBytes(cylinders), 0, 4);
-
             byte[] hdr    = new byte[Marshal.SizeOf(header)];
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.StructureToPtr(header, hdrPtr, true);
