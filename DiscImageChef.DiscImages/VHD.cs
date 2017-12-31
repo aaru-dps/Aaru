@@ -1235,7 +1235,7 @@ namespace DiscImageChef.DiscImages
 
                 imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
 
-                if(imageInfo.Sectors == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
+                if(imageInfo.Cylinders == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
             }
 
             HardDiskFooter footer = new HardDiskFooter
