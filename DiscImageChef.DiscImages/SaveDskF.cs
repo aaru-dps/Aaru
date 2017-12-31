@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -41,7 +42,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class SaveDskF : IMediaImage
+    public class SaveDskF : IWritableImage
     {
         const ushort SDF_MAGIC_OLD        = 0x58AA;
         const ushort SDF_MAGIC            = 0x59AA;
@@ -51,6 +52,7 @@ namespace DiscImageChef.DiscImages
 
         SaveDskFHeader header;
         ImageInfo      imageInfo;
+        FileStream     writingStream;
 
         public SaveDskF()
         {
@@ -325,6 +327,219 @@ namespace DiscImageChef.DiscImages
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
+        // TODO: Test with real hardware to see real supported media
+        public IEnumerable<MediaType> SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.ACORN_35_DS_DD, MediaType.ACORN_35_DS_HD, MediaType.Apricot_35, MediaType.ATARI_35_DS_DD,
+                MediaType.ATARI_35_DS_DD_11, MediaType.ATARI_35_SS_DD, MediaType.ATARI_35_SS_DD_11, MediaType.DMF,
+                MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED,
+                MediaType.DOS_35_HD, MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8,
+                MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
+                MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD,
+                MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
+            };
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new(string name, Type type, string description)[] { };
+        public IEnumerable<string> KnownExtensions => new[] {".dsk"};
+
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
+
+        public bool WriteMediaTag(byte[] data, MediaTagType tag)
+        {
+            ErrorMessage = "Writing media tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSector(byte[] data, ulong sectorAddress)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length != imageInfo.SectorSize)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress >= imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream.Seek((long)(512 + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length % imageInfo.SectorSize != 0)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress + length > imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream.Seek((long)(512 + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool SetTracks(List<Track> tracks)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool Close()
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Image is not opened for writing";
+                return false;
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.Comments))
+            {
+                byte[] commentsBytes = Encoding.GetEncoding("ibm437").GetBytes(imageInfo.Comments);
+                header.commentOffset = (ushort)Marshal.SizeOf(header);
+                writingStream.Seek(header.commentOffset, SeekOrigin.Begin);
+                writingStream.Write(commentsBytes, 0,
+                                    commentsBytes.Length >= 512 - header.commentOffset
+                                        ? 512                   - header.commentOffset
+                                        : commentsBytes.Length);
+            }
+
+            int cylinders = (int)(imageInfo.Sectors / 33 / 8);
+            writingStream.Seek(0, SeekOrigin.Begin);
+            writingStream.Write(BitConverter.GetBytes(cylinders), 0, 4);
+
+            byte[] hdr    = new byte[Marshal.SizeOf(header)];
+            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+            Marshal.StructureToPtr(header, hdrPtr, true);
+            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            Marshal.FreeHGlobal(hdrPtr);
+
+            writingStream.Seek(0, SeekOrigin.Begin);
+            writingStream.Write(hdr, 0, hdr.Length);
+
+            header.checksum = 0;
+            writingStream.Seek(0, SeekOrigin.Begin);
+
+            int b;
+            do
+            {
+                b                          =  writingStream.ReadByte();
+                if(b >= 0) header.checksum += (uint)b;
+            }
+            while(b >= 0);
+
+            hdr    = new byte[Marshal.SizeOf(header)];
+            hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+            Marshal.StructureToPtr(header, hdrPtr, true);
+            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            Marshal.FreeHGlobal(hdrPtr);
+
+            writingStream.Seek(0, SeekOrigin.Begin);
+            writingStream.Write(hdr, 0, hdr.Length);
+
+            writingStream.Flush();
+            writingStream.Close();
+            IsWriting = false;
+
+            return true;
+        }
+
+        public bool SetMetadata(ImageInfo metadata)
+        {
+            imageInfo.Comments = metadata.Comments;
+            return true;
+        }
+
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
+        {
+            if(sectorSize == 0)
+            {
+                ErrorMessage = "Unsupported sector size";
+                return false;
+            }
+
+            if(sectors > ushort.MaxValue)
+            {
+                ErrorMessage = $"Too many sectors";
+                return false;
+            }
+
+            if(!SupportedMediaTypes.Contains(mediaType))
+            {
+                ErrorMessage = $"Unsupport media format {mediaType}";
+                return false;
+            }
+
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+
+            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            catch(IOException e)
+            {
+                ErrorMessage = $"Could not create new image file, exception {e.Message}";
+                return false;
+            }
+
+            (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
+                variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
+
+            header = new SaveDskFHeader
+            {
+                cylinders       = geometry.cylinders,
+                dataOffset      = 512,
+                heads           = geometry.heads,
+                magic           = SDF_MAGIC,
+                sectorsCopied   = (ushort)sectors,
+                sectorsPerTrack = geometry.sectorsPerTrack,
+                sectorSize      = (ushort)sectorSize
+            };
+
+            IsWriting    = true;
+            ErrorMessage = null;
+            return true;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
