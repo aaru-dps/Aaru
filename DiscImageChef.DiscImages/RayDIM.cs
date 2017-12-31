@@ -496,7 +496,6 @@ namespace DiscImageChef.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
-            imageInfo.Comments = metadata.Comments;
             return true;
         }
 
