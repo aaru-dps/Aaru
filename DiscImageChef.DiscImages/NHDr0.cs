@@ -43,44 +43,45 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.DiscImages
 {
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
-    public class Nhdr0 : IMediaImage
+    public class Nhdr0 : IWritableImage
     {
         readonly byte[] signature =
             {0x54, 0x39, 0x38, 0x48, 0x44, 0x44, 0x49, 0x4D, 0x41, 0x47, 0x45, 0x2E, 0x52, 0x30, 0x00};
         ImageInfo imageInfo;
 
         Nhdr0Header nhdhdr;
-        IFilter nhdImageFilter;
+        IFilter     nhdImageFilter;
+        FileStream  writingStream;
 
         public Nhdr0()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "T98-Next NHD r0 Disk Image";
-        public Guid Id => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
+        public string    Name => "T98-Next NHD r0 Disk Image";
+        public Guid      Id   => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
         public ImageInfo Info => imageInfo;
 
         public string Format => "NHDr0 disk image";
@@ -109,7 +110,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            nhdhdr = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
+            nhdhdr          = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
             handle.Free();
 
             if(!nhdhdr.szFileID.SequenceEqual(signature)) return false;
@@ -121,9 +122,9 @@ namespace DiscImageChef.DiscImages
                                       StringHandlers.CToString(nhdhdr.szComment, shiftjis));
             DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwHeadSize = {0}", nhdhdr.dwHeadSize);
             DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwCylinder = {0}", nhdhdr.dwCylinder);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}", nhdhdr.wHead);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}", nhdhdr.wSect);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}", nhdhdr.wSectLen);
+            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}",      nhdhdr.wHead);
+            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}",      nhdhdr.wSect);
+            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}",   nhdhdr.wSectLen);
 
             return true;
         }
@@ -143,22 +144,22 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            nhdhdr = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
+            nhdhdr          = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
             handle.Free();
 
             imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            imageInfo.ImageSize = (ulong)(stream.Length - nhdhdr.dwHeadSize);
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.ImageSize            = (ulong)(stream.Length - nhdhdr.dwHeadSize);
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = (ulong)(nhdhdr.dwCylinder * nhdhdr.wHead * nhdhdr.wSect);
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize = (uint)nhdhdr.wSectLen;
-            imageInfo.Cylinders = (uint)nhdhdr.dwCylinder;
-            imageInfo.Heads = (uint)nhdhdr.wHead;
-            imageInfo.SectorsPerTrack = (uint)nhdhdr.wSect;
-            imageInfo.Comments = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = (ulong)(nhdhdr.dwCylinder * nhdhdr.wHead * nhdhdr.wSect);
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.SectorSize           = (uint)nhdhdr.wSectLen;
+            imageInfo.Cylinders            = (uint)nhdhdr.dwCylinder;
+            imageInfo.Heads                = (uint)nhdhdr.wHead;
+            imageInfo.SectorsPerTrack      = (uint)nhdhdr.wSect;
+            imageInfo.Comments             = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
 
             nhdImageFilter = imageFilter;
 
@@ -265,7 +266,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -275,7 +276,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -285,19 +286,214 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
+        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
+        // TODO: Support dynamic images
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new (string name, Type type, string description)[] { };
+        public IEnumerable<string> KnownExtensions => new[] {".nhd"};
+        public bool                IsWriting       { get; private set; }
+        public string              ErrorMessage    { get; private set; }
+
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
+        {
+            if(sectorSize != 0)
+            {
+                ErrorMessage = "Unsupported sector size";
+                return false;
+            }
+
+            if(!SupportedMediaTypes.Contains(mediaType))
+            {
+                ErrorMessage = $"Unsupport media format {mediaType}";
+                return false;
+            }
+
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+
+            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            catch(IOException e)
+            {
+                ErrorMessage = $"Could not create new image file, exception {e.Message}";
+                return false;
+            }
+
+            IsWriting    = true;
+            ErrorMessage = null;
+            return true;
+        }
+
+        public bool WriteMediaTag(byte[] data, MediaTagType tag)
+        {
+            ErrorMessage = "Writing media tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSector(byte[] data, ulong sectorAddress)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length != imageInfo.SectorSize)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress >= imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream
+               .Seek((long)((ulong)Marshal.SizeOf(typeof(Nhdr0Header)) + sectorAddress * imageInfo.SectorSize),
+                     SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length % 512 != 0)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress + length > imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream
+               .Seek((long)((ulong)Marshal.SizeOf(typeof(Nhdr0Header)) + sectorAddress * imageInfo.SectorSize),
+                     SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool SetTracks(List<Track> tracks)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool Close()
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Image is not opened for writing";
+                return false;
+            }
+
+            // TODO: Interface to set geometry
+            imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 8 / 17);
+            imageInfo.Heads           = 8;
+            imageInfo.SectorsPerTrack = 17;
+
+            while(imageInfo.Cylinders == 0)
+            {
+                imageInfo.Heads--;
+
+                if(imageInfo.Heads == 0)
+                {
+                    imageInfo.SectorsPerTrack--;
+                    imageInfo.Heads = 16;
+                }
+
+                imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
+
+                if(imageInfo.Cylinders == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
+            }
+
+            Nhdr0Header header = new Nhdr0Header
+            {
+                szFileID   = signature,
+                szComment  = new byte[0x100],
+                dwHeadSize = Marshal.SizeOf(typeof(Nhdr0Header)),
+                dwCylinder = (byte)imageInfo.Cylinders,
+                wHead      = (byte)imageInfo.Heads,
+                wSect      = (byte)imageInfo.SectorsPerTrack,
+                wSectLen   = (byte)imageInfo.SectorSize,
+                reserved2  = new byte[2],
+                reserved3  = new byte[0xE0]
+            };
+
+            if(!string.IsNullOrEmpty(imageInfo.Comments))
+            {
+                byte[] commentBytes = Encoding.GetEncoding("shift_jis").GetBytes(imageInfo.Comments);
+                Array.Copy(commentBytes, 0, header.szComment, 0,
+                           commentBytes.Length >= 0x100 ? 0x100 : commentBytes.Length);
+            }
+
+            byte[] hdr    = new byte[Marshal.SizeOf(header)];
+            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+            Marshal.StructureToPtr(header, hdrPtr, true);
+            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            Marshal.FreeHGlobal(hdrPtr);
+
+            writingStream.Seek(0, SeekOrigin.Begin);
+            writingStream.Write(hdr, 0, hdr.Length);
+
+            writingStream.Flush();
+            writingStream.Close();
+            IsWriting = false;
+
+            return true;
+        }
+
+        public bool SetMetadata(ImageInfo metadata)
+        {
+            imageInfo.Comments = metadata.Comments;
+            return true;
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Nhdr0Header
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] szFileID;
-            public byte reserved1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)] public byte[] szComment;
-            public int dwHeadSize;
-            public int dwCylinder;
-            public short wHead;
-            public short wSect;
-            public short wSectLen;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)] public byte[] reserved3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
+            public byte[] szFileID;
+            public byte   reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
+            public byte[] szComment;
+            public int    dwHeadSize;
+            public int    dwCylinder;
+            public short  wHead;
+            public short  wSect;
+            public short  wSectLen;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)]
+            public byte[] reserved3;
         }
     }
 }
