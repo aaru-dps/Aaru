@@ -490,7 +490,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream.Seek((long)(512 + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
