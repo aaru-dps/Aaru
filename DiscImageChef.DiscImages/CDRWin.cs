@@ -1438,18 +1438,18 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
                 {
-                    byte[] flags = new byte[1];
+                    CdFlags flags = 0;
 
                     if(dicTrack.Tracktype != CDRWIN_TRACK_TYPE_AUDIO && dicTrack.Tracktype != CDRWIN_TRACK_TYPE_CDG)
-                        flags[0] += 0x40;
+                        flags |= CdFlags.DataTrack;
 
-                    if(dicTrack.FlagDcp) flags[0] += 0x20;
+                    if(dicTrack.FlagDcp) flags |= CdFlags.CopyPermitted;
 
-                    if(dicTrack.FlagPre) flags[0] += 0x10;
+                    if(dicTrack.FlagPre) flags |= CdFlags.PreEmphasis;
 
-                    if(dicTrack.Flag4ch) flags[0] += 0x80;
+                    if(dicTrack.Flag4ch) flags |= CdFlags.FourChannel;
 
-                    return flags;
+                    return new[] {(byte)flags};
                 }
                 case SectorTagType.CdTrackIsrc: return Encoding.UTF8.GetBytes(dicTrack.Isrc);
                 case SectorTagType.CdTrackText:

@@ -281,12 +281,12 @@ namespace DiscImageChef.DiscImages
     public enum CdFlags : byte
     {
         /// <summary>Track is quadraphonic.</summary>
-        FourChannel = 0x20,
+        FourChannel = 0x08,
         /// <summary>Track is non-audio (data).</summary>
-        DataTrack = 0x10,
+        DataTrack = 0x04,
         /// <summary>Track is copy protected.</summary>
-        CopyPrevent = 0x08,
+        CopyPermitted = 0x02,
         /// <summary>Track has pre-emphasis.</summary>
-        PreEmphasis = 0x04
+        PreEmphasis = 0x01
     }
 }
