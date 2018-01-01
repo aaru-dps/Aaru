@@ -41,6 +41,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
+    // TODO: What are the real supported floppies for this image format?
     public class Dim : IMediaImage
     {
         /// <summary>Start of data sectors in disk image, should be 0x100</summary>
