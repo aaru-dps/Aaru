@@ -143,13 +143,13 @@ namespace DiscImageChef.Commands
 
             if(candidates.Count == 0)
             {
-                DicConsole.WriteLine("No plugin supports requested format.");
+                DicConsole.WriteLine("No plugin supports requested extension.");
                 return;
             }
 
             if(candidates.Count > 1)
             {
-                DicConsole.WriteLine("More than one plugin supports requested format.");
+                DicConsole.WriteLine("More than one plugin supports requested extension.");
                 return;
             }
 
@@ -169,23 +169,24 @@ namespace DiscImageChef.Commands
             {
                 if(outputFormat.SupportedMediaTags.Contains(mediaTag) || options.Force) continue;
 
-                DicConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...");
+                DicConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...", mediaTag);
                 DicConsole.ErrorWriteLine("If you don't care, use force option.");
                 return;
             }
 
             bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
 
-            foreach(SectorTagType mediaTag in inputFormat.Info.ReadableSectorTags)
+            foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags)
             {
-                if(!outputFormat.SupportedSectorTags.Contains(mediaTag))
-                    if(options.Force)
-                    {
-                        useLong = false;
-                        continue;
-                    }
+                if(outputFormat.SupportedSectorTags.Contains(sectorTag)) continue;
 
-                DicConsole.ErrorWriteLine("Converting image will lose sector tag {0}, not continuing...");
+                if(options.Force)
+                {
+                    useLong = false;
+                    continue;
+                }
+
+                DicConsole.ErrorWriteLine("Converting image will lose sector tag {0}, not continuing...", sectorTag);
                 DicConsole
                    .ErrorWriteLine("If you don't care, use force option. This will skip all sector tags converting only user data.");
                 return;
@@ -262,62 +263,128 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("{0} sectors to convert", inputFormat.Info.Sectors);
             ulong doneSectors = 0;
 
-            while(doneSectors < inputFormat.Info.Sectors)
+            if(tracks == null)
             {
-                byte[] sector;
-
-                uint sectorsToDo;
-                if(inputFormat.Info.Sectors - doneSectors >= (ulong)options.Count) sectorsToDo = (uint)options.Count;
-                else
-                    sectorsToDo =
-                        (uint)(inputFormat.Info.Sectors - doneSectors);
-
-                DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", doneSectors,
-                                 doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors);
-
-                bool result;
-                if(useLong)
-                    if(sectorsToDo == 1)
-                    {
-                        sector = inputFormat.ReadSectorLong(doneSectors);
-                        result = outputFormat.WriteSectorLong(sector, doneSectors);
-                    }
-                    else
-                    {
-                        sector = inputFormat.ReadSectorsLong(doneSectors, sectorsToDo);
-                        result = outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
-                    }
-                else
+                while(doneSectors < inputFormat.Info.Sectors)
                 {
-                    if(sectorsToDo == 1)
-                    {
-                        sector = inputFormat.ReadSector(doneSectors);
-                        result = outputFormat.WriteSector(sector, doneSectors);
-                    }
+                    byte[] sector;
+
+                    uint sectorsToDo;
+                    if(inputFormat.Info.Sectors - doneSectors >= (ulong)options.Count)
+                        sectorsToDo  = (uint)options.Count;
+                    else sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+
+                    DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", doneSectors,
+                                     doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors);
+
+                    bool result;
+                    if(useLong)
+                        if(sectorsToDo == 1)
+                        {
+                            sector = inputFormat.ReadSectorLong(doneSectors);
+                            result = outputFormat.WriteSectorLong(sector, doneSectors);
+                        }
+                        else
+                        {
+                            sector = inputFormat.ReadSectorsLong(doneSectors, sectorsToDo);
+                            result = outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
+                        }
                     else
                     {
-                        sector = inputFormat.ReadSectors(doneSectors, sectorsToDo);
-                        result = outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
+                        if(sectorsToDo == 1)
+                        {
+                            sector = inputFormat.ReadSector(doneSectors);
+                            result = outputFormat.WriteSector(sector, doneSectors);
+                        }
+                        else
+                        {
+                            sector = inputFormat.ReadSectors(doneSectors, sectorsToDo);
+                            result = outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
+                        }
                     }
+
+                    if(!result)
+                        if(options.Force)
+                            DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                                      outputFormat.ErrorMessage, doneSectors);
+                        else
+                        {
+                            DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                                      outputFormat.ErrorMessage, doneSectors);
+                            return;
+                        }
+
+                    doneSectors += sectorsToDo;
                 }
-
-                if(!result)
-                    if(options.Force)
-                        DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                  outputFormat.ErrorMessage, doneSectors);
-                    else
+                DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
+                                 inputFormat.Info.Sectors, 1.0);
+                DicConsole.WriteLine();
+            }
+            else
+            {
+                foreach(Track track in tracks)
+                {
+                    doneSectors = 0;
+                    ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                    
+                    while(doneSectors < trackSectors)
                     {
-                        DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                  outputFormat.ErrorMessage, doneSectors);
-                        return;
+                        byte[] sector;
+
+                        uint sectorsToDo;
+                        if(trackSectors - doneSectors >= (ulong)options.Count)
+                            sectorsToDo  = (uint)options.Count;
+                        else sectorsToDo = (uint)(trackSectors - doneSectors);
+
+                        DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", doneSectors,
+                                         doneSectors + sectorsToDo, doneSectors / (double)trackSectors, track.TrackSequence);
+
+                        bool result;
+                        if(useLong)
+                            if(sectorsToDo == 1)
+                            {
+                                sector = inputFormat.ReadSectorLong(doneSectors + track.TrackStartSector);
+                                result = outputFormat.WriteSectorLong(sector, doneSectors + track.TrackStartSector);
+                            }
+                            else
+                            {
+                                sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector, sectorsToDo);
+                                result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector, sectorsToDo);
+                            }
+                        else
+                        {
+                            if(sectorsToDo == 1)
+                            {
+                                sector = inputFormat.ReadSector(doneSectors + track.TrackStartSector);
+                                result = outputFormat.WriteSector(sector, doneSectors + track.TrackStartSector);
+                            }
+                            else
+                            {
+                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
+                                result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector, sectorsToDo);
+                            }
+                        }
+
+                        if(!result)
+                            if(options.Force)
+                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                                          outputFormat.ErrorMessage, doneSectors);
+                            else
+                            {
+                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                                          outputFormat.ErrorMessage, doneSectors);
+                                return;
+                            }
+
+                        doneSectors += sectorsToDo;
                     }
 
-                doneSectors += sectorsToDo;
+                    DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", trackSectors,
+                                     trackSectors, 1.0, track.TrackSequence);
+                    DicConsole.WriteLine();
+                }
             }
 
-            DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
-                             inputFormat.Info.Sectors, 1.0);
-            DicConsole.WriteLine();
             DicConsole.WriteLine("Closing output image.");
 
             if(!outputFormat.Close())
