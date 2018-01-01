@@ -61,7 +61,11 @@ namespace DiscImageChef.Commands
                                  plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces()
                                                                        .Contains(typeof(IWritableImage))));
             if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
-            foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList)
+            foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType()
+                                                                                                   .GetInterfaces()
+                                                                                                   .Contains(typeof(
+                                                                                                                 IWritableImage
+                                                                                                             ))))
                 if(formatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
