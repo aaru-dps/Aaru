@@ -177,8 +177,11 @@ namespace DiscImageChef.DiscImages
         ImageInfo    imageInfo;
         Stream       imageStream;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
-        Dictionary<uint, ulong>      offsetmap;
-        bool                         separateTracksWriting;
+        Dictionary<uint, ulong> offsetmap;
+        bool                    separateTracksWriting;
+
+        Dictionary<byte, byte>       trackFlags;
+        Dictionary<byte, string>     trackIsrcs;
         string                       writingBaseName;
         Dictionary<uint, FileStream> writingStreams;
         List<Track>                  writingTracks;
@@ -624,10 +627,10 @@ namespace DiscImageChef.DiscImages
                                 throw new
                                     FeatureUnsupportedImageException($"Found FLAGS field in incorrect place at line {lineNumber}");
 
-                            currenttrack.FlagDcp  |= matchFile.Groups["dcp"].Value  == "DCP";
-                            currenttrack.Flag4ch  |= matchFile.Groups["quad"].Value == "4CH";
-                            currenttrack.FlagPre  |= matchFile.Groups["pre"].Value  == "PRE";
-                            currenttrack.FlagScms |= matchFile.Groups["scms"].Value == "SCMS";
+                            currenttrack.FlagDcp  |= matchFlags.Groups["dcp"].Value  == "DCP";
+                            currenttrack.Flag4ch  |= matchFlags.Groups["quad"].Value == "4CH";
+                            currenttrack.FlagPre  |= matchFlags.Groups["pre"].Value  == "PRE";
+                            currenttrack.FlagScms |= matchFlags.Groups["scms"].Value == "SCMS";
                         }
                         else if(matchGenre.Success)
                         {
@@ -1451,7 +1454,10 @@ namespace DiscImageChef.DiscImages
 
                     return new[] {(byte)flags};
                 }
-                case SectorTagType.CdTrackIsrc: return Encoding.UTF8.GetBytes(dicTrack.Isrc);
+                case SectorTagType.CdTrackIsrc:
+                    if(dicTrack.Isrc == null) return null;
+
+                    return Encoding.UTF8.GetBytes(dicTrack.Isrc);
                 case SectorTagType.CdTrackText:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -1903,6 +1909,9 @@ namespace DiscImageChef.DiscImages
                 Tracks   = new List<CdrWinTrack>()
             };
 
+            trackFlags = new Dictionary<byte, byte>();
+            trackIsrcs = new Dictionary<byte, string>();
+
             IsWriting    = true;
             ErrorMessage = null;
             return true;
@@ -2209,6 +2218,20 @@ namespace DiscImageChef.DiscImages
 
                 (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
                 descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.TrackSequence, GetTrackMode(track));
+
+                if(trackFlags.TryGetValue((byte)track.TrackSequence, out byte flagsByte))
+                    if(flagsByte != 0 && flagsByte != (byte)CdFlags.DataTrack)
+                    {
+                        CdFlags flags = (CdFlags)flagsByte;
+                        descriptorStream.WriteLine("    FLAGS{0}{1}{2}",
+                                                   flags.HasFlag(CdFlags.CopyPermitted) ? " DCP" : "",
+                                                   flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
+                                                   flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
+                    }
+
+                if(trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc))
+                    descriptorStream.WriteLine("    FLAGS {0}", isrc);
+
                 descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                            msf.frame);
             }
@@ -2224,6 +2247,53 @@ namespace DiscImageChef.DiscImages
         {
             ErrorMessage = "Unsupported feature";
             return false;
+        }
+
+        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            Track track =
+                writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                    sectorAddress <= trk.TrackEndSector);
+
+            if(track.TrackSequence == 0)
+            {
+                ErrorMessage = $"Can't found track containing {sectorAddress}";
+                return false;
+            }
+
+            switch(tag)
+            {
+                case SectorTagType.CdTrackFlags:
+                {
+                    if(data.Length != 1)
+                    {
+                        ErrorMessage = "Incorrect data size for track flags";
+                        return false;
+                    }
+
+                    trackFlags.Add((byte)track.TrackSequence, data[0]);
+                    return true;
+                }
+                case SectorTagType.CdTrackIsrc:
+                {
+                    if(data != null) trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
+                    return true;
+                }
+                default:
+                    ErrorMessage = $"Unsupported tag type {tag}";
+                    return false;
+            }
+        }
+
+        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+        {
+            throw new NotImplementedException();
         }
 
         public bool SetMetadata(ImageInfo metadata)

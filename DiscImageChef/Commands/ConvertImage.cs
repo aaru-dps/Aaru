@@ -321,6 +321,69 @@ namespace DiscImageChef.Commands
                 DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
                                  inputFormat.Info.Sectors, 1.0);
                 DicConsole.WriteLine();
+
+                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
+                {
+                    if(!useLong) break;
+
+                    switch(tag)
+                    {
+                        case SectorTagType.AppleSectorTag:
+                        case SectorTagType.CdSectorSync:
+                        case SectorTagType.CdSectorHeader:
+                        case SectorTagType.CdSectorSubHeader:
+                        case SectorTagType.CdSectorEdc:
+                        case SectorTagType.CdSectorEccP:
+                        case SectorTagType.CdSectorEccQ:
+                        case SectorTagType.CdSectorEcc:
+                            // This tags are inline in long sector
+                            continue;
+                    }
+
+                    doneSectors = 0;
+                    while(doneSectors < inputFormat.Info.Sectors)
+                    {
+                        byte[] sector;
+
+                        uint sectorsToDo;
+                        if(inputFormat.Info.Sectors - doneSectors >= (ulong)options.Count)
+                            sectorsToDo  = (uint)options.Count;
+                        else sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+
+                        DicConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)", doneSectors,
+                                         doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors,
+                                         tag);
+
+                        bool result;
+                        if(sectorsToDo == 1)
+                        {
+                            sector = inputFormat.ReadSectorTag(doneSectors, tag);
+                            result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
+                        }
+                        else
+                        {
+                            sector = inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
+                            result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo, tag);
+                        }
+
+                        if(!result)
+                            if(options.Force)
+                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                                          outputFormat.ErrorMessage, doneSectors);
+                            else
+                            {
+                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                                          outputFormat.ErrorMessage, doneSectors);
+                                return;
+                            }
+
+                        doneSectors += sectorsToDo;
+                    }
+
+                    DicConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)",
+                                     inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0, tag);
+                    DicConsole.WriteLine();
+                }
             }
             else
                 foreach(Track track in tracks)
@@ -389,6 +452,79 @@ namespace DiscImageChef.Commands
                     DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", trackSectors,
                                      trackSectors, 1.0, track.TrackSequence);
                     DicConsole.WriteLine();
+
+                    foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
+                    {
+                        if(!useLong) break;
+
+                        doneSectors = 0;
+                        byte[] sector;
+                        bool   result;
+
+                        switch(tag)
+                        {
+                            case SectorTagType.AppleSectorTag:
+                            case SectorTagType.CdSectorSync:
+                            case SectorTagType.CdSectorHeader:
+                            case SectorTagType.CdSectorSubHeader:
+                            case SectorTagType.CdSectorEdc:
+                            case SectorTagType.CdSectorEccP:
+                            case SectorTagType.CdSectorEccQ:
+                            case SectorTagType.CdSectorEcc:
+                                // This tags are inline in long sector
+                                continue;
+                            case SectorTagType.CdTrackFlags:
+                            case SectorTagType.CdTrackIsrc:
+                                DicConsole.Write("\rConverting tag {0} in track {1}.", tag, track.TrackSequence);
+                                DicConsole.WriteLine();
+                                sector = inputFormat.ReadSectorTag(track.TrackStartSector, tag);
+                                result = outputFormat.WriteSectorTag(sector, track.TrackStartSector, tag);
+                                continue;
+                        }
+
+                        while(doneSectors < trackSectors)
+                        {
+                            uint sectorsToDo;
+                            if(trackSectors - doneSectors >= (ulong)options.Count) sectorsToDo = (uint)options.Count;
+                            else
+                                sectorsToDo =
+                                    (uint)(trackSectors - doneSectors);
+
+                            DicConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
+                                             doneSectors, doneSectors + sectorsToDo, doneSectors / (double)trackSectors,
+                                             track.TrackSequence, tag);
+
+                            if(sectorsToDo == 1)
+                            {
+                                sector = inputFormat.ReadSectorTag(doneSectors           + track.TrackStartSector, tag);
+                                result = outputFormat.WriteSectorTag(sector, doneSectors + track.TrackStartSector, tag);
+                            }
+                            else
+                            {
+                                sector = inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo,
+                                                                    tag);
+                                result = outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
+                                                                      sectorsToDo, tag);
+                            }
+
+                            if(!result)
+                                if(options.Force)
+                                    DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                                              outputFormat.ErrorMessage, doneSectors);
+                                else
+                                {
+                                    DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                                              outputFormat.ErrorMessage, doneSectors);
+                                    return;
+                                }
+
+                            doneSectors += sectorsToDo;
+                        }
+
+                        DicConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
+                                         trackSectors, trackSectors, 1.0, track.TrackSequence, tag);
+                        DicConsole.WriteLine();
+                    }
                 }
 
             if(tracks == null)

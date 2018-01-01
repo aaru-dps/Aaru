@@ -464,6 +464,18 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
+        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
         public bool Close()
         {
             if(!IsWriting)

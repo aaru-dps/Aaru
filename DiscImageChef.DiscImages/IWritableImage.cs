@@ -107,9 +107,9 @@ namespace DiscImageChef.DiscImages
         bool WriteSectors(byte[] data, ulong sectorAddress, uint length);
 
         /// <summary>
-        ///     Writes a sector to the image with tags attached
+        ///     Writes a sector to the image with main channel tags attached
         /// </summary>
-        /// <param name="data">Sector data with its tags attached</param>
+        /// <param name="data">Sector data with its main channel tags attached</param>
         /// <param name="sectorAddress">Sector address</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool WriteSectorLong(byte[] data, ulong sectorAddress);
@@ -117,7 +117,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     Writes several sectors to the image
         /// </summary>
-        /// <param name="data">Sector data with their tags attached</param>
+        /// <param name="data">Sector data with their main channel tags attached</param>
         /// <param name="sectorAddress">Sector starting address</param>
         /// <param name="length">How many sectors to write</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
@@ -151,5 +151,24 @@ namespace DiscImageChef.DiscImages
         /// <param name="sectorsPerTrack">Sectors per track</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack);
+
+        /// <summary>
+        ///     Writes parallel or subchannel sector tag for one sector
+        /// </summary>
+        /// <param name="data">Tag data to write</param>
+        /// <param name="sectorAddress">Sector address</param>
+        /// <param name="tag">Tag type</param>
+        /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
+        bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag);
+        
+        /// <summary>
+        ///     Writes parallel or subchannel sector tag for several sector
+        /// </summary>
+        /// <param name="data">Tag data to write</param>
+        /// <param name="sectorAddress">Starting sector address</param>
+        /// <param name="length">How many sectors to write</param>
+        /// <param name="tag">Tag type</param>
+        /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
+        bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag);
     }
 }
