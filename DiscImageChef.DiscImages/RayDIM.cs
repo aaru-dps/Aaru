@@ -458,6 +458,12 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            // Geometry is set by media type
+            return true;
+        }
+
         public bool Close()
         {
             if(!IsWriting)

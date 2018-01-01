@@ -2220,6 +2220,12 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
         public bool SetMetadata(ImageInfo metadata)
         {
             discimage.Barcode = metadata.MediaBarcode;

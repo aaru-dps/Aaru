@@ -957,6 +957,7 @@ namespace DiscImageChef.DiscImages
                 return types;
             }
         }
+
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions =>
@@ -990,6 +991,12 @@ namespace DiscImageChef.DiscImages
 
             IsWriting    = true;
             ErrorMessage = null;
+            return true;
+        }
+
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            // Geometry is not stored in image
             return true;
         }
 

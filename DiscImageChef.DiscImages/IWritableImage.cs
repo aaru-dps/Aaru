@@ -63,7 +63,7 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         IEnumerable<string> KnownExtensions { get; }
 
-        bool IsWriting { get; }
+        bool   IsWriting    { get; }
         string ErrorMessage { get; }
 
         /// <summary>
@@ -139,8 +139,17 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     Sets image metadata
         /// </summary>
-        /// <param name="metadata"><see cref="ImageInfo"/> containing image metadata</param>
+        /// <param name="metadata"><see cref="ImageInfo" /> containing image metadata</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool SetMetadata(ImageInfo metadata);
+
+        /// <summary>
+        ///     Sets media geometry
+        /// </summary>
+        /// <param name="cylinders">Cylinders</param>
+        /// <param name="heads">Heads</param>
+        /// <param name="sectorsPerTrack">Sectors per track</param>
+        /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
+        bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack);
     }
 }

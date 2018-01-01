@@ -544,6 +544,12 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            // Geometry is set by media type
+            return true;
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DriFooter
         {

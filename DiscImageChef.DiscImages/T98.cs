@@ -401,6 +401,12 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            // Format uses fixed geometry for heads and sectors per track, cylinders must be calculated on closing.
+            return true;
+        }
+
         public bool SetMetadata(ImageInfo metadata)
         {
             return true;

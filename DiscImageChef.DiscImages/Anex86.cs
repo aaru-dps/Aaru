@@ -334,18 +334,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
-                variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
-
-            fdihdr = new Anex86Header
-            {
-                hdrSize   = 4096,
-                dskSize   = (int)(sectors * sectorSize),
-                bps       = (int)sectorSize,
-                spt       = geometry.sectorsPerTrack,
-                heads     = geometry.heads,
-                cylinders = geometry.cylinders
-            };
+            fdihdr = new Anex86Header {hdrSize = 4096, dskSize = (int)(sectors * sectorSize), bps = (int)sectorSize};
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -438,26 +427,26 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(imageInfo.MediaType == MediaType.Unknown || imageInfo.MediaType == MediaType.GENERIC_HDD)
+            if((imageInfo.MediaType == MediaType.Unknown || imageInfo.MediaType == MediaType.GENERIC_HDD) &&
+               fdihdr.cylinders     == 0)
             {
-                // TODO: Interface to set geometry
-                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 8 / 33);
-                imageInfo.Heads           = 8;
-                imageInfo.SectorsPerTrack = 33;
+                fdihdr.cylinders = (int)(imageInfo.Sectors / 8 / 33);
+                fdihdr.heads     = 8;
+                fdihdr.spt       = 33;
 
-                while(imageInfo.Cylinders == 0)
+                while(fdihdr.cylinders == 0)
                 {
-                    imageInfo.Heads--;
+                    fdihdr.heads--;
 
-                    if(imageInfo.Heads == 0)
+                    if(fdihdr.heads == 0)
                     {
-                        imageInfo.SectorsPerTrack--;
-                        imageInfo.Heads = 8;
+                        fdihdr.spt--;
+                        fdihdr.heads = 8;
                     }
 
-                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
+                    fdihdr.cylinders = (int)imageInfo.Sectors / fdihdr.heads / fdihdr.spt;
 
-                    if(imageInfo.Cylinders == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
+                    if(fdihdr.cylinders == 0 && fdihdr.heads == 0 && fdihdr.spt == 0) break;
                 }
             }
 
@@ -479,6 +468,33 @@ namespace DiscImageChef.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
+            return true;
+        }
+
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            if(cylinders > int.MaxValue)
+            {
+                ErrorMessage = "Too many cylinders.";
+                return false;
+            }
+
+            if(heads > int.MaxValue)
+            {
+                ErrorMessage = "Too many heads.";
+                return false;
+            }
+
+            if(sectorsPerTrack > int.MaxValue)
+            {
+                ErrorMessage = "Too many sectors per track.";
+                return false;
+            }
+
+            fdihdr.spt       = (int)sectorsPerTrack;
+            fdihdr.heads     = (int)heads;
+            fdihdr.cylinders = (int)cylinders;
+
             return true;
         }
 

@@ -38,6 +38,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
+using Version = DiscImageChef.Interop.Version;
 
 namespace DiscImageChef.Commands
 {
@@ -202,7 +203,7 @@ namespace DiscImageChef.Commands
             ImageInfo metadata = new ImageInfo
             {
                 Application           = "DiscImageChef",
-                ApplicationVersion    = Interop.Version.GetVersion(),
+                ApplicationVersion    = Version.GetVersion(),
                 Comments              = options.Comments,
                 Creator               = options.Creator,
                 DriveFirmwareRevision = options.DriveFirmwareRevision,
@@ -316,52 +317,58 @@ namespace DiscImageChef.Commands
 
                     doneSectors += sectorsToDo;
                 }
+
                 DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
                                  inputFormat.Info.Sectors, 1.0);
                 DicConsole.WriteLine();
             }
             else
-            {
                 foreach(Track track in tracks)
                 {
-                    doneSectors = 0;
+                    doneSectors        = 0;
                     ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
-                    
+
                     while(doneSectors < trackSectors)
                     {
                         byte[] sector;
 
                         uint sectorsToDo;
-                        if(trackSectors - doneSectors >= (ulong)options.Count)
-                            sectorsToDo  = (uint)options.Count;
-                        else sectorsToDo = (uint)(trackSectors - doneSectors);
+                        if(trackSectors - doneSectors >= (ulong)options.Count) sectorsToDo = (uint)options.Count;
+                        else
+                            sectorsToDo =
+                                (uint)(trackSectors - doneSectors);
 
                         DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", doneSectors,
-                                         doneSectors + sectorsToDo, doneSectors / (double)trackSectors, track.TrackSequence);
+                                         doneSectors + sectorsToDo, doneSectors / (double)trackSectors,
+                                         track.TrackSequence);
 
                         bool result;
                         if(useLong)
                             if(sectorsToDo == 1)
                             {
-                                sector = inputFormat.ReadSectorLong(doneSectors + track.TrackStartSector);
+                                sector = inputFormat.ReadSectorLong(doneSectors           + track.TrackStartSector);
                                 result = outputFormat.WriteSectorLong(sector, doneSectors + track.TrackStartSector);
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector, sectorsToDo);
-                                result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector, sectorsToDo);
+                                sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector,
+                                                                     sectorsToDo);
+                                result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
+                                                                       sectorsToDo);
                             }
                         else
                         {
                             if(sectorsToDo == 1)
                             {
-                                sector = inputFormat.ReadSector(doneSectors + track.TrackStartSector);
+                                sector = inputFormat.ReadSector(doneSectors           + track.TrackStartSector);
                                 result = outputFormat.WriteSector(sector, doneSectors + track.TrackStartSector);
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
-                                result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector, sectorsToDo);
+                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector,
+                                                                 sectorsToDo);
+                                result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector,
+                                                                   sectorsToDo);
                             }
                         }
 
@@ -383,6 +390,16 @@ namespace DiscImageChef.Commands
                                      trackSectors, 1.0, track.TrackSequence);
                     DicConsole.WriteLine();
                 }
+
+            if(tracks == null)
+            {
+                DicConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
+                                     inputFormat.Info.Cylinders, inputFormat.Info.Heads,
+                                     inputFormat.Info.SectorsPerTrack);
+                if(!outputFormat.SetGeometry(inputFormat.Info.Cylinders, inputFormat.Info.Heads,
+                                             inputFormat.Info.SectorsPerTrack))
+                    DicConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
+                                              outputFormat.ErrorMessage);
             }
 
             DicConsole.WriteLine("Closing output image.");

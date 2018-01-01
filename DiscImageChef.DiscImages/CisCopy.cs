@@ -640,6 +640,12 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            // Geometry is not stored in image
+            return true;
+        }
+
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum DiskType : byte
         {

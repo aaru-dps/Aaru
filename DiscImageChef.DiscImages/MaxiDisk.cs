@@ -515,6 +515,33 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            if(cylinders > 90)
+            {
+                ErrorMessage = "Too many cylinders.";
+                return false;
+            }
+
+            if(heads > 2)
+            {
+                ErrorMessage = "Too many heads.";
+                return false;
+            }
+
+            if(sectorsPerTrack > byte.MaxValue)
+            {
+                ErrorMessage = "Too many sectors per track.";
+                return false;
+            }
+
+            imageInfo.SectorsPerTrack = sectorsPerTrack;
+            imageInfo.Heads           = heads;
+            imageInfo.Cylinders       = cylinders;
+
+            return true;
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HdkHeader
         {

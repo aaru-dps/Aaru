@@ -440,24 +440,26 @@ namespace DiscImageChef.DiscImages
 
             Version thisVersion = GetType().Assembly.GetName().Version;
 
-            // TODO: Interface to set geometry
-            imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-            imageInfo.Heads           = 16;
-            imageInfo.SectorsPerTrack = 63;
-
-            while(imageInfo.Cylinders == 0)
+            if(imageInfo.Cylinders == 0)
             {
-                imageInfo.Heads--;
+                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
+                imageInfo.Heads           = 16;
+                imageInfo.SectorsPerTrack = 63;
 
-                if(imageInfo.Heads == 0)
+                while(imageInfo.Cylinders == 0)
                 {
-                    imageInfo.SectorsPerTrack--;
-                    imageInfo.Heads = 16;
+                    imageInfo.Heads--;
+
+                    if(imageInfo.Heads == 0)
+                    {
+                        imageInfo.SectorsPerTrack--;
+                        imageInfo.Heads = 16;
+                    }
+
+                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
+
+                    if(imageInfo.Cylinders == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
                 }
-
-                imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
-
-                if(imageInfo.Cylinders == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
             }
 
             RsIdeHeader header = new RsIdeHeader
@@ -538,7 +540,35 @@ namespace DiscImageChef.DiscImages
             imageInfo.DriveModel            = metadata.DriveModel;
             imageInfo.DriveFirmwareRevision = metadata.DriveFirmwareRevision;
             imageInfo.DriveSerialNumber     = metadata.DriveSerialNumber;
-            throw new NotImplementedException();
+
+            return true;
+        }
+
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            if(cylinders > ushort.MaxValue)
+            {
+                ErrorMessage = "Too many cylinders.";
+                return false;
+            }
+
+            if(heads > ushort.MaxValue)
+            {
+                ErrorMessage = "Too many heads.";
+                return false;
+            }
+
+            if(sectorsPerTrack > ushort.MaxValue)
+            {
+                ErrorMessage = "Too many sectors per track.";
+                return false;
+            }
+
+            imageInfo.SectorsPerTrack = sectorsPerTrack;
+            imageInfo.Heads           = heads;
+            imageInfo.Cylinders       = cylinders;
+
+            return true;
         }
 
         static byte[] ScrambleATAString(string text, int length)

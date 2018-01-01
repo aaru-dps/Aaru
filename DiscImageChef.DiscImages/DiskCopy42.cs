@@ -807,7 +807,7 @@ namespace DiscImageChef.DiscImages
                 ErrorMessage = "Unsupported sector size";
                 return false;
             }
-            
+
             switch(mediaType)
             {
                 case MediaType.AppleFileWare:
@@ -1141,6 +1141,12 @@ namespace DiscImageChef.DiscImages
         ~DiskCopy42()
         {
             Close();
+        }
+
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            // Geometry is not stored in image
+            return true;
         }
 
         // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
