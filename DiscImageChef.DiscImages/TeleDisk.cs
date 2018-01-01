@@ -654,13 +654,6 @@ namespace DiscImageChef.DiscImages
             inStream.Dispose();
             stream.Dispose();
 
-            /*
-            FileStream debugFs = new FileStream("debug.img", FileMode.CreateNew, FileAccess.Write);
-            for(ulong i = 0; i < ImageInfo.sectors; i++)
-                debugFs.Write(ReadSector(i), 0, (int)ImageInfo.sectorSize);
-            debugFs.Dispose();
-            */
-
             return true;
         }
 

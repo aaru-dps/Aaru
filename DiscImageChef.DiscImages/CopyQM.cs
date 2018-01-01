@@ -247,12 +247,6 @@ namespace DiscImageChef.DiscImages
                 decodedImage.Write(filling, 0, filling.Length);
             }
 
-            /*
-            FileStream debugStream = new FileStream("debug.img", FileMode.CreateNew, FileAccess.ReadWrite);
-            debugStream.Write(decodedImage.ToArray(), 0, (int)decodedImage.Length);
-            debugStream.Close();
-            */
-
             int sum                                     = 0;
             for(int i = 0; i < hdr.Length - 1; i++) sum += hdr[i];
 

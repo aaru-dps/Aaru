@@ -244,12 +244,6 @@ namespace DiscImageChef.DiscImages
                 decodedImage.Write(track, 0, tracksize);
             }
 
-            /*
-                        FileStream debugStream = new FileStream("debug.img", FileMode.CreateNew, FileAccess.ReadWrite);
-                        debugStream.Write(decodedImage.ToArray(), 0, (int)decodedImage.Length);
-                        debugStream.Close();
-            */
-
             imageInfo.Application          = "CisCopy";
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();

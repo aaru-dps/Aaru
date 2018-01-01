@@ -262,13 +262,6 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("D88 plugin", "{0} sectors", sectorsData.Count);
 
-            /*
-            FileStream debugStream = new FileStream("debug.img", FileMode.CreateNew, FileAccess.ReadWrite);
-            for(int i = 0; i < sectorsData.Count; i++)
-                debugStream.Write(sectorsData[i], 0, sectorsData[i].Length);
-            debugStream.Close();
-            */
-
             imageInfo.MediaType = MediaType.Unknown;
             if(allEqual)
                 if(trkCounter == 154 && spt == 26 && bps == IBMSectorSizeCode.EighthKilo)
