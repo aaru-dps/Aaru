@@ -401,9 +401,10 @@ namespace DiscImageChef.Commands
                             sectorsToDo =
                                 (uint)(trackSectors - doneSectors);
 
-                        DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", doneSectors,
-                                         doneSectors + sectorsToDo, doneSectors / (double)trackSectors,
-                                         track.TrackSequence);
+                        DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
+                                         doneSectors + track.TrackStartSector,
+                                         doneSectors + sectorsToDo + track.TrackStartSector,
+                                         doneSectors / (double)trackSectors, track.TrackSequence);
 
                         bool result;
                         if(useLong)
@@ -449,8 +450,9 @@ namespace DiscImageChef.Commands
                         doneSectors += sectorsToDo;
                     }
 
-                    DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", trackSectors,
-                                     trackSectors, 1.0, track.TrackSequence);
+                    DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
+                                     trackSectors + track.TrackStartSector, trackSectors + track.TrackStartSector, 1.0,
+                                     track.TrackSequence);
                     DicConsole.WriteLine();
 
                     foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
@@ -491,8 +493,9 @@ namespace DiscImageChef.Commands
                                     (uint)(trackSectors - doneSectors);
 
                             DicConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                             doneSectors, doneSectors + sectorsToDo, doneSectors / (double)trackSectors,
-                                             track.TrackSequence, tag);
+                                             doneSectors + track.TrackStartSector,
+                                             doneSectors + sectorsToDo + track.TrackStartSector,
+                                             doneSectors / (double)trackSectors, track.TrackSequence, tag);
 
                             if(sectorsToDo == 1)
                             {
@@ -522,7 +525,8 @@ namespace DiscImageChef.Commands
                         }
 
                         DicConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                         trackSectors, trackSectors, 1.0, track.TrackSequence, tag);
+                                         trackSectors + track.TrackStartSector, trackSectors + track.TrackStartSector,
+                                         1.0, track.TrackSequence, tag);
                         DicConsole.WriteLine();
                     }
                 }
