@@ -249,7 +249,7 @@ namespace DiscImageChef.DiscImages
 
                     /*if(!cdrTrack.Indexes.TryGetValue(0, out dicTrack.TrackStartSector))
                         cdrTrack.Indexes.TryGetValue(1, out dicTrack.TrackStartSector);*/
-                    if(cdrTrack.Bps == 2448)
+                    if(cdrTrack.Tracktype == CDRWIN_TRACK_TYPE_CDG)
                     {
                         dicTrack.TrackSubchannelFilter = cdrTrack.Trackfile.Datafilter;
                         dicTrack.TrackSubchannelFile   = cdrTrack.Trackfile.Datafilter.GetFilename();
@@ -1132,14 +1132,11 @@ namespace DiscImageChef.DiscImages
                 foreach(CdrWinTrack track in discimage.Tracks) imageInfo.ImageSize += track.Bps * track.Sectors;
                 foreach(CdrWinTrack track in discimage.Tracks) imageInfo.Sectors   += track.Sectors;
 
-                if(discimage.Disktype == MediaType.CDG || discimage.Disktype == MediaType.CDEG ||
-                   discimage.Disktype == MediaType.CDMIDI)
-                    imageInfo.SectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
-                else if(discimage.Disktype != MediaType.CDROMXA && discimage.Disktype != MediaType.CDDA &&
-                        discimage.Disktype != MediaType.CDI     && discimage.Disktype != MediaType.CDPLUS)
-                    imageInfo.SectorSize = 2048; // Only data tracks
-                else
-                    imageInfo.SectorSize = 2352; // All others
+                if(discimage.Disktype != MediaType.CDROMXA && discimage.Disktype != MediaType.CDDA   &&
+                   discimage.Disktype != MediaType.CDI     && discimage.Disktype != MediaType.CDPLUS &&
+                   discimage.Disktype != MediaType.CDG     && discimage.Disktype != MediaType.CDEG   &&
+                   discimage.Disktype != MediaType.CDMIDI) imageInfo.SectorSize = 2048; // Only data tracks
+                else imageInfo.SectorSize                                       = 2352; // All others
 
                 if(discimage.Mcn        != null) imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
                 if(discimage.Cdtextfile != null) imageInfo.ReadableMediaTags.Add(MediaTagType.CD_TEXT);
@@ -1674,8 +1671,8 @@ namespace DiscImageChef.DiscImages
                 case CDRWIN_TRACK_TYPE_CDG:
                 {
                     sectorOffset = 0;
-                    sectorSize   = 2448;
-                    sectorSkip   = 0;
+                    sectorSize   = 2352;
+                    sectorSkip   = 96;
                     break;
                 }
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
@@ -1737,7 +1734,7 @@ namespace DiscImageChef.DiscImages
                     if(!cdrTrack.Indexes.TryGetValue(0, out dicTrack.TrackStartSector))
                         cdrTrack.Indexes.TryGetValue(1, out dicTrack.TrackStartSector);
                     dicTrack.TrackEndSector = dicTrack.TrackStartSector + cdrTrack.Sectors - 1;
-                    if(cdrTrack.Bps == 2448)
+                    if(cdrTrack.Tracktype == CDRWIN_TRACK_TYPE_CDG)
                     {
                         dicTrack.TrackSubchannelFilter = cdrTrack.Trackfile.Datafilter;
                         dicTrack.TrackSubchannelFile   = cdrTrack.Trackfile.Datafilter.GetFilename();
@@ -1834,9 +1831,8 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
-                SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubchannel,
-                SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags,
-                SectorTagType.CdTrackIsrc
+                SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
+                SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdTrackIsrc
             };
         public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
@@ -2230,7 +2226,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                 if(trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc))
-                    descriptorStream.WriteLine("    FLAGS {0}", isrc);
+                    descriptorStream.WriteLine("    ISRC {0}", isrc);
 
                 descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                            msf.frame);
@@ -2293,7 +2289,7 @@ namespace DiscImageChef.DiscImages
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
-            throw new NotImplementedException();
+            return WriteSectorTag(data, sectorAddress, tag);
         }
 
         public bool SetMetadata(ImageInfo metadata)
@@ -2328,8 +2324,8 @@ namespace DiscImageChef.DiscImages
                 case CDRWIN_TRACK_TYPE_AUDIO:
                 case CDRWIN_TRACK_TYPE_MODE1_RAW:
                 case CDRWIN_TRACK_TYPE_MODE2_RAW:
+                case CDRWIN_TRACK_TYPE_CDG:
                 case CDRWIN_TRACK_TYPE_CDI_RAW: return 2352;
-                case CDRWIN_TRACK_TYPE_CDG:     return 2448;
                 default:                        return 0;
             }
         }
@@ -2346,9 +2342,9 @@ namespace DiscImageChef.DiscImages
                 case CDRWIN_TRACK_TYPE_CDI:
                 case CDRWIN_TRACK_TYPE_MODE2_RAW:
                 case CDRWIN_TRACK_TYPE_CDI_RAW: return 2336;
-                case CDRWIN_TRACK_TYPE_AUDIO:   return 2352;
-                case CDRWIN_TRACK_TYPE_CDG:     return 2448;
-                default:                        return 0;
+                case CDRWIN_TRACK_TYPE_CDG:
+                case CDRWIN_TRACK_TYPE_AUDIO: return 2352;
+                default:                      return 0;
             }
         }
 
@@ -2419,7 +2415,6 @@ namespace DiscImageChef.DiscImages
         {
             switch(track.TrackType)
             {
-                case TrackType.Audio when track.TrackRawBytesPerSector == 2448: return CDRWIN_TRACK_TYPE_CDG;
                 case TrackType.Audio when track.TrackRawBytesPerSector == 2352:
                     return CDRWIN_TRACK_TYPE_AUDIO;
                 case TrackType.Data:
