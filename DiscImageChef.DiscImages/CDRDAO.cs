@@ -460,8 +460,7 @@ namespace DiscImageChef.DiscImages
                                 currenttrack.Packedsubchannel = true;
                                 goto case "RW_RAW";
                             case "RW_RAW":
-                                currenttrack.Bps        += 96;
-                                currenttrack.Subchannel =  true;
+                                currenttrack.Subchannel = true;
                                 break;
                             default:
                                 throw new
@@ -483,13 +482,13 @@ namespace DiscImageChef.DiscImages
                     {
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found {1} PRE_EMPHASIS at line {0}", lineNumber,
                                                   matchEmphasis.Groups["no"].Value);
-                        currenttrack.FlagPre |= intrack && matchCopy.Groups["no"].Value == "";
+                        currenttrack.FlagPre |= intrack && matchEmphasis.Groups["no"].Value == "";
                     }
                     else if(matchStereo.Success)
                     {
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found {1}_CHANNEL_AUDIO at line {0}", lineNumber,
                                                   matchStereo.Groups["num"].Value);
-                        currenttrack.Flag_4Ch |= intrack && matchCopy.Groups["num"].Value == "FOUR";
+                        currenttrack.Flag_4Ch |= intrack && matchStereo.Groups["num"].Value == "FOUR";
                     }
                     else if(matchIsrc.Success)
                     {
@@ -860,14 +859,11 @@ namespace DiscImageChef.DiscImages
                     imageInfo.Sectors   += track.Sectors;
                 }
 
-                if(discimage.Disktype == MediaType.CDG || discimage.Disktype == MediaType.CDEG ||
-                   discimage.Disktype == MediaType.CDMIDI)
-                    imageInfo.SectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
-                else if(discimage.Disktype != MediaType.CDROMXA && discimage.Disktype != MediaType.CDDA &&
-                        discimage.Disktype != MediaType.CDI     && discimage.Disktype != MediaType.CDPLUS)
-                    imageInfo.SectorSize = 2048; // Only data tracks
-                else
-                    imageInfo.SectorSize = 2352; // All others
+                if(discimage.Disktype != MediaType.CDG    && discimage.Disktype != MediaType.CDEG    &&
+                   discimage.Disktype != MediaType.CDMIDI && discimage.Disktype != MediaType.CDROMXA &&
+                   discimage.Disktype != MediaType.CDDA   && discimage.Disktype != MediaType.CDI     &&
+                   discimage.Disktype != MediaType.CDPLUS) imageInfo.SectorSize = 2048; // Only data tracks
+                else imageInfo.SectorSize                                       = 2352; // All others
 
                 if(discimage.Mcn != null) imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
 
@@ -1157,8 +1153,11 @@ namespace DiscImageChef.DiscImages
 
                     return new[] {(byte)flags};
                 }
-                case SectorTagType.CdTrackIsrc: return Encoding.UTF8.GetBytes(dicTrack.Isrc);
-                default:                        throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                case SectorTagType.CdTrackIsrc:
+                    if(dicTrack.Isrc == null) return null;
+
+                    return Encoding.UTF8.GetBytes(dicTrack.Isrc);
+                default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
             switch(dicTrack.Tracktype)
