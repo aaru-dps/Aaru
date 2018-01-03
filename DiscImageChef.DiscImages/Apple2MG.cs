@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -41,7 +43,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class Apple2Mg : IMediaImage
+    public class Apple2Mg : IWritableImage
     {
         /// <summary>
         ///     Magic number, "2IMG"
@@ -75,42 +77,47 @@ namespace DiscImageChef.DiscImages
         ///     Disk image created by CiderPress, "CdrP"
         /// </summary>
         const uint CREATOR_CIDER = 0x50726443;
+        /// <summary>
+        ///     Disk image created by DiscImageChef, "dic "
+        /// </summary>
+        const uint CREATOR_DIC = 0x20636964;
 
-        const uint DOS_SECTOR_ORDER = 0x00000000;
+        const uint DOS_SECTOR_ORDER    = 0x00000000;
         const uint PRODOS_SECTOR_ORDER = 0x00000001;
-        const uint NIB_SECTOR_ORDER = 0x00000002;
+        const uint NIB_SECTOR_ORDER    = 0x00000002;
 
-        const uint LOCKED_DISK = 0x80000000;
+        const uint LOCKED_DISK         = 0x80000000;
         const uint VALID_VOLUME_NUMBER = 0x00000100;
-        const uint VOLUME_NUMBER_MASK = 0x000000FF;
+        const uint VOLUME_NUMBER_MASK  = 0x000000FF;
 
-        IFilter a2MgImageFilter;
+        IFilter     a2MgImageFilter;
         A2ImgHeader imageHeader;
-        ImageInfo imageInfo;
+        ImageInfo   imageInfo;
+        FileStream  writingStream;
 
         public Apple2Mg()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -118,7 +125,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "Apple 2IMG";
-        public Guid Id => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
+        public Guid   Id   => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
 
         public string Format => "Apple 2IMG";
 
@@ -149,7 +156,7 @@ namespace DiscImageChef.DiscImages
 
             uint datasize = BitConverter.ToUInt32(header, 0x1C);
             // There seems to be incorrect endian in some images on the wild
-            if(datasize == 0x00800C00) datasize = 0x000C8000;
+            if(datasize           == 0x00800C00) datasize = 0x000C8000;
             if(dataoff + datasize > stream.Length) return false;
 
             uint commentoff = BitConverter.ToUInt32(header, 0x20);
@@ -174,29 +181,29 @@ namespace DiscImageChef.DiscImages
 
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
-            byte[] magic = new byte[4];
+            byte[] magic   = new byte[4];
             byte[] creator = new byte[4];
 
-            Array.Copy(header, 0, magic, 0, 4);
+            Array.Copy(header, 0, magic,   0, 4);
             Array.Copy(header, 4, creator, 0, 4);
 
-            imageHeader.Magic = BitConverter.ToUInt32(header, 0x00);
-            imageHeader.Creator = BitConverter.ToUInt32(header, 0x04);
-            imageHeader.HeaderSize = BitConverter.ToUInt16(header, 0x08);
-            imageHeader.Version = BitConverter.ToUInt16(header, 0x0A);
-            imageHeader.ImageFormat = BitConverter.ToUInt32(header, 0x0C);
-            imageHeader.Flags = BitConverter.ToUInt32(header, 0x10);
-            imageHeader.Blocks = BitConverter.ToUInt32(header, 0x14);
-            imageHeader.DataOffset = BitConverter.ToUInt32(header, 0x18);
-            imageHeader.DataSize = BitConverter.ToUInt32(header, 0x1C);
-            imageHeader.CommentOffset = BitConverter.ToUInt32(header, 0x20);
-            imageHeader.CommentSize = BitConverter.ToUInt32(header, 0x24);
+            imageHeader.Magic                 = BitConverter.ToUInt32(header, 0x00);
+            imageHeader.Creator               = BitConverter.ToUInt32(header, 0x04);
+            imageHeader.HeaderSize            = BitConverter.ToUInt16(header, 0x08);
+            imageHeader.Version               = BitConverter.ToUInt16(header, 0x0A);
+            imageHeader.ImageFormat           = BitConverter.ToUInt32(header, 0x0C);
+            imageHeader.Flags                 = BitConverter.ToUInt32(header, 0x10);
+            imageHeader.Blocks                = BitConverter.ToUInt32(header, 0x14);
+            imageHeader.DataOffset            = BitConverter.ToUInt32(header, 0x18);
+            imageHeader.DataSize              = BitConverter.ToUInt32(header, 0x1C);
+            imageHeader.CommentOffset         = BitConverter.ToUInt32(header, 0x20);
+            imageHeader.CommentSize           = BitConverter.ToUInt32(header, 0x24);
             imageHeader.CreatorSpecificOffset = BitConverter.ToUInt32(header, 0x28);
-            imageHeader.CreatorSpecificSize = BitConverter.ToUInt32(header, 0x2C);
-            imageHeader.Reserved1 = BitConverter.ToUInt32(header, 0x30);
-            imageHeader.Reserved2 = BitConverter.ToUInt32(header, 0x34);
-            imageHeader.Reserved3 = BitConverter.ToUInt32(header, 0x38);
-            imageHeader.Reserved4 = BitConverter.ToUInt32(header, 0x3C);
+            imageHeader.CreatorSpecificSize   = BitConverter.ToUInt32(header, 0x2C);
+            imageHeader.Reserved1             = BitConverter.ToUInt32(header, 0x30);
+            imageHeader.Reserved2             = BitConverter.ToUInt32(header, 0x34);
+            imageHeader.Reserved3             = BitConverter.ToUInt32(header, 0x38);
+            imageHeader.Reserved4             = BitConverter.ToUInt32(header, 0x3C);
 
             if(imageHeader.DataSize == 0x00800C00)
             {
@@ -204,17 +211,19 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
             }
 
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}", imageHeader.HeaderSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}", imageHeader.Version);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}", imageHeader.ImageFormat);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}", imageHeader.Flags);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}", imageHeader.Blocks);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}", imageHeader.DataOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", imageHeader.DataSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"",
+                                      Encoding.ASCII.GetString(magic));
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"",
+                                      Encoding.ASCII.GetString(creator));
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}",         imageHeader.HeaderSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}",            imageHeader.Version);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}",        imageHeader.ImageFormat);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}",         imageHeader.Flags);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}",             imageHeader.Blocks);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}",    imageHeader.DataOffset);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}",           imageHeader.DataSize);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", imageHeader.CommentOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", imageHeader.CommentSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}",        imageHeader.CommentSize);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
                                       imageHeader.CreatorSpecificOffset);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}",
@@ -224,7 +233,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", imageHeader.Reserved3);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", imageHeader.Reserved4);
 
-            if(imageHeader.DataSize == 0 && imageHeader.Blocks == 0 &&
+            if(imageHeader.DataSize    == 0 && imageHeader.Blocks == 0 &&
                imageHeader.ImageFormat != PRODOS_SECTOR_ORDER) return false;
 
             switch(imageHeader.ImageFormat)
@@ -243,7 +252,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo.SectorSize = (uint)(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER ? 512 : 256);
 
-            imageInfo.Sectors = imageHeader.Blocks;
+            imageInfo.Sectors   = imageHeader.Blocks;
             imageInfo.ImageSize = imageHeader.DataSize;
 
             switch(imageHeader.Creator)
@@ -285,10 +294,10 @@ namespace DiscImageChef.DiscImages
                 imageInfo.Comments = Encoding.ASCII.GetString(comments);
             }
 
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.MediaType = GetMediaType();
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.MediaType            = GetMediaType();
 
             a2MgImageFilter = imageFilter;
 
@@ -301,54 +310,40 @@ namespace DiscImageChef.DiscImages
             switch(imageInfo.MediaType)
             {
                 case MediaType.Apple32SS:
-                    imageInfo.Cylinders = 35;
-                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders       = 35;
+                    imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 13;
                     break;
                 case MediaType.Apple32DS:
-                    imageInfo.Cylinders = 35;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 35;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 13;
                     break;
                 case MediaType.Apple33SS:
-                    imageInfo.Cylinders = 35;
-                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders       = 35;
+                    imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.Apple33DS:
-                    imageInfo.Cylinders = 35;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 35;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.AppleSonySS:
                     imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 1;
+                    imageInfo.Heads     = 1;
                     // Variable sectors per track, this suffices
                     imageInfo.SectorsPerTrack = 10;
                     break;
                 case MediaType.AppleSonyDS:
                     imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Heads     = 2;
                     // Variable sectors per track, this suffices
                     imageInfo.SectorsPerTrack = 10;
                     break;
             }
 
             return true;
-        }
-
-        MediaType GetMediaType()
-        {
-            switch(imageInfo.Sectors)
-            {
-                case 455: return MediaType.Apple32SS;
-                case 910: return MediaType.Apple32DS;
-                case 560: return MediaType.Apple33SS;
-                case 1120: return MediaType.Apple33DS;
-                case 800: return MediaType.AppleSonySS;
-                case 1600: return MediaType.AppleSonyDS;
-                default: return MediaType.Unknown;
-            }
         }
 
         public byte[] ReadSector(ulong sectorAddress)
@@ -451,7 +446,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -461,7 +456,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -471,7 +466,243 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
+        public IEnumerable<MediaType>     SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.Apple32SS, MediaType.Apple32DS, MediaType.Apple33SS, MediaType.Apple33DS,
+                MediaType.AppleSonySS, MediaType.AppleSonyDS, MediaType.Unknown, MediaType.GENERIC_HDD
+            };
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new (string name, Type type, string description)[] { };
+        public IEnumerable<string> KnownExtensions => new[] {".2mg"};
+        public bool                IsWriting       { get; private set; }
+        public string              ErrorMessage    { get; private set; }
+
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
+        {
+            switch(mediaType)
+            {
+                case MediaType.Apple32SS when sectorSize != 256:
+                case MediaType.Apple32DS when sectorSize != 256:
+                case MediaType.Apple33SS when sectorSize != 256:
+                case MediaType.Apple33DS when sectorSize != 256:
+                {
+                    ErrorMessage = "Unsupported sector size";
+                    return false;
+                }
+                default:
+                    if(sectorSize != 512)
+                    {
+                        ErrorMessage = "Unsupported sector size";
+                        return false;
+                    }
+
+                    break;
+            }
+
+            if(!SupportedMediaTypes.Contains(mediaType))
+            {
+                ErrorMessage = $"Unsupported media format {mediaType}";
+                return false;
+            }
+
+            if(sectors * sectorSize > uint.MaxValue)
+            {
+                ErrorMessage = "Too many sectors";
+                return false;
+            }
+
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+
+            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            catch(IOException e)
+            {
+                ErrorMessage = $"Could not create new image file, exception {e.Message}";
+                return false;
+            }
+
+            IsWriting    = true;
+            ErrorMessage = null;
+            return true;
+        }
+
+        public bool WriteMediaTag(byte[] data, MediaTagType tag)
+        {
+            ErrorMessage = "Writing media tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSector(byte[] data, ulong sectorAddress)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length != imageInfo.SectorSize)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress >= imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream.Seek(Marshal.SizeOf(typeof(A2ImgHeader)) + (long)(sectorAddress * imageInfo.SectorSize),
+                               SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(data.Length % imageInfo.SectorSize != 0)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            if(sectorAddress + length > imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            writingStream.Seek(Marshal.SizeOf(typeof(A2ImgHeader)) + (long)(sectorAddress * imageInfo.SectorSize),
+                               SeekOrigin.Begin);
+            writingStream.Write(data, 0, data.Length);
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool SetTracks(List<Track> tracks)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        // TODO: Add metadata to creator chunk
+        public bool Close()
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Image is not opened for writing";
+                return false;
+            }
+
+            imageHeader = new A2ImgHeader
+            {
+                Blocks      = (uint)imageInfo.Sectors,
+                Creator     = CREATOR_DIC,
+                DataOffset  = (uint)Marshal.SizeOf(typeof(A2ImgHeader)),
+                DataSize    = (uint)(imageInfo.Sectors * imageInfo.SectorSize),
+                HeaderSize  = (ushort)Marshal.SizeOf(typeof(A2ImgHeader)),
+                ImageFormat = imageInfo.SectorSize == 512 ? PRODOS_SECTOR_ORDER : DOS_SECTOR_ORDER,
+                Magic       = MAGIC,
+                Version     = 1
+            };
+
+            if(imageInfo.LastMediaSequence != 0)
+            {
+                imageHeader.Flags =  VALID_VOLUME_NUMBER;
+                imageHeader.Flags += (uint)(imageInfo.MediaSequence & VOLUME_NUMBER_MASK);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.Comments))
+            {
+                byte[] commentBytes = Encoding.UTF8.GetBytes(imageInfo.Comments);
+                writingStream.Seek(0, SeekOrigin.End);
+                imageHeader.CommentOffset = (uint)writingStream.Position;
+                imageHeader.CommentSize   = (uint)commentBytes.Length;
+                writingStream.Write(commentBytes, 0, commentBytes.Length);
+            }
+
+            byte[] hdr    = new byte[Marshal.SizeOf(imageHeader)];
+            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(imageHeader));
+            Marshal.StructureToPtr(imageHeader, hdrPtr, true);
+            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            Marshal.FreeHGlobal(hdrPtr);
+
+            writingStream.Seek(0, SeekOrigin.Begin);
+            writingStream.Write(hdr, 0, hdr.Length);
+
+            writingStream.Flush();
+            writingStream.Close();
+            IsWriting = false;
+
+            return true;
+        }
+
+        public bool SetMetadata(ImageInfo metadata)
+        {
+            imageInfo.Comments          = metadata.Comments;
+            imageInfo.MediaSequence     = metadata.MediaSequence;
+            imageInfo.LastMediaSequence = metadata.LastMediaSequence;
+            return true;
+        }
+
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            // Geometry is not stored in image
+            return true;
+        }
+
+        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        MediaType GetMediaType()
+        {
+            switch(imageInfo.Sectors)
+            {
+                case 455:  return MediaType.Apple32SS;
+                case 910:  return MediaType.Apple32DS;
+                case 560:  return MediaType.Apple33SS;
+                case 1120: return MediaType.Apple33DS;
+                case 800:  return MediaType.AppleSonySS;
+                case 1600: return MediaType.AppleSonyDS;
+                default:   return MediaType.Unknown;
+            }
+        }
+
         [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct A2ImgHeader
         {
             /// <summary>
