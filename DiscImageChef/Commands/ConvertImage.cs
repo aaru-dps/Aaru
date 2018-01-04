@@ -266,6 +266,14 @@ namespace DiscImageChef.Commands
 
             if(tracks == null)
             {
+                DicConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
+                                     inputFormat.Info.Cylinders, inputFormat.Info.Heads,
+                                     inputFormat.Info.SectorsPerTrack);
+                if(!outputFormat.SetGeometry(inputFormat.Info.Cylinders, inputFormat.Info.Heads,
+                                             inputFormat.Info.SectorsPerTrack))
+                    DicConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
+                                              outputFormat.ErrorMessage);
+
                 while(doneSectors < inputFormat.Info.Sectors)
                 {
                     byte[] sector;
@@ -551,17 +559,6 @@ namespace DiscImageChef.Commands
 
                     DicConsole.WriteLine();
                 }
-            }
-
-            if(tracks == null)
-            {
-                DicConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
-                                     inputFormat.Info.Cylinders, inputFormat.Info.Heads,
-                                     inputFormat.Info.SectorsPerTrack);
-                if(!outputFormat.SetGeometry(inputFormat.Info.Cylinders, inputFormat.Info.Heads,
-                                             inputFormat.Info.SectorsPerTrack))
-                    DicConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
-                                              outputFormat.ErrorMessage);
             }
 
             DicConsole.WriteLine("Closing output image.");
