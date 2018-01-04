@@ -35,13 +35,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class Apridisk : IMediaImage
+    public class Apridisk : IWritableImage
     {
         readonly byte[] signature =
         {
@@ -478,6 +479,275 @@ namespace DiscImageChef.DiscImages
             public byte         head;
             public byte         sector;
             public ushort       cylinder;
+        }
+
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
+        // TODO: Test with real hardware to see real supported media
+        public IEnumerable<MediaType> SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.ACORN_35_DS_DD, MediaType.ACORN_35_DS_HD, MediaType.Apricot_35, MediaType.ATARI_35_DS_DD,
+                MediaType.ATARI_35_DS_DD_11, MediaType.ATARI_35_SS_DD, MediaType.ATARI_35_SS_DD_11, MediaType.DMF,
+                MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED,
+                MediaType.DOS_35_HD, MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8,
+                MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
+                MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD,
+                MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
+            };
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new[]
+            {
+                ("compress", typeof(bool), "Enable Apridisk compression.")
+            };
+        public IEnumerable<string> KnownExtensions => new[] {".dsk"};
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
+        FileStream writingStream;
+
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors, uint sectorSize)
+        {
+            if(!SupportedMediaTypes.Contains(mediaType))
+            {
+                ErrorMessage = $"Unsupport media format {mediaType}";
+                return false;
+            }
+
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+
+            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            catch(IOException e)
+            {
+                ErrorMessage = $"Could not create new image file, exception {e.Message}";
+                return false;
+            }
+
+            IsWriting    = true;
+            ErrorMessage = null;
+            return true;
+        }
+
+        public bool WriteMediaTag(byte[] data, MediaTagType tag)
+        {
+            ErrorMessage = "Writing media tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSector(byte[] data, ulong sectorAddress)
+        {
+            (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
+
+            if(cylinder >= sectorsData.Length)
+            {
+                ErrorMessage = "Sector address not found";
+                return false;
+            }
+
+            if(head >= sectorsData[cylinder].Length)
+            {
+                ErrorMessage = "Sector address not found";
+                return false;
+            }
+
+            if(sector > sectorsData[cylinder][head].Length)
+            {
+                ErrorMessage = "Sector address not found";
+                return false;
+            }
+
+            sectorsData[cylinder][head][sector] = data;
+
+            return true;
+        }
+
+        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+        {
+            for(uint i = 0; i < length; i++)
+            {
+                (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
+
+                if(cylinder >= sectorsData.Length)
+                {
+                    ErrorMessage = "Sector address not found";
+                    return false;
+                }
+
+                if(head >= sectorsData[cylinder].Length)
+                {
+                    ErrorMessage = "Sector address not found";
+                    return false;
+                }
+
+                if(sector > sectorsData[cylinder][head].Length)
+                {
+                    ErrorMessage = "Sector address not found";
+                    return false;
+                }
+
+                sectorsData[cylinder][head][sector] = data;
+            }
+
+            return true;
+        }
+
+        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+        {
+            ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool SetTracks(List<Track> tracks)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        // TODO: Try if apridisk software supports finding other chunks, to extend metadata support
+        public bool Close()
+        {
+            writingStream.Seek(0, SeekOrigin.Begin);
+            writingStream.Write(signature, 0, signature.Length);
+
+            byte[] hdr    = new byte[Marshal.SizeOf(typeof(ApridiskRecord))];
+            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ApridiskRecord)));
+
+            for(ushort c = 0; c < imageInfo.Cylinders; c++)
+            {
+                for(byte h = 0; h < imageInfo.Heads; h++)
+                {
+                    for(byte s = 0; s < imageInfo.SectorsPerTrack; s++)
+                    {
+                        if(sectorsData[c][h][s] == null || sectorsData[c][h][s].Length == 0) continue;
+
+                        ApridiskRecord record = new ApridiskRecord
+                        {
+                            type        = RecordType.Sector,
+                            compression = CompressType.Uncompresed,
+                            headerSize  = (ushort)Marshal.SizeOf(typeof(ApridiskRecord)),
+                            dataSize    = (uint)sectorsData[c][h][s].Length,
+                            head        = h,
+                            sector      = s,
+                            cylinder    = c
+                        };
+
+                        Marshal.StructureToPtr(record, hdrPtr, true);
+                        Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+                        
+                        writingStream.Write(hdr, 0, hdr.Length);
+                        writingStream.Write(sectorsData[c][h][s], 0, sectorsData[c][h][s].Length);
+                    }
+                }
+            }
+
+            if(!string.IsNullOrEmpty(imageInfo.Creator))
+            {
+                byte[]         creatorBytes  = Encoding.UTF8.GetBytes(imageInfo.Creator);
+                ApridiskRecord creatorRecord = new ApridiskRecord
+                {
+                    type        = RecordType.Creator,
+                    compression = CompressType.Uncompresed,
+                    headerSize  = (ushort)Marshal.SizeOf(typeof(ApridiskRecord)),
+                    dataSize    = (uint)creatorBytes.Length + 1,
+                    head        = 0,
+                    sector      = 0,
+                    cylinder    = 0
+                };
+
+                Marshal.StructureToPtr(creatorRecord, hdrPtr, true);
+                Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+                        
+                writingStream.Write(hdr,          0, hdr.Length);
+                writingStream.Write(creatorBytes, 0, creatorBytes.Length);
+                writingStream.WriteByte(0); // Termination
+            }
+
+            if(!string.IsNullOrEmpty(imageInfo.Comments))
+            {
+                byte[]         commentBytes  = Encoding.UTF8.GetBytes(imageInfo.Comments);
+                ApridiskRecord commentRecord = new ApridiskRecord
+                {
+                    type        = RecordType.Comment,
+                    compression = CompressType.Uncompresed,
+                    headerSize  = (ushort)Marshal.SizeOf(typeof(ApridiskRecord)),
+                    dataSize    = (uint)commentBytes.Length + 1,
+                    head        = 0,
+                    sector      = 0,
+                    cylinder    = 0
+                };
+
+                Marshal.StructureToPtr(commentRecord, hdrPtr, true);
+                Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+                        
+                writingStream.Write(hdr,          0, hdr.Length);
+                writingStream.Write(commentBytes, 0, commentBytes.Length);
+                writingStream.WriteByte(0); // Termination
+            }
+            
+            Marshal.FreeHGlobal(hdrPtr);
+            writingStream.Flush();
+            writingStream.Close();
+
+            return true;
+        }
+
+        public bool SetMetadata(ImageInfo metadata)
+        {
+            imageInfo.Comments = metadata.Comments;
+            imageInfo.Creator = metadata.Creator;
+            return true;
+        }
+
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            if(cylinders > ushort.MaxValue)
+            {
+                ErrorMessage = "Too many cylinders";
+                return false;
+            }
+            
+            if(heads > byte.MaxValue)
+            {
+                ErrorMessage = "Too many heads";
+                return false;
+            }
+            
+            if(sectorsPerTrack > byte.MaxValue)
+            {
+                ErrorMessage = "Too many sectors per track";
+                return false;
+            }
+            
+            sectorsData = new byte[cylinders][][][];
+            for(ushort c = 0; c < cylinders; c++)
+            {
+                sectorsData[c] = new byte[heads][][];
+                for(byte h = 0; h < heads; h++)
+                    sectorsData[c][h] = new byte[sectorsPerTrack][];
+            }
+
+            imageInfo.Cylinders = cylinders;
+            imageInfo.Heads = heads;
+            imageInfo.SectorsPerTrack = sectorsPerTrack;
+
+            return true;
+        }
+
+        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
         }
     }
 }
