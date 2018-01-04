@@ -40,6 +40,9 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
+    // TODO: Support version 0
+    // TODO: Support fixed images
+    // TODO: Support version 1.2 geometry
     public class Vdi : IMediaImage
     {
         const uint VDI_MAGIC = 0xBEDA107F;
@@ -51,6 +54,7 @@ namespace DiscImageChef.DiscImages
         const string SUN_VDI = "<<< Sun VirtualBox Disk Image >>>\n";
         const string INNOTEK_VDI = "<<< innotek VirtualBox Disk Image >>>\n";
         const string INNOTEK_OLD_VDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
+        const string DIC_VDI = "<<< DiscImageChef VirtualBox Disk Image >>>\n";
 
         const uint MAX_CACHE_SIZE = 16777216;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
@@ -145,7 +149,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}", vHdr.headerSize);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}", vHdr.imageType);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}", vHdr.imageFlags);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}", vHdr.description);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}", vHdr.comments);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}", vHdr.offsetBlocks);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}", vHdr.offsetData);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}", vHdr.cylinders);
@@ -162,6 +166,9 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}", vHdr.linkUuid);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}", vHdr.parentUuid);
 
+            if(vHdr.imageType != VdiImageType.Normal)
+                throw new FeatureSupportedButNotImplementedImageException($"Support for image type {vHdr.imageType} not yet implemented");
+            
             DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
             stream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
             ibm = new uint[vHdr.blocks];
@@ -179,7 +186,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.SectorSize = vHdr.sectorSize;
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             imageInfo.MediaType = MediaType.GENERIC_HDD;
-            imageInfo.Comments = vHdr.description;
+            imageInfo.Comments = vHdr.comments;
             imageInfo.Version = $"{vHdr.majorVersion}.{vHdr.minorVersion}";
 
             switch(vHdr.creator)
@@ -199,6 +206,9 @@ namespace DiscImageChef.DiscImages
                 case INNOTEK_VDI:
                 case INNOTEK_OLD_VDI:
                     imageInfo.Application = "innotek VirtualBox";
+                    break;
+                case DIC_VDI:
+                    imageInfo.Application = "DiscImageChef";
                     break;
             }
 
@@ -375,10 +385,10 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public ushort majorVersion;
             public ushort minorVersion;
-            public uint headerSize;
-            public uint imageType;
-            public uint imageFlags;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string description;
+            public int headerSize;
+            public VdiImageType imageType;
+            public VdiImageFlags imageFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string comments;
             public uint offsetBlocks;
             public uint offsetData;
             public uint cylinders;
@@ -395,7 +405,32 @@ namespace DiscImageChef.DiscImages
             public Guid snapshotUuid;
             public Guid linkUuid;
             public Guid parentUuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 56)] public byte[] garbage;
+        }
+
+        
+        enum VdiImageType : uint
+        {
+        /// <summary> Normal dynamically growing base image file.</summary>
+            Normal = 1,
+        /// <summary>Preallocated base image file of a fixed size.</summary>
+            Fixed,
+        /// <summary>Dynamically growing image file for undo/commit changes support.</summary>
+            Undo,
+        /// <summary>Dynamically growing image file for differencing support.</summary>
+            Differential,
+
+        /// <summary>First valid image type value.</summary>
+            First = Normal,
+        /// <summary>Last valid image type value.</summary>
+            Last = Differential
+        }
+
+        enum VdiImageFlags : uint
+        {
+            /// <summary>
+            /// Fill new blocks with zeroes while expanding image file. Only valid for newly created images, never set
+            /// for opened existing images.</summary>
+            ZeroExpand = 0x100
         }
     }
 }
