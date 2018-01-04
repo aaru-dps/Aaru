@@ -848,6 +848,8 @@ namespace DiscImageChef.DiscImages
                     // Sector number inside of block
                     uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.BlockSize / 512));
 
+                    if(blockAllocationTable[blockNumber] == 0xFFFFFFFF) return new byte[512];
+                    
                     byte[] bitmap = new byte[bitmapSize * 512];
 
                     // Offset of block in file
@@ -886,6 +888,7 @@ namespace DiscImageChef.DiscImages
                     byte[] data         = new byte[512];
                     uint   sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
                     thisStream          = thisFilter.GetDataForkStream();
+                    System.Console.WriteLine("readsector {0}", sectorOffset);
 
                     thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
                     thisStream.Read(data, 0, 512);
@@ -949,7 +952,7 @@ namespace DiscImageChef.DiscImages
                     byte[] prefix = new byte[sectorsToReadHere * 512];
 
                     // 0xFFFFFFFF means unallocated
-                    if(sectorOffset != 0xFFFFFFFF)
+                    if(blockAllocationTable[blockNumber] != 0xFFFFFFFF)
                     {
                         Stream thisStream = thisFilter.GetDataForkStream();
                         thisStream.Seek(sectorOffset         * 512, SeekOrigin.Begin);
