@@ -219,7 +219,7 @@ namespace DiscImageChef.Decoders
             /// <summary>
             ///     Converts this tag to Apple Profile format
             /// </summary>
-            public ProfileTag Profile()
+            public ProfileTag ToProfile()
             {
                 return new ProfileTag
                 {
