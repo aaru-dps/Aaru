@@ -439,8 +439,6 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress == 28672) System.Console.WriteLine("Empty {0}", ArrayHelpers.ArrayIsNullOrEmpty(data));
-
             // Ignore empty sectors
             if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
