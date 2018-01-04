@@ -888,7 +888,6 @@ namespace DiscImageChef.DiscImages
                     byte[] data         = new byte[512];
                     uint   sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
                     thisStream          = thisFilter.GetDataForkStream();
-                    System.Console.WriteLine("readsector {0}", sectorOffset);
 
                     thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
                     thisStream.Read(data, 0, 512);
