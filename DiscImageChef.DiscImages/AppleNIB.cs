@@ -144,56 +144,26 @@ namespace DiscImageChef.DiscImages
             if(allTracksEqual) spt = tracks[0].sectors.Length;
 
             bool skewed = spt == 16;
-            ulong[] skewing = dosSkewing;
+            ulong[] skewing = proDosSkewing;
 
             // Detect ProDOS skewed disks
             if(skewed)
             {
-                byte[] sector1 = null;
-                byte[] sector0 = null;
-
-                foreach(Apple2.RawSector sector in tracks[0].sectors)
+                foreach(Apple2.RawSector sector in tracks[17].sectors)
                 {
-                    if(sector.addressField.sector.SequenceEqual(new byte[] {170, 171}))
-                        sector1 = Apple2.DecodeSector(sector);
-                    if(sector.addressField.sector.SequenceEqual(new byte[] {170, 170}))
-                        sector0 = Apple2.DecodeSector(sector);
-                }
+                    if(!sector.addressField.sector.SequenceEqual(new byte[] {170, 170})) continue;
 
-                if(sector1 != null)
-                {
-                    byte[] tmpAt0Sz4 = new byte[4];
-                    byte[] tmpAt0Sz6 = new byte[6];
-                    byte[] tmpAt0Sz8 = new byte[8];
-                    byte[] tmpAt3Sz6 = new byte[6];
-                    byte[] tmpAt24Sz36 = new byte[36];
-                    byte[] tmpAt33Sz6 = new byte[6];
+                    byte[] sector0 = Apple2.DecodeSector(sector);
 
-                    Array.Copy(sector1, 0, tmpAt0Sz4, 0, 4);
-                    Array.Copy(sector1, 0, tmpAt0Sz6, 0, 6);
-                    Array.Copy(sector1, 0, tmpAt0Sz8, 0, 8);
-                    Array.Copy(sector1, 3, tmpAt3Sz6, 0, 6);
-                    Array.Copy(sector1, 24, tmpAt24Sz36, 0, 36);
-                    Array.Copy(sector1, 33, tmpAt33Sz6, 0, 6);
+                    if(sector0 == null) continue;
 
-                    if(tmpAt0Sz4.SequenceEqual(sos_sign)) skewing = proDosSkewing;
-                    if(tmpAt0Sz4.SequenceEqual(dos_sign)) skewing = proDosSkewing;
-                    if(tmpAt0Sz4.SequenceEqual(pascal2_sign)) skewing = proDosSkewing;
-                    if(tmpAt0Sz6.SequenceEqual(apple3_sign)) skewing = proDosSkewing;
-                    if(tmpAt0Sz8.SequenceEqual(cpm_sign)) skewing = proDosSkewing;
-                    if(tmpAt3Sz6.SequenceEqual(prodos_string)) skewing = proDosSkewing;
-                    if(tmpAt24Sz36.SequenceEqual(dri_string)) skewing = proDosSkewing;
-                    if(tmpAt33Sz6.SequenceEqual(prodos_string)) skewing = proDosSkewing;
+                    bool isDos = sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
+                                 sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
+                                 sector0[0x37] == 1;
 
-                    if(sector0 != null)
-                    {
-                        byte[] tmpAt215Sz12 = new byte[12];
-                        Array.Copy(sector0, 215, tmpAt215Sz12, 0, 12);
-                        if(tmpAt215Sz12.SequenceEqual(pascal_string) && tmpAt0Sz4.SequenceEqual(pascal_sign))
-                            skewing = proDosSkewing;
-                    }
-
-                    DicConsole.DebugWriteLine("Apple NIB Plugin", "Image is skewed");
+                    if(isDos) skewing = dosSkewing;
+                    
+                    DicConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing", skewing.SequenceEqual(dosSkewing) ? "" : "Pro");
                 }
             }
 
