@@ -92,8 +92,10 @@ namespace DiscImageChef.Filesystems
         {
             if(partition.Length < 3) return false;
 
+            uint multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
+
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier);
             bool   APMFromHDDOnCD        = false;
 
             if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
@@ -155,9 +157,10 @@ namespace DiscImageChef.Filesystems
         {
             Encoding                    = encoding ?? new Apple2c();
             StringBuilder sbInformation = new StringBuilder();
+            uint          multiplier    = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier);
 
             bool APMFromHDDOnCD = false;
 
@@ -187,11 +190,13 @@ namespace DiscImageChef.Filesystems
                 }
             }
 
-            ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock =
-                new ProDOSRootDirectoryKeyBlock {header       = new ProDOSRootDirectoryHeader()};
+            ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock
+            {
+                header       = new ProDOSRootDirectoryHeader(),
+                zero         = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00),
+                next_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02)
+            };
 
-            rootDirectoryKeyBlock.zero                = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00);
-            rootDirectoryKeyBlock.next_pointer        = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02);
             rootDirectoryKeyBlock.header.storage_type =
                 (byte)((rootDirectoryKeyBlockBytes[0x04] & STORAGE_TYPE_MASK) >>
                        4);
