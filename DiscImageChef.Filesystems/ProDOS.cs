@@ -111,9 +111,11 @@ namespace DiscImageChef.Filesystems
         {
             if(partition.Length < 3) return false;
 
+            uint multiplier = (uint)(imagePlugin.ImageInfo.SectorSize == 256 ? 2 : 1);
+
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.Start);
-            bool APMFromHDDOnCD = false;
+            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier);
+            bool   APMFromHDDOnCD        = false;
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 ||
                imagePlugin.GetSectorSize() == 2048)
@@ -172,9 +174,10 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
+            uint          multiplier    = (uint)(imagePlugin.ImageInfo.SectorSize == 256 ? 2 : 1);
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier);
 
             bool APMFromHDDOnCD = false;
 
@@ -204,11 +207,13 @@ namespace DiscImageChef.Filesystems
                 }
             }
 
-            ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock =
-                new ProDOSRootDirectoryKeyBlock {header = new ProDOSRootDirectoryHeader()};
+            ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock
+            {
+                header       = new ProDOSRootDirectoryHeader(),
+                zero         = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00),
+                next_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02)
+            };
 
-            rootDirectoryKeyBlock.zero = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00);
-            rootDirectoryKeyBlock.next_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02);
             rootDirectoryKeyBlock.header.storage_type =
                 (byte)((rootDirectoryKeyBlockBytes[0x04] & STORAGE_TYPE_MASK) >> 4);
             rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & NAME_LENGTH_MASK);
