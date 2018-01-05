@@ -38,11 +38,10 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    // Checked using several images and strings inside Apple's DiskImages.framework
     public class AppleDos : IMediaImage
     {
-        readonly int[] dosOffsets = {0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15};
-        readonly int[] prodosOffsets = {0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15};
+        readonly int[] interleave = {0, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 15};
+        readonly int[] deinterleave = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         ImageInfo imageInfo;
 
         public AppleDos()
@@ -102,11 +101,14 @@ namespace DiscImageChef.DiscImages
             byte[] tmp = new byte[imageFilter.GetDataForkLength()];
             stream.Read(tmp, 0, tmp.Length);
 
+            bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
+                         tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
+            
             deinterleaved = new byte[tmp.Length];
 
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            int[] offsets = extension == ".do" ? dosOffsets : prodosOffsets;
+            int[] offsets = extension == ".do" ? (isDos ? deinterleave : interleave) : (isDos ? interleave : deinterleave);
 
             for(int t = 0; t < 35; t++)
             {
@@ -216,12 +218,9 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        #region Internal variables
         byte[] deinterleaved;
         string extension;
-        #endregion
 
-        #region Unsupported features
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -259,6 +258,5 @@ namespace DiscImageChef.DiscImages
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        #endregion
     }
 }
