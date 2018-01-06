@@ -76,15 +76,15 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         const uint CREATOR_CIDER = 0x50726443;
 
-        const uint DOS_SECTOR_ORDER = 0x00000000;
-        const uint PRODOS_SECTOR_ORDER = 0x00000001;
-        const uint NIB_SECTOR_ORDER = 0x00000002;
+        const    uint  LOCKED_DISK         = 0x80000000;
+        const    uint  VALID_VOLUME_NUMBER = 0x00000100;
+        const    uint  VOLUME_NUMBER_MASK  = 0x000000FF;
+        readonly int[] deinterleave        = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-        const uint LOCKED_DISK = 0x80000000;
-        const uint VALID_VOLUME_NUMBER = 0x00000100;
-        const uint VOLUME_NUMBER_MASK = 0x000000FF;
-        
-        Filter a2MgImageFilter;
+        readonly int[] interleave = {0, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 15};
+
+        Filter      a2MgImageFilter;
+        byte[]      decodedImage;
         A2ImgHeader imageHeader;
 
         public Apple2Mg()
@@ -165,23 +165,23 @@ namespace DiscImageChef.DiscImages
             Array.Copy(header, 0, magic, 0, 4);
             Array.Copy(header, 4, creator, 0, 4);
 
-            imageHeader.Magic = BitConverter.ToUInt32(header, 0x00);
-            imageHeader.Creator = BitConverter.ToUInt32(header, 0x04);
-            imageHeader.HeaderSize = BitConverter.ToUInt16(header, 0x08);
-            imageHeader.Version = BitConverter.ToUInt16(header, 0x0A);
-            imageHeader.ImageFormat = BitConverter.ToUInt32(header, 0x0C);
-            imageHeader.Flags = BitConverter.ToUInt32(header, 0x10);
-            imageHeader.Blocks = BitConverter.ToUInt32(header, 0x14);
-            imageHeader.DataOffset = BitConverter.ToUInt32(header, 0x18);
-            imageHeader.DataSize = BitConverter.ToUInt32(header, 0x1C);
-            imageHeader.CommentOffset = BitConverter.ToUInt32(header, 0x20);
-            imageHeader.CommentSize = BitConverter.ToUInt32(header, 0x24);
-            imageHeader.CreatorSpecificOffset = BitConverter.ToUInt32(header, 0x28);
-            imageHeader.CreatorSpecificSize = BitConverter.ToUInt32(header, 0x2C);
-            imageHeader.Reserved1 = BitConverter.ToUInt32(header, 0x30);
-            imageHeader.Reserved2 = BitConverter.ToUInt32(header, 0x34);
-            imageHeader.Reserved3 = BitConverter.ToUInt32(header, 0x38);
-            imageHeader.Reserved4 = BitConverter.ToUInt32(header, 0x3C);
+            imageHeader.Magic                 = BitConverter.ToUInt32(header, 0x00);
+            imageHeader.Creator               = BitConverter.ToUInt32(header, 0x04);
+            imageHeader.HeaderSize            = BitConverter.ToUInt16(header, 0x08);
+            imageHeader.Version               = BitConverter.ToUInt16(header, 0x0A);
+            imageHeader.ImageFormat           = (SectorOrder)BitConverter.ToUInt32(header, 0x0C);
+            imageHeader.Flags                 = BitConverter.ToUInt32(header,              0x10);
+            imageHeader.Blocks                = BitConverter.ToUInt32(header,              0x14);
+            imageHeader.DataOffset            = BitConverter.ToUInt32(header,              0x18);
+            imageHeader.DataSize              = BitConverter.ToUInt32(header,              0x1C);
+            imageHeader.CommentOffset         = BitConverter.ToUInt32(header,              0x20);
+            imageHeader.CommentSize           = BitConverter.ToUInt32(header,              0x24);
+            imageHeader.CreatorSpecificOffset = BitConverter.ToUInt32(header,              0x28);
+            imageHeader.CreatorSpecificSize   = BitConverter.ToUInt32(header,              0x2C);
+            imageHeader.Reserved1             = BitConverter.ToUInt32(header,              0x30);
+            imageHeader.Reserved2             = BitConverter.ToUInt32(header,              0x34);
+            imageHeader.Reserved3             = BitConverter.ToUInt32(header,              0x38);
+            imageHeader.Reserved4             = BitConverter.ToUInt32(header,              0x3C);
 
             if(imageHeader.DataSize == 0x00800C00)
             {
@@ -209,26 +209,68 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", imageHeader.Reserved3);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", imageHeader.Reserved4);
 
-            if(imageHeader.DataSize == 0 && imageHeader.Blocks == 0 &&
-               imageHeader.ImageFormat != PRODOS_SECTOR_ORDER) return false;
+            if(imageHeader.DataSize    == 0 && imageHeader.Blocks == 0 &&
+               imageHeader.ImageFormat != SectorOrder.ProDos) return false;
+
+            byte[] tmp;
+            int[]  offsets;
 
             switch(imageHeader.ImageFormat)
             {
-                case PRODOS_SECTOR_ORDER when imageHeader.Blocks == 0: return false;
-                case PRODOS_SECTOR_ORDER:
-                    imageHeader.DataSize = imageHeader.Blocks * 512;
+                case SectorOrder.Nibbles:
+                    tmp = new byte[imageHeader.DataSize];
+                    stream.Seek(imageHeader.DataOffset, SeekOrigin.Begin);
+                    stream.Read(tmp, 0, tmp.Length);
+                    AppleNib    nibPlugin = new AppleNib();
+                    ZZZNoFilter noFilter  = new ZZZNoFilter();
+                    noFilter.Open(tmp);
+                    nibPlugin.OpenImage(noFilter);
+                    decodedImage         = nibPlugin.ReadSectors(0, (uint)nibPlugin.ImageInfo.Sectors);
+                    ImageInfo.Sectors    = nibPlugin.ImageInfo.Sectors;
+                    ImageInfo.SectorSize = nibPlugin.ImageInfo.SectorSize;
+                    break;
+                case SectorOrder.Dos when imageHeader.DataSize    == 143360:
+                case SectorOrder.ProDos when imageHeader.DataSize == 143360:
+                    stream.Seek(imageHeader.DataOffset, SeekOrigin.Begin);
+                    tmp = new byte[imageHeader.DataSize];
+                    stream.Read(tmp, 0, tmp.Length);
+                    bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
+                                 tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
+                    decodedImage = new byte[imageHeader.DataSize];
+                    offsets      = imageHeader.ImageFormat == SectorOrder.Dos
+                                       ? (isDos ? deinterleave : interleave)
+                                       : (isDos ? interleave : deinterleave);
+                    for(int t = 0; t < 35; t++)
+                    {
+                        for(int s = 0; s < 16; s++)
+                            Array.Copy(tmp, t * 16 * 256 + s * 256, decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
+                    }
+
+                    ImageInfo.Sectors    = 560;
+                    ImageInfo.SectorSize = 256;
+                    break;
+                case SectorOrder.Dos when imageHeader.DataSize == 819200:
+                    stream.Seek(imageHeader.DataOffset, SeekOrigin.Begin);
+                    tmp = new byte[imageHeader.DataSize];
+                    stream.Read(tmp, 0, tmp.Length);
+                    decodedImage = new byte[imageHeader.DataSize];
+                    offsets      = interleave;
+                    for(int t = 0; t < 200; t++)
+                    {
+                        for(int s = 0; s < 16; s++)
+                            Array.Copy(tmp, t * 16 * 256 + s * 256, decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
+                    }
+
+                    ImageInfo.Sectors    = 1600;
+                    ImageInfo.SectorSize = 512;
                     break;
                 default:
-                    if(imageHeader.Blocks == 0 && imageHeader.DataSize != 0)
-                        imageHeader.Blocks = imageHeader.DataSize / 256;
-                    else if(imageHeader.DataSize == 0 && imageHeader.Blocks != 0)
-                        imageHeader.DataSize = imageHeader.Blocks * 256;
+                    decodedImage         = null;
+                    ImageInfo.SectorSize = 512;
+                    ImageInfo.Sectors    = imageHeader.DataSize / 512;
                     break;
             }
 
-            ImageInfo.SectorSize = (uint)(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER ? 512 : 256);
-
-            ImageInfo.Sectors = imageHeader.Blocks;
             ImageInfo.ImageSize = imageHeader.DataSize;
 
             switch(imageHeader.Creator)
@@ -317,6 +359,11 @@ namespace DiscImageChef.DiscImages
                     // Variable sectors per track, this suffices
                     ImageInfo.SectorsPerTrack = 10;
                     break;
+                case MediaType.DOS_35_HD:
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads     = 2;
+                    ImageInfo.SectorsPerTrack = 18;
+                    break;
             }
 
             return true;
@@ -387,20 +434,6 @@ namespace DiscImageChef.DiscImages
             return ImageInfo.ImageComments;
         }
 
-        public override MediaType GetMediaType()
-        {
-            switch(ImageInfo.Sectors)
-            {
-                case 455: return MediaType.Apple32SS;
-                case 910: return MediaType.Apple32DS;
-                case 560: return MediaType.Apple33SS;
-                case 1120: return MediaType.Apple33DS;
-                case 800: return MediaType.AppleSonySS;
-                case 1600: return MediaType.AppleSonyDS;
-                default: return MediaType.Unknown;
-            }
-        }
-
         public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
@@ -416,11 +449,15 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
-            Stream stream = a2MgImageFilter.GetDataForkStream();
-
-            stream.Seek((long)(imageHeader.DataOffset + sectorAddress * ImageInfo.SectorSize), SeekOrigin.Begin);
-
-            stream.Read(buffer, 0, (int)(length * ImageInfo.SectorSize));
+            if(decodedImage != null)
+                Array.Copy(decodedImage, (long)(sectorAddress * ImageInfo.SectorSize), buffer, 0,
+                           length                             * ImageInfo.SectorSize);
+            else
+            {
+                Stream stream = a2MgImageFilter.GetDataForkStream();
+                stream.Seek((long)(imageHeader.DataOffset + sectorAddress * ImageInfo.SectorSize), SeekOrigin.Begin);
+                stream.Read(buffer, 0, (int)(length                       * ImageInfo.SectorSize));
+            }
 
             return buffer;
         }
@@ -586,6 +623,28 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public override MediaType GetMediaType()
+        {
+            switch(ImageInfo.Sectors)
+            {
+                case 455:  return MediaType.Apple32SS;
+                case 910:  return MediaType.Apple32DS;
+                case 560:  return MediaType.Apple33SS;
+                case 1120: return MediaType.Apple33DS;
+                case 800:  return MediaType.AppleSonySS;
+                case 1600: return MediaType.AppleSonyDS;
+                case 2880: return MediaType.DOS_35_HD;
+                default:   return MediaType.Unknown;
+            }
+        }
+
+        enum SectorOrder : uint
+        {
+            Dos     = 0,
+            ProDos  = 1,
+            Nibbles = 2
+        }
+
         [SuppressMessage("ReSharper", "NotAccessedField.Local")]
         struct A2ImgHeader
         {
@@ -608,7 +667,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Offset 0x0C, disk image format
             /// </summary>
-            public uint ImageFormat;
+            public SectorOrder ImageFormat;
             /// <summary>
             ///     Offset 0x10, flags and volume number
             /// </summary>
