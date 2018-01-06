@@ -1,4 +1,22 @@
-# [4.0.1.0] - 2017-12-25
+# [4.0.1.0] - 2018-01-06
+## Fixes
+### Apple DOS and ProDOS interleaved disk images
+- Fixed interleaving values.
+
+### Apple Nibble disk image
+- Fixed detection of DOS vs ProDOS sector order.
+
+### Apple 2IMG disk image
+- Fixed deinterleaving of DOS and ProDOS sector order.
+- Fixed denibblizing images.
+
+### Apple ProDOS filesystem
+- Fixed detection on Apple II disks.
+
+### UCSD Pascal filesystem
+- Added support for Apple II variants (two physical sectors per logical sector and little endian fields).
+
+# [4.0.0.0] - 2017-12-25
 ## Added
 ### - Advanced Disc Filing System
 - Added support for ADFS-S, ADFS-M, ADFS-L, ADFS-D, ADFS-E, ADFS-E+, ADFS-F, ADFS-F+ and ADFS-G.
