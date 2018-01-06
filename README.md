@@ -1,5 +1,4 @@
 ﻿DiscImageChef v4.0.99.0
-=======================
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
 
