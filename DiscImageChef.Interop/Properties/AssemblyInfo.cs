@@ -46,7 +46,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Claunia.com")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Copyright © 2011-2017 Natalia Portillo")]
+[assembly: AssemblyCopyright("Copyright © 2011-2018 Natalia Portillo")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
