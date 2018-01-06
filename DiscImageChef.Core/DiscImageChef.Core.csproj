@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Core</RootNamespace>
     <AssemblyName>DiscImageChef.Core</AssemblyName>
-    <ReleaseVersion>4.0.0.0</ReleaseVersion>
+    <ReleaseVersion>4.0.1.0</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

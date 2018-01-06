@@ -284,7 +284,7 @@
 </div>
 <hr/>
 <footer>
-    © 2011-2017 <a href="http://www.claunia.com" target="_blank">Claunia.com</a><br/>
+    © 2011-2018 <a href="http://www.claunia.com" target="_blank">Claunia.com</a><br/>
     Fonts are © 2015-2016 <a href="http://int10h.org" target="_blank">VileR</a><br/>
     CSS © 2017 <a href="http://www.freedos.org" target="_blank">The FreeDOS Project</a>
 </footer>
