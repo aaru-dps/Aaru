@@ -50,6 +50,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         bool mounted;
 
         PascalVolumeEntry mountedVolEntry;
+        /// <summary>Apple II disks use 256 bytes / sector, but filesystem assumes it's 512 bytes / sector</summary>
+        uint multiplier;
 
         public PascalPlugin()
         {

@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
 using Schemas;
 
@@ -45,110 +46,128 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             if(partition.Length < 3) return false;
 
+            multiplier = (uint)(imagePlugin.ImageInfo.SectorSize == 256 ? 2 : 1);
+
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] volBlock = imagePlugin.ReadSectors(multiplier * 2 + partition.Start, multiplier);
 
             PascalVolumeEntry volEntry = new PascalVolumeEntry();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            // On Apple II, it's little endian
+            BigEndianBitConverter.IsLittleEndian =
+                multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
 
-            volEntry.firstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00);
-            volEntry.lastBlock = BigEndianBitConverter.ToInt16(volBlock, 0x02);
-            volEntry.entryType = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
-            volEntry.volumeName = new byte[8];
-            Array.Copy(volBlock, 0x06, volEntry.volumeName, 0, 8);
-            volEntry.blocks = BigEndianBitConverter.ToInt16(volBlock, 0x0E);
-            volEntry.files = BigEndianBitConverter.ToInt16(volBlock, 0x10);
-            volEntry.dummy = BigEndianBitConverter.ToInt16(volBlock, 0x12);
-            volEntry.lastBoot = BigEndianBitConverter.ToInt16(volBlock, 0x14);
-            volEntry.tail = BigEndianBitConverter.ToInt32(volBlock, 0x16);
+            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock,                 0x00);
+            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock,                 0x02);
+            volEntry.EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
+            volEntry.VolumeName = new byte[8];
+            Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
+            volEntry.Blocks   = BigEndianBitConverter.ToInt16(volBlock, 0x0E);
+            volEntry.Files    = BigEndianBitConverter.ToInt16(volBlock, 0x10);
+            volEntry.Dummy    = BigEndianBitConverter.ToInt16(volBlock, 0x12);
+            volEntry.LastBoot = BigEndianBitConverter.ToInt16(volBlock, 0x14);
+            volEntry.Tail     = BigEndianBitConverter.ToInt32(volBlock, 0x16);
+
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.firstBlock = {0}", volEntry.FirstBlock);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBlock = {0}",  volEntry.LastBlock);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.entryType = {0}",  volEntry.EntryType);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.volumeName = {0}", volEntry.VolumeName);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.blocks = {0}",     volEntry.Blocks);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.files = {0}",      volEntry.Files);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.dummy = {0}",      volEntry.Dummy);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBoot = {0}",   volEntry.LastBoot);
+            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.tail = {0}",       volEntry.Tail);
 
             // First block is always 0 (even is it's sector 2)
-            if(volEntry.firstBlock != 0) return false;
+            if(volEntry.FirstBlock != 0) return false;
 
             // Last volume record block must be after first block, and before end of device
-            if(volEntry.lastBlock <= volEntry.firstBlock ||
-               (ulong)volEntry.lastBlock > imagePlugin.GetSectors() - 2) return false;
+            if(volEntry.LastBlock        <= volEntry.FirstBlock ||
+               (ulong)volEntry.LastBlock > imagePlugin.GetSectors() / multiplier - 2) return false;
 
             // Volume record entry type must be volume or secure
-            if(volEntry.entryType != PascalFileKind.Volume && volEntry.entryType != PascalFileKind.Secure) return false;
+            if(volEntry.EntryType != PascalFileKind.Volume && volEntry.EntryType != PascalFileKind.Secure) return false;
 
             // Volume name is max 7 characters
-            if(volEntry.volumeName[0] > 7) return false;
+            if(volEntry.VolumeName[0] > 7) return false;
 
             // Volume blocks is equal to volume sectors
-            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.GetSectors()) return false;
+            if(volEntry.Blocks < 0 || (ulong)volEntry.Blocks != imagePlugin.GetSectors() / multiplier) return false;
 
             // There can be not less than zero files
-            return volEntry.files >= 0;
+            return volEntry.Files >= 0;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            information = "";
+            information                 = "";
+            multiplier                  = (uint)(imagePlugin.ImageInfo.SectorSize == 256 ? 2 : 1);
 
             if(imagePlugin.GetSectors() < 3) return;
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] volBlock = imagePlugin.ReadSectors(multiplier * 2 + partition.Start, multiplier);
 
             PascalVolumeEntry volEntry = new PascalVolumeEntry();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            // On Apple //, it's little endian
+            BigEndianBitConverter.IsLittleEndian =
+                multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
 
-            volEntry.firstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00);
-            volEntry.lastBlock = BigEndianBitConverter.ToInt16(volBlock, 0x02);
-            volEntry.entryType = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
-            volEntry.volumeName = new byte[8];
-            Array.Copy(volBlock, 0x06, volEntry.volumeName, 0, 8);
-            volEntry.blocks = BigEndianBitConverter.ToInt16(volBlock, 0x0E);
-            volEntry.files = BigEndianBitConverter.ToInt16(volBlock, 0x10);
-            volEntry.dummy = BigEndianBitConverter.ToInt16(volBlock, 0x12);
-            volEntry.lastBoot = BigEndianBitConverter.ToInt16(volBlock, 0x14);
-            volEntry.tail = BigEndianBitConverter.ToInt32(volBlock, 0x16);
+            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock,                 0x00);
+            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock,                 0x02);
+            volEntry.EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
+            volEntry.VolumeName = new byte[8];
+            Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
+            volEntry.Blocks   = BigEndianBitConverter.ToInt16(volBlock, 0x0E);
+            volEntry.Files    = BigEndianBitConverter.ToInt16(volBlock, 0x10);
+            volEntry.Dummy    = BigEndianBitConverter.ToInt16(volBlock, 0x12);
+            volEntry.LastBoot = BigEndianBitConverter.ToInt16(volBlock, 0x14);
+            volEntry.Tail     = BigEndianBitConverter.ToInt32(volBlock, 0x16);
 
             // First block is always 0 (even is it's sector 2)
-            if(volEntry.firstBlock != 0) return;
+            if(volEntry.FirstBlock != 0) return;
 
             // Last volume record block must be after first block, and before end of device
-            if(volEntry.lastBlock <= volEntry.firstBlock ||
-               (ulong)volEntry.lastBlock > imagePlugin.GetSectors() - 2) return;
+            if(volEntry.LastBlock        <= volEntry.FirstBlock ||
+               (ulong)volEntry.LastBlock > imagePlugin.GetSectors() / multiplier - 2) return;
 
             // Volume record entry type must be volume or secure
-            if(volEntry.entryType != PascalFileKind.Volume && volEntry.entryType != PascalFileKind.Secure) return;
+            if(volEntry.EntryType != PascalFileKind.Volume && volEntry.EntryType != PascalFileKind.Secure) return;
 
             // Volume name is max 7 characters
-            if(volEntry.volumeName[0] > 7) return;
+            if(volEntry.VolumeName[0] > 7) return;
 
             // Volume blocks is equal to volume sectors
-            if(volEntry.blocks < 0 || (ulong)volEntry.blocks != imagePlugin.GetSectors()) return;
+            if(volEntry.Blocks < 0 || (ulong)volEntry.Blocks != imagePlugin.GetSectors() / multiplier) return;
 
             // There can be not less than zero files
-            if(volEntry.files < 0) return;
+            if(volEntry.Files < 0) return;
 
-            sbInformation.AppendFormat("Volume record spans from block {0} to block {1}", volEntry.firstBlock,
-                                       volEntry.lastBlock).AppendLine();
+            sbInformation.AppendFormat("Volume record spans from block {0} to block {1}", volEntry.FirstBlock,
+                                       volEntry.LastBlock).AppendLine();
             sbInformation.AppendFormat("Volume name: {0}",
-                                       StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding))
+                                       StringHandlers.PascalToString(volEntry.VolumeName, CurrentEncoding))
                          .AppendLine();
-            sbInformation.AppendFormat("Volume has {0} blocks", volEntry.blocks).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} files", volEntry.files).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} blocks", volEntry.Blocks).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} files",  volEntry.Files).AppendLine();
             sbInformation
-                .AppendFormat("Volume last booted at {0}", DateHandlers.UcsdPascalToDateTime(volEntry.lastBoot))
-                .AppendLine();
+               .AppendFormat("Volume last booted at {0}", DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot))
+               .AppendLine();
 
             information = sbInformation.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2)),
-                Clusters = volEntry.blocks,
-                ClusterSize = (int)imagePlugin.GetSectorSize(),
-                Files = volEntry.files,
+                Bootable =
+                    !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, multiplier * 2)),
+                Clusters       = volEntry.Blocks,
+                ClusterSize    = (int)imagePlugin.GetSectorSize(),
+                Files          = volEntry.Files,
                 FilesSpecified = true,
-                Type = "UCSD Pascal",
-                VolumeName = StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding)
+                Type           = "UCSD Pascal",
+                VolumeName     = StringHandlers.PascalToString(volEntry.VolumeName, CurrentEncoding)
             };
         }
     }

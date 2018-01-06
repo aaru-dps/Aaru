@@ -69,17 +69,21 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             byte[] file;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+            if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
-                file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? catalogBlocks : bootBlocks;
+                file = string.Compare(path,   "$",     StringComparison.InvariantCulture) == 0
+                           ? catalogBlocks
+                           : bootBlocks;
             else
             {
                 Errno error = GetFileEntry(path, out PascalFileEntry entry);
 
                 if(error != Errno.NoError) return error;
 
-                byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock));
-                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.GetSectorSize() + entry.lastBytes];
+                byte[] tmp = device.ReadSectors((ulong)entry.FirstBlock                    * multiplier,
+                                                (uint)(entry.LastBlock - entry.FirstBlock) * multiplier);
+                file = new byte[(entry.LastBlock - entry.FirstBlock - 1) * device.GetSectorSize() * multiplier +
+                                entry.LastBytes];
                 Array.Copy(tmp, 0, file, 0, file.Length);
             }
 
@@ -104,13 +108,13 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                if(string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
                 {
                     stat = new FileEntryInfo
                     {
                         Attributes = FileAttributes.System,
-                        BlockSize = device.GetSectorSize(),
+                        BlockSize = device.GetSectorSize() * multiplier,
                         DeviceNo = 0,
                         GID = 0,
                         Inode = 0,
@@ -140,16 +144,16 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             stat = new FileEntryInfo
             {
                 Attributes = FileAttributes.File,
-                Blocks = entry.lastBlock - entry.firstBlock,
-                BlockSize = device.GetSectorSize(),
+                Blocks = entry.LastBlock - entry.FirstBlock,
+                BlockSize = device.GetSectorSize() * multiplier,
                 DeviceNo = 0,
                 GID = 0,
                 Inode = 0,
-                LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.mtime),
-                Length = (entry.lastBlock - entry.firstBlock) * device.GetSectorSize() + entry.lastBytes,
+                LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
+                Length = (entry.LastBlock - entry.FirstBlock) * device.GetSectorSize() * multiplier + entry.LastBytes,
                 Links = 1,
-                Mode = 0x124,
-                UID = 0
+                Mode  = 0x124,
+                UID   = 0
             };
 
             return Errno.NoError;
@@ -162,10 +166,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             foreach(PascalFileEntry ent in fileEntries.Where(ent =>
                                                                  string.Compare(path,
                                                                                 StringHandlers
-                                                                                    .PascalToString(ent.filename,
+                                                                                    .PascalToString(ent.Filename,
                                                                                                     CurrentEncoding),
                                                                                 StringComparison
-                                                                                    .InvariantCultureIgnoreCase) == 0))
+                                                                                   .InvariantCultureIgnoreCase) == 0))
             {
                 entry = ent;
                 return Errno.NoError;
