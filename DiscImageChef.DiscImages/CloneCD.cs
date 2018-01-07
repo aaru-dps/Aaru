@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
@@ -43,7 +44,8 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
-    public class CloneCd : IMediaImage
+    // TODO: CloneCD stores subchannel deinterleaved
+    public class CloneCd : IWritableImage
     {
         const string CCD_IDENTIFIER     = @"^\s*\[CloneCD\]";
         const string DISC_IDENTIFIER    = @"^\s*\[Disc\]";
@@ -82,6 +84,7 @@ namespace DiscImageChef.DiscImages
         StreamReader            cueStream;
         IFilter                 dataFilter;
         Stream                  dataStream;
+        StreamWriter            descriptorStream;
         byte[]                  fulltoc;
         ImageInfo               imageInfo;
         Dictionary<uint, ulong> offsetmap;
@@ -89,6 +92,7 @@ namespace DiscImageChef.DiscImages
         IFilter                 subFilter;
         Stream                  subStream;
         Dictionary<byte, byte>  trackFlags;
+        string                  writingBaseName;
 
         public CloneCd()
         {
@@ -1372,9 +1376,581 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.CD_MCN, MediaTagType.CD_FullTOC};
+        public IEnumerable<SectorTagType> SupportedSectorTags =>
+            new[]
+            {
+                SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
+                SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
+                SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
+            };
+        public IEnumerable<MediaType> SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
+                MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
+                MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.DTSCD, MediaType.JaguarCD,
+                MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD,
+                MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD
+            };
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new (string name, Type type, string description)[] { };
+        public IEnumerable<string> KnownExtensions => new[] {".ccd"};
+        public bool                IsWriting       { get; private set; }
+        public string              ErrorMessage    { get; private set; }
+
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
+        {
+            if(!SupportedMediaTypes.Contains(mediaType))
+            {
+                ErrorMessage = $"Unsupport media format {mediaType}";
+                return false;
+            }
+
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+
+            try
+            {
+                writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+                descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
+                dataStream       = new FileStream(writingBaseName + ".img", FileMode.CreateNew, FileAccess.ReadWrite,
+                                                  FileShare.None);
+            }
+            catch(IOException e)
+            {
+                ErrorMessage = $"Could not create new image file, exception {e.Message}";
+                return false;
+            }
+
+            imageInfo.MediaType = mediaType;
+
+            trackFlags = new Dictionary<byte, byte>();
+
+            IsWriting    = true;
+            ErrorMessage = null;
+            return true;
+        }
+
+        public bool WriteMediaTag(byte[] data, MediaTagType tag)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            switch(tag)
+            {
+                case MediaTagType.CD_MCN:
+                    catalog = Encoding.ASCII.GetString(data);
+                    return true;
+                case MediaTagType.CD_FullTOC:
+                    fulltoc = data;
+                    return true;
+                default:
+                    ErrorMessage = $"Unsupported media tag {tag}";
+                    return false;
+            }
+        }
+
+        public bool WriteSector(byte[] data, ulong sectorAddress)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            // TODO: Implement ECC generation
+            ErrorMessage = "This format requires sectors to be raw. Generating ECC is not yet implemented";
+            return false;
+        }
+
+        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            // TODO: Implement ECC generation
+            ErrorMessage = "This format requires sectors to be raw. Generating ECC is not yet implemented";
+            return false;
+        }
+
+        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            Track track =
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                             sectorAddress <= trk.TrackEndSector);
+
+            if(track.TrackSequence == 0)
+            {
+                ErrorMessage = $"Can't found track containing {sectorAddress}";
+                return false;
+            }
+
+            if(data.Length != track.TrackRawBytesPerSector)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            dataStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
+                            SeekOrigin.Begin);
+            dataStream.Write(data, 0, data.Length);
+
+            return true;
+        }
+
+        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            Track track =
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                             sectorAddress <= trk.TrackEndSector);
+
+            if(track.TrackSequence == 0)
+            {
+                ErrorMessage = $"Can't found track containing {sectorAddress}";
+                return false;
+            }
+
+            if(sectorAddress + length > track.TrackEndSector + 1)
+            {
+                ErrorMessage = "Can't cross tracks";
+                return false;
+            }
+
+            if(data.Length % track.TrackRawBytesPerSector != 0)
+            {
+                ErrorMessage = "Incorrect data size";
+                return false;
+            }
+
+            dataStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
+                            SeekOrigin.Begin);
+            dataStream.Write(data, 0, data.Length);
+
+            return true;
+        }
+
+        public bool SetTracks(List<Track> tracks)
+        {
+            ulong currentDataOffset       = 0;
+            ulong currentSubchannelOffset = 0;
+
+            Tracks = new List<Track>();
+            foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
+            {
+                Track newTrack = track;
+                uint  subchannelSize;
+                switch(track.TrackSubchannelType)
+                {
+                    case TrackSubchannelType.None:
+                        subchannelSize = 0;
+                        break;
+                    case TrackSubchannelType.Raw:
+                    case TrackSubchannelType.RawInterleaved:
+                        subchannelSize = 96;
+                        break;
+                    default:
+                        ErrorMessage = $"Unsupported subchannel type {track.TrackSubchannelType}";
+                        return false;
+                }
+
+                newTrack.TrackFileOffset       = currentDataOffset;
+                newTrack.TrackSubchannelOffset = currentSubchannelOffset;
+
+                currentDataOffset += (ulong)newTrack.TrackRawBytesPerSector *
+                                     (newTrack.TrackEndSector                        - newTrack.TrackStartSector + 1);
+                currentSubchannelOffset += subchannelSize * (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
+
+                Tracks.Add(newTrack);
+            }
+
+            return true;
+        }
+
+        public bool Close()
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Image is not opened for writing";
+                return false;
+            }
+
+            dataStream.Flush();
+            dataStream.Close();
+
+            subStream?.Flush();
+            subStream?.Close();
+
+            FullTOC.CDFullTOC? nullableToc              = null;
+            FullTOC.CDFullTOC  toc                      =
+                new FullTOC.CDFullTOC {TrackDescriptors = new FullTOC.TrackDataDescriptor[0]};
+
+            // Easy, just decode the real toc
+            if(fulltoc != null) nullableToc = FullTOC.Decode(fulltoc);
+
+            // Not easy, create a toc from scratch
+            if(nullableToc == null)
+            {
+                toc                                                = new FullTOC.CDFullTOC();
+                Dictionary<byte, byte> sessionEndingTrack          = new Dictionary<byte, byte>();
+                toc.FirstCompleteSession                           = byte.MaxValue;
+                toc.LastCompleteSession                            = byte.MinValue;
+                List<FullTOC.TrackDataDescriptor> trackDescriptors = new List<FullTOC.TrackDataDescriptor>();
+                byte                              currentTrack     = 0;
+
+                foreach(Track track in Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
+                {
+                    if(track.TrackSession < toc.FirstCompleteSession)
+                        toc.FirstCompleteSession = (byte)track.TrackSession;
+
+                    if(track.TrackSession <= toc.LastCompleteSession)
+                    {
+                        currentTrack = (byte)track.TrackSequence;
+                        continue;
+                    }
+
+                    if(toc.LastCompleteSession > 0) sessionEndingTrack.Add(toc.LastCompleteSession, currentTrack);
+
+                    toc.LastCompleteSession = (byte)track.TrackSession;
+                }
+
+                byte currentSession = 0;
+
+                foreach(Track track in Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
+                {
+                    FullTOC.TrackDataDescriptor trackDescriptor;
+                    trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
+
+                    if(trackControl == 0 && track.TrackType != TrackType.Audio) trackControl = (byte)CdFlags.DataTrack;
+
+                    // Lead-Out
+                    if(track.TrackSession > currentSession && currentSession != 0)
+                    {
+                        (byte hour, byte minute, byte second, byte frame) leadoutAmsf =
+                            LbaToMsf(track.TrackStartSector - 150);
+                        (byte hour, byte minute, byte second, byte frame) leadoutPmsf =
+                            LbaToMsf(Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last()
+                                           .TrackStartSector);
+
+                        // Lead-out
+                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
+                        {
+                            SessionNumber = currentSession,
+                            POINT         = 0xB0,
+                            ADR           = 5,
+                            CONTROL       = 0,
+                            HOUR          = leadoutAmsf.hour,
+                            Min           = leadoutAmsf.minute,
+                            Sec           = leadoutAmsf.second,
+                            Frame         = leadoutAmsf.frame,
+                            PHOUR         = leadoutPmsf.hour,
+                            PMIN          = leadoutPmsf.minute,
+                            PSEC          = leadoutPmsf.second,
+                            PFRAME        = leadoutPmsf.frame
+                        });
+
+                        // This seems to be constant? It should not exist on CD-ROM but CloneCD creates them anyway
+                        // Format seems like ATIP, but ATIP should not be as 0xC0 in TOC...
+                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
+                        {
+                            SessionNumber = currentSession,
+                            POINT         = 0xC0,
+                            ADR           = 5,
+                            CONTROL       = 0,
+                            Min           = 128,
+                            PMIN          = 97,
+                            PSEC          = 25
+                        });
+                    }
+
+                    // Lead-in
+                    if(track.TrackSession > currentSession)
+                    {
+                        currentSession = (byte)track.TrackSession;
+                        sessionEndingTrack.TryGetValue(currentSession, out byte endingTrackNumber);
+                        (byte hour, byte minute, byte second, byte frame) leadinPmsf =
+                            LbaToMsf(Tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber).TrackEndSector +
+                                     1);
+
+                        // Starting track
+                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
+                        {
+                            SessionNumber = currentSession,
+                            POINT         = 0xA0,
+                            ADR           = 1,
+                            CONTROL       = trackControl,
+                            PMIN          = (byte)track.TrackSequence
+                        });
+
+                        // Ending track
+                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
+                        {
+                            SessionNumber = currentSession,
+                            POINT         = 0xA1,
+                            ADR           = 1,
+                            CONTROL       = trackControl,
+                            PMIN          = endingTrackNumber
+                        });
+
+                        // Lead-out start
+                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
+                        {
+                            SessionNumber = currentSession,
+                            POINT         = 0xA2,
+                            ADR           = 1,
+                            CONTROL       = trackControl,
+                            PHOUR         = leadinPmsf.hour,
+                            PMIN          = leadinPmsf.minute,
+                            PSEC          = leadinPmsf.second,
+                            PFRAME        = leadinPmsf.frame
+                        });
+                    }
+
+                    (byte hour, byte minute, byte second, byte frame) pmsf = LbaToMsf(track.TrackStartSector);
+
+                    // Track
+                    trackDescriptors.Add(new FullTOC.TrackDataDescriptor
+                    {
+                        SessionNumber = (byte)track.TrackSession,
+                        POINT         = (byte)track.TrackSequence,
+                        ADR           = 1,
+                        CONTROL       = trackControl,
+                        PHOUR         = pmsf.hour,
+                        PMIN          = pmsf.minute,
+                        PSEC          = pmsf.second,
+                        PFRAME        = pmsf.frame
+                    });
+                }
+
+                toc.TrackDescriptors = trackDescriptors.ToArray();
+            }
+            else toc = nullableToc.Value;
+
+            descriptorStream.WriteLine("[CloneCD]");
+            descriptorStream.WriteLine("Version=2");
+            descriptorStream.WriteLine("[Disc]");
+            descriptorStream.WriteLine("TocEntries={0}", toc.TrackDescriptors.Length);
+            descriptorStream.WriteLine("Sessions={0}",   toc.LastCompleteSession);
+            descriptorStream.WriteLine("DataTracksScrambled=0");
+            descriptorStream.WriteLine("CDTextLength=0");
+            if(!string.IsNullOrEmpty(catalog)) descriptorStream.WriteLine("CATALOG={0}", catalog);
+            for(int i = 1; i <= toc.LastCompleteSession; i++)
+            {
+                descriptorStream.WriteLine("[Session {0}]", i);
+                descriptorStream.WriteLine("PreGapMode=0");
+                descriptorStream.WriteLine("PreGapSubC=0");
+            }
+
+            for(int i = 0; i < toc.TrackDescriptors.Length; i++)
+            {
+                long alba =
+                    MsfToLba((toc.TrackDescriptors[i].HOUR, toc.TrackDescriptors[i].Min, toc.TrackDescriptors[i].Sec,
+                             toc.TrackDescriptors[i].Frame));
+                long plba =
+                    MsfToLba((toc.TrackDescriptors[i].PHOUR, toc.TrackDescriptors[i].PMIN, toc.TrackDescriptors[i].PSEC,
+                             toc.TrackDescriptors[i].PFRAME));
+
+                descriptorStream.WriteLine("[Entry {0}]",      i);
+                descriptorStream.WriteLine("Session={0}",      toc.TrackDescriptors[i].SessionNumber);
+                descriptorStream.WriteLine("Point=0x{0:x2}",   toc.TrackDescriptors[i].POINT);
+                descriptorStream.WriteLine("ADR=0x{0:x2}",     toc.TrackDescriptors[i].ADR);
+                descriptorStream.WriteLine("Control=0x{0:x2}", toc.TrackDescriptors[i].CONTROL);
+                descriptorStream.WriteLine("TrackNo={0}",      toc.TrackDescriptors[i].TNO);
+                descriptorStream.WriteLine("AMin={0}",         toc.TrackDescriptors[i].Min);
+                descriptorStream.WriteLine("ASec={0}",         toc.TrackDescriptors[i].Sec);
+                descriptorStream.WriteLine("AFrame={0}",       toc.TrackDescriptors[i].Frame);
+                descriptorStream.WriteLine("ALBA={0}",         toc.TrackDescriptors[i].POINT == 0xC0 ? 125850 : alba);
+                descriptorStream.WriteLine("Zero={0}",
+                                           ((toc.TrackDescriptors[i].HOUR & 0x0F) << 4) +
+                                           (toc.TrackDescriptors[i].PHOUR & 0x0F));
+                descriptorStream.WriteLine("PMin={0}",   toc.TrackDescriptors[i].PMIN);
+                descriptorStream.WriteLine("PSec={0}",   toc.TrackDescriptors[i].PSEC);
+                descriptorStream.WriteLine("PFrame={0}", toc.TrackDescriptors[i].PFRAME);
+                descriptorStream.WriteLine("PLBA={0}",   toc.TrackDescriptors[i].POINT == 0xC0 ? -11775 : plba);
+            }
+
+            descriptorStream.Flush();
+            descriptorStream.Close();
+
+            ErrorMessage = "";
+            return true;
+        }
+
+        public bool SetMetadata(ImageInfo metadata)
+        {
+            return true;
+        }
+
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        {
+            ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            Track track =
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                             sectorAddress <= trk.TrackEndSector);
+
+            if(track.TrackSequence == 0)
+            {
+                ErrorMessage = $"Can't found track containing {sectorAddress}";
+                return false;
+            }
+
+            switch(tag)
+            {
+                case SectorTagType.CdTrackFlags:
+                {
+                    if(data.Length != 1)
+                    {
+                        ErrorMessage = "Incorrect data size for track flags";
+                        return false;
+                    }
+
+                    trackFlags.Add((byte)track.TrackSequence, data[0]);
+
+                    return true;
+                }
+                case SectorTagType.CdSectorSubchannel:
+                {
+                    if(track.TrackSubchannelType == 0)
+                    {
+                        ErrorMessage =
+                            $"Trying to write subchannel to track {track.TrackSequence}, that does not have subchannel";
+                        return false;
+                    }
+
+                    if(data.Length != 96)
+                    {
+                        ErrorMessage = "Incorrect data size for subchannel";
+                        return false;
+                    }
+
+                    if(subStream == null)
+                        try
+                        {
+                            subStream = new FileStream(writingBaseName + ".sub", FileMode.CreateNew,
+                                                       FileAccess.ReadWrite, FileShare.None);
+                        }
+                        catch(IOException e)
+                        {
+                            ErrorMessage = $"Could not create subchannel file, exception {e.Message}";
+                            return false;
+                        }
+
+                    subStream.Seek((long)(track.TrackSubchannelOffset + (sectorAddress - track.TrackStartSector) * 96),
+                                   SeekOrigin.Begin);
+                    subStream.Write(data, 0, data.Length);
+
+                    return true;
+                }
+                default:
+                    ErrorMessage = $"Unsupported tag type {tag}";
+                    return false;
+            }
+        }
+
+        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+        {
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            Track track =
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                             sectorAddress <= trk.TrackEndSector);
+
+            if(track.TrackSequence == 0)
+            {
+                ErrorMessage = $"Can't found track containing {sectorAddress}";
+                return false;
+            }
+
+            switch(tag)
+            {
+                case SectorTagType.CdTrackFlags:
+                case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
+                case SectorTagType.CdSectorSubchannel:
+                {
+                    if(track.TrackSubchannelType == 0)
+                    {
+                        ErrorMessage =
+                            $"Trying to write subchannel to track {track.TrackSequence}, that does not have subchannel";
+                        return false;
+                    }
+
+                    if(data.Length % 96 != 0)
+                    {
+                        ErrorMessage = "Incorrect data size for subchannel";
+                        return false;
+                    }
+
+                    if(subStream == null)
+                        try
+                        {
+                            subStream = new FileStream(writingBaseName + ".sub", FileMode.CreateNew,
+                                                       FileAccess.ReadWrite, FileShare.None);
+                        }
+                        catch(IOException e)
+                        {
+                            ErrorMessage = $"Could not create subchannel file, exception {e.Message}";
+                            return false;
+                        }
+
+                    subStream.Seek((long)(track.TrackSubchannelOffset + (sectorAddress - track.TrackStartSector) * 96),
+                                   SeekOrigin.Begin);
+                    subStream.Write(data, 0, data.Length);
+
+                    return true;
+                }
+                default:
+                    ErrorMessage = $"Unsupported tag type {tag}";
+                    return false;
+            }
+        }
+
         static ulong GetLba(int hour, int minute, int second, int frame)
         {
             return (ulong)(hour * 60 * 60 * 75 + minute * 60 * 75 + second * 75 + frame - 150);
+        }
+
+        static long MsfToLba((byte hour, byte minute, byte second, byte frame) msf)
+        {
+            return msf.hour * 60 * 60 * 75 + msf.minute * 60 * 75 + msf.second * 75 + msf.frame - 150;
+        }
+
+        static (byte hour, byte minute, byte second, byte frame) LbaToMsf(ulong sector)
+        {
+            return ((byte)((sector + 150) / 75 / 60 / 60), (byte)((sector + 150) / 75 / 60 % 60),
+                (byte)((sector     + 150) / 75 % 60), (byte)((sector      + 150) % 75));
         }
     }
 }
