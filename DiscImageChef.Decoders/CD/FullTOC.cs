@@ -157,10 +157,10 @@ namespace DiscImageChef.Decoders.CD
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(CDFullTOCResponse, 0);
+            decoded.DataLength           = BigEndianBitConverter.ToUInt16(CDFullTOCResponse, 0);
             decoded.FirstCompleteSession = CDFullTOCResponse[2];
-            decoded.LastCompleteSession = CDFullTOCResponse[3];
-            decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 11];
+            decoded.LastCompleteSession  = CDFullTOCResponse[3];
+            decoded.TrackDescriptors     = new TrackDataDescriptor[(decoded.DataLength - 2) / 11];
 
             if(decoded.DataLength + 2 != CDFullTOCResponse.Length)
             {
@@ -172,20 +172,20 @@ namespace DiscImageChef.Decoders.CD
 
             for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
             {
-                decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + i * 11 + 4];
-                decoded.TrackDescriptors[i].ADR = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.TrackDescriptors[i].CONTROL = (byte)(CDFullTOCResponse[1 + i * 11 + 4] & 0x0F);
-                decoded.TrackDescriptors[i].TNO = CDFullTOCResponse[2 + i * 11 + 4];
-                decoded.TrackDescriptors[i].POINT = CDFullTOCResponse[3 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Min = CDFullTOCResponse[4 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Sec = CDFullTOCResponse[5 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Frame = CDFullTOCResponse[6 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Zero = CDFullTOCResponse[7 + i * 11 + 4];
-                decoded.TrackDescriptors[i].HOUR = (byte)((CDFullTOCResponse[7 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.TrackDescriptors[i].PHOUR = (byte)(CDFullTOCResponse[7 + i * 11 + 4] & 0x0F);
-                decoded.TrackDescriptors[i].PMIN = CDFullTOCResponse[8 + i * 11 + 4];
-                decoded.TrackDescriptors[i].PSEC = CDFullTOCResponse[9 + i * 11 + 4];
-                decoded.TrackDescriptors[i].PFRAME = CDFullTOCResponse[10 + i * 11 + 4];
+                decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0         + i * 11 + 4];
+                decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
+                decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1  + i * 11 + 4] & 0x0F);
+                decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2         + i * 11 + 4];
+                decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3         + i * 11 + 4];
+                decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4         + i * 11 + 4];
+                decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5         + i * 11 + 4];
+                decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6         + i * 11 + 4];
+                decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7         + i * 11 + 4];
+                decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + i * 11 + 4] & 0xF0) >> 4);
+                decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7  + i * 11 + 4] & 0x0F);
+                decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8         + i * 11 + 4];
+                decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9         + i * 11 + 4];
+                decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10        + i * 11 + 4];
             }
 
             return decoded;
@@ -202,26 +202,28 @@ namespace DiscImageChef.Decoders.CD
             int lastSession = 0;
 
             sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
-            sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
+            sb.AppendFormat("Last complete session number: {0}",  response.LastCompleteSession).AppendLine();
             foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
-                if((descriptor.CONTROL & 0x08) == 0x08 ||
-                   descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6 ||
+                if((descriptor.CONTROL & 0x08) ==
+                   0x08 ||
+                   descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 &&
+                   descriptor.ADR != 6 ||
                    descriptor.TNO != 0)
                 {
                     sb.AppendLine("Unknown TOC entry format, printing values as-is");
                     sb.AppendFormat("SessionNumber = {0}", descriptor.SessionNumber).AppendLine();
-                    sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
-                    sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
-                    sb.AppendFormat("TNO = {0}", descriptor.TNO).AppendLine();
-                    sb.AppendFormat("POINT = {0}", descriptor.POINT).AppendLine();
-                    sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                    sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                    sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                    sb.AppendFormat("HOUR = {0}", descriptor.HOUR).AppendLine();
-                    sb.AppendFormat("PHOUR = {0}", descriptor.PHOUR).AppendLine();
-                    sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                    sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                    sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                    sb.AppendFormat("ADR = {0}",           descriptor.ADR).AppendLine();
+                    sb.AppendFormat("CONTROL = {0}",       descriptor.CONTROL).AppendLine();
+                    sb.AppendFormat("TNO = {0}",           descriptor.TNO).AppendLine();
+                    sb.AppendFormat("POINT = {0}",         descriptor.POINT).AppendLine();
+                    sb.AppendFormat("Min = {0}",           descriptor.Min).AppendLine();
+                    sb.AppendFormat("Sec = {0}",           descriptor.Sec).AppendLine();
+                    sb.AppendFormat("Frame = {0}",         descriptor.Frame).AppendLine();
+                    sb.AppendFormat("HOUR = {0}",          descriptor.HOUR).AppendLine();
+                    sb.AppendFormat("PHOUR = {0}",         descriptor.PHOUR).AppendLine();
+                    sb.AppendFormat("PMIN = {0}",          descriptor.PMIN).AppendLine();
+                    sb.AppendFormat("PSEC = {0}",          descriptor.PSEC).AppendLine();
+                    sb.AppendFormat("PFRAME = {0}",        descriptor.PFRAME).AppendLine();
                 }
                 else
                 {
@@ -238,102 +240,98 @@ namespace DiscImageChef.Decoders.CD
                         {
                             switch(descriptor.POINT)
                             {
-                                case 0xA0:
+                                case 0xA0 when descriptor.ADR == 4:
                                 {
-                                    if(descriptor.ADR == 4)
+                                    sb.AppendFormat("First video track number: {0}", descriptor.PMIN).AppendLine();
+                                    switch(descriptor.PSEC)
                                     {
-                                        sb.AppendFormat("First video track number: {0}", descriptor.PMIN).AppendLine();
-                                        switch(descriptor.PSEC)
-                                        {
-                                            case 0x10:
-                                                sb.AppendLine("CD-V single in NTSC format with digital stereo sound");
-                                                break;
-                                            case 0x11:
-                                                sb.AppendLine("CD-V single in NTSC format with digital bilingual sound");
-                                                break;
-                                            case 0x12:
-                                                sb.AppendLine("CD-V disc in NTSC format with digital stereo sound");
-                                                break;
-                                            case 0x13:
-                                                sb.AppendLine("CD-V disc in NTSC format with digital bilingual sound");
-                                                break;
-                                            case 0x20:
-                                                sb.AppendLine("CD-V single in PAL format with digital stereo sound");
-                                                break;
-                                            case 0x21:
-                                                sb.AppendLine("CD-V single in PAL format with digital bilingual sound");
-                                                break;
-                                            case 0x22:
-                                                sb.AppendLine("CD-V disc in PAL format with digital stereo sound");
-                                                break;
-                                            case 0x23:
-                                                sb.AppendLine("CD-V disc in PAL format with digital bilingual sound");
-                                                break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        sb.AppendFormat("First track number: {0} (", descriptor.PMIN);
-                                        switch((TocControl)(descriptor.CONTROL & 0x0D))
-                                        {
-                                            case TocControl.TwoChanNoPreEmph:
-                                                sb.Append(StereoNoPre);
-                                                break;
-                                            case TocControl.TwoChanPreEmph:
-                                                sb.Append(StereoPreEm);
-                                                break;
-                                            case TocControl.FourChanNoPreEmph:
-                                                sb.Append(QuadNoPreEm);
-                                                break;
-                                            case TocControl.FourChanPreEmph:
-                                                sb.Append(QuadPreEmph);
-                                                break;
-                                            case TocControl.DataTrack:
-                                                sb.Append(DataUnintrp);
-                                                break;
-                                            case TocControl.DataTrackIncremental:
-                                                sb.Append(DataIncrtly);
-                                                break;
-                                        }
-
-                                        sb.AppendLine(")");
-                                        sb.AppendFormat("Disc type: {0}", descriptor.PSEC).AppendLine();
-                                        //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
+                                        case 0x10:
+                                            sb.AppendLine("CD-V single in NTSC format with digital stereo sound");
+                                            break;
+                                        case 0x11:
+                                            sb.AppendLine("CD-V single in NTSC format with digital bilingual sound");
+                                            break;
+                                        case 0x12:
+                                            sb.AppendLine("CD-V disc in NTSC format with digital stereo sound");
+                                            break;
+                                        case 0x13:
+                                            sb.AppendLine("CD-V disc in NTSC format with digital bilingual sound");
+                                            break;
+                                        case 0x20:
+                                            sb.AppendLine("CD-V single in PAL format with digital stereo sound");
+                                            break;
+                                        case 0x21:
+                                            sb.AppendLine("CD-V single in PAL format with digital bilingual sound");
+                                            break;
+                                        case 0x22:
+                                            sb.AppendLine("CD-V disc in PAL format with digital stereo sound");
+                                            break;
+                                        case 0x23:
+                                            sb.AppendLine("CD-V disc in PAL format with digital bilingual sound");
+                                            break;
                                     }
 
                                     break;
                                 }
-                                case 0xA1:
+                                case 0xA0 when descriptor.ADR == 1:
                                 {
-                                    if(descriptor.ADR == 4)
-                                        sb.AppendFormat("Last video track number: {0}", descriptor.PMIN).AppendLine();
-                                    else
+                                    sb.AppendFormat("First track number: {0} (", descriptor.PMIN);
+                                    switch((TocControl)(descriptor.CONTROL & 0x0D))
                                     {
-                                        sb.AppendFormat("Last track number: {0} (", descriptor.PMIN);
-                                        switch((TocControl)(descriptor.CONTROL & 0x0D))
-                                        {
-                                            case TocControl.TwoChanNoPreEmph:
-                                                sb.Append(StereoNoPre);
-                                                break;
-                                            case TocControl.TwoChanPreEmph:
-                                                sb.Append(StereoPreEm);
-                                                break;
-                                            case TocControl.FourChanNoPreEmph:
-                                                sb.Append(QuadNoPreEm);
-                                                break;
-                                            case TocControl.FourChanPreEmph:
-                                                sb.Append(QuadPreEmph);
-                                                break;
-                                            case TocControl.DataTrack:
-                                                sb.Append(DataUnintrp);
-                                                break;
-                                            case TocControl.DataTrackIncremental:
-                                                sb.Append(DataIncrtly);
-                                                break;
-                                        }
-
-                                        sb.AppendLine(")");
+                                        case TocControl.TwoChanNoPreEmph:
+                                            sb.Append(StereoNoPre);
+                                            break;
+                                        case TocControl.TwoChanPreEmph:
+                                            sb.Append(StereoPreEm);
+                                            break;
+                                        case TocControl.FourChanNoPreEmph:
+                                            sb.Append(QuadNoPreEm);
+                                            break;
+                                        case TocControl.FourChanPreEmph:
+                                            sb.Append(QuadPreEmph);
+                                            break;
+                                        case TocControl.DataTrack:
+                                            sb.Append(DataUnintrp);
+                                            break;
+                                        case TocControl.DataTrackIncremental:
+                                            sb.Append(DataIncrtly);
+                                            break;
                                     }
+
+                                    sb.AppendLine(")");
+                                    sb.AppendFormat("Disc type: {0}", descriptor.PSEC).AppendLine();
+                                    //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
+                                    break;
+                                }
+                                case 0xA1 when descriptor.ADR == 4:
+                                    sb.AppendFormat("Last video track number: {0}", descriptor.PMIN).AppendLine();
+                                    break;
+                                case 0xA1 when descriptor.ADR == 1:
+                                {
+                                    sb.AppendFormat("Last track number: {0} (", descriptor.PMIN);
+                                    switch((TocControl)(descriptor.CONTROL & 0x0D))
+                                    {
+                                        case TocControl.TwoChanNoPreEmph:
+                                            sb.Append(StereoNoPre);
+                                            break;
+                                        case TocControl.TwoChanPreEmph:
+                                            sb.Append(StereoPreEm);
+                                            break;
+                                        case TocControl.FourChanNoPreEmph:
+                                            sb.Append(QuadNoPreEm);
+                                            break;
+                                        case TocControl.FourChanPreEmph:
+                                            sb.Append(QuadPreEmph);
+                                            break;
+                                        case TocControl.DataTrack:
+                                            sb.Append(DataUnintrp);
+                                            break;
+                                        case TocControl.DataTrackIncremental:
+                                            sb.Append(DataIncrtly);
+                                            break;
+                                    }
+
+                                    sb.AppendLine(")");
                                     //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
                                     break;
                                 }
@@ -367,8 +365,8 @@ namespace DiscImageChef.Decoders.CD
                                 }
                                 case 0xF0:
                                 {
-                                    sb.AppendFormat("Book type: 0x{0:X2}", descriptor.PMIN);
-                                    sb.AppendFormat("Material type: 0x{0:X2}", descriptor.PSEC);
+                                    sb.AppendFormat("Book type: 0x{0:X2}",         descriptor.PMIN);
+                                    sb.AppendFormat("Material type: 0x{0:X2}",     descriptor.PSEC);
                                     sb.AppendFormat("Moment of inertia: 0x{0:X2}", descriptor.PFRAME);
                                     if(descriptor.PHOUR > 0)
                                         sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min,
@@ -380,7 +378,7 @@ namespace DiscImageChef.Decoders.CD
                                 }
                                 default:
                                 {
-                                    if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x63)
+                                    if(descriptor.POINT   >= 0x01 && descriptor.POINT <= 0x63)
                                         if(descriptor.ADR == 4)
                                             sb.AppendFormat("Video track {3} starts at: {0:D2}:{1:D2}:{2:D2}",
                                                             descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
@@ -428,18 +426,18 @@ namespace DiscImageChef.Decoders.CD
                                         }
                                     else
                                     {
-                                        sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
+                                        sb.AppendFormat("ADR = {0}",     descriptor.ADR).AppendLine();
                                         sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
-                                        sb.AppendFormat("TNO = {0}", descriptor.TNO).AppendLine();
-                                        sb.AppendFormat("POINT = {0}", descriptor.POINT).AppendLine();
-                                        sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                                        sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                                        sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                                        sb.AppendFormat("HOUR = {0}", descriptor.HOUR).AppendLine();
-                                        sb.AppendFormat("PHOUR = {0}", descriptor.PHOUR).AppendLine();
-                                        sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                                        sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                                        sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                                        sb.AppendFormat("TNO = {0}",     descriptor.TNO).AppendLine();
+                                        sb.AppendFormat("POINT = {0}",   descriptor.POINT).AppendLine();
+                                        sb.AppendFormat("Min = {0}",     descriptor.Min).AppendLine();
+                                        sb.AppendFormat("Sec = {0}",     descriptor.Sec).AppendLine();
+                                        sb.AppendFormat("Frame = {0}",   descriptor.Frame).AppendLine();
+                                        sb.AppendFormat("HOUR = {0}",    descriptor.HOUR).AppendLine();
+                                        sb.AppendFormat("PHOUR = {0}",   descriptor.PHOUR).AppendLine();
+                                        sb.AppendFormat("PMIN = {0}",    descriptor.PMIN).AppendLine();
+                                        sb.AppendFormat("PSEC = {0}",    descriptor.PSEC).AppendLine();
+                                        sb.AppendFormat("PFRAME = {0}",  descriptor.PFRAME).AppendLine();
                                     }
 
                                     break;
@@ -457,25 +455,25 @@ namespace DiscImageChef.Decoders.CD
                                     if(descriptor.PHOUR > 0)
                                     {
                                         sb
-                                            .AppendFormat("Start of next possible program in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.Min, descriptor.Sec, descriptor.Frame,
-                                                          descriptor.HOUR).AppendLine();
+                                           .AppendFormat("Start of next possible program in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.Min, descriptor.Sec, descriptor.Frame,
+                                                         descriptor.HOUR).AppendLine();
                                         sb
-                                            .AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                          descriptor.PHOUR).AppendLine();
+                                           .AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                         descriptor.PHOUR).AppendLine();
                                     }
                                     else
                                     {
                                         sb
-                                            .AppendFormat("Start of next possible program in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.Min, descriptor.Sec, descriptor.Frame)
-                                            .AppendLine();
+                                           .AppendFormat("Start of next possible program in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
                                         sb
-                                            .AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
-                                            .AppendLine();
+                                           .AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
+                                           .AppendLine();
                                     }
+
                                     break;
                                 }
                                 case 0xB1:
@@ -503,25 +501,25 @@ namespace DiscImageChef.Decoders.CD
                                     sb.AppendFormat("Optimum recording power: 0x{0:X2}", descriptor.Min).AppendLine();
                                     if(descriptor.PHOUR > 0)
                                         sb
-                                            .AppendFormat("Start time of the first Lead-in area in the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                          descriptor.PHOUR).AppendLine();
+                                           .AppendFormat("Start time of the first Lead-in area in the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                         descriptor.PHOUR).AppendLine();
                                     else
                                         sb
-                                            .AppendFormat("Start time of the first Lead-in area in the disc: {0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
-                                            .AppendLine();
+                                           .AppendFormat("Start time of the first Lead-in area in the disc: {0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
+                                           .AppendLine();
                                     break;
                                 }
                                 case 0xC1:
                                 {
                                     sb.AppendFormat("Copy of information of A1 from ATIP found");
-                                    sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                                    sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                                    sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                                    sb.AppendFormat("Zero = {0}", descriptor.Zero).AppendLine();
-                                    sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                                    sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
+                                    sb.AppendFormat("Min = {0}",    descriptor.Min).AppendLine();
+                                    sb.AppendFormat("Sec = {0}",    descriptor.Sec).AppendLine();
+                                    sb.AppendFormat("Frame = {0}",  descriptor.Frame).AppendLine();
+                                    sb.AppendFormat("Zero = {0}",   descriptor.Zero).AppendLine();
+                                    sb.AppendFormat("PMIN = {0}",   descriptor.PMIN).AppendLine();
+                                    sb.AppendFormat("PSEC = {0}",   descriptor.PSEC).AppendLine();
                                     sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
                                     break;
                                 }
@@ -530,25 +528,25 @@ namespace DiscImageChef.Decoders.CD
                                     if(descriptor.PHOUR > 0)
                                     {
                                         sb
-                                            .AppendFormat("Start position of outer part lead-in area: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                          descriptor.PHOUR).AppendLine();
+                                           .AppendFormat("Start position of outer part lead-in area: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                         descriptor.PHOUR).AppendLine();
                                         sb
-                                            .AppendFormat("Stop position of inner part lead-out area: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.Min, descriptor.Sec, descriptor.Frame,
-                                                          descriptor.HOUR).AppendLine();
+                                           .AppendFormat("Stop position of inner part lead-out area: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.Min, descriptor.Sec, descriptor.Frame,
+                                                         descriptor.HOUR).AppendLine();
                                     }
                                     else
                                     {
                                         sb
-                                            .AppendFormat("Start position of outer part lead-in area: {0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
-                                            .AppendLine();
+                                           .AppendFormat("Start position of outer part lead-in area: {0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
+                                           .AppendLine();
                                         sb
-                                            .AppendFormat("Stop position of inner part lead-out area: {0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.Min, descriptor.Sec, descriptor.Frame)
-                                            .AppendLine();
+                                           .AppendFormat("Stop position of inner part lead-out area: {0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
                                     }
+
                                     break;
                                 }
                                 default:
@@ -556,29 +554,29 @@ namespace DiscImageChef.Decoders.CD
                                     if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x40)
                                     {
                                         sb
-                                            .AppendFormat("Start time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
-                                            .AppendLine();
+                                           .AppendFormat("Start time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME)
+                                           .AppendLine();
                                         sb
-                                            .AppendFormat("Ending time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
-                                                          descriptor.Min, descriptor.Sec, descriptor.Frame)
-                                            .AppendLine();
+                                           .AppendFormat("Ending time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
+                                                         descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
                                     }
                                     else
                                     {
-                                        sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
+                                        sb.AppendFormat("ADR = {0}",     descriptor.ADR).AppendLine();
                                         sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
-                                        sb.AppendFormat("TNO = {0}", descriptor.TNO).AppendLine();
-                                        sb.AppendFormat("POINT = {0}", descriptor.POINT).AppendLine();
-                                        sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                                        sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                                        sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                                        sb.AppendFormat("HOUR = {0}", descriptor.HOUR).AppendLine();
-                                        sb.AppendFormat("PHOUR = {0}", descriptor.PHOUR).AppendLine();
-                                        sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                                        sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                                        sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                                        sb.AppendFormat("TNO = {0}",     descriptor.TNO).AppendLine();
+                                        sb.AppendFormat("POINT = {0}",   descriptor.POINT).AppendLine();
+                                        sb.AppendFormat("Min = {0}",     descriptor.Min).AppendLine();
+                                        sb.AppendFormat("Sec = {0}",     descriptor.Sec).AppendLine();
+                                        sb.AppendFormat("Frame = {0}",   descriptor.Frame).AppendLine();
+                                        sb.AppendFormat("HOUR = {0}",    descriptor.HOUR).AppendLine();
+                                        sb.AppendFormat("PHOUR = {0}",   descriptor.PHOUR).AppendLine();
+                                        sb.AppendFormat("PMIN = {0}",    descriptor.PMIN).AppendLine();
+                                        sb.AppendFormat("PSEC = {0}",    descriptor.PSEC).AppendLine();
+                                        sb.AppendFormat("PFRAME = {0}",  descriptor.PFRAME).AppendLine();
                                     }
+
                                     break;
                                 }
                             }
