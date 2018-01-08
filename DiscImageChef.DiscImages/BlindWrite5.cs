@@ -49,6 +49,7 @@ using DMI = DiscImageChef.Decoders.Xbox.DMI;
 
 namespace DiscImageChef.DiscImages
 {
+    // TODO: Too many unknowns to make this writable
     public class BlindWrite5 : IMediaImage
     {
         /// <summary>"BWT5 STREAM FOOT"</summary>
@@ -443,7 +444,7 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].point = {2}", ses, tSeq,
                                               session.Tracks[tSeq].point);
                     DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown4 = 0x{2:X2}", ses,
-                                              tSeq, session.Tracks[tSeq].unknown4);
+                                              tSeq, session.Tracks[tSeq].tno);
                     DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].min = {2}", ses, tSeq,
                                               session.Tracks[tSeq].min);
                     DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sec = {2}", ses, tSeq,
@@ -1885,7 +1886,7 @@ namespace DiscImageChef.DiscImages
             public byte ctl;
             public byte adr;
             public byte point;
-            public byte unknown4;
+            public byte tno;
             public byte min;
             public byte sec;
             public byte frame;
