@@ -44,6 +44,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
+    // TODO: Too many unknowns, plus a completely unknown footer, to make this writable
     public class BlindWrite4 : IMediaImage
     {
         /// <summary>"BLINDWRITE TOC FILE"</summary>

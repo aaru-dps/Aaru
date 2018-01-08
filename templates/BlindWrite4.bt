@@ -1,0 +1,127 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//      File: BlindWrite4.bt
+//   Authors: Natalia Portillo
+//   Version: 0.1
+//   Purpose: BlindWrite 4 media descriptor.
+//  Category: Misc
+// File Mask: *.bwt
+//  ID Bytes: 42 4C 49 4E 44 57 52 49 54 45 20 54 4F 43 20 46 49 4C 45 //BLINDWRITE TOC FILE
+//   History: 
+//   0.1 2018-01-08 Natalia Portillo: Initial release
+//------------------------------------------------
+
+enum <byte> Bw4TrackType
+{
+ Audio = 0,
+ Mode1 = 1,
+ Mode2 = 2
+};
+
+typedef struct
+{
+ uint filenameLen;
+ if(filenameLen > 0)
+     char filename[filenameLen];
+ uint offset;
+ ubyte subchannel;
+ byte unknown1[3];
+ uint unknown2;
+ byte unknown3;
+ byte session;
+ byte unknown4;
+ byte CONTROL : 4;
+ byte ADR : 4;
+ byte unknown5;
+ Bw4TrackType trackMode;
+ byte unknown6;
+ byte point;
+ uint unknown7;
+ uint unknown8;
+ uint unknown9;
+ uint unknwon10;
+ ushort unknown11;
+ int lastSector;
+ byte unknown12;
+ int pregap;
+ int startSector;
+ uint unknown13[2];
+ uint titleLen;
+ if(titleLen > 0)
+     char title[titleLen];
+ uint performerLen;
+ if(performerLen > 0)
+     char performer[performerLen];
+ uint unkString1Len;
+ if(unkString1Len > 0)
+     char unkString1[unkString1Len];
+ uint unkString2Len;
+ if(unkString2Len > 0)
+     char unkString2[unkString2Len];
+ uint unkString3Len;
+ if(unkString3Len > 0)
+     char unkString3[unkString3Len];
+ uint unkString4Len;
+ if(unkString4Len > 0)
+     char unkString4[unkString4Len];
+ uint discIdLen;
+ if(discIdLen > 0)
+     char discId[discIdLen];
+ uint unkString5Len;
+ if(unkString5Len > 0)
+     char unkString5[unkString5Len];
+ uint unkString6Len;
+ if(unkString6Len > 0)
+     char unkString6[unkString6Len];
+ uint unkString7Len;
+ if(unkString7Len > 0)
+     char unkString7[unkString7Len];
+ uint unkString8Len;
+ if(unkString8Len > 0)
+     char unkString8[unkString8Len];
+ uint unkString9Len;
+ if(unkString9Len > 0)
+     char unkString9[unkString9Len];
+ uint unkString10Len;
+ if(unkString10Len > 0)
+     char unkString10[unkString10Len];
+ uint unkString11Len;
+ if(unkString11Len > 0)
+     char unkString11[unkString11Len];
+ uint isrcLen;
+ if(isrcLen > 0)
+     char isrc[isrcLen];
+} BW4TrackDescriptor <optimize=false>;
+
+typedef struct
+{
+ char magic[19];
+ uint unknown1;
+ uint64 timestamp;
+ uint volumeIdLen;
+ if(volumeIdLen > 0)
+    char volumeId[volumeIdLen];
+ uint systemIdLen;
+ if(systemIdLen > 0)
+    char systemId[systemIdLen];
+ uint commentsLen;
+ if(commentsLen > 0)
+    char comments[commentsLen];
+ uint trackDescriptors;
+ uint datafileLen;
+ if(datafileLen > 0)
+    char datafile[datafileLen];
+ uint subchannelfileLen;
+ if(subchannelfileLen > 0)
+    char subchannelFile[subchannelfileLen];
+ uint unknown2;
+ ubyte unknown3Len;
+ if(unknown3Len > 0)
+    char unknown3[unknown3Len];
+ if(trackDescriptors > 0)
+    BW4TrackDescriptor tracks[trackDescriptors];
+} BW4Header <optimize=false>;
+
+LittleEndian();
+BW4Header header;

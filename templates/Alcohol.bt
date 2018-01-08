@@ -9,7 +9,7 @@
 // File Mask: *.mds
 //  ID Bytes: 4D 45 44 49 41 20 44 45 53 43 52 49 50 54 4F 52 // MEDIA DESCRIPTOR
 //   History: 
-//   0.1 2018-01-08 Vasyl Tsvirkunov: Initial release
+//   0.1 2018-01-08 Natalia Portillo: Initial release
 //------------------------------------------------
 
 enum <unsigned short> AlcoholMediumType
