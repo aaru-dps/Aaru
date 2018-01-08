@@ -43,6 +43,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.DiscImages
 {
     // Support separate data files? Never seen a DiscJuggler image using them anyways...
+    // TODO: Too many unknowns to make this writable
     public class DiscJuggler : IMediaImage
     {
         byte[] cdtext;
