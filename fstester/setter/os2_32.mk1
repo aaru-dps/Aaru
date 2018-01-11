@@ -1,0 +1,40 @@
+!define BLANK ""
+C:\dic\common.obj : C:\dic\common.c .AUTODEPEND
+ @C:
+ cd C:\dic
+ *wcc386 common.c -i="C:\WATCOM/h;C:\WATCOM/h/os2" -w4 -e25 -zq -od -d2 -3r &
+-bt=os2 -fo=.obj -mf
+
+C:\dic\main.obj : C:\dic\main.c .AUTODEPEND
+ @C:
+ cd C:\dic
+ *wcc386 main.c -i="C:\WATCOM/h;C:\WATCOM/h/os2" -w4 -e25 -zq -od -d2 -3r -b&
+t=os2 -fo=.obj -mf
+
+C:\dic\os2.obj : C:\dic\os2.c .AUTODEPEND
+ @C:
+ cd C:\dic
+ *wcc386 os2.c -i="C:\WATCOM/h;C:\WATCOM/h/os2" -w4 -e25 -zq -od -d2 -3r -bt&
+=os2 -fo=.obj -mf
+
+C:\dic\os2_32.obj : C:\dic\os2_32.c .AUTODEPEND
+ @C:
+ cd C:\dic
+ *wcc386 os2_32.c -i="C:\WATCOM/h;C:\WATCOM/h/os2" -w4 -e25 -zq -od -d2 -3r &
+-bt=os2 -fo=.obj -mf
+
+C:\dic\os2_32.exe : C:\dic\common.obj C:\dic\main.obj C:\dic\os2.obj C:\dic\&
+os2_32.obj C:\dic\defs.h C:\dic\main.h .AUTODEPEND
+ @C:
+ cd C:\dic
+ @%write os2_32.lk1 FIL common.obj,main.obj,os2.obj,os2_32.obj
+ @%append os2_32.lk1 
+!ifneq BLANK ""
+ *wlib -q -n -b os2_32.imp 
+ @%append os2_32.lk1 LIBR os2_32.imp
+!endif
+ *wlink name os2_32 d all SYS os2v2 op m op maxe=25 op q op symf @os2_32.lk1
+!ifneq BLANK ""
+ rc -i $[: -i C:\WATCOM\h -i C:\WATCOM\h\os2  os2_32.exe
+!endif
+
