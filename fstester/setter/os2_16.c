@@ -42,6 +42,8 @@ Copyright (C) 2011-2018 Natalia Portillo
 
 #include "defs.h"
 #include "consts.h"
+#include "os2_16.h"
+#include "dosos2.h"
 
 void GetOsInfo()
 {
