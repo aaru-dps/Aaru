@@ -32,18 +32,13 @@ Copyright (C) 2011-2018 Natalia Portillo
 #if (defined(__I386__) || defined (__i386__) || defined (__THW_INTEL) || defined (_M_IX86)) && (defined(__OS2__) || defined (__os2__))
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <string.h>
 
 #define INCL_DOSMISC
 #define INCL_DOSFILEMGR
+
 #include <os2.h>
 
 #include "defs.h"
-#include "os2_16.h"
-#include "dosos2.h"
-#include "consts.h"
 
 void GetOsInfo()
 {
@@ -62,17 +57,17 @@ void FileAttributes(const char *path)
 
 void FilePermissions(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
 }
 
 void ExtendedAttributes(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
 }
 
 void ResourceFork(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
 }
 
 void Filenames(const char *path)
@@ -99,7 +94,12 @@ void Fragmentation(const char *path, size_t clusterSize)
 
 void Sparse(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
+}
+
+void Links(const char *path)
+{
+    // TODO: Check if can ask WPS to make Shadow
 }
 
 void MillionFiles(const char *path)

@@ -9,7 +9,7 @@ Component      : fstester.setter
 
 --[ Description ] -----------------------------------------------------------
 
-Contains definitions commons to DOS and OS/2
+Contains definitions common to DOS and OS/2
 
 --[ License ] ---------------------------------------------------------------
      This program is free software: you can redistribute it and/or modify
@@ -34,11 +34,11 @@ Copyright (C) 2011-2018 Natalia Portillo
 #ifndef DIC_FSTESTER_SETTER_DOSOS2_H
 #define DIC_FSTESTER_SETTER_DOSOS2_H
 
-const char* archivedAttributeText = "This file has the archived attribute set.\n";
-const char* systemAttributeText = "This file has the system attribute set.\n";
-const char* hiddenAttributeText = "This file has the hidden attribute set.\n";
-const char* readonlyAttributeText = "This file has the read-only attribute set.\n";
-const char* noAttributeText = "This file has no attribute set.\n";
+const char *archivedAttributeText = "This file has the archived attribute set.\n";
+const char *systemAttributeText   = "This file has the system attribute set.\n";
+const char *hiddenAttributeText   = "This file has the hidden attribute set.\n";
+const char *readonlyAttributeText = "This file has the read-only attribute set.\n";
+const char *noAttributeText       = "This file has no attribute set.\n";
 
 
 #endif

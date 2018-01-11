@@ -5,7 +5,7 @@ The Disc Image Chef
 Filename       : dos.c
 Author(s)      : Natalia Portillo
 
-Component      : fstester.setter.os2
+Component      : fstester.setter
 
 --[ Description ] -----------------------------------------------------------
 
@@ -32,15 +32,10 @@ Copyright (C) 2011-2018 Natalia Portillo
 #if defined(__DOS__) || defined (MSDOS)
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <string.h>
 
 #include <dos.h>
 
 #include "defs.h"
-#include "dosos2.h"
-#include "consts.h"
 
 void GetOsInfo()
 {
@@ -59,17 +54,17 @@ void FileAttributes(const char *path)
 
 void FilePermissions(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
 }
 
 void ExtendedAttributes(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
 }
 
 void ResourceFork(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
 }
 
 void Filenames(const char *path)
@@ -96,7 +91,12 @@ void Fragmentation(const char *path, size_t clusterSize)
 
 void Sparse(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
+}
+
+void Links(const char *path)
+{
+    /* Do nothing, not supported by target operating system */
 }
 
 void MillionFiles(const char *path)

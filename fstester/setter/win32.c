@@ -32,12 +32,8 @@ Copyright (C) 2011-2018 Natalia Portillo
 #if defined(__WINDOWS__) || defined (__TOS_WIN__) || defined (__WIN32__) || defined (_WIN64) || defined (_WIN32) || defined (__NT__)
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <string.h>
 
 #include "defs.h"
-#include "consts.h"
 
 void GetOsInfo()
 {
@@ -56,17 +52,17 @@ void FileAttributes(const char *path)
 
 void FilePermissions(const char *path)
 {
-   /* Do nothing, not supported by target operating system */
+    /* Do nothing, not supported by target operating system */
 }
 
 void ExtendedAttributes(const char *path)
 {
-   // TODO: Implement
+    // TODO: Implement
 }
 
 void ResourceFork(const char *path)
 {
-   // TODO: Implement with ADS
+    // TODO: Implement with ADS
 }
 
 void Filenames(const char *path)
@@ -91,7 +87,12 @@ void Fragmentation(const char *path, size_t clusterSize)
 
 void Sparse(const char *path)
 {
-   // TODO: Implement
+    // TODO: Implement
+}
+
+void Links(const char *path)
+{
+    // TODO: Implement
 }
 
 void MillionFiles(const char *path)
@@ -103,4 +104,5 @@ void DeleteFiles(const char *path)
 {
     // TODO: Implement
 }
+
 #endif

@@ -33,7 +33,6 @@ Copyright (C) 2011-2018 Natalia Portillo
 
 #include "main.h"
 #include "defs.h"
-#include "consts.h"
 
 int main(int argc, char **argv)
 {
@@ -47,8 +46,8 @@ int main(int argc, char **argv)
 
     if(argc != 2)
     {
-       printf("Usage %s <path>\n", argv[0]);
-       return -1;
+        printf("Usage %s <path>\n", argv[0]);
+        return -1;
     }
 
     GetOsInfo();

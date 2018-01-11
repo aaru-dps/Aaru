@@ -147,7 +147,7 @@ Copyright (C) 2011-2018 Natalia Portillo
 #define OS_NAME "XENIX"
 #elif defined(__MVS__)
 #define OS_NAME "z/OS"
-#elif defined(defined (unix)) || defined (defined (UNIX)) || defined (defined (__unix)) || defined (defined (__unix__)) || defined (defined (__UNIX__)
+#elif defined (unix) || defined (UNIX) || defined (__unix) || defined (__unix__) || defined (__UNIX__)
 #define OS_NAME "Unknown UNIX"
 #else
 #define OS_NAME "Unknown"

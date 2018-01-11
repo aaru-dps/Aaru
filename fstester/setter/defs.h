@@ -33,17 +33,29 @@ Copyright (C) 2011-2018 Natalia Portillo
 #define DIC_FSTESTER_SETTER_DEFS_H
 
 void GetOsInfo();
+
 void GetVolumeInfo(const char *path, size_t *clusterSize);
+
 void FileAttributes(const char *path);
+
 void FilePermissions(const char *path);
+
 void ExtendedAttributes(const char *path);
+
 void ResourceFork(const char *path);
+
 void Filenames(const char *path);
+
 void Timestamps(const char *path);
+
 void DirectoryDepth(const char *path);
+
 void Fragmentation(const char *path, size_t clusterSize);
+
 void Sparse(const char *path);
+
 void MillionFiles(const char *path);
+
 void DeleteFiles(const char *path);
 
 #define FILENAME_FORMAT "This file should be named \"%s\".\n"
