@@ -5,32 +5,25 @@ C:\dic\main.obj : C:\dic\main.c .AUTODEPEND
  *wcc main.c -i="C:\WATCOM/h;C:\WATCOM/h/os21x" -w4 -e25 -zq -od -d2 -bt=os2&
  -fo=.obj -ml
 
-C:\dic\os2.obj : C:\dic\os2.c .AUTODEPEND
- @C:
- cd C:\dic
- *wcc os2.c -i="C:\WATCOM/h;C:\WATCOM/h/os21x" -w4 -e25 -zq -od -d2 -bt=os2 &
--fo=.obj -ml
-
 C:\dic\os2_16.obj : C:\dic\os2_16.c .AUTODEPEND
  @C:
  cd C:\dic
  *wcc os2_16.c -i="C:\WATCOM/h;C:\WATCOM/h/os21x" -w4 -e25 -zq -od -d2 -bt=o&
 s2 -fo=.obj -ml
 
-C:\dic\os2_16.exe : C:\dic\main.obj C:\dic\os2.obj C:\dic\os2_16.obj C:\dic\&
-consts.h C:\dic\defs.h C:\dic\dosos2.h C:\dic\main.h C:\dic\os2_16.h .AUTODE&
-PEND
+C:\dic\os2_16.exe : C:\dic\main.obj C:\dic\os2_16.obj C:\dic\consts.h C:\dic&
+\defs.h C:\dic\dosos2.h C:\dic\main.h C:\dic\os2_16.h .AUTODEPEND
  @C:
  cd C:\dic
- @%write os2_16.lk1 FIL main.obj,os2.obj,os2_16.obj
+ @%write os2_16.lk1 FIL main.obj,os2_16.obj
  @%append os2_16.lk1 
 !ifneq BLANK ""
  *wlib -q -n -b os2_16.imp 
  @%append os2_16.lk1 LIBR os2_16.imp
 !endif
- *wlink name os2_16 d all SYS os2 op m libr os2 op maxe=25 op q op symf @os2&
+ *wlink name os2_16 d all sys os2 op m libr os2 op maxe=25 op q op symf @os2&
 _16.lk1
 !ifneq BLANK ""
- rc -i $[: -i C:\WATCOM\h -i C:\WATCOM\h\os2  os2_16.exe
+ *wrc -q -ad  os2_16.exe
 !endif
 
