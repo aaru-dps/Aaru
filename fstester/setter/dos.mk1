@@ -1,9 +1,4 @@
 !define BLANK ""
-C:\dic\common.obj : C:\dic\common.c .AUTODEPEND
- @C:
- cd C:\dic
- *wcc common.c -i="C:\WATCOM/h" -w4 -e25 -zq -od -d2 -bt=dos -fo=.obj -ml
-
 C:\dic\dos.obj : C:\dic\dos.c .AUTODEPEND
  @C:
  cd C:\dic
@@ -14,11 +9,11 @@ C:\dic\main.obj : C:\dic\main.c .AUTODEPEND
  cd C:\dic
  *wcc main.c -i="C:\WATCOM/h" -w4 -e25 -zq -od -d2 -bt=dos -fo=.obj -ml
 
-C:\dic\dos.exe : C:\dic\common.obj C:\dic\dos.obj C:\dic\main.obj C:\dic\con&
-sts.h C:\dic\defs.h C:\dic\dosos2.h C:\dic\main.h .AUTODEPEND
+C:\dic\dos.exe : C:\dic\dos.obj C:\dic\main.obj C:\dic\consts.h C:\dic\defs.&
+h C:\dic\dos.h C:\dic\dosos2.h C:\dic\main.h .AUTODEPEND
  @C:
  cd C:\dic
- @%write dos.lk1 FIL common.obj,dos.obj,main.obj
+ @%write dos.lk1 FIL dos.obj,main.obj
  @%append dos.lk1 
- *wlink name dos d all SYS dos op m op maxe=25 op q op symf @dos.lk1
+ *wlink name dos d all sys dos op m op maxe=25 op q op symf @dos.lk1
 
