@@ -113,7 +113,7 @@ Copyright (C) 2011-2018 Natalia Portillo
 #define OS_NAME "NetWare"
 #elif defined(__OpenBSD__)
 #define OS_NAME "OpenBSD"
-#elif defined(__OS2__) || defined (__os2__)
+#elif defined(__OS2__) || defined (__os2__) && !defined (__DOS__)
 #define OS_NAME "OS/2"
 #elif defined(__palmos__)
 #define OS_NAME "PalmOS"
