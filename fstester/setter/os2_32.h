@@ -31,8 +31,5 @@ Copyright (C) 2011-2018 Natalia Portillo
 
 #if (defined(__OS2__) || defined (__os2__)) && (defined(__I386__) || defined (__i386__) || defined (__THW_INTEL) || defined (_M_IX86))
 
-#define INCL_DOSMISC
-
-#include <os2.h>
 
 #endif
