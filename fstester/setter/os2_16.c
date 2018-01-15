@@ -29,7 +29,7 @@ Contains 16-bit OS/2 code
 Copyright (C) 2011-2018 Natalia Portillo
 *****************************************************************************/
 
-#if (defined(__I86__) || defined (__i86__) || defined (_M_I86)) && (defined(__OS2__) || defined (__os2__))
+#if (defined(__I86__) || defined (__i86__) || defined (_M_I86)) && (defined(__OS2__) || defined (__os2__)) && !defined (__DOS__)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,6 +87,9 @@ void GetVolumeInfo(const char *path, size_t *clusterSize)
     USHORT      driveNo = path[0] - '@';
     char        *fsdName;
     PFSINFO     pfsInfo;
+
+    if(driveNo > 32)
+       driveNo-=32;
 
     *clusterSize = 0;
 
@@ -1343,7 +1346,7 @@ void MillionFiles(const char *path)
     for(pos = 0; pos < 100000ULL; pos++)
     {
         memset(&filename, 0, 9);
-        sprintf(&filename, "%08d", pos);
+        sprintf(&filename, "%08llu", pos);
         rc = DosOpen(&filename, &handle, &actionTaken, 0, FILE_NORMAL,
                      OPEN_ACTION_CREATE_IF_NEW | OPEN_ACTION_FAIL_IF_EXISTS,
                      OPEN_FLAGS_NOINHERIT | OPEN_FLAGS_NO_CACHE | OPEN_SHARE_DENYNONE | OPEN_ACCESS_READWRITE, 0);
