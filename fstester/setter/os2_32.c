@@ -42,43 +42,42 @@ Copyright (C) 2011-2018 Natalia Portillo
 
 #include "defs.h"
 #include "consts.h"
-
 #include "os2_16.h"
 #include "dosos2.h"
 
 void GetOsInfo()
 {
-    ULONG aulBuffer[3];
+    ULONG  aulBuffer[3];
     APIRET rc;
-    ULONG MajorVer;
-    ULONG MinorVer;
-    ULONG pathLen[1];
+    ULONG  MajorVer;
+    ULONG  MinorVer;
+    ULONG  pathLen[1];
 
-    rc = DosQuerySysInfo(QSV_VERSION_MAJOR, QSV_VERSION_REVISION, (PVOID) aulBuffer, 3 * sizeof(ULONG));
-    
+    rc = DosQuerySysInfo(QSV_VERSION_MAJOR, QSV_VERSION_REVISION, (PVOID)aulBuffer, 3 * sizeof(ULONG));
+
     if(rc)
     {
-       printf("Error %d querying OS/2 version.\n", rc);
-       return;
+        printf("Error %d querying OS/2 version.\n", rc);
+        return;
     }
 
     if(aulBuffer[0] = 20)
     {
-       MajorVer = aulBuffer[1] / 10;
-       MinorVer = aulBuffer[1] % 10;
+        MajorVer = aulBuffer[1] / 10;
+        MinorVer = aulBuffer[1] % 10;
     }
     else
     {
-       MajorVer = aulBuffer[0];
-       MinorVer = aulBuffer[1];
+        MajorVer = aulBuffer[0];
+        MinorVer = aulBuffer[1];
     }
 
     printf("OS information:\n");
 
     if(aulBuffer[2] > 0x20)
-       printf("\tRunning under OS/2 %d.%d revision %c.\n", MajorVer, MinorVer, aulBuffer[2]);
+        printf("\tRunning under OS/2 %d.%d revision %c.\n", MajorVer, MinorVer, aulBuffer[2]);
     else
-       printf("\tRunning under OS/2 %d.%d\n", MajorVer, MinorVer);
+        printf("\tRunning under OS/2 %d.%d\n", MajorVer, MinorVer);
 
     rc = DosQuerySysInfo(QSV_MAX_PATH_LENGTH, QSV_MAX_PATH_LENGTH, (PVOID)pathLen, sizeof(ULONG));
 
@@ -89,18 +88,18 @@ void GetVolumeInfo(const char *path, size_t *clusterSize)
 {
     APIRET      rc;
     BYTE        bData[64];
-    ULONG      cbData  = sizeof(bData);
+    ULONG       cbData  = sizeof(bData);
     PFSALLOCATE pfsAllocateBuffer;
-    ULONG      driveNo = path[0] - '@';
+    ULONG       driveNo = path[0] - '@';
     char        *fsdName;
     PFSINFO     pfsInfo;
 
     if(driveNo > 32)
-       driveNo-=32;
+        driveNo -= 32;
 
     *clusterSize = 0;
-                   
-    rc = DosQueryFSAttach((PSZ)path, 0, FSAIL_QUERYNAME, (PVOID) &bData, &cbData);
+
+    rc = DosQueryFSAttach((PSZ)path, 0, FSAIL_QUERYNAME, (PVOID) & bData, &cbData);
 
     printf("Volume information:\n");
     printf("\tPath: %s\n", path);
@@ -158,11 +157,11 @@ void GetVolumeInfo(const char *path, size_t *clusterSize)
 
 void FileAttributes(const char *path)
 {
-    char   drivePath[4];
-    APIRET rc          = 0, wRc = 0, cRc = 0;
-    ULONG actionTaken = 0;
-    HFILE  handle;
-    FILESTATUS3 fileStatus = {{0}};
+    char        drivePath[4];
+    APIRET      rc          = 0, wRc = 0, cRc = 0;
+    ULONG       actionTaken = 0;
+    HFILE       handle;
+    FILESTATUS3 fileStatus  = {{0}};
 
     drivePath[0] = path[0];
     drivePath[1] = ':';
@@ -197,7 +196,7 @@ void FileAttributes(const char *path)
     {
         wRc = DosWrite(handle, (PVOID)noAttributeText, strlen(noAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_NORMAL;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -211,7 +210,7 @@ void FileAttributes(const char *path)
     {
         wRc = DosWrite(handle, (PVOID)archivedAttributeText, strlen(archivedAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -225,7 +224,7 @@ void FileAttributes(const char *path)
     {
         wRc = DosWrite(handle, (PVOID)systemAttributeText, strlen(systemAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_SYSTEM;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -239,7 +238,7 @@ void FileAttributes(const char *path)
     {
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_HIDDEN;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -253,7 +252,7 @@ void FileAttributes(const char *path)
     {
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_READONLY;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -268,7 +267,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_HIDDEN | FILE_READONLY;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -284,7 +283,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)systemAttributeText, strlen(systemAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_SYSTEM | FILE_READONLY;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -300,7 +299,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)systemAttributeText, strlen(systemAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_SYSTEM | FILE_HIDDEN;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -317,7 +316,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_SYSTEM | FILE_READONLY | FILE_HIDDEN;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -333,7 +332,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)archivedAttributeText, strlen(archivedAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED | FILE_READONLY;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -349,7 +348,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)archivedAttributeText, strlen(archivedAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED | FILE_HIDDEN;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -366,7 +365,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED | FILE_HIDDEN | FILE_READONLY;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -382,7 +381,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)archivedAttributeText, strlen(archivedAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)systemAttributeText, strlen(systemAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED | FILE_SYSTEM;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -399,7 +398,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)systemAttributeText, strlen(systemAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED | FILE_SYSTEM | FILE_READONLY;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -416,7 +415,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)systemAttributeText, strlen(systemAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED | FILE_SYSTEM | FILE_HIDDEN;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -434,7 +433,7 @@ void FileAttributes(const char *path)
         wRc = DosWrite(handle, (PVOID)hiddenAttributeText, strlen(hiddenAttributeText), &actionTaken);
         wRc = DosWrite(handle, (PVOID)readonlyAttributeText, strlen(readonlyAttributeText), &actionTaken);
         fileStatus.attrFile = FILE_ARCHIVED | FILE_SYSTEM | FILE_HIDDEN | FILE_READONLY;
-        rc = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
+        rc  = DosSetFileInfo(handle, FIL_STANDARD, &fileStatus, sizeof(FILESTATUS3));
         cRc = DosClose(handle);
     }
 
@@ -461,7 +460,7 @@ void Filenames(const char *path)
 {
     char   drivePath[4];
     APIRET rc          = 0, wRc = 0, cRc = 0;
-    ULONG actionTaken = 0;
+    ULONG  actionTaken = 0;
     HFILE  handle;
     char   message[300];
     int    pos         = 0;
@@ -513,11 +512,11 @@ void Filenames(const char *path)
 
 void Timestamps(const char *path)
 {
-    char       drivePath[4];
-    APIRET     rc          = 0, wRc = 0, cRc = 0, tRc = 0;
-    ULONG     actionTaken = 0;
-    HFILE      handle;
-    char       message[300];
+    char        drivePath[4];
+    APIRET      rc          = 0, wRc = 0, cRc = 0, tRc = 0;
+    ULONG       actionTaken = 0;
+    HFILE       handle;
+    char        message[300];
     FILESTATUS3 status;
 
     drivePath[0] = path[0];
@@ -1019,7 +1018,7 @@ void Fragmentation(const char *path, size_t clusterSize)
     unsigned char *buffer;
     char          drivePath[4];
     APIRET        rc                      = 0, wRc = 0, cRc = 0;
-    ULONG        actionTaken             = 0;
+    ULONG         actionTaken             = 0;
     HFILE         handle;
     long          i;
 
@@ -1255,7 +1254,7 @@ void MillionFiles(const char *path)
     APIRET             rc          = 0;
     char               filename[9];
     unsigned long long pos         = 0;
-    ULONG             actionTaken = 0;
+    ULONG              actionTaken = 0;
     HFILE              handle;
 
     drivePath[0] = path[0];
@@ -1305,7 +1304,7 @@ void DeleteFiles(const char *path)
     APIRET rc          = 0;
     char   filename[9];
     short  pos         = 0;
-    ULONG actionTaken = 0;
+    ULONG  actionTaken = 0;
     HFILE  handle;
 
     drivePath[0] = path[0];
