@@ -58,6 +58,8 @@ void MillionFiles(const char *path);
 
 void DeleteFiles(const char *path);
 
+void Links(const char *path);
+
 #define FILENAME_FORMAT "This file should be named \"%s\".\n"
 
 #endif

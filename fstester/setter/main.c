@@ -58,6 +58,7 @@ int main(int argc, char **argv)
     ResourceFork(argv[1]);
     Filenames(argv[1]);
     Timestamps(argv[1]);
+    Links(argv[1]);
     DirectoryDepth(argv[1]);
     Fragmentation(argv[1], clusterSize);
     Sparse(argv[1]);
