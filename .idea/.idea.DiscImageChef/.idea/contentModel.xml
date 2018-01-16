@@ -509,6 +509,7 @@
         <e p="Fossil.cs" t="Include" />
         <e p="HAMMER.cs" t="Include" />
         <e p="HPFS.cs" t="Include" />
+        <e p="HPOFS.cs" t="Include" />
         <e p="IFilesystem.cs" t="Include" />
         <e p="IReadOnlyFilesystem.cs" t="Include" />
         <e p="ISO9660" t="Include">
@@ -824,6 +825,7 @@
           <e p="HFSPlus.cs" t="Include" />
           <e p="HFSX.cs" t="Include" />
           <e p="HPFS.cs" t="Include" />
+          <e p="HPOFS.cs" t="Include" />
           <e p="HTFS.cs" t="Include" />
           <e p="ISO9660.cs" t="Include" />
           <e p="JFS2.cs" t="Include" />
