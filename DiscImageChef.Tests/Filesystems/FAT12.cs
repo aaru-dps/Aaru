@@ -205,6 +205,7 @@ namespace DiscImageChef.Tests.Filesystems
             "os2_9.023_dshd.img.lz", "os2_9.023_mf2dd.img.lz", "os2_9.023_mf2ed.img.lz", "os2_9.023_mf2hd.img.lz",
             // eComStation
             "ecs_dshd.img.lz", "ecs_mf2dd.img.lz", "ecs_mf2ed.img.lz", "ecs_mf2hd.img.lz",
+            "ecs20_mf2hd_fstester.img.lz",
             // Windows 95
             "win95_dsdd8.img.lz", "win95_dsdd.img.lz", "win95_dshd.img.lz", "win95_mf2dd.img.lz", "win95_mf2ed.img.lz",
             "win95_mf2hd.img.lz", "win95_ssdd8.img.lz", "win95_ssdd.img.lz",
@@ -427,6 +428,7 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED, MediaType.DOS_35_HD,
             // eComStation
             MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED, MediaType.DOS_35_HD,
+            MediaType.DOS_35_HD,
             // Windows 95
             MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_ED, MediaType.DOS_35_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
@@ -609,7 +611,7 @@ namespace DiscImageChef.Tests.Filesystems
             // OS/2 Warp 4
             2400, 1440, 5760, 2880,
             // eComStation
-            2400, 1440, 5760, 2880,
+            2400, 1440, 5760, 2880, 2880,
             // Windows 95
             640, 720, 2400, 1440, 5760, 2880, 320, 360,
             // Windows 95 OSR 2
@@ -781,7 +783,7 @@ namespace DiscImageChef.Tests.Filesystems
             // OS/2 Warp 4
             512, 512, 512, 512,
             // eComStation
-            512, 512, 512, 512,
+            512, 512, 512, 512, 512,
             // Windows 95
             512, 512, 512, 512, 512, 512, 512, 512,
             // Windows 95 OSR 2
@@ -953,7 +955,7 @@ namespace DiscImageChef.Tests.Filesystems
             // OS/2 Warp 4
             2400, 720, 2880, 2880,
             // eComStation
-            2400, 720, 2880, 2880,
+            2400, 720, 2880, 2880, 2880,
             // Windows 95
             320, 360, 2400, 720, 2880, 2880, 320, 360,
             // Windows 95 OSR 2
@@ -1125,7 +1127,7 @@ namespace DiscImageChef.Tests.Filesystems
             // OS/2 Warp 4
             512, 1024, 1024, 512,
             // eComStation
-            512, 1024, 1024, 512,
+            512, 1024, 1024, 512, 512,
             // Windows 95
             1024, 1024, 512, 1024, 1024, 512, 512, 512,
             // Windows 95 OSR 2
@@ -1302,7 +1304,7 @@ namespace DiscImageChef.Tests.Filesystems
             // OS/2 Warp 4
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             // eComStation
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
+            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             // Windows 95
             null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", null, "VOLUMELABEL",
             // Windows 95 OSR 2
@@ -1475,7 +1477,7 @@ namespace DiscImageChef.Tests.Filesystems
             // OS/2 Warp 4
             "E6CD9414", "1BFAD414", "E6DFF414", "E6D4C414",
             // eComStation
-            "E6CA5814", "E6CBC814", "E6B81814", "1C013814",
+            "E6CA5814", "E6CBC814", "E6B81814", "1C013814", "9BF37814",
             // Windows 95
             null, "3B360D0D", "24240D0D", "3C260D11", "30050D10", "275A0D11", null, "3B100D0F",
             // Windows 95 OSR 2
@@ -1647,7 +1649,7 @@ namespace DiscImageChef.Tests.Filesystems
             // OS/2 Warp 4
             "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
             // eComStation
-            "IBM 4.50", "IBM 4.50", "IBM 4.50", "IBM 4.50",
+            "IBM 4.50", "IBM 4.50", "IBM 4.50", "IBM 4.50", "IBM 4.50",
             // Windows 95
             null, "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", null, "MSWIN4.0",
             // Windows 95 OSR 2
@@ -1709,29 +1711,29 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                IFilesystem fs = new FAT();
-                Partition wholePart = new Partition
+                IFilesystem fs        = new FAT();
+                Partition   wholePart = new Partition
                 {
-                    Name = "Whole device",
+                    Name   = "Whole device",
                     Length = image.Info.Sectors,
-                    Size = image.Info.Sectors * image.Info.SectorSize
+                    Size   = image.Info.Sectors * image.Info.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
+                Assert.AreEqual("FAT12",         fs.XmlFsType.Type,             testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
+                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
@@ -1760,17 +1762,17 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_apm", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_apm", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FAT();
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
+                IFilesystem     fs         = new FAT();
+                int             part       = -1;
+                for(int j = 0; j          < partitions.Count; j++)
                     if(partitions[j].Type == "DOS_FAT_12")
                     {
                         part = j;
@@ -1780,12 +1782,12 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
+                Assert.AreEqual("FAT12",         fs.XmlFsType.Type,             testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
+                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
@@ -1814,17 +1816,17 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_gpt", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_gpt", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FAT();
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
+                IFilesystem     fs         = new FAT();
+                int             part       = -1;
+                for(int j = 0; j          < partitions.Count; j++)
                     if(partitions[j].Type == "Microsoft Basic data")
                     {
                         part = j;
@@ -1834,12 +1836,12 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
+                Assert.AreEqual("FAT12",         fs.XmlFsType.Type,             testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
+                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
@@ -1936,23 +1938,23 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_mbr", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_mbr", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FAT();
+                IFilesystem     fs         = new FAT();
                 Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
                 fs.GetInformation(image, partitions[0], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
+                Assert.AreEqual("FAT12",         fs.XmlFsType.Type,             testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
+                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
