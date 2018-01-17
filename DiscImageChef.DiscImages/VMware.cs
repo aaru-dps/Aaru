@@ -111,7 +111,7 @@ namespace DiscImageChef.DiscImages
         ulong     grainSize;
         uint[]    gTable;
         bool      hasParent;
-        int       hwversion;
+        uint      hwversion;
         ImageInfo imageInfo;
         string    imageType;
         uint      maxCachedGrains;
@@ -867,7 +867,7 @@ namespace DiscImageChef.DiscImages
             {
                 ("adapter_type", typeof(string),
                 "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX."),
-                ("hwversion", typeof(int), "VDMK hardware version."), ("sparse", typeof(bool), "Use sparse extents."),
+                ("hwversion", typeof(uint), "VDMK hardware version."), ("sparse", typeof(bool), "Use sparse extents."),
                 ("split", typeof(bool), "Split data file at 2GiB.")
             };
         public IEnumerable<string> KnownExtensions => new[] {".vmdk"};
@@ -898,7 +898,7 @@ namespace DiscImageChef.DiscImages
 
                 if(options.TryGetValue("hwversion", out string tmpValue))
                 {
-                    if(!int.TryParse(tmpValue, out hwversion))
+                    if(!uint.TryParse(tmpValue, out hwversion))
                     {
                         ErrorMessage = "Invalid value for hwversion option";
                         return false;
