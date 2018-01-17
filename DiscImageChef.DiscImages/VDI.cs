@@ -386,7 +386,7 @@ namespace DiscImageChef.DiscImages
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint   sectorSize)
         {
-            if(sectorSize == 0)
+            if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
                 return false;
