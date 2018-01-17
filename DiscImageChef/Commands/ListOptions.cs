@@ -50,26 +50,48 @@ namespace DiscImageChef.Commands
             foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
             {
                 List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
-                options.Add(("debug", typeof(bool), "Enables debug features if available"));
-
-                DicConsole.WriteLine("\tOptions for {0}:",      kvp.Value.Name);
-                DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", "Name", "Type", "Description");
-                foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
-                    DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, option.type, option.description);
-                DicConsole.WriteLine();
-            }
-
-            DicConsole.WriteLine("Read/Write media images options:");
-            foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
-            {
-                List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
+                if(options.Count == 0) continue;
 
                 DicConsole.WriteLine("\tOptions for {0}:",         kvp.Value.Name);
                 DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", "Name", "Type", "Description");
                 foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
-                    DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, option.type, option.description);
+                    DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, TypeToString(option.type),
+                                         option.description);
                 DicConsole.WriteLine();
             }
+            
+            DicConsole.WriteLine();
+            
+            DicConsole.WriteLine("Read/Write media images options:");
+            foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
+            {
+                List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
+                if(options.Count == 0) continue;
+
+                DicConsole.WriteLine("\tOptions for {0}:",         kvp.Value.Name);
+                DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", "Name", "Type", "Description");
+                foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
+                    DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, TypeToString(option.type),
+                                         option.description);
+                DicConsole.WriteLine();
+            }
+        }
+
+        static string TypeToString(Type type)
+        {
+            if(type == typeof(bool)) return "boolean";
+
+            if(type == typeof(sbyte) || type == typeof(short) || type == typeof(int) || type == typeof(long))
+                return "signed number";
+
+            if(type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong))
+                return "number";
+
+            if(type == typeof(float) || type == typeof(double)) return "float number";
+
+            if(type == typeof(Guid)) return "float number";
+
+            return type == typeof(string) ? "string" : type.ToString();
         }
     }
 }
