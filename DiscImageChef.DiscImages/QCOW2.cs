@@ -788,6 +788,8 @@ namespace DiscImageChef.DiscImages
             for(long i = 0; i < l1Table.LongLength; i++)
                 writingStream.Write(BigEndianBitConverter.GetBytes(l1Table[i]), 0, 8);
 
+            IsWriting = false;
+            ErrorMessage = "";
             return true;
         }
 
