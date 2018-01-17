@@ -89,9 +89,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            hashInt ^= CRC64_SEED;
             BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
-            return BigEndianBitConverter.GetBytes(hashInt);
+            return BigEndianBitConverter.GetBytes(hashInt ^= CRC64_SEED);
         }
 
         /// <summary>
@@ -99,12 +98,11 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            hashInt ^= CRC64_SEED;
             StringBuilder crc64Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++)
-                crc64Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^= CRC64_SEED).Length; i++)
+                crc64Output.Append(BigEndianBitConverter.GetBytes(hashInt ^= CRC64_SEED)[i].ToString("x2"));
 
             return crc64Output.ToString();
         }

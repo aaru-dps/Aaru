@@ -90,9 +90,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            hashInt ^= CRC32_SEED;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            return BigEndianBitConverter.GetBytes(hashInt);
+            return BigEndianBitConverter.GetBytes(hashInt ^ CRC32_SEED);
         }
 
         /// <summary>
@@ -100,12 +99,11 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            hashInt ^= CRC32_SEED;
             StringBuilder crc32Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++)
-                crc32Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^ CRC32_SEED).Length; i++)
+                crc32Output.Append(BigEndianBitConverter.GetBytes(hashInt ^ CRC32_SEED)[i].ToString("x2"));
 
             return crc32Output.ToString();
         }
@@ -144,7 +142,13 @@ namespace DiscImageChef.Checksums
             }
 
             for(int i = 0; i < fileStream.Length; i++)
+            {
                 localhashInt = (localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)];
+                if((localhashInt ^ CRC32_SEED) == 0xB883C628 || (localhashInt ^CRC32_SEED) == 0x28C683B8)
+                {
+                    System.Console.WriteLine("CRC found at position {0}", fileStream.Position);
+                }
+            }
 
             localhashInt ^= CRC32_SEED;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
