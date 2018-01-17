@@ -56,9 +56,13 @@ namespace DiscImageChef.Commands
 
             FiltersList                filtersList = new FiltersList();
             IFilter                    inputFilter = filtersList.GetFilter(options.InputFile);
-            Dictionary<string, string> optionsDict =
-                new Dictionary<string, string> {{"debug", options.Debug.ToString()}};
 
+            Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
+            DicConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
+            foreach(KeyValuePair<string,string> parsedOption in parsedOptions)
+                DicConsole.DebugWriteLine("Extract-Files command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+            parsedOptions.Add("debug", options.Debug.ToString());
+            
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
@@ -165,7 +169,7 @@ namespace DiscImageChef.Commands
                                                                                  .GetConstructor(Type.EmptyTypes)
                                                                                 ?.Invoke(new object[] { });
 
-                                    error = fs.Mount(imageFormat, partitions[i], encoding, optionsDict);
+                                    error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                                     if(error == Errno.NoError)
                                     {
                                         List<string> rootDir = new List<string>();
@@ -321,7 +325,7 @@ namespace DiscImageChef.Commands
                             IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                                                          .GetType().GetConstructor(Type.EmptyTypes)
                                                                         ?.Invoke(new object[] { });
-                            error = fs.Mount(imageFormat, partitions[i], encoding, optionsDict);
+                            error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
@@ -482,7 +486,7 @@ namespace DiscImageChef.Commands
                             IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                                                          .GetType().GetConstructor(Type.EmptyTypes)
                                                                         ?.Invoke(new object[] { });
-                            error = fs.Mount(imageFormat, wholePart, encoding, optionsDict);
+                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
@@ -627,7 +631,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine($"Identified by {plugin.Name}.");
                     IReadOnlyFilesystem fs =
                         (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                    error = fs.Mount(imageFormat, wholePart, encoding, optionsDict);
+                    error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                     if(error == Errno.NoError)
                     {
                         List<string> rootDir = new List<string>();

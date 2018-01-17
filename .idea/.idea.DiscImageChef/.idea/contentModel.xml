@@ -145,6 +145,7 @@
           <e p="IBGLog.cs" t="Include" />
           <e p="MHDDLog.cs" t="Include" />
         </e>
+        <e p="Options.cs" t="Include" />
         <e p="Partitions.cs" t="Include" />
         <e p="PluginBase.cs" t="Include" />
         <e p="Properties" t="Include">

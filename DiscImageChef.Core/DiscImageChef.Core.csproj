@@ -37,6 +37,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Options.cs" />
     <Compile Include="PluginBase.cs" />
     <Compile Include="ImageFormat.cs" />
     <Compile Include="Statistics.cs" />

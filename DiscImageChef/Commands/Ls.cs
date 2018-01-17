@@ -52,8 +52,12 @@ namespace DiscImageChef.Commands
 
             FiltersList                filtersList = new FiltersList();
             IFilter                    inputFilter = filtersList.GetFilter(options.InputFile);
-            Dictionary<string, string> optionsDict =
-                new Dictionary<string, string> {{"debug", options.Debug.ToString()}};
+            
+            Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
+            DicConsole.DebugWriteLine("Ls command", "Parsed options:");
+            foreach(KeyValuePair<string,string> parsedOption in parsedOptions)
+                DicConsole.DebugWriteLine("Ls command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+            parsedOptions.Add("debug", options.Debug.ToString());
 
             if(inputFilter == null)
             {
@@ -154,7 +158,7 @@ namespace DiscImageChef.Commands
 
                                     if(fs == null) continue;
 
-                                    error = fs.Mount(imageFormat, partitions[i], encoding, optionsDict);
+                                    error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                                     if(error == Errno.NoError)
                                     {
                                         List<string> rootDir = new List<string>();
@@ -184,7 +188,7 @@ namespace DiscImageChef.Commands
                                                                         ?.Invoke(new object[] { });
                             if(fs == null) continue;
 
-                            error = fs.Mount(imageFormat, partitions[i], encoding, optionsDict);
+                            error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
@@ -224,7 +228,7 @@ namespace DiscImageChef.Commands
                                                                         ?.Invoke(new object[] { });
                             if(fs == null) continue;
 
-                            error = fs.Mount(imageFormat, wholePart, encoding, optionsDict);
+                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();
@@ -251,7 +255,7 @@ namespace DiscImageChef.Commands
                                                 .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                         if(fs != null)
                         {
-                            error = fs.Mount(imageFormat, wholePart, encoding, optionsDict);
+                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
                                 List<string> rootDir = new List<string>();

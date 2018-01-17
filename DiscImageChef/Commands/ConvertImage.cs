@@ -67,6 +67,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Analyze command", "--drive-model={0}",        options.DriveModel);
             DicConsole.DebugWriteLine("Analyze command", "--drive-serial={0}",       options.DriveSerialNumber);
             DicConsole.DebugWriteLine("Analyze command", "--drive-revision={0}",     options.DriveFirmwareRevision);
+            DicConsole.DebugWriteLine("Analyze command", "--options={0}", options.Options);
+
+            Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
+            DicConsole.DebugWriteLine("Analyze command", "Parsed options:");
+            foreach(KeyValuePair<string,string> parsedOption in parsedOptions)
+                DicConsole.DebugWriteLine("Analyze command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
             if(options.Count == 0)
             {
@@ -193,7 +199,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            if(!outputFormat.Create(options.OutputFile, inputFormat.Info.MediaType, new Dictionary<string, string>(),
+            if(!outputFormat.Create(options.OutputFile, inputFormat.Info.MediaType, parsedOptions,
                                     inputFormat.Info.Sectors, inputFormat.Info.SectorSize))
             {
                 DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);

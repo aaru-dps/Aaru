@@ -326,6 +326,10 @@ namespace DiscImageChef
 
         [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
         public string EncodingName { get; set; }
+
+        [Option('O', "options", Default = null,
+            HelpText                    = "Comma separated name=value pairs of options to pass to filesystem plugin")]
+        public string Options { get; set; }
     }
 
     [Verb("extract-files", HelpText = "Extracts all files in disc image.")]
@@ -343,6 +347,10 @@ namespace DiscImageChef
 
         [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
         public string EncodingName { get; set; }
+
+        [Option('O', "options", Default = null,
+            HelpText                    = "Comma separated name=value pairs of options to pass to filesystem plugin")]
+        public string Options { get; set; }
     }
 
     [Verb("list-devices", HelpText = "Lists all connected devices.")]
@@ -412,5 +420,9 @@ namespace DiscImageChef
             HelpText                      =
                 "Firmware revision of the drive used to read the media represented by the image")]
         public string DriveFirmwareRevision { get; set; }
+
+        [Option('O', "options", Default = null,
+            HelpText                    = "Comma separated name=value pairs of options to pass to output image plugin")]
+        public string Options { get; set; }
     }
 }
