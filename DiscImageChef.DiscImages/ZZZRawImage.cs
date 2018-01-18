@@ -36,17 +36,52 @@ using System.IO;
 using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.DVD;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Filters;
+using DMI = DiscImageChef.Decoders.Xbox.DMI;
 
 namespace DiscImageChef.DiscImages
 {
     public class ZZZRawImage : IWritableImage
     {
-        bool       differentTrackZeroSize;
-        string     extension;
-        ImageInfo  imageInfo;
-        IFilter    rawImageFilter;
-        FileStream writingStream;
+        readonly (MediaTagType tag, string name)[] readWriteSidecars =
+        {
+            (MediaTagType.ATA_IDENTIFY, ".identify.bin"), (MediaTagType.BD_DI, ".di.bin"),
+            (MediaTagType.CD_ATIP, ".atip.bin"), (MediaTagType.CD_FullTOC, ".toc.bin"),
+            (MediaTagType.CD_LeadIn, ".leadin.bin"), (MediaTagType.CD_PMA, ".pma.bin"),
+            (MediaTagType.CD_TEXT, ".cdtext.bin"), (MediaTagType.DCB, ".dcb.bin"), (MediaTagType.DVD_ADIP, ".adip.bin"),
+            (MediaTagType.DVD_BCA, ".bca.bin"), (MediaTagType.DVD_CMI, ".cmi.bin"), (MediaTagType.DVD_DMI, ".dmi.bin"),
+            (MediaTagType.DVD_MediaIdentifier, ".mid.bin"), (MediaTagType.DVD_PFI, ".pfi.bin"),
+            (MediaTagType.DVDRAM_DDS, ".dds.bin"), (MediaTagType.DVDRAM_SpareArea, ".sai.bin"),
+            (MediaTagType.DVDR_PFI, ".pfir.bin"), (MediaTagType.DVDR_PreRecordedInfo, ".pri.bin"),
+            (MediaTagType.Floppy_LeadOut, ".leadout.bin"), (MediaTagType.HDDVD_CPI, ".cpi.bin"),
+            (MediaTagType.MMC_ExtendedCSD, ".ecsd.bin"), (MediaTagType.PCMCIA_CIS, ".cis.bin"),
+            (MediaTagType.SCSI_INQUIRY, ".inquiry.bin"), (MediaTagType.SCSI_MODEPAGE_2A, ".modepage2a.bin"),
+            (MediaTagType.SCSI_MODESENSE_10, ".modesense10.bin"), (MediaTagType.SCSI_MODESENSE_6, ".modesense.bin"),
+            (MediaTagType.SD_CID, ".cid.bin"), (MediaTagType.SD_CSD, ".csd.bin"), (MediaTagType.SD_OCR, ".ocr.bin"),
+            (MediaTagType.SD_SCR, ".scr.bin"), (MediaTagType.USB_Descriptors, ".usbdescriptors.bin"),
+            (MediaTagType.Xbox_DMI, ".xboxdmi.bin"), (MediaTagType.Xbox_PFI, ".xboxpfi.bin"),
+            (MediaTagType.Xbox_SecuritySector, ".ss.bin")
+        };
+
+        readonly (MediaTagType tag, string name)[] writeOnlySidecars =
+        {
+            (MediaTagType.ATAPI_IDENTIFY, ".identify.bin"), (MediaTagType.BD_BCA, ".bca.bin"),
+            (MediaTagType.BD_DDS, ".dds.bin"), (MediaTagType.BD_DI, ".di.bin"), (MediaTagType.BD_SpareArea, ".sai.bin"),
+            (MediaTagType.CD_LeadOut, ".leadout.bin"), (MediaTagType.MMC_CID, ".cid.bin"),
+            (MediaTagType.MMC_CSD, ".csd.bin"), (MediaTagType.MMC_OCR, ".ocr.bin")
+        };
+
+        string                           basepath;
+        bool                             differentTrackZeroSize;
+        string                           extension;
+        ImageInfo                        imageInfo;
+        Dictionary<MediaTagType, byte[]> mediaTags;
+        IFilter                          rawImageFilter;
+        FileStream                       writingStream;
 
         public ZZZRawImage()
         {
@@ -372,22 +407,6 @@ namespace DiscImageChef.DiscImages
 
             imageInfo.MediaType = CalculateDiskType();
 
-            switch(imageInfo.MediaType)
-            {
-                case MediaType.CD:
-                case MediaType.DVDPR:
-                case MediaType.DVDR:
-                case MediaType.DVDRDL:
-                case MediaType.DVDPRDL:
-                case MediaType.BDR:
-                case MediaType.BDRXL:
-                    imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
-                    break;
-                default:
-                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                    break;
-            }
-
             // Sharp X68000 SASI hard disks
             if(extension                     == ".hdf")
                 if(imageInfo.ImageSize % 256 == 0)
@@ -397,13 +416,180 @@ namespace DiscImageChef.DiscImages
                     imageInfo.MediaType  = MediaType.GENERIC_HDD;
                 }
 
-            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            // Search for known tags
+            string basename = imageFilter.GetBasePath();
+            basename        = basename.Substring(0, basename.Length - extension.Length);
+
+            mediaTags = new Dictionary<MediaTagType, byte[]>();
+            foreach((MediaTagType tag, string name) sidecar in readWriteSidecars)
             {
-                imageInfo.HasSessions   = true;
-                imageInfo.HasPartitions = true;
+                FiltersList filters = new FiltersList();
+                IFilter     filter  = filters.GetFilter(basename + sidecar.name);
+                if(filter == null || !filter.IsOpened()) continue;
+
+                DicConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
+                byte[] data = new byte[filter.GetDataForkLength()];
+                filter.GetDataForkStream().Read(data, 0, data.Length);
+                mediaTags.Add(sidecar.tag, data);
             }
 
-            DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", imageInfo.MediaType);
+            // If there are INQUIRY and IDENTIFY tags, it's ATAPI
+            if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
+                if(mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] tag))
+                {
+                    mediaTags.Remove(MediaTagType.ATA_IDENTIFY);
+                    mediaTags.Add(MediaTagType.ATAPI_IDENTIFY, tag);
+                }
+
+            // It is a blu-ray
+            if(mediaTags.ContainsKey(MediaTagType.BD_DI))
+            {
+                imageInfo.MediaType = MediaType.BDROM;
+
+                if(mediaTags.TryGetValue(MediaTagType.DVD_BCA, out byte[] bca))
+                {
+                    mediaTags.Remove(MediaTagType.DVD_BCA);
+                    mediaTags.Add(MediaTagType.BD_BCA, bca);
+                }
+
+                if(mediaTags.TryGetValue(MediaTagType.DVDRAM_DDS, out byte[] dds))
+                {
+                    imageInfo.MediaType = MediaType.BDRE;
+                    mediaTags.Remove(MediaTagType.DVDRAM_DDS);
+                    mediaTags.Add(MediaTagType.BD_DDS, dds);
+                }
+
+                if(mediaTags.TryGetValue(MediaTagType.DVDRAM_SpareArea, out byte[] sai))
+                {
+                    imageInfo.MediaType = MediaType.BDRE;
+                    mediaTags.Remove(MediaTagType.DVDRAM_SpareArea);
+                    mediaTags.Add(MediaTagType.BD_SpareArea, sai);
+                }
+            }
+
+            // It is a DVD
+            if(mediaTags.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfi))
+            {
+                PFI.PhysicalFormatInformation decPfi = PFI.Decode(pfi).Value;
+                switch(decPfi.DiskCategory)
+                {
+                    case DiskCategory.DVDPR:
+                        imageInfo.MediaType = MediaType.DVDPR;
+                        break;
+                    case DiskCategory.DVDPRDL:
+                        imageInfo.MediaType = MediaType.DVDPRDL;
+                        break;
+                    case DiskCategory.DVDPRW:
+                        imageInfo.MediaType = MediaType.DVDPRW;
+                        break;
+                    case DiskCategory.DVDPRWDL:
+                        imageInfo.MediaType = MediaType.DVDPRWDL;
+                        break;
+                    case DiskCategory.DVDR:
+                        imageInfo.MediaType = decPfi.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                        break;
+                    case DiskCategory.DVDRAM:
+                        imageInfo.MediaType = MediaType.DVDRAM;
+                        break;
+                    default:
+                        imageInfo.MediaType = MediaType.DVDROM;
+                        break;
+                    case DiskCategory.DVDRW:
+                        imageInfo.MediaType = decPfi.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                        break;
+                    case DiskCategory.HDDVDR:
+                        imageInfo.MediaType = MediaType.HDDVDR;
+                        break;
+                    case DiskCategory.HDDVDRAM:
+                        imageInfo.MediaType = MediaType.HDDVDRAM;
+                        break;
+                    case DiskCategory.HDDVDROM:
+                        imageInfo.MediaType = MediaType.HDDVDROM;
+                        break;
+                    case DiskCategory.HDDVDRW:
+                        imageInfo.MediaType = MediaType.HDDVDRW;
+                        break;
+                    case DiskCategory.Nintendo:
+                        imageInfo.MediaType = decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
+                        break;
+                    case DiskCategory.UMD:
+                        imageInfo.MediaType = MediaType.UMD;
+                        break;
+                }
+
+                if((imageInfo.MediaType == MediaType.DVDR || imageInfo.MediaType == MediaType.DVDRW ||
+                    imageInfo.MediaType == MediaType.HDDVDR) &&
+                   mediaTags.TryGetValue(MediaTagType.DVD_MediaIdentifier, out byte[] mid))
+                {
+                    mediaTags.Remove(MediaTagType.DVD_MediaIdentifier);
+                    mediaTags.Add(MediaTagType.DVDR_MediaIdentifier, mid);
+                }
+
+                // Check for Xbox
+                if(mediaTags.TryGetValue(MediaTagType.DVD_DMI, out byte[] dmi))
+                    if(DMI.IsXbox(dmi) || DMI.IsXbox360(dmi))
+                        if(DMI.IsXbox(dmi))
+                            imageInfo.MediaType = MediaType.XGD;
+                        else if(DMI.IsXbox360(dmi))
+                        {
+                            imageInfo.MediaType = MediaType.XGD2;
+
+                            // All XGD3 all have the same number of blocks
+                            if(imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
+                               imageInfo.Sectors == 4229664 || // Xtreme unlock
+                               imageInfo.Sectors == 4246304)   // Wxripper unlock
+                                imageInfo.MediaType = MediaType.XGD3;
+                        }
+            }
+
+            // It's MultiMediaCard or SecureDigital
+            if(mediaTags.ContainsKey(MediaTagType.SD_CID) || mediaTags.ContainsKey(MediaTagType.SD_CSD) ||
+               mediaTags.ContainsKey(MediaTagType.SD_OCR))
+            {
+                imageInfo.MediaType = MediaType.SecureDigital;
+
+                if(mediaTags.ContainsKey(MediaTagType.MMC_ExtendedCSD) || !mediaTags.ContainsKey(MediaTagType.SD_SCR))
+                {
+                    imageInfo.MediaType = MediaType.MMC;
+
+                    if(mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] cid))
+                    {
+                        mediaTags.Remove(MediaTagType.SD_CID);
+                        mediaTags.Add(MediaTagType.MMC_CID, cid);
+                    }
+
+                    if(mediaTags.TryGetValue(MediaTagType.SD_CSD, out byte[] csd))
+                    {
+                        mediaTags.Remove(MediaTagType.SD_CSD);
+                        mediaTags.Add(MediaTagType.MMC_CSD, csd);
+                    }
+
+                    if(mediaTags.TryGetValue(MediaTagType.SD_OCR, out byte[] ocr))
+                    {
+                        mediaTags.Remove(MediaTagType.SD_OCR);
+                        mediaTags.Add(MediaTagType.MMC_OCR, ocr);
+                    }
+                }
+            }
+
+            // It's a compact disc
+            if(mediaTags.ContainsKey(MediaTagType.CD_FullTOC))
+            {
+                imageInfo.MediaType = imageInfo.Sectors > 360000 ? MediaType.DDCD : MediaType.CD;
+
+                // Only CD-R and CD-RW have ATIP
+                if(mediaTags.TryGetValue(MediaTagType.CD_ATIP, out byte[] atipBuf))
+                {
+                    ATIP.CDATIP? atip                     = ATIP.Decode(atipBuf);
+                    if(atip.HasValue) imageInfo.MediaType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+                }
+
+                if(mediaTags.TryGetValue(MediaTagType.Floppy_LeadOut, out byte[] leadout))
+                {
+                    mediaTags.Remove(MediaTagType.Floppy_LeadOut);
+                    mediaTags.Add(MediaTagType.CD_LeadOut, leadout);
+                }
+            }
 
             switch(imageInfo.MediaType)
             {
@@ -725,6 +911,134 @@ namespace DiscImageChef.DiscImages
                     break;
             }
 
+            // It's SCSI, check tags
+            if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
+            {
+                PeripheralDeviceTypes devType = PeripheralDeviceTypes.DirectAccess;
+                Inquiry.SCSIInquiry?  scsiInq;
+                if(mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] inq))
+                {
+                    scsiInq = Inquiry.Decode(inq);
+                    devType = (PeripheralDeviceTypes)(inq[0] & 0x1F);
+                }
+
+                Modes.DecodedMode? decMode = null;
+
+                if(mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_6, out byte[] mode6))
+                    decMode = Modes.DecodeMode6(mode6, devType);
+                else if(mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_10, out byte[] mode10))
+                    decMode = Modes.DecodeMode10(mode10, devType);
+
+                byte mediumType  = 0;
+                byte densityCode = 0;
+
+                if(decMode.HasValue)
+                {
+                    mediumType = (byte)decMode.Value.Header.MediumType;
+                    if(decMode.Value.Header.BlockDescriptors.Length >= 1)
+                        densityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+
+                    foreach(Modes.ModePage page in decMode.Value.Pages)
+                        // CD-ROM page
+                        if(page.Page == 0x2A && page.Subpage == 0)
+                        {
+                            if(mediaTags.ContainsKey(MediaTagType.SCSI_MODEPAGE_2A))
+                                mediaTags.Remove(MediaTagType.SCSI_MODEPAGE_2A);
+                            mediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A, page.PageResponse);
+                        }
+                        // Rigid Disk page
+                        else if(page.Page == 0x04 && page.Subpage == 0)
+                        {
+                            Modes.ModePage_04? mode04 = Modes.DecodeModePage_04(page.PageResponse);
+                            if(!mode04.HasValue) continue;
+
+                            imageInfo.Cylinders       = mode04.Value.Cylinders;
+                            imageInfo.Heads           = mode04.Value.Heads;
+                            imageInfo.SectorsPerTrack =
+                                (uint)(imageInfo.Sectors / (mode04.Value.Cylinders * mode04.Value.Heads));
+                        }
+                        // Flexible Disk Page
+                        else if(page.Page == 0x05 && page.Subpage == 0)
+                        {
+                            Modes.ModePage_05? mode05 = Modes.DecodeModePage_05(page.PageResponse);
+                            if(!mode05.HasValue) continue;
+
+                            imageInfo.Cylinders       = mode05.Value.Cylinders;
+                            imageInfo.Heads           = mode05.Value.Heads;
+                            imageInfo.SectorsPerTrack = mode05.Value.SectorsPerTrack;
+                        }
+                }
+
+                if(scsiInq.HasValue)
+                {
+                    imageInfo.DriveManufacturer =
+                        VendorString.Prettify(StringHandlers.CToString(scsiInq.Value.VendorIdentification).Trim());
+                    imageInfo.DriveModel =
+                        StringHandlers.CToString(scsiInq.Value.ProductIdentification).Trim();
+                    imageInfo.DriveFirmwareRevision =
+                        StringHandlers.CToString(scsiInq.Value.ProductRevisionLevel).Trim();
+                    imageInfo.MediaType = MediaTypeFromScsi.Get((byte)devType, imageInfo.DriveManufacturer,
+                                                                imageInfo.DriveModel, mediumType, densityCode,
+                                                                imageInfo.Sectors, imageInfo.SectorSize);
+                }
+
+                if(imageInfo.MediaType            == MediaType.Unknown)
+                    imageInfo.MediaType = devType == PeripheralDeviceTypes.OpticalDevice
+                                              ? MediaType.UnknownMO
+                                              : MediaType.GENERIC_HDD;
+            }
+
+            // It's ATA, check tags
+            if(mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] identifyBuf))
+            {
+                Identify.IdentifyDevice? ataId = Decoders.ATA.Identify.Decode(identifyBuf);
+                if(ataId.HasValue)
+                {
+                    imageInfo.MediaType = (ushort)ataId.Value.GeneralConfiguration == 0x848A
+                                              ? MediaType.CompactFlash
+                                              : MediaType.GENERIC_HDD;
+
+                    if(ataId.Value.Cylinders == 0 || ataId.Value.Heads == 0 || ataId.Value.SectorsPerTrack == 0)
+                    {
+                        imageInfo.Cylinders       = ataId.Value.CurrentCylinders;
+                        imageInfo.Heads           = ataId.Value.CurrentHeads;
+                        imageInfo.SectorsPerTrack = ataId.Value.CurrentSectorsPerTrack;
+                    }
+                    else
+                    {
+                        imageInfo.Cylinders       = ataId.Value.Cylinders;
+                        imageInfo.Heads           = ataId.Value.Heads;
+                        imageInfo.SectorsPerTrack = ataId.Value.SectorsPerTrack;
+                    }
+                }
+            }
+
+            switch(imageInfo.MediaType)
+            {
+                case MediaType.CD:
+                case MediaType.DVDPR:
+                case MediaType.DVDR:
+                case MediaType.DVDRDL:
+                case MediaType.DVDPRDL:
+                case MediaType.BDR:
+                case MediaType.BDRXL:
+                    imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                    break;
+                default:
+                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    break;
+            }
+
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                imageInfo.HasSessions   = true;
+                imageInfo.HasPartitions = true;
+            }
+
+            DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", imageInfo.MediaType);
+
+            imageInfo.ReadableMediaTags = new List<MediaTagType>(mediaTags.Keys);
+
             return true;
         }
 
@@ -907,7 +1221,9 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            if(mediaTags.TryGetValue(tag, out byte[] data)) return data;
+
+            throw new FeatureNotPresentImageException("Requested tag is not present in image");
         }
 
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
@@ -920,8 +1236,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        // TODO: Support media tags as separate files
-        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[] { };
+        public IEnumerable<MediaTagType> SupportedMediaTags =>
+            readWriteSidecars.Concat(writeOnlySidecars).OrderBy(t => t.tag).Select(t => t.tag).ToArray();
 
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes
@@ -989,6 +1305,8 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            basepath = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+
             IsWriting    = true;
             ErrorMessage = null;
             return true;
@@ -1014,9 +1332,16 @@ namespace DiscImageChef.DiscImages
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
-            // TODO: Implement
-            ErrorMessage = "Writing media tags is not supported.";
-            return false;
+            if(!SupportedMediaTags.Contains(tag))
+            {
+                ErrorMessage = $"Tried to write unsupported media tag {tag}.";
+                return false;
+            }
+
+            if(mediaTags.ContainsKey(tag)) mediaTags.Remove(tag);
+
+            mediaTags.Add(tag, data);
+            return true;
         }
 
         public bool WriteSector(byte[] data, ulong sectorAddress)
@@ -1104,6 +1429,19 @@ namespace DiscImageChef.DiscImages
             writingStream.Flush();
             writingStream.Close();
             IsWriting = false;
+
+            foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
+            {
+                string suffix = readWriteSidecars.Concat(writeOnlySidecars).Where(t => t.tag == tag.Key)
+                                                 .Select(t => t.name).FirstOrDefault();
+
+                if(suffix == null) continue;
+
+                FileStream tagStream =
+                    new FileStream(basepath + suffix, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                tagStream.Write(tag.Value, 0, tag.Value.Length);
+                tagStream.Close();
+            }
 
             return true;
         }

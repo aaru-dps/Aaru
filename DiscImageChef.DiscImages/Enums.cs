@@ -250,7 +250,23 @@ namespace DiscImageChef.DiscImages
         ///     On floppy disks, data in last cylinder usually in a different format that contains duplication or
         ///     manufacturing information
         /// </summary>
-        Floppy_LeadOut
+        Floppy_LeadOut,
+        /// <summary>DVD Disc Control Blocks</summary>
+        DCB,
+        /// <summary>Compact Disc Lead-in</summary>
+        CD_LeadIn,
+        /// <summary>Compact Disc Lead-out</summary>
+        CD_LeadOut,
+        /// <summary>SCSI MODE SENSE (6)</summary>
+        SCSI_MODESENSE_6,
+        /// <summary>SCSI MODE SENSE (10)</summary>
+        SCSI_MODESENSE_10,
+        /// <summary>USB descriptors</summary>
+        USB_Descriptors,
+        /// <summary>XGD unlocked DMI</summary>
+        Xbox_DMI,
+        /// <summary>XDG unlocked PFI</summary>
+        Xbox_PFI,
     }
 
     /// <summary>
