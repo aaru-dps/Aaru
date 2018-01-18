@@ -423,14 +423,18 @@ namespace DiscImageChef.DiscImages
             mediaTags = new Dictionary<MediaTagType, byte[]>();
             foreach((MediaTagType tag, string name) sidecar in readWriteSidecars)
             {
-                FiltersList filters = new FiltersList();
-                IFilter     filter  = filters.GetFilter(basename + sidecar.name);
-                if(filter == null || !filter.IsOpened()) continue;
+                try
+                {
+                    FiltersList filters = new FiltersList();
+                    IFilter                       filter  = filters.GetFilter(basename + sidecar.name);
+                    if(filter == null || !filter.IsOpened()) continue;
 
-                DicConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
-                byte[] data = new byte[filter.GetDataForkLength()];
-                filter.GetDataForkStream().Read(data, 0, data.Length);
-                mediaTags.Add(sidecar.tag, data);
+                    DicConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
+                    byte[] data = new byte[filter.GetDataForkLength()];
+                    filter.GetDataForkStream().Read(data, 0, data.Length);
+                    mediaTags.Add(sidecar.tag, data);
+                }
+                catch(IOException e) { continue; }
             }
 
             // If there are INQUIRY and IDENTIFY tags, it's ATAPI
@@ -935,7 +939,8 @@ namespace DiscImageChef.DiscImages
                 if(decMode.HasValue)
                 {
                     mediumType = (byte)decMode.Value.Header.MediumType;
-                    if(decMode.Value.Header.BlockDescriptors.Length >= 1)
+                    if(decMode.Value.Header.BlockDescriptors != null && 
+                       decMode.Value.Header.BlockDescriptors.Length >= 1)
                         densityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
                     foreach(Modes.ModePage page in decMode.Value.Pages)
@@ -1298,7 +1303,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -1306,6 +1311,7 @@ namespace DiscImageChef.DiscImages
             }
 
             basepath = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+            mediaTags = new Dictionary<MediaTagType, byte[]>();
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -1438,7 +1444,7 @@ namespace DiscImageChef.DiscImages
                 if(suffix == null) continue;
 
                 FileStream tagStream =
-                    new FileStream(basepath + suffix, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                    new FileStream(basepath + suffix, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
                 tagStream.Write(tag.Value, 0, tag.Value.Length);
                 tagStream.Close();
             }
