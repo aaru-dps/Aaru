@@ -915,7 +915,7 @@ namespace DiscImageChef.DiscImages
             if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
             {
                 PeripheralDeviceTypes devType = PeripheralDeviceTypes.DirectAccess;
-                Inquiry.SCSIInquiry?  scsiInq;
+                Inquiry.SCSIInquiry?  scsiInq = null;
                 if(mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] inq))
                 {
                     scsiInq = Inquiry.Decode(inq);
