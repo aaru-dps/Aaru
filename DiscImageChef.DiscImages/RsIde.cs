@@ -289,11 +289,15 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public IEnumerable<MediaTagType> SupportedMediaTags =>
-            new[] {MediaTagType.ATA_IDENTIFY};
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.ATA_IDENTIFY};
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes =>
-            new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
+            new[]
+            {
+                MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".ide"};
@@ -309,7 +313,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectors > ushort.MaxValue)
+            if(sectors > 63 * 16 * 1024)
             {
                 ErrorMessage = $"Too many sectors";
                 return false;
@@ -323,7 +327,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -502,7 +506,7 @@ namespace DiscImageChef.DiscImages
                 if(string.IsNullOrEmpty(imageInfo.DriveFirmwareRevision)) Interop.Version.GetVersion();
 
                 if(string.IsNullOrEmpty(imageInfo.DriveSerialNumber))
-                    imageInfo.DriveSerialNumber = $"{new Random().NextDouble():X16}";
+                    imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
 
                 byte[] ataIdBytes = new byte[Marshal.SizeOf(ataId)];
                 IntPtr ptr        = Marshal.AllocHGlobal(512);
@@ -529,8 +533,9 @@ namespace DiscImageChef.DiscImages
 
             writingStream.Flush();
             writingStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

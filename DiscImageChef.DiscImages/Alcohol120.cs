@@ -1476,11 +1476,11 @@ namespace DiscImageChef.DiscImages
 
             try
             {
-                descriptorStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                descriptorStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
                 imageStream      =
                     new
                         FileStream(Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".mdf",
-                                   FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                                   FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -2144,7 +2144,10 @@ namespace DiscImageChef.DiscImages
 
             descriptorStream.Flush();
             descriptorStream.Close();
+            imageStream.Flush();
+            imageStream.Close();
 
+            IsWriting    = false;
             ErrorMessage = "";
             return true;
         }

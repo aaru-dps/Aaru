@@ -348,7 +348,13 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.Unknown, MediaType.GENERIC_HDD};
+        public IEnumerable<MediaType>     SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         // TODO: Add cluster size option
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -380,7 +386,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -525,6 +531,28 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            if(pHdr.cylinders == 0)
+            {
+                pHdr.cylinders            = (uint)(imageInfo.Sectors / 16 / 63);
+                pHdr.heads                = 16;
+                imageInfo.SectorsPerTrack = 63;
+
+                while(pHdr.cylinders == 0)
+                {
+                    pHdr.heads--;
+
+                    if(pHdr.heads == 0)
+                    {
+                        imageInfo.SectorsPerTrack--;
+                        pHdr.heads = 16;
+                    }
+
+                    pHdr.cylinders = (uint)(imageInfo.Sectors / pHdr.heads / imageInfo.SectorsPerTrack);
+
+                    if(pHdr.cylinders == 0 && pHdr.heads == 0 && imageInfo.SectorsPerTrack == 0) break;
+                }
+            }
+
             byte[] hdr    = new byte[Marshal.SizeOf(typeof(ParallelsHeader))];
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ParallelsHeader)));
             Marshal.StructureToPtr(pHdr, hdrPtr, true);
@@ -536,6 +564,11 @@ namespace DiscImageChef.DiscImages
 
             for(long i = 0; i < bat.LongLength; i++) writingStream.Write(BitConverter.GetBytes(bat[i]), 0, 4);
 
+            writingStream.Flush();
+            writingStream.Close();
+
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

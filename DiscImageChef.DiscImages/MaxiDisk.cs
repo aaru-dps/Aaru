@@ -374,13 +374,13 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(imageInfo.Cylinders > 2)
+            if(imageInfo.Heads > 2)
             {
                 ErrorMessage = "Too many heads";
                 return false;
             }
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -505,8 +505,9 @@ namespace DiscImageChef.DiscImages
 
             writingStream.Flush();
             writingStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

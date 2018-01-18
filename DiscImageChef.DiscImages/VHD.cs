@@ -849,7 +849,7 @@ namespace DiscImageChef.DiscImages
                     uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.BlockSize / 512));
 
                     if(blockAllocationTable[blockNumber] == 0xFFFFFFFF) return new byte[512];
-                    
+
                     byte[] bitmap = new byte[bitmapSize * 512];
 
                     // Offset of block in file
@@ -1094,7 +1094,13 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
+        public IEnumerable<MediaType>     SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         // TODO: Support dynamic images
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -1119,7 +1125,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -1288,8 +1294,9 @@ namespace DiscImageChef.DiscImages
 
             writingStream.Flush();
             writingStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

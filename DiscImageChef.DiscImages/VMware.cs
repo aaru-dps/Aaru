@@ -861,7 +861,12 @@ namespace DiscImageChef.DiscImages
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes =>
-            new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
+            new[]
+            {
+                MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new[]
             {
@@ -961,8 +966,8 @@ namespace DiscImageChef.DiscImages
                 writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
                 descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
                 // TODO: Support split
-                writingStream = new FileStream(writingBaseName + "-flat.vmdk", FileMode.CreateNew, FileAccess.ReadWrite,
-                                               FileShare.None);
+                writingStream = new FileStream(writingBaseName + "-flat.vmdk", FileMode.OpenOrCreate,
+                                               FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -1108,8 +1113,9 @@ namespace DiscImageChef.DiscImages
 
             descriptorStream.Flush();
             descriptorStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

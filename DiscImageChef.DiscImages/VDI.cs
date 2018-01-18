@@ -237,7 +237,7 @@ namespace DiscImageChef.DiscImages
             ulong index  = sectorAddress * vHdr.sectorSize / vHdr.blockSize;
             ulong secOff = sectorAddress * vHdr.sectorSize % vHdr.blockSize;
 
-            uint  ibmOff = ibm[index];
+            uint ibmOff = ibm[index];
 
             if(ibmOff == VDI_EMPTY) return new byte[vHdr.sectorSize];
 
@@ -375,7 +375,13 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.Unknown, MediaType.GENERIC_HDD};
+        public IEnumerable<MediaType>     SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         // TODO: Add cluster size option
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -406,7 +412,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -564,6 +570,28 @@ namespace DiscImageChef.DiscImages
                                     ? imageInfo.Comments.Substring(0, 255)
                                     : imageInfo.Comments;
 
+            if(vHdr.cylinders == 0)
+            {
+                vHdr.cylinders = (uint)(imageInfo.Sectors / 16 / 63);
+                vHdr.heads     = 16;
+                vHdr.spt       = 63;
+
+                while(vHdr.cylinders == 0)
+                {
+                    vHdr.heads--;
+
+                    if(vHdr.heads == 0)
+                    {
+                        vHdr.spt--;
+                        vHdr.heads = 16;
+                    }
+
+                    vHdr.cylinders = (uint)(imageInfo.Sectors / vHdr.heads / vHdr.spt);
+
+                    if(vHdr.cylinders == 0 && vHdr.heads == 0 && vHdr.spt == 0) break;
+                }
+            }
+
             byte[] hdr    = new byte[Marshal.SizeOf(typeof(VdiHeader))];
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(VdiHeader)));
             Marshal.StructureToPtr(vHdr, hdrPtr, true);
@@ -576,6 +604,11 @@ namespace DiscImageChef.DiscImages
             writingStream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
             for(long i = 0; i < ibm.LongLength; i++) writingStream.Write(BitConverter.GetBytes(ibm[i]), 0, 4);
 
+            writingStream.Flush();
+            writingStream.Close();
+
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

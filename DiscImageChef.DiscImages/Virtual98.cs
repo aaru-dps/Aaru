@@ -299,7 +299,12 @@ namespace DiscImageChef.DiscImages
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes =>
-            new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
+            new[]
+            {
+                MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".v98"};
@@ -309,7 +314,7 @@ namespace DiscImageChef.DiscImages
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint   sectorSize)
         {
-            if(sectorSize == 0)
+            if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
                 return false;
@@ -329,7 +334,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -480,8 +485,9 @@ namespace DiscImageChef.DiscImages
 
             writingStream.Flush();
             writingStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

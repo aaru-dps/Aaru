@@ -42,6 +42,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
+    // TODO: Check writing
     public class Apridisk : IWritableImage
     {
         readonly byte[] signature =
@@ -59,6 +60,7 @@ namespace DiscImageChef.DiscImages
 
         // Cylinder by head, sector data matrix
         byte[][][][] sectorsData;
+        FileStream   writingStream;
 
         public Apridisk()
         {
@@ -422,65 +424,6 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        static uint Decompress(byte[] compressed, out byte[] decompressed)
-        {
-            int          readp  = 0;
-            int          cLen   = compressed.Length;
-            MemoryStream buffer = new MemoryStream();
-
-            uint uLen = 0;
-
-            while(cLen >= 3)
-            {
-                ushort blklen = BitConverter.ToUInt16(compressed, readp);
-                readp         += 2;
-
-                for(int i = 0; i < blklen; i++) buffer.WriteByte(compressed[readp]);
-
-                uLen += blklen;
-                readp++;
-                cLen -= 3;
-            }
-
-            decompressed = buffer.ToArray();
-            return uLen;
-        }
-
-        (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
-        {
-            ushort cylinder = (ushort)(lba / (imageInfo.Heads          * imageInfo.SectorsPerTrack));
-            byte   head     = (byte)(lba   / imageInfo.SectorsPerTrack % imageInfo.Heads);
-            byte   sector   = (byte)(lba   % imageInfo.SectorsPerTrack + 1);
-
-            return (cylinder, head, sector);
-        }
-
-        enum RecordType : uint
-        {
-            Deleted = 0xE31D0000,
-            Sector  = 0xE31D0001,
-            Comment = 0xE31D0002,
-            Creator = 0xE31D0003
-        }
-
-        enum CompressType : ushort
-        {
-            Uncompresed = 0x9E90,
-            Compressed  = 0x3E5A
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ApridiskRecord
-        {
-            public RecordType   type;
-            public CompressType compression;
-            public ushort       headerSize;
-            public uint         dataSize;
-            public byte         head;
-            public byte         sector;
-            public ushort       cylinder;
-        }
-
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         // TODO: Test with real hardware to see real supported media
@@ -496,16 +439,13 @@ namespace DiscImageChef.DiscImages
                 MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new[]
-            {
-                ("compress", typeof(bool), "Enable Apridisk compression.")
-            };
+            new[] {("compress", typeof(bool), "Enable Apridisk compression.")};
         public IEnumerable<string> KnownExtensions => new[] {".dsk"};
-        public bool   IsWriting    { get; private set; }
-        public string ErrorMessage { get; private set; }
-        FileStream writingStream;
+        public bool                IsWriting       { get; private set; }
+        public string              ErrorMessage    { get; private set; }
 
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors, uint sectorSize)
+        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                           uint   sectorSize)
         {
             if(!SupportedMediaTypes.Contains(mediaType))
             {
@@ -515,7 +455,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -638,8 +578,8 @@ namespace DiscImageChef.DiscImages
 
                         Marshal.StructureToPtr(record, hdrPtr, true);
                         Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-                        
-                        writingStream.Write(hdr, 0, hdr.Length);
+
+                        writingStream.Write(hdr,                  0, hdr.Length);
                         writingStream.Write(sectorsData[c][h][s], 0, sectorsData[c][h][s].Length);
                     }
                 }
@@ -661,7 +601,7 @@ namespace DiscImageChef.DiscImages
 
                 Marshal.StructureToPtr(creatorRecord, hdrPtr, true);
                 Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-                        
+
                 writingStream.Write(hdr,          0, hdr.Length);
                 writingStream.Write(creatorBytes, 0, creatorBytes.Length);
                 writingStream.WriteByte(0); // Termination
@@ -683,23 +623,25 @@ namespace DiscImageChef.DiscImages
 
                 Marshal.StructureToPtr(commentRecord, hdrPtr, true);
                 Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-                        
+
                 writingStream.Write(hdr,          0, hdr.Length);
                 writingStream.Write(commentBytes, 0, commentBytes.Length);
                 writingStream.WriteByte(0); // Termination
             }
-            
+
             Marshal.FreeHGlobal(hdrPtr);
             writingStream.Flush();
             writingStream.Close();
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 
         public bool SetMetadata(ImageInfo metadata)
         {
             imageInfo.Comments = metadata.Comments;
-            imageInfo.Creator = metadata.Creator;
+            imageInfo.Creator  = metadata.Creator;
             return true;
         }
 
@@ -710,29 +652,28 @@ namespace DiscImageChef.DiscImages
                 ErrorMessage = "Too many cylinders";
                 return false;
             }
-            
+
             if(heads > byte.MaxValue)
             {
                 ErrorMessage = "Too many heads";
                 return false;
             }
-            
+
             if(sectorsPerTrack > byte.MaxValue)
             {
                 ErrorMessage = "Too many sectors per track";
                 return false;
             }
-            
+
             sectorsData = new byte[cylinders][][][];
             for(ushort c = 0; c < cylinders; c++)
             {
-                sectorsData[c] = new byte[heads][][];
-                for(byte h = 0; h < heads; h++)
-                    sectorsData[c][h] = new byte[sectorsPerTrack][];
+                sectorsData[c]                                    = new byte[heads][][];
+                for(byte h = 0; h < heads; h++) sectorsData[c][h] = new byte[sectorsPerTrack][];
             }
 
-            imageInfo.Cylinders = cylinders;
-            imageInfo.Heads = heads;
+            imageInfo.Cylinders       = cylinders;
+            imageInfo.Heads           = heads;
             imageInfo.SectorsPerTrack = sectorsPerTrack;
 
             return true;
@@ -748,6 +689,65 @@ namespace DiscImageChef.DiscImages
         {
             ErrorMessage = "Unsupported feature";
             return false;
+        }
+
+        static uint Decompress(byte[] compressed, out byte[] decompressed)
+        {
+            int          readp  = 0;
+            int          cLen   = compressed.Length;
+            MemoryStream buffer = new MemoryStream();
+
+            uint uLen = 0;
+
+            while(cLen >= 3)
+            {
+                ushort blklen = BitConverter.ToUInt16(compressed, readp);
+                readp         += 2;
+
+                for(int i = 0; i < blklen; i++) buffer.WriteByte(compressed[readp]);
+
+                uLen += blklen;
+                readp++;
+                cLen -= 3;
+            }
+
+            decompressed = buffer.ToArray();
+            return uLen;
+        }
+
+        (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
+        {
+            ushort cylinder = (ushort)(lba / (imageInfo.Heads          * imageInfo.SectorsPerTrack));
+            byte   head     = (byte)(lba   / imageInfo.SectorsPerTrack % imageInfo.Heads);
+            byte   sector   = (byte)(lba   % imageInfo.SectorsPerTrack + 1);
+
+            return (cylinder, head, sector);
+        }
+
+        enum RecordType : uint
+        {
+            Deleted = 0xE31D0000,
+            Sector  = 0xE31D0001,
+            Comment = 0xE31D0002,
+            Creator = 0xE31D0003
+        }
+
+        enum CompressType : ushort
+        {
+            Uncompresed = 0x9E90,
+            Compressed  = 0x3E5A
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ApridiskRecord
+        {
+            public RecordType   type;
+            public CompressType compression;
+            public ushort       headerSize;
+            public uint         dataSize;
+            public byte         head;
+            public byte         sector;
+            public ushort       cylinder;
         }
     }
 }

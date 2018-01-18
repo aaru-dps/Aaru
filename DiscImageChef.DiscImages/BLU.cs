@@ -400,7 +400,8 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 MediaType.AppleProfile, MediaType.AppleWidget, MediaType.PriamDataTower, MediaType.GENERIC_HDD,
-                MediaType.Unknown
+                MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2,
+                MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -431,7 +432,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -723,6 +724,8 @@ namespace DiscImageChef.DiscImages
             writingStream.Flush();
             writingStream.Close();
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

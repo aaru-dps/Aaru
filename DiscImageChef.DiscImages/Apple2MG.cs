@@ -526,7 +526,9 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 MediaType.Apple32SS, MediaType.Apple33SS, MediaType.AppleSonySS, MediaType.AppleSonyDS,
-                MediaType.DOS_35_HD, MediaType.Unknown, MediaType.GENERIC_HDD
+                MediaType.DOS_35_HD, MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive,
+                MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII,
+                MediaType.PCCardTypeIII, MediaType.PCCardTypeIV
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -558,7 +560,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -700,9 +702,8 @@ namespace DiscImageChef.DiscImages
             writingStream.Flush();
             writingStream.Close();
 
-            ErrorMessage = "";
             IsWriting    = false;
-
+            ErrorMessage = "";
             return true;
         }
 

@@ -706,7 +706,12 @@ namespace DiscImageChef.DiscImages
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes =>
-            new[] {MediaType.Unknown, MediaType.GENERIC_HDD};
+            new[]
+            {
+                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dmg"};
@@ -730,7 +735,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -1014,9 +1019,9 @@ namespace DiscImageChef.DiscImages
             writingStream.Write(BigEndianBitConverter.GetBytes(footer.imageVariant),       0, 4);
             writingStream.Write(BigEndianBitConverter.GetBytes(footer.sectorCount),        0, 8);
             writingStream.Write(new byte[12],                                              0, 12);
-            writingStream.Close();
 
-            Crc32Context.File(writingStream.Name);
+            writingStream.Flush();
+            writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

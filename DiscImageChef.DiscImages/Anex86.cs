@@ -295,7 +295,9 @@ namespace DiscImageChef.DiscImages
                 MediaType.DOS_35_DS_DD_9, MediaType.ACORN_35_DS_HD, MediaType.DOS_525_HD, MediaType.ACORN_525_DS_DD,
                 MediaType.DOS_35_HD, MediaType.XDF_525, MediaType.DMF, MediaType.XDF_35, MediaType.DOS_35_ED,
                 MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_525_HD, MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD,
-                MediaType.Unknown, MediaType.GENERIC_HDD
+                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new(string name, Type type, string description)[] { };
@@ -327,7 +329,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -427,8 +429,11 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if((imageInfo.MediaType == MediaType.Unknown || imageInfo.MediaType == MediaType.GENERIC_HDD) &&
-               fdihdr.cylinders     == 0)
+            if((imageInfo.MediaType == MediaType.Unknown           || imageInfo.MediaType == MediaType.GENERIC_HDD   ||
+                imageInfo.MediaType == MediaType.FlashDrive        || imageInfo.MediaType == MediaType.CompactFlash  ||
+                imageInfo.MediaType == MediaType.CompactFlashType2 || imageInfo.MediaType == MediaType.PCCardTypeI   ||
+                imageInfo.MediaType == MediaType.PCCardTypeII      || imageInfo.MediaType == MediaType.PCCardTypeIII ||
+                imageInfo.MediaType == MediaType.PCCardTypeIV) && fdihdr.cylinders        == 0)
             {
                 fdihdr.cylinders = (int)(imageInfo.Sectors / 8 / 33);
                 fdihdr.heads     = 8;
@@ -461,8 +466,9 @@ namespace DiscImageChef.DiscImages
 
             writingStream.Flush();
             writingStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

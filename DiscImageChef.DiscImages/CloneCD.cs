@@ -1414,7 +1414,7 @@ namespace DiscImageChef.DiscImages
             {
                 writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
                 descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
-                dataStream       = new FileStream(writingBaseName + ".img", FileMode.CreateNew, FileAccess.ReadWrite,
+                dataStream       = new FileStream(writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
                                                   FileShare.None);
             }
             catch(IOException e)
@@ -1790,6 +1790,7 @@ namespace DiscImageChef.DiscImages
             descriptorStream.Flush();
             descriptorStream.Close();
 
+            IsWriting    = false;
             ErrorMessage = "";
             return true;
         }
@@ -1855,7 +1856,7 @@ namespace DiscImageChef.DiscImages
                     if(subStream == null)
                         try
                         {
-                            subStream = new FileStream(writingBaseName + ".sub", FileMode.CreateNew,
+                            subStream = new FileStream(writingBaseName + ".sub", FileMode.OpenOrCreate,
                                                        FileAccess.ReadWrite, FileShare.None);
                         }
                         catch(IOException e)
@@ -1916,7 +1917,7 @@ namespace DiscImageChef.DiscImages
                     if(subStream == null)
                         try
                         {
-                            subStream = new FileStream(writingBaseName + ".sub", FileMode.CreateNew,
+                            subStream = new FileStream(writingBaseName + ".sub", FileMode.OpenOrCreate,
                                                        FileAccess.ReadWrite, FileShare.None);
                         }
                         catch(IOException e)

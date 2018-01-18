@@ -449,7 +449,13 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.Unknown, MediaType.GENERIC_HDD};
+        public IEnumerable<MediaType>     SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
         // TODO: Add cluster size option
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -481,7 +487,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -676,6 +682,11 @@ namespace DiscImageChef.DiscImages
             writingStream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
             for(long i = 0; i < l1Table.LongLength; i++) writingStream.Write(BitConverter.GetBytes(l1Table[i]), 0, 8);
 
+            writingStream.Flush();
+            writingStream.Close();
+
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

@@ -89,6 +89,12 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            if(File.Exists(options.OutputFile))
+            {
+                DicConsole.ErrorWriteLine("Output file already exists, not continuing.");
+                return;
+            }
+
             PluginBase  plugins     = new PluginBase();
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
 

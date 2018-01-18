@@ -1814,11 +1814,11 @@ namespace DiscImageChef.DiscImages
             if(separateTracksWriting)
                 foreach(Track track in writingTracks)
                     writingStreams.Add(track.TrackSequence,
-                                       new FileStream(track.TrackFile, FileMode.CreateNew, FileAccess.ReadWrite,
+                                       new FileStream(track.TrackFile, FileMode.OpenOrCreate, FileAccess.ReadWrite,
                                                       FileShare.None));
             else
             {
-                FileStream jointstream = new FileStream(writingBaseName + ".bin", FileMode.CreateNew,
+                FileStream jointstream = new FileStream(writingBaseName + ".bin", FileMode.OpenOrCreate,
                                                         FileAccess.ReadWrite, FileShare.None);
                 foreach(Track track in writingTracks) writingStreams.Add(track.TrackSequence, jointstream);
             }
@@ -1922,8 +1922,9 @@ namespace DiscImageChef.DiscImages
 
             descriptorStream.Flush();
             descriptorStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 

@@ -336,7 +336,7 @@ namespace DiscImageChef.DiscImages
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint   sectorSize)
         {
-            if(sectorSize == 512)
+            if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
                 return false;
@@ -366,7 +366,7 @@ namespace DiscImageChef.DiscImages
                 SectorsPerTrack = geometry.sectorsPerTrack
             };
 
-            try { writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None); }
+            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
@@ -485,7 +485,7 @@ namespace DiscImageChef.DiscImages
             }
 
             string headerSignature =
-                $"Disk IMage VER 1.0 Copyright (C) ({DateTime.Now.Year:D4}) Ray Arachelian, All Rights Reserved.  DIC ";
+                $"Disk IMage VER 1.0 Copyright (C) {DateTime.Now.Year:D4} Ray Arachelian, All Rights Reserved.  DIC ";
             RayHdr header = new RayHdr
             {
                 signature       = Encoding.ASCII.GetBytes(headerSignature),
@@ -507,8 +507,9 @@ namespace DiscImageChef.DiscImages
 
             writingStream.Flush();
             writingStream.Close();
-            IsWriting = false;
 
+            IsWriting    = false;
+            ErrorMessage = "";
             return true;
         }
 
