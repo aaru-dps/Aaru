@@ -47,6 +47,7 @@ using Version = DiscImageChef.Metadata.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    // TODO: Add support for images
     static class Ssc
     {
         /// <summary>
@@ -57,24 +58,23 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPrefix">Prefix for output data files</param>
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
-        /// <param name="sidecar">Partially filled initialized sidecar</param>
-        internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar,
-                                  ref                                                     Resume           resume,
-                                  ref                                                     DumpLog          dumpLog)
+        internal static void Dump(Device dev, string outputPrefix, string devicePath, ref Resume  resume,
+                                  ref                                                     DumpLog dumpLog)
         {
-            FixedSense? fxSense;
-            bool        aborted;
-            bool        sense;
-            ulong       blocks = 0;
-            uint        blockSize;
-            MediaType   dskType = MediaType.Unknown;
-            DateTime    start;
-            DateTime    end;
-            double      totalDuration    = 0;
-            double      totalChkDuration = 0;
-            double      currentSpeed     = 0;
-            double      maxSpeed         = double.MinValue;
-            double      minSpeed         = double.MaxValue;
+            FixedSense?      fxSense;
+            bool             aborted;
+            bool             sense;
+            ulong            blocks = 0;
+            uint             blockSize;
+            MediaType        dskType = MediaType.Unknown;
+            DateTime         start;
+            DateTime         end;
+            double           totalDuration    = 0;
+            double           totalChkDuration = 0;
+            double           currentSpeed     = 0;
+            double           maxSpeed         = double.MinValue;
+            double           minSpeed         = double.MaxValue;
+            CICMMetadataType sidecar          = new CICMMetadataType();
 
             dev.RequestSense(out byte[] senseBuf, dev.Timeout, out double duration);
             fxSense = Sense.DecodeFixed(senseBuf, out string strSense);

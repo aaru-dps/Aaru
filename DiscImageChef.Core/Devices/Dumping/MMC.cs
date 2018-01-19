@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
@@ -39,6 +40,7 @@ using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Metadata;
 using Schemas;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
@@ -59,6 +61,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
         /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="outputPlugin">Plugin for output file</param>
         /// <param name="retryPasses">How many times to retry</param>
         /// <param name="force">Force to continue dump whenever possible</param>
         /// <param name="dumpRaw">Dump raw/long sectors</param>
@@ -67,25 +70,25 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
         /// <param name="encoding">Encoding to use when analyzing dump</param>
-        /// <param name="sidecar">Partially filled initialized sidecar</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        /// <param name="separateSubchannel">Write subchannel separate from main channel</param>
         /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <param name="outputPath">Path to output file</param>
+        /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="NotImplementedException">If trying to dump GOD or WOD, or XGDs without a Kreon drive</exception>
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
-                                  bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
-                                  ref MediaType dskType, bool separateSubchannel, ref Resume resume,
-                                  ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
+        internal static void Dump(Device        dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
+                                  bool          force, bool dumpRaw, bool              persistent, bool     stopOnError,
+                                  ref MediaType dskType,
+                                  ref
+                                      Resume resume, ref DumpLog dumpLog, bool dumpLeadIn,
+                                  Encoding   encoding,
+                                  string
+                                      outputPrefix, string outputPath, Dictionary<string, string> formatOptions)
         {
-            bool sense;
-            ulong blocks;
+            bool   sense;
+            ulong  blocks;
             byte[] tmpBuf;
-            bool compactDisc = true;
-            bool isXbox = false;
-            Alcohol120 alcohol = new Alcohol120(outputPrefix);
-
-            sidecar.OpticalDisc = new OpticalDiscType[1];
-            sidecar.OpticalDisc[0] = new OpticalDiscType();
+            bool   compactDisc = true;
+            bool   isXbox      = false;
 
             // TODO: Log not only what is it reading, but if it was read correctly or not.
 
@@ -193,15 +196,16 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
-                                 ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, alcohol,
-                                 dumpLeadIn);
+                CompactDisc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
+                                 ref dskType, ref resume, ref dumpLog, dumpLeadIn, outputPrefix, outputPath,
+                                 formatOptions);
                 return;
             }
 
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
-            blocks = scsiReader.GetDeviceBlocks();
+            blocks            = scsiReader.GetDeviceBlocks();
             dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
+            Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 
             #region Nintendo
             switch(dskType)
@@ -213,9 +217,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                     {
                         PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf);
-                        if(nintendoPfi != null)
+                        if(nintendoPfi                        != null)
                             if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
-                               nintendoPfi.Value.PartVersion == 15)
+                               nintendoPfi.Value.PartVersion  == 15)
                             {
                                 dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
                                 throw new
@@ -245,19 +249,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
                     if(!sense)
-                    {
-                        alcohol.AddPfi(cmdBuf);
                         if(PFI.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length - 4];
+                            tmpBuf = new byte[cmdBuf.Length                - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                            sidecar.OpticalDisc[0].PFI = new DumpType
-                            {
-                                Image = outputPrefix + ".pfi.bin",
-                                Size = tmpBuf.Length,
-                                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                            };
-                            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PFI.Image, tmpBuf);
+                            mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
 
                             PFI.PhysicalFormatInformation decPfi = PFI.Decode(cmdBuf).Value;
                             DicConsole.WriteLine("PFI:\n{0}", PFI.Prettify(decPfi));
@@ -310,7 +306,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         break;
                                 }
                         }
-                    }
 
                     dumpLog.WriteLine("Reading Disc Manufacturing Information");
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -326,9 +321,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 dskType = MediaType.XGD2;
 
                                 // All XGD3 all have the same number of blocks
-                                if(blocks == 25063 || // Locked (or non compatible drive)
+                                if(blocks == 25063   || // Locked (or non compatible drive)
                                    blocks == 4229664 || // Xtreme unlock
-                                   blocks == 4246304) // Wxripper unlock
+                                   blocks == 4246304)   // Wxripper unlock
                                     dskType = MediaType.XGD3;
                             }
 
@@ -345,7 +340,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(dumpRaw && !force)
                             {
                                 DicConsole
-                                    .ErrorWriteLine("Not continuing. If you want to continue reading cooked data when raw is not available use the force option.");
+                                   .ErrorWriteLine("Not continuing. If you want to continue reading cooked data when raw is not available use the force option.");
                                 // TODO: Exit more gracefully
                                 return;
                             }
@@ -353,19 +348,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                             isXbox = true;
                         }
 
-                        alcohol.AddDmi(cmdBuf);
-
                         if(cmdBuf.Length == 2052)
                         {
-                            tmpBuf = new byte[cmdBuf.Length - 4];
+                            tmpBuf = new byte[cmdBuf.Length                - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                            sidecar.OpticalDisc[0].DMI = new DumpType
-                            {
-                                Image = outputPrefix + ".dmi.bin",
-                                Size = tmpBuf.Length,
-                                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                            };
-                            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DMI.Image, tmpBuf);
+                            mediaTags.Add(MediaTagType.DVD_DMI, tmpBuf);
                         }
                     }
 
@@ -385,19 +372,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(!sense)
                     if(CSS_CPRM.DecodeLeadInCopyright(cmdBuf).HasValue)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].CMI = new DumpType
-                        {
-                            Image = outputPrefix + ".cmi.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].CMI.Image, tmpBuf);
-
-                        CSS_CPRM.LeadInCopyright cpy = CSS_CPRM.DecodeLeadInCopyright(cmdBuf).Value;
-                        if(cpy.CopyrightType != CopyrightType.NoProtection)
-                            sidecar.OpticalDisc[0].CopyProtection = cpy.CopyrightType.ToString();
+                        mediaTags.Add(MediaTagType.DVD_CMI, tmpBuf);
                     }
             }
             #endregion DVD-ROM
@@ -413,17 +390,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        alcohol.AddBca(tmpBuf);
-                        sidecar.OpticalDisc[0].BCA = new DumpType
-                        {
-                            Image = outputPrefix + ".bca.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].BCA.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.DVD_BCA, tmpBuf);
                     }
+
                     break;
                 #endregion DVD-ROM and HD DVD-ROM
 
@@ -436,15 +407,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(DDS.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length - 4];
+                            tmpBuf = new byte[cmdBuf.Length                - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                            sidecar.OpticalDisc[0].DDS = new DumpType
-                            {
-                                Image = outputPrefix + ".dds.bin",
-                                Size = tmpBuf.Length,
-                                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                            };
-                            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DDS.Image, tmpBuf);
+                            mediaTags.Add(MediaTagType.DVDRAM_DDS, tmpBuf);
                         }
 
                     dumpLog.WriteLine("Reading Spare Area Information.");
@@ -454,16 +419,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(Spare.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length - 4];
+                            tmpBuf = new byte[cmdBuf.Length                - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                            sidecar.OpticalDisc[0].SAI = new DumpType
-                            {
-                                Image = outputPrefix + ".sai.bin",
-                                Size = tmpBuf.Length,
-                                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                            };
-                            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].SAI.Image, tmpBuf);
+                            mediaTags.Add(MediaTagType.DVDRAM_SpareArea, tmpBuf);
                         }
+
                     break;
                 #endregion DVD-RAM and HD DVD-RAM
 
@@ -475,16 +435,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].PRI = new DumpType
-                        {
-                            Image = outputPrefix + ".pri.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].SAI.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.DVDR_PreRecordedInfo, tmpBuf);
                     }
+
                     break;
                 #endregion DVD-R and DVD-RW
             }
@@ -500,15 +455,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].MediaID = new DumpType
-                        {
-                            Image = outputPrefix + ".mid.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].MediaID.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.DVDR_MediaIdentifier, tmpBuf);
                     }
 
                     dumpLog.WriteLine("Reading Recordable Physical Information.");
@@ -517,16 +466,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].PFIR = new DumpType
-                        {
-                            Image = outputPrefix + ".pfir.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PFIR.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.DVDR_PFI, tmpBuf);
                     }
+
                     break;
                 #endregion DVD-R, DVD-RW and HD DVD-R
 
@@ -540,15 +484,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.Adip, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].ADIP = new DumpType
-                        {
-                            Image = outputPrefix + ".adip.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].ADIP.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.DVD_ADIP, tmpBuf);
                     }
 
                     dumpLog.WriteLine("Reading Disc Control Blocks.");
@@ -556,16 +494,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.Dcb, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].DCB = new DumpType
-                        {
-                            Image = outputPrefix + ".dcb.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DCB.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.DCB, tmpBuf);
                     }
+
                     break;
                 #endregion All DVD+
 
@@ -577,16 +510,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].CMI = new DumpType
-                        {
-                            Image = outputPrefix + ".cmi.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].CMI.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.HDDVD_CPI, tmpBuf);
                     }
+
                     break;
                 #endregion HD DVD-ROM
 
@@ -602,17 +530,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(DI.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length - 4];
+                            tmpBuf = new byte[cmdBuf.Length                - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                            sidecar.OpticalDisc[0].DI = new DumpType
-                            {
-                                Image = outputPrefix + ".di.bin",
-                                Size = tmpBuf.Length,
-                                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                            };
-                            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DI.Image, tmpBuf);
+                            mediaTags.Add(MediaTagType.BD_DI, tmpBuf);
                         }
 
+                    // TODO: PAC
+                    /*
                     dumpLog.WriteLine("Reading PAC.");
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
                                                   MmcDiscStructureFormat.Pac, 0, dev.Timeout, out _);
@@ -620,14 +544,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].PAC = new DumpType
-                        {
-                            Image = outputPrefix + ".pac.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PAC.Image, tmpBuf);
-                    }
+                        mediaTags.Add(MediaTagType.PAC, tmpBuf);
+                    }*/
                     break;
                 #endregion All Blu-ray
             }
@@ -641,17 +559,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BdBurstCuttingArea, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        alcohol.AddBca(tmpBuf);
-                        sidecar.OpticalDisc[0].BCA = new DumpType
-                        {
-                            Image = outputPrefix + ".bca.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].BCA.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.BD_BCA, tmpBuf);
                     }
+
                     break;
                 #endregion BD-ROM only
 
@@ -665,15 +577,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BdDds, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].DDS = new DumpType
-                        {
-                            Image = outputPrefix + ".dds.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DDS.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.BD_DDS, tmpBuf);
                     }
 
                     dumpLog.WriteLine("Reading Spare Area Information.");
@@ -681,29 +587,177 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length - 4];
+                        tmpBuf = new byte[cmdBuf.Length                - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].SAI = new DumpType
-                        {
-                            Image = outputPrefix + ".sai.bin",
-                            Size = tmpBuf.Length,
-                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
-                        };
-                        DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].SAI.Image, tmpBuf);
+                        mediaTags.Add(MediaTagType.BD_SpareArea, tmpBuf);
                     }
+
                     break;
                 #endregion Writable Blu-ray only
             }
 
             if(isXbox)
             {
-                Xgd.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
-                         ref sidecar, ref dskType, ref resume, ref dumpLog, encoding);
+                Xgd.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
+                         ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions);
                 return;
             }
 
-            Sbc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar,
-                     ref dskType, true, ref resume, ref dumpLog, encoding, alcohol);
+            Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
+                     ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions);
+        }
+
+        internal static void AddMediaTagToSidecar(string                             outputPath,
+                                                  KeyValuePair<MediaTagType, byte[]> tag,
+                                                  ref CICMMetadataType               sidecar)
+        {
+            switch(tag.Key)
+            {
+                case MediaTagType.DVD_PFI:
+                    sidecar.OpticalDisc[0].PFI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DVD_DMI:
+                    sidecar.OpticalDisc[0].DMI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DVD_CMI:
+                case MediaTagType.HDDVD_CPI:
+                    sidecar.OpticalDisc[0].CMI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+
+                    CSS_CPRM.LeadInCopyright cpy = CSS_CPRM.DecodeLeadInCopyright(tag.Value).Value;
+                    if(cpy.CopyrightType != CopyrightType.NoProtection)
+                        sidecar.OpticalDisc[0].CopyProtection = cpy.CopyrightType.ToString();
+
+                    break;
+                case MediaTagType.DVD_BCA:
+                case MediaTagType.BD_BCA:
+                    sidecar.OpticalDisc[0].BCA = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.BD_DDS:
+                case MediaTagType.DVDRAM_DDS:
+                    sidecar.OpticalDisc[0].DDS = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DVDRAM_SpareArea:
+                case MediaTagType.BD_SpareArea:
+                    sidecar.OpticalDisc[0].SAI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DVDR_PreRecordedInfo:
+                    sidecar.OpticalDisc[0].PRI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DVD_MediaIdentifier:
+                    sidecar.OpticalDisc[0].MediaID = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DVDR_PFI:
+                    sidecar.OpticalDisc[0].PFIR = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DVD_ADIP:
+                    sidecar.OpticalDisc[0].ADIP = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.DCB:
+                    sidecar.OpticalDisc[0].DCB = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.BD_DI:
+                    sidecar.OpticalDisc[0].DI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.Xbox_SecuritySector:
+                    if(sidecar.OpticalDisc[0].Xbox == null) sidecar.OpticalDisc[0].Xbox = new XboxType();
+
+                    sidecar.OpticalDisc[0].Xbox.SecuritySectors = new[]
+                    {
+                        new XboxSecuritySectorsType
+                        {
+                            RequestNumber   = 0,
+                            RequestVersion  = 1,
+                            SecuritySectors = new DumpType
+                            {
+                                Image     = outputPath,
+                                Size      = tag.Value.Length,
+                                Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                            }
+                        }
+                    };
+
+                    break;
+                case MediaTagType.Xbox_PFI:
+                    if(sidecar.OpticalDisc[0].Xbox == null) sidecar.OpticalDisc[0].Xbox = new XboxType();
+
+                    sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.Xbox_DMI:
+                    if(sidecar.OpticalDisc[0].Xbox == null) sidecar.OpticalDisc[0].Xbox = new XboxType();
+
+                    sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+            }
         }
     }
 }

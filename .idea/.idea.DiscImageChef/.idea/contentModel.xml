@@ -101,7 +101,6 @@
         <e p="Devices" t="Include">
           <e p="Dumping" t="Include">
             <e p="ATA.cs" t="Include" />
-            <e p="Alcohol120.cs" t="Include" />
             <e p="CompactDisc.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />

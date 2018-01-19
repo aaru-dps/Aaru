@@ -269,9 +269,6 @@ namespace DiscImageChef
         [Option('i', "device", Required = true, HelpText = "Device path.")]
         public string DevicePath { get; set; }
 
-        [Option('w', "output-prefix", Required = true, HelpText = "Prefix for media dump.")]
-        public string OutputPrefix { get; set; }
-
         [Option('r', "raw", Default = false,
             HelpText                = "Dump sectors with tags included. For optical media, dump scrambled sectors")]
         public bool Raw { get; set; }
@@ -288,10 +285,6 @@ namespace DiscImageChef
         [Option("persistent", Default = false, HelpText = "Try to recover partial or incorrect data.")]
         public bool Persistent { get; set; }
 
-        [Option("separate-subchannel", Default = false,
-            HelpText                           = "Save subchannel in a separate file. Only applicable to CD/DDCD/GD.")]
-        public bool SeparateSubchannel { get; set; }
-
         [Option('m', "resume", Default = true, HelpText = "Create/use resume mapfile.")]
         public bool Resume { get; set; }
 
@@ -300,6 +293,18 @@ namespace DiscImageChef
 
         [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
         public string EncodingName { get; set; }
+
+        [Option('o', "output", Required = true, HelpText = "Output image.")]
+        public string OutputFile { get; set; }
+
+        [Option('t', "format", Default = null,
+            HelpText                   =
+                "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")]
+        public string OutputFormat { get; set; }
+
+        [Option('O', "options", Default = null,
+            HelpText                    = "Comma separated name=value pairs of options to pass to output image plugin")]
+        public string Options { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]

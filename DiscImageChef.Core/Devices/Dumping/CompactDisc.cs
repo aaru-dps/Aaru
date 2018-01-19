@@ -32,23 +32,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml.Serialization;
-using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Metadata;
-using Extents;
-using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using PlatformID = DiscImageChef.Interop.PlatformID;
-using Session = DiscImageChef.Decoders.CD.Session;
-using TrackType = Schemas.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -63,6 +51,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
         /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="outputPlugin">Plugin for output file</param>
         /// <param name="retryPasses">How many times to retry</param>
         /// <param name="force">Force to continue dump whenever possible</param>
         /// <param name="dumpRaw">Dump scrambled sectors</param>
@@ -70,20 +59,25 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="stopOnError">Stop dump on first error</param>
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
-        /// <param name="sidecar">Partially filled initialized sidecar</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        /// <param name="separateSubchannel">Write subchannel separate from main channel</param>
-        /// <param name="alcohol">Alcohol disc image already initialized</param>
         /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <param name="outputPath">Path to output file</param>
+        /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="NotImplementedException">If trying to dump scrambled sectors</exception>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         /// <exception cref="ArgumentOutOfRangeException">If the track type is unknown (never)</exception>
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
-                                  bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
-                                  ref MediaType dskType, bool separateSubchannel, ref Resume resume,
-                                  ref DumpLog dumpLog, Alcohol120 alcohol, bool dumpLeadIn)
+        internal static void Dump(Device        dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
+                                  bool          force, bool dumpRaw, bool              persistent, bool     stopOnError,
+                                  ref MediaType dskType,
+                                  ref
+                                      Resume resume, ref DumpLog dumpLog, bool dumpLeadIn,
+                                  string     outputPrefix,
+                                  string
+                                      outputPath, Dictionary<string, string> formatOptions)
         {
-            bool sense = false;
+            throw new NotImplementedException("Dumping CompactDisc is disable pending rewrite.");
+
+            /*bool sense = false;
             ulong blocks;
             // TODO: Check subchannel support
             uint blockSize;
@@ -99,7 +93,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             Checksum dataChk;
             bool readcd;
             uint blocksToRead = 64;
-            DataFile dumpFile;
             bool aborted = false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
@@ -902,7 +895,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 alcohol.Close();
             }
 
-            Statistics.AddMedia(dskType, true);
+            Statistics.AddMedia(dskType, true);*/
         }
     }
 }

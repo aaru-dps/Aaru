@@ -31,13 +31,17 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.Console;
+using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Dumping;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Commands
@@ -46,19 +50,35 @@ namespace DiscImageChef.Commands
     {
         internal static void DoDumpMedia(DumpMediaOptions options)
         {
-            DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Dump-Media command", "--device={0}", options.DevicePath);
-            DicConsole.DebugWriteLine("Dump-Media command", "--output-prefix={0}", options.OutputPrefix);
-            DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}", options.Raw);
-            DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}", options.StopOnError);
-            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", options.Force);
-            DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}", options.RetryPasses);
-            DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", options.Persistent);
-            DicConsole.DebugWriteLine("Dump-Media command", "--separate-subchannel={0}", options.SeparateSubchannel);
-            DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}", options.Resume);
-            DicConsole.DebugWriteLine("Dump-Media command", "--lead-in={0}", options.LeadIn);
-            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}", options.EncodingName);
+            // TODO: Be able to cancel hashing
+            Sidecar.InitProgressEvent    += Progress.InitProgress;
+            Sidecar.UpdateProgressEvent  += Progress.UpdateProgress;
+            Sidecar.EndProgressEvent     += Progress.EndProgress;
+            Sidecar.InitProgressEvent2   += Progress.InitProgress2;
+            Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
+            Sidecar.EndProgressEvent2    += Progress.EndProgress2;
+            Sidecar.UpdateStatusEvent    += Progress.UpdateStatus;
+
+            DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}",              options.Debug);
+            DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}",            options.Verbose);
+            DicConsole.DebugWriteLine("Dump-Media command", "--device={0}",             options.DevicePath);
+            DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",                options.Raw);
+            DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}",      options.StopOnError);
+            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",              options.Force);
+            DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}",       options.RetryPasses);
+            DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}",         options.Persistent);
+            DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}",             options.Resume);
+            DicConsole.DebugWriteLine("Dump-Media command", "--lead-in={0}",            options.LeadIn);
+            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}",           options.EncodingName);
+            DicConsole.DebugWriteLine("Dump-Media command", "--output={0}",             options.OutputFile);
+            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}",             options.OutputFormat);
+            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",              options.Force);
+            DicConsole.DebugWriteLine("Dump-Media command", "--options={0}",            options.Options);
+
+            Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
+            DicConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
+            foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
+                DicConsole.DebugWriteLine("Dump-Media command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
             Encoding encoding = null;
 
@@ -88,13 +108,16 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            Resume resume = null;
-            XmlSerializer xs = new XmlSerializer(typeof(Resume));
-            if(File.Exists(options.OutputPrefix + ".resume.xml") && options.Resume)
+            string outputPrefix = Path.Combine(Path.GetDirectoryName(options.OutputFile),
+                                               Path.GetFileNameWithoutExtension(options.OutputFile));
+
+            Resume        resume = null;
+            XmlSerializer xs     = new XmlSerializer(typeof(Resume));
+            if(File.Exists(outputPrefix + ".resume.xml") && options.Resume)
                 try
                 {
-                    StreamReader sr = new StreamReader(options.OutputPrefix + ".resume.xml");
-                    resume = (Resume)xs.Deserialize(sr);
+                    StreamReader sr = new StreamReader(outputPrefix + ".resume.xml");
+                    resume          = (Resume)xs.Deserialize(sr);
                     sr.Close();
                 }
                 catch
@@ -109,29 +132,74 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            DumpLog dumpLog = new DumpLog(options.OutputPrefix + ".log", dev);
+            PluginBase           plugins    = new PluginBase();
+            List<IWritableImage> candidates = new List<IWritableImage>();
+
+            // Try extension
+            if(string.IsNullOrEmpty(options.OutputFormat))
+                candidates.AddRange(plugins.WritableImages.Values.Where(t =>
+                                                                            t.KnownExtensions
+                                                                             .Contains(Path.GetExtension(options
+                                                                                                            .OutputFile))));
+            // Try Id
+            else if(Guid.TryParse(options.OutputFormat, out Guid outId))
+                candidates.AddRange(plugins.WritableImages.Values.Where(t => t.Id.Equals(outId)));
+            // Try name
+            else
+                candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, options.OutputFormat,
+                                                                                           StringComparison
+                                                                                              .InvariantCultureIgnoreCase)));
+
+            if(candidates.Count == 0)
+            {
+                DicConsole.WriteLine("No plugin supports requested extension.");
+                return;
+            }
+
+            if(candidates.Count > 1)
+            {
+                DicConsole.WriteLine("More than one plugin supports requested extension.");
+                return;
+            }
+
+            IWritableImage outputFormat = candidates[0];
+
+            DumpLog dumpLog = new DumpLog(outputPrefix + ".log", dev);
+
+            if(options.Verbose)
+            {
+                dumpLog.WriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
+                DicConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
+            }
+            else
+            {
+                dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
+                DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
+            }
 
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    Ata.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
-                             options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
+                    Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
+                             options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
+                             options.OutputFile, parsedOptions);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses,
-                                       options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume,
-                                       ref dumpLog, encoding);
+                    SecureDigital.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
+                                       options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog,
+                                       encoding, outputPrefix, options.OutputFile, parsedOptions);
                     break;
                 case DeviceType.NVMe:
-                    NvMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
-                              options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
+                    NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
+                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
+                              options.OutputFile, parsedOptions);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    Scsi.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
-                              options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel,
-                              ref resume, ref dumpLog, options.LeadIn, encoding);
+                    Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
+                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, options.LeadIn,
+                              encoding, outputPrefix, options.OutputFile, parsedOptions);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");
@@ -144,11 +212,10 @@ namespace DiscImageChef.Commands
                 resume.LastWriteDate = DateTime.UtcNow;
                 resume.BadBlocks.Sort();
 
-                if(File.Exists(options.OutputPrefix + ".resume.xml")) File.Delete(options.OutputPrefix + ".resume.xml");
+                if(File.Exists(outputPrefix + ".resume.xml")) File.Delete(outputPrefix + ".resume.xml");
 
-                FileStream fs = new FileStream(options.OutputPrefix + ".resume.xml", FileMode.Create,
-                                               FileAccess.ReadWrite);
-                xs = new XmlSerializer(resume.GetType());
+                FileStream fs = new FileStream(outputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
+                xs            = new XmlSerializer(resume.GetType());
                 xs.Serialize(fs, resume);
                 fs.Close();
             }

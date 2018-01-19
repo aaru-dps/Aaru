@@ -31,14 +31,15 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Metadata;
-using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 
 namespace DiscImageChef.Core.Devices.Dumping
@@ -55,6 +56,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
         /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="outputPlugin">Plugin for output file</param>
         /// <param name="retryPasses">How many times to retry</param>
         /// <param name="force">Force to continue dump whenever possible</param>
         /// <param name="dumpRaw">Dump long or scrambled sectors</param>
@@ -63,15 +65,21 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
         /// <param name="encoding">Encoding to use when analyzing dump</param>
-        /// <param name="separateSubchannel">Write subchannel separate from main channel</param>
         /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <param name="outputPath">Path to output file</param>
+        /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
-                                bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel,
-                                ref Resume resume, ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
+        public static void Dump(Device     dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
+                                bool       force, bool dumpRaw, bool              persistent, bool     stopOnError,
+                                ref Resume resume,
+                                ref
+                                    DumpLog dumpLog, bool dumpLeadIn, Encoding encoding,
+                                string      outputPrefix,
+                                string
+                                    outputPath, Dictionary<string, string> formatOptions)
         {
             MediaType dskType = MediaType.Unknown;
-            int resets = 0;
+            int       resets  = 0;
 
             if(dev.IsRemovable)
             {
@@ -191,23 +199,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            CICMMetadataType sidecar = new CICMMetadataType();
-
             switch(dev.ScsiType)
             {
                 case PeripheralDeviceTypes.SequentialAccess:
                     if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
 
-                    Ssc.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume, ref dumpLog);
+                    Ssc.Dump(dev, outputPrefix, devicePath, ref resume, ref dumpLog);
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
-                    Mmc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
-                             ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn,
-                             encoding);
+                    Mmc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
+                             ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
+                             formatOptions);
                     return;
                 default:
-                    Sbc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
-                             ref sidecar, ref dskType, false, ref resume, ref dumpLog, encoding);
+                    Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, null,
+                             ref dskType, false, ref resume, ref dumpLog, encoding, outputPrefix, outputPath,
+                             formatOptions);
                     break;
             }
         }
