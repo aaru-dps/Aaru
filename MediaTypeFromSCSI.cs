@@ -34,7 +34,7 @@ using System;
 
 namespace DiscImageChef.CommonTypes
 {
-#pragma warning disable RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
+    #pragma warning disable RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
     public static class MediaTypeFromScsi
     {
         /// <summary>
@@ -49,7 +49,7 @@ namespace DiscImageChef.CommonTypes
         /// <param name="blockSize">Size in bytes of each block</param>
         /// <returns></returns>
         public static MediaType Get(byte scsiPeripheralType, string vendor, string model, byte mediumType,
-                                    byte densityCode, ulong blocks, uint blockSize)
+                                    byte densityCode, ulong         blocks, uint   blockSize)
         {
             switch(scsiPeripheralType)
             {
@@ -79,9 +79,10 @@ namespace DiscImageChef.CommonTypes
                     }
 
                     if(vendor.ToLowerInvariant().StartsWith("iomega", StringComparison.Ordinal) &&
-                       (model.ToLowerInvariant().StartsWith("clik", StringComparison.Ordinal) ||
+                       (model.ToLowerInvariant().StartsWith("clik",      StringComparison.Ordinal) ||
                         model.ToLowerInvariant().StartsWith("pocketzip", StringComparison.Ordinal)) &&
-                       blockSize == 512 && blocks == 78882) return MediaType.PocketZip;
+                       blockSize == 512                                                             &&
+                       blocks    == 78882) return MediaType.PocketZip;
 
                     if(model.ToLowerInvariant().StartsWith("zip", StringComparison.Ordinal))
                     {
@@ -111,7 +112,9 @@ namespace DiscImageChef.CommonTypes
                             if(blocks == 2880) return MediaType.DOS_35_HD;
                             if(blocks == 1440) return MediaType.DOS_35_DS_DD_9;
                         }
-                        else if(blockSize == 1024) if(blocks == 1232) return MediaType.NEC_35_HD_8;
+                        else if(blockSize == 1024)
+                            if(blocks     == 1232)
+                                return MediaType.NEC_35_HD_8;
 
                         return MediaType.Unknown;
                     }
@@ -131,7 +134,7 @@ namespace DiscImageChef.CommonTypes
                                 case 128:
                                     switch(blocks)
                                     {
-                                        case 720: return MediaType.ATARI_525_SD;
+                                        case 720:  return MediaType.ATARI_525_SD;
                                         case 1040: return MediaType.ATARI_525_DD;
                                         case 1898: return MediaType.IBM33FD_128;
                                         case 2002: return MediaType.ECMA_54;
@@ -141,13 +144,13 @@ namespace DiscImageChef.CommonTypes
                                 case 256:
                                     switch(blocks)
                                     {
-                                        case 322: return MediaType.ECMA_66;
-                                        case 400: return MediaType.ACORN_525_SS_SD_40;
-                                        case 455: return MediaType.Apple32SS;
-                                        case 560: return MediaType.Apple33SS;
-                                        case 640: return MediaType.ACORN_525_SS_DD_40;
-                                        case 720: return MediaType.ATARI_525_DD;
-                                        case 800: return MediaType.ACORN_525_SS_SD_80;
+                                        case 322:  return MediaType.ECMA_66;
+                                        case 400:  return MediaType.ACORN_525_SS_SD_40;
+                                        case 455:  return MediaType.Apple32SS;
+                                        case 560:  return MediaType.Apple33SS;
+                                        case 640:  return MediaType.ACORN_525_SS_DD_40;
+                                        case 720:  return MediaType.ATARI_525_DD;
+                                        case 800:  return MediaType.ACORN_525_SS_SD_80;
                                         case 1121: return MediaType.IBM33FD_256;
                                         case 1280: return MediaType.ACORN_525_SS_DD_80;
                                         case 2002: return MediaType.RX02;
@@ -164,13 +167,13 @@ namespace DiscImageChef.CommonTypes
                                 case 512:
                                     switch(blocks)
                                     {
-                                        case 320: return MediaType.DOS_525_DS_DD_8;
-                                        case 360: return MediaType.DOS_35_SS_DD_9;
-                                        case 610: return MediaType.IBM33FD_512;
-                                        case 630: return MediaType.Apricot_35;
-                                        case 640: return MediaType.DOS_35_SS_DD_8;
-                                        case 720: return MediaType.DOS_35_DS_DD_9;
-                                        case 800: return MediaType.AppleSonySS;
+                                        case 320:    return MediaType.DOS_525_DS_DD_8;
+                                        case 360:    return MediaType.DOS_35_SS_DD_9;
+                                        case 610:    return MediaType.IBM33FD_512;
+                                        case 630:    return MediaType.Apricot_35;
+                                        case 640:    return MediaType.DOS_35_SS_DD_8;
+                                        case 720:    return MediaType.DOS_35_DS_DD_9;
+                                        case 800:    return MediaType.AppleSonySS;
                                         case 249850: return MediaType.ECMA_154;
                                         case 429975: return MediaType.ECMA_201_ROM;
                                         case 446325: return MediaType.ECMA_201;
@@ -194,8 +197,8 @@ namespace DiscImageChef.CommonTypes
                                         case 603466:
                                         case 637041: return MediaType.ECMA_184;
                                         case 936921:
-                                        case 948770: return MediaType.ECMA_195;
-                                        case 1244621: return MediaType.ECMA_238;
+                                        case 948770:   return MediaType.ECMA_195;
+                                        case 1244621:  return MediaType.ECMA_238;
                                         case 14476734: return MediaType.ECMA_260;
                                         case 24445990: return MediaType.ECMA_260_Double;
                                     }
@@ -208,8 +211,8 @@ namespace DiscImageChef.CommonTypes
                                     {
                                         case 318988:
                                         case 320332:
-                                        case 321100: return MediaType.ECMA_239;
-                                        case 605846: return MediaType.GigaMo;
+                                        case 321100:  return MediaType.ECMA_239;
+                                        case 605846:  return MediaType.GigaMo;
                                         case 1063146: return MediaType.GigaMo2;
                                         case 1128134: return MediaType.ECMA_280;
                                         case 2043664: return MediaType.ECMA_322_2k;
@@ -255,7 +258,7 @@ namespace DiscImageChef.CommonTypes
                                 case 256:
                                     switch(blocks)
                                     {
-                                        case 910: return MediaType.Apple32DS;
+                                        case 910:  return MediaType.Apple32DS;
                                         case 1120: return MediaType.Apple33DS;
                                         case 1280: return MediaType.ECMA_70;
                                         case 2560: return MediaType.ECMA_78;
@@ -267,21 +270,21 @@ namespace DiscImageChef.CommonTypes
                                 case 512:
                                     switch(blocks)
                                     {
-                                        case 640: return MediaType.DOS_525_DS_DD_8;
-                                        case 720: return MediaType.DOS_525_DS_DD_9;
-                                        case 1280: return MediaType.DOS_35_DS_DD_8;
-                                        case 1440: return MediaType.ECMA_100;
-                                        case 1640: return MediaType.FDFORMAT_35_DD;
-                                        case 1760: return MediaType.CBM_AMIGA_35_DD;
-                                        case 2242: return MediaType.IBM53FD_512;
-                                        case 2332: return MediaType.ECMA_99_15;
-                                        case 2400: return MediaType.DOS_525_HD;
-                                        case 2788: return MediaType.FDFORMAT_525_HD;
-                                        case 2880: return MediaType.ECMA_125;
-                                        case 3360: return MediaType.DMF;
-                                        case 3444: return MediaType.FDFORMAT_35_HD;
-                                        case 3520: return MediaType.CBM_AMIGA_35_HD;
-                                        case 5760: return MediaType.ECMA_147;
+                                        case 640:    return MediaType.DOS_525_DS_DD_8;
+                                        case 720:    return MediaType.DOS_525_DS_DD_9;
+                                        case 1280:   return MediaType.DOS_35_DS_DD_8;
+                                        case 1440:   return MediaType.DOS_35_DS_DD_9;
+                                        case 1640:   return MediaType.FDFORMAT_35_DD;
+                                        case 1760:   return MediaType.CBM_AMIGA_35_DD;
+                                        case 2242:   return MediaType.IBM53FD_512;
+                                        case 2332:   return MediaType.ECMA_99_15;
+                                        case 2400:   return MediaType.DOS_525_HD;
+                                        case 2788:   return MediaType.FDFORMAT_525_HD;
+                                        case 2880:   return MediaType.DOS_35_HD;
+                                        case 3360:   return MediaType.DMF;
+                                        case 3444:   return MediaType.FDFORMAT_35_HD;
+                                        case 3520:   return MediaType.CBM_AMIGA_35_HD;
+                                        case 5760:   return MediaType.DOS_35_ED;
                                         case 249850: return MediaType.ECMA_154;
                                         case 429975: return MediaType.ECMA_201_ROM;
                                         case 446325: return MediaType.ECMA_201;
@@ -299,20 +302,20 @@ namespace DiscImageChef.CommonTypes
                                 case 1024:
                                     switch(blocks)
                                     {
-                                        case 800: return MediaType.ACORN_35_DS_DD;
-                                        case 1600: return MediaType.ACORN_35_DS_HD;
-                                        case 1220: return MediaType.IBM53FD_1024;
-                                        case 1232: return MediaType.SHARP_35;
-                                        case 1268: return MediaType.ECMA_69_8;
-                                        case 1280: return MediaType.NEC_525_HD;
-                                        case 1316: return MediaType.ECMA_99_8;
+                                        case 800:    return MediaType.ACORN_35_DS_DD;
+                                        case 1600:   return MediaType.ACORN_35_DS_HD;
+                                        case 1220:   return MediaType.IBM53FD_1024;
+                                        case 1232:   return MediaType.SHARP_35;
+                                        case 1268:   return MediaType.ECMA_69_8;
+                                        case 1280:   return MediaType.NEC_525_HD;
+                                        case 1316:   return MediaType.ECMA_99_8;
                                         case 371371: return MediaType.ECMA_223;
                                         case 498526: return MediaType.ECMA_183;
                                         case 603466:
                                         case 637041: return MediaType.ECMA_184;
                                         case 936921:
-                                        case 948770: return MediaType.ECMA_195;
-                                        case 1244621: return MediaType.ECMA_238;
+                                        case 948770:   return MediaType.ECMA_195;
+                                        case 1244621:  return MediaType.ECMA_238;
                                         case 14476734: return MediaType.ECMA_260;
                                         case 24445990: return MediaType.ECMA_260_Double;
                                     }
@@ -324,8 +327,8 @@ namespace DiscImageChef.CommonTypes
                                     {
                                         case 318988:
                                         case 320332:
-                                        case 321100: return MediaType.ECMA_239;
-                                        case 605846: return MediaType.GigaMo;
+                                        case 321100:  return MediaType.ECMA_239;
+                                        case 605846:  return MediaType.GigaMo;
                                         case 1063146: return MediaType.GigaMo2;
                                         case 1128134: return MediaType.ECMA_280;
                                         case 2043664: return MediaType.ECMA_322_2k;
@@ -362,8 +365,8 @@ namespace DiscImageChef.CommonTypes
                         case 0x0B:
                             switch(blockSize)
                             {
-                                case 256: return MediaType.ECMA_69_26;
-                                case 512: return MediaType.ECMA_69_15;
+                                case 256:  return MediaType.ECMA_69_26;
+                                case 512:  return MediaType.ECMA_69_15;
                                 case 1024: return MediaType.ECMA_69_8;
                             }
 
@@ -381,15 +384,15 @@ namespace DiscImageChef.CommonTypes
                         case 0x1A:
                             switch(blockSize)
                             {
-                                case 256: return MediaType.ECMA_99_26;
-                                case 512: return MediaType.ECMA_99_15;
+                                case 256:  return MediaType.ECMA_99_26;
+                                case 512:  return MediaType.ECMA_99_15;
                                 case 1024: return MediaType.ECMA_99_8;
                             }
 
                             return MediaType.Unknown;
-                        case 0x1E: return MediaType.ECMA_100;
+                        case 0x1E: return MediaType.DOS_35_DS_DD_9;
                         case 0x93: return MediaType.NEC_35_HD_15;
-                        case 0x94: return MediaType.ECMA_125;
+                        case 0x94: return MediaType.DOS_35_HD;
                     }
 
                     switch(blockSize)
@@ -398,7 +401,7 @@ namespace DiscImageChef.CommonTypes
                         {
                             switch(blocks)
                             {
-                                case 720: return MediaType.ATARI_525_SD;
+                                case 720:  return MediaType.ATARI_525_SD;
                                 case 1040: return MediaType.ATARI_525_ED;
                                 case 1898: return MediaType.IBM33FD_128;
                                 case 2002: return MediaType.ECMA_54;
@@ -412,14 +415,14 @@ namespace DiscImageChef.CommonTypes
                         {
                             switch(blocks)
                             {
-                                case 322: return MediaType.ECMA_66;
-                                case 400: return MediaType.ACORN_525_SS_SD_40;
-                                case 455: return MediaType.Apple32SS;
-                                case 560: return MediaType.Apple33SS;
-                                case 640: return MediaType.ACORN_525_SS_DD_40;
-                                case 720: return MediaType.ATARI_525_DD;
-                                case 800: return MediaType.ACORN_525_SS_SD_80;
-                                case 910: return MediaType.Apple32DS;
+                                case 322:  return MediaType.ECMA_66;
+                                case 400:  return MediaType.ACORN_525_SS_SD_40;
+                                case 455:  return MediaType.Apple32SS;
+                                case 560:  return MediaType.Apple33SS;
+                                case 640:  return MediaType.ACORN_525_SS_DD_40;
+                                case 720:  return MediaType.ATARI_525_DD;
+                                case 800:  return MediaType.ACORN_525_SS_SD_80;
+                                case 910:  return MediaType.Apple32DS;
                                 case 1120: return MediaType.Apple33DS;
                                 case 1121: return MediaType.IBM33FD_256;
                                 case 1280: return MediaType.ECMA_70;
@@ -442,14 +445,14 @@ namespace DiscImageChef.CommonTypes
                         {
                             switch(blocks)
                             {
-                                case 320: return MediaType.DOS_525_SS_DD_8;
-                                case 360: return MediaType.DOS_525_SS_DD_9;
-                                case 610: return MediaType.IBM33FD_512;
-                                case 640: return MediaType.DOS_525_DS_DD_8;
-                                case 720: return MediaType.DOS_525_DS_DD_9;
-                                case 800: return MediaType.AppleSonySS;
+                                case 320:  return MediaType.DOS_525_SS_DD_8;
+                                case 360:  return MediaType.DOS_525_SS_DD_9;
+                                case 610:  return MediaType.IBM33FD_512;
+                                case 640:  return MediaType.DOS_525_DS_DD_8;
+                                case 720:  return MediaType.DOS_525_DS_DD_9;
+                                case 800:  return MediaType.AppleSonySS;
                                 case 1280: return MediaType.DOS_35_DS_DD_8;
-                                case 1440: return MediaType.ECMA_100;
+                                case 1440: return MediaType.DOS_35_DS_DD_9;
                                 case 1600: return MediaType.ACORN_35_DS_DD;
                                 case 1640: return MediaType.FDFORMAT_35_DD;
                                 case 1760: return MediaType.CBM_AMIGA_35_DD;
@@ -457,11 +460,11 @@ namespace DiscImageChef.CommonTypes
                                 case 2332: return MediaType.ECMA_99_15;
                                 case 2400: return MediaType.DOS_525_HD;
                                 case 2788: return MediaType.FDFORMAT_525_HD;
-                                case 2880: return MediaType.ECMA_125;
+                                case 2880: return MediaType.DOS_35_HD;
                                 case 3360: return MediaType.DMF;
                                 case 3444: return MediaType.FDFORMAT_35_HD;
                                 case 3520: return MediaType.CBM_AMIGA_35_HD;
-                                case 5760: return MediaType.ECMA_147;
+                                case 5760: return MediaType.DOS_35_ED;
                             }
                         }
 
@@ -1046,8 +1049,8 @@ namespace DiscImageChef.CommonTypes
                                 {
                                     if(model.ToLowerInvariant().StartsWith("exb", StringComparison.Ordinal))
                                         return MediaType.Exatape106m;
-                                    if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal) ||
-                                       model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                                    if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                                       model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                                        model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                                         return MediaType.DLTtapeIV;
                                     if(model.ToLowerInvariant().StartsWith("stt", StringComparison.Ordinal))
@@ -1079,8 +1082,8 @@ namespace DiscImageChef.CommonTypes
                                 case 0x88:
                                 case 0x89:
                                 {
-                                    if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal) ||
-                                       model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                                    if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                                       model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                                        model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                                         return MediaType.DLTtapeIV;
 
@@ -1106,8 +1109,8 @@ namespace DiscImageChef.CommonTypes
                                 {
                                     if(model.ToLowerInvariant().StartsWith("exb", StringComparison.Ordinal))
                                         return MediaType.Exatape160mXL;
-                                    if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal) ||
-                                       model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                                    if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                                       model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                                        model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                                         return MediaType.SDLT1;
 
@@ -1124,8 +1127,8 @@ namespace DiscImageChef.CommonTypes
                                 case 0x92:
                                 case 0x93:
                                 {
-                                    if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal) ||
-                                       model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                                    if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                                       model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                                        model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                                         return MediaType.SDLT1;
 
@@ -1142,8 +1145,8 @@ namespace DiscImageChef.CommonTypes
                                 case 0x00:
                                 case 0x4A:
                                 {
-                                    if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal) ||
-                                       model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                                    if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                                       model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                                        model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                                         return MediaType.SDLT2;
 
@@ -1162,8 +1165,8 @@ namespace DiscImageChef.CommonTypes
                                 case 0x98:
                                 case 0x99:
                                 {
-                                    if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal) ||
-                                       model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                                    if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                                       model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                                        model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                                         return MediaType.VStapeI;
 
@@ -1407,7 +1410,7 @@ namespace DiscImageChef.CommonTypes
                                 case 1298496: return MediaType.PD650;
                                 case 1644581:
                                 case 1647371: return MediaType.ECMA_195_512;
-                                default: return MediaType.UnknownMO;
+                                default:      return MediaType.UnknownMO;
                             }
                         }
                         case 1024:
@@ -1419,11 +1422,11 @@ namespace DiscImageChef.CommonTypes
                                 case 603466:
                                 case 637041: return MediaType.ECMA_184;
                                 case 936921:
-                                case 948770: return MediaType.ECMA_195;
-                                case 1244621: return MediaType.ECMA_238;
+                                case 948770:   return MediaType.ECMA_195;
+                                case 1244621:  return MediaType.ECMA_238;
                                 case 14476734: return MediaType.ECMA_260;
                                 case 24445990: return MediaType.ECMA_260_Double;
-                                default: return MediaType.UnknownMO;
+                                default:       return MediaType.UnknownMO;
                             }
                         }
                         case 2048:
@@ -1432,13 +1435,13 @@ namespace DiscImageChef.CommonTypes
                             {
                                 case 318988:
                                 case 320332:
-                                case 321100: return MediaType.ECMA_239;
-                                case 605846: return MediaType.GigaMo;
+                                case 321100:  return MediaType.ECMA_239;
+                                case 605846:  return MediaType.GigaMo;
                                 case 1063146: return MediaType.GigaMo2;
                                 case 1128134: return MediaType.ECMA_280;
                                 case 2043664: return MediaType.ECMA_322_2k;
                                 case 7355716: return MediaType.ECMA_317;
-                                default: return MediaType.UnknownMO;
+                                default:      return MediaType.UnknownMO;
                             }
                         }
                         case 4096:
@@ -1446,7 +1449,7 @@ namespace DiscImageChef.CommonTypes
                             switch(blocks)
                             {
                                 case 1095840: return MediaType.ECMA_322;
-                                default: return MediaType.UnknownMO;
+                                default:      return MediaType.UnknownMO;
                             }
                         }
                         case 8192:
@@ -1456,7 +1459,7 @@ namespace DiscImageChef.CommonTypes
                                 case 1834348: return MediaType.UDO;
                                 case 3668759: return MediaType.UDO2_WORM;
                                 case 3669724: return MediaType.UDO2;
-                                default: return MediaType.UnknownMO;
+                                default:      return MediaType.UnknownMO;
                             }
                         }
                         default: return MediaType.UnknownMO;
@@ -1509,14 +1512,11 @@ namespace DiscImageChef.CommonTypes
 
                     break;
                 // Host managed zoned block device
-                case 0x14:
-                {
-                    return MediaType.Zone_HDD;
-                }
+                case 0x14: { return MediaType.Zone_HDD; }
             }
 
             return MediaType.Unknown;
         }
     }
-#pragma warning restore RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
+    #pragma warning restore RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
 }
