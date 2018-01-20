@@ -197,7 +197,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(compactDisc)
             {
                 CompactDisc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
-                                 ref dskType, ref resume, ref dumpLog, dumpLeadIn, outputPrefix, outputPath,
+                                 ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
                                  formatOptions);
                 return;
             }
@@ -751,6 +751,38 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(sidecar.OpticalDisc[0].Xbox == null) sidecar.OpticalDisc[0].Xbox = new XboxType();
 
                     sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.CD_FullTOC:
+                    sidecar.OpticalDisc[0].TOC = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.CD_ATIP:
+                    sidecar.OpticalDisc[0].ATIP = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.CD_PMA:
+                    sidecar.OpticalDisc[0].PMA = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = tag.Value.Length,
+                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                    };
+                    break;
+                case MediaTagType.CD_TEXT:
+                    sidecar.OpticalDisc[0].LeadInCdText = new DumpType
                     {
                         Image     = outputPath,
                         Size      = tag.Value.Length,
