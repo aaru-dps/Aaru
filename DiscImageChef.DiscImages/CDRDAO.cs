@@ -1785,6 +1785,10 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            if(writingTracks != null && writingStreams != null)
+                foreach(FileStream oldTrack in writingStreams.Select(t => t.Value).Distinct())
+                    oldTrack.Close();
+            
             ulong currentOffset = 0;
             writingTracks       = new List<Track>();
             foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
