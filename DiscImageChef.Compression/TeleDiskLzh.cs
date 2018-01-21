@@ -381,14 +381,13 @@ namespace DiscImageChef.Compression
         short DecodePosition()
         {
             short  bit;
-            ushort j;
 
             /* decode upper 6 bits from given table */
             if((bit = (short)GetByte()) < 0) return -1;
 
             ushort i = (ushort)bit;
             ushort c = (ushort)(d_code[i] << 6);
-            j = d_len[i];
+            ushort j = d_len[i];
 
             /* input lower 6 bits directly */
             j -= 2;
