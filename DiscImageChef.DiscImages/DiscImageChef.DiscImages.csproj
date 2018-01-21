@@ -121,6 +121,10 @@
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
       <Name>DiscImageChef.Checksums</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Compression\DiscImageChef.Compression.csproj">
+      <Project>{858398d1-7321-4763-8bab-56bbfec74e29}</Project>
+      <Name>DiscImageChef.Compression</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>

@@ -84,6 +84,15 @@
         <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
       </e>
+      <e p="DiscImageChef.Compression" t="IncludeRecursive">
+        <e p="DiscImageChef.Compression.csproj" t="IncludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="TeleDiskLzh.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
       <e p="DiscImageChef.Console" t="IncludeRecursive">
         <e p="DicConsole.cs" t="Include" />
         <e p="DiscImageChef.Console.csproj" t="IncludeRecursive" />
