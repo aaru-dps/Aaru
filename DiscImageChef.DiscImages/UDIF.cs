@@ -40,6 +40,7 @@ using Claunia.PropertyList;
 using Claunia.RsrcFork;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Compression;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using Ionic.Zlib;
@@ -507,8 +508,8 @@ namespace DiscImageChef.DiscImages
                     byte[] cmpBuffer = new byte[currentChunk.length];
                     imageStream.Seek((long)currentChunk.offset, SeekOrigin.Begin);
                     imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
-                    MemoryStream cmpMs = new MemoryStream(cmpBuffer);
-                    Stream       decStream;
+                    MemoryStream cmpMs     = new MemoryStream(cmpBuffer);
+                    Stream       decStream = null;
 
                     switch(currentChunk.type)
                     {
@@ -521,6 +522,7 @@ namespace DiscImageChef.DiscImages
                         case CHUNK_TYPE_BZIP:
                             decStream = new BZip2Stream(cmpMs, SharpCompress.Compressors.CompressionMode.Decompress);
                             break;
+                        case CHUNK_TYPE_RLE: break;
                         default:
                             throw new
                                 ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
@@ -530,19 +532,44 @@ namespace DiscImageChef.DiscImages
                     try
                     {
                         #endif
-                        byte[] tmpBuffer = new byte[buffersize];
-                        int    realSize  = decStream.Read(tmpBuffer, 0, (int)buffersize);
-                        buffer           = new byte[realSize];
-                        Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
-
-                        if(currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
+                        byte[] tmpBuffer;
+                        int    realSize;
+                        switch(currentChunk.type)
                         {
-                            chunkCache.Clear();
-                            currentChunkCacheSize = 0;
-                        }
+                            case CHUNK_TYPE_ADC:
+                            case CHUNK_TYPE_ZLIB:
+                            case CHUNK_TYPE_BZIP:
+                                tmpBuffer = new byte[buffersize];
+                                realSize  = decStream.Read(tmpBuffer, 0, (int)buffersize);
+                                buffer    = new byte[realSize];
+                                Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
 
-                        chunkCache.Add(chunkStartSector, buffer);
-                        currentChunkCacheSize += (uint)realSize;
+                                if(currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
+                                {
+                                    chunkCache.Clear();
+                                    currentChunkCacheSize = 0;
+                                }
+
+                                chunkCache.Add(chunkStartSector, buffer);
+                                currentChunkCacheSize += (uint)realSize;
+                                break;
+                            case CHUNK_TYPE_RLE:
+                                tmpBuffer    = new byte[buffersize];
+                                realSize     = 0;
+                                AppleRle rle = new AppleRle(cmpMs);
+                                for(int i = 0; i < buffersize; i++)
+                                {
+                                    int b = rle.ProduceByte();
+                                    if(b == -1) break;
+
+                                    tmpBuffer[i] = (byte)b;
+                                    realSize++;
+                                }
+
+                                buffer = new byte[realSize];
+                                Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
+                                break;
+                        }
                         #if DEBUG
                     }
                     catch(ZlibException)

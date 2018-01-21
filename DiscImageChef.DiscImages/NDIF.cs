@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Compression;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using SharpCompress.Compressors.ADC;
@@ -236,8 +237,6 @@ namespace DiscImageChef.DiscImages
                         case CHUNK_TYPE_KENCODE:
                             throw new
                                 ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                        case CHUNK_TYPE_RLE:
-                            throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
                         case CHUNK_TYPE_LZH:
                             throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
                         case CHUNK_TYPE_STUFFIT:
@@ -411,15 +410,41 @@ namespace DiscImageChef.DiscImages
                     imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
                     imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
                     MemoryStream cmpMs = new MemoryStream(cmpBuffer);
-                    Stream decStream;
+                    int realSize = 0;
 
-                    if(currentChunk.type == CHUNK_TYPE_ADC) decStream = new ADCStream(cmpMs);
-                    else throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
+                    switch(currentChunk.type)
+                    {
+                        case CHUNK_TYPE_ADC:
+                        {
+                            Stream decStream = new ADCStream(cmpMs);
+                            byte[] tmpBuffer = new byte[buffersize];
+                            realSize         = decStream.Read(tmpBuffer, 0, (int)buffersize);
+                            buffer           = new byte[realSize];
+                            Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
+                            break;
+                        }
+                        case CHUNK_TYPE_RLE:
+                        {
+                            byte[] tmpBuffer = new byte[buffersize];
+                            realSize         = 0;
+                            AppleRle rle     = new AppleRle(cmpMs);
+                            for(int i = 0; i < buffersize; i++)
+                            {
+                                int b = rle.ProduceByte();
+                                if(b == -1) break;
 
-                    byte[] tmpBuffer = new byte[buffersize];
-                    int realSize = decStream.Read(tmpBuffer, 0, (int)buffersize);
-                    buffer = new byte[realSize];
-                    Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
+                                tmpBuffer[i] = (byte)b;
+                                realSize++;
+                            }
+
+                            buffer = new byte[realSize];
+                            Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
+                            break;
+                        }
+                        default:
+                            throw new
+                                ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
+                    }
 
                     if(currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
                     {

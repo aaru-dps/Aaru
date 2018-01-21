@@ -85,6 +85,7 @@
         <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Compression" t="IncludeRecursive">
+        <e p="AppleRle.cs" t="Include" />
         <e p="DiscImageChef.Compression.csproj" t="IncludeRecursive" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />

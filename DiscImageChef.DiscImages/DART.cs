@@ -38,6 +38,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Compression;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using Version = Resources.Version;
@@ -47,11 +48,11 @@ namespace DiscImageChef.DiscImages
     public class Dart : IMediaImage
     {
         // Disk types
-        const byte DISK_MAC = 1;
-        const byte DISK_LISA = 2;
+        const byte DISK_MAC    = 1;
+        const byte DISK_LISA   = 2;
         const byte DISK_APPLE2 = 3;
         const byte DISK_MAC_HD = 16;
-        const byte DISK_DOS = 17;
+        const byte DISK_DOS    = 17;
         const byte DISK_DOS_HD = 18;
 
         // Compression types
@@ -63,61 +64,61 @@ namespace DiscImageChef.DiscImages
         const byte COMPRESS_NONE = 2;
 
         // Valid sizes
-        const short SIZE_LISA = 400;
+        const short SIZE_LISA   = 400;
         const short SIZE_MAC_SS = 400;
-        const short SIZE_MAC = 800;
+        const short SIZE_MAC    = 800;
         const short SIZE_MAC_HD = 1440;
         const short SIZE_APPLE2 = 800;
-        const short SIZE_DOS = 720;
+        const short SIZE_DOS    = 720;
         const short SIZE_DOS_HD = 1440;
 
         // bLength array sizes
-        const int BLOCK_ARRAY_LEN_LOW = 40;
+        const int BLOCK_ARRAY_LEN_LOW  = 40;
         const int BLOCK_ARRAY_LEN_HIGH = 72;
 
         const int SECTORS_PER_BLOCK = 40;
-        const int SECTOR_SIZE = 512;
-        const int TAG_SECTOR_SIZE = 12;
-        const int DATA_SIZE = SECTORS_PER_BLOCK * SECTOR_SIZE;
-        const int TAG_SIZE = SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
-        const int BUFFER_SIZE = SECTORS_PER_BLOCK * SECTOR_SIZE + SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
+        const int SECTOR_SIZE       = 512;
+        const int TAG_SECTOR_SIZE   = 12;
+        const int DATA_SIZE         = SECTORS_PER_BLOCK * SECTOR_SIZE;
+        const int TAG_SIZE          = SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
+        const int BUFFER_SIZE       = SECTORS_PER_BLOCK * SECTOR_SIZE + SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
 
         // DART images are at most 1474560 bytes, so let's cache the whole
-        byte[] dataCache;
-        uint dataChecksum;
+        byte[]    dataCache;
+        uint      dataChecksum;
         ImageInfo imageInfo;
-        byte[] tagCache;
-        uint tagChecksum;
+        byte[]    tagCache;
+        uint      tagChecksum;
 
         public Dart()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "Apple Disk Archival/Retrieval Tool";
-        public Guid Id => new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
+        public string    Name => "Apple Disk Archival/Retrieval Tool";
+        public Guid      Id   => new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
         public ImageInfo Info => imageInfo;
 
         public string Format => "Apple Disk Archival/Retrieval Tool";
@@ -235,11 +236,11 @@ namespace DiscImageChef.DiscImages
             short[] bLength;
 
             if(header.srcType == DISK_MAC_HD || header.srcType == DISK_DOS_HD)
-                bLength = new short[BLOCK_ARRAY_LEN_HIGH];
+                bLength  = new short[BLOCK_ARRAY_LEN_HIGH];
             else bLength = new short[BLOCK_ARRAY_LEN_LOW];
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            
+
             for(int i = 0; i < bLength.Length; i++)
             {
                 byte[] tmpShort = new byte[2];
@@ -248,7 +249,7 @@ namespace DiscImageChef.DiscImages
             }
 
             MemoryStream dataMs = new MemoryStream();
-            MemoryStream tagMs = new MemoryStream();
+            MemoryStream tagMs  = new MemoryStream();
 
             foreach(short l in bLength)
                 if(l != 0)
@@ -267,12 +268,18 @@ namespace DiscImageChef.DiscImages
                         {
                             temp = new byte[l * 2];
                             stream.Read(temp, 0, temp.Length);
-                            throw new ImageNotSupportedException("Compressed images not yet supported");
+                            AppleRle rle                                   = new AppleRle(new MemoryStream(temp));
+                            buffer                                         = new byte[BUFFER_SIZE];
+                            for(int i = 0; i < BUFFER_SIZE; i++) buffer[i] = (byte)rle.ProduceByte();
+                            dataMs.Write(buffer, 0, DATA_SIZE);
+                            tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                         }
-
-                        temp = new byte[l];
-                        stream.Read(temp, 0, temp.Length);
-                        throw new ImageNotSupportedException("Compressed images not yet supported");
+                        else
+                        {
+                            temp = new byte[l];
+                            stream.Read(temp, 0, temp.Length);
+                            throw new ImageNotSupportedException("LZH Compressed images not yet supported");
+                        }
                     }
                 }
 
@@ -300,12 +307,12 @@ namespace DiscImageChef.DiscImages
                             Version version = new Version(vers);
 
                             string release = null;
-                            string dev = null;
-                            string pre = null;
+                            string dev     = null;
+                            string pre     = null;
 
                             string major = $"{version.MajorVersion}";
                             string minor = $".{version.MinorVersion / 10}";
-                            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
+                            if(version.MinorVersion                 % 10 > 0) release = $".{version.MinorVersion % 10}";
                             switch(version.DevStage)
                             {
                                 case Version.DevelopmentStage.Alpha:
@@ -324,8 +331,8 @@ namespace DiscImageChef.DiscImages
                             if(dev != null) pre = $"{version.PreReleaseVersion}";
 
                             imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                            imageInfo.Application = version.VersionString;
-                            imageInfo.Comments = version.VersionMessage;
+                            imageInfo.Application        = version.VersionString;
+                            imageInfo.Comments           = version.VersionMessage;
                         }
                     }
 
@@ -339,15 +346,15 @@ namespace DiscImageChef.DiscImages
                                                                         Encoding.GetEncoding("macintosh"));
                             const string DART_REGEX =
                                 @"(?<version>\S+), tag checksum=\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\$(?<datachk>[0123456789ABCDEF]{8})$";
-                            Regex dArtEx = new Regex(DART_REGEX);
+                            Regex dArtEx    = new Regex(DART_REGEX);
                             Match dArtMatch = dArtEx.Match(dArt);
 
                             if(dArtMatch.Success)
                             {
-                                imageInfo.Application = "DART";
+                                imageInfo.Application        = "DART";
                                 imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
-                                dataChecksum = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
-                                tagChecksum = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
+                                dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
+                                tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value,  16);
                             }
                         }
                     }
@@ -359,12 +366,13 @@ namespace DiscImageChef.DiscImages
                         if(cksmRsrc?.ContainsId(1) == true)
                         {
                             byte[] tagChk = cksmRsrc.GetResource(1);
-                            tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
+                            tagChecksum   = BigEndianBitConverter.ToUInt32(tagChk, 0);
                         }
+
                         if(cksmRsrc?.ContainsId(2) == true)
                         {
                             byte[] dataChk = cksmRsrc.GetResource(1);
-                            dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
+                            dataChecksum   = BigEndianBitConverter.ToUInt32(dataChk, 0);
                         }
                     }
                 }
@@ -374,40 +382,40 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", imageInfo.Application,
                                       imageInfo.ApplicationVersion);
 
-            imageInfo.Sectors = (ulong)(header.srcSize * 2);
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.Sectors              = (ulong)(header.srcSize * 2);
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.SectorSize = SECTOR_SIZE;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.ImageSize = imageInfo.Sectors * SECTOR_SIZE;
-            imageInfo.Version = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.SectorSize           = SECTOR_SIZE;
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.ImageSize            = imageInfo.Sectors * SECTOR_SIZE;
+            imageInfo.Version              = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
 
             switch(header.srcSize)
             {
                 case SIZE_MAC_SS:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 1;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 10;
-                    imageInfo.MediaType = MediaType.AppleSonySS;
+                    imageInfo.MediaType       = MediaType.AppleSonySS;
                     break;
                 case SIZE_MAC:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 10;
-                    imageInfo.MediaType = MediaType.AppleSonyDS;
+                    imageInfo.MediaType       = MediaType.AppleSonyDS;
                     break;
                 case SIZE_DOS:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
-                    imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                    imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
                     break;
                 case SIZE_MAC_HD:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 18;
-                    imageInfo.MediaType = MediaType.DOS_35_HD;
+                    imageInfo.MediaType       = MediaType.DOS_35_HD;
                     break;
             }
 
@@ -473,8 +481,8 @@ namespace DiscImageChef.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] data = ReadSectors(sectorAddress, length);
-            byte[] tags = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag);
+            byte[] data   = ReadSectors(sectorAddress, length);
+            byte[] tags   = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag);
             byte[] buffer = new byte[data.Length + tags.Length];
 
             for(uint i = 0; i < length; i++)
@@ -482,7 +490,7 @@ namespace DiscImageChef.DiscImages
                 Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + TAG_SECTOR_SIZE),
                            imageInfo.SectorSize);
                 Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                           i * (imageInfo.SectorSize + TAG_SECTOR_SIZE) + imageInfo.SectorSize, TAG_SECTOR_SIZE);
+                           i       * (imageInfo.SectorSize + TAG_SECTOR_SIZE) + imageInfo.SectorSize, TAG_SECTOR_SIZE);
             }
 
             return buffer;
@@ -544,7 +552,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -554,7 +562,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -567,8 +575,8 @@ namespace DiscImageChef.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DartHeader
         {
-            public byte srcCmp;
-            public byte srcType;
+            public byte  srcCmp;
+            public byte  srcType;
             public short srcSize;
         }
     }
