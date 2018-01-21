@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : TeleDiskLzh.cs
+// Filename       : AppleRle.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Compression algorithms.
