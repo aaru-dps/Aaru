@@ -640,7 +640,7 @@ namespace DiscImageChef.Devices
         ///     Requests SPC-4 style error data
         /// </summary>
         RequestSenseDataExt = 0x0B,
-        SanitizeCommands = 0xB4,
+        SanitizeCommands    = 0xB4,
         /// <summary>
         ///     Executes a Security Protocol command that does not require a transfer of data
         /// </summary>
@@ -2394,7 +2394,7 @@ namespace DiscImageChef.Devices
         ///     Sets the spindle speed to be used while reading/writing data to a CD
         /// </summary>
         SetCdSpeed = 0xDA,
-        WriteCdp = 0xE3,
+        WriteCdp   = 0xE3,
         #endregion
 
         #region ATA Command Pass-Through
@@ -2413,10 +2413,10 @@ namespace DiscImageChef.Devices
 
         #region 6-byte CDB aliases
         ModeSelect6 = ModeSelect,
-        ModeSense6 = ModeSense,
-        Read6 = Read,
-        Seek6 = Seek,
-        Write6 = Write,
+        ModeSense6  = ModeSense,
+        Read6       = Read,
+        Seek6       = Seek,
+        Write6      = Write,
         #endregion 6-byte CDB aliases
 
         #region SCSI Zoned Block Commands
@@ -2431,19 +2431,19 @@ namespace DiscImageChef.Devices
         #endregion
 
         #region SCSI Commands with unknown meaning, mostly vendor specific
-        SetCdSpeedUnk = 0xB8,
-        WriteCdMsf = 0xA2,
-        WriteCd = 0xAA,
-        ReadDefectTag = 0xB7,
-        PlayCd = 0xBC,
-        SpareIn = 0xBC,
-        SpareOut = 0xBD,
-        WriteStream16 = 0x9A,
-        WriteAtomic = 0x9C,
+        SetCdSpeedUnk              = 0xB8,
+        WriteCdMsf                 = 0xA2,
+        WriteCd                    = 0xAA,
+        ReadDefectTag              = 0xB7,
+        PlayCd                     = 0xBC,
+        SpareIn                    = 0xBC,
+        SpareOut                   = 0xBD,
+        WriteStream16              = 0x9A,
+        WriteAtomic                = 0x9C,
         ServiceActionBidirectional = 0x9D,
-        WriteLong2 = 0xEA,
-        UnknownCdCommand = 0xD4,
-        UnknownCdCommand2 = 0xD5,
+        WriteLong2                 = 0xEA,
+        UnknownCdCommand           = 0xD4,
+        UnknownCdCommand2          = 0xD5,
         #endregion SCSI Commands with unknown meaning, mostly vendor specific
 
         #region SEGA Packet Interface (all are 12-byte CDB)
@@ -2841,7 +2841,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         ///     Drive shall return only the Feature Header with the chosen Feature Descriptor
         /// </summary>
-        Single = 0x02,
+        Single   = 0x02,
         Reserved = 0x03
     }
 
@@ -3505,8 +3505,8 @@ namespace DiscImageChef.Devices
         ///     The host sends the bus testing data pattern to a device (ADTC, R1)
         /// </summary>
         BusTestWrite = 19,
-        SpiReadOcr = 58,
-        SpicrcOnOff = 59,
+        SpiReadOcr   = 58,
+        SpicrcOnOff  = 59,
         #endregion Class 1 MMC Commands (Basic and read-stream)
 
         #region Class 2 MMC Commands (Block-oriented read)
@@ -3742,35 +3742,35 @@ namespace DiscImageChef.Devices
     public enum MmcFlags : uint
     {
         ResponsePresent = 1 << 0,
-        Response136 = 1 << 1,
-        ResponseCrc = 1 << 2,
-        ResponseBusy = 1 << 3,
-        ResponseOpcode = 1 << 4,
-        CommandMask = 3 << 5,
-        CommandAc = 0 << 5,
-        CommandAdtc = 1 << 5,
-        CommandBc = 2 << 5,
-        CommandBcr = 3 << 5,
-        ResponseSpiS1 = 1 << 7,
-        ResponseSpiS2 = 1 << 8,
-        ResponseSpiB4 = 1 << 9,
+        Response136     = 1 << 1,
+        ResponseCrc     = 1 << 2,
+        ResponseBusy    = 1 << 3,
+        ResponseOpcode  = 1 << 4,
+        CommandMask     = 3 << 5,
+        CommandAc       = 0 << 5,
+        CommandAdtc     = 1 << 5,
+        CommandBc       = 2 << 5,
+        CommandBcr      = 3 << 5,
+        ResponseSpiS1   = 1 << 7,
+        ResponseSpiS2   = 1 << 8,
+        ResponseSpiB4   = 1 << 9,
         ResponseSpiBusy = 1 << 10,
-        ResponseNone = 0,
-        ResponseR1 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        ResponseR1B = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
-        ResponseR2 = ResponsePresent | Response136 | ResponseCrc,
-        ResponseR3 = ResponsePresent,
-        ResponseR4 = ResponsePresent,
-        ResponseR5 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        ResponseR6 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        ResponseR7 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        ResponseSpiR1 = ResponseSpiS1,
-        ResponseSpiR1B = ResponseSpiS1 | ResponseSpiBusy,
-        ResponseSpiR2 = ResponseSpiS1 | ResponseSpiS2,
-        ResponseSpiR3 = ResponseSpiS1 | ResponseSpiB4,
-        ResponseSpiR4 = ResponseSpiS1 | ResponseSpiB4,
-        ResponseSpiR5 = ResponseSpiS1 | ResponseSpiS2,
-        ResponseSpiR7 = ResponseSpiS1 | ResponseSpiB4
+        ResponseNone    = 0,
+        ResponseR1      = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR1B     = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
+        ResponseR2      = ResponsePresent | Response136 | ResponseCrc,
+        ResponseR3      = ResponsePresent,
+        ResponseR4      = ResponsePresent,
+        ResponseR5      = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR6      = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR7      = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseSpiR1   = ResponseSpiS1,
+        ResponseSpiR1B  = ResponseSpiS1 | ResponseSpiBusy,
+        ResponseSpiR2   = ResponseSpiS1 | ResponseSpiS2,
+        ResponseSpiR3   = ResponseSpiS1 | ResponseSpiB4,
+        ResponseSpiR4   = ResponseSpiS1 | ResponseSpiB4,
+        ResponseSpiR5   = ResponseSpiS1 | ResponseSpiS2,
+        ResponseSpiR7   = ResponseSpiS1 | ResponseSpiB4
     }
 
     [Flags]
@@ -3818,10 +3818,111 @@ namespace DiscImageChef.Devices
         ErrorSkipping
     }
 
+    public enum AtaFeatures : byte
+    {
+        /// <summary>Enable 8-bit data transfers</summary>
+        Enable8Bit = 0x01,
+        /// <summary>Enable write cache</summary>
+        EnableWriteCache = 0x02,
+        /// <summary>Set transfer mode based on value in sector count register</summary>
+        SetTransferMode = 0x03,
+        /// <summary>Enable all automatic defect reassignment</summary>
+        EnableDefectReassignment = 0x04,
+        /// <summary>Enable advanced power management</summary>
+        EnableApm = 0x05,
+        /// <summary>Enable Power-Up In Standby feature set</summary>
+        EnablePowerUpInStandby = 0x06,
+        /// <summary>Power-Up In Standby feature set device spin-up</summary>
+        PowerUpInStandByFeature = 0x07,
+        /// <summary>Reserved for Address offset reserved area boot method technical report</summary>
+        AddressOffsetReserved = 0x09,
+        /// <summary>Enable CFA power mode 1</summary>
+        EnableCfaPowerMode1 = 0x0A,
+        /// <summary>Enable Write-Read-Verify feature set</summary>
+        EnableWriteReadVerify = 0x0B,
+        /// <summary>Enable use of SATA feature</summary>
+        EnableSataFeature = 0x10,
+        /// <summary>Disable Media Status Notification</summary>
+        DisableMediaStatusNotification = 0x31,
+        /// <summary>Disable retry</summary>
+        DisableRetry = 0x33,
+        /// <summary>Enable Free-fall Control</summary>
+        EnableFreeFall = 0x41,
+        /// <summary>Enable Automatic Acoustic Management feature set</summary>
+        EnableAam = 0x42,
+        /// <summary>Set Maximum Host Interface Sector Times</summary>
+        SetMaximumHostInterfaceSectorTimes = 0x43,
+        /// <summary>Vendor unique length of ECC on read long/write long commands</summary>
+        EnableReadLongVendorLength = 0x44,
+        /// <summary>Extended Power conditions</summary>
+        ExtendedPowerConditions = 0x4A,
+        /// <summary>Set cache segments to sector count register value</summary>
+        SetCacheSegments = 0x54,
+        /// <summary>Disable read look-ahead feature</summary>
+        DisableReadLookAhead = 0x55,
+        /// <summary>Enable release interrupt</summary>
+        EnableReleaseInterrupt = 0x5D,
+        /// <summary>Enable SERVICE interrupt</summary>
+        EnableServiceInterrupt = 0x5E,
+        /// <summary>Long Physical Sector Alignment Error Reporting Control</summary>
+        LongPhysicalSectorErrorControl = 0x62,
+        /// <summary>Enable/Disable the DSN feature set</summary>
+        DsnFeature = 0x63,
+        /// <summary>Disable reverting to power on defaults</summary>
+        DisableRevertToDefaults = 0x66,
+        /// <summary>Disable ECC</summary>
+        DisableEcc = 0x77,
+        /// <summary>Disable 8-bit data transfers</summary>
+        Disable8Bit = 0x81,
+        /// <summary>Disable write cache</summary>
+        DisableWriteCache = 0x82,
+        /// <summary>Disable all automatic defect reassignment</summary>
+        DisableDefectReassignment = 0x84,
+        /// <summary>Disable advanced power management</summary>
+        DisableApm = 0x85,
+        /// <summary>Disable Power-Up In Standby feature set</summary>
+        DisablePowerUpInStandby = 0x86,
+        /// <summary>Enable ECC</summary>
+        EnableEcc = 0x88,
+        /// <summary>Reserved for Address offset reserved area boot method technical report</summary>
+        AddressOffsetReserved2 = 0x89,
+        /// <summary>Disable CFA power mode 1</summary>
+        DisableCfaPowerMode1 = 0x8A,
+        /// <summary>Disable Write-Read-Verify feature set</summary>
+        DisableWriteReadVerify = 0x8B,
+        /// <summary>Disable use of SATA feature</summary>
+        DisableSataFeature = 0x90,
+        /// <summary>Enable Media Status Notification</summary>
+        EnableMediaStatusNotification = 0x95,
+        /// <summary>Enable retries</summary>
+        EnableRetries = 0x99,
+        /// <summary>Set device maximum average current</summary>
+        SetMaximumAverageCurrent = 0x9A,
+        /// <summary>Enable read look-ahead feature</summary>
+        EnableReadLookAhead = 0xAA,
+        /// <summary>Set maximum prefetch using sector count register value</summary>
+        SetMaximumPrefetch = 0xAB,
+        /// <summary>4 bytes of ECC apply on read long/write long commands</summary>
+        DisableReadLongVendorLength = 0xBB,
+        /// <summary>Disable Free-fall Control</summary>
+        DisableFreeFall = 0xC1,
+        /// <summary>Disable Automatic Acoustic Management feature set</summary>
+        DisableAam = 0xC2,
+        /// <summary>Enable/Disable the Sense Data Reporting feature set</summary>
+        SenseDataReporting = 0xC3,
+        /// <summary>Enable reverting to power on defaults</summary>
+        EnableRevertToDefaults = 0xCC,
+        /// <summary>Disable release interrupt</summary>
+        DisableReleaseInterrupt = 0xDD,
+        /// <summary>Disable SERVICE interrupt</summary>
+        DisableServiceInterrupt = 0xDE,
+        VendorSpecific          = 0xE0
+    }
+
     public enum KreonLockStates : byte
     {
-        Locked = 0,
-        Xtreme = 1,
+        Locked   = 0,
+        Xtreme   = 1,
         Wxripper = 2
     }
 }

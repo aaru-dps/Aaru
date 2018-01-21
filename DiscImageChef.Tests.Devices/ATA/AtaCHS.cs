@@ -50,6 +50,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 DicConsole.WriteLine("7.- Send READ SECTORS command.");
                 DicConsole.WriteLine("8.- Send READ SECTORS WITH RETRIES command.");
                 DicConsole.WriteLine("9.- Send SEEK command.");
+                DicConsole.WriteLine("10.- Send SET FEATURES command.");
                 DicConsole.WriteLine("0.- Return to ATA commands menu.");
                 DicConsole.Write("Choose: ");
 
@@ -93,6 +94,9 @@ namespace DiscImageChef.Tests.Devices.ATA
                     case 9:
                         Seek(devPath, dev);
                         continue;
+                    case 10:
+                        SetFeatures(devPath, dev);
+                        continue;
                     default:
                         DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
@@ -111,9 +115,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending IDENTIFY DEVICE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -180,22 +184,22 @@ namespace DiscImageChef.Tests.Devices.ATA
         static void ReadDma(string devPath, Device dev, bool retries)
         {
             ushort cylinder = 0;
-            byte head = 0;
-            byte sector = 1;
-            byte count = 1;
+            byte   head     = 0;
+            byte   sector   = 1;
+            byte   count    = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Device: {0}",                         devPath);
                 DicConsole.WriteLine("Parameters for READ DMA {0}command:", retries ? "WITH RETRIES " : "");
-                DicConsole.WriteLine("Cylinder: {0}", cylinder);
-                DicConsole.WriteLine("Head: {0}", head);
-                DicConsole.WriteLine("Sector: {0}", sector);
-                DicConsole.WriteLine("Count: {0}", count);
+                DicConsole.WriteLine("Cylinder: {0}",                       cylinder);
+                DicConsole.WriteLine("Head: {0}",                           head);
+                DicConsole.WriteLine("Sector: {0}",                         sector);
+                DicConsole.WriteLine("Count: {0}",                          count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -241,6 +245,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
                             head = 15;
                         }
+
                         DicConsole.Write("What sector?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out sector))
@@ -271,12 +276,12 @@ namespace DiscImageChef.Tests.Devices.ATA
                                      head, sector, count, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Device: {0}",                        devPath);
             DicConsole.WriteLine("Sending READ DMA {0}to the device:", retries ? "WITH RETRIES " : "");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -302,7 +307,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("Device: {0}",           devPath);
                     DicConsole.WriteLine("READ DMA {0}response:", retries ? "WITH RETRIES " : "");
                     if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
@@ -312,7 +317,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("Device: {0}",                   devPath);
                     DicConsole.WriteLine("READ DMA {0}status registers:", retries ? "WITH RETRIES " : "");
                     DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -332,23 +337,23 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadLong(string devPath, Device dev, bool retries)
         {
-            ushort cylinder = 0;
-            byte head = 0;
-            byte sector = 1;
-            uint blockSize = 1;
+            ushort cylinder  = 0;
+            byte   head      = 0;
+            byte   sector    = 1;
+            uint   blockSize = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Device: {0}",                          devPath);
                 DicConsole.WriteLine("Parameters for READ LONG {0}command:", retries ? "WITH RETRIES " : "");
-                DicConsole.WriteLine("Cylinder: {0}", cylinder);
-                DicConsole.WriteLine("Head: {0}", head);
-                DicConsole.WriteLine("Sector: {0}", sector);
-                DicConsole.WriteLine("Block size: {0}", blockSize);
+                DicConsole.WriteLine("Cylinder: {0}",                        cylinder);
+                DicConsole.WriteLine("Head: {0}",                            head);
+                DicConsole.WriteLine("Sector: {0}",                          sector);
+                DicConsole.WriteLine("Block size: {0}",                      blockSize);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -394,6 +399,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
                             head = 15;
                         }
+
                         DicConsole.Write("What sector?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out sector))
@@ -424,12 +430,12 @@ namespace DiscImageChef.Tests.Devices.ATA
                                       head, sector, blockSize, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Device: {0}",                         devPath);
             DicConsole.WriteLine("Sending READ LONG {0}to the device:", retries ? "WITH RETRIES " : "");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Command took {0} ms.",                duration);
+            DicConsole.WriteLine("Sense is {0}.",                       sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",                buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",        ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -455,7 +461,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("Device: {0}",            devPath);
                     DicConsole.WriteLine("READ LONG {0}response:", retries ? "WITH RETRIES " : "");
                     if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
@@ -465,7 +471,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("Device: {0}",                    devPath);
                     DicConsole.WriteLine("READ LONG {0}status registers:", retries ? "WITH RETRIES " : "");
                     DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -486,11 +492,11 @@ namespace DiscImageChef.Tests.Devices.ATA
         static void ReadMultiple(string devPath, Device dev)
         {
             ushort cylinder = 0;
-            byte head = 0;
-            byte sector = 1;
-            byte count = 1;
+            byte   head     = 0;
+            byte   sector   = 1;
+            byte   count    = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -499,9 +505,9 @@ namespace DiscImageChef.Tests.Devices.ATA
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ MULTIPLE command:");
                 DicConsole.WriteLine("Cylinder: {0}", cylinder);
-                DicConsole.WriteLine("Head: {0}", head);
-                DicConsole.WriteLine("Sector: {0}", sector);
-                DicConsole.WriteLine("Count: {0}", count);
+                DicConsole.WriteLine("Head: {0}",     head);
+                DicConsole.WriteLine("Sector: {0}",   sector);
+                DicConsole.WriteLine("Count: {0}",    count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -547,6 +553,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
                             head = 15;
                         }
+
                         DicConsole.Write("What sector?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out sector))
@@ -579,9 +586,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ MULTIPLE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -639,22 +646,22 @@ namespace DiscImageChef.Tests.Devices.ATA
         static void ReadSectors(string devPath, Device dev, bool retries)
         {
             ushort cylinder = 0;
-            byte head = 0;
-            byte sector = 1;
-            byte count = 1;
+            byte   head     = 0;
+            byte   sector   = 1;
+            byte   count    = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Device: {0}",                             devPath);
                 DicConsole.WriteLine("Parameters for READ SECTORS {0}command:", retries ? "WITH RETRIES " : "");
-                DicConsole.WriteLine("Cylinder: {0}", cylinder);
-                DicConsole.WriteLine("Head: {0}", head);
-                DicConsole.WriteLine("Sector: {0}", sector);
-                DicConsole.WriteLine("Count: {0}", count);
+                DicConsole.WriteLine("Cylinder: {0}",                           cylinder);
+                DicConsole.WriteLine("Head: {0}",                               head);
+                DicConsole.WriteLine("Sector: {0}",                             sector);
+                DicConsole.WriteLine("Count: {0}",                              count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -700,6 +707,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
                             head = 15;
                         }
+
                         DicConsole.Write("What sector?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out sector))
@@ -730,12 +738,12 @@ namespace DiscImageChef.Tests.Devices.ATA
                                   sector, count, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Device: {0}",                            devPath);
             DicConsole.WriteLine("Sending READ SECTORS {0}to the device:", retries ? "WITH RETRIES " : "");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Command took {0} ms.",                   duration);
+            DicConsole.WriteLine("Sense is {0}.",                          sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",                   buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",           ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -761,7 +769,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("Device: {0}",               devPath);
                     DicConsole.WriteLine("READ SECTORS {0}response:", retries ? "WITH RETRIES " : "");
                     if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
@@ -771,7 +779,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("Device: {0}",                       devPath);
                     DicConsole.WriteLine("READ SECTORS {0}status registers:", retries ? "WITH RETRIES " : "");
                     DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -792,10 +800,10 @@ namespace DiscImageChef.Tests.Devices.ATA
         static void Seek(string devPath, Device dev)
         {
             ushort cylinder = 0;
-            byte head = 0;
-            byte sector = 1;
+            byte   head     = 0;
+            byte   sector   = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -804,8 +812,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for SEEK command:");
                 DicConsole.WriteLine("Cylinder: {0}", cylinder);
-                DicConsole.WriteLine("Head: {0}", head);
-                DicConsole.WriteLine("Sector: {0}", sector);
+                DicConsole.WriteLine("Head: {0}",     head);
+                DicConsole.WriteLine("Sector: {0}",   sector);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -851,6 +859,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
                             head = 15;
                         }
+
                         DicConsole.Write("What sector?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out sector))
@@ -874,7 +883,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEEK to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
+            DicConsole.WriteLine("Sense is {0}.",        sense);
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Decode error registers.");
@@ -901,6 +910,157 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEEK status registers:");
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 2: goto start;
+                case 3: goto parameters;
+                default:
+                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    goto menu;
+            }
+        }
+
+        static void SetFeatures(string devPath, Device dev)
+        {
+            ushort cylinder    = 0;
+            byte   head        = 0;
+            byte   sector      = 0;
+            byte   feature     = 0;
+            byte   sectorCount = 0;
+            string strDev;
+            int    item;
+
+            parameters:
+            while(true)
+            {
+                System.Console.Clear();
+                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Parameters for SET FEATURES command:");
+                DicConsole.WriteLine("Cylinder: {0}",     cylinder);
+                DicConsole.WriteLine("Head: {0}",         head);
+                DicConsole.WriteLine("Sector: {0}",       sector);
+                DicConsole.WriteLine("Sector count: {0}", sectorCount);
+                DicConsole.WriteLine("Feature: 0x{0:X2}", feature);
+                DicConsole.WriteLine();
+                DicConsole.WriteLine("Choose what to do:");
+                DicConsole.WriteLine("1.- Change parameters.");
+                DicConsole.WriteLine("2.- Send command with these parameters.");
+                DicConsole.WriteLine("0.- Return to CHS ATA commands menu.");
+
+                strDev = System.Console.ReadLine();
+                if(!int.TryParse(strDev, out item))
+                {
+                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    System.Console.ReadKey();
+                    continue;
+                }
+
+                switch(item)
+                {
+                    case 0:
+                        DicConsole.WriteLine("Returning to CHS ATA commands menu...");
+                        return;
+                    case 1:
+                        DicConsole.Write("What cylinder?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!ushort.TryParse(strDev, out cylinder))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            cylinder = 0;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+
+                        DicConsole.Write("What head?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!byte.TryParse(strDev, out head))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            head = 0;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+
+                        if(head > 15)
+                        {
+                            DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
+                            head = 15;
+                        }
+
+                        DicConsole.Write("What sector?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!byte.TryParse(strDev, out sector))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            sector = 0;
+                            System.Console.ReadKey();
+                        }
+
+                        DicConsole.Write("What sector count?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!byte.TryParse(strDev, out sectorCount))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            sectorCount = 0;
+                            System.Console.ReadKey();
+                        }
+
+                        DicConsole.Write("What feature?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!byte.TryParse(strDev, out feature))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            feature = 0;
+                            System.Console.ReadKey();
+                        }
+
+                        break;
+                    case 2: goto start;
+                }
+            }
+
+            start:
+            System.Console.Clear();
+            bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters, cylinder, head, sector, dev.Timeout,
+                                  out double duration);
+
+            menu:
+            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Sending SET FEATURES to the device:");
+            DicConsole.WriteLine("Command took {0} ms.", duration);
+            DicConsole.WriteLine("Sense is {0}.",        sense);
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Choose what to do:");
+            DicConsole.WriteLine("1.- Decode error registers.");
+            DicConsole.WriteLine("2.- Send command again.");
+            DicConsole.WriteLine("3.- Change parameters.");
+            DicConsole.WriteLine("0.- Return to CHS ATA commands menu.");
+            DicConsole.Write("Choose: ");
+
+            strDev = System.Console.ReadLine();
+            if(!int.TryParse(strDev, out item))
+            {
+                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                goto menu;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    DicConsole.WriteLine("Returning to CHS ATA commands menu...");
+                    return;
+                case 1:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("SET FEATURES status registers:");
                     DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
