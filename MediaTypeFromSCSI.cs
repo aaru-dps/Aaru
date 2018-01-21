@@ -209,6 +209,7 @@ namespace DiscImageChef.CommonTypes
                                 {
                                     switch(blocks)
                                     {
+                                        case 310352: // Found in real media
                                         case 318988:
                                         case 320332:
                                         case 321100:  return MediaType.ECMA_239;
@@ -325,6 +326,7 @@ namespace DiscImageChef.CommonTypes
                                 {
                                     switch(blocks)
                                     {
+                                        case 310352: // Found in real media
                                         case 318988:
                                         case 320332:
                                         case 321100:  return MediaType.ECMA_239;
@@ -1433,6 +1435,7 @@ namespace DiscImageChef.CommonTypes
                         {
                             switch(blocks)
                             {
+                                case 310352: // Found in real media
                                 case 318988:
                                 case 320332:
                                 case 321100:  return MediaType.ECMA_239;
