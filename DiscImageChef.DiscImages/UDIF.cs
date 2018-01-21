@@ -431,9 +431,6 @@ namespace DiscImageChef.DiscImages
                             case CHUNK_TYPE_KENCODE:
                                 throw new
                                     ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                            case CHUNK_TYPE_RLE:
-                                throw new
-                                    ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
                             case CHUNK_TYPE_LZH:
                                 throw new
                                     ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
