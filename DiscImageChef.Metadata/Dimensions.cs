@@ -75,7 +75,6 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.ECMA_99_26:
                 case CommonTypes.MediaType.FDFORMAT_525_DD:
                 case CommonTypes.MediaType.FDFORMAT_525_HD:
-                case CommonTypes.MediaType.SHARP_525:
                     // According to ECMA-99 et al
                     dmns.Height = 133.3;
                     dmns.HeightSpecified = true;
@@ -101,14 +100,10 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.CBM_35_DD:
                 case CommonTypes.MediaType.CBM_AMIGA_35_DD:
                 case CommonTypes.MediaType.CBM_AMIGA_35_HD:
-                case CommonTypes.MediaType.ECMA_100:
-                case CommonTypes.MediaType.ECMA_125:
-                case CommonTypes.MediaType.ECMA_147:
                 case CommonTypes.MediaType.FDFORMAT_35_DD:
                 case CommonTypes.MediaType.FDFORMAT_35_HD:
                 case CommonTypes.MediaType.NEC_35_HD_8:
                 case CommonTypes.MediaType.NEC_35_HD_15:
-                case CommonTypes.MediaType.SHARP_35:
                 case CommonTypes.MediaType.Floptical:
                 case CommonTypes.MediaType.HiFD:
                 case CommonTypes.MediaType.UHD144:

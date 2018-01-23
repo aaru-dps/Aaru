@@ -98,16 +98,11 @@ namespace DiscImageChef.Filesystems.CPM
                 case MediaType.NEC_525_HD:
                 case MediaType.NEC_35_HD_8:
                 case MediaType.NEC_35_HD_15:
-                case MediaType.SHARP_525:
                 case MediaType.SHARP_525_9:
-                case MediaType.SHARP_35:
                 case MediaType.SHARP_35_9:
                 case MediaType.ECMA_99_8:
                 case MediaType.ECMA_99_15:
                 case MediaType.ECMA_99_26:
-                case MediaType.ECMA_100:
-                case MediaType.ECMA_125:
-                case MediaType.ECMA_147:
                 case MediaType.ECMA_54:
                 case MediaType.ECMA_59:
                 case MediaType.ECMA_66:
