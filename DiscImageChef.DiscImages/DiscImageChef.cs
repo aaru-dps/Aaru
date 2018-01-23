@@ -84,30 +84,39 @@ namespace DiscImageChef.DiscImages
     // TODO: Work in progress
     public class DiscImageChef : IWritableImage
     {
-        const ulong  DIC_MAGIC = 0x544D464444434944;
-        MemoryStream blockStream;
-        SHA256       checksumProvider;
-        LzmaStream   compressedBlockStream;
+        const ulong DIC_MAGIC              = 0x544D464444434944;
+        const byte  DICF_VERSION           = 0;
+        const uint  MAX_CACHE_SIZE         = 256 * 1024 * 1024;
+        const int   LZMA_PROPERTIES_LENGTH = 5;
+        const int   MAX_DDT_ENTRY_CACHE    = 16000000;
 
+        Dictionary<ulong, byte[]>        blockCache;
+        Dictionary<ulong, BlockHeader>   blockHeaderCache;
+        MemoryStream                     blockStream;
+        SHA256                           checksumProvider;
+        LzmaStream                       compressedBlockStream;
         Crc64Context                     crc64;
         BlockHeader                      currentBlockHeader;
+        uint                             currentBlockOffset;
+        uint                             currentCacheSize;
+        Dictionary<ulong, ulong>         ddtEntryCache;
         Dictionary<byte[], ulong>        deduplicationTable;
         GeometryBlock                    geometryBlock;
         DicHeader                        header;
+        ImageInfo                        imageInfo;
         Stream                           imageStream;
         List<IndexEntry>                 index;
         bool                             inMemoryDdt;
         Dictionary<MediaTagType, byte[]> mediaTags;
         long                             outMemoryDdtPosition;
-
-        byte    shift;
-        byte[]  structureBytes;
-        IntPtr  structurePointer;
-        ulong[] userDataDdt;
+        byte                             shift;
+        byte[]                           structureBytes;
+        IntPtr                           structurePointer;
+        ulong[]                          userDataDdt;
 
         public DiscImageChef()
         {
-            Info = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags    = new List<SectorTagType>(),
                 ReadableMediaTags     = new List<MediaTagType>(),
@@ -132,8 +141,8 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-        public ImageInfo       Info       { get; private set; }
-        public string          Name       => "DiscImageChef format plugin";
+        public ImageInfo       Info       => imageInfo;
+        public string          Name       => "DiscImageChef format";
         public Guid            Id         => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
         public string          Format     => "DiscImageChef";
         public List<Partition> Partitions { get; }
@@ -160,7 +169,256 @@ namespace DiscImageChef.DiscImages
 
         public bool Open(IFilter imageFilter)
         {
-            throw new NotImplementedException();
+            imageStream = imageFilter.GetDataForkStream();
+            imageStream.Seek(0, SeekOrigin.Begin);
+
+            if(imageStream.Length < 512) return false;
+
+            header         = new DicHeader();
+            structureBytes = new byte[Marshal.SizeOf(header)];
+            imageStream.Read(structureBytes, 0, structureBytes.Length);
+            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(header));
+            header = (DicHeader)Marshal.PtrToStructure(structurePointer, typeof(DicHeader));
+            Marshal.FreeHGlobal(structurePointer);
+
+            if(header.imageMajorVersion > DICF_VERSION)
+                throw new FeatureUnsupportedImageException($"Image version {header.imageMajorVersion} not recognized.");
+
+            imageInfo.Application        = header.application;
+            imageInfo.ApplicationVersion = $"{header.applicationMajorVersion}.{header.applicationMinorVersion}";
+            imageInfo.Version            = $"{header.imageMajorVersion}.{header.imageMinorVersion}";
+            imageInfo.MediaType          = header.mediaType;
+
+            imageStream.Position  = (long)header.indexOffset;
+            IndexHeader idxHeader = new IndexHeader();
+            structureBytes        = new byte[Marshal.SizeOf(idxHeader)];
+            imageStream.Read(structureBytes, 0, structureBytes.Length);
+            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(idxHeader));
+            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(idxHeader));
+            idxHeader = (IndexHeader)Marshal.PtrToStructure(structurePointer, typeof(IndexHeader));
+            Marshal.FreeHGlobal(structurePointer);
+
+            if(idxHeader.identifier != BlockType.Index) throw new FeatureUnsupportedImageException("Index not found!");
+
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Index at {0} contains {1} entries",
+                                      header.indexOffset, idxHeader.entries);
+
+            index = new List<IndexEntry>();
+            for(ushort i = 0; i < idxHeader.entries; i++)
+            {
+                IndexEntry entry = new IndexEntry();
+                structureBytes   = new byte[Marshal.SizeOf(entry)];
+                imageStream.Read(structureBytes, 0, structureBytes.Length);
+                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(entry));
+                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(entry));
+                entry = (IndexEntry)Marshal.PtrToStructure(structurePointer, typeof(IndexEntry));
+                Marshal.FreeHGlobal(structurePointer);
+                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                          "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
+                                          entry.dataType, entry.offset);
+                index.Add(entry);
+            }
+
+            bool foundUserDataDdt = false;
+            mediaTags             = new Dictionary<MediaTagType, byte[]>();
+            foreach(IndexEntry entry in index)
+            {
+                imageStream.Position = (long)entry.offset;
+                switch(entry.blockType)
+                {
+                    // TODO: Non-deduplicatable sector tags are data blocks
+                    case BlockType.DataBlock:
+                        // NOP block, skip
+                        if(entry.dataType == DataType.NoData ||
+                           // Unused, skip
+                           entry.dataType == DataType.UserData) break;
+
+                        imageStream.Position = (long)entry.offset;
+
+                        BlockHeader blockHeader = new BlockHeader();
+                        structureBytes          = new byte[Marshal.SizeOf(blockHeader)];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(blockHeader));
+                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(blockHeader));
+                        blockHeader = (BlockHeader)Marshal.PtrToStructure(structurePointer, typeof(BlockHeader));
+                        Marshal.FreeHGlobal(structurePointer);
+                        imageInfo.ImageSize = blockHeader.cmpLength;
+
+                        if(blockHeader.identifier != entry.blockType)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Incorrect identifier for data block at position {0}",
+                                                      entry.offset);
+                            break;
+                        }
+
+                        if(blockHeader.type != entry.dataType)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Expected block with data type {0} at position {1} but found data type {2}",
+                                                      entry.dataType, entry.offset, blockHeader.type);
+                            break;
+                        }
+
+                        byte[]       data;
+                        MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Found media tag {0} at position {1}",
+                                                  mediaTagType, entry.offset);
+
+                        if(blockHeader.compression == CompressionType.Lzma)
+                        {
+                            byte[] compressedTag  = new byte[blockHeader.cmpLength];
+                            byte[] lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                            imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                            imageStream.Read(compressedTag,  0, (int)blockHeader.cmpLength);
+                            MemoryStream compressedTagMs = new MemoryStream(compressedTag);
+                            LzmaStream   lzmaBlock       = new LzmaStream(lzmaProperties, compressedTagMs);
+                            data                         = new byte[blockHeader.length];
+                            lzmaBlock.Read(data, 0, (int)blockHeader.length);
+                            lzmaBlock.Close();
+                            compressedTagMs.Close();
+                            compressedTag = null;
+                        }
+                        else if(blockHeader.compression == CompressionType.None)
+                        {
+                            data = new byte[blockHeader.length];
+                            imageStream.Read(data, 0, (int)blockHeader.length);
+                        }
+                        else
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Found unknown compression type {0}, continuing...",
+                                                      (ushort)blockHeader.compression);
+                            break;
+                        }
+
+                        Crc64Context.Data(data, out byte[] blockCrc);
+                        if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                      BitConverter.ToUInt64(blockCrc, 0), blockHeader.crc64);
+                            break;
+                        }
+
+                        if(mediaTags.ContainsKey(mediaTagType))
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Media tag type {0} duplicated, removing previous entry...",
+                                                      mediaTagType);
+
+                            mediaTags.Remove(mediaTagType);
+                        }
+
+                        mediaTags.Add(mediaTagType, data);
+                        break;
+                    case BlockType.DeDuplicationTable:
+                        // Only user data deduplication tables are used right now
+                        if(entry.dataType != DataType.UserData) break;
+
+                        DdtHeader ddtHeader = new DdtHeader();
+                        structureBytes      = new byte[Marshal.SizeOf(ddtHeader)];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
+                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
+                        ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
+                        Marshal.FreeHGlobal(structurePointer);
+                        imageInfo.ImageSize = ddtHeader.cmpLength;
+
+                        if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
+
+                        // TODO: Check CRC64
+                        imageInfo.Sectors = ddtHeader.entries;
+                        shift             = ddtHeader.shift;
+
+                        switch(ddtHeader.compression)
+                        {
+                            case CompressionType.Lzma:
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
+                                DateTime ddtStart       = DateTime.UtcNow;
+                                byte[]   compressedDdt  = new byte[ddtHeader.cmpLength];
+                                byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                imageStream.Read(compressedDdt,  0, (int)ddtHeader.cmpLength);
+                                MemoryStream compressedDdtMs = new MemoryStream(compressedDdt);
+                                LzmaStream   lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
+                                byte[]       decompressedDdt = new byte[ddtHeader.length];
+                                lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
+                                lzmaDdt.Close();
+                                compressedDdtMs.Close();
+                                compressedDdt = null;
+                                userDataDdt   = new ulong[ddtHeader.entries];
+                                for(ulong i = 0; i < ddtHeader.entries; i++)
+                                    userDataDdt[i] = BitConverter.ToUInt64(decompressedDdt, (int)(i * sizeof(ulong)));
+                                decompressedDdt    = null;
+                                DateTime ddtEnd    = DateTime.UtcNow;
+                                inMemoryDdt        = true;
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                          "Took {0} seconds to decompress DDT",
+                                                          (ddtEnd - ddtStart).TotalSeconds);
+                                break;
+                            case CompressionType.None:
+                                inMemoryDdt          = false;
+                                outMemoryDdtPosition = (long)entry.offset;
+                                break;
+                            default:
+                                throw new
+                                    ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                        }
+
+                        foundUserDataDdt = true;
+                        break;
+                    case BlockType.GeometryBlock:
+                        geometryBlock  = new GeometryBlock();
+                        structureBytes = new byte[Marshal.SizeOf(geometryBlock)];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(geometryBlock));
+                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(geometryBlock));
+                        geometryBlock = (GeometryBlock)Marshal.PtrToStructure(structurePointer, typeof(GeometryBlock));
+                        Marshal.FreeHGlobal(structurePointer);
+                        if(geometryBlock.identifier == BlockType.GeometryBlock)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Geometry set to {0} cylinders {1} heads {2} sectors per track",
+                                                      geometryBlock.cylinders, geometryBlock.heads,
+                                                      geometryBlock.sectorsPerTrack);
+                            imageInfo.Cylinders       = geometryBlock.cylinders;
+                            imageInfo.Heads           = geometryBlock.heads;
+                            imageInfo.SectorsPerTrack = geometryBlock.sectorsPerTrack;
+                        }
+
+                        break;
+                }
+            }
+
+            if(!foundUserDataDdt) throw new ImageNotSupportedException("Could not find user data deduplication table.");
+
+            // TODO: Sector size!
+            imageInfo.SectorSize = 512;
+
+            // TODO: Timestamps in header?
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            // TODO: Metadata
+            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            // TODO: Get from media type
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            // TODO: Calculate
+            //imageInfo.ImageSize            = qHdr.size;
+            // TODO: If no geometry
+            /*imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
+            imageInfo.Heads           = 16;
+            imageInfo.SectorsPerTrack = 63;*/
+
+            // Initialize caches
+            blockCache                     = new Dictionary<ulong, byte[]>();
+            blockHeaderCache               = new Dictionary<ulong, BlockHeader>();
+            currentCacheSize               = 0;
+            if(!inMemoryDdt) ddtEntryCache = new Dictionary<ulong, ulong>();
+
+            return true;
         }
 
         public byte[] ReadDiskTag(MediaTagType tag)
@@ -172,7 +430,75 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            throw new NotImplementedException();
+            if(sectorAddress > imageInfo.Sectors - 1)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      $"Sector address {sectorAddress} not found");
+
+            ulong ddtEntry    = GetDdtEntry(sectorAddress);
+            uint  offsetMask  = (uint)((1 << shift) - 1);
+            ulong offset      = ddtEntry & offsetMask;
+            ulong blockOffset = ddtEntry >> shift;
+
+            // Partially written image... as we can't know the real sector size just assume it's common :/
+            if(ddtEntry == 0) return new byte[imageInfo.SectorSize];
+
+            byte[] sector;
+
+            if(blockCache.TryGetValue(blockOffset, out byte[] block) &&
+               blockHeaderCache.TryGetValue(blockOffset, out BlockHeader blockHeader))
+            {
+                sector = new byte[blockHeader.sectorSize];
+                Array.Copy(block, (long)(offset * blockHeader.sectorSize), sector, 0, blockHeader.sectorSize);
+                return sector;
+            }
+
+            imageStream.Position = (long)blockOffset;
+            blockHeader          = new BlockHeader();
+            structureBytes       = new byte[Marshal.SizeOf(blockHeader)];
+            imageStream.Read(structureBytes, 0, structureBytes.Length);
+            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(blockHeader));
+            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(blockHeader));
+            blockHeader = (BlockHeader)Marshal.PtrToStructure(structurePointer, typeof(BlockHeader));
+            Marshal.FreeHGlobal(structurePointer);
+
+            switch(blockHeader.compression)
+            {
+                case CompressionType.None:
+                    block = new byte[blockHeader.length];
+                    imageStream.Read(block, 0, (int)blockHeader.length);
+                    break;
+                case CompressionType.Lzma:
+                    byte[] compressedBlock = new byte[blockHeader.cmpLength];
+                    byte[] lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
+                    imageStream.Read(lzmaProperties,  0, LZMA_PROPERTIES_LENGTH);
+                    imageStream.Read(compressedBlock, 0, (int)blockHeader.cmpLength);
+                    MemoryStream compressedBlockMs = new MemoryStream(compressedBlock);
+                    LzmaStream   lzmaBlock         = new LzmaStream(lzmaProperties, compressedBlockMs);
+                    block                          = new byte[blockHeader.length];
+                    lzmaBlock.Read(block, 0, (int)blockHeader.length);
+                    lzmaBlock.Close();
+                    compressedBlockMs.Close();
+                    compressedBlock = null;
+                    break;
+                default:
+                    throw new
+                        ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)blockHeader.compression}");
+            }
+
+            if(currentCacheSize + blockHeader.length >= MAX_CACHE_SIZE)
+            {
+                currentCacheSize = 0;
+                blockHeaderCache = new Dictionary<ulong, BlockHeader>();
+                blockCache       = new Dictionary<ulong, byte[]>();
+            }
+
+            currentCacheSize += blockHeader.length;
+            blockHeaderCache.Add(blockOffset, blockHeader);
+            blockCache.Add(blockOffset, block);
+
+            sector = new byte[blockHeader.sectorSize];
+            Array.Copy(block, (long)(offset * blockHeader.sectorSize), sector, 0, blockHeader.sectorSize);
+            return sector;
         }
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
@@ -192,7 +518,22 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            throw new NotImplementedException();
+            if(sectorAddress > imageInfo.Sectors - 1)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      $"Sector address {sectorAddress} not found");
+
+            if(sectorAddress + length > imageInfo.Sectors)
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+
+            MemoryStream ms = new MemoryStream();
+
+            for(uint i = 0; i < length; i++)
+            {
+                byte[] sector = ReadSector(sectorAddress + i);
+                ms.Write(sector, 0, sector.Length);
+            }
+
+            return ms.ToArray();
         }
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
@@ -318,7 +659,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Got a shift of {0} for {1} sectors per block",
                                       shift, oldSectorsPerBlock);
 
-            Info = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
 
             try { imageStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
@@ -334,7 +675,7 @@ namespace DiscImageChef.DiscImages
             {
                 identifier              = DIC_MAGIC,
                 application             = "DiscImageChef",
-                imageMajorVersion       = 0,
+                imageMajorVersion       = DICF_VERSION,
                 imageMinorVersion       = 0,
                 applicationMajorVersion = 4,
                 applicationMinorVersion = 0,
@@ -433,12 +774,12 @@ namespace DiscImageChef.DiscImages
             }
 
             // Close current block first
-            if(blockStream                                                   != null &&
-               (currentBlockHeader.sectorSize                                != data.Length ||
-                compressedBlockStream.Length / currentBlockHeader.sectorSize == 1 << shift))
+            if(blockStream                    != null &&
+               (currentBlockHeader.sectorSize != data.Length || currentBlockOffset == 1 << shift))
             {
-                currentBlockHeader.length = (uint)compressedBlockStream.Length;
+                currentBlockHeader.length = currentBlockOffset * currentBlockHeader.sectorSize;
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
+                byte[] lzmaProperties     = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
                 currentBlockHeader.cmpLength = (uint)blockStream.Length;
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
@@ -451,8 +792,10 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
+                imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-                blockStream = null;
+                blockStream        = null;
+                currentBlockOffset = 0;
             }
 
             // No block set
@@ -471,12 +814,12 @@ namespace DiscImageChef.DiscImages
                 crc64.Init();
             }
 
-            long  blockOffset = compressedBlockStream.Position / currentBlockHeader.sectorSize;
-            ulong ddtEntry    = (ulong)((imageStream.Position << shift) + blockOffset);
+            ulong ddtEntry = (ulong)((imageStream.Position << shift) + currentBlockOffset);
             deduplicationTable.Add(hash, ddtEntry);
             compressedBlockStream.Write(data, 0, data.Length);
             SetDdtEntry(sectorAddress, ddtEntry);
             crc64.Update(data);
+            currentBlockOffset++;
 
             ErrorMessage = "";
             return true;
@@ -548,8 +891,9 @@ namespace DiscImageChef.DiscImages
             // Close current block first
             if(blockStream != null)
             {
-                currentBlockHeader.length = (uint)compressedBlockStream.Length;
+                currentBlockHeader.length = currentBlockOffset * currentBlockHeader.sectorSize;
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
+                byte[] lzmaProperties     = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
                 currentBlockHeader.cmpLength = (uint)blockStream.Length;
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
@@ -562,6 +906,7 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
+                imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                 blockStream = null;
             }
@@ -594,11 +939,12 @@ namespace DiscImageChef.DiscImages
                 blockStream           = new MemoryStream();
                 compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
                 compressedBlockStream.Write(mediaTag.Value, 0, mediaTag.Value.Length);
+                byte[] lzmaProperties = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
                 byte[] tagData;
 
                 // Not compressible
-                if(blockStream.Length >= mediaTag.Value.Length)
+                if(blockStream.Length + LZMA_PROPERTIES_LENGTH >= mediaTag.Value.Length)
                 {
                     tagBlock.cmpLength   = tagBlock.length;
                     tagBlock.cmpCrc64    = tagBlock.crc64;
@@ -623,7 +969,9 @@ namespace DiscImageChef.DiscImages
                 Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
-                imageStream.Write(tagData,        0, tagData.Length);
+                if(tagBlock.compression == CompressionType.Lzma)
+                    imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
+                imageStream.Write(tagData,            0, tagData.Length);
 
                 index.Add(idxEntry);
             }
@@ -655,7 +1003,7 @@ namespace DiscImageChef.DiscImages
                 idxEntry = new IndexEntry
                 {
                     blockType = BlockType.DeDuplicationTable,
-                    dataType  = DataType.NoData,
+                    dataType  = DataType.UserData,
                     offset    = (ulong)imageStream.Position
                 };
 
@@ -683,6 +1031,7 @@ namespace DiscImageChef.DiscImages
                     compressedBlockStream.Write(ddtEntry, 0, ddtEntry.Length);
                 }
 
+                byte[] lzmaProperties = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
                 ddtHeader.cmpLength = (uint)blockStream.Length;
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
@@ -695,6 +1044,7 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
+                imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                 blockStream           = null;
                 compressedBlockStream = null;
@@ -792,6 +1142,26 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
+        ulong GetDdtEntry(ulong sectorAddress)
+        {
+            if(inMemoryDdt) return userDataDdt[sectorAddress];
+
+            if(ddtEntryCache.TryGetValue(sectorAddress, out ulong entry)) return entry;
+
+            long oldPosition     = imageStream.Position;
+            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf(typeof(DdtHeader));
+            imageStream.Position += (long)(sectorAddress * sizeof(ulong));
+            byte[] temp          = new byte[sizeof(ulong)];
+            imageStream.Read(temp, 0, sizeof(ulong));
+            imageStream.Position = oldPosition;
+            entry                = BitConverter.ToUInt64(temp, 0);
+
+            if(ddtEntryCache.Count >= MAX_DDT_ENTRY_CACHE) ddtEntryCache.Clear();
+
+            ddtEntryCache.Add(sectorAddress, entry);
+            return entry;
+        }
+
         void SetDdtEntry(ulong sectorAddress, ulong pointer)
         {
             if(inMemoryDdt)
@@ -801,10 +1171,85 @@ namespace DiscImageChef.DiscImages
             }
 
             long oldPosition     = imageStream.Position;
-            imageStream.Position =  outMemoryDdtPosition;
+            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf(typeof(DdtHeader));
             imageStream.Position += (long)(sectorAddress * sizeof(ulong));
             imageStream.Write(BitConverter.GetBytes(pointer), 0, sizeof(ulong));
             imageStream.Position = oldPosition;
+        }
+
+        static MediaTagType GetMediaTagTypeForDataType(DataType type)
+        {
+            switch(type)
+            {
+                case DataType.CompactDiscPartialToc:            return MediaTagType.CD_TOC;
+                case DataType.CompactDiscSessionInfo:           return MediaTagType.CD_SessionInfo;
+                case DataType.CompactDiscToc:                   return MediaTagType.CD_FullTOC;
+                case DataType.CompactDiscPma:                   return MediaTagType.CD_PMA;
+                case DataType.CompactDiscAtip:                  return MediaTagType.CD_ATIP;
+                case DataType.CompactDiscLeadInCdText:          return MediaTagType.CD_TEXT;
+                case DataType.DvdPfi:                           return MediaTagType.DVD_PFI;
+                case DataType.DvdLeadInCmi:                     return MediaTagType.DVD_CMI;
+                case DataType.DvdDiscKey:                       return MediaTagType.DVD_DiscKey;
+                case DataType.DvdBca:                           return MediaTagType.DVD_BCA;
+                case DataType.DvdDmi:                           return MediaTagType.DVD_DMI;
+                case DataType.DvdMediaIdentifier:               return MediaTagType.DVD_MediaIdentifier;
+                case DataType.DvdMediaKeyBlock:                 return MediaTagType.DVD_MKB;
+                case DataType.DvdRamDds:                        return MediaTagType.DVDRAM_DDS;
+                case DataType.DvdRamMediumStatus:               return MediaTagType.DVDRAM_MediumStatus;
+                case DataType.DvdRamSpareArea:                  return MediaTagType.DVDRAM_SpareArea;
+                case DataType.DvdRRmd:                          return MediaTagType.DVDR_RMD;
+                case DataType.DvdRPrerecordedInfo:              return MediaTagType.DVDR_PreRecordedInfo;
+                case DataType.DvdRMediaIdentifier:              return MediaTagType.DVDR_MediaIdentifier;
+                case DataType.DvdRPfi:                          return MediaTagType.DVDR_PFI;
+                case DataType.DvdAdip:                          return MediaTagType.DVD_ADIP;
+                case DataType.HdDvdCpi:                         return MediaTagType.HDDVD_CPI;
+                case DataType.HdDvdMediumStatus:                return MediaTagType.HDDVD_MediumStatus;
+                case DataType.DvdDlLayerCapacity:               return MediaTagType.DVDDL_LayerCapacity;
+                case DataType.DvdDlMiddleZoneAddress:           return MediaTagType.DVDDL_MiddleZoneAddress;
+                case DataType.DvdDlJumpIntervalSize:            return MediaTagType.DVDDL_JumpIntervalSize;
+                case DataType.DvdDlManualLayerJumpLba:          return MediaTagType.DVDDL_ManualLayerJumpLBA;
+                case DataType.BlurayDi:                         return MediaTagType.BD_DI;
+                case DataType.BlurayBca:                        return MediaTagType.BD_BCA;
+                case DataType.BlurayDds:                        return MediaTagType.BD_DDS;
+                case DataType.BlurayCartridgeStatus:            return MediaTagType.BD_CartridgeStatus;
+                case DataType.BluraySpareArea:                  return MediaTagType.BD_SpareArea;
+                case DataType.AacsVolumeIdentifier:             return MediaTagType.AACS_VolumeIdentifier;
+                case DataType.AacsSerialNumber:                 return MediaTagType.AACS_SerialNumber;
+                case DataType.AacsMediaIdentifier:              return MediaTagType.AACS_MediaIdentifier;
+                case DataType.AacsMediaKeyBlock:                return MediaTagType.AACS_MKB;
+                case DataType.AacsDataKeys:                     return MediaTagType.AACS_DataKeys;
+                case DataType.AacsLbaExtents:                   return MediaTagType.AACS_LBAExtents;
+                case DataType.CprmMediaKeyBlock:                return MediaTagType.AACS_CPRM_MKB;
+                case DataType.HybridRecognizedLayers:           return MediaTagType.Hybrid_RecognizedLayers;
+                case DataType.ScsiMmcWriteProtection:           return MediaTagType.MMC_WriteProtection;
+                case DataType.ScsiMmcDiscInformation:           return MediaTagType.MMC_DiscInformation;
+                case DataType.ScsiMmcTrackResourcesInformation: return MediaTagType.MMC_TrackResourcesInformation;
+                case DataType.ScsiMmcPowResourcesInformation:   return MediaTagType.MMC_POWResourcesInformation;
+                case DataType.ScsiInquiry:                      return MediaTagType.SCSI_INQUIRY;
+                case DataType.ScsiModePage2A:                   return MediaTagType.SCSI_MODEPAGE_2A;
+                case DataType.AtaIdentify:                      return MediaTagType.ATA_IDENTIFY;
+                case DataType.AtapiIdentify:                    return MediaTagType.ATAPI_IDENTIFY;
+                case DataType.PcmciaCis:                        return MediaTagType.PCMCIA_CIS;
+                case DataType.SecureDigitalCid:                 return MediaTagType.SD_CID;
+                case DataType.SecureDigitalCsd:                 return MediaTagType.SD_CSD;
+                case DataType.SecureDigitalScr:                 return MediaTagType.SD_SCR;
+                case DataType.SecureDigitalOcr:                 return MediaTagType.SD_OCR;
+                case DataType.MultiMediaCardCid:                return MediaTagType.MMC_CID;
+                case DataType.MultiMediaCardCsd:                return MediaTagType.MMC_CSD;
+                case DataType.MultiMediaCardOcr:                return MediaTagType.MMC_OCR;
+                case DataType.MultiMediaCardExtendedCsd:        return MediaTagType.MMC_ExtendedCSD;
+                case DataType.XboxSecuritySector:               return MediaTagType.Xbox_SecuritySector;
+                case DataType.FloppyLeadOut:                    return MediaTagType.Floppy_LeadOut;
+                case DataType.DvdDiscControlBlock:              return MediaTagType.DCB;
+                case DataType.CompactDiscLeadIn:                return MediaTagType.CD_LeadIn;
+                case DataType.CompactDiscLeadOut:               return MediaTagType.CD_LeadOut;
+                case DataType.ScsiModeSense6:                   return MediaTagType.SCSI_MODESENSE_6;
+                case DataType.ScsiModeSense10:                  return MediaTagType.SCSI_MODESENSE_10;
+                case DataType.UsbDescriptors:                   return MediaTagType.USB_Descriptors;
+                case DataType.XboxDmi:                          return MediaTagType.Xbox_DMI;
+                case DataType.XboxPfi:                          return MediaTagType.Xbox_PFI;
+                default:                                        throw new ArgumentOutOfRangeException();
+            }
         }
 
         static DataType GetDataTypeForMediaTag(MediaTagType tag)
