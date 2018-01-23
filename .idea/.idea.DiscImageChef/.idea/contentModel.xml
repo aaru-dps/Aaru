@@ -423,6 +423,7 @@
         <e p="DIM.cs" t="Include" />
         <e p="DiscFerret.cs" t="Include" />
         <e p="DiscImageChef.DiscImages.csproj" t="IncludeRecursive" />
+        <e p="DiscImageChef.cs" t="Include" />
         <e p="DiscJuggler.cs" t="Include" />
         <e p="DiskCopy42.cs" t="Include" />
         <e p="DriDiskCopy.cs" t="Include" />
