@@ -113,6 +113,8 @@ namespace DiscImageChef.DiscImages
         byte                             shift;
         byte[]                           structureBytes;
         IntPtr                           structurePointer;
+        Dictionary<byte, byte>           trackFlags;
+        Dictionary<byte, string>         trackIsrcs;
         ulong[]                          userDataDdt;
 
         public DiscImageChef()
@@ -146,9 +148,9 @@ namespace DiscImageChef.DiscImages
         public string          Name       => "DiscImageChef format";
         public Guid            Id         => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
         public string          Format     => "DiscImageChef";
-        public List<Partition> Partitions { get; }
+        public List<Partition> Partitions { get; private set; }
         public List<Track>     Tracks     { get; private set; }
-        public List<Session>   Sessions   { get; }
+        public List<Session>   Sessions   { get; private set; }
 
         public bool Identify(IFilter imageFilter)
         {
@@ -569,6 +571,59 @@ namespace DiscImageChef.DiscImages
                         }
 
                         break;
+                    case BlockType.TracksBlock:
+                        TracksHeader tracksHeader = new TracksHeader();
+                        structureBytes            = new byte[Marshal.SizeOf(tracksHeader)];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(tracksHeader));
+                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(tracksHeader));
+                        tracksHeader = (TracksHeader)Marshal.PtrToStructure(structurePointer, typeof(TracksHeader));
+                        Marshal.FreeHGlobal(structurePointer);
+                        if(tracksHeader.identifier != BlockType.TracksBlock)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Incorrect identifier for tracks block at position {0}",
+                                                      entry.offset);
+                            break;
+                        }
+
+                        // TODO: Check CRC64
+
+                        Tracks     = new List<Track>();
+                        trackFlags = new Dictionary<byte, byte>();
+                        trackIsrcs = new Dictionary<byte, string>();
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Found {0} tracks at position {0}",
+                                                  tracksHeader.entries, entry.offset);
+
+                        for(ushort i = 0; i < tracksHeader.entries; i++)
+                        {
+                            TrackEntry trackEntry = new TrackEntry();
+                            structureBytes        = new byte[Marshal.SizeOf(trackEntry)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(trackEntry));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(trackEntry));
+                            trackEntry = (TrackEntry)Marshal.PtrToStructure(structurePointer, typeof(TrackEntry));
+                            Marshal.FreeHGlobal(structurePointer);
+
+                            Tracks.Add(new Track
+                            {
+                                TrackSequence    = trackEntry.sequence,
+                                TrackType        = trackEntry.type,
+                                TrackStartSector = (ulong)trackEntry.start,
+                                TrackEndSector   = (ulong)trackEntry.end,
+                                TrackPregap      = (ulong)trackEntry.pregap,
+                                TrackSession     = trackEntry.session,
+                                TrackFile        = imageFilter.GetFilename(),
+                                TrackFileType    = "BINARY",
+                                TrackFilter      = imageFilter
+                            });
+
+                            trackFlags.Add(trackEntry.sequence, trackEntry.flags);
+                            trackIsrcs.Add(trackEntry.sequence, trackEntry.isrc);
+                        }
+
+                        break;
                 }
             }
 
@@ -595,6 +650,79 @@ namespace DiscImageChef.DiscImages
             blockHeaderCache               = new Dictionary<ulong, BlockHeader>();
             currentCacheSize               = 0;
             if(!inMemoryDdt) ddtEntryCache = new Dictionary<ulong, ulong>();
+
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                if(Tracks == null || Tracks.Count == 0)
+                {
+                    Tracks = new List<Track>
+                    {
+                        new Track
+                        {
+                            Indexes                = new Dictionary<int, ulong>(),
+                            TrackBytesPerSector    = (int)imageInfo.SectorSize,
+                            TrackEndSector         = imageInfo.Sectors - 1,
+                            TrackFile              = imageFilter.GetFilename(),
+                            TrackFileType          = "BINARY",
+                            TrackFilter            = imageFilter,
+                            TrackRawBytesPerSector = (int)imageInfo.SectorSize,
+                            TrackSession           = 1,
+                            TrackSequence          = 1,
+                            TrackType              = TrackType.Data
+                        }
+                    };
+
+                    trackFlags = new Dictionary<byte, byte> {{1, (byte)CdFlags.DataTrack}};
+                    trackIsrcs = new Dictionary<byte, string>();
+                }
+
+                Sessions = new List<Session>();
+                for(int i = 1; i <= Tracks.Max(t => t.TrackSession); i++)
+                    Sessions.Add(new Session
+                    {
+                        SessionSequence = (ushort)i,
+                        StartTrack      = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackSequence),
+                        EndTrack        = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackSequence),
+                        StartSector     = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackStartSector),
+                        EndSector       = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackEndSector)
+                    });
+
+                ulong currentTrackOffset = 0;
+                Partitions               = new List<Partition>();
+                foreach(Track track in Tracks.OrderBy(t => t.TrackStartSector))
+                {
+                    Partitions.Add(new Partition
+                    {
+                        Sequence = track.TrackSequence,
+                        Type     = track.TrackType.ToString(),
+                        Name     = $"Track {track.TrackSequence}",
+                        Offset   = currentTrackOffset,
+                        Start    = track.TrackStartSector,
+                        Size     = (track.TrackEndSector - track.TrackStartSector + 1) *
+                                   (ulong)track.TrackBytesPerSector,
+                        Length = track.TrackEndSector - track.TrackStartSector + 1,
+                        Scheme = "Optical disc track"
+                    });
+                    currentTrackOffset += (track.TrackEndSector - track.TrackStartSector + 1) *
+                                          (ulong)track.TrackBytesPerSector;
+                }
+
+                Track[] tracks = Tracks.ToArray();
+                for(int i = 0; i < tracks.Length; i++)
+                {
+                    byte[] sector                    = ReadSector(tracks[i].TrackStartSector);
+                    tracks[i].TrackBytesPerSector    = sector.Length;
+                    tracks[i].TrackRawBytesPerSector = sector.Length;
+                }
+
+                Tracks = tracks.ToList();
+            }
+            else
+            {
+                Tracks     = null;
+                Sessions   = null;
+                Partitions = null;
+            }
 
             return true;
         }
@@ -686,12 +814,26 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            return ReadSector(trk.TrackStartSector + sectorAddress);
         }
 
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            return ReadSectorTag(trk.TrackStartSector + sectorAddress, tag);
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
@@ -721,12 +863,34 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
+
+            return ReadSectors(trk.TrackStartSector + sectorAddress, length);
         }
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
+
+            return ReadSectorsTag(trk.TrackStartSector + sectorAddress, length, tag);
         }
 
         public byte[] ReadSectorLong(ulong sectorAddress)
@@ -736,7 +900,14 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            return ReadSectorLong(trk.TrackStartSector + sectorAddress);
         }
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
@@ -746,7 +917,18 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
+
+            return ReadSectorsLong(trk.TrackStartSector + sectorAddress, length);
         }
 
         public List<Track> GetSessionTracks(Session session)
@@ -766,7 +948,14 @@ namespace DiscImageChef.DiscImages
 
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            return VerifySector(trk.TrackStartSector + sectorAddress);
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
@@ -778,7 +967,18 @@ namespace DiscImageChef.DiscImages
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out                                               List<ulong> unknownLbas)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
+            if(trk.TrackSequence                                   != track)
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+
+            if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
+
+            return VerifySectors(trk.TrackStartSector + sectorAddress, length, out failingLbas, out unknownLbas);
         }
 
         public bool? VerifyMediaImage()
@@ -837,7 +1037,13 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Got a shift of {0} for {1} sectors per block",
                                       shift, oldSectorsPerBlock);
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType    = mediaType,
+                SectorSize   = sectorSize,
+                Sectors      = sectors,
+                XmlMediaType = GetXmlMediaType(mediaType)
+            };
 
             try { imageStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
             catch(IOException e)
@@ -906,6 +1112,8 @@ namespace DiscImageChef.DiscImages
             mediaTags          = new Dictionary<MediaTagType, byte[]>();
             checksumProvider   = SHA256.Create();
             deduplicationTable = new Dictionary<byte[], ulong>();
+            trackIsrcs         = new Dictionary<byte, string>();
+            trackFlags         = new Dictionary<byte, byte>();
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -970,7 +1178,7 @@ namespace DiscImageChef.DiscImages
                     dataType  = DataType.UserData,
                     offset    = (ulong)imageStream.Position
                 });
-                
+
                 structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(currentBlockHeader));
                 structureBytes   = new byte[Marshal.SizeOf(currentBlockHeader)];
                 Marshal.StructureToPtr(currentBlockHeader, structurePointer, true);
@@ -1055,6 +1263,12 @@ namespace DiscImageChef.DiscImages
 
         public bool SetTracks(List<Track> tracks)
         {
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            {
+                ErrorMessage = "Unsupported feature";
+                return false;
+            }
+
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
@@ -1243,6 +1457,72 @@ namespace DiscImageChef.DiscImages
                 compressedBlockStream = null;
 
                 index.Add(idxEntry);
+            }
+
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && Tracks != null && Tracks.Count > 0)
+            {
+                List<TrackEntry> trackEntries = new List<TrackEntry>();
+                foreach(Track track in Tracks)
+                {
+                    trackFlags.TryGetValue((byte)track.TrackSequence, out byte flags);
+                    trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc);
+
+                    if((flags & (int)CdFlags.DataTrack) == 0 && track.TrackType != TrackType.Audio)
+                        flags += (byte)CdFlags.DataTrack;
+
+                    trackEntries.Add(new TrackEntry
+                    {
+                        sequence = (byte)track.TrackSequence,
+                        type     = track.TrackType,
+                        start    = (long)track.TrackStartSector,
+                        end      = (long)track.TrackEndSector,
+                        pregap   = (long)track.TrackPregap,
+                        session  = (byte)track.TrackSession,
+                        isrc     = isrc,
+                        flags    = flags
+                    });
+                }
+
+                if(trackEntries.Count > 0)
+                {
+                    blockStream = new MemoryStream();
+
+                    foreach(TrackEntry entry in trackEntries)
+                    {
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(entry));
+                        structureBytes   = new byte[Marshal.SizeOf(entry)];
+                        Marshal.StructureToPtr(entry, structurePointer, true);
+                        Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                        Marshal.FreeHGlobal(structurePointer);
+                        blockStream.Write(structureBytes, 0, structureBytes.Length);
+                    }
+
+                    Crc64Context.Data(blockStream.ToArray(), out byte[] trksCrc);
+                    TracksHeader trkHeader = new TracksHeader
+                    {
+                        identifier = BlockType.TracksBlock,
+                        entries    = (ushort)trackEntries.Count,
+                        crc64      = BitConverter.ToUInt64(trksCrc, 0)
+                    };
+
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing tracks to position {0}",
+                                              imageStream.Position);
+
+                    index.Add(new IndexEntry
+                    {
+                        blockType = BlockType.TracksBlock,
+                        dataType  = DataType.NoData,
+                        offset    = (ulong)imageStream.Position
+                    });
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(trkHeader));
+                    structureBytes   = new byte[Marshal.SizeOf(trkHeader)];
+                    Marshal.StructureToPtr(trkHeader, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    imageStream.Write(structureBytes,        0, structureBytes.Length);
+                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                }
             }
 
             MetadataBlock metadataBlock = new MetadataBlock();
@@ -1489,18 +1769,85 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        // TODO: Implement
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
-            ErrorMessage = "Writing sectors with tags is not yet implemented.";
-            return false;
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(sectorAddress >= imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            Track track = new Track();
+            switch(tag)
+            {
+                case SectorTagType.CdTrackFlags:
+                case SectorTagType.CdTrackIsrc:
+                    if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                    {
+                        ErrorMessage = "Incorrect tag for disk type";
+                        return false;
+                    }
+
+                    track = Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                         sectorAddress <= trk.TrackEndSector);
+                    if(track.TrackSequence                             == 0)
+                    {
+                        ErrorMessage = $"Can't found track containing {sectorAddress}";
+                        return false;
+                    }
+
+                    break;
+            }
+
+            switch(tag)
+            {
+                case SectorTagType.CdTrackFlags:
+                {
+                    if(data.Length != 1)
+                    {
+                        ErrorMessage = "Incorrect data size for track flags";
+                        return false;
+                    }
+
+                    trackFlags.Add((byte)track.TrackSequence, data[0]);
+
+                    return true;
+                }
+                case SectorTagType.CdTrackIsrc:
+                {
+                    if(data != null) trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
+                    return true;
+                }
+                default: throw new NotImplementedException();
+            }
         }
 
-        // TODO: Implement
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
-            ErrorMessage = "Writing sectors with tags is not yet implemented.";
-            return false;
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(sectorAddress + length > imageInfo.Sectors)
+            {
+                ErrorMessage = "Tried to write past image size";
+                return false;
+            }
+
+            switch(tag)
+            {
+                case SectorTagType.CdTrackFlags:
+                case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
+                default:                        throw new NotImplementedException();
+            }
         }
 
         static XmlMediaType GetXmlMediaType(MediaType type)
@@ -1860,7 +2207,8 @@ namespace DiscImageChef.DiscImages
             DeDuplicationTable = 0x48544444,
             Index              = 0x48584449,
             GeometryBlock      = 0x4D4F4547,
-            MetadataBlock      = 0x5444545D
+            MetadataBlock      = 0x5444545D,
+            TracksBlock        = 0x534B5254
         }
 
         /// <summary>Header, at start of file</summary>
@@ -1975,6 +2323,7 @@ namespace DiscImageChef.DiscImages
             public uint      sectorsPerTrack;
         }
 
+        /// <summary>Metadata block, contains metadata</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct MetadataBlock
         {
@@ -2034,6 +2383,31 @@ namespace DiscImageChef.DiscImages
             public uint driveFirmwareRevisionOffset;
             /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
             public uint driveFirmwareRevisionLength;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct TracksHeader
+        {
+            /// <summary>Identifier, <see cref="BlockType.TracksBlock" /></summary>
+            public BlockType identifier;
+            /// <summary>How many entries follow this header</summary>
+            public ushort entries;
+            /// <summary>CRC64-ECMA of the block</summary>
+            public ulong crc64;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+        struct TrackEntry
+        {
+            public byte      sequence;
+            public TrackType type;
+            public long      start;
+            public long      end;
+            public long      pregap;
+            public byte      session;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 13)]
+            public string isrc;
+            public byte   flags;
         }
     }
 }
