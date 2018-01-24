@@ -115,7 +115,7 @@ namespace DiscImageChef.Decoders
             /// <summary>
             ///     Converts this tag to Sony format
             /// </summary>
-            public SonyTag Sony()
+            public SonyTag ToSony()
             {
                 return new SonyTag
                 {
