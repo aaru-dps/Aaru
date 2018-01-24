@@ -233,9 +233,7 @@ namespace DiscImageChef.DiscImages
                     // TODO: Non-deduplicatable sector tags are data blocks
                     case BlockType.DataBlock:
                         // NOP block, skip
-                        if(entry.dataType == DataType.NoData ||
-                           // Unused, skip
-                           entry.dataType == DataType.UserData) break;
+                        if(entry.dataType == DataType.NoData) break;
 
                         imageStream.Position = (long)entry.offset;
 
@@ -247,6 +245,14 @@ namespace DiscImageChef.DiscImages
                         blockHeader = (BlockHeader)Marshal.PtrToStructure(structurePointer, typeof(BlockHeader));
                         Marshal.FreeHGlobal(structurePointer);
                         imageInfo.ImageSize += blockHeader.cmpLength;
+
+                        // Unused, skip
+                        if(entry.dataType == DataType.UserData)
+                        {
+                            if(blockHeader.sectorSize > imageInfo.SectorSize)
+                                imageInfo.SectorSize = blockHeader.sectorSize;
+                            break;
+                        }
 
                         if(blockHeader.identifier != entry.blockType)
                         {
@@ -568,17 +574,11 @@ namespace DiscImageChef.DiscImages
 
             if(!foundUserDataDdt) throw new ImageNotSupportedException("Could not find user data deduplication table.");
 
-            // TODO: Sector size!
-            imageInfo.SectorSize = 512;
-
             imageInfo.CreationTime = DateTime.FromFileTimeUtc(header.creationTime);
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image created on", imageInfo.CreationTime);
             imageInfo.LastModificationTime = DateTime.FromFileTimeUtc(header.lastWrittenTime);
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image last written on",
                                       imageInfo.LastModificationTime);
-
-            // TODO: Calculate
-            //imageInfo.ImageSize            = qHdr.size;
 
             if(geometryBlock.identifier != BlockType.GeometryBlock && imageInfo.XmlMediaType == XmlMediaType.BlockMedia)
             {
@@ -964,6 +964,13 @@ namespace DiscImageChef.DiscImages
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
                 currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64, 0);
 
+                index.Add(new IndexEntry
+                {
+                    blockType = BlockType.DataBlock,
+                    dataType  = DataType.UserData,
+                    offset    = (ulong)imageStream.Position
+                });
+                
                 structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(currentBlockHeader));
                 structureBytes   = new byte[Marshal.SizeOf(currentBlockHeader)];
                 Marshal.StructureToPtr(currentBlockHeader, structurePointer, true);
@@ -1077,6 +1084,13 @@ namespace DiscImageChef.DiscImages
                 currentBlockHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
                 currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64, 0);
+
+                index.Add(new IndexEntry
+                {
+                    blockType = BlockType.DataBlock,
+                    dataType  = DataType.UserData,
+                    offset    = (ulong)imageStream.Position
+                });
 
                 structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(currentBlockHeader));
                 structureBytes   = new byte[Marshal.SizeOf(currentBlockHeader)];
