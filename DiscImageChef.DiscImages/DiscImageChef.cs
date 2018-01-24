@@ -220,6 +220,8 @@ namespace DiscImageChef.DiscImages
                 index.Add(entry);
             }
 
+            imageInfo.ImageSize = 0;
+
             bool foundUserDataDdt = false;
             mediaTags             = new Dictionary<MediaTagType, byte[]>();
             foreach(IndexEntry entry in index)
@@ -243,7 +245,7 @@ namespace DiscImageChef.DiscImages
                         Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(blockHeader));
                         blockHeader = (BlockHeader)Marshal.PtrToStructure(structurePointer, typeof(BlockHeader));
                         Marshal.FreeHGlobal(structurePointer);
-                        imageInfo.ImageSize = blockHeader.cmpLength;
+                        imageInfo.ImageSize += blockHeader.cmpLength;
 
                         if(blockHeader.identifier != entry.blockType)
                         {
@@ -269,10 +271,10 @@ namespace DiscImageChef.DiscImages
 
                         if(blockHeader.compression == CompressionType.Lzma)
                         {
-                            byte[] compressedTag  = new byte[blockHeader.cmpLength];
+                            byte[] compressedTag  = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                             byte[] lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                             imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                            imageStream.Read(compressedTag,  0, (int)blockHeader.cmpLength);
+                            imageStream.Read(compressedTag,  0, compressedTag.Length);
                             MemoryStream compressedTagMs = new MemoryStream(compressedTag);
                             LzmaStream   lzmaBlock       = new LzmaStream(lzmaProperties, compressedTagMs);
                             data                         = new byte[blockHeader.length];
@@ -325,7 +327,7 @@ namespace DiscImageChef.DiscImages
                         Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
                         ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
                         Marshal.FreeHGlobal(structurePointer);
-                        imageInfo.ImageSize = ddtHeader.cmpLength;
+                        imageInfo.ImageSize += ddtHeader.cmpLength;
 
                         if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
 
@@ -338,10 +340,10 @@ namespace DiscImageChef.DiscImages
                             case CompressionType.Lzma:
                                 DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
                                 DateTime ddtStart       = DateTime.UtcNow;
-                                byte[]   compressedDdt  = new byte[ddtHeader.cmpLength];
+                                byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                                 byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                                 imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                imageStream.Read(compressedDdt,  0, (int)ddtHeader.cmpLength);
+                                imageStream.Read(compressedDdt,  0, compressedDdt.Length);
                                 MemoryStream compressedDdtMs = new MemoryStream(compressedDdt);
                                 LzmaStream   lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
                                 byte[]       decompressedDdt = new byte[ddtHeader.length];
@@ -468,10 +470,10 @@ namespace DiscImageChef.DiscImages
                     imageStream.Read(block, 0, (int)blockHeader.length);
                     break;
                 case CompressionType.Lzma:
-                    byte[] compressedBlock = new byte[blockHeader.cmpLength];
+                    byte[] compressedBlock = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                     byte[] lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
                     imageStream.Read(lzmaProperties,  0, LZMA_PROPERTIES_LENGTH);
-                    imageStream.Read(compressedBlock, 0, (int)blockHeader.cmpLength);
+                    imageStream.Read(compressedBlock, 0, compressedBlock.Length);
                     MemoryStream compressedBlockMs = new MemoryStream(compressedBlock);
                     LzmaStream   lzmaBlock         = new LzmaStream(lzmaProperties, compressedBlockMs);
                     block                          = new byte[blockHeader.length];
@@ -781,7 +783,7 @@ namespace DiscImageChef.DiscImages
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
                 byte[] lzmaProperties     = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
-                currentBlockHeader.cmpLength = (uint)blockStream.Length;
+                currentBlockHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
                 currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64, 0);
 
@@ -895,7 +897,7 @@ namespace DiscImageChef.DiscImages
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
                 byte[] lzmaProperties     = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
-                currentBlockHeader.cmpLength = (uint)blockStream.Length;
+                currentBlockHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
                 currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64, 0);
 
@@ -955,7 +957,7 @@ namespace DiscImageChef.DiscImages
                 {
                     tagData = blockStream.ToArray();
                     Crc64Context.Data(tagData, out tagCrc);
-                    tagBlock.cmpLength   = (uint)tagData.Length;
+                    tagBlock.cmpLength   = (uint)tagData.Length + LZMA_PROPERTIES_LENGTH;
                     tagBlock.cmpCrc64    = BitConverter.ToUInt64(tagCrc, 0);
                     tagBlock.compression = CompressionType.Lzma;
                 }
@@ -1033,7 +1035,7 @@ namespace DiscImageChef.DiscImages
 
                 byte[] lzmaProperties = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
-                ddtHeader.cmpLength = (uint)blockStream.Length;
+                ddtHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                 Crc64Context.Data(blockStream.ToArray(), out byte[] cmpCrc64);
                 ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64, 0);
 
