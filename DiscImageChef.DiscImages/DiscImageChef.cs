@@ -73,6 +73,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -392,6 +393,176 @@ namespace DiscImageChef.DiscImages
                         }
 
                         break;
+                    case BlockType.MetadataBlock:
+                        MetadataBlock metadataBlock = new MetadataBlock();
+                        structureBytes              = new byte[Marshal.SizeOf(metadataBlock)];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(metadataBlock));
+                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(metadataBlock));
+                        metadataBlock = (MetadataBlock)Marshal.PtrToStructure(structurePointer, typeof(MetadataBlock));
+                        Marshal.FreeHGlobal(structurePointer);
+
+                        if(metadataBlock.identifier != entry.blockType)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Incorrect identifier for data block at position {0}",
+                                                      entry.offset);
+                            break;
+                        }
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Found metadata block at position {0}",
+                                                  entry.offset);
+
+                        byte[] metadata      = new byte[metadataBlock.blockSize];
+                        imageStream.Position = (long)entry.offset;
+                        imageStream.Read(metadata, 0, metadata.Length);
+
+                        if(metadataBlock.mediaSequence > 0 && metadataBlock.lastMediaSequence > 0)
+                        {
+                            imageInfo.MediaSequence     = metadataBlock.mediaSequence;
+                            imageInfo.LastMediaSequence = metadataBlock.lastMediaSequence;
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Setting media sequence as {0} of {1}", imageInfo.MediaSequence,
+                                                      imageInfo.LastMediaSequence);
+                        }
+
+                        if(metadataBlock.creatorLength                               > 0 &&
+                           metadataBlock.creatorLength + metadataBlock.creatorOffset <= metadata.Length)
+                        {
+                            imageInfo.Creator = Encoding.Unicode.GetString(metadata, (int)metadataBlock.creatorOffset,
+                                                                           (int)(metadataBlock.creatorLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting creator: {0}",
+                                                      imageInfo.Creator);
+                        }
+
+                        if(metadataBlock.commentsOffset                                > 0 &&
+                           metadataBlock.commentsLength + metadataBlock.commentsOffset <= metadata.Length)
+                        {
+                            imageInfo.Comments =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.commentsOffset,
+                                                           (int)(metadataBlock.commentsLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting comments: {0}",
+                                                      imageInfo.Comments);
+                        }
+
+                        if(metadataBlock.mediaTitleOffset                                  > 0 &&
+                           metadataBlock.mediaTitleLength + metadataBlock.mediaTitleOffset <= metadata.Length)
+                        {
+                            imageInfo.MediaTitle =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaTitleOffset,
+                                                           (int)(metadataBlock.mediaTitleLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media title: {0}",
+                                                      imageInfo.MediaTitle);
+                        }
+
+                        if(metadataBlock.mediaManufacturerOffset                                         > 0 &&
+                           metadataBlock.mediaManufacturerLength + metadataBlock.mediaManufacturerOffset <=
+                           metadata.Length)
+                        {
+                            imageInfo.MediaManufacturer =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaManufacturerOffset,
+                                                           (int)(metadataBlock.mediaManufacturerLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media manufacturer: {0}",
+                                                      imageInfo.MediaManufacturer);
+                        }
+
+                        if(metadataBlock.mediaModelOffset                                  > 0 &&
+                           metadataBlock.mediaModelLength + metadataBlock.mediaModelOffset <= metadata.Length)
+                        {
+                            imageInfo.MediaModel =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaModelOffset,
+                                                           (int)(metadataBlock.mediaModelLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media model: {0}",
+                                                      imageInfo.MediaModel);
+                        }
+
+                        if(metadataBlock.mediaSerialNumberOffset                                         > 0 &&
+                           metadataBlock.mediaSerialNumberLength + metadataBlock.mediaSerialNumberOffset <=
+                           metadata.Length)
+                        {
+                            imageInfo.MediaSerialNumber =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaSerialNumberOffset,
+                                                           (int)(metadataBlock.mediaSerialNumberLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media serial number: {0}",
+                                                      imageInfo.MediaSerialNumber);
+                        }
+
+                        if(metadataBlock.mediaBarcodeOffset                                    > 0 &&
+                           metadataBlock.mediaBarcodeLength + metadataBlock.mediaBarcodeOffset <= metadata.Length)
+                        {
+                            imageInfo.MediaBarcode =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaBarcodeOffset,
+                                                           (int)(metadataBlock.mediaBarcodeLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media barcode: {0}",
+                                                      imageInfo.MediaBarcode);
+                        }
+
+                        if(metadataBlock.mediaPartNumberOffset                                       > 0 &&
+                           metadataBlock.mediaPartNumberLength + metadataBlock.mediaPartNumberOffset <= metadata.Length)
+                        {
+                            imageInfo.MediaPartNumber =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaPartNumberOffset,
+                                                           (int)(metadataBlock.mediaPartNumberLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media part number: {0}",
+                                                      imageInfo.MediaPartNumber);
+                        }
+
+                        if(metadataBlock.driveManufacturerOffset                                         > 0 &&
+                           metadataBlock.driveManufacturerLength + metadataBlock.driveManufacturerOffset <=
+                           metadata.Length)
+                        {
+                            imageInfo.DriveManufacturer =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveManufacturerOffset,
+                                                           (int)(metadataBlock.driveManufacturerLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting drive manufacturer: {0}",
+                                                      imageInfo.DriveManufacturer);
+                        }
+
+                        if(metadataBlock.driveModelOffset                                  > 0 &&
+                           metadataBlock.driveModelLength + metadataBlock.driveModelOffset <= metadata.Length)
+                        {
+                            imageInfo.DriveModel =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveModelOffset,
+                                                           (int)(metadataBlock.driveModelLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting drive model: {0}",
+                                                      imageInfo.DriveModel);
+                        }
+
+                        if(metadataBlock.driveSerialNumberOffset                                         > 0 &&
+                           metadataBlock.driveSerialNumberLength + metadataBlock.driveSerialNumberOffset <=
+                           metadata.Length)
+                        {
+                            imageInfo.DriveSerialNumber =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveSerialNumberOffset,
+                                                           (int)(metadataBlock.driveSerialNumberLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting drive serial number: {0}",
+                                                      imageInfo.DriveSerialNumber);
+                        }
+
+                        if(metadataBlock.driveFirmwareRevisionOffset > 0 && metadataBlock.driveFirmwareRevisionLength +
+                           metadataBlock.driveFirmwareRevisionOffset <= metadata.Length)
+                        {
+                            imageInfo.DriveFirmwareRevision =
+                                Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveFirmwareRevisionOffset,
+                                                           (int)(metadataBlock.driveFirmwareRevisionLength - 2));
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Setting drive firmware revision: {0}",
+                                                      imageInfo.DriveFirmwareRevision);
+                        }
+
+                        break;
                 }
             }
 
@@ -400,19 +571,24 @@ namespace DiscImageChef.DiscImages
             // TODO: Sector size!
             imageInfo.SectorSize = 512;
 
-            // TODO: Timestamps in header?
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            // TODO: Metadata
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            // TODO: Get from media type
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.CreationTime = DateTime.FromFileTimeUtc(header.creationTime);
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image created on", imageInfo.CreationTime);
+            imageInfo.LastModificationTime = DateTime.FromFileTimeUtc(header.lastWrittenTime);
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image last written on",
+                                      imageInfo.LastModificationTime);
+
             // TODO: Calculate
             //imageInfo.ImageSize            = qHdr.size;
-            // TODO: If no geometry
-            /*imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-            imageInfo.Heads           = 16;
-            imageInfo.SectorsPerTrack = 63;*/
+
+            if(geometryBlock.identifier != BlockType.GeometryBlock && imageInfo.XmlMediaType == XmlMediaType.BlockMedia)
+            {
+                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
+                imageInfo.Heads           = 16;
+                imageInfo.SectorsPerTrack = 63;
+            }
+
+            imageInfo.XmlMediaType = GetXmlMediaType(header.mediaType);
+            imageInfo.ReadableMediaTags.AddRange(mediaTags.Keys);
 
             // Initialize caches
             blockCache                     = new Dictionary<ulong, byte[]>();
@@ -681,7 +857,8 @@ namespace DiscImageChef.DiscImages
                 imageMinorVersion       = 0,
                 applicationMajorVersion = 4,
                 applicationMinorVersion = 0,
-                mediaType               = mediaType
+                mediaType               = mediaType,
+                creationTime            = DateTime.UtcNow.ToFileTimeUtc()
             };
 
             // TODO: Settable
@@ -1054,6 +1231,159 @@ namespace DiscImageChef.DiscImages
                 index.Add(idxEntry);
             }
 
+            MetadataBlock metadataBlock = new MetadataBlock();
+            blockStream                 = new MemoryStream();
+            blockStream.Write(new byte[Marshal.SizeOf(metadataBlock)], 0, Marshal.SizeOf(metadataBlock));
+            byte[] tmpUtf16Le;
+
+            if(imageInfo.MediaSequence > 0 && imageInfo.LastMediaSequence > 0)
+            {
+                metadataBlock.identifier        = BlockType.MetadataBlock;
+                metadataBlock.mediaSequence     = imageInfo.MediaSequence;
+                metadataBlock.lastMediaSequence = imageInfo.LastMediaSequence;
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.Creator))
+            {
+                tmpUtf16Le                  = Encoding.Unicode.GetBytes(imageInfo.Creator);
+                metadataBlock.identifier    = BlockType.MetadataBlock;
+                metadataBlock.creatorOffset = (uint)blockStream.Position;
+                metadataBlock.creatorLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.Comments))
+            {
+                tmpUtf16Le                   = Encoding.Unicode.GetBytes(imageInfo.Comments);
+                metadataBlock.identifier     = BlockType.MetadataBlock;
+                metadataBlock.commentsOffset = (uint)blockStream.Position;
+                metadataBlock.commentsLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.MediaTitle))
+            {
+                tmpUtf16Le                     = Encoding.Unicode.GetBytes(imageInfo.MediaTitle);
+                metadataBlock.identifier       = BlockType.MetadataBlock;
+                metadataBlock.mediaTitleOffset = (uint)blockStream.Position;
+                metadataBlock.mediaTitleLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.MediaManufacturer))
+            {
+                tmpUtf16Le                            = Encoding.Unicode.GetBytes(imageInfo.MediaManufacturer);
+                metadataBlock.identifier              = BlockType.MetadataBlock;
+                metadataBlock.mediaManufacturerOffset = (uint)blockStream.Position;
+                metadataBlock.mediaManufacturerLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.MediaModel))
+            {
+                tmpUtf16Le                     = Encoding.Unicode.GetBytes(imageInfo.MediaModel);
+                metadataBlock.identifier       = BlockType.MetadataBlock;
+                metadataBlock.mediaModelOffset = (uint)blockStream.Position;
+                metadataBlock.mediaModelLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.MediaSerialNumber))
+            {
+                tmpUtf16Le                            = Encoding.Unicode.GetBytes(imageInfo.MediaSerialNumber);
+                metadataBlock.identifier              = BlockType.MetadataBlock;
+                metadataBlock.mediaSerialNumberOffset = (uint)blockStream.Position;
+                metadataBlock.mediaSerialNumberLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.MediaBarcode))
+            {
+                tmpUtf16Le                       = Encoding.Unicode.GetBytes(imageInfo.MediaBarcode);
+                metadataBlock.identifier         = BlockType.MetadataBlock;
+                metadataBlock.mediaBarcodeOffset = (uint)blockStream.Position;
+                metadataBlock.mediaBarcodeLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.MediaPartNumber))
+            {
+                tmpUtf16Le                          = Encoding.Unicode.GetBytes(imageInfo.MediaPartNumber);
+                metadataBlock.identifier            = BlockType.MetadataBlock;
+                metadataBlock.mediaPartNumberOffset = (uint)blockStream.Position;
+                metadataBlock.mediaPartNumberLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
+            {
+                tmpUtf16Le                            = Encoding.Unicode.GetBytes(imageInfo.DriveManufacturer);
+                metadataBlock.identifier              = BlockType.MetadataBlock;
+                metadataBlock.driveManufacturerOffset = (uint)blockStream.Position;
+                metadataBlock.driveManufacturerLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.DriveModel))
+            {
+                tmpUtf16Le                     = Encoding.Unicode.GetBytes(imageInfo.DriveModel);
+                metadataBlock.identifier       = BlockType.MetadataBlock;
+                metadataBlock.driveModelOffset = (uint)blockStream.Position;
+                metadataBlock.driveModelLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
+            {
+                tmpUtf16Le                            = Encoding.Unicode.GetBytes(imageInfo.DriveSerialNumber);
+                metadataBlock.identifier              = BlockType.MetadataBlock;
+                metadataBlock.driveSerialNumberOffset = (uint)blockStream.Position;
+                metadataBlock.driveSerialNumberLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(!string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
+            {
+                tmpUtf16Le                                = Encoding.Unicode.GetBytes(imageInfo.DriveFirmwareRevision);
+                metadataBlock.identifier                  = BlockType.MetadataBlock;
+                metadataBlock.driveFirmwareRevisionOffset = (uint)blockStream.Position;
+                metadataBlock.driveFirmwareRevisionLength = (uint)(tmpUtf16Le.Length + 2);
+                blockStream.Write(tmpUtf16Le,        0, tmpUtf16Le.Length);
+                blockStream.Write(new byte[] {0, 0}, 0, 2);
+            }
+
+            if(metadataBlock.identifier == BlockType.MetadataBlock)
+            {
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing metadata to position {0}",
+                                          imageStream.Position);
+                metadataBlock.blockSize = (uint)blockStream.Length;
+                structurePointer        = Marshal.AllocHGlobal(Marshal.SizeOf(metadataBlock));
+                structureBytes          = new byte[Marshal.SizeOf(metadataBlock)];
+                Marshal.StructureToPtr(metadataBlock, structurePointer, true);
+                Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                Marshal.FreeHGlobal(structurePointer);
+                blockStream.Position = 0;
+                blockStream.Write(structureBytes, 0, structureBytes.Length);
+                index.Add(new IndexEntry
+                {
+                    blockType = BlockType.MetadataBlock,
+                    dataType  = DataType.NoData,
+                    offset    = (ulong)imageStream.Position
+                });
+                imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+            }
+
             header.indexOffset = (ulong)imageStream.Position;
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing index to position {0}",
                                       header.indexOffset);
@@ -1088,9 +1418,10 @@ namespace DiscImageChef.DiscImages
             imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing header");
-            imageStream.Position = 0;
-            structurePointer     = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            structureBytes       = new byte[Marshal.SizeOf(header)];
+            header.lastWrittenTime = DateTime.UtcNow.ToFileTimeUtc();
+            imageStream.Position   = 0;
+            structurePointer       = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+            structureBytes         = new byte[Marshal.SizeOf(header)];
             Marshal.StructureToPtr(header, structurePointer, true);
             Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
             Marshal.FreeHGlobal(structurePointer);
@@ -1107,6 +1438,20 @@ namespace DiscImageChef.DiscImages
         // TODO: Implement
         public bool SetMetadata(ImageInfo metadata)
         {
+            imageInfo.Creator               = metadata.Creator;
+            imageInfo.Comments              = metadata.Comments;
+            imageInfo.MediaManufacturer     = metadata.MediaManufacturer;
+            imageInfo.MediaModel            = metadata.MediaModel;
+            imageInfo.MediaSerialNumber     = metadata.MediaSerialNumber;
+            imageInfo.MediaBarcode          = metadata.MediaBarcode;
+            imageInfo.MediaPartNumber       = metadata.MediaPartNumber;
+            imageInfo.MediaSequence         = metadata.MediaSequence;
+            imageInfo.LastMediaSequence     = metadata.LastMediaSequence;
+            imageInfo.DriveManufacturer     = metadata.DriveManufacturer;
+            imageInfo.DriveModel            = metadata.DriveModel;
+            imageInfo.DriveSerialNumber     = metadata.DriveSerialNumber;
+            imageInfo.DriveFirmwareRevision = metadata.DriveFirmwareRevision;
+
             return true;
         }
 
@@ -1142,6 +1487,92 @@ namespace DiscImageChef.DiscImages
         {
             ErrorMessage = "Writing sectors with tags is not yet implemented.";
             return false;
+        }
+
+        static XmlMediaType GetXmlMediaType(MediaType type)
+        {
+            switch(type)
+            {
+                case MediaType.CD:
+                case MediaType.CDDA:
+                case MediaType.CDG:
+                case MediaType.CDEG:
+                case MediaType.CDI:
+                case MediaType.CDROM:
+                case MediaType.CDROMXA:
+                case MediaType.CDPLUS:
+                case MediaType.CDMO:
+                case MediaType.CDR:
+                case MediaType.CDRW:
+                case MediaType.CDMRW:
+                case MediaType.VCD:
+                case MediaType.SVCD:
+                case MediaType.PCD:
+                case MediaType.SACD:
+                case MediaType.DDCD:
+                case MediaType.DDCDR:
+                case MediaType.DDCDRW:
+                case MediaType.DTSCD:
+                case MediaType.CDMIDI:
+                case MediaType.CDV:
+                case MediaType.DVDROM:
+                case MediaType.DVDR:
+                case MediaType.DVDRW:
+                case MediaType.DVDPR:
+                case MediaType.DVDPRW:
+                case MediaType.DVDPRWDL:
+                case MediaType.DVDRDL:
+                case MediaType.DVDPRDL:
+                case MediaType.DVDRAM:
+                case MediaType.DVDRWDL:
+                case MediaType.DVDDownload:
+                case MediaType.HDDVDROM:
+                case MediaType.HDDVDRAM:
+                case MediaType.HDDVDR:
+                case MediaType.HDDVDRW:
+                case MediaType.HDDVDRDL:
+                case MediaType.HDDVDRWDL:
+                case MediaType.BDROM:
+                case MediaType.BDR:
+                case MediaType.BDRE:
+                case MediaType.BDRXL:
+                case MediaType.BDREXL:
+                case MediaType.EVD:
+                case MediaType.FVD:
+                case MediaType.HVD:
+                case MediaType.CBHD:
+                case MediaType.HDVMD:
+                case MediaType.VCDHD:
+                case MediaType.SVOD:
+                case MediaType.FDDVD:
+                case MediaType.LD:
+                case MediaType.LDROM:
+                case MediaType.LDROM2:
+                case MediaType.LVROM:
+                case MediaType.MegaLD:
+                case MediaType.PS1CD:
+                case MediaType.PS2CD:
+                case MediaType.PS2DVD:
+                case MediaType.PS3DVD:
+                case MediaType.PS3BD:
+                case MediaType.PS4BD:
+                case MediaType.UMD:
+                case MediaType.XGD:
+                case MediaType.XGD2:
+                case MediaType.XGD3:
+                case MediaType.XGD4:
+                case MediaType.MEGACD:
+                case MediaType.SATURNCD:
+                case MediaType.GDROM:
+                case MediaType.GDR:
+                case MediaType.SuperCDROM2:
+                case MediaType.JaguarCD:
+                case MediaType.ThreeDO:
+                case MediaType.GOD:
+                case MediaType.WOD:
+                case MediaType.WUOD: return XmlMediaType.OpticalDisc;
+                default:             return XmlMediaType.BlockMedia;
+            }
         }
 
         ulong GetDdtEntry(ulong sectorAddress)
@@ -1414,7 +1845,8 @@ namespace DiscImageChef.DiscImages
             DataBlock          = 0x484B4C42,
             DeDuplicationTable = 0x48544444,
             Index              = 0x48584449,
-            GeometryBlock      = 0x4D4F4547
+            GeometryBlock      = 0x4D4F4547,
+            MetadataBlock      = 0x5444545D
         }
 
         /// <summary>Header, at start of file</summary>
@@ -1423,7 +1855,7 @@ namespace DiscImageChef.DiscImages
         {
             /// <summary>Header identifier, <see cref="DIC_MAGIC" /></summary>
             public ulong identifier;
-            /// <summary>UTF-16 name of the application that created the image</summary>
+            /// <summary>UTF-16LE name of the application that created the image</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string application;
             /// <summary>Image format major version. A new major version means a possibly incompatible change of format</summary>
@@ -1438,6 +1870,14 @@ namespace DiscImageChef.DiscImages
             public MediaType mediaType;
             /// <summary>Offset to index</summary>
             public ulong indexOffset;
+            /// <summary>
+            ///     Windows filetime (100 nanoseconds since 1601/01/01 00:00:00 UTC) of image creation time
+            /// </summary>
+            public long creationTime;
+            /// <summary>
+            ///     Windows filetime (100 nanoseconds since 1601/01/01 00:00:00 UTC) of image last written time
+            /// </summary>
+            public long lastWrittenTime;
         }
 
         /// <summary>Header for a deduplication table. Table follows it</summary>
@@ -1519,6 +1959,67 @@ namespace DiscImageChef.DiscImages
             public uint      cylinders;
             public uint      heads;
             public uint      sectorsPerTrack;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct MetadataBlock
+        {
+            /// <summary>Identifier, <see cref="BlockType.MetadataBlock" /></summary>
+            public BlockType identifier;
+            /// <summary>Size in bytes of this whole metadata block</summary>
+            public uint blockSize;
+            /// <summary>Sequence of media set this media belongs to</summary>
+            public int mediaSequence;
+            /// <summary>Total number of media on the media set this media belongs to</summary>
+            public int lastMediaSequence;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint creatorOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint creatorLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint commentsOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint commentsLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint mediaTitleOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint mediaTitleLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint mediaManufacturerOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint mediaManufacturerLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint mediaModelOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint mediaModelLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint mediaSerialNumberOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint mediaSerialNumberLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint mediaBarcodeOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint mediaBarcodeLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint mediaPartNumberOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint mediaPartNumberLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint driveManufacturerOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint driveManufacturerLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint driveModelOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint driveModelLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint driveSerialNumberOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint driveSerialNumberLength;
+            /// <summary>Offset to start of creator string from start of this block</summary>
+            public uint driveFirmwareRevisionOffset;
+            /// <summary>Length in bytes of the null-terminated UTF-16LE creator string</summary>
+            public uint driveFirmwareRevisionLength;
         }
     }
 }
