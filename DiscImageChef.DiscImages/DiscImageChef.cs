@@ -83,6 +83,7 @@ using SharpCompress.Compressors.LZMA;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Work in progress
+    // TODO: Get manufacurer, model, firmware, from tags, if available
     public class DiscImageChef : IWritableImage
     {
         const ulong DIC_MAGIC              = 0x544D464444434944;
@@ -110,6 +111,9 @@ namespace DiscImageChef.DiscImages
         bool                             inMemoryDdt;
         Dictionary<MediaTagType, byte[]> mediaTags;
         long                             outMemoryDdtPosition;
+        byte[]                           sectorPrefix;
+        byte[]                           sectorSubchannel;
+        byte[]                           sectorSuffix;
         byte                             shift;
         byte[]                           structureBytes;
         IntPtr                           structurePointer;
@@ -232,7 +236,6 @@ namespace DiscImageChef.DiscImages
                 imageStream.Position = (long)entry.offset;
                 switch(entry.blockType)
                 {
-                    // TODO: Non-deduplicatable sector tags are data blocks
                     case BlockType.DataBlock:
                         // NOP block, skip
                         if(entry.dataType == DataType.NoData) break;
@@ -272,11 +275,11 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
 
-                        byte[]       data;
-                        MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
+                        byte[] data;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Found media tag {0} at position {1}",
-                                                  mediaTagType, entry.offset);
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Found data block type {0} at position {1}", entry.dataType,
+                                                  entry.offset);
 
                         if(blockHeader.compression == CompressionType.Lzma)
                         {
@@ -306,6 +309,7 @@ namespace DiscImageChef.DiscImages
                         }
 
                         Crc64Context.Data(data, out byte[] blockCrc);
+                        blockCrc = blockCrc.Reverse().ToArray();
                         if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
                         {
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -314,16 +318,49 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
 
-                        if(mediaTags.ContainsKey(mediaTagType))
+                        switch(entry.dataType)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                                      "Media tag type {0} duplicated, removing previous entry...",
-                                                      mediaTagType);
+                            case DataType.CdSectorPrefix:
+                                sectorPrefix = data;
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                break;
+                            case DataType.CdSectorSuffix:
+                                sectorSuffix = data;
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                break;
+                            case DataType.CdSectorSubchannel:
+                                sectorSubchannel = data;
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                                break;
+                            default:
+                                MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
 
-                            mediaTags.Remove(mediaTagType);
+                                if(mediaTags.ContainsKey(mediaTagType))
+                                {
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Media tag type {0} duplicated, removing previous entry...",
+                                                              mediaTagType);
+
+                                    mediaTags.Remove(mediaTagType);
+                                }
+
+                                mediaTags.Add(mediaTagType, data);
+                                break;
                         }
 
-                        mediaTags.Add(mediaTagType, data);
                         break;
                     case BlockType.DeDuplicationTable:
                         // Only user data deduplication tables are used right now
@@ -809,7 +846,7 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            throw new NotImplementedException();
+            return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
         public byte[] ReadSector(ulong sectorAddress, uint track)
@@ -858,7 +895,186 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            throw new NotImplementedException();
+            uint   sectorOffset;
+            uint   sectorSize;
+            uint   sectorSkip;
+            byte[] dataSource;
+
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
+                                                       sectorAddress <= t.TrackEndSector);
+                if(trk.TrackSequence                                 == 0)
+                    throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                          "Can't found track containing requested sector");
+
+                if(trk.TrackType == TrackType.Data)
+                    throw new ArgumentException("Unsupported tag requested", nameof(tag));
+
+                switch(tag)
+                {
+                    case SectorTagType.CdSectorEcc:
+                    case SectorTagType.CdSectorEccP:
+                    case SectorTagType.CdSectorEccQ:
+                    case SectorTagType.CdSectorEdc:
+                    case SectorTagType.CdSectorHeader:
+                    case SectorTagType.CdSectorSubchannel:
+                    case SectorTagType.CdSectorSubHeader:
+                    case SectorTagType.CdSectorSync: break;
+                    case SectorTagType.CdTrackFlags:
+                        return trackFlags.TryGetValue((byte)trk.TrackSequence, out byte flags) ? new[] {flags} : null;
+                    case SectorTagType.CdTrackIsrc:
+                        return trackIsrcs.TryGetValue((byte)trk.TrackSequence, out string isrc)
+                                   ? Encoding.UTF8.GetBytes(isrc)
+                                   : null;
+                    default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                }
+
+                switch(trk.TrackType)
+                {
+                    case TrackType.CdMode1:
+                        switch(tag)
+                        {
+                            case SectorTagType.CdSectorSync:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 12;
+                                sectorSkip   = 4;
+                                dataSource   = sectorPrefix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorHeader:
+                            {
+                                sectorOffset = 12;
+                                sectorSize   = 4;
+                                sectorSkip   = 2336;
+                                dataSource   = sectorPrefix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorSubHeader:
+                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                            case SectorTagType.CdSectorEcc:
+                            {
+                                sectorOffset = 12;
+                                sectorSize   = 276;
+                                sectorSkip   = 0;
+                                dataSource   = sectorSuffix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorEccP:
+                            {
+                                sectorOffset = 12;
+                                sectorSize   = 172;
+                                sectorSkip   = 104;
+                                dataSource   = sectorSuffix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorEccQ:
+                            {
+                                sectorOffset = 184;
+                                sectorSize   = 104;
+                                sectorSkip   = 0;
+                                dataSource   = sectorSuffix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorEdc:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 4;
+                                sectorSkip   = 284;
+                                dataSource   = sectorSuffix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorSubchannel:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 96;
+                                sectorSkip   = 0;
+                                dataSource   = sectorSubchannel;
+                                break;
+                            }
+                            default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        }
+
+                        break;
+                    case TrackType.CdMode2Formless:
+                    case TrackType.CdMode2Form1:
+                    case TrackType.CdMode2Form2:
+                    {
+                        switch(tag)
+                        {
+                            case SectorTagType.CdSectorSync:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 12;
+                                sectorSkip   = 4;
+                                dataSource   = sectorPrefix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorHeader:
+                            {
+                                sectorOffset = 12;
+                                sectorSize   = 4;
+                                sectorSkip   = 2336;
+                                dataSource   = sectorPrefix;
+                                break;
+                            }
+                            case SectorTagType.CdSectorEcc:
+                            case SectorTagType.CdSectorEccP:
+                            case SectorTagType.CdSectorEccQ:
+                            case SectorTagType.CdSectorSubHeader:
+                            case SectorTagType.CdSectorEdc:
+                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                            case SectorTagType.CdSectorSubchannel:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 96;
+                                sectorSkip   = 0;
+                                dataSource   = sectorSubchannel;
+                                break;
+                            }
+                            default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        }
+
+                        break;
+                    }
+                    case TrackType.Audio:
+                    {
+                        switch(tag)
+                        {
+                            case SectorTagType.CdSectorSubchannel:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 96;
+                                sectorSkip   = 0;
+                                dataSource   = sectorSubchannel;
+                                break;
+                            }
+                            default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        }
+
+                        break;
+                    }
+                    default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                }
+            }
+            else throw new NotImplementedException();
+
+            if(dataSource == null) throw new ArgumentException("Unsupported tag requested", nameof(tag));
+
+            byte[] data = new byte[sectorSize * length];
+
+            if(sectorOffset == 0 && sectorSkip == 0)
+            {
+                Array.Copy(dataSource, (long)(sectorAddress * sectorSize), data, 0, length * sectorSize);
+                return data;
+            }
+
+            for(int i = 0; i < length; i++)
+                Array.Copy(dataSource, (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), data,
+                           i                                * sectorSize, sectorSize);
+
+            return data;
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
@@ -895,7 +1111,38 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
+                                                       sectorAddress <= t.TrackEndSector);
+                if(trk.TrackSequence                                 == 0)
+                    throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                          "Can't found track containing requested sector");
+
+                if(sectorSuffix == null || sectorPrefix == null) return ReadSector(sectorAddress);
+
+                byte[] sector = new byte[2352];
+                byte[] data   = ReadSector(sectorAddress);
+
+                switch(trk.TrackType)
+                {
+                    case TrackType.Audio:
+                    case TrackType.Data: return data;
+                    case TrackType.CdMode1:
+                        Array.Copy(sectorPrefix, (int)sectorAddress * 16,  sector, 0,    16);
+                        Array.Copy(data,         0,                        sector, 16,   2048);
+                        Array.Copy(sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
+                        return sector;
+                    case TrackType.CdMode2Formless:
+                    case TrackType.CdMode2Form1:
+                    case TrackType.CdMode2Form2:
+                        Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0,  16);
+                        Array.Copy(data,         0,                       sector, 16, 2336);
+                        return sector;
+                }
+            }
+
+            throw new FeatureNotPresentImageException("Feature not present in image");
         }
 
         public byte[] ReadSectorLong(ulong sectorAddress, uint track)
@@ -912,7 +1159,20 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            throw new NotImplementedException();
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureNotPresentImageException("Feature not present in image");
+
+            Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
+                                                   sectorAddress <= t.TrackEndSector);
+            if(trk.TrackSequence                                 == 0)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      "Can't found track containing requested sector");
+
+            if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
+
+            return ReadSectorsLong(trk.TrackStartSector + sectorAddress, length);
         }
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
@@ -986,9 +1246,10 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException();
         }
 
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => Enum.GetValues(typeof(MediaType)).Cast<MediaTagType>();
+        public IEnumerable<MediaTagType> SupportedMediaTags =>
+            Enum.GetValues(typeof(MediaTagType)).Cast<MediaTagType>();
         public IEnumerable<SectorTagType> SupportedSectorTags =>
-            Enum.GetValues(typeof(MediaType)).Cast<SectorTagType>();
+            Enum.GetValues(typeof(SectorTagType)).Cast<SectorTagType>();
         public IEnumerable<MediaType> SupportedMediaTypes =>
             Enum.GetValues(typeof(MediaType)).Cast<MediaType>();
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
@@ -1247,17 +1508,100 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        // TODO: Implement
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
-            ErrorMessage = "Writing sectors with tags is not yet implemented.";
+            if(!IsWriting)
+            {
+                ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            byte[] sector;
+
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                Track track =
+                    Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                 sectorAddress <= trk.TrackEndSector);
+
+                if(track.TrackSequence == 0)
+                {
+                    ErrorMessage = $"Can't found track containing {sectorAddress}";
+                    return false;
+                }
+
+                if(data.Length != 2352)
+                {
+                    ErrorMessage = "Incorrect data size";
+                    return false;
+                }
+
+                switch(track.TrackType)
+                {
+                    case TrackType.Audio:
+                    case TrackType.Data: return WriteSector(data, sectorAddress);
+                    case TrackType.CdMode1:
+                        if(sectorPrefix == null) sectorPrefix = new byte[imageInfo.Sectors * 16];
+                        if(sectorSuffix == null) sectorSuffix = new byte[imageInfo.Sectors * 288];
+                        sector                                = new byte[2048];
+                        Array.Copy(data, 0,    sectorPrefix, (int)sectorAddress * 16,  16);
+                        Array.Copy(data, 16,   sector,       0,                        2048);
+                        Array.Copy(data, 2064, sectorSuffix, (int)sectorAddress * 288, 288);
+                        return WriteSector(sector, sectorAddress);
+                    case TrackType.CdMode2Formless:
+                    case TrackType.CdMode2Form1:
+                    case TrackType.CdMode2Form2:
+                        if(sectorPrefix == null) sectorPrefix = new byte[imageInfo.Sectors * 16];
+                        if(sectorSuffix == null) sectorSuffix = new byte[imageInfo.Sectors * 288];
+                        sector                                = new byte[2336];
+                        Array.Copy(data, 0,  sectorPrefix, (int)sectorAddress * 16, 16);
+                        Array.Copy(data, 16, sector,       0,                       2336);
+                        return WriteSector(sector, sectorAddress);
+                }
+            }
+
+            // TODO: Implement
+            ErrorMessage = "Unknown sector tag type, cannot write.";
             return false;
         }
 
-        // TODO: Implement
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
-            ErrorMessage = "Writing sectors with tags is not yet implemented.";
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                Track track =
+                    Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                 sectorAddress <= trk.TrackEndSector);
+
+                if(track.TrackSequence == 0)
+                {
+                    ErrorMessage = $"Can't found track containing {sectorAddress}";
+                    return false;
+                }
+
+                if(data.Length % 2352 != 0)
+                {
+                    ErrorMessage = "Incorrect data size";
+                    return false;
+                }
+
+                if(track.TrackStartSector + sectorAddress + length > track.TrackEndSector + 1)
+                    throw new ArgumentOutOfRangeException(nameof(length),
+                                                          $"Requested more sectors ({length + sectorAddress}) than present in track ({track.TrackEndSector - track.TrackStartSector + 1}), won't cross tracks");
+
+                byte[] sector = new byte[2352];
+                for(uint i = 0; i < length; i++)
+                {
+                    Array.Copy(data, 2352 * i, sector, 0, 2352);
+                    if(!WriteSectorLong(sector, sectorAddress + i)) return false;
+                }
+
+                ErrorMessage = "";
+                return true;
+            }
+
+            // TODO: Implement
+            ErrorMessage = "Unknown sector tag type, cannot write.";
             return false;
         }
 
@@ -1461,6 +1805,149 @@ namespace DiscImageChef.DiscImages
 
             if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && Tracks != null && Tracks.Count > 0)
             {
+                if(sectorPrefix != null && sectorSuffix != null)
+                {
+                    idxEntry = new IndexEntry
+                    {
+                        blockType = BlockType.DataBlock,
+                        dataType  = DataType.CdSectorPrefix,
+                        offset    = (ulong)imageStream.Position
+                    };
+
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                              "Writing CD sector prefix block to position {0}", idxEntry.offset);
+
+                    Crc64Context.Data(sectorPrefix, out byte[] blockCrc);
+
+                    BlockHeader prefixBlock = new BlockHeader
+                    {
+                        identifier = BlockType.DataBlock,
+                        type       = DataType.CdSectorPrefix,
+                        length     = (uint)sectorPrefix.Length,
+                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                    };
+
+                    blockStream           = new MemoryStream();
+                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
+                    compressedBlockStream.Write(sectorPrefix, 0, sectorPrefix.Length);
+                    byte[] lzmaProperties = compressedBlockStream.Properties;
+                    compressedBlockStream.Close();
+
+                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                    prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                    prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                    prefixBlock.compression = CompressionType.Lzma;
+
+                    compressedBlockStream = null;
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
+                    structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
+                    Marshal.StructureToPtr(prefixBlock, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    imageStream.Write(structureBytes, 0, structureBytes.Length);
+                    if(prefixBlock.compression == CompressionType.Lzma)
+                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                    index.Add(idxEntry);
+
+                    idxEntry = new IndexEntry
+                    {
+                        blockType = BlockType.DataBlock,
+                        dataType  = DataType.CdSectorSuffix,
+                        offset    = (ulong)imageStream.Position
+                    };
+
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                              "Writing CD sector suffix block to position {0}", idxEntry.offset);
+
+                    Crc64Context.Data(sectorSuffix, out blockCrc);
+
+                    prefixBlock = new BlockHeader
+                    {
+                        identifier = BlockType.DataBlock,
+                        type       = DataType.CdSectorSuffix,
+                        length     = (uint)sectorSuffix.Length,
+                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                    };
+
+                    blockStream           = new MemoryStream();
+                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
+                    compressedBlockStream.Write(sectorSuffix, 0, sectorSuffix.Length);
+                    lzmaProperties = compressedBlockStream.Properties;
+                    compressedBlockStream.Close();
+
+                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                    prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                    prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                    prefixBlock.compression = CompressionType.Lzma;
+
+                    compressedBlockStream = null;
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
+                    structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
+                    Marshal.StructureToPtr(prefixBlock, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    imageStream.Write(structureBytes, 0, structureBytes.Length);
+                    if(prefixBlock.compression == CompressionType.Lzma)
+                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                    index.Add(idxEntry);
+                    blockStream = null;
+                }
+
+                if(sectorSubchannel != null)
+                {
+                    idxEntry = new IndexEntry
+                    {
+                        blockType = BlockType.DataBlock,
+                        dataType  = DataType.CdSectorSubchannel,
+                        offset    = (ulong)imageStream.Position
+                    };
+
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                              "Writing CD subchannel block to position {0}", idxEntry.offset);
+
+                    Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
+
+                    BlockHeader subchannelBlock = new BlockHeader
+                    {
+                        identifier = BlockType.DataBlock,
+                        type       = DataType.CdSectorSubchannel,
+                        length     = (uint)sectorSubchannel.Length,
+                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                    };
+
+                    blockStream           = new MemoryStream();
+                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
+                    compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                    byte[] lzmaProperties = compressedBlockStream.Properties;
+                    compressedBlockStream.Close();
+
+                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                    subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                    subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                    subchannelBlock.compression = CompressionType.Lzma;
+
+                    compressedBlockStream = null;
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
+                    structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
+                    Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    imageStream.Write(structureBytes, 0, structureBytes.Length);
+                    if(subchannelBlock.compression == CompressionType.Lzma)
+                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                    index.Add(idxEntry);
+                    blockStream = null;
+                }
+
                 List<TrackEntry> trackEntries = new List<TrackEntry>();
                 foreach(Track track in Tracks)
                 {
@@ -1729,7 +2216,6 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        // TODO: Implement
         public bool SetMetadata(ImageInfo metadata)
         {
             imageInfo.Creator               = metadata.Creator;
@@ -1754,6 +2240,12 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+                return false;
+            }
+
+            if(imageInfo.XmlMediaType != XmlMediaType.BlockMedia)
+            {
+                ErrorMessage = "Tried to set geometry on a media that doesn't suppport it";
                 return false;
             }
 
@@ -1788,6 +2280,7 @@ namespace DiscImageChef.DiscImages
             {
                 case SectorTagType.CdTrackFlags:
                 case SectorTagType.CdTrackIsrc:
+                case SectorTagType.CdSectorSubchannel:
                     if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                     {
                         ErrorMessage = "Incorrect tag for disk type";
@@ -1824,6 +2317,20 @@ namespace DiscImageChef.DiscImages
                     if(data != null) trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
                     return true;
                 }
+                case SectorTagType.CdSectorSubchannel:
+                {
+                    if(data.Length != 96)
+                    {
+                        ErrorMessage = "Incorrect data size for subchannel";
+                        return false;
+                    }
+
+                    if(sectorSubchannel == null) sectorSubchannel = new byte[imageInfo.Sectors * 96];
+
+                    Array.Copy(data, 0, sectorSubchannel, (int)(96 * sectorAddress), 96);
+
+                    return true;
+                }
                 default: throw new NotImplementedException();
             }
         }
@@ -1846,7 +2353,28 @@ namespace DiscImageChef.DiscImages
             {
                 case SectorTagType.CdTrackFlags:
                 case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
-                default:                        throw new NotImplementedException();
+                case SectorTagType.CdSectorSubchannel:
+                {
+                    if(data.Length % 96 != 0)
+                    {
+                        ErrorMessage = "Incorrect data size for subchannel";
+                        return false;
+                    }
+
+                    if(sectorSubchannel == null) sectorSubchannel = new byte[imageInfo.Sectors * 96];
+
+                    if(sectorAddress * 96 + length * 96 > (ulong)sectorSubchannel.LongLength)
+                    {
+                        ErrorMessage = "Tried to write more data than possible";
+                        return false;
+                    }
+
+                    Array.Copy(data, 0, sectorSubchannel, (int)(96 * sectorAddress), 96 * length);
+
+                    return true;
+                }
+
+                default: throw new NotImplementedException();
             }
         }
 
@@ -2198,7 +2726,10 @@ namespace DiscImageChef.DiscImages
             ScsiModeSense10                  = 65,
             UsbDescriptors                   = 66,
             XboxDmi                          = 67,
-            XboxPfi                          = 68
+            XboxPfi                          = 68,
+            CdSectorPrefix                   = 69,
+            CdSectorSuffix                   = 70,
+            CdSectorSubchannel               = 71
         }
 
         enum BlockType : uint
