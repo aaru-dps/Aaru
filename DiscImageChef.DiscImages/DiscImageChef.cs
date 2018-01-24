@@ -77,6 +77,7 @@ using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders;
 using DiscImageChef.Filters;
 using SharpCompress.Compressors.LZMA;
 
@@ -344,6 +345,13 @@ namespace DiscImageChef.DiscImages
                                 sectorSubchannel = data;
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                                break;
+                            case DataType.AppleProfileTag:
+                            case DataType.AppleSonyTag:
+                            case DataType.PriamDataTowerTag:
+                                sectorSubchannel = data;
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
                                 break;
                             default:
                                 MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
@@ -749,7 +757,14 @@ namespace DiscImageChef.DiscImages
                 {
                     byte[] sector                    = ReadSector(tracks[i].TrackStartSector);
                     tracks[i].TrackBytesPerSector    = sector.Length;
-                    tracks[i].TrackRawBytesPerSector = sector.Length;
+                    tracks[i].TrackRawBytesPerSector =
+                        sectorPrefix != null && sectorSuffix != null ? 2352 : sector.Length;
+
+                    if(sectorSubchannel == null) continue;
+
+                    tracks[i].TrackSubchannelFile   = tracks[i].TrackFile;
+                    tracks[i].TrackSubchannelFilter = tracks[i].TrackFilter;
+                    tracks[i].TrackSubchannelType   = TrackSubchannelType.Raw;
                 }
 
                 Tracks = tracks.ToList();
@@ -1058,7 +1073,7 @@ namespace DiscImageChef.DiscImages
                     default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
                 }
             }
-            else throw new NotImplementedException();
+            else throw new FeatureNotPresentImageException("Feature not present in image");
 
             if(dataSource == null) throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
@@ -1111,35 +1126,50 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
-            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            switch(imageInfo.XmlMediaType)
             {
-                Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
-                                                       sectorAddress <= t.TrackEndSector);
-                if(trk.TrackSequence                                 == 0)
-                    throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                          "Can't found track containing requested sector");
+                case XmlMediaType.OpticalDisc:
+                    Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
+                                                           sectorAddress <= t.TrackEndSector);
+                    if(trk.TrackSequence                                 == 0)
+                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                              "Can't found track containing requested sector");
 
-                if(sectorSuffix == null || sectorPrefix == null) return ReadSector(sectorAddress);
+                    if(sectorSuffix == null || sectorPrefix == null) return ReadSector(sectorAddress);
 
-                byte[] sector = new byte[2352];
-                byte[] data   = ReadSector(sectorAddress);
+                    byte[] sector = new byte[2352];
+                    byte[] data   = ReadSector(sectorAddress);
 
-                switch(trk.TrackType)
-                {
-                    case TrackType.Audio:
-                    case TrackType.Data: return data;
-                    case TrackType.CdMode1:
-                        Array.Copy(sectorPrefix, (int)sectorAddress * 16,  sector, 0,    16);
-                        Array.Copy(data,         0,                        sector, 16,   2048);
-                        Array.Copy(sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
-                        return sector;
-                    case TrackType.CdMode2Formless:
-                    case TrackType.CdMode2Form1:
-                    case TrackType.CdMode2Form2:
-                        Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0,  16);
-                        Array.Copy(data,         0,                       sector, 16, 2336);
-                        return sector;
-                }
+                    switch(trk.TrackType)
+                    {
+                        case TrackType.Audio:
+                        case TrackType.Data: return data;
+                        case TrackType.CdMode1:
+                            Array.Copy(sectorPrefix, (int)sectorAddress * 16,  sector, 0,    16);
+                            Array.Copy(data,         0,                        sector, 16,   2048);
+                            Array.Copy(sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
+                            return sector;
+                        case TrackType.CdMode2Formless:
+                        case TrackType.CdMode2Form1:
+                        case TrackType.CdMode2Form2:
+                            Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0,  16);
+                            Array.Copy(data,         0,                       sector, 16, 2336);
+                            return sector;
+                    }
+
+                    break;
+                case XmlMediaType.BlockMedia:
+                    switch(imageInfo.MediaType)
+                    {
+                        case MediaType.AppleFileWare:
+                        case MediaType.AppleProfile:
+                        case MediaType.AppleSonySS:
+                        case MediaType.AppleSonyDS:
+                        case MediaType.AppleWidget:
+                        case MediaType.PriamDataTower: return ReadSectorsLong(sectorAddress, 1);
+                    }
+
+                    break;
             }
 
             throw new FeatureNotPresentImageException("Feature not present in image");
@@ -1159,20 +1189,107 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureNotPresentImageException("Feature not present in image");
+            byte[] sectors;
+            byte[] data;
 
-            Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
-                                                   sectorAddress <= t.TrackEndSector);
-            if(trk.TrackSequence                                 == 0)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      "Can't found track containing requested sector");
+            switch(imageInfo.XmlMediaType)
+            {
+                case XmlMediaType.OpticalDisc:
+                    Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
+                                                           sectorAddress <= t.TrackEndSector);
+                    if(trk.TrackSequence                                 == 0)
+                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                              "Can't found track containing requested sector");
 
-            if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
+                    if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
+                        throw new ArgumentOutOfRangeException(nameof(length),
+                                                              $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
 
-            return ReadSectorsLong(trk.TrackStartSector + sectorAddress, length);
+                    switch(trk.TrackType)
+                    {
+                        case TrackType.Audio:
+                        case TrackType.Data: return ReadSectors(sectorAddress, length);
+                        case TrackType.CdMode1:
+                            if(sectorPrefix == null || sectorSuffix == null) return ReadSectors(sectorAddress, length);
+
+                            sectors = new byte[2352 * length];
+                            data    = ReadSectors(sectorAddress, length);
+                            for(uint i = 0; i < length; i++)
+                            {
+                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors,
+                                           (int)((sectorAddress               + i) * 2352), 16);
+                                Array.Copy(data, (int)((sectorAddress         + i) * 2048), sectors,
+                                           (int)((sectorAddress               + i) * 2352) + 16, 2048);
+                                Array.Copy(sectorSuffix, (int)((sectorAddress + i) * 288), sectors,
+                                           (int)((sectorAddress               + i) * 2352) + 2064, 288);
+                            }
+
+                            return sectors;
+                        case TrackType.CdMode2Formless:
+                        case TrackType.CdMode2Form1:
+                        case TrackType.CdMode2Form2:
+                            if(sectorPrefix == null || sectorSuffix == null) return ReadSectors(sectorAddress, length);
+
+                            sectors = new byte[2352 * length];
+                            data    = ReadSectors(sectorAddress, length);
+                            for(uint i = 0; i < length; i++)
+                            {
+                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors,
+                                           (int)((sectorAddress               + i) * 2352), 16);
+                                Array.Copy(data, (int)((sectorAddress         + i) * 2336), sectors,
+                                           (int)((sectorAddress               + i) * 2352) + 16, 2336);
+                            }
+
+                            return sectors;
+                    }
+
+                    break;
+                case XmlMediaType.BlockMedia:
+                    switch(imageInfo.MediaType)
+                    {
+                        case MediaType.AppleFileWare:
+                        case MediaType.AppleProfile:
+                        case MediaType.AppleSonySS:
+                        case MediaType.AppleSonyDS:
+                        case MediaType.AppleWidget:
+                        case MediaType.PriamDataTower:
+                            if(sectorSubchannel == null) return ReadSector(sectorAddress);
+
+                            uint tagSize = 0;
+                            switch(imageInfo.MediaType)
+                            {
+                                case MediaType.AppleFileWare:
+                                case MediaType.AppleProfile:
+                                case MediaType.AppleWidget:
+                                    tagSize = 20;
+                                    break;
+                                case MediaType.AppleSonySS:
+                                case MediaType.AppleSonyDS:
+                                    tagSize = 12;
+                                    break;
+                                case MediaType.PriamDataTower:
+                                    tagSize = 24;
+                                    break;
+                            }
+
+                            uint sectorSize = 512 + tagSize;
+                            data            = ReadSectors(sectorAddress, length);
+                            sectors         = new byte[(sectorSize + 512) * length];
+                            for(uint i = 0; i < length; i++)
+                            {
+                                Array.Copy(sectorSubchannel, (int)((sectorAddress + i) * tagSize), sectors,
+                                           (int)((sectorAddress                   + i) * sectorSize + 512), tagSize);
+                                Array.Copy(data, (int)((sectorAddress             + i) * 512), sectors,
+                                           (int)((sectorAddress                   + i) * 512), 512);
+                            }
+
+                            return sectors;
+                    }
+
+                    break;
+            }
+
+            throw new FeatureNotPresentImageException("Feature not present in image");
         }
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
@@ -1480,7 +1597,6 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        // TODO: Optimize this
         public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
         {
             if(!IsWriting)
@@ -1518,90 +1634,219 @@ namespace DiscImageChef.DiscImages
 
             byte[] sector;
 
-            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            switch(imageInfo.XmlMediaType)
             {
-                Track track =
-                    Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                 sectorAddress <= trk.TrackEndSector);
+                case XmlMediaType.OpticalDisc:
+                    Track track =
+                        Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
-                if(track.TrackSequence == 0)
-                {
-                    ErrorMessage = $"Can't found track containing {sectorAddress}";
-                    return false;
-                }
+                    if(track.TrackSequence == 0)
+                    {
+                        ErrorMessage = $"Can't found track containing {sectorAddress}";
+                        return false;
+                    }
 
-                if(data.Length != 2352)
-                {
-                    ErrorMessage = "Incorrect data size";
-                    return false;
-                }
+                    if(data.Length != 2352)
+                    {
+                        ErrorMessage = "Incorrect data size";
+                        return false;
+                    }
 
-                switch(track.TrackType)
-                {
-                    case TrackType.Audio:
-                    case TrackType.Data: return WriteSector(data, sectorAddress);
-                    case TrackType.CdMode1:
-                        if(sectorPrefix == null) sectorPrefix = new byte[imageInfo.Sectors * 16];
-                        if(sectorSuffix == null) sectorSuffix = new byte[imageInfo.Sectors * 288];
-                        sector                                = new byte[2048];
-                        Array.Copy(data, 0,    sectorPrefix, (int)sectorAddress * 16,  16);
-                        Array.Copy(data, 16,   sector,       0,                        2048);
-                        Array.Copy(data, 2064, sectorSuffix, (int)sectorAddress * 288, 288);
-                        return WriteSector(sector, sectorAddress);
-                    case TrackType.CdMode2Formless:
-                    case TrackType.CdMode2Form1:
-                    case TrackType.CdMode2Form2:
-                        if(sectorPrefix == null) sectorPrefix = new byte[imageInfo.Sectors * 16];
-                        if(sectorSuffix == null) sectorSuffix = new byte[imageInfo.Sectors * 288];
-                        sector                                = new byte[2336];
-                        Array.Copy(data, 0,  sectorPrefix, (int)sectorAddress * 16, 16);
-                        Array.Copy(data, 16, sector,       0,                       2336);
-                        return WriteSector(sector, sectorAddress);
-                }
+                    switch(track.TrackType)
+                    {
+                        case TrackType.Audio:
+                        case TrackType.Data: return WriteSector(data, sectorAddress);
+                        case TrackType.CdMode1:
+                            if(sectorPrefix == null) sectorPrefix = new byte[imageInfo.Sectors * 16];
+                            if(sectorSuffix == null) sectorSuffix = new byte[imageInfo.Sectors * 288];
+                            sector                                = new byte[2048];
+                            Array.Copy(data, 0,    sectorPrefix, (int)sectorAddress * 16,  16);
+                            Array.Copy(data, 16,   sector,       0,                        2048);
+                            Array.Copy(data, 2064, sectorSuffix, (int)sectorAddress * 288, 288);
+                            return WriteSector(sector, sectorAddress);
+                        case TrackType.CdMode2Formless:
+                        case TrackType.CdMode2Form1:
+                        case TrackType.CdMode2Form2:
+                            if(sectorPrefix == null) sectorPrefix = new byte[imageInfo.Sectors * 16];
+                            if(sectorSuffix == null) sectorSuffix = new byte[imageInfo.Sectors * 288];
+                            sector                                = new byte[2336];
+                            Array.Copy(data, 0,  sectorPrefix, (int)sectorAddress * 16, 16);
+                            Array.Copy(data, 16, sector,       0,                       2336);
+                            return WriteSector(sector, sectorAddress);
+                    }
+
+                    break;
+                case XmlMediaType.BlockMedia:
+                    switch(imageInfo.MediaType)
+                    {
+                        case MediaType.AppleFileWare:
+                        case MediaType.AppleProfile:
+                        case MediaType.AppleSonyDS:
+                        case MediaType.AppleSonySS:
+                        case MediaType.AppleWidget:
+                        case MediaType.PriamDataTower:
+                            byte[] oldTag;
+                            byte[] newTag;
+
+                            switch(data.Length - 512)
+                            {
+                                // Sony tag, convert to Profile
+                                case 12 when imageInfo.MediaType == MediaType.AppleProfile ||
+                                             imageInfo.MediaType == MediaType.AppleFileWare:
+                                    oldTag = new byte[12];
+                                    Array.Copy(data, 512, oldTag, 0, 12);
+                                    newTag = LisaTag.DecodeSonyTag(oldTag)?.ToProfile().GetBytes();
+                                    break;
+                                // Sony tag, convert to Priam
+                                case 12 when imageInfo.MediaType == MediaType.PriamDataTower:
+                                    oldTag = new byte[12];
+                                    Array.Copy(data, 512, oldTag, 0, 12);
+                                    newTag = LisaTag.DecodeSonyTag(oldTag)?.ToPriam().GetBytes();
+                                    break;
+                                // Sony tag, copy to Sony
+                                case 12 when imageInfo.MediaType == MediaType.AppleSonySS ||
+                                             imageInfo.MediaType == MediaType.AppleSonySS:
+                                    newTag = new byte[12];
+                                    Array.Copy(data, 512, newTag, 0, 12);
+                                    break;
+                                // Profile tag, copy to Profile
+                                case 20 when imageInfo.MediaType == MediaType.AppleProfile ||
+                                             imageInfo.MediaType == MediaType.AppleFileWare:
+                                    newTag = new byte[20];
+                                    Array.Copy(data, 512, newTag, 0, 20);
+                                    break;
+                                // Profile tag, convert to Priam
+                                case 20 when imageInfo.MediaType == MediaType.PriamDataTower:
+                                    oldTag = new byte[20];
+                                    Array.Copy(data, 512, oldTag, 0, 20);
+                                    newTag = LisaTag.DecodeProfileTag(oldTag)?.ToPriam().GetBytes();
+                                    break;
+                                // Profile tag, convert to Sony
+                                case 20 when imageInfo.MediaType == MediaType.AppleSonySS ||
+                                             imageInfo.MediaType == MediaType.AppleSonySS:
+                                    oldTag = new byte[20];
+                                    Array.Copy(data, 512, oldTag, 0, 20);
+                                    newTag = LisaTag.DecodeProfileTag(oldTag)?.ToSony().GetBytes();
+                                    break;
+                                // Priam tag, convert to Profile
+                                case 24 when imageInfo.MediaType == MediaType.AppleProfile ||
+                                             imageInfo.MediaType == MediaType.AppleFileWare:
+                                    oldTag = new byte[24];
+                                    Array.Copy(data, 512, oldTag, 0, 24);
+                                    newTag = LisaTag.DecodePriamTag(oldTag)?.ToProfile().GetBytes();
+                                    break;
+                                // Priam tag, copy to Priam
+                                case 12 when imageInfo.MediaType == MediaType.PriamDataTower:
+                                    newTag = new byte[24];
+                                    Array.Copy(data, 512, newTag, 0, 24);
+                                    break;
+                                // Priam tag, convert to Sony
+                                case 24 when imageInfo.MediaType == MediaType.AppleSonySS ||
+                                             imageInfo.MediaType == MediaType.AppleSonySS:
+                                    oldTag = new byte[24];
+                                    Array.Copy(data, 512, oldTag, 0, 24);
+                                    newTag = LisaTag.DecodePriamTag(oldTag)?.ToSony().GetBytes();
+                                    break;
+                                case 0:
+                                    newTag = null;
+                                    break;
+                                default:
+                                    ErrorMessage = "Incorrect data size";
+                                    return false;
+                            }
+
+                            sector = new byte[512];
+                            Array.Copy(data, 0, sector, 0, 512);
+
+                            if(newTag == null) return WriteSector(sector, sectorAddress);
+
+                            if(sectorSubchannel == null)
+                                sectorSubchannel = new byte[newTag.Length         * (int)imageInfo.Sectors];
+                            Array.Copy(newTag, 0, sectorSubchannel, newTag.Length * (int)sectorAddress, newTag.Length);
+
+                            return WriteSector(sector, sectorAddress);
+                    }
+
+                    break;
             }
 
-            // TODO: Implement
-            ErrorMessage = "Unknown sector tag type, cannot write.";
+            ErrorMessage = "Unknown long sector type, cannot write.";
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
-            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            byte[] sector;
+            switch(imageInfo.XmlMediaType)
             {
-                Track track =
-                    Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                 sectorAddress <= trk.TrackEndSector);
+                case XmlMediaType.OpticalDisc:
+                    Track track =
+                        Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
-                if(track.TrackSequence == 0)
-                {
-                    ErrorMessage = $"Can't found track containing {sectorAddress}";
-                    return false;
-                }
+                    if(track.TrackSequence == 0)
+                    {
+                        ErrorMessage = $"Can't found track containing {sectorAddress}";
+                        return false;
+                    }
 
-                if(data.Length % 2352 != 0)
-                {
-                    ErrorMessage = "Incorrect data size";
-                    return false;
-                }
+                    if(data.Length % 2352 != 0)
+                    {
+                        ErrorMessage = "Incorrect data size";
+                        return false;
+                    }
 
-                if(track.TrackStartSector + sectorAddress + length > track.TrackEndSector + 1)
-                    throw new ArgumentOutOfRangeException(nameof(length),
-                                                          $"Requested more sectors ({length + sectorAddress}) than present in track ({track.TrackEndSector - track.TrackStartSector + 1}), won't cross tracks");
+                    if(track.TrackStartSector + sectorAddress + length > track.TrackEndSector + 1)
+                        throw new ArgumentOutOfRangeException(nameof(length),
+                                                              $"Requested more sectors ({length + sectorAddress}) than present in track ({track.TrackEndSector - track.TrackStartSector + 1}), won't cross tracks");
 
-                byte[] sector = new byte[2352];
-                for(uint i = 0; i < length; i++)
-                {
-                    Array.Copy(data, 2352 * i, sector, 0, 2352);
-                    if(!WriteSectorLong(sector, sectorAddress + i)) return false;
-                }
+                    sector = new byte[2352];
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(data, 2352 * i, sector, 0, 2352);
+                        if(!WriteSectorLong(sector, sectorAddress + i)) return false;
+                    }
 
-                ErrorMessage = "";
-                return true;
+                    ErrorMessage = "";
+                    return true;
+                case XmlMediaType.BlockMedia:
+                    switch(imageInfo.MediaType)
+                    {
+                        case MediaType.AppleFileWare:
+                        case MediaType.AppleProfile:
+                        case MediaType.AppleSonyDS:
+                        case MediaType.AppleSonySS:
+                        case MediaType.AppleWidget:
+                        case MediaType.PriamDataTower:
+                            int sectorSize                             = 0;
+                            if(data.Length      % 524 == 0) sectorSize = 524;
+                            else if(data.Length % 532 == 0)
+                                sectorSize = 532;
+                            else if(data.Length % 536 == 0)
+                                sectorSize = 536;
+
+                            if(sectorSize == 0)
+                            {
+                                ErrorMessage = "Incorrect data size";
+                                return false;
+                            }
+
+                            sector = new byte[sectorSize];
+                            for(uint i = 0; i < length; i++)
+                            {
+                                Array.Copy(data, sectorSize * i, sector, 0, sectorSize);
+                                if(!WriteSectorLong(sector, sectorAddress + i)) return false;
+                            }
+
+                            ErrorMessage = "";
+                            return true;
+                    }
+
+                    break;
             }
 
-            // TODO: Implement
-            ErrorMessage = "Unknown sector tag type, cannot write.";
+            ErrorMessage = "Unknown long sector type, cannot write.";
             return false;
         }
 
@@ -2011,6 +2256,79 @@ namespace DiscImageChef.DiscImages
                     imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                 }
             }
+            else if(imageInfo.XmlMediaType == XmlMediaType.BlockMedia)
+                if(sectorSubchannel        != null &&
+                   (imageInfo.MediaType    == MediaType.AppleFileWare ||
+                    imageInfo.MediaType    == MediaType.AppleSonySS   ||
+                    imageInfo.MediaType    == MediaType.AppleSonyDS   ||
+                    imageInfo.MediaType    == MediaType.AppleProfile  ||
+                    imageInfo.MediaType    == MediaType.AppleWidget   ||
+                    imageInfo.MediaType    == MediaType.PriamDataTower))
+                {
+                    DataType tagType = DataType.NoData;
+
+                    switch(imageInfo.MediaType)
+                    {
+                        case MediaType.AppleSonySS:
+                        case MediaType.AppleSonyDS:
+                            tagType = DataType.AppleSonyTag;
+                            break;
+                        case MediaType.AppleFileWare:
+                        case MediaType.AppleProfile:
+                        case MediaType.AppleWidget:
+                            tagType = DataType.AppleProfileTag;
+                            break;
+                        case MediaType.PriamDataTower:
+                            tagType = DataType.PriamDataTowerTag;
+                            break;
+                    }
+
+                    idxEntry = new IndexEntry
+                    {
+                        blockType = BlockType.DataBlock,
+                        dataType  = tagType,
+                        offset    = (ulong)imageStream.Position
+                    };
+
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                              "Writing apple sector tag block to position {0}", idxEntry.offset);
+
+                    Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
+
+                    BlockHeader subchannelBlock = new BlockHeader
+                    {
+                        identifier = BlockType.DataBlock,
+                        type       = tagType,
+                        length     = (uint)sectorSubchannel.Length,
+                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                    };
+
+                    blockStream           = new MemoryStream();
+                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
+                    compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                    byte[] lzmaProperties = compressedBlockStream.Properties;
+                    compressedBlockStream.Close();
+
+                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                    subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                    subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                    subchannelBlock.compression = CompressionType.Lzma;
+
+                    compressedBlockStream = null;
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
+                    structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
+                    Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    imageStream.Write(structureBytes, 0, structureBytes.Length);
+                    if(subchannelBlock.compression == CompressionType.Lzma)
+                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                    index.Add(idxEntry);
+                    blockStream = null;
+                }
 
             MetadataBlock metadataBlock = new MetadataBlock();
             blockStream                 = new MemoryStream();
@@ -2331,7 +2649,9 @@ namespace DiscImageChef.DiscImages
 
                     return true;
                 }
-                default: throw new NotImplementedException();
+                default:
+                    ErrorMessage = $"Don't know how to write sector tag type {tag}";
+                    return false;
             }
         }
 
@@ -2374,7 +2694,9 @@ namespace DiscImageChef.DiscImages
                     return true;
                 }
 
-                default: throw new NotImplementedException();
+                default:
+                    ErrorMessage = $"Don't know how to write sector tag type {tag}";
+                    return false;
             }
         }
 
@@ -2729,7 +3051,10 @@ namespace DiscImageChef.DiscImages
             XboxPfi                          = 68,
             CdSectorPrefix                   = 69,
             CdSectorSuffix                   = 70,
-            CdSectorSubchannel               = 71
+            CdSectorSubchannel               = 71,
+            AppleProfileTag                  = 72,
+            AppleSonyTag                     = 73,
+            PriamDataTowerTag                = 74
         }
 
         enum BlockType : uint
