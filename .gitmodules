@@ -1,3 +1,6 @@
 [submodule "CICMMetadata"]
 	path = CICMMetadata
 	url = https://github.com/claunia/CICMMetadata
+[submodule "cuetoolsnet"]
+	path = cuetoolsnet
+	url = git@github.com:claunia/cuetoolsnet.git

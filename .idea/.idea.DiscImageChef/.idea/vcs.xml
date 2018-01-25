@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CICMMetadata" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cuetoolsnet" vcs="Git" />
   </component>
 </project>
