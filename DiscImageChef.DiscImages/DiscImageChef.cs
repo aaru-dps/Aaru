@@ -404,7 +404,7 @@ namespace DiscImageChef.DiscImages
                                 lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
                                 lzmaDdt.Close();
                                 compressedDdtMs.Close();
-                                userDataDdt   = new ulong[ddtHeader.entries];
+                                userDataDdt = new ulong[ddtHeader.entries];
                                 for(ulong i = 0; i < ddtHeader.entries; i++)
                                     userDataDdt[i] = BitConverter.ToUInt64(decompressedDdt, (int)(i * sizeof(ulong)));
                                 DateTime ddtEnd    = DateTime.UtcNow;
@@ -677,6 +677,8 @@ namespace DiscImageChef.DiscImages
                             trackIsrcs.Add(trackEntry.sequence, trackEntry.isrc);
                         }
 
+                        imageInfo.HasPartitions = true;
+                        imageInfo.HasSessions   = true;
                         break;
                 }
             }
@@ -684,9 +686,9 @@ namespace DiscImageChef.DiscImages
             if(!foundUserDataDdt) throw new ImageNotSupportedException("Could not find user data deduplication table.");
 
             imageInfo.CreationTime = DateTime.FromFileTimeUtc(header.creationTime);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image created on", imageInfo.CreationTime);
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image created on {0}", imageInfo.CreationTime);
             imageInfo.LastModificationTime = DateTime.FromFileTimeUtc(header.lastWrittenTime);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image last written on",
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image last written on {0}",
                                       imageInfo.LastModificationTime);
 
             if(geometryBlock.identifier != BlockType.GeometryBlock && imageInfo.XmlMediaType == XmlMediaType.BlockMedia)
@@ -1721,34 +1723,28 @@ namespace DiscImageChef.DiscImages
 
                 if(header.mediaType != mediaType)
                 {
-                    ErrorMessage = $"Cannot write a media with type {mediaType} to an image with type {header.mediaType}";
+                    ErrorMessage =
+                        $"Cannot write a media with type {mediaType} to an image with type {header.mediaType}";
                     return false;
                 }
-
-                // TODO: Set correct version
-                header.application = "DiscImageChef";
-                header.imageMajorVersion = DICF_VERSION;
-                header.imageMinorVersion = 0;
-                header.applicationMajorVersion = 4;
-                header.applicationMinorVersion = 0;
             }
             else
             {
-                // TODO: Set correct version
                 header = new DicHeader
                 {
-                    identifier              = DIC_MAGIC,
-                    application             = "DiscImageChef",
-                    imageMajorVersion       = DICF_VERSION,
-                    imageMinorVersion       = 0,
-                    applicationMajorVersion = 4,
-                    applicationMinorVersion = 0,
-                    mediaType               = mediaType,
-                    creationTime            = DateTime.UtcNow.ToFileTimeUtc()
+                    identifier   = DIC_MAGIC,
+                    mediaType    = mediaType,
+                    creationTime = DateTime.UtcNow.ToFileTimeUtc()
                 };
 
                 imageStream.Write(new byte[Marshal.SizeOf(typeof(DicHeader))], 0, Marshal.SizeOf(typeof(DicHeader)));
             }
+
+            header.application             = "DiscImageChef";
+            header.imageMajorVersion       = DICF_VERSION;
+            header.imageMinorVersion       = 0;
+            header.applicationMajorVersion = (byte)typeof(DiscImageChef).Assembly.GetName().Version.Major;
+            header.applicationMinorVersion = (byte)typeof(DiscImageChef).Assembly.GetName().Version.Minor;
 
             index = new List<IndexEntry>();
 
@@ -1955,7 +1951,7 @@ namespace DiscImageChef.DiscImages
             else
             {
                 inMemoryDdt = sectors <= maxDdtSize * 1024 * 1024 / sizeof(ulong);
-                
+
                 if(inMemoryDdt) userDataDdt = new ulong[sectors];
                 else
                 {
@@ -1987,8 +1983,8 @@ namespace DiscImageChef.DiscImages
                     imageStream.Write(structureBytes, 0, structureBytes.Length);
                     structureBytes = null;
 
-                    // TODO: Can be changed to a seek?
-                    imageStream.Write(new byte[sectors * sizeof(ulong)], 0, (int)(sectors * sizeof(ulong)));
+                    imageStream.Position += (long)(sectors * sizeof(ulong)) - 1;
+                    imageStream.WriteByte(0);
                 }
             }
 
@@ -2309,9 +2305,11 @@ namespace DiscImageChef.DiscImages
                         return false;
                     }
 
-                    if(track.TrackStartSector + sectorAddress + length > track.TrackEndSector + 1)
-                        throw new ArgumentOutOfRangeException(nameof(length),
-                                                              $"Requested more sectors ({length + sectorAddress}) than present in track ({track.TrackEndSector - track.TrackStartSector + 1}), won't cross tracks");
+                    if(sectorAddress + length > track.TrackEndSector + 1)
+                    {
+                        ErrorMessage = "Can't cross tracks";
+                        return false;
+                    }
 
                     sector = new byte[2352];
                     for(uint i = 0; i < length; i++)
@@ -2484,8 +2482,7 @@ namespace DiscImageChef.DiscImages
                     imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
                 imageStream.Write(tagData,            0, tagData.Length);
 
-                index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
-                                     t.dataType  == dataType);
+                index.RemoveAll(t => t.blockType == BlockType.DataBlock && t.dataType == dataType);
 
                 index.Add(idxEntry);
             }
@@ -2509,8 +2506,7 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
 
-                index.RemoveAll(t => t.blockType == BlockType.GeometryBlock &&
-                                     t.dataType  == DataType.NoData);
+                index.RemoveAll(t => t.blockType == BlockType.GeometryBlock && t.dataType == DataType.NoData);
 
                 index.Add(idxEntry);
             }
@@ -2569,8 +2565,7 @@ namespace DiscImageChef.DiscImages
                 blockStream           = null;
                 compressedBlockStream = null;
 
-                index.RemoveAll(t => t.blockType == BlockType.DeDuplicationTable &&
-                                     t.dataType  == DataType.UserData);
+                index.RemoveAll(t => t.blockType == BlockType.DeDuplicationTable && t.dataType == DataType.UserData);
 
                 index.Add(idxEntry);
             }
@@ -2777,8 +2772,7 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing tracks to position {0}",
                                                   imageStream.Position);
 
-                        index.RemoveAll(t => t.blockType == BlockType.TracksBlock &&
-                                             t.dataType  == DataType.NoData);
+                        index.RemoveAll(t => t.blockType == BlockType.TracksBlock && t.dataType == DataType.NoData);
 
                         index.Add(new IndexEntry
                         {
@@ -2867,8 +2861,7 @@ namespace DiscImageChef.DiscImages
                             imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
-                        index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
-                                             t.dataType  == tagType);
+                        index.RemoveAll(t => t.blockType == BlockType.DataBlock && t.dataType == tagType);
 
                         index.Add(idxEntry);
                         blockStream = null;
@@ -3021,8 +3014,7 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 blockStream.Position = 0;
                 blockStream.Write(structureBytes, 0, structureBytes.Length);
-                index.RemoveAll(t => t.blockType == BlockType.MetadataBlock &&
-                                     t.dataType  == DataType.NoData);
+                index.RemoveAll(t => t.blockType == BlockType.MetadataBlock && t.dataType == DataType.NoData);
 
                 index.Add(new IndexEntry
                 {
