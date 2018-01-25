@@ -1610,12 +1610,6 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(track.TrackSubchannelType != TrackSubchannelType.None)
-            {
-                ErrorMessage = "Invalid subchannel mode for this sector";
-                return false;
-            }
-
             trackStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
                              SeekOrigin.Begin);
             trackStream.Write(data, 0, data.Length);
@@ -1667,17 +1661,33 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(track.TrackSubchannelType != TrackSubchannelType.None)
+            switch(track.TrackSubchannelType)
             {
-                ErrorMessage = "Invalid subchannel mode for this sector";
-                return false;
-            }
-
-            trackStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
+                case TrackSubchannelType.None:
+                    trackStream
+                       .Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
                              SeekOrigin.Begin);
-            trackStream.Write(data, 0, data.Length);
+                    trackStream.Write(data, 0, data.Length);
 
-            return true;
+                    ErrorMessage = "";
+                    return true;
+                case TrackSubchannelType.Raw:
+                case TrackSubchannelType.RawInterleaved:
+                    trackStream
+                       .Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96)),
+                             SeekOrigin.Begin);
+                    for(uint i = 0; i < length; i++)
+                    {
+                        trackStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
+                        trackStream.Position += 96;
+                    }
+
+                    ErrorMessage = "";
+                    return true;
+                default:
+                    ErrorMessage = "Invalid subchannel mode for this sector";
+                    return false;
+            }
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
@@ -1788,7 +1798,7 @@ namespace DiscImageChef.DiscImages
             if(writingTracks != null && writingStreams != null)
                 foreach(FileStream oldTrack in writingStreams.Select(t => t.Value).Distinct())
                     oldTrack.Close();
-            
+
             ulong currentOffset = 0;
             writingTracks       = new List<Track>();
             foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
