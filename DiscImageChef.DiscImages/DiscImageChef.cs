@@ -79,13 +79,16 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
+using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SecureDigital;
 using DiscImageChef.Filters;
 using SharpCompress.Compressors.LZMA;
+using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
 namespace DiscImageChef.DiscImages
 {
     // TODO: Work in progress
-    // TODO: Get manufacurer, model, firmware, from tags, if available
     public class DiscImageChef : IWritableImage
     {
         const ulong DIC_MAGIC              = 0x544D464444434944;
@@ -786,6 +789,8 @@ namespace DiscImageChef.DiscImages
                 Sessions   = null;
                 Partitions = null;
             }
+
+            SetMetadataFromTags();
 
             return true;
         }
@@ -2870,6 +2875,7 @@ namespace DiscImageChef.DiscImages
                     break;
             }
 
+            SetMetadataFromTags();
             MetadataBlock metadataBlock = new MetadataBlock();
             blockStream                 = new MemoryStream();
             blockStream.Write(new byte[Marshal.SizeOf(metadataBlock)], 0, Marshal.SizeOf(metadataBlock));
@@ -3240,6 +3246,81 @@ namespace DiscImageChef.DiscImages
                     ErrorMessage = $"Don't know how to write sector tag type {tag}";
                     return false;
             }
+        }
+
+        void SetMetadataFromTags()
+        {
+            if(mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] sdCid))
+            {
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(sdCid);
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
+                    imageInfo.DriveManufacturer =
+                        VendorString.Prettify(decoded.Manufacturer);
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel)) imageInfo.DriveModel = decoded.ProductName;
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
+                    imageInfo.DriveFirmwareRevision =
+                        $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
+                    imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
+            }
+
+            if(mediaTags.TryGetValue(MediaTagType.MMC_CID, out byte[] mmcCid))
+            {
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(mmcCid);
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
+                    imageInfo.DriveManufacturer =
+                        Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel)) imageInfo.DriveModel = decoded.ProductName;
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
+                    imageInfo.DriveFirmwareRevision =
+                        $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
+                    imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
+            }
+
+            if(mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] scsiInquiry))
+            {
+                Inquiry.SCSIInquiry? nullableInquiry = Inquiry.Decode(scsiInquiry);
+
+                if(nullableInquiry.HasValue)
+                {
+                    Inquiry.SCSIInquiry inquiry = nullableInquiry.Value;
+                    if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
+                        imageInfo.DriveManufacturer = StringHandlers.CToString(inquiry.VendorIdentification)?.Trim();
+                    if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
+                        imageInfo.DriveModel = StringHandlers.CToString(inquiry.ProductIdentification)?.Trim();
+                    if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
+                        imageInfo.DriveFirmwareRevision =
+                            StringHandlers.CToString(inquiry.ProductRevisionLevel)?.Trim();
+                }
+            }
+
+            if(!mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY,   out byte[] ataIdentify) &&
+               !mediaTags.TryGetValue(MediaTagType.ATAPI_IDENTIFY, out ataIdentify)) return;
+
+            Identify.IdentifyDevice? nullableIdentify = Decoders.ATA.Identify.Decode(ataIdentify);
+
+            if(!nullableIdentify.HasValue) return;
+
+            Identify.IdentifyDevice identify = nullableIdentify.Value;
+
+            string[] separated = identify.Model.Split(' ');
+
+            if(separated.Length == 1)
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
+                    imageInfo.DriveModel = separated[0];
+                else
+                {
+                    if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
+                        imageInfo.DriveManufacturer = separated[0];
+                    if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
+                        imageInfo.DriveModel = separated[separated.Length - 1];
+                }
+
+            if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
+                imageInfo.DriveFirmwareRevision = identify.FirmwareRevision;
+            if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
+                imageInfo.DriveSerialNumber = identify.SerialNumber;
         }
 
         static XmlMediaType GetXmlMediaType(MediaType type)
