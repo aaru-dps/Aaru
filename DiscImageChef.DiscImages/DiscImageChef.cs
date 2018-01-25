@@ -65,6 +65,7 @@
  the pointer in the corresponding deduplication table.
  
  P.S.: Data Position Measurement is doable, as soon as I know how to do it.
+ P.S.2: Support for floppy image containg bitslices and/or fluxes will be added soon.
 */
 
 using System;
@@ -110,6 +111,7 @@ namespace DiscImageChef.DiscImages
         Stream                           imageStream;
         List<IndexEntry>                 index;
         bool                             inMemoryDdt;
+        LzmaEncoderProperties            lzmaEncoderProperties;
         Dictionary<MediaTagType, byte[]> mediaTags;
         long                             outMemoryDdtPosition;
         byte[]                           sectorPrefix;
@@ -1373,7 +1375,11 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 ("sectors_per_block", typeof(uint),
-                "How many sectors to store per block (will be rounded to next power of two)")
+                "How many sectors to store per block (will be rounded to next power of two)"),
+                ("dictionary", typeof(uint),
+                 "Size, in bytes, of the LZMA dictionary"),
+                ("max_ddt_size", typeof(uint),
+                "Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk")
             };
         public IEnumerable<string> KnownExtensions => new[] {".dicf"};
         public bool                IsWriting       { get; private set; }
@@ -1384,8 +1390,11 @@ namespace DiscImageChef.DiscImages
                            uint   sectorSize)
         {
             uint sectorsPerBlock;
+            uint dictionary;
+            uint maxDdtSize;
 
             if(options != null)
+            {
                 if(options.TryGetValue("sectors_per_block", out string tmpValue))
                 {
                     if(!uint.TryParse(tmpValue, out sectorsPerBlock))
@@ -1394,9 +1403,34 @@ namespace DiscImageChef.DiscImages
                         return false;
                     }
                 }
-                else
-                    sectorsPerBlock = 4096;
-            else sectorsPerBlock    = 4096;
+                else sectorsPerBlock = 4096;
+
+                if(options.TryGetValue("dictionary", out tmpValue))
+                {
+                    if(!uint.TryParse(tmpValue, out dictionary))
+                    {
+                        ErrorMessage = "Invalid value for dictionary option";
+                        return false;
+                    }
+                }
+                else dictionary = 1 << 25;
+
+                if(options.TryGetValue("dictionary", out tmpValue))
+                {
+                    if(!uint.TryParse(tmpValue, out maxDdtSize))
+                    {
+                        ErrorMessage = "Invalid value for max_ddt_size option";
+                        return false;
+                    }
+                }
+                else maxDdtSize = 256;
+            }
+            else
+            {
+                sectorsPerBlock = 4096;
+                dictionary = 1 << 25;
+                maxDdtSize = 256;
+            }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
@@ -1445,8 +1479,7 @@ namespace DiscImageChef.DiscImages
                 creationTime            = DateTime.UtcNow.ToFileTimeUtc()
             };
 
-            // TODO: Settable
-            inMemoryDdt = sectors <= 256 * 1024 * 1024 / sizeof(ulong);
+            inMemoryDdt = sectors <= maxDdtSize * 1024 * 1024 / sizeof(ulong);
 
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "In memory DDT?: {0}", inMemoryDdt);
 
@@ -1492,6 +1525,8 @@ namespace DiscImageChef.DiscImages
             deduplicationTable = new Dictionary<byte[], ulong>();
             trackIsrcs         = new Dictionary<byte, string>();
             trackFlags         = new Dictionary<byte, byte>();
+
+            lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictionary, 255);
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -1574,7 +1609,7 @@ namespace DiscImageChef.DiscImages
             if(blockStream == null)
             {
                 blockStream           = new MemoryStream();
-                compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
+                compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
                 currentBlockHeader    = new BlockHeader
                 {
                     identifier  = BlockType.DataBlock,
@@ -1933,7 +1968,7 @@ namespace DiscImageChef.DiscImages
                 };
 
                 blockStream           = new MemoryStream();
-                compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
+                compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
                 compressedBlockStream.Write(mediaTag.Value, 0, mediaTag.Value.Length);
                 byte[] lzmaProperties = compressedBlockStream.Properties;
                 compressedBlockStream.Close();
@@ -2017,7 +2052,7 @@ namespace DiscImageChef.DiscImages
                 };
 
                 blockStream           = new MemoryStream();
-                compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
+                compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
                 crc64                 = new Crc64Context();
                 crc64.Init();
                 for(ulong i = 0; i < (ulong)userDataDdt.LongLength; i++)
@@ -2048,287 +2083,292 @@ namespace DiscImageChef.DiscImages
                 index.Add(idxEntry);
             }
 
-            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && Tracks != null && Tracks.Count > 0)
+            switch(imageInfo.XmlMediaType)
             {
-                if(sectorPrefix != null && sectorSuffix != null)
-                {
-                    idxEntry = new IndexEntry
+                case XmlMediaType.OpticalDisc when Tracks != null && Tracks.Count > 0:
+                    if(sectorPrefix                       != null && sectorSuffix != null)
                     {
-                        blockType = BlockType.DataBlock,
-                        dataType  = DataType.CdSectorPrefix,
-                        offset    = (ulong)imageStream.Position
-                    };
+                        idxEntry = new IndexEntry
+                        {
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorPrefix,
+                            offset    = (ulong)imageStream.Position
+                        };
 
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                              "Writing CD sector prefix block to position {0}", idxEntry.offset);
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Writing CD sector prefix block to position {0}", idxEntry.offset);
 
-                    Crc64Context.Data(sectorPrefix, out byte[] blockCrc);
+                        Crc64Context.Data(sectorPrefix, out byte[] blockCrc);
 
-                    BlockHeader prefixBlock = new BlockHeader
-                    {
-                        identifier = BlockType.DataBlock,
-                        type       = DataType.CdSectorPrefix,
-                        length     = (uint)sectorPrefix.Length,
-                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
-                    };
+                        BlockHeader prefixBlock = new BlockHeader
+                        {
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorPrefix,
+                            length     = (uint)sectorPrefix.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                        };
 
-                    blockStream           = new MemoryStream();
-                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
-                    compressedBlockStream.Write(sectorPrefix, 0, sectorPrefix.Length);
-                    byte[] lzmaProperties = compressedBlockStream.Properties;
-                    compressedBlockStream.Close();
+                        blockStream           = new MemoryStream();
+                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        compressedBlockStream.Write(sectorPrefix, 0, sectorPrefix.Length);
+                        byte[] lzmaProperties = compressedBlockStream.Properties;
+                        compressedBlockStream.Close();
 
-                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                    prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                    prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                    prefixBlock.compression = CompressionType.Lzma;
+                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                        prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                        prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                        prefixBlock.compression = CompressionType.Lzma;
 
-                    compressedBlockStream = null;
+                        compressedBlockStream = null;
 
-                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
-                    structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
-                    Marshal.StructureToPtr(prefixBlock, structurePointer, true);
-                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                    Marshal.FreeHGlobal(structurePointer);
-                    imageStream.Write(structureBytes, 0, structureBytes.Length);
-                    if(prefixBlock.compression == CompressionType.Lzma)
-                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
-                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-
-                    index.Add(idxEntry);
-
-                    idxEntry = new IndexEntry
-                    {
-                        blockType = BlockType.DataBlock,
-                        dataType  = DataType.CdSectorSuffix,
-                        offset    = (ulong)imageStream.Position
-                    };
-
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                              "Writing CD sector suffix block to position {0}", idxEntry.offset);
-
-                    Crc64Context.Data(sectorSuffix, out blockCrc);
-
-                    prefixBlock = new BlockHeader
-                    {
-                        identifier = BlockType.DataBlock,
-                        type       = DataType.CdSectorSuffix,
-                        length     = (uint)sectorSuffix.Length,
-                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
-                    };
-
-                    blockStream           = new MemoryStream();
-                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
-                    compressedBlockStream.Write(sectorSuffix, 0, sectorSuffix.Length);
-                    lzmaProperties = compressedBlockStream.Properties;
-                    compressedBlockStream.Close();
-
-                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                    prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                    prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                    prefixBlock.compression = CompressionType.Lzma;
-
-                    compressedBlockStream = null;
-
-                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
-                    structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
-                    Marshal.StructureToPtr(prefixBlock, structurePointer, true);
-                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                    Marshal.FreeHGlobal(structurePointer);
-                    imageStream.Write(structureBytes, 0, structureBytes.Length);
-                    if(prefixBlock.compression == CompressionType.Lzma)
-                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
-                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-
-                    index.Add(idxEntry);
-                    blockStream = null;
-                }
-
-                if(sectorSubchannel != null)
-                {
-                    idxEntry = new IndexEntry
-                    {
-                        blockType = BlockType.DataBlock,
-                        dataType  = DataType.CdSectorSubchannel,
-                        offset    = (ulong)imageStream.Position
-                    };
-
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                              "Writing CD subchannel block to position {0}", idxEntry.offset);
-
-                    Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
-
-                    BlockHeader subchannelBlock = new BlockHeader
-                    {
-                        identifier = BlockType.DataBlock,
-                        type       = DataType.CdSectorSubchannel,
-                        length     = (uint)sectorSubchannel.Length,
-                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
-                    };
-
-                    blockStream           = new MemoryStream();
-                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
-                    compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
-                    byte[] lzmaProperties = compressedBlockStream.Properties;
-                    compressedBlockStream.Close();
-
-                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                    subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                    subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                    subchannelBlock.compression = CompressionType.Lzma;
-
-                    compressedBlockStream = null;
-
-                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
-                    structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
-                    Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
-                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                    Marshal.FreeHGlobal(structurePointer);
-                    imageStream.Write(structureBytes, 0, structureBytes.Length);
-                    if(subchannelBlock.compression == CompressionType.Lzma)
-                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
-                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-
-                    index.Add(idxEntry);
-                    blockStream = null;
-                }
-
-                List<TrackEntry> trackEntries = new List<TrackEntry>();
-                foreach(Track track in Tracks)
-                {
-                    trackFlags.TryGetValue((byte)track.TrackSequence, out byte flags);
-                    trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc);
-
-                    if((flags & (int)CdFlags.DataTrack) == 0 && track.TrackType != TrackType.Audio)
-                        flags += (byte)CdFlags.DataTrack;
-
-                    trackEntries.Add(new TrackEntry
-                    {
-                        sequence = (byte)track.TrackSequence,
-                        type     = track.TrackType,
-                        start    = (long)track.TrackStartSector,
-                        end      = (long)track.TrackEndSector,
-                        pregap   = (long)track.TrackPregap,
-                        session  = (byte)track.TrackSession,
-                        isrc     = isrc,
-                        flags    = flags
-                    });
-                }
-
-                if(trackEntries.Count > 0)
-                {
-                    blockStream = new MemoryStream();
-
-                    foreach(TrackEntry entry in trackEntries)
-                    {
-                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(entry));
-                        structureBytes   = new byte[Marshal.SizeOf(entry)];
-                        Marshal.StructureToPtr(entry, structurePointer, true);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
+                        structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
+                        Marshal.StructureToPtr(prefixBlock, structurePointer, true);
                         Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
                         Marshal.FreeHGlobal(structurePointer);
-                        blockStream.Write(structureBytes, 0, structureBytes.Length);
+                        imageStream.Write(structureBytes, 0, structureBytes.Length);
+                        if(prefixBlock.compression == CompressionType.Lzma)
+                            imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                        imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.Add(idxEntry);
+
+                        idxEntry = new IndexEntry
+                        {
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorSuffix,
+                            offset    = (ulong)imageStream.Position
+                        };
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Writing CD sector suffix block to position {0}", idxEntry.offset);
+
+                        Crc64Context.Data(sectorSuffix, out blockCrc);
+
+                        prefixBlock = new BlockHeader
+                        {
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorSuffix,
+                            length     = (uint)sectorSuffix.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                        };
+
+                        blockStream           = new MemoryStream();
+                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        compressedBlockStream.Write(sectorSuffix, 0, sectorSuffix.Length);
+                        lzmaProperties = compressedBlockStream.Properties;
+                        compressedBlockStream.Close();
+
+                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                        prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                        prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                        prefixBlock.compression = CompressionType.Lzma;
+
+                        compressedBlockStream = null;
+
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
+                        structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
+                        Marshal.StructureToPtr(prefixBlock, structurePointer, true);
+                        Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                        Marshal.FreeHGlobal(structurePointer);
+                        imageStream.Write(structureBytes, 0, structureBytes.Length);
+                        if(prefixBlock.compression == CompressionType.Lzma)
+                            imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                        imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.Add(idxEntry);
+                        blockStream = null;
                     }
 
-                    Crc64Context.Data(blockStream.ToArray(), out byte[] trksCrc);
-                    TracksHeader trkHeader = new TracksHeader
+                    if(sectorSubchannel != null)
                     {
-                        identifier = BlockType.TracksBlock,
-                        entries    = (ushort)trackEntries.Count,
-                        crc64      = BitConverter.ToUInt64(trksCrc, 0)
-                    };
+                        idxEntry = new IndexEntry
+                        {
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorSubchannel,
+                            offset    = (ulong)imageStream.Position
+                        };
 
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing tracks to position {0}",
-                                              imageStream.Position);
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Writing CD subchannel block to position {0}", idxEntry.offset);
 
-                    index.Add(new IndexEntry
+                        Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
+
+                        BlockHeader subchannelBlock = new BlockHeader
+                        {
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorSubchannel,
+                            length     = (uint)sectorSubchannel.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                        };
+
+                        blockStream           = new MemoryStream();
+                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                        byte[] lzmaProperties = compressedBlockStream.Properties;
+                        compressedBlockStream.Close();
+
+                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                        subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                        subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                        subchannelBlock.compression = CompressionType.Lzma;
+
+                        compressedBlockStream = null;
+
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
+                        structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
+                        Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
+                        Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                        Marshal.FreeHGlobal(structurePointer);
+                        imageStream.Write(structureBytes, 0, structureBytes.Length);
+                        if(subchannelBlock.compression == CompressionType.Lzma)
+                            imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                        imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.Add(idxEntry);
+                        blockStream = null;
+                    }
+
+                    List<TrackEntry> trackEntries = new List<TrackEntry>();
+                    foreach(Track track in Tracks)
                     {
-                        blockType = BlockType.TracksBlock,
-                        dataType  = DataType.NoData,
-                        offset    = (ulong)imageStream.Position
-                    });
+                        trackFlags.TryGetValue((byte)track.TrackSequence, out byte flags);
+                        trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc);
 
-                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(trkHeader));
-                    structureBytes   = new byte[Marshal.SizeOf(trkHeader)];
-                    Marshal.StructureToPtr(trkHeader, structurePointer, true);
-                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                    Marshal.FreeHGlobal(structurePointer);
-                    imageStream.Write(structureBytes,        0, structureBytes.Length);
-                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-                }
+                        if((flags & (int)CdFlags.DataTrack) == 0 && track.TrackType != TrackType.Audio)
+                            flags += (byte)CdFlags.DataTrack;
+
+                        trackEntries.Add(new TrackEntry
+                        {
+                            sequence = (byte)track.TrackSequence,
+                            type     = track.TrackType,
+                            start    = (long)track.TrackStartSector,
+                            end      = (long)track.TrackEndSector,
+                            pregap   = (long)track.TrackPregap,
+                            session  = (byte)track.TrackSession,
+                            isrc     = isrc,
+                            flags    = flags
+                        });
+                    }
+
+                    if(trackEntries.Count > 0)
+                    {
+                        blockStream = new MemoryStream();
+
+                        foreach(TrackEntry entry in trackEntries)
+                        {
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(entry));
+                            structureBytes   = new byte[Marshal.SizeOf(entry)];
+                            Marshal.StructureToPtr(entry, structurePointer, true);
+                            Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                            Marshal.FreeHGlobal(structurePointer);
+                            blockStream.Write(structureBytes, 0, structureBytes.Length);
+                        }
+
+                        Crc64Context.Data(blockStream.ToArray(), out byte[] trksCrc);
+                        TracksHeader trkHeader = new TracksHeader
+                        {
+                            identifier = BlockType.TracksBlock,
+                            entries    = (ushort)trackEntries.Count,
+                            crc64      = BitConverter.ToUInt64(trksCrc, 0)
+                        };
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing tracks to position {0}",
+                                                  imageStream.Position);
+
+                        index.Add(new IndexEntry
+                        {
+                            blockType = BlockType.TracksBlock,
+                            dataType  = DataType.NoData,
+                            offset    = (ulong)imageStream.Position
+                        });
+
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(trkHeader));
+                        structureBytes   = new byte[Marshal.SizeOf(trkHeader)];
+                        Marshal.StructureToPtr(trkHeader, structurePointer, true);
+                        Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                        Marshal.FreeHGlobal(structurePointer);
+                        imageStream.Write(structureBytes,        0, structureBytes.Length);
+                        imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                    }
+
+                    break;
+                case XmlMediaType.BlockMedia:
+                    if(sectorSubchannel     != null &&
+                       (imageInfo.MediaType == MediaType.AppleFileWare ||
+                        imageInfo.MediaType == MediaType.AppleSonySS   ||
+                        imageInfo.MediaType == MediaType.AppleSonyDS   ||
+                        imageInfo.MediaType == MediaType.AppleProfile  ||
+                        imageInfo.MediaType == MediaType.AppleWidget   ||
+                        imageInfo.MediaType == MediaType.PriamDataTower))
+                    {
+                        DataType tagType = DataType.NoData;
+
+                        switch(imageInfo.MediaType)
+                        {
+                            case MediaType.AppleSonySS:
+                            case MediaType.AppleSonyDS:
+                                tagType = DataType.AppleSonyTag;
+                                break;
+                            case MediaType.AppleFileWare:
+                            case MediaType.AppleProfile:
+                            case MediaType.AppleWidget:
+                                tagType = DataType.AppleProfileTag;
+                                break;
+                            case MediaType.PriamDataTower:
+                                tagType = DataType.PriamDataTowerTag;
+                                break;
+                        }
+
+                        idxEntry = new IndexEntry
+                        {
+                            blockType = BlockType.DataBlock,
+                            dataType  = tagType,
+                            offset    = (ulong)imageStream.Position
+                        };
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Writing apple sector tag block to position {0}", idxEntry.offset);
+
+                        Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
+
+                        BlockHeader subchannelBlock = new BlockHeader
+                        {
+                            identifier = BlockType.DataBlock,
+                            type       = tagType,
+                            length     = (uint)sectorSubchannel.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                        };
+
+                        blockStream           = new MemoryStream();
+                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                        byte[] lzmaProperties = compressedBlockStream.Properties;
+                        compressedBlockStream.Close();
+
+                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                        subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                        subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                        subchannelBlock.compression = CompressionType.Lzma;
+
+                        compressedBlockStream = null;
+
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
+                        structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
+                        Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
+                        Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                        Marshal.FreeHGlobal(structurePointer);
+                        imageStream.Write(structureBytes, 0, structureBytes.Length);
+                        if(subchannelBlock.compression == CompressionType.Lzma)
+                            imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                        imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.Add(idxEntry);
+                        blockStream = null;
+                    }
+
+                    break;
             }
-            else if(imageInfo.XmlMediaType == XmlMediaType.BlockMedia)
-                if(sectorSubchannel        != null &&
-                   (imageInfo.MediaType    == MediaType.AppleFileWare ||
-                    imageInfo.MediaType    == MediaType.AppleSonySS   ||
-                    imageInfo.MediaType    == MediaType.AppleSonyDS   ||
-                    imageInfo.MediaType    == MediaType.AppleProfile  ||
-                    imageInfo.MediaType    == MediaType.AppleWidget   ||
-                    imageInfo.MediaType    == MediaType.PriamDataTower))
-                {
-                    DataType tagType = DataType.NoData;
-
-                    switch(imageInfo.MediaType)
-                    {
-                        case MediaType.AppleSonySS:
-                        case MediaType.AppleSonyDS:
-                            tagType = DataType.AppleSonyTag;
-                            break;
-                        case MediaType.AppleFileWare:
-                        case MediaType.AppleProfile:
-                        case MediaType.AppleWidget:
-                            tagType = DataType.AppleProfileTag;
-                            break;
-                        case MediaType.PriamDataTower:
-                            tagType = DataType.PriamDataTowerTag;
-                            break;
-                    }
-
-                    idxEntry = new IndexEntry
-                    {
-                        blockType = BlockType.DataBlock,
-                        dataType  = tagType,
-                        offset    = (ulong)imageStream.Position
-                    };
-
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                              "Writing apple sector tag block to position {0}", idxEntry.offset);
-
-                    Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
-
-                    BlockHeader subchannelBlock = new BlockHeader
-                    {
-                        identifier = BlockType.DataBlock,
-                        type       = tagType,
-                        length     = (uint)sectorSubchannel.Length,
-                        crc64      = BitConverter.ToUInt64(blockCrc, 0)
-                    };
-
-                    blockStream           = new MemoryStream();
-                    compressedBlockStream = new LzmaStream(new LzmaEncoderProperties(), false, blockStream);
-                    compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
-                    byte[] lzmaProperties = compressedBlockStream.Properties;
-                    compressedBlockStream.Close();
-
-                    Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                    subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                    subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                    subchannelBlock.compression = CompressionType.Lzma;
-
-                    compressedBlockStream = null;
-
-                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
-                    structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
-                    Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
-                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                    Marshal.FreeHGlobal(structurePointer);
-                    imageStream.Write(structureBytes, 0, structureBytes.Length);
-                    if(subchannelBlock.compression == CompressionType.Lzma)
-                        imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
-                    imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-
-                    index.Add(idxEntry);
-                    blockStream = null;
-                }
 
             MetadataBlock metadataBlock = new MetadataBlock();
             blockStream                 = new MemoryStream();
