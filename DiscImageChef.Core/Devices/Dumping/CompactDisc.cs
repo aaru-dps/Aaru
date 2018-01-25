@@ -607,11 +607,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                sense = dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 64, MmcSectorTypes.AllTypes, false,
-                                   false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                   supportedSubchannel, dev.Timeout, out _);
+                sense = dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
+                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
+                                   dev.Timeout, out _);
 
-                byte[] tmpBuf = new byte[SECTOR_SIZE];
+                byte[] tmpBuf = new byte[subSize];
                 Array.Copy(readBuffer, SECTOR_SIZE, tmpBuf, 0, subSize);
 
                 ret = outputPlugin.WriteSectorTag(tmpBuf, 0, SectorTagType.CdSectorSubchannel);
@@ -700,15 +700,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                         ibgLog.Write(i, currentSpeed * 1024);
                         extents.Add(i, blocksToRead, true);
                         if(supportedSubchannel != MmcSubchannel.None)
-                            for(int b = 0; b   < blocksToRead; b++)
+                        {
+                            byte[] data = new byte[SECTOR_SIZE * blocksToRead];
+                            byte[] sub  = new byte[subSize     * blocksToRead];
+
+                            for(int b = 0; b < blocksToRead; b++)
                             {
-                                byte[] data = new byte[SECTOR_SIZE];
-                                byte[] sub  = new byte[subSize];
-                                Array.Copy(readBuffer, (int)(0           + b * blockSize), data, 0, SECTOR_SIZE);
-                                Array.Copy(readBuffer, (int)(SECTOR_SIZE + b * blockSize), sub,  0, subSize);
-                                outputPlugin.WriteSectors(data, i, blocksToRead);
-                                outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
+                                Array.Copy(readBuffer, (int)(0 + b * blockSize), data, SECTOR_SIZE * b,
+                                           SECTOR_SIZE);
+                                Array.Copy(readBuffer, (int)(SECTOR_SIZE + b * blockSize), sub, subSize * b,
+                                           subSize);
                             }
+
+                            outputPlugin.WriteSectors(data, i, blocksToRead);
+                            outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
+                        }
                         else outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
                     }
                     else
@@ -776,7 +782,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(readcd)
                     {
-                        sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, blocksToRead,
+                        sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                            true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
                                            out double cmdDuration);
@@ -801,7 +807,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         outputPlugin.WriteSector(data, badSector);
                         outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
                     }
-                    else outputPlugin.WriteSectors(readBuffer, badSector, blocksToRead);
+                    else outputPlugin.WriteSector(readBuffer, badSector);
                 }
 
                 if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
