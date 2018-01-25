@@ -1619,7 +1619,6 @@ namespace DiscImageChef.DiscImages
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }
 
-        // TODO: Support resume
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint   sectorSize)
         {
@@ -1698,62 +1697,304 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            if(imageStream.Length > Marshal.SizeOf(typeof(DicHeader)))
+            {
+                header         = new DicHeader();
+                structureBytes = new byte[Marshal.SizeOf(header)];
+                imageStream.Read(structureBytes, 0, structureBytes.Length);
+                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(header));
+                header = (DicHeader)Marshal.PtrToStructure(structurePointer, typeof(DicHeader));
+                Marshal.FreeHGlobal(structurePointer);
+
+                if(header.identifier != DIC_MAGIC)
+                {
+                    ErrorMessage = "Cannot append to a non DiscImageChef format image";
+                    return false;
+                }
+
+                if(header.imageMajorVersion > DICF_VERSION)
+                {
+                    ErrorMessage = $"Cannot append to an unknown image version {header.imageMajorVersion}";
+                    return false;
+                }
+
+                if(header.mediaType != mediaType)
+                {
+                    ErrorMessage = $"Cannot write a media with type {mediaType} to an image with type {header.mediaType}";
+                    return false;
+                }
+
+                // TODO: Set correct version
+                header.application = "DiscImageChef";
+                header.imageMajorVersion = DICF_VERSION;
+                header.imageMinorVersion = 0;
+                header.applicationMajorVersion = 4;
+                header.applicationMinorVersion = 0;
+            }
+            else
+            {
+                // TODO: Set correct version
+                header = new DicHeader
+                {
+                    identifier              = DIC_MAGIC,
+                    application             = "DiscImageChef",
+                    imageMajorVersion       = DICF_VERSION,
+                    imageMinorVersion       = 0,
+                    applicationMajorVersion = 4,
+                    applicationMinorVersion = 0,
+                    mediaType               = mediaType,
+                    creationTime            = DateTime.UtcNow.ToFileTimeUtc()
+                };
+
+                imageStream.Write(new byte[Marshal.SizeOf(typeof(DicHeader))], 0, Marshal.SizeOf(typeof(DicHeader)));
+            }
+
             index = new List<IndexEntry>();
 
-            // TODO: Set correct version
-            header = new DicHeader
+            if(header.indexOffset > 0)
             {
-                identifier              = DIC_MAGIC,
-                application             = "DiscImageChef",
-                imageMajorVersion       = DICF_VERSION,
-                imageMinorVersion       = 0,
-                applicationMajorVersion = 4,
-                applicationMinorVersion = 0,
-                mediaType               = mediaType,
-                creationTime            = DateTime.UtcNow.ToFileTimeUtc()
-            };
+                imageStream.Position  = (long)header.indexOffset;
+                IndexHeader idxHeader = new IndexHeader();
+                structureBytes        = new byte[Marshal.SizeOf(idxHeader)];
+                imageStream.Read(structureBytes, 0, structureBytes.Length);
+                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(idxHeader));
+                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(idxHeader));
+                idxHeader = (IndexHeader)Marshal.PtrToStructure(structurePointer, typeof(IndexHeader));
+                Marshal.FreeHGlobal(structurePointer);
 
-            inMemoryDdt = sectors <= maxDdtSize * 1024 * 1024 / sizeof(ulong);
+                if(idxHeader.identifier != BlockType.Index)
+                {
+                    ErrorMessage = "Index not found in existing image, cannot continue";
+                    return false;
+                }
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Index at {0} contains {1} entries",
+                                          header.indexOffset, idxHeader.entries);
+
+                for(ushort i = 0; i < idxHeader.entries; i++)
+                {
+                    IndexEntry entry = new IndexEntry();
+                    structureBytes   = new byte[Marshal.SizeOf(entry)];
+                    imageStream.Read(structureBytes, 0, structureBytes.Length);
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(entry));
+                    Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(entry));
+                    entry = (IndexEntry)Marshal.PtrToStructure(structurePointer, typeof(IndexEntry));
+                    Marshal.FreeHGlobal(structurePointer);
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                              "Block type {0} with data type {1} is indexed to be at {2}",
+                                              entry.blockType, entry.dataType, entry.offset);
+                    index.Add(entry);
+                }
+
+                bool foundUserDataDdt = false;
+                foreach(IndexEntry entry in index)
+                {
+                    imageStream.Position = (long)entry.offset;
+                    switch(entry.blockType)
+                    {
+                        case BlockType.DataBlock:
+                            switch(entry.dataType)
+                            {
+                                case DataType.CdSectorPrefix:
+                                case DataType.CdSectorSuffix:
+                                case DataType.CdSectorSubchannel:
+                                case DataType.AppleProfileTag:
+                                case DataType.AppleSonyTag:
+                                case DataType.PriamDataTowerTag: break;
+                                default:                         continue;
+                            }
+
+                            BlockHeader blockHeader = new BlockHeader();
+                            structureBytes          = new byte[Marshal.SizeOf(blockHeader)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(blockHeader));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(blockHeader));
+                            blockHeader = (BlockHeader)Marshal.PtrToStructure(structurePointer, typeof(BlockHeader));
+                            Marshal.FreeHGlobal(structurePointer);
+                            imageInfo.ImageSize += blockHeader.cmpLength;
+
+                            if(blockHeader.identifier != entry.blockType)
+                            {
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                          "Incorrect identifier for data block at position {0}",
+                                                          entry.offset);
+                                break;
+                            }
+
+                            if(blockHeader.type != entry.dataType)
+                            {
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                          "Expected block with data type {0} at position {1} but found data type {2}",
+                                                          entry.dataType, entry.offset, blockHeader.type);
+                                break;
+                            }
+
+                            byte[] data;
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Found data block type {0} at position {1}", entry.dataType,
+                                                      entry.offset);
+
+                            if(blockHeader.compression == CompressionType.Lzma)
+                            {
+                                byte[] compressedTag  = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                byte[] lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                imageStream.Read(compressedTag,  0, compressedTag.Length);
+                                MemoryStream compressedTagMs = new MemoryStream(compressedTag);
+                                LzmaStream   lzmaBlock       = new LzmaStream(lzmaProperties, compressedTagMs);
+                                data                         = new byte[blockHeader.length];
+                                lzmaBlock.Read(data, 0, (int)blockHeader.length);
+                                lzmaBlock.Close();
+                                compressedTagMs.Close();
+                            }
+                            else if(blockHeader.compression == CompressionType.None)
+                            {
+                                data = new byte[blockHeader.length];
+                                imageStream.Read(data, 0, (int)blockHeader.length);
+                            }
+                            else
+                            {
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                          "Found unknown compression type {0}, continuing...",
+                                                          (ushort)blockHeader.compression);
+                                break;
+                            }
+
+                            Crc64Context.Data(data, out byte[] blockCrc);
+                            blockCrc = blockCrc.Reverse().ToArray();
+                            if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
+                            {
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                          "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                          BitConverter.ToUInt64(blockCrc, 0), blockHeader.crc64);
+                                break;
+                            }
+
+                            switch(entry.dataType)
+                            {
+                                case DataType.CdSectorPrefix:
+                                    sectorPrefix = data;
+                                    break;
+                                case DataType.CdSectorSuffix:
+                                    sectorSuffix = data;
+                                    break;
+                                case DataType.CdSectorSubchannel:
+                                case DataType.AppleProfileTag:
+                                case DataType.AppleSonyTag:
+                                case DataType.PriamDataTowerTag:
+                                    sectorSubchannel = data;
+                                    break;
+                            }
+
+                            break;
+                        case BlockType.DeDuplicationTable:
+                            // Only user data deduplication tables are used right now
+                            if(entry.dataType != DataType.UserData) break;
+
+                            DdtHeader ddtHeader = new DdtHeader();
+                            structureBytes      = new byte[Marshal.SizeOf(ddtHeader)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
+                            ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
+                            Marshal.FreeHGlobal(structurePointer);
+                            imageInfo.ImageSize += ddtHeader.cmpLength;
+
+                            if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
+
+                            imageInfo.Sectors = ddtHeader.entries;
+                            shift             = ddtHeader.shift;
+
+                            switch(ddtHeader.compression)
+                            {
+                                case CompressionType.Lzma:
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
+                                    DateTime ddtStart       = DateTime.UtcNow;
+                                    byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                    byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                    imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                    imageStream.Read(compressedDdt,  0, compressedDdt.Length);
+                                    MemoryStream compressedDdtMs = new MemoryStream(compressedDdt);
+                                    LzmaStream   lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
+                                    byte[]       decompressedDdt = new byte[ddtHeader.length];
+                                    lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
+                                    lzmaDdt.Close();
+                                    compressedDdtMs.Close();
+                                    userDataDdt = new ulong[ddtHeader.entries];
+                                    for(ulong i = 0; i < ddtHeader.entries; i++)
+                                        userDataDdt[i] =
+                                            BitConverter.ToUInt64(decompressedDdt, (int)(i * sizeof(ulong)));
+                                    DateTime ddtEnd = DateTime.UtcNow;
+                                    inMemoryDdt     = true;
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Took {0} seconds to decompress DDT",
+                                                              (ddtEnd - ddtStart).TotalSeconds);
+                                    break;
+                                case CompressionType.None:
+                                    inMemoryDdt          = false;
+                                    outMemoryDdtPosition = (long)entry.offset;
+                                    break;
+                                default:
+                                    throw new
+                                        ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                            }
+
+                            foundUserDataDdt = true;
+                            break;
+                    }
+                }
+
+                if(!foundUserDataDdt)
+                {
+                    ErrorMessage = "Could not find user data deduplication table.";
+                    return false;
+                }
+            }
+            else
+            {
+                inMemoryDdt = sectors <= maxDdtSize * 1024 * 1024 / sizeof(ulong);
+                
+                if(inMemoryDdt) userDataDdt = new ulong[sectors];
+                else
+                {
+                    outMemoryDdtPosition = imageStream.Position;
+                    index.Add(new IndexEntry
+                    {
+                        blockType = BlockType.DeDuplicationTable,
+                        dataType  = DataType.UserData,
+                        offset    = (ulong)outMemoryDdtPosition
+                    });
+
+                    // CRC64 will be calculated later
+                    DdtHeader ddtHeader = new DdtHeader
+                    {
+                        identifier  = BlockType.DeDuplicationTable,
+                        type        = DataType.UserData,
+                        compression = CompressionType.None,
+                        shift       = shift,
+                        entries     = sectors,
+                        cmpLength   = sectors * sizeof(ulong),
+                        length      = sectors * sizeof(ulong)
+                    };
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
+                    structureBytes   = new byte[Marshal.SizeOf(ddtHeader)];
+                    Marshal.StructureToPtr(ddtHeader, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    imageStream.Write(structureBytes, 0, structureBytes.Length);
+                    structureBytes = null;
+
+                    // TODO: Can be changed to a seek?
+                    imageStream.Write(new byte[sectors * sizeof(ulong)], 0, (int)(sectors * sizeof(ulong)));
+                }
+            }
 
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "In memory DDT?: {0}", inMemoryDdt);
 
-            imageStream.Write(new byte[Marshal.SizeOf(typeof(DicHeader))], 0, Marshal.SizeOf(typeof(DicHeader)));
-
-            if(inMemoryDdt) userDataDdt = new ulong[sectors];
-            else
-            {
-                outMemoryDdtPosition = imageStream.Position;
-                index.Add(new IndexEntry
-                {
-                    blockType = BlockType.DeDuplicationTable,
-                    dataType  = DataType.UserData,
-                    offset    = (ulong)outMemoryDdtPosition
-                });
-
-                // CRC64 will be calculated later
-                DdtHeader ddtHeader = new DdtHeader
-                {
-                    identifier  = BlockType.DeDuplicationTable,
-                    type        = DataType.UserData,
-                    compression = CompressionType.None,
-                    shift       = shift,
-                    entries     = sectors,
-                    cmpLength   = sectors * sizeof(ulong),
-                    length      = sectors * sizeof(ulong)
-                };
-
-                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
-                structureBytes   = new byte[Marshal.SizeOf(ddtHeader)];
-                Marshal.StructureToPtr(ddtHeader, structurePointer, true);
-                Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                Marshal.FreeHGlobal(structurePointer);
-                imageStream.Write(structureBytes, 0, structureBytes.Length);
-                structureBytes = null;
-
-                // TODO: Can be changed to a seek?
-                imageStream.Write(new byte[sectors * sizeof(ulong)], 0, (int)(sectors * sizeof(ulong)));
-            }
-
+            imageStream.Seek(0, SeekOrigin.End);
             mediaTags          = new Dictionary<MediaTagType, byte[]>();
             checksumProvider   = SHA256.Create();
             deduplicationTable = new Dictionary<byte[], ulong>();
@@ -1783,7 +2024,6 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        // TODO: Resume
         public bool WriteSector(byte[] data, ulong sectorAddress)
         {
             if(!IsWriting)
@@ -2244,6 +2484,9 @@ namespace DiscImageChef.DiscImages
                     imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
                 imageStream.Write(tagData,            0, tagData.Length);
 
+                index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                     t.dataType  == dataType);
+
                 index.Add(idxEntry);
             }
 
@@ -2265,6 +2508,9 @@ namespace DiscImageChef.DiscImages
                 Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
+
+                index.RemoveAll(t => t.blockType == BlockType.GeometryBlock &&
+                                     t.dataType  == DataType.NoData);
 
                 index.Add(idxEntry);
             }
@@ -2323,6 +2569,9 @@ namespace DiscImageChef.DiscImages
                 blockStream           = null;
                 compressedBlockStream = null;
 
+                index.RemoveAll(t => t.blockType == BlockType.DeDuplicationTable &&
+                                     t.dataType  == DataType.UserData);
+
                 index.Add(idxEntry);
             }
 
@@ -2374,6 +2623,9 @@ namespace DiscImageChef.DiscImages
                             imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
+                        index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                             t.dataType  == DataType.CdSectorPrefix);
+
                         index.Add(idxEntry);
 
                         idxEntry = new IndexEntry
@@ -2418,6 +2670,9 @@ namespace DiscImageChef.DiscImages
                         if(prefixBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                             t.dataType  == DataType.CdSectorSuffix);
 
                         index.Add(idxEntry);
                         blockStream = null;
@@ -2467,6 +2722,9 @@ namespace DiscImageChef.DiscImages
                         if(subchannelBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                             t.dataType  == DataType.CdSectorSubchannel);
 
                         index.Add(idxEntry);
                         blockStream = null;
@@ -2518,6 +2776,9 @@ namespace DiscImageChef.DiscImages
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing tracks to position {0}",
                                                   imageStream.Position);
+
+                        index.RemoveAll(t => t.blockType == BlockType.TracksBlock &&
+                                             t.dataType  == DataType.NoData);
 
                         index.Add(new IndexEntry
                         {
@@ -2605,6 +2866,9 @@ namespace DiscImageChef.DiscImages
                         if(subchannelBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                             t.dataType  == tagType);
 
                         index.Add(idxEntry);
                         blockStream = null;
@@ -2757,6 +3021,9 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 blockStream.Position = 0;
                 blockStream.Write(structureBytes, 0, structureBytes.Length);
+                index.RemoveAll(t => t.blockType == BlockType.MetadataBlock &&
+                                     t.dataType  == DataType.NoData);
+
                 index.Add(new IndexEntry
                 {
                     blockType = BlockType.MetadataBlock,
