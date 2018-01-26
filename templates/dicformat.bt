@@ -3,16 +3,16 @@
 //
 //      File: dicformat.bt
 //   Authors: Natalia Portillo
-//   Version: 0.0
+//   Version: 1.0
 //   Purpose: DiscImageChef format
 //  Category: Misc
 // File Mask: *.dicf
-//  ID Bytes: 44 49 43 44 44 46 4D 54 // DICDDFMT
+//  ID Bytes: 44 49 43 4D 46 52 4D 54 // DICMFRMT
 //   History: 
-//   0.0 2018-01-25 Natalia Portillo: Initial release
+//   1.0 2018-01-26 Natalia Portillo: Initial release
 //------------------------------------------------
 
-#define DIC_MAGIC 0x544D464444434944
+#define DIC_MAGIC 0x544D52464D434944
 
 enum <uint> MediaType
 {
@@ -620,12 +620,19 @@ enum <ushort> DataType
 
 enum <uint> BlockType
 {
-    DataBlock          = 0x484B4C42,
-    DeDuplicationTable = 0x48544444,
-    Index              = 0x48584449,
-    GeometryBlock      = 0x4D4F4547,
-    MetadataBlock      = 0x5444545D,
-    TracksBlock        = 0x534B5254
+    DataBlock                    = 0x4B4C4244,
+    DeDuplicationTable           = 0X2A544444,
+    Index                        = 0X58444E49,
+    GeometryBlock                = 0x4D4F4547,
+    MetadataBlock                = 0x4154454D,
+    TracksBlock                  = 0x534B5254,
+    CicmBlock                    = 0x4D434943,
+    ChecksumBlock                = 0x4D534B43,
+    DataPositionMeasurementBlock = 0x2A4D5044,
+    SnapshotBlock                = 0x50414E53,
+    ParentBlock                  = 0x50524E54,
+    DumpHardwareBlock            = 0x2A504D44,
+    TapeFileBlock                = 0x454C4654
 };
 
 enum <byte> TrackType
@@ -767,16 +774,16 @@ for(i = 0; i < index.entries; i++)
     FSeek(index.items[i].offset);
     switch(index.items[i].blockType)
     {
-        case 0x484B4C42:
+        case 0x4B4C4244:
             BlockHeader dataBlock;
             break;
-        case 0x48544444:
+        case 0x2A544444:
             DdtHeader deduplicationTable;
             break;
         case 0x4D4F4547:
             GeometryBlock geometry;
             break;
-        case 0x5444545D:
+        case 0x4154454D:
             MetadataBlock metadata;
             if(metadata.creatorOffset > 0)
             {

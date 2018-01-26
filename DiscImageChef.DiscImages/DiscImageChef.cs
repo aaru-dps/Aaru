@@ -50,13 +50,13 @@
  Apple GCR sector tags). 
  
  Optical disks contain a track block that describes the tracks.
- Streaming tapes contain a file block that describes the files and an optional partition block that describes the tape
+ TODO: Streaming tapes contain a file block that describes the files and an optional partition block that describes the tape
  partitions.
  
- There are also blocks for image metadata, contents metadata and dump hardware information.
+ TODO: There are also blocks for image metadata, contents metadata and dump hardware information.
  
  A differencing image will have all the metadata and deduplication tables, but the entries in these ones will be set to
- 0 if the block is stored in the parent image. This is not yet implemented.
+ 0 if the block is stored in the parent image. TODO: This is not yet implemented.
  
  Also because the file becomes useless without the index and deduplication table, each can be stored twice. In case of
  the index it should just be searched for. In case of deduplication tables, both copies should be indexed.
@@ -90,51 +90,93 @@ using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
 namespace DiscImageChef.DiscImages
 {
-    // TODO: Work in progress
     public class DiscImageChef : IWritableImage
     {
-        const ulong DIC_MAGIC              = 0x544D464444434944;
-        const byte  DICF_VERSION           = 0;
-        const uint  MAX_CACHE_SIZE         = 256 * 1024 * 1024;
-        const int   LZMA_PROPERTIES_LENGTH = 5;
-        const int   MAX_DDT_ENTRY_CACHE    = 16000000;
-
+        /// <summary>Magic identidier = "DICMFMT".</summary>
+        const ulong DIC_MAGIC = 0x544D52464D434944;
+        /// <summary>
+        ///     Image format version. A change in this number indicates an incompatible change to the format that
+        ///     prevents older implementations from reading it correctly, if at all.
+        /// </summary>
+        const byte DICF_VERSION = 1;
+        /// <summary>Maximum read cache size, 256MiB.</summary>
+        const uint MAX_CACHE_SIZE = 256 * 1024 * 1024;
+        /// <summary>Size in bytes of LZMA properties.</summary>
+        const int LZMA_PROPERTIES_LENGTH = 5;
+        /// <summary>Maximum number of entries for the DDT cache.</summary>
+        const int MAX_DDT_ENTRY_CACHE = 16000000;
+        /// <summary>How many samples are contained in a RedBook sector.</summary>
         const int SAMPLES_PER_SECTOR = 588;
-        const int MAX_FLAKE_BLOCK    = 4608;
-        const int MIN_FLAKE_BLOCK    = 256;
+        /// <summary>Maximum number of samples for a FLAC block. Bigger than 4608 gives no benefit.</summary>
+        const int MAX_FLAKE_BLOCK = 4608;
+        /// <summary>
+        ///     Minimum number of samples for a FLAC block. <see cref="CUETools.Codecs.FLAKE" /> does not support it to be
+        ///     smaller than 256.
+        /// </summary>
+        const int MIN_FLAKE_BLOCK = 256;
 
-        Dictionary<ulong, byte[]>      blockCache;
+        /// <summary>Cache of uncompressed blocks.</summary>
+        Dictionary<ulong, byte[]> blockCache;
+        /// <summary>Cache of block headers.</summary>
         Dictionary<ulong, BlockHeader> blockHeaderCache;
-        MemoryStream                   blockStream;
-        SHA256                         checksumProvider;
-        LzmaStream                     compressedBlockStream;
-        Crc64Context                   crc64;
-        BlockHeader                    currentBlockHeader;
-        uint                           currentBlockOffset;
-        uint                           currentCacheSize;
-        Dictionary<ulong, ulong>       ddtEntryCache;
-        Dictionary<byte[], ulong>      deduplicationTable;
-        FlakeWriter                    flakeWriter;
-
-        FlakeWriterSettings              flakeWriterSettings;
-        GeometryBlock                    geometryBlock;
-        DicHeader                        header;
-        ImageInfo                        imageInfo;
-        Stream                           imageStream;
-        List<IndexEntry>                 index;
-        bool                             inMemoryDdt;
-        LzmaEncoderProperties            lzmaEncoderProperties;
+        /// <summary>Stream used for writing blocks.</summary>
+        MemoryStream blockStream;
+        /// <summary>Provides checksum for deduplication of sectors.</summary>
+        SHA256 checksumProvider;
+        /// <summary>Provides CRC64.</summary>
+        Crc64Context crc64;
+        /// <summary>Header of the currently writing block.</summary>
+        BlockHeader currentBlockHeader;
+        /// <summary>Sector offset of writing position in currently writing block.</summary>
+        uint currentBlockOffset;
+        /// <summary>Current size in bytes of the block cache</summary>
+        uint currentCacheSize;
+        /// <summary>Cache of DDT entries.</summary>
+        Dictionary<ulong, ulong> ddtEntryCache;
+        /// <summary>On-memory deduplication table indexed by checksum.</summary>
+        Dictionary<byte[], ulong> deduplicationTable;
+        /// <summary><see cref="CUETools.Codecs.FLAKE" /> writer.</summary>
+        FlakeWriter flakeWriter;
+        /// <summary><see cref="CUETools.Codecs.FLAKE" /> settings.</summary>
+        FlakeWriterSettings flakeWriterSettings;
+        /// <summary>Block with logical geometry.</summary>
+        GeometryBlock geometryBlock;
+        /// <summary>Image header.</summary>
+        DicHeader header;
+        /// <summary>Image information.</summary>
+        ImageInfo imageInfo;
+        /// <summary>Image data stream.</summary>
+        Stream imageStream;
+        /// <summary>Index.</summary>
+        List<IndexEntry> index;
+        /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
+        bool inMemoryDdt;
+        /// <summary>LZMA stream.</summary>
+        LzmaStream lzmaBlockStream;
+        /// <summary>LZMA properties.</summary>
+        LzmaEncoderProperties lzmaEncoderProperties;
+        /// <summary>Cache of media tags.</summary>
         Dictionary<MediaTagType, byte[]> mediaTags;
-        long                             outMemoryDdtPosition;
-        byte[]                           sectorPrefix;
-        byte[]                           sectorSubchannel;
-        byte[]                           sectorSuffix;
-        byte                             shift;
-        byte[]                           structureBytes;
-        IntPtr                           structurePointer;
-        Dictionary<byte, byte>           trackFlags;
-        Dictionary<byte, string>         trackIsrcs;
-        ulong[]                          userDataDdt;
+        /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
+        long outMemoryDdtPosition;
+        /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
+        byte[] sectorPrefix;
+        /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
+        byte[] sectorSubchannel;
+        /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
+        byte[] sectorSuffix;
+        /// <summary>Shift for calculating number of sectors in a block.</summary>
+        byte shift;
+        /// <summary>Cache for bytes to write/rad on-disk.</summary>
+        byte[] structureBytes;
+        /// <summary>Cache for pointer for marshaling structures.</summary>
+        IntPtr structurePointer;
+        /// <summary>Cache of CompactDisc track's flags</summary>
+        Dictionary<byte, byte> trackFlags;
+        /// <summary>Cache of CompactDisc track's ISRC</summary>
+        Dictionary<byte, string> trackIsrcs;
+        /// <summary>In-memory deduplication table</summary>
+        ulong[] userDataDdt;
 
         public DiscImageChef()
         {
@@ -212,6 +254,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.Version            = $"{header.imageMajorVersion}.{header.imageMinorVersion}";
             imageInfo.MediaType          = header.mediaType;
 
+            // Read the index header
             imageStream.Position  = (long)header.indexOffset;
             IndexHeader idxHeader = new IndexHeader();
             structureBytes        = new byte[Marshal.SizeOf(idxHeader)];
@@ -226,6 +269,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Index at {0} contains {1} entries",
                                       header.indexOffset, idxHeader.entries);
 
+            // Fill in-memory index
             index = new List<IndexEntry>();
             for(ushort i = 0; i < idxHeader.entries; i++)
             {
@@ -296,6 +340,7 @@ namespace DiscImageChef.DiscImages
                                                   "Found data block type {0} at position {1}", entry.dataType,
                                                   entry.offset);
 
+                        // Decompress media tag
                         if(blockHeader.compression == CompressionType.Lzma)
                         {
                             byte[] compressedTag  = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
@@ -322,6 +367,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
 
+                        // Check CRC, if not correct, skip it
                         Crc64Context.Data(data, out byte[] blockCrc);
                         blockCrc = blockCrc.Reverse().ToArray();
                         if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
@@ -332,6 +378,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
 
+                        // Check if it's not a media tag, but a sector tag, and fill the appropriate table then
                         switch(entry.dataType)
                         {
                             case DataType.CdSectorPrefix:
@@ -401,6 +448,7 @@ namespace DiscImageChef.DiscImages
                         imageInfo.Sectors = ddtHeader.entries;
                         shift             = ddtHeader.shift;
 
+                        // Check for DDT compression
                         switch(ddtHeader.compression)
                         {
                             case CompressionType.Lzma:
@@ -436,6 +484,7 @@ namespace DiscImageChef.DiscImages
 
                         foundUserDataDdt = true;
                         break;
+                    // Logical geometry block. It doesn't have a CRC coz, well, it's not so important
                     case BlockType.GeometryBlock:
                         geometryBlock  = new GeometryBlock();
                         structureBytes = new byte[Marshal.SizeOf(geometryBlock)];
@@ -456,6 +505,7 @@ namespace DiscImageChef.DiscImages
                         }
 
                         break;
+                    // Metadata block
                     case BlockType.MetadataBlock:
                         MetadataBlock metadataBlock = new MetadataBlock();
                         structureBytes              = new byte[Marshal.SizeOf(metadataBlock)];
@@ -626,6 +676,7 @@ namespace DiscImageChef.DiscImages
                         }
 
                         break;
+                    // Optical disc tracks block
                     case BlockType.TracksBlock:
                         TracksHeader tracksHeader = new TracksHeader();
                         structureBytes            = new byte[Marshal.SizeOf(tracksHeader)];
@@ -719,6 +770,7 @@ namespace DiscImageChef.DiscImages
             currentCacheSize               = 0;
             if(!inMemoryDdt) ddtEntryCache = new Dictionary<ulong, ulong>();
 
+            // Initialize tracks, sessions and partitions
             if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(Tracks == null || Tracks.Count == 0)
@@ -827,6 +879,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] sector;
 
+            // Check if block is cached
             if(blockCache.TryGetValue(blockOffset, out byte[] block) &&
                blockHeaderCache.TryGetValue(blockOffset, out BlockHeader blockHeader))
             {
@@ -835,6 +888,7 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
+            // Read block header
             imageStream.Position = (long)blockOffset;
             blockHeader          = new BlockHeader();
             structureBytes       = new byte[Marshal.SizeOf(blockHeader)];
@@ -844,6 +898,7 @@ namespace DiscImageChef.DiscImages
             blockHeader = (BlockHeader)Marshal.PtrToStructure(structurePointer, typeof(BlockHeader));
             Marshal.FreeHGlobal(structurePointer);
 
+            // Decompress block
             switch(blockHeader.compression)
             {
                 case CompressionType.None:
@@ -879,6 +934,7 @@ namespace DiscImageChef.DiscImages
                         ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)blockHeader.compression}");
             }
 
+            // Check if cache needs to be emptied
             if(currentCacheSize + blockHeader.length >= MAX_CACHE_SIZE)
             {
                 currentCacheSize = 0;
@@ -886,6 +942,7 @@ namespace DiscImageChef.DiscImages
                 blockCache       = new Dictionary<ulong, byte[]>();
             }
 
+            // Add block to cache
             currentCacheSize += blockHeader.length;
             blockHeaderCache.Add(blockOffset, blockHeader);
             blockCache.Add(blockOffset, block);
@@ -1070,6 +1127,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorPrefix;
                                 break;
                             }
+                            // These could be implemented
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
                             case SectorTagType.CdSectorEccQ:
@@ -1243,8 +1301,10 @@ namespace DiscImageChef.DiscImages
 
                     switch(trk.TrackType)
                     {
+                        // These types only contain user data
                         case TrackType.Audio:
                         case TrackType.Data: return ReadSectors(sectorAddress, length);
+                        // Join prefix (sync, header) with user data with suffix (edc, ecc p, ecc q)
                         case TrackType.CdMode1:
                             if(sectorPrefix == null || sectorSuffix == null) return ReadSectors(sectorAddress, length);
 
@@ -1261,6 +1321,7 @@ namespace DiscImageChef.DiscImages
                             }
 
                             return sectors;
+                        // Join prefix (sync, header) with user data
                         case TrackType.CdMode2Formless:
                         case TrackType.CdMode2Form1:
                         case TrackType.CdMode2Form2:
@@ -1283,6 +1344,7 @@ namespace DiscImageChef.DiscImages
                 case XmlMediaType.BlockMedia:
                     switch(imageInfo.MediaType)
                     {
+                        // Join user data with tags
                         case MediaType.AppleFileWare:
                         case MediaType.AppleProfile:
                         case MediaType.AppleSonySS:
@@ -1376,6 +1438,7 @@ namespace DiscImageChef.DiscImages
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
 
+            // Right now only CompactDisc sectors are verifyable
             if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
             {
                 for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
@@ -1413,6 +1476,7 @@ namespace DiscImageChef.DiscImages
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out                                               List<ulong> unknownLbas)
         {
+            // Right now only CompactDisc sectors are verifyable
             if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
             {
                 failingLbas = new List<ulong>();
@@ -1452,6 +1516,7 @@ namespace DiscImageChef.DiscImages
 
         public bool? VerifyMediaImage()
         {
+            // This will traverse all blocks and check their CRC64 without uncompressing them
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Checking index integrity at {0}",
                                       header.indexOffset);
             imageStream.Position = (long)header.indexOffset;
@@ -1502,6 +1567,7 @@ namespace DiscImageChef.DiscImages
                 vrIndex.Add(entry);
             }
 
+            // Read up to 1MiB at a time for verification
             const int VERIFY_SIZE = 1024 * 1024;
 
             foreach(IndexEntry entry in vrIndex)
@@ -1691,12 +1757,14 @@ namespace DiscImageChef.DiscImages
                 maxDdtSize      = 256;
             }
 
+            // This really, cannot happen
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
                 return false;
             }
 
+            // Calculate shift
             shift                   = 0;
             uint oldSectorsPerBlock = sectorsPerBlock;
             while(sectorsPerBlock > 1)
@@ -1723,6 +1791,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            // Check if appending to an existing image
             if(imageStream.Length > Marshal.SizeOf(typeof(DicHeader)))
             {
                 header         = new DicHeader();
@@ -1772,6 +1841,7 @@ namespace DiscImageChef.DiscImages
 
             index = new List<IndexEntry>();
 
+            // If there exists an index, we are appending, so read index
             if(header.indexOffset > 0)
             {
                 imageStream.Position  = (long)header.indexOffset;
@@ -1977,11 +2047,15 @@ namespace DiscImageChef.DiscImages
                     return false;
                 }
             }
+            // Creating new
             else
             {
+                // Checking that DDT is smaller than requested size
                 inMemoryDdt = sectors <= maxDdtSize * 1024 * 1024 / sizeof(ulong);
 
+                // If in memory, easy
                 if(inMemoryDdt) userDataDdt = new ulong[sectors];
+                // If not, create the block, add to index, and enlarge the file to allow the DDT to exist on-disk
                 else
                 {
                     outMemoryDdtPosition = imageStream.Position;
@@ -2019,6 +2093,7 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "In memory DDT?: {0}", inMemoryDdt);
 
+            // Initialize tables
             imageStream.Seek(0, SeekOrigin.End);
             mediaTags          = new Dictionary<MediaTagType, byte[]>();
             checksumProvider   = SHA256.Create();
@@ -2026,6 +2101,7 @@ namespace DiscImageChef.DiscImages
             trackIsrcs         = new Dictionary<byte, string>();
             trackFlags         = new Dictionary<byte, byte>();
 
+            // Initialize compressors properties (all maxed)
             lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictionary, 273);
             flakeWriterSettings   = new FlakeWriterSettings
             {
@@ -2049,6 +2125,7 @@ namespace DiscImageChef.DiscImages
                 AllowNonSubset     = true
             };
 
+            // Check if FLAKE's block size is bigger than what we want
             if(flakeWriterSettings.BlockSize > MAX_FLAKE_BLOCK) flakeWriterSettings.BlockSize = MAX_FLAKE_BLOCK;
             if(flakeWriterSettings.BlockSize < MIN_FLAKE_BLOCK) flakeWriterSettings.BlockSize = MIN_FLAKE_BLOCK;
             FlakeWriter.Vendor                                                                = "DiscImageChef";
@@ -2099,6 +2176,7 @@ namespace DiscImageChef.DiscImages
 
             Track trk = new Track();
 
+            // If optical disc check track
             if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
@@ -2109,11 +2187,13 @@ namespace DiscImageChef.DiscImages
             }
 
             // Close current block first
-            if(blockStream                     != null &&
-               (currentBlockHeader.sectorSize  != data.Length ||
-                currentBlockOffset             == 1 << shift  ||
-                currentBlockHeader.compression == CompressionType.Flac &&
-                trk.TrackType                  != TrackType.Audio))
+            if(blockStream != null &&
+               // When sector siz changes
+               (currentBlockHeader.sectorSize != data.Length ||
+                // When block if filled
+                currentBlockOffset == 1 << shift ||
+                // When we change to/from CompactDisc audio
+                currentBlockHeader.compression == CompressionType.Flac && trk.TrackType != TrackType.Audio))
             {
                 currentBlockHeader.length = currentBlockOffset * currentBlockHeader.sectorSize;
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
@@ -2143,8 +2223,8 @@ namespace DiscImageChef.DiscImages
                 }
                 else
                 {
-                    lzmaProperties = compressedBlockStream.Properties;
-                    compressedBlockStream.Close();
+                    lzmaProperties = lzmaBlockStream.Properties;
+                    lzmaBlockStream.Close();
                     cmpCrc64Context.Update(lzmaProperties);
                 }
 
@@ -2191,10 +2271,9 @@ namespace DiscImageChef.DiscImages
 
                 blockStream = new MemoryStream();
                 if(currentBlockHeader.compression == CompressionType.Flac)
-                    flakeWriter                                                            =
-                        new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
-                else compressedBlockStream                                                 = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                crc64                                                                      = new Crc64Context();
+                    flakeWriter      = new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
+                else lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                crc64                = new Crc64Context();
                 crc64.Init();
             }
 
@@ -2205,7 +2284,7 @@ namespace DiscImageChef.DiscImages
                 AudioBuffer audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, data, SAMPLES_PER_SECTOR);
                 flakeWriter.Write(audioBuffer);
             }
-            else compressedBlockStream.Write(data, 0, data.Length);
+            else lzmaBlockStream.Write(data, 0, data.Length);
 
             SetDdtEntry(sectorAddress, ddtEntry);
             crc64.Update(data);
@@ -2271,6 +2350,7 @@ namespace DiscImageChef.DiscImages
                         return false;
                     }
 
+                    // Split raw cd sector data in prefix (sync, header), user data and suffix (edc, ecc p, ecc q)
                     switch(track.TrackType)
                     {
                         case TrackType.Audio:
@@ -2298,6 +2378,7 @@ namespace DiscImageChef.DiscImages
                 case XmlMediaType.BlockMedia:
                     switch(imageInfo.MediaType)
                     {
+                        // Split user data from Apple tags
                         case MediaType.AppleFileWare:
                         case MediaType.AppleProfile:
                         case MediaType.AppleSonyDS:
@@ -2528,8 +2609,8 @@ namespace DiscImageChef.DiscImages
                 }
                 else
                 {
-                    lzmaProperties = compressedBlockStream.Properties;
-                    compressedBlockStream.Close();
+                    lzmaProperties = lzmaBlockStream.Properties;
+                    lzmaBlockStream.Close();
                     cmpCrc64Context.Update(lzmaProperties);
                 }
 
@@ -2560,6 +2641,7 @@ namespace DiscImageChef.DiscImages
 
             IndexEntry idxEntry;
 
+            // Write media tag blocks
             foreach(KeyValuePair<MediaTagType, byte[]> mediaTag in mediaTags)
             {
                 DataType dataType = GetDataTypeForMediaTag(mediaTag.Key);
@@ -2583,11 +2665,11 @@ namespace DiscImageChef.DiscImages
                     crc64      = BitConverter.ToUInt64(tagCrc, 0)
                 };
 
-                blockStream           = new MemoryStream();
-                compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                compressedBlockStream.Write(mediaTag.Value, 0, mediaTag.Value.Length);
-                byte[] lzmaProperties = compressedBlockStream.Properties;
-                compressedBlockStream.Close();
+                blockStream     = new MemoryStream();
+                lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                lzmaBlockStream.Write(mediaTag.Value, 0, mediaTag.Value.Length);
+                byte[] lzmaProperties = lzmaBlockStream.Properties;
+                lzmaBlockStream.Close();
                 byte[] tagData;
 
                 // Not compressible
@@ -2607,8 +2689,8 @@ namespace DiscImageChef.DiscImages
                     tagBlock.compression = CompressionType.Lzma;
                 }
 
-                compressedBlockStream = null;
-                blockStream           = null;
+                lzmaBlockStream = null;
+                blockStream     = null;
 
                 structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(tagBlock));
                 structureBytes   = new byte[Marshal.SizeOf(tagBlock)];
@@ -2625,6 +2707,7 @@ namespace DiscImageChef.DiscImages
                 index.Add(idxEntry);
             }
 
+            // If we have set the geometry block, write it
             if(geometryBlock.identifier == BlockType.GeometryBlock)
             {
                 idxEntry = new IndexEntry
@@ -2649,6 +2732,7 @@ namespace DiscImageChef.DiscImages
                 index.Add(idxEntry);
             }
 
+            // If the DDT is in-memory, write it to disk
             if(inMemoryDdt)
             {
                 idxEntry = new IndexEntry
@@ -2671,19 +2755,19 @@ namespace DiscImageChef.DiscImages
                     length      = (ulong)(userDataDdt.LongLength * sizeof(ulong))
                 };
 
-                blockStream           = new MemoryStream();
-                compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                crc64                 = new Crc64Context();
+                blockStream     = new MemoryStream();
+                lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                crc64           = new Crc64Context();
                 crc64.Init();
                 for(ulong i = 0; i < (ulong)userDataDdt.LongLength; i++)
                 {
                     byte[] ddtEntry = BitConverter.GetBytes(userDataDdt[i]);
                     crc64.Update(ddtEntry);
-                    compressedBlockStream.Write(ddtEntry, 0, ddtEntry.Length);
+                    lzmaBlockStream.Write(ddtEntry, 0, ddtEntry.Length);
                 }
 
-                byte[] lzmaProperties = compressedBlockStream.Properties;
-                compressedBlockStream.Close();
+                byte[] lzmaProperties = lzmaBlockStream.Properties;
+                lzmaBlockStream.Close();
                 ddtHeader.cmpLength          = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                 Crc64Context cmpCrc64Context = new Crc64Context();
                 cmpCrc64Context.Init();
@@ -2700,14 +2784,15 @@ namespace DiscImageChef.DiscImages
                 structureBytes = null;
                 imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-                blockStream           = null;
-                compressedBlockStream = null;
+                blockStream     = null;
+                lzmaBlockStream = null;
 
                 index.RemoveAll(t => t.blockType == BlockType.DeDuplicationTable && t.dataType == DataType.UserData);
 
                 index.Add(idxEntry);
             }
 
+            // Write the sector prefix, suffix and subchannels if present
             switch(imageInfo.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc when Tracks != null && Tracks.Count > 0:
@@ -2733,18 +2818,18 @@ namespace DiscImageChef.DiscImages
                             crc64      = BitConverter.ToUInt64(blockCrc, 0)
                         };
 
-                        blockStream           = new MemoryStream();
-                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        compressedBlockStream.Write(sectorPrefix, 0, sectorPrefix.Length);
-                        byte[] lzmaProperties = compressedBlockStream.Properties;
-                        compressedBlockStream.Close();
+                        blockStream     = new MemoryStream();
+                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        lzmaBlockStream.Write(sectorPrefix, 0, sectorPrefix.Length);
+                        byte[] lzmaProperties = lzmaBlockStream.Properties;
+                        lzmaBlockStream.Close();
 
                         Crc64Context.Data(blockStream.ToArray(), out blockCrc);
                         prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                         prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         prefixBlock.compression = CompressionType.Lzma;
 
-                        compressedBlockStream = null;
+                        lzmaBlockStream = null;
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
                         structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
@@ -2781,18 +2866,18 @@ namespace DiscImageChef.DiscImages
                             crc64      = BitConverter.ToUInt64(blockCrc, 0)
                         };
 
-                        blockStream           = new MemoryStream();
-                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        compressedBlockStream.Write(sectorSuffix, 0, sectorSuffix.Length);
-                        lzmaProperties = compressedBlockStream.Properties;
-                        compressedBlockStream.Close();
+                        blockStream     = new MemoryStream();
+                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        lzmaBlockStream.Write(sectorSuffix, 0, sectorSuffix.Length);
+                        lzmaProperties = lzmaBlockStream.Properties;
+                        lzmaBlockStream.Close();
 
                         Crc64Context.Data(blockStream.ToArray(), out blockCrc);
                         prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                         prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         prefixBlock.compression = CompressionType.Lzma;
 
-                        compressedBlockStream = null;
+                        lzmaBlockStream = null;
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
                         structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
@@ -2833,18 +2918,18 @@ namespace DiscImageChef.DiscImages
                             crc64      = BitConverter.ToUInt64(blockCrc, 0)
                         };
 
-                        blockStream           = new MemoryStream();
-                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
-                        byte[] lzmaProperties = compressedBlockStream.Properties;
-                        compressedBlockStream.Close();
+                        blockStream     = new MemoryStream();
+                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        lzmaBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                        byte[] lzmaProperties = lzmaBlockStream.Properties;
+                        lzmaBlockStream.Close();
 
                         Crc64Context.Data(blockStream.ToArray(), out blockCrc);
                         subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                         subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         subchannelBlock.compression = CompressionType.Lzma;
 
-                        compressedBlockStream = null;
+                        lzmaBlockStream = null;
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
                         structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
@@ -2885,6 +2970,7 @@ namespace DiscImageChef.DiscImages
                         });
                     }
 
+                    // If there are tracks build the tracks block
                     if(trackEntries.Count > 0)
                     {
                         blockStream = new MemoryStream();
@@ -2976,18 +3062,18 @@ namespace DiscImageChef.DiscImages
                             crc64      = BitConverter.ToUInt64(blockCrc, 0)
                         };
 
-                        blockStream           = new MemoryStream();
-                        compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        compressedBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
-                        byte[] lzmaProperties = compressedBlockStream.Properties;
-                        compressedBlockStream.Close();
+                        blockStream     = new MemoryStream();
+                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        lzmaBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                        byte[] lzmaProperties = lzmaBlockStream.Properties;
+                        lzmaBlockStream.Close();
 
                         Crc64Context.Data(blockStream.ToArray(), out blockCrc);
                         subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                         subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         subchannelBlock.compression = CompressionType.Lzma;
 
-                        compressedBlockStream = null;
+                        lzmaBlockStream = null;
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
                         structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
@@ -3008,6 +3094,7 @@ namespace DiscImageChef.DiscImages
                     break;
             }
 
+            // Write metadata if present
             SetMetadataFromTags();
             MetadataBlock metadataBlock = new MetadataBlock();
             blockStream                 = new MemoryStream();
@@ -3141,6 +3228,7 @@ namespace DiscImageChef.DiscImages
                 blockStream.Write(new byte[] {0, 0}, 0, 2);
             }
 
+            // Check if we set up any metadata earlier, then write its block
             if(metadataBlock.identifier == BlockType.MetadataBlock)
             {
                 DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing metadata to position {0}",
@@ -3170,6 +3258,7 @@ namespace DiscImageChef.DiscImages
 
             blockStream = new MemoryStream();
 
+            // Write index to memory
             foreach(IndexEntry entry in index)
             {
                 structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(entry));
@@ -3189,6 +3278,7 @@ namespace DiscImageChef.DiscImages
                 crc64      = BitConverter.ToUInt64(idxCrc, 0)
             };
 
+            // Write index to disk
             structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(idxHeader));
             structureBytes   = new byte[Marshal.SizeOf(idxHeader)];
             Marshal.StructureToPtr(idxHeader, structurePointer, true);
@@ -3381,8 +3471,12 @@ namespace DiscImageChef.DiscImages
             }
         }
 
+        /// <summary>
+        ///     Checks for media tags that may contain metadata and sets it up if not already set
+        /// </summary>
         void SetMetadataFromTags()
         {
+            // Search for SecureDigital CID
             if(mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] sdCid))
             {
                 CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(sdCid);
@@ -3397,6 +3491,7 @@ namespace DiscImageChef.DiscImages
                     imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
             }
 
+            // Search for MultiMediaCard CID
             if(mediaTags.TryGetValue(MediaTagType.MMC_CID, out byte[] mmcCid))
             {
                 Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(mmcCid);
@@ -3411,6 +3506,7 @@ namespace DiscImageChef.DiscImages
                     imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
             }
 
+            // Search for SCSI INQUIRY
             if(mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] scsiInquiry))
             {
                 Inquiry.SCSIInquiry? nullableInquiry = Inquiry.Decode(scsiInquiry);
@@ -3428,6 +3524,7 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
+            // Search for ATA or ATAPI IDENTIFY
             if(!mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY,   out byte[] ataIdentify) &&
                !mediaTags.TryGetValue(MediaTagType.ATAPI_IDENTIFY, out ataIdentify)) return;
 
@@ -3456,6 +3553,7 @@ namespace DiscImageChef.DiscImages
                 imageInfo.DriveSerialNumber = identify.SerialNumber;
         }
 
+        // Get the CICM XML media type from DIC media type
         static XmlMediaType GetXmlMediaType(MediaType type)
         {
             switch(type)
@@ -3542,6 +3640,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
+        // Gets a DDT entry
         ulong GetDdtEntry(ulong sectorAddress)
         {
             if(inMemoryDdt) return userDataDdt[sectorAddress];
@@ -3562,6 +3661,7 @@ namespace DiscImageChef.DiscImages
             return entry;
         }
 
+        // Sets a DDT entry
         void SetDdtEntry(ulong sectorAddress, ulong pointer)
         {
             if(inMemoryDdt)
@@ -3577,6 +3677,7 @@ namespace DiscImageChef.DiscImages
             imageStream.Position = oldPosition;
         }
 
+        // Converts between image data type and dic media tag type
         static MediaTagType GetMediaTagTypeForDataType(DataType type)
         {
             switch(type)
@@ -3652,6 +3753,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
+        // Converts between dic media tag type and image data type
         static DataType GetDataTypeForMediaTag(MediaTagType tag)
         {
             switch(tag)
@@ -3728,100 +3830,201 @@ namespace DiscImageChef.DiscImages
             }
         }
 
+        /// <summary>List of known compression types</summary>
         enum CompressionType : ushort
         {
+            /// <summary>Not compressed</summary>
             None = 0,
+            /// <summary>LZMA</summary>
             Lzma = 1,
+            /// <summary>FLAC</summary>
             Flac = 2
         }
 
+        /// <summary>List of known data types</summary>
         enum DataType : ushort
         {
-            NoData                           = 0,
-            UserData                         = 1,
-            CompactDiscPartialToc            = 2,
-            CompactDiscSessionInfo           = 3,
-            CompactDiscToc                   = 4,
-            CompactDiscPma                   = 5,
-            CompactDiscAtip                  = 6,
-            CompactDiscLeadInCdText          = 7,
-            DvdPfi                           = 8,
-            DvdLeadInCmi                     = 9,
-            DvdDiscKey                       = 10,
-            DvdBca                           = 11,
-            DvdDmi                           = 12,
-            DvdMediaIdentifier               = 13,
-            DvdMediaKeyBlock                 = 14,
-            DvdRamDds                        = 15,
-            DvdRamMediumStatus               = 16,
-            DvdRamSpareArea                  = 17,
-            DvdRRmd                          = 18,
-            DvdRPrerecordedInfo              = 19,
-            DvdRMediaIdentifier              = 20,
-            DvdRPfi                          = 21,
-            DvdAdip                          = 22,
-            HdDvdCpi                         = 23,
-            HdDvdMediumStatus                = 24,
-            DvdDlLayerCapacity               = 25,
-            DvdDlMiddleZoneAddress           = 26,
-            DvdDlJumpIntervalSize            = 27,
-            DvdDlManualLayerJumpLba          = 28,
-            BlurayDi                         = 29,
-            BlurayBca                        = 30,
-            BlurayDds                        = 31,
-            BlurayCartridgeStatus            = 32,
-            BluraySpareArea                  = 33,
-            AacsVolumeIdentifier             = 34,
-            AacsSerialNumber                 = 35,
-            AacsMediaIdentifier              = 36,
-            AacsMediaKeyBlock                = 37,
-            AacsDataKeys                     = 38,
-            AacsLbaExtents                   = 39,
-            CprmMediaKeyBlock                = 40,
-            HybridRecognizedLayers           = 41,
-            ScsiMmcWriteProtection           = 42,
-            ScsiMmcDiscInformation           = 43,
+            /// <summary>No data</summary>
+            NoData = 0,
+            /// <summary>User data</summary>
+            UserData = 1,
+            /// <summary>CompactDisc partial Table of Contents</summary>
+            CompactDiscPartialToc = 2,
+            /// <summary>CompactDisc session information</summary>
+            CompactDiscSessionInfo = 3,
+            /// <summary>CompactDisc Table of Contents</summary>
+            CompactDiscToc = 4,
+            /// <summary>CompactDisc Power Management Area</summary>
+            CompactDiscPma = 5,
+            /// <summary>CompactDisc Absolute Time In Pregroove</summary>
+            CompactDiscAtip = 6,
+            /// <summary>CompactDisc Lead-in's CD-Text</summary>
+            CompactDiscLeadInCdText = 7,
+            /// <summary>DVD Physical Format Information</summary>
+            DvdPfi = 8,
+            /// <summary>DVD Lead-in's Copyright Management Information</summary>
+            DvdLeadInCmi = 9,
+            /// <summary>DVD Disc Key</summary>
+            DvdDiscKey = 10,
+            /// <summary>DVD Burst Cutting Area</summary>
+            DvdBca = 11,
+            /// <summary>DVD DMI</summary>
+            DvdDmi = 12,
+            /// <summary>DVD Media Identifier</summary>
+            DvdMediaIdentifier = 13,
+            /// <summary>DVD Media Key Block</summary>
+            DvdMediaKeyBlock = 14,
+            /// <summary>DVD-RAM Disc Definition Structure</summary>
+            DvdRamDds = 15,
+            /// <summary>DVD-RAM Medium Status</summary>
+            DvdRamMediumStatus = 16,
+            /// <summary>DVD-RAM Spare Area Information</summary>
+            DvdRamSpareArea = 17,
+            /// <summary>DVD-R RMD</summary>
+            DvdRRmd = 18,
+            /// <summary>DVD-R Pre-recorded Information</summary>
+            DvdRPrerecordedInfo = 19,
+            /// <summary>DVD-R Media Identifier</summary>
+            DvdRMediaIdentifier = 20,
+            /// <summary>DVD-R Physical Format Information</summary>
+            DvdRPfi = 21,
+            /// <summary>DVD ADress In Pregroove</summary>
+            DvdAdip = 22,
+            /// <summary>HD DVD Copy Protection Information</summary>
+            HdDvdCpi = 23,
+            /// <summary>HD DVD Medium Status</summary>
+            HdDvdMediumStatus = 24,
+            /// <summary>DVD DL Layer Capacity</summary>
+            DvdDlLayerCapacity = 25,
+            /// <summary>DVD DL Middle Zone Address</summary>
+            DvdDlMiddleZoneAddress = 26,
+            /// <summary>DVD DL Jump Interval Size</summary>
+            DvdDlJumpIntervalSize = 27,
+            /// <summary>DVD DL Manual Layer Jump LBA</summary>
+            DvdDlManualLayerJumpLba = 28,
+            /// <summary>Bluray Disc Information</summary>
+            BlurayDi = 29,
+            /// <summary>Bluray Burst Cutting Area</summary>
+            BlurayBca = 30,
+            /// <summary>Bluray Disc Definition Structure</summary>
+            BlurayDds = 31,
+            /// <summary>Bluray Cartridge Status</summary>
+            BlurayCartridgeStatus = 32,
+            /// <summary>Bluray Spare Area Information</summary>
+            BluraySpareArea = 33,
+            /// <summary>AACS Volume Identifier</summary>
+            AacsVolumeIdentifier = 34,
+            /// <summary>AACS Serial Number</summary>
+            AacsSerialNumber = 35,
+            /// <summary>AACS Media Identifier</summary>
+            AacsMediaIdentifier = 36,
+            /// <summary>AACS Media Key Block</summary>
+            AacsMediaKeyBlock = 37,
+            /// <summary>AACS Data Keys</summary>
+            AacsDataKeys = 38,
+            /// <summary>AACS LBA Extents</summary>
+            AacsLbaExtents = 39,
+            /// <summary>CPRM Media Key Block</summary>
+            CprmMediaKeyBlock = 40,
+            /// <summary>Recognized Layers</summary>
+            HybridRecognizedLayers = 41,
+            /// <summary>MMC Write Protection</summary>
+            ScsiMmcWriteProtection = 42,
+            /// <summary>MMC Disc Information</summary>
+            ScsiMmcDiscInformation = 43,
+            /// <summary>MMC Track Resources Information</summary>
             ScsiMmcTrackResourcesInformation = 44,
-            ScsiMmcPowResourcesInformation   = 45,
-            ScsiInquiry                      = 46,
-            ScsiModePage2A                   = 47,
-            AtaIdentify                      = 48,
-            AtapiIdentify                    = 49,
-            PcmciaCis                        = 50,
-            SecureDigitalCid                 = 51,
-            SecureDigitalCsd                 = 52,
-            SecureDigitalScr                 = 53,
-            SecureDigitalOcr                 = 54,
-            MultiMediaCardCid                = 55,
-            MultiMediaCardCsd                = 56,
-            MultiMediaCardOcr                = 57,
-            MultiMediaCardExtendedCsd        = 58,
-            XboxSecuritySector               = 59,
-            FloppyLeadOut                    = 60,
-            DvdDiscControlBlock              = 61,
-            CompactDiscLeadIn                = 62,
-            CompactDiscLeadOut               = 63,
-            ScsiModeSense6                   = 64,
-            ScsiModeSense10                  = 65,
-            UsbDescriptors                   = 66,
-            XboxDmi                          = 67,
-            XboxPfi                          = 68,
-            CdSectorPrefix                   = 69,
-            CdSectorSuffix                   = 70,
-            CdSectorSubchannel               = 71,
-            AppleProfileTag                  = 72,
-            AppleSonyTag                     = 73,
-            PriamDataTowerTag                = 74
+            /// <summary>MMC POW Resources Information</summary>
+            ScsiMmcPowResourcesInformation = 45,
+            /// <summary>SCSI INQUIRY RESPONSE</summary>
+            ScsiInquiry = 46,
+            /// <summary>SCSI MODE PAGE 2Ah</summary>
+            ScsiModePage2A = 47,
+            /// <summary>ATA IDENTIFY response</summary>
+            AtaIdentify = 48,
+            /// <summary>ATAPI IDENTIFY response</summary>
+            AtapiIdentify = 49,
+            /// <summary>PCMCIA CIS</summary>
+            PcmciaCis = 50,
+            /// <summary>SecureDigital CID</summary>
+            SecureDigitalCid = 51,
+            /// <summary>SecureDigital CSD</summary>
+            SecureDigitalCsd = 52,
+            /// <summary>SecureDigital SCR</summary>
+            SecureDigitalScr = 53,
+            /// <summary>SecureDigital OCR</summary>
+            SecureDigitalOcr = 54,
+            /// <summary>MultiMediaCard CID</summary>
+            MultiMediaCardCid = 55,
+            /// <summary>MultiMediaCard CSD</summary>
+            MultiMediaCardCsd = 56,
+            /// <summary>MultiMediaCard OCR</summary>
+            MultiMediaCardOcr = 57,
+            /// <summary>MultiMediaCard Extended CSD</summary>
+            MultiMediaCardExtendedCsd = 58,
+            /// <summary>Xbox Security Sector</summary>
+            XboxSecuritySector = 59,
+            /// <summary>Floppy Lead-out</summary>
+            FloppyLeadOut = 60,
+            /// <summary>Dvd Disc Control Block</summary>
+            DvdDiscControlBlock = 61,
+            /// <summary>CompactDisc Lead-in</summary>
+            CompactDiscLeadIn = 62,
+            /// <summary>CompactDisc Lead-out</summary>
+            CompactDiscLeadOut = 63,
+            /// <summary>SCSI MODE SENSE (6) response</summary>
+            ScsiModeSense6 = 64,
+            /// <summary>SCSI MODE SENSE (10) response</summary>
+            ScsiModeSense10 = 65,
+            /// <summary>USB descriptors</summary>
+            UsbDescriptors = 66,
+            /// <summary>Xbox DMI</summary>
+            XboxDmi = 67,
+            /// <summary>Xbox Physical Format Information</summary>
+            XboxPfi = 68,
+            /// <summary>CompactDisc sector prefix (sync, header</summary>
+            CdSectorPrefix = 69,
+            /// <summary>CompactDisc sector suffix (edc, ecc p, ecc q)</summary>
+            CdSectorSuffix = 70,
+            /// <summary>CompactDisc subchannel</summary>
+            CdSectorSubchannel = 71,
+            /// <summary>Apple Profile (20 byte) tag</summary>
+            AppleProfileTag = 72,
+            /// <summary>Apple Sony (12 byte) tag</summary>
+            AppleSonyTag = 73,
+            /// <summary>Priam Data Tower (24 byte) tag</summary>
+            PriamDataTowerTag = 74
         }
 
+        /// <summary>List of known blocks types</summary>
         enum BlockType : uint
         {
-            DataBlock          = 0x484B4C42,
-            DeDuplicationTable = 0x48544444,
-            Index              = 0x48584449,
-            GeometryBlock      = 0x4D4F4547,
-            MetadataBlock      = 0x5444545D,
-            TracksBlock        = 0x534B5254
+            /// <summary>Block containing data</summary>
+            DataBlock = 0x4B4C4244,
+            /// <summary>Block containing a deduplication table</summary>
+            DeDuplicationTable = 0X2A544444,
+            /// <summary>Block containing the index</summary>
+            Index = 0X58444E49,
+            /// <summary>Block containing logical geometry</summary>
+            GeometryBlock = 0x4D4F4547,
+            /// <summary>Block containing metadata</summary>
+            MetadataBlock = 0x4154454D,
+            /// <summary>Block containing optical disc tracks</summary>
+            TracksBlock = 0x534B5254,
+            /// <summary>TODO: Block containing CICM XML metadata</summary>
+            CicmBlock = 0x4D434943,
+            /// <summary>TODO: Block containing contents checksums</summary>
+            ChecksumBlock = 0x4D534B43,
+            /// <summary>TODO: Block containing data position measurements</summary>
+            DataPositionMeasurementBlock = 0x2A4D5044,
+            /// <summary>TODO: Block containing a snapshot index</summary>
+            SnapshotBlock = 0x50414E53,
+            /// <summary>TODO: Block containing how to locate the parent image</summary>
+            ParentBlock = 0x50524E54,
+            /// <summary>TODO: Block containing an array of hardware used to create the image</summary>
+            DumpHardwareBlock = 0x2A504D44,
+            /// <summary>TODO: Block containing list of files for a tape image</summary>
+            TapeFileBlock = 0x454C4654
         }
 
         /// <summary>Header, at start of file</summary>
@@ -3845,13 +4048,9 @@ namespace DiscImageChef.DiscImages
             public MediaType mediaType;
             /// <summary>Offset to index</summary>
             public ulong indexOffset;
-            /// <summary>
-            ///     Windows filetime (100 nanoseconds since 1601/01/01 00:00:00 UTC) of image creation time
-            /// </summary>
+            /// <summary>Windows filetime (100 nanoseconds since 1601/01/01 00:00:00 UTC) of image creation time</summary>
             public long creationTime;
-            /// <summary>
-            ///     Windows filetime (100 nanoseconds since 1601/01/01 00:00:00 UTC) of image last written time
-            /// </summary>
+            /// <summary>Windows filetime (100 nanoseconds since 1601/01/01 00:00:00 UTC) of image last written time</summary>
             public long lastWrittenTime;
         }
 
@@ -3998,6 +4197,7 @@ namespace DiscImageChef.DiscImages
             public uint driveFirmwareRevisionLength;
         }
 
+        /// <summary>Contains list of optical disc tracks</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TracksHeader
         {
@@ -4009,18 +4209,27 @@ namespace DiscImageChef.DiscImages
             public ulong crc64;
         }
 
+        /// <summary>Optical disc track</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
         struct TrackEntry
         {
-            public byte      sequence;
+            /// <summary>Track sequence</summary>
+            public byte sequence;
+            /// <summary>Track type</summary>
             public TrackType type;
-            public long      start;
-            public long      end;
-            public long      pregap;
-            public byte      session;
+            /// <summary>Track starting LBA</summary>
+            public long start;
+            /// <summary>Track last LBA</summary>
+            public long end;
+            /// <summary>Track pregap in sectors</summary>
+            public long pregap;
+            /// <summary>Track session</summary>
+            public byte session;
+            /// <summary>Track's ISRC in ASCII</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 13)]
             public string isrc;
-            public byte   flags;
+            /// <summary>Track flags</summary>
+            public byte flags;
         }
     }
 }
