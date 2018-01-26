@@ -535,7 +535,8 @@ enum <uint> MediaType
 enum <ushort> CompressionType
 {
     None = 0,
-    Lzma = 1
+    Lzma = 1,
+    Flac = 2
 };
 
 enum <ushort> DataType
@@ -751,7 +752,6 @@ typedef struct
     TrackEntry tracks[entries];
 } TracksHeader;
 
-DisplayFormatHex();
 LittleEndian();
 
 local int i;

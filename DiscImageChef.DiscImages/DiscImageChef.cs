@@ -75,6 +75,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using CUETools.Codecs;
+using CUETools.Codecs.FLAKE;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -97,17 +99,24 @@ namespace DiscImageChef.DiscImages
         const int   LZMA_PROPERTIES_LENGTH = 5;
         const int   MAX_DDT_ENTRY_CACHE    = 16000000;
 
-        Dictionary<ulong, byte[]>        blockCache;
-        Dictionary<ulong, BlockHeader>   blockHeaderCache;
-        MemoryStream                     blockStream;
-        SHA256                           checksumProvider;
-        LzmaStream                       compressedBlockStream;
-        Crc64Context                     crc64;
-        BlockHeader                      currentBlockHeader;
-        uint                             currentBlockOffset;
-        uint                             currentCacheSize;
-        Dictionary<ulong, ulong>         ddtEntryCache;
-        Dictionary<byte[], ulong>        deduplicationTable;
+        const int SAMPLES_PER_SECTOR = 588;
+        const int MAX_FLAKE_BLOCK    = 4608;
+        const int MIN_FLAKE_BLOCK    = 256;
+
+        Dictionary<ulong, byte[]>      blockCache;
+        Dictionary<ulong, BlockHeader> blockHeaderCache;
+        MemoryStream                   blockStream;
+        SHA256                         checksumProvider;
+        LzmaStream                     compressedBlockStream;
+        Crc64Context                   crc64;
+        BlockHeader                    currentBlockHeader;
+        uint                           currentBlockOffset;
+        uint                           currentCacheSize;
+        Dictionary<ulong, ulong>       ddtEntryCache;
+        Dictionary<byte[], ulong>      deduplicationTable;
+        FlakeWriter                    flakeWriter;
+
+        FlakeWriterSettings              flakeWriterSettings;
         GeometryBlock                    geometryBlock;
         DicHeader                        header;
         ImageInfo                        imageInfo;
@@ -853,6 +862,18 @@ namespace DiscImageChef.DiscImages
                     lzmaBlock.Close();
                     compressedBlockMs.Close();
                     break;
+                case CompressionType.Flac:
+                    byte[] flacBlock = new byte[blockHeader.cmpLength];
+                    imageStream.Read(flacBlock, 0, flacBlock.Length);
+                    MemoryStream flacMs      = new MemoryStream(flacBlock);
+                    FlakeReader  flakeReader = new FlakeReader("", flacMs);
+                    block                    = new byte[blockHeader.length];
+                    int         samples      = (int)(block.Length / blockHeader.sectorSize * 588);
+                    AudioBuffer audioBuffer  = new AudioBuffer(AudioPCMConfig.RedBook, block, samples);
+                    flakeReader.Read(audioBuffer, samples);
+                    flakeReader.Close();
+                    flacMs.Close();
+                    break;
                 default:
                     throw new
                         ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)blockHeader.compression}");
@@ -1520,8 +1541,6 @@ namespace DiscImageChef.DiscImages
                         verifyBytes = new byte[blockHeader.cmpLength - readBytes];
                         imageStream.Read(verifyBytes, 0, verifyBytes.Length);
                         crcVerify.Update(verifyBytes);
-                        readBytes += (ulong)verifyBytes.LongLength;
-                        System.Console.WriteLine("Read {0} bytes of {1}", readBytes, blockHeader.cmpLength);
 
                         verifyCrc = crcVerify.Final();
 
@@ -1655,7 +1674,7 @@ namespace DiscImageChef.DiscImages
                 }
                 else dictionary = 1 << 25;
 
-                if(options.TryGetValue("dictionary", out tmpValue))
+                if(options.TryGetValue("max_ddt_size", out tmpValue))
                 {
                     if(!uint.TryParse(tmpValue, out maxDdtSize))
                     {
@@ -1901,12 +1920,17 @@ namespace DiscImageChef.DiscImages
                             Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
                             ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
                             Marshal.FreeHGlobal(structurePointer);
-                            imageInfo.ImageSize += ddtHeader.cmpLength;
 
                             if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
 
-                            imageInfo.Sectors = ddtHeader.entries;
-                            shift             = ddtHeader.shift;
+                            if(ddtHeader.entries != imageInfo.Sectors)
+                            {
+                                ErrorMessage =
+                                    $"Trying to write a media with {imageInfo.Sectors} sectors to an image with {ddtHeader.entries} sectors, not continuing...";
+                                return false;
+                            }
+
+                            shift = ddtHeader.shift;
 
                             switch(ddtHeader.compression)
                             {
@@ -2002,7 +2026,32 @@ namespace DiscImageChef.DiscImages
             trackIsrcs         = new Dictionary<byte, string>();
             trackFlags         = new Dictionary<byte, byte>();
 
-            lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictionary, 255);
+            lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictionary, 273);
+            flakeWriterSettings   = new FlakeWriterSettings
+            {
+                PCM                = AudioPCMConfig.RedBook,
+                DoMD5              = false,
+                BlockSize          = (1 << shift) * SAMPLES_PER_SECTOR,
+                MinFixedOrder      = 0,
+                MaxFixedOrder      = 4,
+                MinLPCOrder        = 1,
+                MaxLPCOrder        = 32,
+                MaxPartitionOrder  = 8,
+                StereoMethod       = StereoMethod.Evaluate,
+                PredictionType     = PredictionType.Search,
+                WindowMethod       = WindowMethod.EvaluateN,
+                EstimationDepth    = 5,
+                MinPrecisionSearch = 1,
+                MaxPrecisionSearch = 1,
+                TukeyParts         = 0,
+                TukeyOverlap       = 1.0,
+                TukeyP             = 1.0,
+                AllowNonSubset     = true
+            };
+
+            if(flakeWriterSettings.BlockSize > MAX_FLAKE_BLOCK) flakeWriterSettings.BlockSize = MAX_FLAKE_BLOCK;
+            if(flakeWriterSettings.BlockSize < MIN_FLAKE_BLOCK) flakeWriterSettings.BlockSize = MIN_FLAKE_BLOCK;
+            FlakeWriter.Vendor                                                                = "DiscImageChef";
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -2048,18 +2097,60 @@ namespace DiscImageChef.DiscImages
                 return true;
             }
 
+            Track trk = new Track();
+
+            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
+                                                 sectorAddress <= t.TrackEndSector);
+                if(trk.TrackSequence                           == 0)
+                    throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                          "Can't found track containing requested sector");
+            }
+
             // Close current block first
-            if(blockStream                    != null &&
-               (currentBlockHeader.sectorSize != data.Length || currentBlockOffset == 1 << shift))
+            if(blockStream                     != null &&
+               (currentBlockHeader.sectorSize  != data.Length ||
+                currentBlockOffset             == 1 << shift  ||
+                currentBlockHeader.compression == CompressionType.Flac &&
+                trk.TrackType                  != TrackType.Audio))
             {
                 currentBlockHeader.length = currentBlockOffset * currentBlockHeader.sectorSize;
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
-                byte[] lzmaProperties     = compressedBlockStream.Properties;
-                compressedBlockStream.Close();
-                currentBlockHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+
                 Crc64Context cmpCrc64Context = new Crc64Context();
                 cmpCrc64Context.Init();
-                cmpCrc64Context.Update(lzmaProperties);
+
+                byte[] lzmaProperties = new byte[0];
+
+                if(currentBlockHeader.compression == CompressionType.Flac)
+                {
+                    long remaining = currentBlockOffset * SAMPLES_PER_SECTOR % flakeWriter.Settings.BlockSize;
+                    // Fill FLAC block
+                    if(remaining != 0)
+                    {
+                        AudioBuffer audioBuffer =
+                            new AudioBuffer(AudioPCMConfig.RedBook, new byte[remaining * 4], (int)remaining);
+                        flakeWriter.Write(audioBuffer);
+                    }
+
+                    // This trick because CUETools.Codecs.Flake closes the underlying stream
+                    long   realLength = blockStream.Length;
+                    byte[] buffer     = new byte[realLength];
+                    flakeWriter.Close();
+                    Array.Copy(blockStream.GetBuffer(), 0, buffer, 0, realLength);
+                    blockStream = new MemoryStream(buffer);
+                }
+                else
+                {
+                    lzmaProperties = compressedBlockStream.Properties;
+                    compressedBlockStream.Close();
+                    cmpCrc64Context.Update(lzmaProperties);
+                }
+
+                currentBlockHeader.cmpLength = (uint)blockStream.Length;
+                if(currentBlockHeader.compression == CompressionType.Lzma)
+                    currentBlockHeader.cmpLength += LZMA_PROPERTIES_LENGTH;
                 cmpCrc64Context.Update(blockStream.ToArray());
                 currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
@@ -2077,7 +2168,8 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
-                imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
+                if(currentBlockHeader.compression == CompressionType.Lzma)
+                    imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                 blockStream        = null;
                 currentBlockOffset = 0;
@@ -2086,22 +2178,35 @@ namespace DiscImageChef.DiscImages
             // No block set
             if(blockStream == null)
             {
-                blockStream           = new MemoryStream();
-                compressedBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                currentBlockHeader    = new BlockHeader
+                currentBlockHeader = new BlockHeader
                 {
                     identifier  = BlockType.DataBlock,
                     type        = DataType.UserData,
                     compression = CompressionType.Lzma,
                     sectorSize  = (uint)data.Length
                 };
-                crc64 = new Crc64Context();
+
+                if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && trk.TrackType == TrackType.Audio)
+                    currentBlockHeader.compression = CompressionType.Flac;
+
+                blockStream = new MemoryStream();
+                if(currentBlockHeader.compression == CompressionType.Flac)
+                    flakeWriter                                                            =
+                        new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
+                else compressedBlockStream                                                 = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                crc64                                                                      = new Crc64Context();
                 crc64.Init();
             }
 
             ulong ddtEntry = (ulong)((imageStream.Position << shift) + currentBlockOffset);
             deduplicationTable.Add(hash, ddtEntry);
-            compressedBlockStream.Write(data, 0, data.Length);
+            if(currentBlockHeader.compression == CompressionType.Flac)
+            {
+                AudioBuffer audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, data, SAMPLES_PER_SECTOR);
+                flakeWriter.Write(audioBuffer);
+            }
+            else compressedBlockStream.Write(data, 0, data.Length);
+
             SetDdtEntry(sectorAddress, ddtEntry);
             crc64.Update(data);
             currentBlockOffset++;
@@ -2397,12 +2502,40 @@ namespace DiscImageChef.DiscImages
             {
                 currentBlockHeader.length = currentBlockOffset * currentBlockHeader.sectorSize;
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
-                byte[] lzmaProperties     = compressedBlockStream.Properties;
-                compressedBlockStream.Close();
-                currentBlockHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+
                 Crc64Context cmpCrc64Context = new Crc64Context();
                 cmpCrc64Context.Init();
-                cmpCrc64Context.Update(lzmaProperties);
+
+                byte[] lzmaProperties = new byte[0];
+
+                if(currentBlockHeader.compression == CompressionType.Flac)
+                {
+                    long remaining = currentBlockOffset * SAMPLES_PER_SECTOR % flakeWriter.Settings.BlockSize;
+                    // Fill FLAC block
+                    if(remaining != 0)
+                    {
+                        AudioBuffer audioBuffer =
+                            new AudioBuffer(AudioPCMConfig.RedBook, new byte[remaining * 4], (int)remaining);
+                        flakeWriter.Write(audioBuffer);
+                    }
+
+                    // This trick because CUETools.Codecs.Flake closes the underlying stream
+                    long   realLength = blockStream.Length;
+                    byte[] buffer     = new byte[realLength];
+                    flakeWriter.Close();
+                    Array.Copy(blockStream.GetBuffer(), 0, buffer, 0, realLength);
+                    blockStream = new MemoryStream(buffer);
+                }
+                else
+                {
+                    lzmaProperties = compressedBlockStream.Properties;
+                    compressedBlockStream.Close();
+                    cmpCrc64Context.Update(lzmaProperties);
+                }
+
+                currentBlockHeader.cmpLength = (uint)blockStream.Length;
+                if(currentBlockHeader.compression == CompressionType.Lzma)
+                    currentBlockHeader.cmpLength += LZMA_PROPERTIES_LENGTH;
                 cmpCrc64Context.Update(blockStream.ToArray());
                 currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
@@ -2420,9 +2553,9 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(structurePointer);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
-                imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
+                if(currentBlockHeader.compression == CompressionType.Lzma)
+                    imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-                blockStream = null;
             }
 
             IndexEntry idxEntry;
@@ -3598,7 +3731,8 @@ namespace DiscImageChef.DiscImages
         enum CompressionType : ushort
         {
             None = 0,
-            Lzma = 1
+            Lzma = 1,
+            Flac = 2
         }
 
         enum DataType : ushort
