@@ -603,14 +603,6 @@ namespace DiscImageChef.Metadata
                     discType = "3.5\" floppy";
                     discSubType = "NEC triple-density";
                     break;
-                case CommonTypes.MediaType.SHARP_525:
-                    discType = "5.25\" floppy";
-                    discSubType = "Sharp";
-                    break;
-                case CommonTypes.MediaType.SHARP_35:
-                    discType = "3.5\" floppy";
-                    discSubType = "Sharp";
-                    break;
                 case CommonTypes.MediaType.SHARP_525_9:
                     discType = "5.25\" floppy";
                     discSubType = "Sharp (9 sectors per track)";
@@ -651,18 +643,6 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.ECMA_99_26:
                     discType = "5.25\" floppy";
                     discSubType = "ECMA-99";
-                    break;
-                case CommonTypes.MediaType.ECMA_100:
-                    discType = "3.5\" floppy";
-                    discSubType = "ECMA-99";
-                    break;
-                case CommonTypes.MediaType.ECMA_125:
-                    discType = "3.5\" floppy";
-                    discSubType = "ECMA-125";
-                    break;
-                case CommonTypes.MediaType.ECMA_147:
-                    discType = "3.5\" floppy";
-                    discSubType = "ECMA-147";
                     break;
                 case CommonTypes.MediaType.FDFORMAT_525_DD:
                     discType = "5.25\" floppy";

@@ -37,20 +37,20 @@ namespace DiscImageChef.DiscImages
     /// <summary>
     ///     Track (as partitioning element) types.
     /// </summary>
-    public enum TrackType
+    public enum TrackType : byte
     {
         /// <summary>Audio track</summary>
-        Audio,
+        Audio = 0,
         /// <summary>Data track (not any of the below defined ones)</summary>
-        Data,
+        Data = 1,
         /// <summary>Data track, compact disc mode 1</summary>
-        CdMode1,
+        CdMode1 = 2,
         /// <summary>Data track, compact disc mode 2, formless</summary>
-        CdMode2Formless,
+        CdMode2Formless = 3,
         /// <summary>Data track, compact disc mode 2, form 1</summary>
-        CdMode2Form1,
+        CdMode2Form1 = 4,
         /// <summary>Data track, compact disc mode 2, form 2</summary>
-        CdMode2Form2
+        CdMode2Form2 = 5
     }
 
     /// <summary>

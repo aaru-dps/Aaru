@@ -504,15 +504,10 @@ namespace DiscImageChef.Core
                 case CommonTypes.MediaType.CBM_1571:
                     trkFormat = "Commodore GCR";
                     break;
-                case CommonTypes.MediaType.SHARP_525:
                 case CommonTypes.MediaType.SHARP_525_9:
-                case CommonTypes.MediaType.SHARP_35: break;
                 case CommonTypes.MediaType.SHARP_35_9: break;
                 case CommonTypes.MediaType.ECMA_99_15:
                 case CommonTypes.MediaType.ECMA_99_26:
-                case CommonTypes.MediaType.ECMA_100:
-                case CommonTypes.MediaType.ECMA_125:
-                case CommonTypes.MediaType.ECMA_147:
                 case CommonTypes.MediaType.ECMA_99_8:
                     trkFormat = "ISO MFM";
                     break;
