@@ -228,7 +228,7 @@ namespace DiscImageChef.DiscImages
             header = (DicHeader)Marshal.PtrToStructure(structurePointer, typeof(DicHeader));
             Marshal.FreeHGlobal(structurePointer);
 
-            return header.identifier == DIC_MAGIC && header.imageMajorVersion == 0;
+            return header.identifier == DIC_MAGIC && header.imageMajorVersion <= DICF_VERSION;
         }
 
         public bool Open(IFilter imageFilter)
