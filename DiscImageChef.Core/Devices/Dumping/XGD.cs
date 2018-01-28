@@ -87,7 +87,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   ref                                             Resume    resume,
                                   ref                                             DumpLog   dumpLog,
                                   Encoding                                                  encoding, string outputPrefix, string outputPath,
-                                  Dictionary<string, string>                                formatOptions)
+                                  Dictionary<string, string>                                formatOptions,
+                                  CICMMetadataType                                          preSidecar)
         {
             bool       sense;
             ulong      blocks;
@@ -771,6 +772,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             outputPlugin.SetDumpHardware(resume.Tries);
+            if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
             outputPlugin.Close();
@@ -793,6 +795,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             DateTime         chkStart = DateTime.UtcNow;
             CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
             end                       = DateTime.UtcNow;
+
+            if(preSidecar != null)
+            {
+                preSidecar.OpticalDisc = sidecar.OpticalDisc;
+                sidecar                = preSidecar;
+            }
 
             totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
             dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);

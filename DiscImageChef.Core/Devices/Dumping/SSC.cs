@@ -59,7 +59,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
         internal static void Dump(Device dev, string outputPrefix, string devicePath, ref Resume  resume,
-                                  ref                                                     DumpLog dumpLog)
+                                  ref                                                     DumpLog dumpLog,
+                                  CICMMetadataType                                                preSidecar)
         {
             FixedSense?      fxSense;
             bool             aborted;
@@ -74,7 +75,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double           currentSpeed     = 0;
             double           maxSpeed         = double.MinValue;
             double           minSpeed         = double.MaxValue;
-            CICMMetadataType sidecar          = new CICMMetadataType();
+            CICMMetadataType sidecar          = preSidecar ?? new CICMMetadataType();
 
             dev.RequestSense(out byte[] senseBuf, dev.Timeout, out double duration);
             fxSense = Sense.DecodeFixed(senseBuf, out string strSense);

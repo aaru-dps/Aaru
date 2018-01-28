@@ -89,7 +89,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                       Resume resume, ref DumpLog dumpLog, bool dumpLeadIn,
                                   Encoding   encoding,
                                   string
-                                      outputPrefix, string outputPath, Dictionary<string, string> formatOptions)
+                                      outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
+                                  CICMMetadataType
+                                      preSidecar)
         {
             uint               subSize;
             DateTime           start;
@@ -887,6 +889,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
             outputPlugin.SetDumpHardware(resume.Tries);
+            if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
             outputPlugin.Close();
@@ -914,6 +917,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+            if(preSidecar == null)
+            {
+                preSidecar.OpticalDisc = sidecar.OpticalDisc;
+                sidecar                = preSidecar;
+            }
 
             sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
             Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);

@@ -37,6 +37,7 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Metadata;
+using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -46,9 +47,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 bool       force, bool dumpRaw, bool              persistent, bool     stopOnError,
                                 ref Resume resume,
                                 ref
-                                    DumpLog dumpLog, Encoding encoding, string outputPrefix, string outputPath,
+                                    DumpLog dumpLog, Encoding encoding, string outputPrefix,
+                                string      outputPath,
                                 Dictionary<string, string>
-                                    formatOptions)
+                                    formatOptions, CICMMetadataType preSidecar)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }

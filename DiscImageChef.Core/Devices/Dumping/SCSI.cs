@@ -40,6 +40,7 @@ using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Metadata;
+using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 
 namespace DiscImageChef.Core.Devices.Dumping
@@ -76,7 +77,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     DumpLog dumpLog, bool dumpLeadIn, Encoding encoding,
                                 string      outputPrefix,
                                 string
-                                    outputPath, Dictionary<string, string> formatOptions)
+                                    outputPath, Dictionary<string, string> formatOptions,
+                                CICMMetadataType
+                                    preSidecar)
         {
             MediaType dskType = MediaType.Unknown;
             int       resets  = 0;
@@ -204,17 +207,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                 case PeripheralDeviceTypes.SequentialAccess:
                     if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
 
-                    Ssc.Dump(dev, outputPrefix, devicePath, ref resume, ref dumpLog);
+                    Ssc.Dump(dev, outputPrefix, devicePath, ref resume, ref dumpLog, preSidecar);
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     Mmc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
                              ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                             formatOptions);
+                             formatOptions, preSidecar);
                     return;
                 default:
                     Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, null,
                              ref dskType, false, ref resume, ref dumpLog, encoding, outputPrefix, outputPath,
-                             formatOptions);
+                             formatOptions, preSidecar);
                     break;
             }
         }

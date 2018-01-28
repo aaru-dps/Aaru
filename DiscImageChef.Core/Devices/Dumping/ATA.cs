@@ -78,9 +78,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 bool       force, bool dumpRaw, bool              persistent, bool     stopOnError,
                                 ref Resume resume,
                                 ref
-                                    DumpLog dumpLog, Encoding encoding, string outputPrefix, string outputPath,
+                                    DumpLog dumpLog, Encoding encoding, string outputPrefix,
+                                string      outputPath,
                                 Dictionary<string, string>
-                                    formatOptions)
+                                    formatOptions, CICMMetadataType preSidecar)
         {
             bool aborted;
 
@@ -418,6 +419,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     outputPlugin.SetDumpHardware(resume.Tries);
+                    if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
                     dumpLog.WriteLine("Closing output file.");
                     DicConsole.WriteLine("Closing output file.");
                     outputPlugin.Close();
@@ -436,6 +438,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     DateTime         chkStart = DateTime.UtcNow;
                     CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
+                    if(preSidecar != null)
+                    {
+                        preSidecar.BlockMedia = sidecar.BlockMedia;
+                        sidecar               = preSidecar;
+                    }
 
                     if(dev.IsUsb)
                     {

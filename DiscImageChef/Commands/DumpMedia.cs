@@ -43,6 +43,7 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Metadata;
+using Schemas;
 
 namespace DiscImageChef.Commands
 {
@@ -59,21 +60,22 @@ namespace DiscImageChef.Commands
             Sidecar.EndProgressEvent2    += Progress.EndProgress2;
             Sidecar.UpdateStatusEvent    += Progress.UpdateStatus;
 
-            DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}",              options.Debug);
-            DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}",            options.Verbose);
-            DicConsole.DebugWriteLine("Dump-Media command", "--device={0}",             options.DevicePath);
-            DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",                options.Raw);
-            DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}",      options.StopOnError);
-            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",              options.Force);
-            DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}",       options.RetryPasses);
-            DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}",         options.Persistent);
-            DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}",             options.Resume);
-            DicConsole.DebugWriteLine("Dump-Media command", "--lead-in={0}",            options.LeadIn);
-            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}",           options.EncodingName);
-            DicConsole.DebugWriteLine("Dump-Media command", "--output={0}",             options.OutputFile);
-            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}",             options.OutputFormat);
-            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",              options.Force);
-            DicConsole.DebugWriteLine("Dump-Media command", "--options={0}",            options.Options);
+            DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}",         options.Debug);
+            DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}",       options.Verbose);
+            DicConsole.DebugWriteLine("Dump-Media command", "--device={0}",        options.DevicePath);
+            DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           options.Raw);
+            DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}", options.StopOnError);
+            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",         options.Force);
+            DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}",  options.RetryPasses);
+            DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}",    options.Persistent);
+            DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}",        options.Resume);
+            DicConsole.DebugWriteLine("Dump-Media command", "--lead-in={0}",       options.LeadIn);
+            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}",      options.EncodingName);
+            DicConsole.DebugWriteLine("Dump-Media command", "--output={0}",        options.OutputFile);
+            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}",        options.OutputFormat);
+            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",         options.Force);
+            DicConsole.DebugWriteLine("Dump-Media command", "--options={0}",       options.Options);
+            DicConsole.DebugWriteLine("Dump-Media command", "--cicm-xml={0}",      options.CicmXml);
 
             Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
             DicConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
@@ -132,6 +134,27 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            CICMMetadataType sidecar   = null;
+            XmlSerializer    sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+            if(options.CicmXml != null)
+                if(File.Exists(options.CicmXml))
+                    try
+                    {
+                        StreamReader sr = new StreamReader(options.CicmXml);
+                        sidecar         = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                        sr.Close();
+                    }
+                    catch
+                    {
+                        DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
+                        return;
+                    }
+                else
+                {
+                    DicConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
+                    return;
+                }
+
             PluginBase           plugins    = new PluginBase();
             List<IWritableImage> candidates = new List<IWritableImage>();
 
@@ -182,24 +205,24 @@ namespace DiscImageChef.Commands
                 case DeviceType.ATA:
                     Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                             options.OutputFile, parsedOptions);
+                             options.OutputFile, parsedOptions, sidecar);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
                     SecureDigital.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
                                        options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog,
-                                       encoding, outputPrefix, options.OutputFile, parsedOptions);
+                                       encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar);
                     break;
                 case DeviceType.NVMe:
                     NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                              options.OutputFile, parsedOptions);
+                              options.OutputFile, parsedOptions, sidecar);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
                     Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, options.LeadIn,
-                              encoding, outputPrefix, options.OutputFile, parsedOptions);
+                              encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");

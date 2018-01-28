@@ -85,7 +85,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   ref Resume                       resume,
                                   ref DumpLog                      dumpLog, Encoding encoding, string outputPrefix,
                                   string                           outputPath,
-                                  Dictionary<string, string>       formatOptions)
+                                  Dictionary<string, string>       formatOptions,
+                                  CICMMetadataType                 preSidecar)
         {
             bool         sense;
             ulong        blocks;
@@ -646,6 +647,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
             outputPlugin.SetDumpHardware(resume.Tries);
+            if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
             outputPlugin.Close();
@@ -676,6 +678,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(opticalDisc)
             {
+                if(preSidecar != null)
+                {
+                    preSidecar.OpticalDisc = sidecar.OpticalDisc;
+                    sidecar                = preSidecar;
+                }
+
                 // TODO: Implement layers
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
                 Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
@@ -689,6 +697,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
             else
             {
+                if(preSidecar != null)
+                {
+                    preSidecar.BlockMedia = sidecar.BlockMedia;
+                    sidecar               = preSidecar;
+                }
+
                 // All USB flash drives report as removable, even if the media is not removable
                 if(!dev.IsRemovable || dev.IsUsb)
                 {

@@ -82,7 +82,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                       Resume resume, ref DumpLog dumpLog, bool dumpLeadIn,
                                   Encoding   encoding,
                                   string
-                                      outputPrefix, string outputPath, Dictionary<string, string> formatOptions)
+                                      outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
+                                  CICMMetadataType
+                                      preSidecar)
         {
             bool   sense;
             ulong  blocks;
@@ -198,7 +200,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 CompactDisc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
                                  ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                                 formatOptions);
+                                 formatOptions, preSidecar);
                 return;
             }
 
@@ -599,12 +601,14 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(isXbox)
             {
                 Xgd.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
-                         ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions);
+                         ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
+                         preSidecar);
                 return;
             }
 
             Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
-                     ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions);
+                     ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
+                     preSidecar);
         }
 
         internal static void AddMediaTagToSidecar(string                             outputPath,
