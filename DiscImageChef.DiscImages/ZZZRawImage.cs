@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
@@ -1040,6 +1041,19 @@ namespace DiscImageChef.DiscImages
             }
 
             DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", imageInfo.MediaType);
+
+            XmlSerializer sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+            if(File.Exists(basename + "cicm.xml"))
+                try
+                {
+                    StreamReader sr = new StreamReader(basename + "cicm.xml");
+                    CicmMetadata    = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                    sr.Close();
+                }
+                catch
+                {
+                    // Do nothing.
+                }
 
             imageInfo.ReadableMediaTags = new List<MediaTagType>(mediaTags.Keys);
 
