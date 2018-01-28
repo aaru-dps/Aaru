@@ -192,7 +192,6 @@ namespace DiscImageChef.Core
             {
                 byte[] mode2A = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODEPAGE_2A);
 
-                DicConsole.WriteLine("SCSI INQUIRY contained in image:");
                 DicConsole.Write("{0}", Modes.PrettifyModePage_2A(mode2A));
                 DicConsole.WriteLine();
             }
