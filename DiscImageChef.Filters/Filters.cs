@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using DiscImageChef.Console;
@@ -48,7 +49,7 @@ namespace DiscImageChef.Filters
         public FiltersList()
         {
             Assembly assembly = Assembly.GetAssembly(typeof(IFilter));
-            Filters = new SortedDictionary<string, IFilter>();
+            Filters           = new SortedDictionary<string, IFilter>();
 
             foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
                 try
@@ -67,27 +68,31 @@ namespace DiscImageChef.Filters
         /// <returns>The filter that allows reading the specified path</returns>
         public IFilter GetFilter(string path)
         {
-            IFilter noFilter = null;
+            try
+            {
+                IFilter noFilter = null;
+                foreach(IFilter filter in Filters.Values)
+                    if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                    {
+                        if(!filter.Identify(path)) continue;
 
-            foreach(IFilter filter in Filters.Values)
-                if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-                {
-                    if(!filter.Identify(path)) continue;
+                        IFilter foundFilter =
+                            (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
 
-                    IFilter foundFilter =
-                        (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                        foundFilter?.Open(path);
 
-                    foundFilter?.Open(path);
+                        if(foundFilter?.IsOpened() == true) return foundFilter;
+                    }
+                    else
+                        noFilter = filter;
 
-                    if(foundFilter?.IsOpened() == true) return foundFilter;
-                }
-                else noFilter = filter;
+                if(!noFilter?.Identify(path) == true) return noFilter;
 
-            if(!noFilter?.Identify(path) == true) return noFilter;
+                noFilter?.Open(path);
 
-            noFilter?.Open(path);
-
-            return noFilter;
+                return noFilter;
+            }
+            catch(IOException) { return null; }
         }
 
         /// <summary>
