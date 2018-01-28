@@ -635,17 +635,23 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            bool ret;
+            bool ret = false;
+            if(resume != null || dumpHardware != null)
+            {
+                if(resume            != null) ret = outputFormat.SetDumpHardware(resume.Tries);
+                else if(dumpHardware != null)
+                    ret = outputFormat.SetDumpHardware(dumpHardware);
+                if(ret) DicConsole.WriteLine("Written dump hardware list to output image.");
+            }
 
-            if(resume            != null) ret = outputFormat.SetDumpHardware(resume.Tries);
-            else if(dumpHardware != null)
-                ret = outputFormat.SetDumpHardware(dumpHardware);
-            if(ret) DicConsole.WriteLine("Written dump hardware list to output image.");
-
-            if(sidecar           != null) ret = outputFormat.SetCicmMetadata(sidecar);
-            else if(cicmMetadata != null)
-                ret = outputFormat.SetCicmMetadata(cicmMetadata);
-            if(ret) DicConsole.WriteLine("Written CICM XML metadata to output image.");
+            ret = false;
+            if(resume != null || dumpHardware != null)
+            {
+                if(sidecar           != null) ret = outputFormat.SetCicmMetadata(sidecar);
+                else if(cicmMetadata != null)
+                    ret = outputFormat.SetCicmMetadata(cicmMetadata);
+                if(ret) DicConsole.WriteLine("Written CICM XML metadata to output image.");
+            }
 
             DicConsole.WriteLine("Closing output image.");
 
