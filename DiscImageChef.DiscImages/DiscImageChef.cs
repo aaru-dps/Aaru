@@ -75,6 +75,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using CUETools.Codecs;
 using CUETools.Codecs.FLAKE;
 using DiscImageChef.Checksums;
@@ -743,6 +745,38 @@ namespace DiscImageChef.DiscImages
 
                         imageInfo.HasPartitions = true;
                         imageInfo.HasSessions   = true;
+                        break;
+                    // CICM XML metadata block
+                    case BlockType.CicmBlock:
+                        CicmMetadataBlock cicmBlock = new CicmMetadataBlock();
+                        structureBytes              = new byte[Marshal.SizeOf(cicmBlock)];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(cicmBlock));
+                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(cicmBlock));
+                        cicmBlock = (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer, typeof(GeometryBlock));
+                        Marshal.FreeHGlobal(structurePointer);
+                        if(cicmBlock.identifier != BlockType.CicmBlock) break;
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Found CICM XML metadata block at position {0}", entry.offset);
+
+                        byte[] cicmBytes = new byte[cicmBlock.length];
+                        imageStream.Read(cicmBytes, 0, cicmBytes.Length);
+                        MemoryStream  cicmMs = new MemoryStream(cicmBytes);
+                        XmlSerializer cicmXs = new XmlSerializer(typeof(CICMMetadataType));
+                        try
+                        {
+                            StreamReader sr = new StreamReader(cicmMs);
+                            CicmMetadata    = (CICMMetadataType)cicmXs.Deserialize(sr);
+                            sr.Close();
+                        }
+                        catch(XmlException ex)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Exception {0} processing CICM XML metadata block", ex.Message);
+                            CicmMetadata = null;
+                        }
+
                         break;
                 }
             }
@@ -2042,6 +2076,40 @@ namespace DiscImageChef.DiscImages
 
                             foundUserDataDdt = true;
                             break;
+                        // CICM XML metadata block
+                        case BlockType.CicmBlock:
+                            CicmMetadataBlock cicmBlock = new CicmMetadataBlock();
+                            structureBytes              = new byte[Marshal.SizeOf(cicmBlock)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(cicmBlock));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(cicmBlock));
+                            cicmBlock =
+                                (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer, typeof(GeometryBlock));
+                            Marshal.FreeHGlobal(structurePointer);
+                            if(cicmBlock.identifier != BlockType.CicmBlock) break;
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Found CICM XML metadata block at position {0}", entry.offset);
+
+                            byte[] cicmBytes = new byte[cicmBlock.length];
+                            imageStream.Read(cicmBytes, 0, cicmBytes.Length);
+                            MemoryStream  cicmMs = new MemoryStream(cicmBytes);
+                            XmlSerializer cicmXs = new XmlSerializer(typeof(CICMMetadataType));
+                            try
+                            {
+                                StreamReader sr = new StreamReader(cicmMs);
+                                CicmMetadata    = (CICMMetadataType)cicmXs.Deserialize(sr);
+                                sr.Close();
+                            }
+                            catch(XmlException ex)
+                            {
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                          "Exception {0} processing CICM XML metadata block",
+                                                          ex.Message);
+                                CicmMetadata = null;
+                            }
+
+                            break;
                     }
                 }
 
@@ -2732,6 +2800,38 @@ namespace DiscImageChef.DiscImages
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
 
                 index.RemoveAll(t => t.blockType == BlockType.GeometryBlock && t.dataType == DataType.NoData);
+
+                index.Add(idxEntry);
+            }
+
+            // If we have CICM XML metadata, write it
+            if(CicmMetadata != null)
+            {
+                MemoryStream  cicmMs = new MemoryStream();
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                xmlSer.Serialize(cicmMs, CicmMetadata);
+
+                idxEntry = new IndexEntry
+                {
+                    blockType = BlockType.CicmBlock,
+                    dataType  = DataType.NoData,
+                    offset    = (ulong)imageStream.Position
+                };
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing CICM XML block to position {0}",
+                                          idxEntry.offset);
+
+                CicmMetadataBlock cicmBlock           =
+                    new CicmMetadataBlock {identifier = BlockType.CicmBlock, length = (uint)cicmMs.Length};
+                structurePointer                      = Marshal.AllocHGlobal(Marshal.SizeOf(cicmBlock));
+                structureBytes                        = new byte[Marshal.SizeOf(cicmBlock)];
+                Marshal.StructureToPtr(cicmBlock, structurePointer, true);
+                Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                Marshal.FreeHGlobal(structurePointer);
+                imageStream.Write(structureBytes,   0, structureBytes.Length);
+                imageStream.Write(cicmMs.ToArray(), 0, (int)cicmMs.Length);
+
+                index.RemoveAll(t => t.blockType == BlockType.CicmBlock && t.dataType == DataType.NoData);
 
                 index.Add(idxEntry);
             }
@@ -3483,8 +3583,8 @@ namespace DiscImageChef.DiscImages
 
         public bool SetCicmMetadata(CICMMetadataType metadata)
         {
-            // TODO: Implement
-            return false;
+            CicmMetadata = metadata;
+            return true;
         }
 
         /// <summary>
@@ -4027,7 +4127,7 @@ namespace DiscImageChef.DiscImages
             MetadataBlock = 0x4154454D,
             /// <summary>Block containing optical disc tracks</summary>
             TracksBlock = 0x534B5254,
-            /// <summary>TODO: Block containing CICM XML metadata</summary>
+            /// <summary>Block containing CICM XML metadata</summary>
             CicmBlock = 0x4D434943,
             /// <summary>TODO: Block containing contents checksums</summary>
             ChecksumBlock = 0x4D534B43,
@@ -4246,6 +4346,15 @@ namespace DiscImageChef.DiscImages
             public string isrc;
             /// <summary>Track flags</summary>
             public byte flags;
+        }
+
+        /// <summary>Geometry block, contains physical geometry information</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CicmMetadataBlock
+        {
+            /// <summary>Identifier, <see cref="BlockType.CicmBlock" /></summary>
+            public BlockType identifier;
+            public uint      length;
         }
     }
 }

@@ -645,7 +645,7 @@ namespace DiscImageChef.Commands
             }
 
             ret = false;
-            if(resume != null || dumpHardware != null)
+            if(sidecar != null || cicmMetadata != null)
             {
                 if(sidecar           != null) ret = outputFormat.SetCicmMetadata(sidecar);
                 else if(cicmMetadata != null)
