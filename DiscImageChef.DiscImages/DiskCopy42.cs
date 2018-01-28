@@ -40,6 +40,7 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 using Encoding = System.Text.Encoding;
 using Version = Resources.Version;
 
@@ -635,6 +636,9 @@ namespace DiscImageChef.DiscImages
             return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         public byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
@@ -1159,6 +1163,18 @@ namespace DiscImageChef.DiscImages
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
             return false;
         }
 

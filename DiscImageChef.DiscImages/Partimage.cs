@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using Extents;
+using Schemas;
 
 #pragma warning disable 649
 
@@ -46,50 +47,50 @@ namespace DiscImageChef.DiscImages
 {
     public class Partimage : IMediaImage
     {
-        const int MAX_DESCRIPTION = 4096;
-        const int MAX_HOSTNAMESIZE = 128;
-        const int MAX_DEVICENAMELEN = 512;
-        const int MAX_UNAMEINFOLEN = 65; //SYS_NMLN
-        const int MBR_SIZE_WHOLE = 512;
-        const int MAX_DESC_MODEL = 128;
-        const int MAX_DESC_GEOMETRY = 1024;
-        const int MAX_DESC_IDENTIFY = 4096;
-        const int CHECK_FREQUENCY = 65536;
+        const int    MAX_DESCRIPTION         = 4096;
+        const int    MAX_HOSTNAMESIZE        = 128;
+        const int    MAX_DEVICENAMELEN       = 512;
+        const int    MAX_UNAMEINFOLEN        = 65; //SYS_NMLN
+        const int    MBR_SIZE_WHOLE          = 512;
+        const int    MAX_DESC_MODEL          = 128;
+        const int    MAX_DESC_GEOMETRY       = 1024;
+        const int    MAX_DESC_IDENTIFY       = 4096;
+        const int    CHECK_FREQUENCY         = 65536;
         const string MAGIC_BEGIN_LOCALHEADER = "MAGIC-BEGIN-LOCALHEADER";
-        const string MAGIC_BEGIN_DATABLOCKS = "MAGIC-BEGIN-DATABLOCKS";
-        const string MAGIC_BEGIN_BITMAP = "MAGIC-BEGIN-BITMAP";
-        const string MAGIC_BEGIN_MBRBACKUP = "MAGIC-BEGIN-MBRBACKUP";
-        const string MAGIC_BEGIN_TAIL = "MAGIC-BEGIN-TAIL";
-        const string MAGIC_BEGIN_INFO = "MAGIC-BEGIN-INFO";
-        const string MAGIC_BEGIN_EXT000 = "MAGIC-BEGIN-EXT000"; // reserved for future use
-        const string MAGIC_BEGIN_EXT001 = "MAGIC-BEGIN-EXT001"; // reserved for future use
-        const string MAGIC_BEGIN_EXT002 = "MAGIC-BEGIN-EXT002"; // reserved for future use
-        const string MAGIC_BEGIN_EXT003 = "MAGIC-BEGIN-EXT003"; // reserved for future use
-        const string MAGIC_BEGIN_EXT004 = "MAGIC-BEGIN-EXT004"; // reserved for future use
-        const string MAGIC_BEGIN_EXT005 = "MAGIC-BEGIN-EXT005"; // reserved for future use
-        const string MAGIC_BEGIN_EXT006 = "MAGIC-BEGIN-EXT006"; // reserved for future use
-        const string MAGIC_BEGIN_EXT007 = "MAGIC-BEGIN-EXT007"; // reserved for future use
-        const string MAGIC_BEGIN_EXT008 = "MAGIC-BEGIN-EXT008"; // reserved for future use
-        const string MAGIC_BEGIN_EXT009 = "MAGIC-BEGIN-EXT009"; // reserved for future use
-        const string MAGIC_BEGIN_VOLUME = "PaRtImAgE-VoLuMe";
+        const string MAGIC_BEGIN_DATABLOCKS  = "MAGIC-BEGIN-DATABLOCKS";
+        const string MAGIC_BEGIN_BITMAP      = "MAGIC-BEGIN-BITMAP";
+        const string MAGIC_BEGIN_MBRBACKUP   = "MAGIC-BEGIN-MBRBACKUP";
+        const string MAGIC_BEGIN_TAIL        = "MAGIC-BEGIN-TAIL";
+        const string MAGIC_BEGIN_INFO        = "MAGIC-BEGIN-INFO";
+        const string MAGIC_BEGIN_EXT000      = "MAGIC-BEGIN-EXT000"; // reserved for future use
+        const string MAGIC_BEGIN_EXT001      = "MAGIC-BEGIN-EXT001"; // reserved for future use
+        const string MAGIC_BEGIN_EXT002      = "MAGIC-BEGIN-EXT002"; // reserved for future use
+        const string MAGIC_BEGIN_EXT003      = "MAGIC-BEGIN-EXT003"; // reserved for future use
+        const string MAGIC_BEGIN_EXT004      = "MAGIC-BEGIN-EXT004"; // reserved for future use
+        const string MAGIC_BEGIN_EXT005      = "MAGIC-BEGIN-EXT005"; // reserved for future use
+        const string MAGIC_BEGIN_EXT006      = "MAGIC-BEGIN-EXT006"; // reserved for future use
+        const string MAGIC_BEGIN_EXT007      = "MAGIC-BEGIN-EXT007"; // reserved for future use
+        const string MAGIC_BEGIN_EXT008      = "MAGIC-BEGIN-EXT008"; // reserved for future use
+        const string MAGIC_BEGIN_EXT009      = "MAGIC-BEGIN-EXT009"; // reserved for future use
+        const string MAGIC_BEGIN_VOLUME      = "PaRtImAgE-VoLuMe";
 
-        const uint MAX_CACHE_SIZE = 16777216;
-        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-        readonly byte[] partimageMagic =
+        const    uint   MAX_CACHE_SIZE     = 16777216;
+        const    uint   MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        readonly byte[] partimageMagic     =
         {
             0x50, 0x61, 0x52, 0x74, 0x49, 0x6D, 0x41, 0x67, 0x45, 0x2D, 0x56, 0x6F, 0x4C, 0x75, 0x4D, 0x65, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
-        byte[] bitmap;
+        byte[]              bitmap;
         PartimageMainHeader cMainHeader;
 
         PartimageHeader cVolumeHeader;
-        long dataOff;
+        long            dataOff;
 
-        ExtentsULong extents;
+        ExtentsULong             extents;
         Dictionary<ulong, ulong> extentsOff;
-        ImageInfo imageInfo;
-        Stream imageStream;
+        ImageInfo                imageInfo;
+        Stream                   imageStream;
 
         Dictionary<ulong, byte[]> sectorCache;
 
@@ -97,24 +98,24 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Application = "Partimage",
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Application           = "Partimage",
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -122,7 +123,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "Partimage disk image";
-        public Guid Id => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
+        public Guid   Id   => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
 
         public string Format => "Partimage";
 
@@ -144,7 +145,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = new PartimageHeader();
+            cVolumeHeader    = new PartimageHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
             cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
@@ -162,7 +163,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
             stream.Read(hdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = new PartimageHeader();
+            cVolumeHeader    = new PartimageHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
             Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
             cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
@@ -184,7 +185,7 @@ namespace DiscImageChef.DiscImages
             hdrB = new byte[Marshal.SizeOf(cMainHeader)];
             stream.Read(hdrB, 0, Marshal.SizeOf(cMainHeader));
             cMainHeader = new PartimageMainHeader();
-            headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cMainHeader));
+            headerPtr   = Marshal.AllocHGlobal(Marshal.SizeOf(cMainHeader));
             Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(cMainHeader));
             cMainHeader = (PartimageMainHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageMainHeader));
             Marshal.FreeHGlobal(headerPtr);
@@ -233,7 +234,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_zone = {0}",
                                       cMainHeader.dateCreate.Timezone);
 
-            DateTime dateCreate = new DateTime(1900 + (int)cMainHeader.dateCreate.Year,
+            DateTime dateCreate = new DateTime(1900                              + (int)cMainHeader.dateCreate.Year,
                                                (int)cMainHeader.dateCreate.Month + 1,
                                                (int)cMainHeader.dateCreate.DayOfMonth, (int)cMainHeader.dateCreate.Hour,
                                                (int)cMainHeader.dateCreate.Minute, (int)cMainHeader.dateCreate.Second);
@@ -245,7 +246,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szVersion = {0}",
                                       StringHandlers.CToString(cMainHeader.szVersion));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrCount = {0}", cMainHeader.dwMbrCount);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrSize = {0}", cMainHeader.dwMbrSize);
+            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrSize = {0}",  cMainHeader.dwMbrSize);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwEncryptAlgo = {0} ({1})",
                                       cMainHeader.dwEncryptAlgo, (uint)cMainHeader.dwEncryptAlgo);
             DicConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CMainHeader.cHashTestKey) = {0}",
@@ -306,7 +307,7 @@ namespace DiscImageChef.DiscImages
             CLocalHeader localHeader = (CLocalHeader)Marshal.PtrToStructure(headerPtr, typeof(CLocalHeader));
             Marshal.FreeHGlobal(headerPtr);
 
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}", localHeader.qwBlockSize);
+            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}",  localHeader.qwBlockSize);
             DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwUsedBlocks = {0}", localHeader.qwUsedBlocks);
             DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlocksCount = {0}",
                                       localHeader.qwBlocksCount);
@@ -355,11 +356,11 @@ namespace DiscImageChef.DiscImages
                     ImageNotSupportedException("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
 
             DicConsole.DebugWriteLine("Partimage plugin", "Filling extents");
-            DateTime start = DateTime.Now;
-            extents = new ExtentsULong();
-            extentsOff = new Dictionary<ulong, ulong>();
-            bool current = (bitmap[0] & (1 << (0 % 8))) != 0;
-            ulong blockOff = 0;
+            DateTime start    = DateTime.Now;
+            extents           = new ExtentsULong();
+            extentsOff        = new Dictionary<ulong, ulong>();
+            bool  current     = (bitmap[0] & (1 << (0 % 8))) != 0;
+            ulong blockOff    = 0;
             ulong extentStart = 0;
 
             for(ulong i = 1; i <= localHeader.qwBlocksCount; i++)
@@ -376,7 +377,7 @@ namespace DiscImageChef.DiscImages
                     else
                     {
                         extents.Add(extentStart, i);
-                        extentsOff.TryGetValue(extentStart, out ulong foo);
+                        extentsOff.TryGetValue(extentStart, out ulong _);
                     }
 
                 if(next && current) blockOff++;
@@ -390,27 +391,20 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            imageInfo.CreationTime = dateCreate;
+            imageInfo.CreationTime         = dateCreate;
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = localHeader.qwBlocksCount + 1;
-            imageInfo.SectorSize = (uint)localHeader.qwBlockSize;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.MediaType = MediaType.GENERIC_HDD;
-            imageInfo.Version = StringHandlers.CToString(cMainHeader.szVersion);
-            imageInfo.Comments = StringHandlers.CToString(cMainHeader.szPartDescription);
-            imageInfo.ImageSize =
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = localHeader.qwBlocksCount + 1;
+            imageInfo.SectorSize           = (uint)localHeader.qwBlockSize;
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            imageInfo.Version              = StringHandlers.CToString(cMainHeader.szVersion);
+            imageInfo.Comments             = StringHandlers.CToString(cMainHeader.szPartDescription);
+            imageInfo.ImageSize            =
                 (ulong)(stream.Length - (dataOff + Marshal.SizeOf(typeof(CMainTail)) + MAGIC_BEGIN_TAIL.Length));
             imageStream = stream;
 
             return true;
-        }
-
-        ulong BlockOffset(ulong sectorAddress)
-        {
-            extents.GetStart(sectorAddress, out ulong extentStart);
-            extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
-            return extentStartingOffset + (sectorAddress - extentStart);
         }
 
         public byte[] ReadSector(ulong sectorAddress)
@@ -462,7 +456,7 @@ namespace DiscImageChef.DiscImages
             MemoryStream ms = new MemoryStream();
 
             bool allEmpty = true;
-            for(uint i = 0; i < length; i++)
+            for(uint i = 0; i                                                    < length; i++)
                 if((bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) != 0)
                 {
                     allEmpty = false;
@@ -556,7 +550,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -566,7 +560,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -575,6 +569,16 @@ namespace DiscImageChef.DiscImages
         public bool? VerifyMediaImage()
         {
             return null;
+        }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
+        ulong BlockOffset(ulong sectorAddress)
+        {
+            extents.GetStart(sectorAddress, out ulong extentStart);
+            extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+            return extentStartingOffset + (sectorAddress - extentStart);
         }
 
         /// <summary>
@@ -586,11 +590,13 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Magic, <see cref="Partimage.partimageMagic" />
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] magic;
             /// <summary>
             ///     Source filesystem
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] version;
             /// <summary>
             ///     Volume number
             /// </summary>
@@ -602,7 +608,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Empty space
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 404)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 404)]
+            public byte[] reserved;
         }
 
         struct PortableTm
@@ -623,10 +630,10 @@ namespace DiscImageChef.DiscImages
 
         enum PCompression : uint
         {
-            None = 0,
-            Gzip = 1,
+            None  = 0,
+            Gzip  = 1,
             Bzip2 = 2,
-            Lzo = 3
+            Lzo   = 3
         }
 
         enum PEncryption : uint
@@ -650,22 +657,29 @@ namespace DiscImageChef.DiscImages
             public byte[] szFirstImageFilepath; //MAXPATHLEN]; // for splitted image files
 
             // system and hardware infos
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameSysname;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameNodename;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameRelease;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameVersion;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameMachine;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)]
+            public byte[] szUnameSysname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)]
+            public byte[] szUnameNodename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)]
+            public byte[] szUnameRelease;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)]
+            public byte[] szUnameVersion;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)]
+            public byte[] szUnameMachine;
 
             public PCompression dwCompression; // COMPRESS_XXXXXX
-            public uint dwMainFlags;
-            public PortableTm dateCreate; // date of image creation
-            public ulong qwPartSize; // size of the partition in bytes
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_HOSTNAMESIZE)] public byte[] szHostname;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] szVersion; // version of the image file
+            public uint         dwMainFlags;
+            public PortableTm   dateCreate; // date of image creation
+            public ulong        qwPartSize; // size of the partition in bytes
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_HOSTNAMESIZE)]
+            public byte[] szHostname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] szVersion; // version of the image file
 
             // MBR backup
             public uint dwMbrCount; // how many MBR are saved in the image file
-            public uint dwMbrSize; // size of a MBR record (allow to change the size in the next versions)
+            public uint dwMbrSize;  // size of a MBR record (allow to change the size in the next versions)
 
             // future encryption support
             public PEncryption dwEncryptAlgo; // algo used to encrypt data
@@ -693,15 +707,19 @@ namespace DiscImageChef.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CMbr // must be 1024
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MBR_SIZE_WHOLE)] public byte[] cData;
-            public uint dwDataCRC;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)] public byte[] szDevice; // ex: "hda"
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MBR_SIZE_WHOLE)]
+            public byte[] cData;
+            public uint   dwDataCRC;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)]
+            public byte[] szDevice; // ex: "hda"
 
             // disk identificators
             ulong qwBlocksCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESC_MODEL)] public byte[] szDescModel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESC_MODEL)]
+            public byte[] szDescModel;
 
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 884)] public byte[] cReserved; // for future use
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 884)]
+            public byte[] cReserved; // for future use
 
             //public byte[] szDescGeometry[MAX_DESC_GEOMETRY];
             //public byte[] szDescIdentify[MAX_DESC_IDENTIFY];
@@ -710,9 +728,10 @@ namespace DiscImageChef.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CCheck
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] byte[] cMagic; // must be 'C','H','K'
-            public uint dwCRC; // CRC of the CHECK_FREQUENCY blocks
-            public ulong qwPos; // number of the last block written
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            byte[]       cMagic; // must be 'C','H','K'
+            public uint  dwCRC;  // CRC of the CHECK_FREQUENCY blocks
+            public ulong qwPos;  // number of the last block written
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -723,7 +742,8 @@ namespace DiscImageChef.DiscImages
             public ulong qwBlocksCount;
             public ulong qwBitmapSize; // bytes in the bitmap
             public ulong qwBadBlocksCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] szLabel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] szLabel;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16280)]
             public byte[] cReserved; // Adjust to fit with total header size
@@ -735,7 +755,7 @@ namespace DiscImageChef.DiscImages
         struct CMainTail // size must be 16384 (adjust the reserved data)
         {
             public ulong qwCRC;
-            public uint dwVolumeNumber;
+            public uint  dwVolumeNumber;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16372)]
             public byte[] cReserved; // Adjust to fit with total header size

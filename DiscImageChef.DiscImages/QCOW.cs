@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 
@@ -306,12 +307,9 @@ namespace DiscImageChef.DiscImages
                 {
                     if((offset & QCOW_COMPRESSED) == QCOW_COMPRESSED)
                     {
-                        ulong compSizeMask;
-                        ulong offMask;
-
-                        compSizeMask =   (ulong)(1 << qHdr.cluster_bits) - 1;
-                        compSizeMask <<= 63                              - qHdr.cluster_bits;
-                        offMask      =   ~compSizeMask ^ QCOW_COMPRESSED;
+                        ulong compSizeMask = (ulong)(1 << qHdr.cluster_bits) - 1;
+                        compSizeMask       <<= 63                            - qHdr.cluster_bits;
+                        ulong offMask      = ~compSizeMask ^ QCOW_COMPRESSED;
 
                         ulong realOff  = offset  & offMask;
                         ulong compSize = (offset & compSizeMask) >> (63 - qHdr.cluster_bits);
@@ -466,6 +464,9 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
@@ -746,6 +747,18 @@ namespace DiscImageChef.DiscImages
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+            return false;
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
             return false;
         }
 

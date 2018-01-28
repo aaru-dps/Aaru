@@ -40,6 +40,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -72,36 +73,36 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     Identifier for track information, "Track-Info\r\n"
         /// </summary>
-        readonly byte[] trackId = {0x54, 0x72, 0x61, 0x63, 0x6B, 0x2D, 0x49, 0x6E, 0x66, 0x6F};
+        readonly byte[]           trackId = {0x54, 0x72, 0x61, 0x63, 0x6B, 0x2D, 0x49, 0x6E, 0x66, 0x6F};
         Dictionary<ulong, byte[]> addressMarks;
 
-        bool extended;
-        ImageInfo imageInfo;
+        bool                      extended;
+        ImageInfo                 imageInfo;
         Dictionary<ulong, byte[]> sectors;
 
         public Cpcdsk()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -109,7 +110,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "CPCEMU Disk-File and Extended CPC Disk-File";
-        public Guid Id => new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
+        public Guid   Id   => new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
 
         public string Format => extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
 
@@ -168,8 +169,8 @@ namespace DiscImageChef.DiscImages
                                       StringHandlers.CToString(header.magic2));
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.creator = \"{0}\"",
                                       StringHandlers.CToString(header.creator));
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.tracks = {0}", header.tracks);
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}", header.sides);
+            DicConsole.DebugWriteLine("CPCDSK plugin",               "header.tracks = {0}",    header.tracks);
+            DicConsole.DebugWriteLine("CPCDSK plugin",               "header.sides = {0}",     header.sides);
             if(!extended) DicConsole.DebugWriteLine("CPCDSK plugin", "header.tracksize = {0}", header.tracksize);
             else
                 for(int i = 0; i < header.tracks; i++)
@@ -179,12 +180,12 @@ namespace DiscImageChef.DiscImages
                                                   header.tracksizeTable[i * header.sides + j] * 256);
                 }
 
-            ulong currentSector = 0;
-            sectors = new Dictionary<ulong, byte[]>();
-            addressMarks = new Dictionary<ulong, byte[]>();
-            ulong readtracks = 0;
-            bool allTracksSameSize = true;
-            ulong sectorsPerTrack = 0;
+            ulong currentSector     = 0;
+            sectors                 = new Dictionary<ulong, byte[]>();
+            addressMarks            = new Dictionary<ulong, byte[]>();
+            ulong readtracks        = 0;
+            bool  allTracksSameSize = true;
+            ulong sectorsPerTrack   = 0;
 
             // Seek to first track descriptor
             stream.Seek(256, SeekOrigin.Begin);
@@ -226,14 +227,16 @@ namespace DiscImageChef.DiscImages
                                               trackInfo.recordingMode, i, j);
                     DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i,
                                               j);
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
+                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].side = {0}",  trackInfo.side,  i, j);
                     DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
 
-                    if(trackInfo.sectors != sectorsPerTrack)
-                        if(sectorsPerTrack == 0) sectorsPerTrack = trackInfo.sectors;
-                        else allTracksSameSize = false;
+                    if(trackInfo.sectors   != sectorsPerTrack)
+                        if(sectorsPerTrack == 0)
+                            sectorsPerTrack = trackInfo.sectors;
+                        else
+                            allTracksSameSize = false;
 
-                    byte[][] thisTrackSectors = new byte[trackInfo.sectors][];
+                    byte[][] thisTrackSectors      = new byte[trackInfo.sectors][];
                     byte[][] thisTrackAddressMarks = new byte[trackInfo.sectors][];
 
                     for(int k = 1; k <= trackInfo.sectors; k++)
@@ -253,10 +256,9 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].track = {0}",
                                                   trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
-                        int sectLen;
-                        sectLen = extended
-                                      ? trackInfo.sectorsInfo[k - 1].len
-                                      : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
+                        int sectLen = extended
+                                          ? trackInfo.sectorsInfo[k                 - 1].len
+                                          : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
 
                         byte[] sector = new byte[sectLen];
                         stream.Read(sector, 0, sectLen);
@@ -277,20 +279,20 @@ namespace DiscImageChef.DiscImages
                         thisTrackSectors[(trackInfo.sectorsInfo[k - 1].id & 0x3F) - 1] = sector;
 
                         byte[] amForCrc = new byte[8];
-                        amForCrc[0] = 0xA1;
-                        amForCrc[1] = 0xA1;
-                        amForCrc[2] = 0xA1;
-                        amForCrc[3] = (byte)IBMIdType.AddressMark;
-                        amForCrc[4] = trackInfo.sectorsInfo[k - 1].track;
-                        amForCrc[5] = trackInfo.sectorsInfo[k - 1].side;
-                        amForCrc[6] = trackInfo.sectorsInfo[k - 1].id;
-                        amForCrc[7] = (byte)trackInfo.sectorsInfo[k - 1].size;
+                        amForCrc[0]     = 0xA1;
+                        amForCrc[1]     = 0xA1;
+                        amForCrc[2]     = 0xA1;
+                        amForCrc[3]     = (byte)IBMIdType.AddressMark;
+                        amForCrc[4]     = trackInfo.sectorsInfo[k       - 1].track;
+                        amForCrc[5]     = trackInfo.sectorsInfo[k       - 1].side;
+                        amForCrc[6]     = trackInfo.sectorsInfo[k       - 1].id;
+                        amForCrc[7]     = (byte)trackInfo.sectorsInfo[k - 1].size;
 
                         Crc16Context.Data(amForCrc, 8, out byte[] amCrc);
 
                         byte[] addressMark = new byte[22];
                         Array.Copy(amForCrc, 0, addressMark, 12, 8);
-                        Array.Copy(amCrc, 0, addressMark, 20, 2);
+                        Array.Copy(amCrc,    0, addressMark, 20, 2);
 
                         thisTrackAddressMarks[(trackInfo.sectorsInfo[k - 1].id & 0x3F) - 1] = addressMark;
                     }
@@ -307,7 +309,8 @@ namespace DiscImageChef.DiscImages
                     stream.Seek(trackPos, SeekOrigin.Begin);
                     if(extended)
                     {
-                        stream.Seek(header.tracksizeTable[i * header.sides + j] * 256, SeekOrigin.Current);
+                        stream.Seek(header.tracksizeTable[i * header.sides + j] * 256,
+                                    SeekOrigin.Current);
                         imageInfo.ImageSize += (ulong)(header.tracksizeTable[i * header.sides + j] * 256) - 256;
                     }
                     else
@@ -320,17 +323,17 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            DicConsole.DebugWriteLine("CPCDSK plugin", "Read {0} sectors", sectors.Count);
-            DicConsole.DebugWriteLine("CPCDSK plugin", "Read {0} tracks", readtracks);
+            DicConsole.DebugWriteLine("CPCDSK plugin", "Read {0} sectors",              sectors.Count);
+            DicConsole.DebugWriteLine("CPCDSK plugin", "Read {0} tracks",               readtracks);
             DicConsole.DebugWriteLine("CPCDSK plugin", "All tracks are same size? {0}", allTracksSameSize);
 
-            imageInfo.Application = StringHandlers.CToString(header.creator);
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.Application          = StringHandlers.CToString(header.creator);
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = (ulong)sectors.Count;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.MediaType = MediaType.CompactFloppy;
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = (ulong)sectors.Count;
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.MediaType            = MediaType.CompactFloppy;
             imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
 
             // Debug writing full disk as raw
@@ -345,27 +348,11 @@ namespace DiscImageChef.DiscImages
             foo.Close();
             */
 
-            imageInfo.Cylinders = header.tracks;
-            imageInfo.Heads = header.sides;
+            imageInfo.Cylinders       = header.tracks;
+            imageInfo.Heads           = header.sides;
             imageInfo.SectorsPerTrack = (uint)(imageInfo.Sectors / (imageInfo.Cylinders * imageInfo.Heads));
 
             return true;
-        }
-
-        static int SizeCodeToBytes(IBMSectorSizeCode code)
-        {
-            switch(code)
-            {
-                case IBMSectorSizeCode.EighthKilo: return 128;
-                case IBMSectorSizeCode.QuarterKilo: return 256;
-                case IBMSectorSizeCode.HalfKilo: return 512;
-                case IBMSectorSizeCode.Kilo: return 1024;
-                case IBMSectorSizeCode.TwiceKilo: return 2048;
-                case IBMSectorSizeCode.FriceKilo: return 4096;
-                case IBMSectorSizeCode.TwiceFriceKilo: return 8192;
-                case IBMSectorSizeCode.FricelyFriceKilo: return 16384;
-                default: return 0;
-            }
         }
 
         public byte[] ReadSector(ulong sectorAddress)
@@ -494,7 +481,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -504,7 +491,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -514,21 +501,43 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
+        static int SizeCodeToBytes(IBMSectorSizeCode code)
+        {
+            switch(code)
+            {
+                case IBMSectorSizeCode.EighthKilo:       return 128;
+                case IBMSectorSizeCode.QuarterKilo:      return 256;
+                case IBMSectorSizeCode.HalfKilo:         return 512;
+                case IBMSectorSizeCode.Kilo:             return 1024;
+                case IBMSectorSizeCode.TwiceKilo:        return 2048;
+                case IBMSectorSizeCode.FriceKilo:        return 4096;
+                case IBMSectorSizeCode.TwiceFriceKilo:   return 8192;
+                case IBMSectorSizeCode.FricelyFriceKilo: return 16384;
+                default:                                 return 0;
+            }
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CpcDiskInfo
         {
             /// <summary>
             ///     Magic number, "MV - CPCEMU Disk-File" in old files, "EXTENDED CPC DSK File" in extended ones
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)] public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)]
+            public byte[] magic;
             /// <summary>
             ///     Second part of magic, should be "\r\nDisk-Info\r\n" in all, but some emulators write spaces instead.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] magic2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
+            public byte[] magic2;
             /// <summary>
             ///     Creator application (can be null)
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] creator;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+            public byte[] creator;
             /// <summary>
             ///     Tracks
             /// </summary>
@@ -545,7 +554,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Size of each track in the extended format. 0 indicates track is not formatted and not present in image.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 204)] public byte[] tracksizeTable;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 204)]
+            public byte[] tracksizeTable;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -554,8 +564,10 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Magic number, "Track-Info\r\n"
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] magic;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] carriageReturn;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] carriageReturn;
             /// <summary>
             ///     Padding
             /// </summary>
@@ -595,7 +607,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Informatino for up to 32 sectors
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public CpcSectorInfo[] sectorsInfo;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public CpcSectorInfo[] sectorsInfo;
         }
 
         /// <summary>

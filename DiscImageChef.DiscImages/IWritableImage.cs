@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -160,7 +161,7 @@ namespace DiscImageChef.DiscImages
         /// <param name="tag">Tag type</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag);
-        
+
         /// <summary>
         ///     Writes parallel or subchannel sector tag for several sector
         /// </summary>
@@ -170,5 +171,15 @@ namespace DiscImageChef.DiscImages
         /// <param name="tag">Tag type</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag);
+
+        /// <summary>
+        ///     Sets the list of dump hardware used to create the image from real media
+        /// </summary>
+        bool SetDumpHardware(List<DumpHardwareType> dumpHardware);
+
+        /// <summary>
+        ///     Sets the CICM XML metadata for the image
+        /// </summary>
+        bool SetCicmMetadata(CICMMetadataType metadata);
     }
 }

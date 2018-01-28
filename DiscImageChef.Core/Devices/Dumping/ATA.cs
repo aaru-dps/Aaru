@@ -417,6 +417,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
                     }
 
+                    outputPlugin.SetDumpHardware(resume.Tries);
                     dumpLog.WriteLine("Closing output file.");
                     DicConsole.WriteLine("Closing output file.");
                     outputPlugin.Close();

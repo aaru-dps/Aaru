@@ -41,6 +41,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Compression;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 using Version = Resources.Version;
 
 namespace DiscImageChef.DiscImages
@@ -571,6 +572,9 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DartHeader

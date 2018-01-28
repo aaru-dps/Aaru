@@ -41,6 +41,7 @@ using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Filters;
+using Schemas;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 
 namespace DiscImageChef.DiscImages
@@ -422,11 +423,10 @@ namespace DiscImageChef.DiscImages
 
             mediaTags = new Dictionary<MediaTagType, byte[]>();
             foreach((MediaTagType tag, string name) sidecar in readWriteSidecars)
-            {
                 try
                 {
                     FiltersList filters = new FiltersList();
-                    IFilter                       filter  = filters.GetFilter(basename + sidecar.name);
+                    IFilter     filter  = filters.GetFilter(basename + sidecar.name);
                     if(filter == null || !filter.IsOpened()) continue;
 
                     DicConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
@@ -434,8 +434,7 @@ namespace DiscImageChef.DiscImages
                     filter.GetDataForkStream().Read(data, 0, data.Length);
                     mediaTags.Add(sidecar.tag, data);
                 }
-                catch(IOException e) { continue; }
-            }
+                catch(IOException e) { }
 
             // If there are INQUIRY and IDENTIFY tags, it's ATAPI
             if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
@@ -939,7 +938,7 @@ namespace DiscImageChef.DiscImages
                 if(decMode.HasValue)
                 {
                     mediumType = (byte)decMode.Value.Header.MediumType;
-                    if(decMode.Value.Header.BlockDescriptors != null && 
+                    if(decMode.Value.Header.BlockDescriptors        != null &&
                        decMode.Value.Header.BlockDescriptors.Length >= 1)
                         densityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
@@ -1109,6 +1108,9 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata { get; private set; }
 
         public List<Track> GetSessionTracks(Session session)
         {
@@ -1310,7 +1312,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            basepath = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+            basepath  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
             mediaTags = new Dictionary<MediaTagType, byte[]>();
 
             IsWriting    = true;
@@ -1333,6 +1335,18 @@ namespace DiscImageChef.DiscImages
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
             return false;
         }
 

@@ -886,6 +886,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     throw new ArgumentException(outputPlugin.ErrorMessage);
                 }
 
+            outputPlugin.SetDumpHardware(resume.Tries);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
             outputPlugin.Close();

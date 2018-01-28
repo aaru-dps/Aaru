@@ -51,10 +51,10 @@ namespace DiscImageChef.Core
         /// <returns>The metadata sidecar</returns>
         public static CICMMetadataType Create(IMediaImage image, string imagePath, Guid filterId, Encoding encoding)
         {
-            CICMMetadataType sidecar = new CICMMetadataType();
-            PluginBase plugins = new PluginBase();
+            CICMMetadataType sidecar = image.CicmMetadata ?? new CICMMetadataType();
+            PluginBase       plugins = new PluginBase();
 
-            FileInfo fi = new FileInfo(imagePath);
+            FileInfo   fi = new FileInfo(imagePath);
             FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
 
             Checksum imgChkWorker = new Checksum();
@@ -63,7 +63,7 @@ namespace DiscImageChef.Core
             //goto skipImageChecksum;
 
             byte[] data;
-            long position = 0;
+            long   position = 0;
             InitProgress();
             while(position < fi.Length - 1048576)
             {
@@ -77,7 +77,7 @@ namespace DiscImageChef.Core
                 position += 1048576;
             }
 
-            data = new byte[fi.Length - position];
+            data = new byte[fi.Length        - position];
             fs.Read(data, 0, (int)(fi.Length - position));
 
             UpdateProgress("Hashing image file byte {0} of {1}", position, fi.Length);
@@ -91,6 +91,11 @@ namespace DiscImageChef.Core
             fs.Close();
 
             List<ChecksumType> imgChecksums = imgChkWorker.End();
+
+            sidecar.OpticalDisc = null;
+            sidecar.BlockMedia  = null;
+            sidecar.AudioMedia  = null;
+            sidecar.LinearMedia = null;
 
             switch(image.Info.XmlMediaType)
             {

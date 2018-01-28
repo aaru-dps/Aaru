@@ -38,6 +38,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
+using Schemas;
 using Version = DiscImageChef.Interop.Version;
 
 namespace DiscImageChef.Commands
@@ -248,6 +249,9 @@ namespace DiscImageChef.Commands
 
             try { tracks              = inputFormat.Tracks; }
             catch(Exception) { tracks = null; }
+
+            CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;
+            List<DumpHardwareType> dumpHardware = inputFormat.DumpHardware;
 
             if(tracks != null)
                 if(!outputFormat.SetTracks(tracks))
@@ -510,6 +514,17 @@ namespace DiscImageChef.Commands
                                                  track.TrackSequence, track.TrackSequence / (double)tracks.Count);
                                 sector = inputFormat.ReadSectorTag(track.TrackStartSector, tag);
                                 result = outputFormat.WriteSectorTag(sector, track.TrackStartSector, tag);
+                                if(!result)
+                                    if(options.Force)
+                                        DicConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
+                                                                  outputFormat.ErrorMessage);
+                                    else
+                                    {
+                                        DicConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
+                                                                  outputFormat.ErrorMessage);
+                                        return;
+                                    }
+
                                 continue;
                         }
 
@@ -542,11 +557,11 @@ namespace DiscImageChef.Commands
 
                             if(!result)
                                 if(options.Force)
-                                    DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                    DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
                                 else
                                 {
-                                    DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                    DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
                                     return;
                                 }
@@ -572,6 +587,11 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
             }
+
+            if(dumpHardware != null && outputFormat.SetDumpHardware(dumpHardware))
+                DicConsole.WriteLine("Written dump hardware list to output image.");
+            if(cicmMetadata != null && outputFormat.SetCicmMetadata(cicmMetadata))
+                DicConsole.WriteLine("Written CICM XML metadata to output image.");
 
             DicConsole.WriteLine("Closing output image.");
 

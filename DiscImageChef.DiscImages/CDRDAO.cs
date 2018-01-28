@@ -41,6 +41,7 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -1476,6 +1477,9 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         // TODO: Decode CD-Text to text
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.CD_MCN};
         public IEnumerable<SectorTagType> SupportedSectorTags =>
@@ -2087,6 +2091,18 @@ namespace DiscImageChef.DiscImages
                     ErrorMessage = $"Unsupported tag type {tag}";
                     return false;
             }
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
+            return false;
         }
 
         static ushort CdrdaoTrackTypeToBytesPerSector(string trackType)

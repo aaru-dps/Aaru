@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -268,13 +269,13 @@ namespace DiscImageChef.DiscImages
             imageInfo.MediaType =
                 Geometry.GetMediaType(((ushort)header.totalCylinders, (byte)header.heads, header.sectorsPerTrack,
                                       (uint)header.sectorSize, MediaEncoding.MFM, false));
-            
+
             switch(imageInfo.MediaType)
             {
-                case MediaType.NEC_525_HD when header.drive == COPYQM_35_HD ||header.drive == COPYQM_35_ED:
+                case MediaType.NEC_525_HD when header.drive == COPYQM_35_HD || header.drive == COPYQM_35_ED:
                     imageInfo.MediaType = MediaType.NEC_35_HD_8;
                     break;
-                case MediaType.DOS_525_HD when header.drive == COPYQM_35_HD ||header.drive == COPYQM_35_ED:
+                case MediaType.DOS_525_HD when header.drive == COPYQM_35_HD || header.drive == COPYQM_35_ED:
                     imageInfo.MediaType = MediaType.NEC_35_HD_15;
                     break;
                 case MediaType.RX50 when header.drive == COPYQM_525_DD || header.drive == COPYQM_525_HD:
@@ -334,6 +335,9 @@ namespace DiscImageChef.DiscImages
         {
             return calculatedDataCrc == header.crc && headerChecksumOk;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         public byte[] ReadSector(ulong sectorAddress)
         {

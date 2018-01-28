@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using Extents;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -46,20 +47,20 @@ namespace DiscImageChef.DiscImages
     {
         const int CRC_SIZE = 4;
 
-        const uint MAX_CACHE_SIZE = 16777216;
-        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-        readonly byte[] biTmAgIc = {0x42, 0x69, 0x54, 0x6D, 0x41, 0x67, 0x49, 0x63};
-        readonly byte[] partCloneMagic =
+        const    uint   MAX_CACHE_SIZE     = 16777216;
+        const    uint   MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        readonly byte[] biTmAgIc           = {0x42, 0x69, 0x54, 0x6D, 0x41, 0x67, 0x49, 0x63};
+        readonly byte[] partCloneMagic     =
             {0x70, 0x61, 0x72, 0x74, 0x63, 0x6C, 0x6F, 0x6E, 0x65, 0x2D, 0x69, 0x6D, 0x61, 0x67, 0x65};
         // The used block "bitmap" uses one byte per block
         // TODO: Convert on-image bytemap to on-memory bitmap
         byte[] byteMap;
-        long dataOff;
+        long   dataOff;
 
-        ExtentsULong extents;
+        ExtentsULong             extents;
         Dictionary<ulong, ulong> extentsOff;
-        ImageInfo imageInfo;
-        Stream imageStream;
+        ImageInfo                imageInfo;
+        Stream                   imageStream;
 
         PartCloneHeader pHdr;
 
@@ -69,30 +70,30 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Application = "PartClone",
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Application           = "PartClone",
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "PartClone disk image";
-        public Guid Id => new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
+        public string    Name => "PartClone disk image";
+        public Guid      Id   => new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
         public ImageInfo Info => imageInfo;
 
         public string Format => "PartClone";
@@ -115,7 +116,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr = new PartCloneHeader();
+            pHdr             = new PartCloneHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (PartCloneHeader)Marshal.PtrToStructure(headerPtr, typeof(PartCloneHeader));
@@ -140,7 +141,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr = new PartCloneHeader();
+            pHdr             = new PartCloneHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (PartCloneHeader)Marshal.PtrToStructure(headerPtr, typeof(PartCloneHeader));
@@ -149,11 +150,12 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
             DicConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",
                                       StringHandlers.CToString(pHdr.filesystem));
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}", StringHandlers.CToString(pHdr.version));
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}", pHdr.blockSize);
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}", pHdr.deviceSize);
+            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}",
+                                      StringHandlers.CToString(pHdr.version));
+            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}",   pHdr.blockSize);
+            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}",  pHdr.deviceSize);
             DicConsole.DebugWriteLine("PartClone plugin", "pHdr.totalBlocks = {0}", pHdr.totalBlocks);
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}", pHdr.usedBlocks);
+            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}",  pHdr.usedBlocks);
 
             byteMap = new byte[pHdr.totalBlocks];
             DicConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", byteMap.Length);
@@ -171,11 +173,11 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", dataOff);
 
             DicConsole.DebugWriteLine("PartClone plugin", "Filling extents");
-            DateTime start = DateTime.Now;
-            extents = new ExtentsULong();
-            extentsOff = new Dictionary<ulong, ulong>();
-            bool current = byteMap[0] > 0;
-            ulong blockOff = 0;
+            DateTime start    = DateTime.Now;
+            extents           = new ExtentsULong();
+            extentsOff        = new Dictionary<ulong, ulong>();
+            bool  current     = byteMap[0] > 0;
+            ulong blockOff    = 0;
             ulong extentStart = 0;
 
             for(ulong i = 1; i < pHdr.totalBlocks; i++)
@@ -206,24 +208,17 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = pHdr.totalBlocks;
-            imageInfo.SectorSize = pHdr.blockSize;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.MediaType = MediaType.GENERIC_HDD;
-            imageInfo.ImageSize = (ulong)(stream.Length - (4096 + 0x40 + (long)pHdr.totalBlocks));
-            imageStream = stream;
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = pHdr.totalBlocks;
+            imageInfo.SectorSize           = pHdr.blockSize;
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            imageInfo.ImageSize            = (ulong)(stream.Length - (4096 + 0x40 + (long)pHdr.totalBlocks));
+            imageStream                    = stream;
 
             return true;
-        }
-
-        ulong BlockOffset(ulong sectorAddress)
-        {
-            extents.GetStart(sectorAddress, out ulong extentStart);
-            extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
-            return extentStartingOffset + (sectorAddress - extentStart);
         }
 
         public byte[] ReadSector(ulong sectorAddress)
@@ -261,7 +256,7 @@ namespace DiscImageChef.DiscImages
             MemoryStream ms = new MemoryStream();
 
             bool allEmpty = true;
-            for(uint i = 0; i < length; i++)
+            for(uint i = 0; i                 < length; i++)
                 if(byteMap[sectorAddress + i] != 0)
                 {
                     allEmpty = false;
@@ -355,7 +350,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -365,7 +360,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -374,6 +369,16 @@ namespace DiscImageChef.DiscImages
         public bool? VerifyMediaImage()
         {
             return null;
+        }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
+        ulong BlockOffset(ulong sectorAddress)
+        {
+            extents.GetStart(sectorAddress, out ulong extentStart);
+            extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+            return extentStartingOffset + (sectorAddress - extentStart);
         }
 
         /// <summary>
@@ -385,15 +390,18 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Magic, <see cref="PartClone.partCloneMagic" />
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
+            public byte[] magic;
             /// <summary>
             ///     Source filesystem
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] filesystem;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
+            public byte[] filesystem;
             /// <summary>
             ///     Version
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] version;
             /// <summary>
             ///     Padding
             /// </summary>
@@ -417,7 +425,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Empty space
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)] public byte[] buffer;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)]
+            public byte[] buffer;
         }
     }
 }

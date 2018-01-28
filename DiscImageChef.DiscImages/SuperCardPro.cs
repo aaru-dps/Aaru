@@ -39,6 +39,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -46,28 +47,28 @@ namespace DiscImageChef.DiscImages
     {
         public enum ScpDiskType : byte
         {
-            Commodore64 = 0x00,
+            Commodore64    = 0x00,
             CommodoreAmiga = 0x04,
-            AtariFMSS = 0x10,
-            AtariFMDS = 0x11,
-            AtariFSEx = 0x12,
-            AtariSTSS = 0x14,
-            AtariSTDS = 0x15,
-            AppleII = 0x20,
-            AppleIIPro = 0x21,
-            Apple400K = 0x24,
-            Apple800K = 0x25,
-            Apple144 = 0x26,
-            PC360K = 0x30,
-            PC720K = 0x31,
-            PC12M = 0x32,
-            PC144M = 0x33,
-            TandySSSD = 0x40,
-            TandySSDD = 0x41,
-            TandyDSSD = 0x42,
-            TandyDSDD = 0x43,
-            Ti994A = 0x50,
-            RolandD20 = 0x60
+            AtariFMSS      = 0x10,
+            AtariFMDS      = 0x11,
+            AtariFSEx      = 0x12,
+            AtariSTSS      = 0x14,
+            AtariSTDS      = 0x15,
+            AppleII        = 0x20,
+            AppleIIPro     = 0x21,
+            Apple400K      = 0x24,
+            Apple800K      = 0x25,
+            Apple144       = 0x26,
+            PC360K         = 0x30,
+            PC720K         = 0x31,
+            PC12M          = 0x32,
+            PC144M         = 0x33,
+            TandySSSD      = 0x40,
+            TandySSDD      = 0x41,
+            TandyDSSD      = 0x42,
+            TandyDSDD      = 0x43,
+            Ti994A         = 0x50,
+            RolandD20      = 0x60
         }
 
         [Flags]
@@ -114,34 +115,34 @@ namespace DiscImageChef.DiscImages
         readonly byte[] trkSignature = {0x54, 0x52, 0x4B};
 
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public ScpHeader Header;
-        ImageInfo imageInfo;
-        Stream scpStream;
+        public ScpHeader                     Header;
+        ImageInfo                            imageInfo;
+        Stream                               scpStream;
         public Dictionary<byte, TrackHeader> ScpTracks;
 
         public SuperCardPro()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -149,7 +150,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "SuperCardPro";
-        public Guid Id => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
+        public Guid   Id   => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
 
         public string Format => "SuperCardPro";
 
@@ -164,7 +165,7 @@ namespace DiscImageChef.DiscImages
 
         public bool Identify(IFilter imageFilter)
         {
-            Header = new ScpHeader();
+            Header        = new ScpHeader();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < Marshal.SizeOf(Header)) return false;
@@ -182,7 +183,7 @@ namespace DiscImageChef.DiscImages
 
         public bool Open(IFilter imageFilter)
         {
-            Header = new ScpHeader();
+            Header    = new ScpHeader();
             scpStream = imageFilter.GetDataForkStream();
             scpStream.Seek(0, SeekOrigin.Begin);
             if(scpStream.Length < Marshal.SizeOf(Header)) return false;
@@ -198,16 +199,16 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"",
                                       StringHandlers.CToString(Header.signature));
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.version = {0}.{1}", (Header.version & 0xF0) >> 4,
-                                      Header.version & 0xF);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}", Header.type);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}", Header.revolutions);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}", Header.start);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.end = {0}", Header.end);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.flags = {0}", Header.flags);
+                                      Header.version                                                     & 0xF);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}",            Header.type);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}",     Header.revolutions);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}",           Header.start);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.end = {0}",             Header.end);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.flags = {0}",           Header.flags);
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.bitCellEncoding = {0}", Header.bitCellEncoding);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.heads = {0}", Header.heads);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}", Header.reserved);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}", Header.checksum);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.heads = {0}",           Header.heads);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}",        Header.reserved);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}",   Header.checksum);
 
             if(!scpSignature.SequenceEqual(Header.signature)) return false;
 
@@ -217,8 +218,8 @@ namespace DiscImageChef.DiscImages
             {
                 if(t >= Header.offsets.Length) break;
 
-                scpStream.Position = Header.offsets[t];
-                TrackHeader trk =
+                scpStream.Position             = Header.offsets[t];
+                TrackHeader trk                =
                     new TrackHeader {Signature = new byte[3], Entries = new TrackEntry[Header.revolutions]};
                 scpStream.Read(trk.Signature, 0, trk.Signature.Length);
                 trk.TrackNumber = (byte)scpStream.ReadByte();
@@ -298,7 +299,7 @@ namespace DiscImageChef.DiscImages
                                                   footer.modificationTime);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationVersion = {0}.{1}",
                                                   (footer.applicationVersion & 0xF0) >> 4,
-                                                  footer.applicationVersion & 0xF);
+                                                  footer.applicationVersion  & 0xF);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.hardwareVersion = {0}.{1}",
                                                   (footer.hardwareVersion & 0xF0) >> 4, footer.hardwareVersion & 0xF);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.firmwareVersion = {0}.{1}",
@@ -309,11 +310,11 @@ namespace DiscImageChef.DiscImages
                                                   StringHandlers.CToString(BitConverter.GetBytes(footer.signature)));
 
                         imageInfo.DriveManufacturer = ReadPStringUtf8(scpStream, footer.manufacturerOffset);
-                        imageInfo.DriveModel = ReadPStringUtf8(scpStream, footer.modelOffset);
+                        imageInfo.DriveModel        = ReadPStringUtf8(scpStream, footer.modelOffset);
                         imageInfo.DriveSerialNumber = ReadPStringUtf8(scpStream, footer.serialOffset);
-                        imageInfo.Creator = ReadPStringUtf8(scpStream, footer.creatorOffset);
-                        imageInfo.Application = ReadPStringUtf8(scpStream, footer.applicationOffset);
-                        imageInfo.Comments = ReadPStringUtf8(scpStream, footer.commentsOffset);
+                        imageInfo.Creator           = ReadPStringUtf8(scpStream, footer.creatorOffset);
+                        imageInfo.Application       = ReadPStringUtf8(scpStream, footer.applicationOffset);
+                        imageInfo.Comments          = ReadPStringUtf8(scpStream, footer.commentsOffset);
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"",
                                                   imageInfo.DriveManufacturer);
@@ -344,8 +345,8 @@ namespace DiscImageChef.DiscImages
                         imageInfo.ApplicationVersion =
                             $"{(footer.applicationVersion & 0xF0) >> 4}.{footer.applicationVersion & 0xF}";
                         imageInfo.DriveFirmwareRevision =
-                            $"{(footer.firmwareVersion & 0xF0) >> 4}.{footer.firmwareVersion & 0xF}";
-                        imageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
+                            $"{(footer.firmwareVersion              & 0xF0) >> 4}.{footer.firmwareVersion & 0xF}";
+                        imageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion    & 0xF}";
 
                         break;
                     }
@@ -355,31 +356,14 @@ namespace DiscImageChef.DiscImages
             }
             else
             {
-                imageInfo.Application = "SuperCardPro";
-                imageInfo.ApplicationVersion = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
-                imageInfo.CreationTime = imageFilter.GetCreationTime();
+                imageInfo.Application          = "SuperCardPro";
+                imageInfo.ApplicationVersion   = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
+                imageInfo.CreationTime         = imageFilter.GetCreationTime();
                 imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-                imageInfo.Version = "1.5";
+                imageInfo.Version              = "1.5";
             }
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
-
-        static string ReadPStringUtf8(Stream stream, uint position)
-        {
-            if(position == 0) return null;
-
-            stream.Position = position;
-            byte[] lenB = new byte[2];
-            stream.Read(lenB, 0, 2);
-            ushort len = BitConverter.ToUInt16(lenB, 0);
-
-            if(len == 0 || len + stream.Position >= stream.Length) return null;
-
-            byte[] str = new byte[len];
-            stream.Read(str, 0, len);
-
-            return Encoding.UTF8.GetString(str);
         }
 
         public byte[] ReadDiskTag(MediaTagType tag)
@@ -428,7 +412,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -438,7 +422,7 @@ namespace DiscImageChef.DiscImages
             if(Header.flags.HasFlag(ScpFlags.Writable)) return null;
 
             byte[] wholeFile = new byte[scpStream.Length];
-            uint sum = 0;
+            uint   sum       = 0;
 
             scpStream.Position = 0;
             scpStream.Read(wholeFile, 0, wholeFile.Length);
@@ -447,6 +431,9 @@ namespace DiscImageChef.DiscImages
 
             return Header.checksum == sum;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {
@@ -489,32 +476,52 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        static string ReadPStringUtf8(Stream stream, uint position)
+        {
+            if(position == 0) return null;
+
+            stream.Position = position;
+            byte[] lenB     = new byte[2];
+            stream.Read(lenB, 0, 2);
+            ushort len = BitConverter.ToUInt16(lenB, 0);
+
+            if(len == 0 || len + stream.Position >= stream.Length) return null;
+
+            byte[] str = new byte[len];
+            stream.Read(str, 0, len);
+
+            return Encoding.UTF8.GetString(str);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct ScpHeader
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] signature;
-            public byte version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[]      signature;
+            public byte        version;
             public ScpDiskType type;
-            public byte revolutions;
-            public byte start;
-            public byte end;
-            public ScpFlags flags;
-            public byte bitCellEncoding;
-            public byte heads;
-            public byte reserved;
-            public uint checksum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)] public uint[] offsets;
+            public byte        revolutions;
+            public byte        start;
+            public byte        end;
+            public ScpFlags    flags;
+            public byte        bitCellEncoding;
+            public byte        heads;
+            public byte        reserved;
+            public uint        checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)]
+            public uint[] offsets;
         }
 
         public struct TrackHeader
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] Signature;
-            public byte TrackNumber;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[]       Signature;
+            public byte         TrackNumber;
             public TrackEntry[] Entries;
         }
 

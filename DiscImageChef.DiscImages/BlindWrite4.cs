@@ -41,6 +41,7 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -565,9 +566,9 @@ namespace DiscImageChef.DiscImages
                     if(bwTrack.pregap != 0)
                         track.TrackFileOffset +=
                             (ulong)(bwTrack.startSector - bwTrack.pregap) * 2352;
-                    track.TrackFileType          = "BINARY";
-                    track.TrackPregap            = (ulong)(bwTrack.startSector - bwTrack.pregap);
-                    track.TrackRawBytesPerSector = 2352;
+                    track.TrackFileType                            = "BINARY";
+                    track.TrackPregap                              = (ulong)(bwTrack.startSector - bwTrack.pregap);
+                    track.TrackRawBytesPerSector                   = 2352;
                     track.TrackSequence                            = bwTrack.point;
                     track.TrackSession                             = bwTrack.session;
                     if(track.TrackSession > maxSession) maxSession = track.TrackSession;
@@ -1197,6 +1198,9 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         struct Bw4Header
         {

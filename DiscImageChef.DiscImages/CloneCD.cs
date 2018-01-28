@@ -41,6 +41,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -1376,6 +1377,9 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.CD_MCN, MediaTagType.CD_FullTOC};
         public IEnumerable<SectorTagType> SupportedSectorTags =>
             new[]
@@ -1936,6 +1940,18 @@ namespace DiscImageChef.DiscImages
                     ErrorMessage = $"Unsupported tag type {tag}";
                     return false;
             }
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
+            return false;
         }
 
         static ulong GetLba(int hour, int minute, int second, int frame)

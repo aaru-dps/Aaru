@@ -40,54 +40,55 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class KryoFlux : IMediaImage
     {
-        const string hostDate = "host_date";
-        const string hostTime = "host_time";
-        const string kfName = "name";
+        const string hostDate  = "host_date";
+        const string hostTime  = "host_time";
+        const string kfName    = "name";
         const string kfVersion = "version";
-        const string kfDate = "date";
-        const string kfTime = "time";
-        const string kfHwId = "hwid";
-        const string kfHwRv = "hwrv";
-        const string kfSck = "sck";
-        const string kfIck = "ick";
+        const string kfDate    = "date";
+        const string kfTime    = "time";
+        const string kfHwId    = "hwid";
+        const string kfHwRv    = "hwrv";
+        const string kfSck     = "sck";
+        const string kfIck     = "ick";
 
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<byte, IFilter> tracks;
-        public ImageInfo imageInfo;
-        public ImageInfo Info => imageInfo;
+        public ImageInfo                       imageInfo;
+        public ImageInfo                       Info => imageInfo;
 
         public string Name => "KryoFlux STREAM";
-        public Guid Id => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
+        public Guid   Id   => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
 
         public KryoFlux()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -95,7 +96,7 @@ namespace DiscImageChef.DiscImages
         public bool Identify(IFilter imageFilter)
         {
             OobBlock header = new OobBlock();
-            Stream stream = imageFilter.GetDataForkStream();
+            Stream   stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < Marshal.SizeOf(header)) return false;
 
@@ -119,13 +120,13 @@ namespace DiscImageChef.DiscImages
             Marshal.FreeHGlobal(hdrPtr);
 
             return header.blockId == BlockIds.Oob && header.blockType == OobTypes.KFInfo &&
-                   footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF && footer.length == 0x0D0D;
+                   footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF    && footer.length == 0x0D0D;
         }
 
         public bool Open(IFilter imageFilter)
         {
             OobBlock header = new OobBlock();
-            Stream stream = imageFilter.GetDataForkStream();
+            Stream   stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < Marshal.SizeOf(header)) return false;
 
@@ -149,22 +150,22 @@ namespace DiscImageChef.DiscImages
             Marshal.FreeHGlobal(hdrPtr);
 
             if(header.blockId != BlockIds.Oob || header.blockType != OobTypes.KFInfo ||
-               footer.blockId != BlockIds.Oob || footer.blockType != OobTypes.EOF ||
-               footer.length != 0x0D0D) return false;
+               footer.blockId != BlockIds.Oob || footer.blockType != OobTypes.EOF    ||
+               footer.length  != 0x0D0D) return false;
 
             // TODO: This is supposing NoFilter, shouldn't
-            tracks = new SortedDictionary<byte, IFilter>();
-            byte step = 1;
-            byte heads = 2;
-            bool topHead = false;
+            tracks          = new SortedDictionary<byte, IFilter>();
+            byte   step     = 1;
+            byte   heads    = 2;
+            bool   topHead  = false;
             string basename = Path.Combine(imageFilter.GetParentFolder(),
                                            imageFilter.GetFilename()
                                                       .Substring(0, imageFilter.GetFilename().Length - 8));
 
             for(byte t = 0; t < 166; t += step)
             {
-                int cylinder = t / heads;
-                int head = topHead ? 1 : t % heads;
+                int    cylinder  = t               / heads;
+                int    head      = topHead ? 1 : t % heads;
                 string trackfile = Directory.Exists(basename)
                                        ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
                                        : $"{basename}{cylinder:D2}.{head:D1}.raw";
@@ -177,7 +178,7 @@ namespace DiscImageChef.DiscImages
                             DicConsole.DebugWriteLine("KryoFlux plugin",
                                                       "Cannot find cyl 0 hd 0, supposing only top head was dumped");
                             topHead = true;
-                            heads = 1;
+                            heads   = 1;
                             continue;
                         }
 
@@ -202,7 +203,7 @@ namespace DiscImageChef.DiscImages
                 trackFilter.Open(trackfile);
                 if(!trackFilter.IsOpened()) throw new IOException("Could not open KryoFlux track file.");
 
-                imageInfo.CreationTime = DateTime.MaxValue;
+                imageInfo.CreationTime         = DateTime.MaxValue;
                 imageInfo.LastModificationTime = DateTime.MinValue;
 
                 Stream trackStream = trackFilter.GetDataForkStream();
@@ -238,12 +239,12 @@ namespace DiscImageChef.DiscImages
 
                             byte[] kfinfo = new byte[oobBlk.length];
                             trackStream.Read(kfinfo, 0, oobBlk.length);
-                            string kfinfoStr = StringHandlers.CToString(kfinfo);
-                            string[] lines = kfinfoStr.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                            string   kfinfoStr = StringHandlers.CToString(kfinfo);
+                            string[] lines     = kfinfoStr.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
 
                             DateTime blockDate = DateTime.Now;
                             DateTime blockTime = DateTime.Now;
-                            bool foundDate = false;
+                            bool     foundDate = false;
 
                             foreach(string[] kvp in lines.Select(line => line.Split('=')).Where(kvp => kvp.Length == 2))
                             {
@@ -306,7 +307,7 @@ namespace DiscImageChef.DiscImages
                 tracks.Add(t, trackFilter);
             }
 
-            imageInfo.Heads = heads;
+            imageInfo.Heads     = heads;
             imageInfo.Cylinders = (uint)(tracks.Count / heads);
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
@@ -360,7 +361,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -415,7 +416,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -425,17 +426,20 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OobBlock
         {
             public BlockIds blockId;
             public OobTypes blockType;
-            public ushort length;
+            public ushort   length;
         }
 
         enum BlockIds : byte
         {
-            Flux2 = 0x00,
+            Flux2   = 0x00,
             Flux2_1 = 0x01,
             Flux2_2 = 0x02,
             Flux2_3 = 0x03,
@@ -443,22 +447,22 @@ namespace DiscImageChef.DiscImages
             Flux2_5 = 0x05,
             Flux2_6 = 0x06,
             Flux2_7 = 0x07,
-            Nop1 = 0x08,
-            Nop2 = 0x09,
-            Nop3 = 0x0A,
-            Ovl16 = 0x0B,
-            Flux3 = 0x0C,
-            Oob = 0x0D
+            Nop1    = 0x08,
+            Nop2    = 0x09,
+            Nop3    = 0x0A,
+            Ovl16   = 0x0B,
+            Flux3   = 0x0C,
+            Oob     = 0x0D
         }
 
         enum OobTypes : byte
         {
-            Invalid = 0x00,
+            Invalid    = 0x00,
             StreamInfo = 0x01,
-            Index = 0x02,
-            StreamEnd = 0x03,
-            KFInfo = 0x04,
-            EOF = 0x0D
+            Index      = 0x02,
+            StreamEnd  = 0x03,
+            KFInfo     = 0x04,
+            EOF        = 0x0D
         }
     }
 }

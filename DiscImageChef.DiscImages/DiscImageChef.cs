@@ -85,6 +85,7 @@ using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SecureDigital;
 using DiscImageChef.Filters;
+using Schemas;
 using SharpCompress.Compressors.LZMA;
 using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
@@ -1691,6 +1692,9 @@ namespace DiscImageChef.DiscImages
 
             return true;
         }
+
+        public List<DumpHardwareType> DumpHardware { get; private set; }
+        public CICMMetadataType       CicmMetadata { get; private set; }
 
         public IEnumerable<MediaTagType> SupportedMediaTags =>
             Enum.GetValues(typeof(MediaTagType)).Cast<MediaTagType>();
@@ -3469,6 +3473,18 @@ namespace DiscImageChef.DiscImages
                     ErrorMessage = $"Don't know how to write sector tag type {tag}";
                     return false;
             }
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // TODO: Implement
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // TODO: Implement
+            return false;
         }
 
         /// <summary>

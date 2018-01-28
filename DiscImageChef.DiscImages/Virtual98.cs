@@ -39,6 +39,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -296,6 +297,9 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes =>
@@ -322,7 +326,7 @@ namespace DiscImageChef.DiscImages
 
             if(sectors > uint.MaxValue)
             {
-                ErrorMessage = $"Too many sectors";
+                ErrorMessage = "Too many sectors";
                 return false;
             }
 
@@ -533,6 +537,18 @@ namespace DiscImageChef.DiscImages
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+            return false;
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
             return false;
         }
 

@@ -32,9 +32,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -71,6 +71,10 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <value>The sessions.</value>
         List<Session> Sessions { get; }
+        /// <summary>List of dump hardware used to create the image from real media</summary>
+        List<DumpHardwareType> DumpHardware { get; }
+        /// <summary>Gets the CICM XML metadata for the image</summary>
+        CICMMetadataType CicmMetadata { get; }
 
         /// <summary>
         ///     Identifies the image.
@@ -242,7 +246,7 @@ namespace DiscImageChef.DiscImages
         /// <param name="failingLbas">List of incorrect sectors</param>
         /// <param name="unknownLbas">List of uncheckable sectors</param>
         bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                            out List<ulong> unknownLbas);
+                            out                                               List<ulong> unknownLbas);
 
         /// <summary>
         ///     Verifies media image internal checksum.

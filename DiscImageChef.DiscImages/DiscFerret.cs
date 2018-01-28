@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -50,7 +51,7 @@ namespace DiscImageChef.DiscImages
         ///     "DFE2"
         /// </summary>
         const uint DFI_MAGIC2 = 0x32454644;
-        ImageInfo imageInfo;
+        ImageInfo  imageInfo;
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<int, long> TrackLengths;
         public SortedDictionary<int, long> TrackOffsets;
@@ -59,31 +60,31 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "DiscFerret";
-        public Guid Id => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
+        public string    Name => "DiscFerret";
+        public Guid      Id   => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
         public ImageInfo Info => imageInfo;
 
         public string Format => "DiscFerret";
@@ -116,18 +117,18 @@ namespace DiscImageChef.DiscImages
 
             if(magic != DFI_MAGIC && magic != DFI_MAGIC2) return false;
 
-            TrackOffsets = new SortedDictionary<int, long>();
-            TrackLengths = new SortedDictionary<int, long>();
-            int t = -1;
+            TrackOffsets        = new SortedDictionary<int, long>();
+            TrackLengths        = new SortedDictionary<int, long>();
+            int    t            = -1;
             ushort lastCylinder = 0, lastHead = 0;
-            long offset = 0;
+            long   offset       = 0;
 
             while(stream.Position < stream.Length)
             {
                 long thisOffset = stream.Position;
 
                 DfiBlockHeader blockHeader = new DfiBlockHeader();
-                byte[] blk = new byte[Marshal.SizeOf(blockHeader)];
+                byte[]         blk         = new byte[Marshal.SizeOf(blockHeader)];
                 stream.Read(blk, 0, Marshal.SizeOf(blockHeader));
                 blockHeader = BigEndianMarshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
 
@@ -150,7 +151,7 @@ namespace DiscImageChef.DiscImages
                 if(blockHeader.cylinder > 0 && blockHeader.cylinder > lastCylinder)
                 {
                     lastCylinder = blockHeader.cylinder;
-                    lastHead = 0;
+                    lastHead     = 0;
                     TrackOffsets.Add(t, offset);
                     TrackLengths.Add(t, thisOffset - offset + 1);
                     offset = thisOffset;
@@ -166,13 +167,13 @@ namespace DiscImageChef.DiscImages
                 }
 
                 if(blockHeader.cylinder > imageInfo.Cylinders) imageInfo.Cylinders = blockHeader.cylinder;
-                if(blockHeader.head > imageInfo.Heads) imageInfo.Heads = blockHeader.head;
+                if(blockHeader.head     > imageInfo.Heads) imageInfo.Heads         = blockHeader.head;
             }
 
             imageInfo.Heads++;
             imageInfo.Cylinders++;
 
-            imageInfo.Application = "DiscFerret";
+            imageInfo.Application        = "DiscFerret";
             imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
@@ -224,7 +225,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -270,7 +271,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -280,13 +281,16 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DfiBlockHeader
         {
             public ushort cylinder;
             public ushort head;
             public ushort sector;
-            public uint length;
+            public uint   length;
         }
     }
 }

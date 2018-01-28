@@ -390,6 +390,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
+            outputPlugin.SetDumpHardware(resume.Tries);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
             outputPlugin.Close();

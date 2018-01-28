@@ -38,13 +38,14 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
     public class UkvFdi : IMediaImage
     {
         readonly byte[] signature = {0x46, 0x44, 0x49};
-        ImageInfo imageInfo;
+        ImageInfo       imageInfo;
 
         // Cylinder by head, sector data matrix
         byte[][][][] sectorsData;
@@ -53,31 +54,31 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
         public string Name => "Spectrum Floppy Disk Image";
-        public Guid Id => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
+        public Guid   Id   => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
 
         public string Format => "Spectrum floppy disk image";
 
@@ -104,7 +105,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            hdr = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
+            hdr             = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
             handle.Free();
 
             return hdr.magic.SequenceEqual(signature);
@@ -123,15 +124,15 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            hdr = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
+            hdr             = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
             handle.Free();
 
             DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}", hdr.cylinders);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}", hdr.dataOff);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}", hdr.descOff);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}", hdr.flags);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}", hdr.heads);
+            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}",  hdr.cylinders);
+            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}",    hdr.dataOff);
+            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}",    hdr.descOff);
+            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}",      hdr.flags);
+            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}",      hdr.heads);
 
             stream.Seek(hdr.descOff, SeekOrigin.Begin);
             byte[] description = new byte[hdr.dataOff - hdr.descOff];
@@ -142,17 +143,17 @@ namespace DiscImageChef.DiscImages
 
             stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
 
-            long spt = long.MaxValue;
+            long       spt        = long.MaxValue;
             uint[][][] sectorsOff = new uint[hdr.cylinders][][];
-            sectorsData = new byte[hdr.cylinders][][][];
+            sectorsData           = new byte[hdr.cylinders][][][];
 
             imageInfo.Cylinders = hdr.cylinders;
-            imageInfo.Heads = hdr.heads;
+            imageInfo.Heads     = hdr.heads;
 
             // Read track descriptors
             for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
             {
-                sectorsOff[cyl] = new uint[hdr.heads][];
+                sectorsOff[cyl]  = new uint[hdr.heads][];
                 sectorsData[cyl] = new byte[hdr.heads][][];
 
                 for(ushort head = 0; head < hdr.heads; head++)
@@ -161,39 +162,39 @@ namespace DiscImageChef.DiscImages
                     stream.Read(sctB, 0, 4);
                     stream.Seek(2, SeekOrigin.Current);
                     byte sectors = (byte)stream.ReadByte();
-                    uint trkOff = BitConverter.ToUInt32(sctB, 0);
+                    uint trkOff  = BitConverter.ToUInt32(sctB, 0);
 
-                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}", cyl);
-                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}", head);
+                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}",       cyl);
+                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}",       head);
                     DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
-                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}", trkOff);
+                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}",     trkOff);
 
-                    sectorsOff[cyl][head] = new uint[sectors];
+                    sectorsOff[cyl][head]  = new uint[sectors];
                     sectorsData[cyl][head] = new byte[sectors][];
 
                     if(sectors < spt && sectors > 0) spt = sectors;
 
                     for(ushort sec = 0; sec < sectors; sec++)
                     {
-                        byte c = (byte)stream.ReadByte();
-                        byte h = (byte)stream.ReadByte();
-                        byte r = (byte)stream.ReadByte();
-                        byte n = (byte)stream.ReadByte();
-                        SectorFlags f = (SectorFlags)stream.ReadByte();
-                        byte[] offB = new byte[2];
+                        byte        c    = (byte)stream.ReadByte();
+                        byte        h    = (byte)stream.ReadByte();
+                        byte        r    = (byte)stream.ReadByte();
+                        byte        n    = (byte)stream.ReadByte();
+                        SectorFlags f    = (SectorFlags)stream.ReadByte();
+                        byte[]      offB = new byte[2];
                         stream.Read(offB, 0, 2);
                         ushort secOff = BitConverter.ToUInt16(offB, 0);
 
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}", h);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}", r);
+                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}",       c);
+                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}",       h);
+                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}",       r);
                         DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.n = {0} ({1})", n, 128 << n);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}", f);
+                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}",       f);
                         DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.off = {0} ({1})", secOff,
                                                   secOff + trkOff + hdr.dataOff);
 
                         // TODO: This assumes sequential sectors.
-                        sectorsOff[cyl][head][sec] = secOff + trkOff + hdr.dataOff;
+                        sectorsOff[cyl][head][sec]  = secOff + trkOff + hdr.dataOff;
                         sectorsData[cyl][head][sec] = new byte[128 << n];
 
                         if(128 << n > imageInfo.SectorSize) imageInfo.SectorSize = (uint)(128 << n);
@@ -223,7 +224,7 @@ namespace DiscImageChef.DiscImages
                     // Create empty sectors
                     else
                     {
-                        sectorsData[cyl][head] = new byte[spt][];
+                        sectorsData[cyl][head]                                 = new byte[spt][];
                         for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[imageInfo.SectorSize];
                     }
                 }
@@ -232,14 +233,14 @@ namespace DiscImageChef.DiscImages
             }
 
             // TODO: What about double sided, half track pitch compact floppies?
-            imageInfo.MediaType = MediaType.CompactFloppy;
-            imageInfo.ImageSize = (ulong)stream.Length - hdr.dataOff;
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.MediaType            = MediaType.CompactFloppy;
+            imageInfo.ImageSize            = (ulong)stream.Length - hdr.dataOff;
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.SectorsPerTrack = (uint)spt;
-            imageInfo.Sectors = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.SectorsPerTrack      = (uint)spt;
+            imageInfo.Sectors              = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
 
             return true;
         }
@@ -276,15 +277,6 @@ namespace DiscImageChef.DiscImages
             }
 
             return buffer.ToArray();
-        }
-
-        (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
-        {
-            ushort cylinder = (ushort)(lba / (imageInfo.Heads * imageInfo.SectorsPerTrack));
-            byte head = (byte)(lba / imageInfo.SectorsPerTrack % imageInfo.Heads);
-            byte sector = (byte)(lba % imageInfo.SectorsPerTrack + 1);
-
-            return (cylinder, head, sector);
         }
 
         public byte[] ReadDiskTag(MediaTagType tag)
@@ -363,7 +355,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -373,7 +365,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -381,6 +373,18 @@ namespace DiscImageChef.DiscImages
         public bool? VerifyMediaImage()
         {
             return null;
+        }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
+        (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
+        {
+            ushort cylinder = (ushort)(lba / (imageInfo.Heads          * imageInfo.SectorsPerTrack));
+            byte   head     = (byte)(lba   / imageInfo.SectorsPerTrack % imageInfo.Heads);
+            byte   sector   = (byte)(lba   % imageInfo.SectorsPerTrack + 1);
+
+            return (cylinder, head, sector);
         }
 
         [Flags]
@@ -392,25 +396,26 @@ namespace DiscImageChef.DiscImages
         [Flags]
         enum SectorFlags : byte
         {
-            CrcOk128 = 0x01,
-            CrcOk256 = 0x02,
-            CrcOk512 = 0x04,
+            CrcOk128  = 0x01,
+            CrcOk256  = 0x02,
+            CrcOk512  = 0x04,
             CrcOk1024 = 0x08,
             CrcOk2048 = 0x10,
             CrcOk4096 = 0x20,
-            Deleted = 0x80
+            Deleted   = 0x80
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct FdiHeader
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[]    magic;
             public DiskFlags flags;
-            public ushort cylinders;
-            public ushort heads;
-            public ushort descOff;
-            public ushort dataOff;
-            public ushort addInfoLen;
+            public ushort    cylinders;
+            public ushort    heads;
+            public ushort    descOff;
+            public ushort    dataOff;
+            public ushort    addInfoLen;
         }
     }
 }

@@ -38,6 +38,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -48,42 +49,42 @@ namespace DiscImageChef.DiscImages
         const uint DATA_OFFSET = 0x100;
 
         readonly byte[] headerId = {0x44, 0x49, 0x46, 0x43, 0x20, 0x48, 0x45, 0x41, 0x44, 0x45, 0x52, 0x20, 0x20};
-        byte[] comment;
+        byte[]          comment;
         /// <summary>Disk image file</summary>
-        IFilter dimImageFilter;
-        DiskType dskType;
-        byte[] hdrId;
+        IFilter   dimImageFilter;
+        DiskType  dskType;
+        byte[]    hdrId;
         ImageInfo imageInfo;
 
         public Dim()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "DIM Disk Image";
-        public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public string    Name => "DIM Disk Image";
+        public Guid      Id   => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
         public ImageInfo Info => imageInfo;
 
         public string Format => "DIM disk image";
@@ -105,7 +106,7 @@ namespace DiscImageChef.DiscImages
             if(stream.Length < DATA_OFFSET) return false;
 
             comment = new byte[60];
-            hdrId = new byte[13];
+            hdrId   = new byte[13];
             stream.Seek(0, SeekOrigin.Begin);
             dskType = (DiskType)stream.ReadByte();
             stream.Seek(0xAB, SeekOrigin.Begin);
@@ -126,7 +127,7 @@ namespace DiscImageChef.DiscImages
             long diskSize = stream.Length - DATA_OFFSET;
 
             comment = new byte[60];
-            hdrId = new byte[13];
+            hdrId   = new byte[13];
             stream.Seek(0, SeekOrigin.Begin);
             dskType = (DiskType)stream.ReadByte();
             stream.Seek(0xAB, SeekOrigin.Begin);
@@ -149,7 +150,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 8 * 1024) == 77) imageInfo.MediaType = MediaType.SHARP_525;
-                    imageInfo.SectorSize = 1024;
+                    imageInfo.SectorSize                                    = 1024;
                     break;
                 // 9 spt, 1024 bps
                 case DiskType.Hs2:
@@ -160,7 +161,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80) imageInfo.MediaType = MediaType.SHARP_525_9;
-                    imageInfo.SectorSize = 512;
+                    imageInfo.SectorSize                                   = 512;
                     break;
                 // 15 spt, 512 bps
                 case DiskType.Hc2:
@@ -171,7 +172,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 15 * 512) == 80) imageInfo.MediaType = MediaType.DOS_525_HD;
-                    imageInfo.SectorSize = 512;
+                    imageInfo.SectorSize                                    = 512;
                     break;
                 // 9 spt, 1024 bps
                 case DiskType.Hde2:
@@ -182,7 +183,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80) imageInfo.MediaType = MediaType.SHARP_35_9;
-                    imageInfo.SectorSize = 512;
+                    imageInfo.SectorSize                                   = 512;
                     break;
                 // 18 spt, 512 bps
                 case DiskType.Hq2:
@@ -193,19 +194,19 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 18 * 512) == 80) imageInfo.MediaType = MediaType.DOS_35_HD;
-                    imageInfo.SectorSize = 512;
+                    imageInfo.SectorSize                                    = 512;
                     break;
                 // 26 spt, 256 bps
                 case DiskType.N88:
                     if(diskSize % (2 * 26 * 256) == 0)
                     {
                         if(diskSize % (2 * 26 * 256) == 77) imageInfo.MediaType = MediaType.NEC_8_DD;
-                        imageInfo.SectorSize = 256;
+                        imageInfo.SectorSize                                    = 256;
                     }
                     else if(diskSize % (2 * 26 * 128) == 0)
                     {
                         if(diskSize % (2 * 26 * 128) == 77) imageInfo.MediaType = MediaType.NEC_8_SD;
-                        imageInfo.SectorSize = 256;
+                        imageInfo.SectorSize                                    = 256;
                     }
                     else
                     {
@@ -223,45 +224,45 @@ namespace DiscImageChef.DiscImages
 
             dimImageFilter = imageFilter;
 
-            imageInfo.ImageSize = (ulong)diskSize;
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.ImageSize            = (ulong)diskSize;
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors = imageInfo.ImageSize / imageInfo.SectorSize;
-            imageInfo.Comments = StringHandlers.CToString(comment, Encoding.GetEncoding(932));
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.Sectors              = imageInfo.ImageSize / imageInfo.SectorSize;
+            imageInfo.Comments             = StringHandlers.CToString(comment, Encoding.GetEncoding(932));
+            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
 
             switch(imageInfo.MediaType)
             {
                 case MediaType.SHARP_525:
-                    imageInfo.Cylinders = 77;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 77;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 8;
                     break;
                 case MediaType.SHARP_525_9:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_525_HD:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 15;
                     break;
                 case MediaType.SHARP_35_9:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_35_HD:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 18;
                     break;
                 case MediaType.NEC_8_DD:
                 case MediaType.NEC_8_SD:
-                    imageInfo.Cylinders = 77;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 77;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 26;
                     break;
             }
@@ -369,7 +370,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -379,7 +380,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -389,14 +390,17 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         enum DiskType : byte
         {
-            Hd2 = 0,
-            Hs2 = 1,
-            Hc2 = 2,
+            Hd2  = 0,
+            Hs2  = 1,
+            Hc2  = 2,
             Hde2 = 3,
-            Hq2 = 9,
-            N88 = 17
+            Hq2  = 9,
+            N88  = 17
         }
     }
 }

@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
+using Schemas;
 using static DiscImageChef.Decoders.ATA.Identify;
 
 namespace DiscImageChef.DiscImages
@@ -289,6 +290,9 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.ATA_IDENTIFY};
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes =>
@@ -315,7 +319,7 @@ namespace DiscImageChef.DiscImages
 
             if(sectors > 63 * 16 * 1024)
             {
-                ErrorMessage = $"Too many sectors";
+                ErrorMessage = "Too many sectors";
                 return false;
             }
 
@@ -442,8 +446,6 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            Version thisVersion = GetType().Assembly.GetName().Version;
-
             if(imageInfo.Cylinders == 0)
             {
                 imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
@@ -514,10 +516,10 @@ namespace DiscImageChef.DiscImages
                 Marshal.Copy(ptr, ataIdBytes, 0, Marshal.SizeOf(ataId));
                 Marshal.FreeHGlobal(ptr);
 
-                Array.Copy(ScrambleATAString(imageInfo.DriveManufacturer + " " + imageInfo.DriveModel, 40), 0,
+                Array.Copy(ScrambleAtaString(imageInfo.DriveManufacturer + " " + imageInfo.DriveModel, 40), 0,
                            ataIdBytes, 27                                                                 * 2, 40);
-                Array.Copy(ScrambleATAString(imageInfo.DriveFirmwareRevision, 8),  0, ataIdBytes,      23 * 2, 8);
-                Array.Copy(ScrambleATAString(imageInfo.DriveSerialNumber,     20), 0, ataIdBytes,      10 * 2, 20);
+                Array.Copy(ScrambleAtaString(imageInfo.DriveFirmwareRevision, 8),  0, ataIdBytes,      23 * 2, 8);
+                Array.Copy(ScrambleAtaString(imageInfo.DriveSerialNumber,     20), 0, ataIdBytes,      10 * 2, 20);
                 Array.Copy(ataIdBytes,                                             0, header.identify, 0,      106);
             }
             else Array.Copy(identify, 0, header.identify, 0, 106);
@@ -588,7 +590,19 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        static byte[] ScrambleATAString(string text, int length)
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
+            return false;
+        }
+
+        static byte[] ScrambleAtaString(string text, int length)
         {
             byte[] inbuf = Encoding.ASCII.GetBytes(text);
             if(inbuf.Length % 2 != 0)

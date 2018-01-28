@@ -43,6 +43,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Filters;
+using Schemas;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 
 namespace DiscImageChef.DiscImages
@@ -102,7 +103,7 @@ namespace DiscImageChef.DiscImages
 
         public string Format => "Alcohol 120% Media Descriptor Structure";
 
-        public List<Partition> Partitions { get; set; }
+        public List<Partition> Partitions { get; private set; }
 
         public List<Track> Tracks
         {
@@ -1432,6 +1433,9 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
         public IEnumerable<MediaTagType> SupportedMediaTags =>
             new[] {MediaTagType.CD_FullTOC, MediaTagType.DVD_BCA, MediaTagType.DVD_DMI, MediaTagType.DVD_PFI};
         public IEnumerable<SectorTagType> SupportedSectorTags =>
@@ -2052,12 +2056,11 @@ namespace DiscImageChef.DiscImages
 
             byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.
 
-            byte[] block;
             IntPtr blockPtr;
 
             // Write header
             descriptorStream.Seek(0, SeekOrigin.Begin);
-            block    = new byte[Marshal.SizeOf(header)];
+            byte[] block = new byte[Marshal.SizeOf(header)];
             blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.StructureToPtr(header, blockPtr, true);
             Marshal.Copy(blockPtr, block, 0, block.Length);
@@ -2282,6 +2285,18 @@ namespace DiscImageChef.DiscImages
                     ErrorMessage = $"Unsupported tag type {tag}";
                     return false;
             }
+        }
+
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+        {
+            // Not supported
+            return false;
+        }
+
+        public bool SetCicmMetadata(CICMMetadataType metadata)
+        {
+            // Not supported
+            return false;
         }
 
         static ushort AlcoholTrackModeToBytesPerSector(AlcoholTrackMode trackMode)

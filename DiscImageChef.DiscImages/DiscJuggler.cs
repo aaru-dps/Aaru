@@ -39,6 +39,7 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -46,50 +47,47 @@ namespace DiscImageChef.DiscImages
     // TODO: Too many unknowns to make this writable
     public class DiscJuggler : IMediaImage
     {
-        byte[] cdtext;
-        ImageInfo imageInfo;
-        Stream imageStream;
+        byte[]                  cdtext;
+        ImageInfo               imageInfo;
+        Stream                  imageStream;
         Dictionary<uint, ulong> offsetmap;
-        List<Partition> partitions;
-        List<Session> sessions;
-        Dictionary<uint, byte> trackFlags;
-        List<Track> tracks;
+        Dictionary<uint, byte>  trackFlags;
 
         public DiscJuggler()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = true,
-                HasSessions = true,
-                Version = null,
-                ApplicationVersion = null,
-                MediaTitle = null,
-                Creator = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = true,
+                HasSessions           = true,
+                Version               = null,
+                ApplicationVersion    = null,
+                MediaTitle            = null,
+                Creator               = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
 
-        public string Name => "DiscJuggler";
-        public Guid Id => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
+        public string    Name => "DiscJuggler";
+        public Guid      Id   => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
         public ImageInfo Info => imageInfo;
 
         public string Format => "DiscJuggler";
 
-        public List<Partition> Partitions => partitions;
+        public List<Partition> Partitions { get; set; }
 
-        public List<Track> Tracks => tracks;
+        public List<Track> Tracks { get; set; }
 
-        public List<Session> Sessions => sessions;
+        public List<Session> Sessions { get; set; }
 
         public bool Identify(IFilter imageFilter)
         {
@@ -112,8 +110,8 @@ namespace DiscImageChef.DiscImages
             if(descriptor[0] > 99 || descriptor[0] == 0) return false;
 
             // Seems all sessions start with this data
-            if(descriptor[1] != 0x00 || descriptor[3] != 0x00 || descriptor[4] != 0x00 || descriptor[5] != 0x00 ||
-               descriptor[6] != 0x00 || descriptor[7] != 0x00 || descriptor[8] != 0x00 || descriptor[9] != 0x00 ||
+            if(descriptor[1]  != 0x00 || descriptor[3]  != 0x00 || descriptor[4]  != 0x00 || descriptor[5]  != 0x00 ||
+               descriptor[6]  != 0x00 || descriptor[7]  != 0x00 || descriptor[8]  != 0x00 || descriptor[9]  != 0x00 ||
                descriptor[10] != 0x01 || descriptor[11] != 0x00 || descriptor[12] != 0x00 || descriptor[13] != 0x00 ||
                descriptor[14] != 0xFF || descriptor[15] != 0xFF) return false;
 
@@ -142,17 +140,17 @@ namespace DiscImageChef.DiscImages
             int position = 1;
 
             ushort sessionSequence = 0;
-            sessions = new List<Session>();
-            tracks = new List<Track>();
-            partitions = new List<Partition>();
-            offsetmap = new Dictionary<uint, ulong>();
-            trackFlags = new Dictionary<uint, byte>();
+            Sessions               = new List<Session>();
+            Tracks                 = new List<Track>();
+            Partitions             = new List<Partition>();
+            offsetmap              = new Dictionary<uint, ulong>();
+            trackFlags             = new Dictionary<uint, byte>();
             ushort mediumType;
-            byte maxS = descriptor[0];
+            byte   maxS = descriptor[0];
 
             DicConsole.DebugWriteLine("DiscJuggler plugin", "maxS = {0}", maxS);
-            uint lastSessionTrack = 0;
-            ulong currentOffset = 0;
+            uint  lastSessionTrack = 0;
+            ulong currentOffset    = 0;
 
             // Read sessions
             for(byte s = 0; s <= maxS; s++)
@@ -160,11 +158,11 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("DiscJuggler plugin", "s = {0}", s);
 
                 // Seems all sessions start with this data
-                if(descriptor[position + 0] != 0x00 || descriptor[position + 2] != 0x00 ||
-                   descriptor[position + 3] != 0x00 || descriptor[position + 4] != 0x00 ||
-                   descriptor[position + 5] != 0x00 || descriptor[position + 6] != 0x00 ||
-                   descriptor[position + 7] != 0x00 || descriptor[position + 8] != 0x00 ||
-                   descriptor[position + 9] != 0x01 || descriptor[position + 10] != 0x00 ||
+                if(descriptor[position + 0]  != 0x00 || descriptor[position + 2]  != 0x00 ||
+                   descriptor[position + 3]  != 0x00 || descriptor[position + 4]  != 0x00 ||
+                   descriptor[position + 5]  != 0x00 || descriptor[position + 6]  != 0x00 ||
+                   descriptor[position + 7]  != 0x00 || descriptor[position + 8]  != 0x00 ||
+                   descriptor[position + 9]  != 0x01 || descriptor[position + 10] != 0x00 ||
                    descriptor[position + 11] != 0x00 || descriptor[position + 12] != 0x00 ||
                    descriptor[position + 13] != 0xFF || descriptor[position + 14] != 0xFF) return false;
 
@@ -178,11 +176,11 @@ namespace DiscImageChef.DiscImages
                 Session session = new Session
                 {
                     SessionSequence = sessionSequence,
-                    EndTrack = uint.MinValue,
-                    StartTrack = uint.MaxValue
+                    EndTrack        = uint.MinValue,
+                    StartTrack      = uint.MaxValue
                 };
 
-                position += 15;
+                position         += 15;
                 bool addedATrack = false;
 
                 // Read track
@@ -197,21 +195,21 @@ namespace DiscImageChef.DiscImages
                     byte[] trackFilenameB = new byte[descriptor[position]];
                     position++;
                     Array.Copy(descriptor, position, trackFilenameB, 0, trackFilenameB.Length);
-                    position += trackFilenameB.Length;
-                    track.TrackFile = Path.GetFileName(Encoding.Default.GetString(trackFilenameB));
+                    position        += trackFilenameB.Length;
+                    track.TrackFile =  Path.GetFileName(Encoding.Default.GetString(trackFilenameB));
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\tfilename = {0}", track.TrackFile);
 
                     // Skip unknown
                     position += 29;
 
-                    mediumType = BitConverter.ToUInt16(descriptor, position);
-                    position += 2;
+                    mediumType =  BitConverter.ToUInt16(descriptor, position);
+                    position   += 2;
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\tmediumType = {0}", mediumType);
 
                     // Read indices
                     track.Indexes = new Dictionary<int, ulong>();
-                    ushort maxI = BitConverter.ToUInt16(descriptor, position);
-                    position += 2;
+                    ushort maxI   = BitConverter.ToUInt16(descriptor, position);
+                    position      += 2;
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxI = {0}", maxI);
                     for(ushort i = 0; i < maxI; i++)
                     {
@@ -223,7 +221,7 @@ namespace DiscImageChef.DiscImages
 
                     // Read CD-Text
                     uint maxC = BitConverter.ToUInt32(descriptor, position);
-                    position += 4;
+                    position  += 4;
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxC = {0}", maxC);
                     for(uint c = 0; c < maxC; c++)
                     {
@@ -246,7 +244,7 @@ namespace DiscImageChef.DiscImages
                         }
                     }
 
-                    position += 2;
+                    position       += 2;
                     uint trackMode = BitConverter.ToUInt32(descriptor, position);
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackMode = {0}", trackMode);
                     position += 4;
@@ -255,30 +253,31 @@ namespace DiscImageChef.DiscImages
                     position += 4;
 
                     session.SessionSequence = (ushort)(BitConverter.ToUInt32(descriptor, position) + 1);
-                    track.TrackSession = (ushort)(session.SessionSequence + 1);
+                    track.TrackSession      = (ushort)(session.SessionSequence                     + 1);
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\tsession = {0}", session.SessionSequence);
-                    position += 4;
-                    track.TrackSequence = BitConverter.ToUInt32(descriptor, position) + lastSessionTrack + 1;
+                    position            += 4;
+                    track.TrackSequence =  BitConverter.ToUInt32(descriptor, position) + lastSessionTrack + 1;
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\ttrack = {1} + {2} + 1 = {0}",
                                               track.TrackSequence, BitConverter.ToUInt32(descriptor, position),
                                               lastSessionTrack);
-                    position += 4;
-                    track.TrackStartSector = BitConverter.ToUInt32(descriptor, position);
+                    position               += 4;
+                    track.TrackStartSector =  BitConverter.ToUInt32(descriptor, position);
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackStart = {0}", track.TrackStartSector);
-                    position += 4;
-                    uint trackLen = BitConverter.ToUInt32(descriptor, position);
+                    position             += 4;
+                    uint trackLen        = BitConverter.ToUInt32(descriptor, position);
                     track.TrackEndSector = track.TrackStartSector + trackLen - 1;
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackEnd = {0}", track.TrackEndSector);
                     position += 4;
 
                     if(track.TrackSequence > session.EndTrack)
                     {
-                        session.EndTrack = track.TrackSequence;
+                        session.EndTrack  = track.TrackSequence;
                         session.EndSector = track.TrackEndSector;
                     }
+
                     if(track.TrackSequence < session.StartTrack)
                     {
-                        session.StartTrack = track.TrackSequence;
+                        session.StartTrack  = track.TrackSequence;
                         session.StartSector = track.TrackStartSector;
                     }
 
@@ -287,7 +286,7 @@ namespace DiscImageChef.DiscImages
 
                     uint readMode = BitConverter.ToUInt32(descriptor, position);
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\treadMode = {0}", readMode);
-                    position += 4;
+                    position      += 4;
                     uint trackCtl = BitConverter.ToUInt32(descriptor, position);
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackCtl = {0}", trackCtl);
                     position += 4;
@@ -298,7 +297,7 @@ namespace DiscImageChef.DiscImages
                     byte[] isrc = new byte[12];
                     Array.Copy(descriptor, position, isrc, 0, 12);
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\tisrc = {0}", StringHandlers.CToString(isrc));
-                    position += 12;
+                    position       += 12;
                     uint isrcValid = BitConverter.ToUInt32(descriptor, position);
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "\tisrc_valid = {0}", isrcValid);
                     position += 4;
@@ -331,31 +330,33 @@ namespace DiscImageChef.DiscImages
                         // Audio
                         case 0:
                             if(imageInfo.SectorSize < 2352) imageInfo.SectorSize = 2352;
-                            track.TrackType = TrackType.Audio;
-                            track.TrackBytesPerSector = 2352;
-                            track.TrackRawBytesPerSector = 2352;
+                            track.TrackType                                      = TrackType.Audio;
+                            track.TrackBytesPerSector                            = 2352;
+                            track.TrackRawBytesPerSector                         = 2352;
                             switch(readMode)
                             {
                                 case 2:
                                     if(firstTrack) currentOffset += 150 * (ulong)track.TrackRawBytesPerSector;
-                                    track.TrackFileOffset = currentOffset;
-                                    currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
+                                    track.TrackFileOffset        =  currentOffset;
+                                    currentOffset                += trackLen * (ulong)track.TrackRawBytesPerSector;
                                     break;
                                 case 3:
                                     if(firstTrack) currentOffset += 150 * (ulong)(track.TrackRawBytesPerSector + 16);
-                                    track.TrackFileOffset = currentOffset;
-                                    track.TrackSubchannelFile = track.TrackFile;
-                                    track.TrackSubchannelOffset = currentOffset;
-                                    track.TrackSubchannelType = TrackSubchannelType.Q16Interleaved;
-                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
+                                    track.TrackFileOffset        =  currentOffset;
+                                    track.TrackSubchannelFile    =  track.TrackFile;
+                                    track.TrackSubchannelOffset  =  currentOffset;
+                                    track.TrackSubchannelType    =  TrackSubchannelType.Q16Interleaved;
+                                    currentOffset                +=
+                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
                                     break;
                                 case 4:
                                     if(firstTrack) currentOffset += 150 * (ulong)(track.TrackRawBytesPerSector + 96);
-                                    track.TrackFileOffset = currentOffset;
-                                    track.TrackSubchannelFile = track.TrackFile;
-                                    track.TrackSubchannelOffset = currentOffset;
-                                    track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
+                                    track.TrackFileOffset        =  currentOffset;
+                                    track.TrackSubchannelFile    =  track.TrackFile;
+                                    track.TrackSubchannelOffset  =  currentOffset;
+                                    track.TrackSubchannelType    =  TrackSubchannelType.RawInterleaved;
+                                    currentOffset                +=
+                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
                                     break;
                                 default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
                             }
@@ -364,22 +365,22 @@ namespace DiscImageChef.DiscImages
                         // Mode 1 or DVD
                         case 1:
                             if(imageInfo.SectorSize < 2048) imageInfo.SectorSize = 2048;
-                            track.TrackType = TrackType.CdMode1;
-                            track.TrackBytesPerSector = 2048;
+                            track.TrackType                                      = TrackType.CdMode1;
+                            track.TrackBytesPerSector                            = 2048;
                             switch(readMode)
                             {
                                 case 0:
-                                    track.TrackRawBytesPerSector = 2048;
+                                    track.TrackRawBytesPerSector =  2048;
                                     if(firstTrack) currentOffset += 150 * (ulong)track.TrackRawBytesPerSector;
-                                    track.TrackFileOffset = currentOffset;
-                                    currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
+                                    track.TrackFileOffset        =  currentOffset;
+                                    currentOffset                += trackLen * (ulong)track.TrackRawBytesPerSector;
                                     break;
                                 case 1:
                                     throw
                                         new ImageNotSupportedException($"Invalid read mode {readMode} for this track");
                                 case 2:
-                                    track.TrackRawBytesPerSector = 2352;
-                                    currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
+                                    track.TrackRawBytesPerSector =  2352;
+                                    currentOffset                += trackLen * (ulong)track.TrackRawBytesPerSector;
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
@@ -394,13 +395,14 @@ namespace DiscImageChef.DiscImages
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                                     break;
                                 case 3:
-                                    track.TrackRawBytesPerSector = 2352;
+                                    track.TrackRawBytesPerSector =  2352;
                                     if(firstTrack) currentOffset += 150 * (ulong)(track.TrackRawBytesPerSector + 16);
-                                    track.TrackFileOffset = currentOffset;
-                                    track.TrackSubchannelFile = track.TrackFile;
-                                    track.TrackSubchannelOffset = currentOffset;
-                                    track.TrackSubchannelType = TrackSubchannelType.Q16Interleaved;
-                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
+                                    track.TrackFileOffset        =  currentOffset;
+                                    track.TrackSubchannelFile    =  track.TrackFile;
+                                    track.TrackSubchannelOffset  =  currentOffset;
+                                    track.TrackSubchannelType    =  TrackSubchannelType.Q16Interleaved;
+                                    currentOffset                +=
+                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
@@ -415,13 +417,14 @@ namespace DiscImageChef.DiscImages
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                                     break;
                                 case 4:
-                                    track.TrackRawBytesPerSector = 2352;
+                                    track.TrackRawBytesPerSector =  2352;
                                     if(firstTrack) currentOffset += 150 * (ulong)(track.TrackRawBytesPerSector + 96);
-                                    track.TrackFileOffset = currentOffset;
-                                    track.TrackSubchannelFile = track.TrackFile;
-                                    track.TrackSubchannelOffset = currentOffset;
-                                    track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
+                                    track.TrackFileOffset        =  currentOffset;
+                                    track.TrackSubchannelFile    =  track.TrackFile;
+                                    track.TrackSubchannelOffset  =  currentOffset;
+                                    track.TrackSubchannelType    =  TrackSubchannelType.RawInterleaved;
+                                    currentOffset                +=
+                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
@@ -442,48 +445,50 @@ namespace DiscImageChef.DiscImages
                         // Mode 2
                         case 2:
                             if(imageInfo.SectorSize < 2336) imageInfo.SectorSize = 2336;
-                            track.TrackType = TrackType.CdMode2Formless;
-                            track.TrackBytesPerSector = 2336;
+                            track.TrackType                                      = TrackType.CdMode2Formless;
+                            track.TrackBytesPerSector                            = 2336;
                             switch(readMode)
                             {
                                 case 0:
                                     throw
                                         new ImageNotSupportedException($"Invalid read mode {readMode} for this track");
                                 case 1:
-                                    track.TrackRawBytesPerSector = 2336;
+                                    track.TrackRawBytesPerSector =  2336;
                                     if(firstTrack) currentOffset += 150 * (ulong)track.TrackRawBytesPerSector;
-                                    track.TrackFileOffset = currentOffset;
-                                    currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
+                                    track.TrackFileOffset        =  currentOffset;
+                                    currentOffset                += trackLen * (ulong)track.TrackRawBytesPerSector;
                                     break;
                                 case 2:
-                                    track.TrackRawBytesPerSector = 2352;
-                                    currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
+                                    track.TrackRawBytesPerSector =  2352;
+                                    currentOffset                += trackLen * (ulong)track.TrackRawBytesPerSector;
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                                     break;
                                 case 3:
-                                    track.TrackRawBytesPerSector = 2352;
+                                    track.TrackRawBytesPerSector =  2352;
                                     if(firstTrack) currentOffset += 150 * (ulong)(track.TrackRawBytesPerSector + 16);
-                                    track.TrackFileOffset = currentOffset;
-                                    track.TrackSubchannelFile = track.TrackFile;
-                                    track.TrackSubchannelOffset = currentOffset;
-                                    track.TrackSubchannelType = TrackSubchannelType.Q16Interleaved;
-                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
+                                    track.TrackFileOffset        =  currentOffset;
+                                    track.TrackSubchannelFile    =  track.TrackFile;
+                                    track.TrackSubchannelOffset  =  currentOffset;
+                                    track.TrackSubchannelType    =  TrackSubchannelType.Q16Interleaved;
+                                    currentOffset                +=
+                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                                     break;
                                 case 4:
-                                    track.TrackRawBytesPerSector = 2352;
+                                    track.TrackRawBytesPerSector =  2352;
                                     if(firstTrack) currentOffset += 150 * (ulong)(track.TrackRawBytesPerSector + 96);
-                                    track.TrackFileOffset = currentOffset;
-                                    track.TrackSubchannelFile = track.TrackFile;
-                                    track.TrackSubchannelOffset = currentOffset;
-                                    track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
+                                    track.TrackFileOffset        =  currentOffset;
+                                    track.TrackSubchannelFile    =  track.TrackFile;
+                                    track.TrackSubchannelOffset  =  currentOffset;
+                                    track.TrackSubchannelType    =  TrackSubchannelType.RawInterleaved;
+                                    currentOffset                +=
+                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
@@ -496,11 +501,11 @@ namespace DiscImageChef.DiscImages
                         default: throw new ImageNotSupportedException($"Unknown track mode {trackMode}");
                     }
 
-                    track.TrackFile = imageFilter.GetFilename();
+                    track.TrackFile   = imageFilter.GetFilename();
                     track.TrackFilter = imageFilter;
                     if(track.TrackSubchannelType != TrackSubchannelType.None)
                     {
-                        track.TrackSubchannelFile = imageFilter.GetFilename();
+                        track.TrackSubchannelFile   = imageFilter.GetFilename();
                         track.TrackSubchannelFilter = imageFilter;
                         if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
@@ -509,17 +514,17 @@ namespace DiscImageChef.DiscImages
                     Partition partition = new Partition
                     {
                         Description = track.TrackDescription,
-                        Size = (ulong)(trackLen * track.TrackBytesPerSector),
-                        Length = trackLen,
-                        Sequence = track.TrackSequence,
-                        Offset = track.TrackFileOffset,
-                        Start = track.TrackStartSector,
-                        Type = track.TrackType.ToString()
+                        Size        = (ulong)(trackLen * track.TrackBytesPerSector),
+                        Length      = trackLen,
+                        Sequence    = track.TrackSequence,
+                        Offset      = track.TrackFileOffset,
+                        Start       = track.TrackStartSector,
+                        Type        = track.TrackType.ToString()
                     };
                     imageInfo.Sectors += partition.Length;
-                    partitions.Add(partition);
+                    Partitions.Add(partition);
                     offsetmap.Add(track.TrackSequence, track.TrackStartSector);
-                    tracks.Add(track);
+                    Tracks.Add(track);
                     trackFlags.Add(track.TrackSequence, (byte)(trackCtl & 0xFF));
                     addedATrack = true;
                 }
@@ -527,11 +532,11 @@ namespace DiscImageChef.DiscImages
                 if(!addedATrack) continue;
 
                 lastSessionTrack = session.EndTrack;
-                sessions.Add(session);
-                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.StartTrack = {0}", session.StartTrack);
+                Sessions.Add(session);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.StartTrack = {0}",  session.StartTrack);
                 DicConsole.DebugWriteLine("DiscJuggler plugin", "session.StartSector = {0}", session.StartSector);
-                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndTrack = {0}", session.EndTrack);
-                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndSector = {0}", session.EndSector);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndTrack = {0}",    session.EndTrack);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndSector = {0}",   session.EndSector);
                 DicConsole.DebugWriteLine("DiscJuggler plugin", "session.SessionSequence = {0}",
                                           session.SessionSequence);
             }
@@ -543,25 +548,25 @@ namespace DiscImageChef.DiscImages
             byte[] filenameB = new byte[descriptor[position]];
             position++;
             Array.Copy(descriptor, position, filenameB, 0, filenameB.Length);
-            position += filenameB.Length;
+            position        += filenameB.Length;
             string filename = Path.GetFileName(Encoding.Default.GetString(filenameB));
             DicConsole.DebugWriteLine("DiscJuggler plugin", "filename = {0}", filename);
 
             // Skip unknown
             position += 29;
 
-            mediumType = BitConverter.ToUInt16(descriptor, position);
-            position += 2;
+            mediumType =  BitConverter.ToUInt16(descriptor, position);
+            position   += 2;
             DicConsole.DebugWriteLine("DiscJuggler plugin", "mediumType = {0}", mediumType);
 
             uint discSize = BitConverter.ToUInt32(descriptor, position);
-            position += 4;
+            position      += 4;
             DicConsole.DebugWriteLine("DiscJuggler plugin", "discSize = {0}", discSize);
 
             byte[] volidB = new byte[descriptor[position]];
             position++;
             Array.Copy(descriptor, position, volidB, 0, volidB.Length);
-            position += volidB.Length;
+            position     += volidB.Length;
             string volid = Path.GetFileName(Encoding.Default.GetString(volidB));
             DicConsole.DebugWriteLine("DiscJuggler plugin", "volid = {0}", volid);
 
@@ -571,7 +576,7 @@ namespace DiscImageChef.DiscImages
             byte[] mcn = new byte[13];
             Array.Copy(descriptor, position, mcn, 0, 13);
             DicConsole.DebugWriteLine("DiscJuggler plugin", "mcn = {0}", StringHandlers.CToString(mcn));
-            position += 13;
+            position      += 13;
             uint mcnValid = BitConverter.ToUInt32(descriptor, position);
             DicConsole.DebugWriteLine("DiscJuggler plugin", "mcn_valid = {0}", mcnValid);
             position += 4;
@@ -594,27 +599,27 @@ namespace DiscImageChef.DiscImages
 
             if(imageInfo.MediaType == MediaType.CDROM)
             {
-                bool data = false;
-                bool mode2 = false;
+                bool data       = false;
+                bool mode2      = false;
                 bool firstaudio = false;
-                bool firstdata = false;
-                bool audio = false;
+                bool firstdata  = false;
+                bool audio      = false;
 
-                for(int i = 0; i < tracks.Count; i++)
+                for(int i = 0; i < Tracks.Count; i++)
                 {
                     // First track is audio
-                    firstaudio |= i == 0 && tracks[i].TrackType == TrackType.Audio;
+                    firstaudio |= i == 0 && Tracks[i].TrackType == TrackType.Audio;
 
                     // First track is data
-                    firstdata |= i == 0 && tracks[i].TrackType != TrackType.Audio;
+                    firstdata |= i == 0 && Tracks[i].TrackType != TrackType.Audio;
 
                     // Any non first track is data
-                    data |= i != 0 && tracks[i].TrackType != TrackType.Audio;
+                    data |= i != 0 && Tracks[i].TrackType != TrackType.Audio;
 
                     // Any non first track is audio
-                    audio |= i != 0 && tracks[i].TrackType == TrackType.Audio;
+                    audio |= i != 0 && Tracks[i].TrackType == TrackType.Audio;
 
-                    switch(tracks[i].TrackType)
+                    switch(Tracks[i].TrackType)
                     {
                         case TrackType.CdMode2Form1:
                         case TrackType.CdMode2Form2:
@@ -624,30 +629,24 @@ namespace DiscImageChef.DiscImages
                     }
                 }
 
-                if(!data && !firstdata) imageInfo.MediaType = MediaType.CDDA;
-                else if(firstaudio && data && sessions.Count > 1 && mode2) imageInfo.MediaType = MediaType.CDPLUS;
-                else if(firstdata && audio || mode2) imageInfo.MediaType = MediaType.CDROMXA;
-                else if(!audio) imageInfo.MediaType = MediaType.CDROM;
-                else imageInfo.MediaType = MediaType.CD;
+                if(!data           && !firstdata) imageInfo.MediaType = MediaType.CDDA;
+                else if(firstaudio && data && Sessions.Count > 1 && mode2)
+                    imageInfo.MediaType = MediaType.CDPLUS;
+                else if(firstdata && audio || mode2)
+                    imageInfo.MediaType = MediaType.CDROMXA;
+                else if(!audio)
+                    imageInfo.MediaType = MediaType.CDROM;
+                else
+                    imageInfo.MediaType = MediaType.CD;
             }
 
-            imageInfo.Application = "DiscJuggler";
-            imageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.Application          = "DiscJuggler";
+            imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
             return true;
-        }
-
-        static MediaType DecodeCdiMediumType(ushort type)
-        {
-            switch(type)
-            {
-                case 56: return MediaType.DVDROM;
-                case 152: return MediaType.CDROM;
-                default: return MediaType.Unknown;
-            }
         }
 
         public byte[] ReadDiskTag(MediaTagType tag)
@@ -689,9 +688,9 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
-                                                     from track in tracks
+                                                     from track in Tracks
                                                      where track.TrackSequence == kvp.Key
-                                                     where sectorAddress < track.TrackEndSector
+                                                     where sectorAddress       < track.TrackEndSector
                                                      select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
@@ -701,9 +700,11 @@ namespace DiscImageChef.DiscImages
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap
-                .Where(kvp => sectorAddress >= kvp.Value)
-                .Where(kvp => tracks.Where(track => track.TrackSequence == kvp.Key)
-                                    .Any(track => sectorAddress < track.TrackEndSector)))
+                                                    .Where(kvp => sectorAddress >= kvp.Value)
+                                                    .Where(kvp => Tracks
+                                                                 .Where(track => track.TrackSequence == kvp.Key)
+                                                                 .Any(track => sectorAddress         <
+                                                                               track.TrackEndSector)))
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -713,7 +714,7 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track))
+            foreach(Track linqTrack in Tracks.Where(linqTrack => linqTrack.TrackSequence == track))
             {
                 dicTrack = linqTrack;
                 break;
@@ -735,37 +736,39 @@ namespace DiscImageChef.DiscImages
                 case TrackType.Audio:
                 {
                     sectorOffset = 0;
-                    sectorSize = 2352;
-                    sectorSkip = 0;
+                    sectorSize   = 2352;
+                    sectorSkip   = 0;
                     break;
                 }
                 case TrackType.CdMode1:
                     if(dicTrack.TrackRawBytesPerSector == 2352)
                     {
                         sectorOffset = 16;
-                        sectorSize = 2048;
-                        sectorSkip = 288;
+                        sectorSize   = 2048;
+                        sectorSkip   = 288;
                     }
                     else
                     {
                         sectorOffset = 0;
-                        sectorSize = 2048;
-                        sectorSkip = 0;
+                        sectorSize   = 2048;
+                        sectorSkip   = 0;
                     }
+
                     break;
                 case TrackType.CdMode2Formless:
                     if(dicTrack.TrackRawBytesPerSector == 2352)
                     {
                         sectorOffset = 16;
-                        sectorSize = 2336;
-                        sectorSkip = 0;
+                        sectorSize   = 2336;
+                        sectorSkip   = 0;
                     }
                     else
                     {
                         sectorOffset = 0;
-                        sectorSize = 2336;
-                        sectorSkip = 0;
+                        sectorSize   = 2336;
+                        sectorSkip   = 0;
                     }
+
                     break;
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
@@ -806,7 +809,7 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track))
+            foreach(Track linqTrack in Tracks.Where(linqTrack => linqTrack.TrackSequence == track))
             {
                 dicTrack = linqTrack;
                 break;
@@ -835,7 +838,7 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdTrackFlags:
                     if(trackFlags.TryGetValue(track, out byte flag)) return new[] {flag};
 
-                    throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                    throw new ArgumentException("Unsupported tag requested",      nameof(tag));
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
@@ -854,15 +857,15 @@ namespace DiscImageChef.DiscImages
                         case SectorTagType.CdSectorSync:
                         {
                             sectorOffset = 0;
-                            sectorSize = 12;
-                            sectorSkip = 2340;
+                            sectorSize   = 12;
+                            sectorSkip   = 2340;
                             break;
                         }
                         case SectorTagType.CdSectorHeader:
                         {
                             sectorOffset = 12;
-                            sectorSize = 4;
-                            sectorSkip = 2336;
+                            sectorSize   = 4;
+                            sectorSkip   = 2336;
                             break;
                         }
                         case SectorTagType.CdSectorSubHeader:
@@ -870,29 +873,29 @@ namespace DiscImageChef.DiscImages
                         case SectorTagType.CdSectorEcc:
                         {
                             sectorOffset = 2076;
-                            sectorSize = 276;
-                            sectorSkip = 0;
+                            sectorSize   = 276;
+                            sectorSkip   = 0;
                             break;
                         }
                         case SectorTagType.CdSectorEccP:
                         {
                             sectorOffset = 2076;
-                            sectorSize = 172;
-                            sectorSkip = 104;
+                            sectorSize   = 172;
+                            sectorSkip   = 104;
                             break;
                         }
                         case SectorTagType.CdSectorEccQ:
                         {
                             sectorOffset = 2248;
-                            sectorSize = 104;
-                            sectorSkip = 0;
+                            sectorSize   = 104;
+                            sectorSkip   = 0;
                             break;
                         }
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2064;
-                            sectorSize = 4;
-                            sectorSkip = 284;
+                            sectorSize   = 4;
+                            sectorSkip   = 284;
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
@@ -906,8 +909,8 @@ namespace DiscImageChef.DiscImages
                             }
 
                             sectorOffset = 2352;
-                            sectorSize = 96;
-                            sectorSkip = 0;
+                            sectorSize   = 96;
+                            sectorSkip   = 0;
                             break;
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
@@ -929,15 +932,15 @@ namespace DiscImageChef.DiscImages
                         case SectorTagType.CdSectorSubHeader:
                         {
                             sectorOffset = 0;
-                            sectorSize = 8;
-                            sectorSkip = 2328;
+                            sectorSize   = 8;
+                            sectorSkip   = 2328;
                             break;
                         }
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2332;
-                            sectorSize = 4;
-                            sectorSkip = 0;
+                            sectorSize   = 4;
+                            sectorSkip   = 0;
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
@@ -951,8 +954,8 @@ namespace DiscImageChef.DiscImages
                             }
 
                             sectorOffset = 2352;
-                            sectorSize = 96;
-                            sectorSkip = 0;
+                            sectorSize   = 96;
+                            sectorSkip   = 0;
                             break;
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
@@ -974,8 +977,8 @@ namespace DiscImageChef.DiscImages
                             }
 
                             sectorOffset = 2352;
-                            sectorSize = 96;
-                            sectorSkip = 0;
+                            sectorSize   = 96;
+                            sectorSkip   = 0;
                             break;
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
@@ -1031,9 +1034,9 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
-                                                     from track in tracks
-                                                     where track.TrackSequence == kvp.Key
-                                                     where sectorAddress - kvp.Value <
+                                                     from track in Tracks
+                                                     where track.TrackSequence              == kvp.Key
+                                                     where sectorAddress        - kvp.Value <
                                                            track.TrackEndSector - track.TrackStartSector
                                                      select kvp)
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
@@ -1045,7 +1048,7 @@ namespace DiscImageChef.DiscImages
         {
             Track dicTrack = new Track {TrackSequence = 0};
 
-            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track))
+            foreach(Track linqTrack in Tracks.Where(linqTrack => linqTrack.TrackSequence == track))
             {
                 dicTrack = linqTrack;
                 break;
@@ -1094,14 +1097,14 @@ namespace DiscImageChef.DiscImages
 
         public List<Track> GetSessionTracks(Session session)
         {
-            if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
+            if(Sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
         public List<Track> GetSessionTracks(ushort session)
         {
-            return tracks.Where(track => track.TrackSession == session).ToList();
+            return Tracks.Where(track => track.TrackSession == session).ToList();
         }
 
         public bool? VerifySector(ulong sectorAddress)
@@ -1117,13 +1120,13 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
-            int bps = (int)(buffer.Length / length);
+            int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+            failingLbas   = new List<ulong>();
+            unknownLbas   = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1147,13 +1150,13 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
-            int bps = (int)(buffer.Length / length);
+            int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+            failingLbas   = new List<ulong>();
+            unknownLbas   = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1179,6 +1182,19 @@ namespace DiscImageChef.DiscImages
         public bool? VerifyMediaImage()
         {
             return null;
+        }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
+        static MediaType DecodeCdiMediumType(ushort type)
+        {
+            switch(type)
+            {
+                case 56:  return MediaType.DVDROM;
+                case 152: return MediaType.CDROM;
+                default:  return MediaType.Unknown;
+            }
         }
     }
 }

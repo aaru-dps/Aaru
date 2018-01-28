@@ -48,13 +48,13 @@ namespace DiscImageChef.Commands
     {
         internal static void DoSidecar(CreateSidecarOptions options)
         {
-            Sidecar.InitProgressEvent += Progress.InitProgress;
-            Sidecar.UpdateProgressEvent += Progress.UpdateProgress;
-            Sidecar.EndProgressEvent += Progress.EndProgress;
-            Sidecar.InitProgressEvent2 += Progress.InitProgress2;
+            Sidecar.InitProgressEvent    += Progress.InitProgress;
+            Sidecar.UpdateProgressEvent  += Progress.UpdateProgress;
+            Sidecar.EndProgressEvent     += Progress.EndProgress;
+            Sidecar.InitProgressEvent2   += Progress.InitProgress2;
             Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
-            Sidecar.EndProgressEvent2 += Progress.EndProgress2;
-            Sidecar.UpdateStatusEvent += Progress.UpdateStatus;
+            Sidecar.EndProgressEvent2    += Progress.EndProgress2;
+            Sidecar.UpdateStatusEvent    += Progress.UpdateStatus;
 
             Encoding encoding = null;
 
@@ -79,7 +79,7 @@ namespace DiscImageChef.Commands
                 }
 
                 FiltersList filtersList = new FiltersList();
-                IFilter inputFilter = filtersList.GetFilter(options.InputFile);
+                IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
 
                 if(inputFilter == null)
                 {
@@ -123,8 +123,7 @@ namespace DiscImageChef.Commands
                     Core.Statistics.AddMediaFormat(imageFormat.Format);
                     Core.Statistics.AddFilter(inputFilter.Name);
 
-                    CICMMetadataType sidecar =
-                        Sidecar.Create(imageFormat, options.InputFile, inputFilter.Id, encoding);
+                    CICMMetadataType sidecar = Sidecar.Create(imageFormat, options.InputFile, inputFilter.Id, encoding);
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 
@@ -153,9 +152,9 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-                string[] contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
-                List<string> files = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0)
-                                             .ToList();
+                string[]     contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
+                List<string> files    = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0)
+                                                .ToList();
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
@@ -175,7 +174,8 @@ namespace DiscImageChef.Commands
 
                 Core.Statistics.AddCommand("create-sidecar");
             }
-            else DicConsole.ErrorWriteLine("The specified input file cannot be found.");
+            else
+                DicConsole.ErrorWriteLine("The specified input file cannot be found.");
         }
     }
 }

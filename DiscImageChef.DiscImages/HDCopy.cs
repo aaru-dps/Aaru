@@ -70,6 +70,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -128,8 +129,8 @@ namespace DiscImageChef.DiscImages
         public string Name => "HD-Copy disk image";
         public Guid   Id   => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
 
-        public string          Format => "HD-Copy image";
-        public List<Partition> Partitions  =>
+        public string          Format     => "HD-Copy image";
+        public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public List<Track> Tracks =>
@@ -375,6 +376,9 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         void ReadTrackIntoCache(Stream stream, int tracknum)
         {

@@ -40,6 +40,7 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 
 #pragma warning disable 414
 #pragma warning disable 169
@@ -1623,6 +1624,9 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         static MediaType NeroMediaTypeToMediaType(NeroMediaTypes type)
         {

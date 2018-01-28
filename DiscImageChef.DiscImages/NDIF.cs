@@ -41,6 +41,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Compression;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Schemas;
 using SharpCompress.Compressors.ADC;
 using Version = Resources.Version;
 
@@ -61,34 +62,34 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         const short NDIF_RESOURCEID = 128;
 
-        const byte CHUNK_TYPE_NOCOPY = 0;
-        const byte CHUNK_TYPE_COPY = 2;
+        const byte CHUNK_TYPE_NOCOPY  = 0;
+        const byte CHUNK_TYPE_COPY    = 2;
         const byte CHUNK_TYPE_KENCODE = 0x80;
-        const byte CHUNK_TYPE_RLE = 0x81;
-        const byte CHUNK_TYPE_LZH = 0x82;
-        const byte CHUNK_TYPE_ADC = 0x83;
+        const byte CHUNK_TYPE_RLE     = 0x81;
+        const byte CHUNK_TYPE_LZH     = 0x82;
+        const byte CHUNK_TYPE_ADC     = 0x83;
         /// <summary>
         ///     Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using
         /// </summary>
         const byte CHUNK_TYPE_STUFFIT = 0xF0;
-        const byte CHUNK_TYPE_END = 0xFF;
+        const byte CHUNK_TYPE_END     = 0xFF;
 
         const byte CHUNK_TYPE_COMPRESSED_MASK = 0x80;
 
-        const short DRIVER_OSX = -1;
-        const short DRIVER_HFS = 0;
-        const short DRIVER_PRODOS = 256;
-        const short DRIVER_DOS = 18771;
-        const uint MAX_CACHE_SIZE = 16777216;
-        const uint SECTOR_SIZE = 512;
-        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
-        uint buffersize;
-        Dictionary<ulong, byte[]> chunkCache;
+        const short                   DRIVER_OSX         = -1;
+        const short                   DRIVER_HFS         = 0;
+        const short                   DRIVER_PRODOS      = 256;
+        const short                   DRIVER_DOS         = 18771;
+        const uint                    MAX_CACHE_SIZE     = 16777216;
+        const uint                    SECTOR_SIZE        = 512;
+        const uint                    MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
+        uint                          buffersize;
+        Dictionary<ulong, byte[]>     chunkCache;
         Dictionary<ulong, BlockChunk> chunks;
-        uint currentChunkCacheSize;
+        uint                          currentChunkCacheSize;
 
         ChunkHeader header;
-        ImageInfo imageInfo;
+        ImageInfo   imageInfo;
 
         Stream imageStream;
 
@@ -98,25 +99,25 @@ namespace DiscImageChef.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }
@@ -124,7 +125,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info => imageInfo;
 
         public string Name => "Apple New Disk Image Format";
-        public Guid Id => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
+        public Guid   Id   => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
 
         public string Format => "Apple New Disk Image Format";
 
@@ -160,8 +161,8 @@ namespace DiscImageChef.DiscImages
             if(!imageFilter.HasResourceFork() || imageFilter.GetResourceForkLength() == 0) return false;
 
             ResourceFork rsrcFork;
-            Resource rsrc;
-            short[] bcems;
+            Resource     rsrc;
+            short[]      bcems;
 
             try
             {
@@ -183,26 +184,26 @@ namespace DiscImageChef.DiscImages
 
                 header = BigEndianMarshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
 
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}", header.version);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}",   header.version);
                 DicConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
                 DicConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}",
                                           StringHandlers.PascalToString(header.name,
                                                                         Encoding.GetEncoding("macintosh")));
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", header.sectors);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}",            header.sectors);
                 DicConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}", header.dataOffset);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}", header.crc);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}", header.segmented);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}", header.p1);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}", header.p2);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}", header.unknown[0]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}", header.unknown[1]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}", header.unknown[2]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}", header.unknown[3]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}", header.unknown[4]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}", header.encrypted);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}", header.hash);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}", header.chunks);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}",         header.dataOffset);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}",           header.crc);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}",          header.segmented);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}",            header.p1);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}",            header.p2);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}",    header.unknown[0]);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}",    header.unknown[1]);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}",    header.unknown[2]);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}",    header.unknown[3]);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}",    header.unknown[4]);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}",          header.encrypted);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}",          header.hash);
+                DicConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}",             header.chunks);
 
                 // Block chunks and headers
                 chunks = new Dictionary<ulong, BlockChunk>();
@@ -213,18 +214,18 @@ namespace DiscImageChef.DiscImages
                 {
                     // Obsolete read-only NDIF only prepended the header and then put the image without any kind of block references.
                     // So let's falsify a block chunk
-                    BlockChunk bChnk = new BlockChunk();
-                    byte[] sector = new byte[4];
+                    BlockChunk bChnk  = new BlockChunk();
+                    byte[]     sector = new byte[4];
                     Array.Copy(bcem, 128 + 0 + i * 12, sector, 1, 3);
                     bChnk.sector = BigEndianBitConverter.ToUInt32(sector, 0);
-                    bChnk.type = bcem[128 + 3 + i * 12];
+                    bChnk.type   = bcem[128                                 + 3 + i * 12];
                     bChnk.offset = BigEndianBitConverter.ToUInt32(bcem, 128 + 4 + i * 12);
                     bChnk.length = BigEndianBitConverter.ToUInt32(bcem, 128 + 8 + i * 12);
 
                     DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X2}", i, bChnk.type);
-                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].sector = {1}", i, bChnk.sector);
-                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
-                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
+                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].sector = {1}",    i, bChnk.sector);
+                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
+                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
 
                     if(bChnk.type == CHUNK_TYPE_END) break;
 
@@ -245,10 +246,9 @@ namespace DiscImageChef.DiscImages
                     }
 
                     // TODO: Handle compressed chunks
-                    if(bChnk.type > CHUNK_TYPE_COPY && bChnk.type < CHUNK_TYPE_KENCODE ||
-                       bChnk.type > CHUNK_TYPE_ADC && bChnk.type < CHUNK_TYPE_STUFFIT ||
-                       bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END ||
-                       bChnk.type == 1)
+                    if(bChnk.type > CHUNK_TYPE_COPY    && bChnk.type < CHUNK_TYPE_KENCODE ||
+                       bChnk.type > CHUNK_TYPE_ADC     && bChnk.type < CHUNK_TYPE_STUFFIT ||
+                       bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END     || bChnk.type == 1)
                         throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
 
                     chunks.Add(bChnk.sector, bChnk);
@@ -290,12 +290,12 @@ namespace DiscImageChef.DiscImages
                     Version version = new Version(vers);
 
                     string release = null;
-                    string dev = null;
-                    string pre = null;
+                    string dev     = null;
+                    string pre     = null;
 
                     string major = $"{version.MajorVersion}";
                     string minor = $".{version.MinorVersion / 10}";
-                    if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
+                    if(version.MinorVersion                 % 10 > 0) release = $".{version.MinorVersion % 10}";
                     switch(version.DevStage)
                     {
                         case Version.DevelopmentStage.Alpha:
@@ -314,58 +314,60 @@ namespace DiscImageChef.DiscImages
                     if(dev != null) pre = $"{version.PreReleaseVersion}";
 
                     imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                    imageInfo.Application = version.VersionString;
-                    imageInfo.Comments = version.VersionMessage;
+                    imageInfo.Application        = version.VersionString;
+                    imageInfo.Comments           = version.VersionMessage;
 
-                    if(version.MajorVersion == 3) imageInfo.Application = "ShrinkWrap™";
-                    else if(version.MajorVersion == 6) imageInfo.Application = "DiskCopy";
+                    if(version.MajorVersion      == 3) imageInfo.Application = "ShrinkWrap™";
+                    else if(version.MajorVersion == 6)
+                        imageInfo.Application = "DiskCopy";
                 }
             }
 
             DicConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", imageInfo.Application,
                                       imageInfo.ApplicationVersion);
 
-            sectorCache = new Dictionary<ulong, byte[]>();
-            chunkCache = new Dictionary<ulong, byte[]>();
+            sectorCache           = new Dictionary<ulong, byte[]>();
+            chunkCache            = new Dictionary<ulong, byte[]>();
             currentChunkCacheSize = 0;
-            imageStream = imageFilter.GetDataForkStream();
-            buffersize = header.maxSectorsPerChunk * SECTOR_SIZE;
+            imageStream           = imageFilter.GetDataForkStream();
+            buffersize            = header.maxSectorsPerChunk * SECTOR_SIZE;
 
-            imageInfo.CreationTime = imageFilter.GetCreationTime();
+            imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle = StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh"));
-            imageInfo.SectorSize = SECTOR_SIZE;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.ImageSize = imageInfo.Sectors * SECTOR_SIZE;
+            imageInfo.MediaTitle           =
+                StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh"));
+            imageInfo.SectorSize         = SECTOR_SIZE;
+            imageInfo.XmlMediaType       = XmlMediaType.BlockMedia;
+            imageInfo.ImageSize          = imageInfo.Sectors * SECTOR_SIZE;
             imageInfo.ApplicationVersion = "6";
-            imageInfo.Application = "Apple DiskCopy";
+            imageInfo.Application        = "Apple DiskCopy";
 
             switch(imageInfo.MediaType)
             {
                 case MediaType.AppleSonyDS:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 10;
                     break;
                 case MediaType.DOS_35_DS_DD_9:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_35_HD:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 18;
                     break;
                 case MediaType.DMF:
-                    imageInfo.Cylinders = 80;
-                    imageInfo.Heads = 2;
+                    imageInfo.Cylinders       = 80;
+                    imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 21;
                     break;
                 default:
-                    imageInfo.MediaType = MediaType.GENERIC_HDD;
-                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / 16 / 63);
-                    imageInfo.Heads = 16;
+                    imageInfo.MediaType       = MediaType.GENERIC_HDD;
+                    imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
+                    imageInfo.Heads           = 16;
                     imageInfo.SectorsPerTrack = 63;
                     break;
             }
@@ -381,14 +383,14 @@ namespace DiscImageChef.DiscImages
 
             if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
-            BlockChunk currentChunk = new BlockChunk();
-            bool chunkFound = false;
-            ulong chunkStartSector = 0;
+            BlockChunk currentChunk     = new BlockChunk();
+            bool       chunkFound       = false;
+            ulong      chunkStartSector = 0;
 
             foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key))
             {
-                currentChunk = kvp.Value;
-                chunkFound = true;
+                currentChunk     = kvp.Value;
+                chunkFound       = true;
                 chunkStartSector = kvp.Key;
             }
 
@@ -410,7 +412,7 @@ namespace DiscImageChef.DiscImages
                     imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
                     imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
                     MemoryStream cmpMs = new MemoryStream(cmpBuffer);
-                    int realSize = 0;
+                    int          realSize;
 
                     switch(currentChunk.type)
                     {
@@ -585,7 +587,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                   List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -595,7 +597,7 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                            out List<ulong> unknownLbas)
+                                   out                                               List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -604,6 +606,9 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ChunkHeader
@@ -619,7 +624,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Disk image name, Str63 (Pascal string)
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] name;
             /// <summary>
             ///     Sectors in image
             /// </summary>
@@ -651,7 +657,8 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Unknown, spare?
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] unknown;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public uint[] unknown;
             /// <summary>
             ///     Set to 1 by ShrinkWrap if image is encrypted
             /// </summary>
