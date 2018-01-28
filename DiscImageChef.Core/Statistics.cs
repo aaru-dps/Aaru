@@ -216,7 +216,7 @@ namespace DiscImageChef.Core
                         System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
                         #else
                     DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
-                        #endif
+                                                #endif
 
                         FileStream    fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
                         XmlSerializer xs = new XmlSerializer(stats.GetType());
@@ -258,7 +258,7 @@ namespace DiscImageChef.Core
                         throw;
                         #else
                         continue;
-                        #endif
+                                                #endif
                     }
 
                 submitStatsLock = false;
@@ -359,6 +359,10 @@ namespace DiscImageChef.Core
                 case "convert-image":
                     AllStats.Commands.ConvertImage++;
                     CurrentStats.Commands.ConvertImage++;
+                    break;
+                case "image-info":
+                    AllStats.Commands.ImageInfo++;
+                    CurrentStats.Commands.ImageInfo++;
                     break;
             }
         }

@@ -67,11 +67,11 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Analyze command", "--drive-model={0}",        options.DriveModel);
             DicConsole.DebugWriteLine("Analyze command", "--drive-serial={0}",       options.DriveSerialNumber);
             DicConsole.DebugWriteLine("Analyze command", "--drive-revision={0}",     options.DriveFirmwareRevision);
-            DicConsole.DebugWriteLine("Analyze command", "--options={0}", options.Options);
+            DicConsole.DebugWriteLine("Analyze command", "--options={0}",            options.Options);
 
             Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
             DicConsole.DebugWriteLine("Analyze command", "Parsed options:");
-            foreach(KeyValuePair<string,string> parsedOption in parsedOptions)
+            foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
                 DicConsole.DebugWriteLine("Analyze command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
             if(options.Count == 0)
@@ -212,7 +212,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            ImageInfo metadata = new ImageInfo
+            DiscImages.ImageInfo metadata = new DiscImages.ImageInfo
             {
                 Application           = "DiscImageChef",
                 ApplicationVersion    = Version.GetVersion(),

@@ -47,9 +47,9 @@ namespace DiscImageChef.Commands
     {
         internal static void DoDeviceInfo(DeviceInfoOptions options)
         {
-            DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
+            DicConsole.DebugWriteLine("Device-Info command", "--debug={0}",         options.Debug);
+            DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}",       options.Verbose);
+            DicConsole.DebugWriteLine("Device-Info command", "--device={0}",        options.DevicePath);
             DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", options.OutputPrefix);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
@@ -71,11 +71,11 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("USB device");
                 if(dev.UsbDescriptors != null)
                     DicConsole.WriteLine("USB descriptor is {0} bytes", dev.UsbDescriptors.Length);
-                DicConsole.WriteLine("USB Vendor ID: {0:X4}", dev.UsbVendorId);
-                DicConsole.WriteLine("USB Product ID: {0:X4}", dev.UsbProductId);
-                DicConsole.WriteLine("USB Manufacturer: {0}", dev.UsbManufacturerString);
-                DicConsole.WriteLine("USB Product: {0}", dev.UsbProductString);
-                DicConsole.WriteLine("USB Serial number: {0}", dev.UsbSerialString);
+                DicConsole.WriteLine("USB Vendor ID: {0:X4}",           dev.UsbVendorId);
+                DicConsole.WriteLine("USB Product ID: {0:X4}",          dev.UsbProductId);
+                DicConsole.WriteLine("USB Manufacturer: {0}",           dev.UsbManufacturerString);
+                DicConsole.WriteLine("USB Product: {0}",                dev.UsbProductString);
+                DicConsole.WriteLine("USB Serial number: {0}",          dev.UsbSerialString);
                 DicConsole.WriteLine();
             }
 
@@ -83,10 +83,10 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("FireWire device");
                 DicConsole.WriteLine("FireWire Vendor ID: {0:X6}", dev.FireWireVendor);
-                DicConsole.WriteLine("FireWire Model ID: {0:X6}", dev.FireWireModel);
+                DicConsole.WriteLine("FireWire Model ID: {0:X6}",  dev.FireWireModel);
                 DicConsole.WriteLine("FireWire Manufacturer: {0}", dev.FireWireVendorName);
-                DicConsole.WriteLine("FireWire Model: {0}", dev.FireWireModelName);
-                DicConsole.WriteLine("FireWire GUID: {0:X16}", dev.FireWireGuid);
+                DicConsole.WriteLine("FireWire Model: {0}",        dev.FireWireModelName);
+                DicConsole.WriteLine("FireWire GUID: {0:X16}",     dev.FireWireGuid);
                 DicConsole.WriteLine();
             }
 
@@ -165,7 +165,7 @@ namespace DiscImageChef.Commands
                     if(sense)
                     {
                         DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
+                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}",  errorRegisters.Error);
                         DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
                                                   errorRegisters.SectorCount);
                         DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
@@ -229,7 +229,7 @@ namespace DiscImageChef.Commands
                     if(sense)
                     {
                         DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
+                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}",  errorRegisters.Error);
                         DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
                                                   errorRegisters.SectorCount);
                         DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
@@ -426,7 +426,7 @@ namespace DiscImageChef.Commands
                                 }
                                 else if(page == 0xC0 &&
                                         StringHandlers
-                                            .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                                         "quantum")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -439,7 +439,7 @@ namespace DiscImageChef.Commands
                                 }
                                 else if(page == 0xC0 &&
                                         StringHandlers
-                                            .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                                         "seagate")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -452,7 +452,7 @@ namespace DiscImageChef.Commands
                                 }
                                 else if(page == 0xC0 &&
                                         StringHandlers
-                                            .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                                         "ibm")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -465,7 +465,7 @@ namespace DiscImageChef.Commands
                                 }
                                 else if(page == 0xC1 &&
                                         StringHandlers
-                                            .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                                         "ibm")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -478,7 +478,7 @@ namespace DiscImageChef.Commands
                                 }
                                 else if((page == 0xC0 || page == 0xC1) &&
                                         StringHandlers
-                                            .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                                         "certance")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -489,10 +489,11 @@ namespace DiscImageChef.Commands
                                                      $"_scsi_evpd_{page:X2}h.bin", $"SCSI INQUIRY EVPD {page:X2}h",
                                                      inqBuf);
                                 }
-                                else if(
-                                    (page == 0xC2 || page == 0xC3 || page == 0xC4 || page == 0xC5 || page == 0xC6) &&
-                                    StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant()
-                                                  .Trim() == "certance")
+                                else if((page == 0xC2 || page == 0xC3 || page == 0xC4 || page == 0xC5 ||
+                                         page == 0xC6) &&
+                                        StringHandlers
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                                        "certance")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                     if(sense) continue;
@@ -505,8 +506,7 @@ namespace DiscImageChef.Commands
                                 else if((page == 0xC0 || page == 0xC1 || page == 0xC2 || page == 0xC3 || page == 0xC4 ||
                                          page == 0xC5) &&
                                         StringHandlers
-                                            .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                                        "hp")
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "hp")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                     if(sense) continue;
@@ -518,7 +518,7 @@ namespace DiscImageChef.Commands
                                 }
                                 else if(page == 0xDF &&
                                         StringHandlers
-                                            .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                                           .CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                                         "certance")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -544,7 +544,7 @@ namespace DiscImageChef.Commands
                                 }
                     }
 
-                    Modes.DecodedMode? decMode = null;
+                    Modes.DecodedMode?    decMode = null;
                     PeripheralDeviceTypes devType = (PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
 
                     sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true,
@@ -572,300 +572,7 @@ namespace DiscImageChef.Commands
                                          "SCSI MODE SENSE", modeBuf);
 
                     if(decMode.HasValue)
-                    {
-                        DicConsole.WriteLine(Modes.PrettifyModeHeader(decMode.Value.Header, devType));
-
-                        if(decMode.Value.Pages != null)
-                            foreach(Modes.ModePage page in decMode.Value.Pages)
-                                //DicConsole.WriteLine("Page {0:X2}h subpage {1:X2}h is {2} bytes long", page.Page, page.Subpage, page.PageResponse.Length);
-                                switch(page.Page)
-                                {
-                                    case 0x00:
-                                    {
-                                        if(devType == PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_00_SFF(page.PageResponse));
-                                        else
-                                        {
-                                            if(page.Subpage != 0)
-                                                DicConsole
-                                                    .WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h",
-                                                               page.Page, page.Subpage);
-                                            else
-                                                DicConsole.WriteLine("Found unknown vendor mode page {0:X2}h",
-                                                                     page.Page);
-                                        }
-                                        break;
-                                    }
-                                    case 0x01:
-                                    {
-                                        if(page.Subpage == 0)
-                                            if(devType == PeripheralDeviceTypes.MultiMediaDevice)
-                                                DicConsole.WriteLine(Modes.PrettifyModePage_01_MMC(page.PageResponse));
-                                            else DicConsole.WriteLine(Modes.PrettifyModePage_01(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x02:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_02(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x03:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_03(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x04:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_04(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x05:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_05(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x06:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_06(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x07:
-                                    {
-                                        if(page.Subpage == 0)
-                                            if(devType == PeripheralDeviceTypes.MultiMediaDevice)
-                                                DicConsole.WriteLine(Modes.PrettifyModePage_07_MMC(page.PageResponse));
-                                            else DicConsole.WriteLine(Modes.PrettifyModePage_07(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x08:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_08(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x0A:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_0A(page.PageResponse));
-                                        else if(page.Subpage == 1)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_0A_S01(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x0B:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_0B(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x0D:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_0D(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x0E:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_0E(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x0F:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_0F(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x10:
-                                    {
-                                        if(page.Subpage == 0)
-                                            if(devType == PeripheralDeviceTypes.SequentialAccess)
-                                                DicConsole.WriteLine(Modes.PrettifyModePage_10_SSC(page.PageResponse));
-                                            else DicConsole.WriteLine(Modes.PrettifyModePage_10(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x11:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_11(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x12:
-                                    case 0x13:
-                                    case 0x14:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_12_13_14(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x1A:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_1A(page.PageResponse));
-                                        else if(page.Subpage == 1)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_1A_S01(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x1B:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_1B(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x1C:
-                                    {
-                                        if(page.Subpage == 0)
-                                            if(devType == PeripheralDeviceTypes.MultiMediaDevice)
-                                                DicConsole.WriteLine(Modes.PrettifyModePage_1C_SFF(page.PageResponse));
-                                            else DicConsole.WriteLine(Modes.PrettifyModePage_1C(page.PageResponse));
-                                        else if(page.Subpage == 1)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_1C_S01(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x1D:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_1D(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x21:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "CERTANCE"
-                                        ) DicConsole.WriteLine(Modes.PrettifyCertanceModePage_21(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x22:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "CERTANCE"
-                                        ) DicConsole.WriteLine(Modes.PrettifyCertanceModePage_22(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x24:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "IBM")
-                                            DicConsole.WriteLine(Modes.PrettifyIBMModePage_24(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x2A:
-                                    {
-                                        if(page.Subpage == 0)
-                                            DicConsole.WriteLine(Modes.PrettifyModePage_2A(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x2F:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "IBM")
-                                            DicConsole.WriteLine(Modes.PrettifyIBMModePage_2F(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x30:
-                                    {
-                                        if(Modes.IsAppleModePage_30(page.PageResponse))
-                                            DicConsole.WriteLine("Drive identifies as Apple OEM drive");
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x3B:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
-                                            DicConsole.WriteLine(Modes.PrettifyHPModePage_3B(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x3C:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
-                                            DicConsole.WriteLine(Modes.PrettifyHPModePage_3C(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x3D:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "IBM")
-                                            DicConsole.WriteLine(Modes.PrettifyIBMModePage_3D(page.PageResponse));
-                                        else if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
-                                            DicConsole.WriteLine(Modes.PrettifyHPModePage_3D(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    case 0x3E:
-                                    {
-                                        if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "FUJITSU")
-                                            DicConsole.WriteLine(Modes.PrettifyFujitsuModePage_3E(page.PageResponse));
-                                        else if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
-                                            DicConsole.WriteLine(Modes.PrettifyHPModePage_3E(page.PageResponse));
-                                        else goto default;
-
-                                        break;
-                                    }
-                                    default:
-                                    {
-                                        if(page.Subpage != 0)
-                                            DicConsole.WriteLine("Found unknown mode page {0:X2}h subpage {1:X2}h",
-                                                                 page.Page, page.Subpage);
-                                        else DicConsole.WriteLine("Found unknown mode page {0:X2}h", page.Page);
-                                        break;
-                                    }
-                                }
-                    }
+                        PrintScsiModePages.Print(decMode.Value, devType, inq.Value.VendorIdentification);
 
                     switch(devType)
                     {
@@ -1126,16 +833,16 @@ namespace DiscImageChef.Commands
                             #region Plextor
                             if(dev.Manufacturer == "PLEXTOR")
                             {
-                                bool plxtSense = true;
-                                bool plxtDvd = false;
-                                byte[] plxtBuf = null;
+                                bool   plxtSense = true;
+                                bool   plxtDvd   = false;
+                                byte[] plxtBuf   = null;
 
                                 switch(dev.Model)
                                 {
                                     case "DVDR   PX-708A":
                                     case "DVDR   PX-708A2":
                                     case "DVDR   PX-712A":
-                                        plxtDvd = true;
+                                        plxtDvd   = true;
                                         plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout,
                                                                           out _);
                                         break;
@@ -1174,39 +881,39 @@ namespace DiscImageChef.Commands
                                                      "PLEXTOR READ EEPROM", plxtBuf);
 
                                     ushort discs;
-                                    uint cdReadTime, cdWriteTime, dvdReadTime = 0, dvdWriteTime = 0;
+                                    uint   cdReadTime, cdWriteTime, dvdReadTime = 0, dvdWriteTime = 0;
 
                                     BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
                                     if(plxtDvd)
                                     {
-                                        discs = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
-                                        cdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0122);
-                                        cdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0126);
-                                        dvdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012A);
+                                        discs        = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
+                                        cdReadTime   = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0122);
+                                        cdWriteTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0126);
+                                        dvdReadTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012A);
                                         dvdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012E);
                                     }
                                     else
                                     {
-                                        discs = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0078);
-                                        cdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x006C);
+                                        discs       = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0078);
+                                        cdReadTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x006C);
                                         cdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x007A);
                                     }
 
                                     DicConsole.WriteLine("Drive has loaded a total of {0} discs", discs);
                                     DicConsole
-                                        .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
-                                                   cdReadTime / 3600, cdReadTime / 60 % 60, cdReadTime % 60);
+                                       .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
+                                                  cdReadTime / 3600, cdReadTime / 60 % 60, cdReadTime % 60);
                                     DicConsole
-                                        .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
-                                                   cdWriteTime / 3600, cdWriteTime / 60 % 60, cdWriteTime % 60);
+                                       .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
+                                                  cdWriteTime / 3600, cdWriteTime / 60 % 60, cdWriteTime % 60);
                                     if(plxtDvd)
                                     {
                                         DicConsole
-                                            .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
-                                                       dvdReadTime / 3600, dvdReadTime / 60 % 60, dvdReadTime % 60);
+                                           .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
+                                                      dvdReadTime / 3600, dvdReadTime / 60 % 60, dvdReadTime % 60);
                                         DicConsole
-                                            .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
-                                                       dvdWriteTime / 3600, dvdWriteTime / 60 % 60, dvdWriteTime % 60);
+                                           .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
+                                                      dvdWriteTime / 3600, dvdWriteTime / 60 % 60, dvdWriteTime % 60);
                                     }
                                 }
 
@@ -1231,12 +938,12 @@ namespace DiscImageChef.Commands
                                         {
                                             if(plxtPwrRecSelected > 0)
                                                 DicConsole
-                                                    .WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
-                                                               plxtPwrRecSelected, plxtPwrRecSelected / 177);
+                                                   .WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
+                                                              plxtPwrRecSelected, plxtPwrRecSelected / 177);
                                             if(plxtPwrRecMax > 0)
                                                 DicConsole
-                                                    .WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
-                                                               plxtPwrRecMax, plxtPwrRecMax / 177);
+                                                   .WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
+                                                              plxtPwrRecMax, plxtPwrRecMax / 177);
                                             if(plxtPwrRecLast > 0)
                                                 DicConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)",
                                                                      plxtPwrRecLast, plxtPwrRecLast / 177);
@@ -1343,6 +1050,7 @@ namespace DiscImageChef.Commands
                                     if(krFeatures.HasFlag(KreonFeatures.ErrorSkipping))
                                         DicConsole.WriteLine("\tCan skip read errors");
                                 }
+
                             break;
                         case PeripheralDeviceTypes.SequentialAccess:
 
@@ -1388,8 +1096,10 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("Medium types supported by device:");
                                     DicConsole.WriteLine(DensitySupport.PrettifyMediumType(meds));
                                 }
+
                                 DicConsole.WriteLine(DensitySupport.PrettifyMediumType(seqBuf));
                             }
+
                             break;
                     }
 
@@ -1407,6 +1117,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(mmcBuf));
                     }
+
                     sense = dev.ReadCsd(out mmcBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
@@ -1415,6 +1126,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(mmcBuf));
                     }
+
                     sense = dev.ReadOcr(out mmcBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
@@ -1423,6 +1135,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(mmcBuf));
                     }
+
                     sense = dev.ReadExtendedCsd(out mmcBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
@@ -1447,6 +1160,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital CID", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(sdBuf));
                     }
+
                     sense = dev.ReadCsd(out sdBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
@@ -1455,6 +1169,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital CSD", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(sdBuf));
                     }
+
                     sense = dev.ReadSdocr(out sdBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
@@ -1463,6 +1178,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital OCR", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(sdBuf));
                     }
+
                     sense = dev.ReadScr(out sdBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {

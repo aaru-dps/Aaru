@@ -75,6 +75,7 @@ namespace DiscImageChef.Metadata
         public long Entropy;
         public long ExtractFiles;
         public long Formats;
+        public long ImageInfo;
         public long ListDevices;
         public long ListEncodings;
         public long Ls;

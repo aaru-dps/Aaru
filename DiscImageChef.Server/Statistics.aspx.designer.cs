@@ -56,7 +56,9 @@ namespace DiscImageChef.Server {
 		
 		protected Label lblExtractFiles;
 		
-		protected Label lblFormats;
+	    protected Label lblFormats;
+		
+	    protected Label lblImageInfo;
 		
 		protected Label lblListDevices;
 		

@@ -51,13 +51,13 @@ namespace DiscImageChef.Server
     /// </summary>
     public partial class Statistics : Page
     {
-        List<DeviceItem> devices;
+        List<DeviceItem>     devices;
         List<NameValueStats> operatingSystems;
-        List<MediaItem> realMedia;
+        List<MediaItem>      realMedia;
 
-        Stats statistics;
+        Stats                statistics;
         List<NameValueStats> versions;
-        List<MediaItem> virtualMedia;
+        List<MediaItem>      virtualMedia;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -68,19 +68,19 @@ namespace DiscImageChef.Server
                 if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
                                              "Statistics", "Statistics.xml")))
                 {
-#if DEBUG
+                    #if DEBUG
                     content.InnerHtml =
                         $"<b>Sorry, cannot load data file \"{Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml")}\"</b>";
-#else
+                    #else
                     content.InnerHtml = "<b>Sorry, cannot load data file</b>";
-#endif
+                    #endif
                     return;
                 }
 
                 statistics = new Stats();
 
                 XmlSerializer xs = new XmlSerializer(statistics.GetType());
-                FileStream fs =
+                FileStream    fs =
                     WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
                                 FileMode.Open, FileAccess.Read, FileShare.Read);
                 statistics = (Stats)xs.Deserialize(fs);
@@ -117,26 +117,27 @@ namespace DiscImageChef.Server
 
                 if(statistics.Commands != null)
                 {
-                    lblAnalyze.Text = statistics.Commands.Analyze.ToString();
-                    lblCompare.Text = statistics.Commands.Compare.ToString();
-                    lblChecksum.Text = statistics.Commands.Checksum.ToString();
-                    lblEntropy.Text = statistics.Commands.Entropy.ToString();
-                    lblVerify.Text = statistics.Commands.Verify.ToString();
-                    lblPrintHex.Text = statistics.Commands.PrintHex.ToString();
-                    lblDecode.Text = statistics.Commands.Decode.ToString();
-                    lblDeviceInfo.Text = statistics.Commands.DeviceInfo.ToString();
-                    lblMediaInfo.Text = statistics.Commands.MediaInfo.ToString();
-                    lblMediaScan.Text = statistics.Commands.MediaScan.ToString();
-                    lblFormats.Text = statistics.Commands.Formats.ToString();
-                    lblBenchmark.Text = statistics.Commands.Benchmark.ToString();
+                    lblAnalyze.Text       = statistics.Commands.Analyze.ToString();
+                    lblCompare.Text       = statistics.Commands.Compare.ToString();
+                    lblChecksum.Text      = statistics.Commands.Checksum.ToString();
+                    lblEntropy.Text       = statistics.Commands.Entropy.ToString();
+                    lblVerify.Text        = statistics.Commands.Verify.ToString();
+                    lblPrintHex.Text      = statistics.Commands.PrintHex.ToString();
+                    lblDecode.Text        = statistics.Commands.Decode.ToString();
+                    lblDeviceInfo.Text    = statistics.Commands.DeviceInfo.ToString();
+                    lblMediaInfo.Text     = statistics.Commands.MediaInfo.ToString();
+                    lblMediaScan.Text     = statistics.Commands.MediaScan.ToString();
+                    lblFormats.Text       = statistics.Commands.Formats.ToString();
+                    lblBenchmark.Text     = statistics.Commands.Benchmark.ToString();
                     lblCreateSidecar.Text = statistics.Commands.CreateSidecar.ToString();
-                    lblDumpMedia.Text = statistics.Commands.DumpMedia.ToString();
-                    lblDeviceReport.Text = statistics.Commands.DeviceReport.ToString();
-                    lblLs.Text = statistics.Commands.Ls.ToString();
-                    lblExtractFiles.Text = statistics.Commands.ExtractFiles.ToString();
-                    lblListDevices.Text = statistics.Commands.ListDevices.ToString();
+                    lblDumpMedia.Text     = statistics.Commands.DumpMedia.ToString();
+                    lblDeviceReport.Text  = statistics.Commands.DeviceReport.ToString();
+                    lblLs.Text            = statistics.Commands.Ls.ToString();
+                    lblExtractFiles.Text  = statistics.Commands.ExtractFiles.ToString();
+                    lblListDevices.Text   = statistics.Commands.ListDevices.ToString();
                     lblListEncodings.Text = statistics.Commands.ListEncodings.ToString();
-                    lblConvertImage.Text = statistics.Commands.ConvertImage.ToString();
+                    lblConvertImage.Text  = statistics.Commands.ConvertImage.ToString();
+                    lblImageInfo.Text     = statistics.Commands.ImageInfo.ToString();
                 }
                 else divCommands.Visible = false;
 
@@ -170,16 +171,16 @@ namespace DiscImageChef.Server
 
                 if(statistics.Medias != null)
                 {
-                    realMedia = new List<MediaItem>();
+                    realMedia    = new List<MediaItem>();
                     virtualMedia = new List<MediaItem>();
                     foreach(MediaStats nvs in statistics.Medias)
                     {
                         MediaType
-                            .MediaTypeToString((CommonTypes.MediaType)Enum.Parse(typeof(CommonTypes.MediaType), nvs.type),
-                                               out string type, out string subtype);
+                           .MediaTypeToString((CommonTypes.MediaType)Enum.Parse(typeof(CommonTypes.MediaType), nvs.type),
+                                              out string type, out string subtype);
 
                         if(nvs.real) realMedia.Add(new MediaItem {Type = type, SubType = subtype, Count = nvs.Value});
-                        else virtualMedia.Add(new MediaItem {Type = type, SubType = subtype, Count = nvs.Value});
+                        else virtualMedia.Add(new MediaItem {Type      = type, SubType = subtype, Count = nvs.Value});
                     }
 
                     if(realMedia.Count > 0)
@@ -200,7 +201,7 @@ namespace DiscImageChef.Server
                 }
                 else
                 {
-                    divRealMedia.Visible = false;
+                    divRealMedia.Visible    = false;
                     divVirtualMedia.Visible = false;
                 }
 
@@ -212,29 +213,30 @@ namespace DiscImageChef.Server
                         string url;
                         string xmlFile;
                         if(!string.IsNullOrWhiteSpace(device.Manufacturer) &&
-                           !string.IsNullOrWhiteSpace(device.Model) && !string.IsNullOrWhiteSpace(device.Revision))
+                           !string.IsNullOrWhiteSpace(device.Model)        &&
+                           !string.IsNullOrWhiteSpace(device.Revision))
                         {
                             xmlFile = device.Manufacturer + "_" + device.Model + "_" + device.Revision + ".xml";
-                            url =
+                            url     =
                                 $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
                         }
                         else if(!string.IsNullOrWhiteSpace(device.Manufacturer) &&
                                 !string.IsNullOrWhiteSpace(device.Model))
                         {
                             xmlFile = device.Manufacturer + "_" + device.Model + ".xml";
-                            url =
+                            url     =
                                 $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}";
                         }
                         else if(!string.IsNullOrWhiteSpace(device.Model) && !string.IsNullOrWhiteSpace(device.Revision))
                         {
                             xmlFile = device.Model + "_" + device.Revision + ".xml";
-                            url =
+                            url     =
                                 $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
                         }
                         else
                         {
                             xmlFile = device.Model + ".xml";
-                            url = $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}";
+                            url     = $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}";
                         }
 
                         xmlFile = xmlFile.Replace('/', '_').Replace('\\', '_').Replace('?', '_');
@@ -244,10 +246,10 @@ namespace DiscImageChef.Server
                         devices.Add(new DeviceItem
                         {
                             Manufacturer = device.Manufacturer,
-                            Model = device.Model,
-                            Revision = device.Revision,
-                            Bus = device.Bus,
-                            ReportLink = url == null ? "No" : $"<a href=\"{url}\" target=\"_blank\">Yes</a>"
+                            Model        = device.Model,
+                            Revision     = device.Revision,
+                            Bus          = device.Bus,
+                            ReportLink   = url == null ? "No" : $"<a href=\"{url}\" target=\"_blank\">Yes</a>"
                         });
                     }
 
@@ -261,9 +263,9 @@ namespace DiscImageChef.Server
             catch(Exception)
             {
                 content.InnerHtml = "<b>Could not load statistics</b>";
-#if DEBUG
+                #if DEBUG
                 throw;
-#endif
+                #endif
             }
         }
 
@@ -289,18 +291,18 @@ namespace DiscImageChef.Server
 
         class MediaItem
         {
-            public string Type { get; set; }
+            public string Type    { get; set; }
             public string SubType { get; set; }
-            public long Count { get; set; }
+            public long   Count   { get; set; }
         }
 
         class DeviceItem
         {
             public string Manufacturer { get; set; }
-            public string Model { get; set; }
-            public string Revision { get; set; }
-            public string Bus { get; set; }
-            public string ReportLink { get; set; }
+            public string Model        { get; set; }
+            public string Revision     { get; set; }
+            public string Bus          { get; set; }
+            public string ReportLink   { get; set; }
         }
     }
 }

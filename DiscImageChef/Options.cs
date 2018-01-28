@@ -430,4 +430,12 @@ namespace DiscImageChef
             HelpText                    = "Comma separated name=value pairs of options to pass to output image plugin")]
         public string Options { get; set; }
     }
+
+    [Verb("image-info", HelpText =
+        "Opens a media image and shows information about the media it represents and metadata.")]
+    public class ImageInfoOptions : CommonOptions
+    {
+        [Option('i', "input", Required = true, HelpText = "Media image.")]
+        public string InputFile { get; set; }
+    }
 }

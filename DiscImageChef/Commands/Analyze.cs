@@ -51,6 +51,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Analyze command", "--input={0}", options.InputFile);
             DicConsole.DebugWriteLine("Analyze command", "--filesystems={0}", options.SearchForFilesystems);
             DicConsole.DebugWriteLine("Analyze command", "--partitions={0}", options.SearchForPartitions);
+            DicConsole.DebugWriteLine("Analyze command", "--encoding={0}", options.EncodingName);
 
             FiltersList filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(options.InputFile);
@@ -93,6 +94,7 @@ namespace DiscImageChef.Commands
                     DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                 imageFormat.Id);
                 else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                DicConsole.WriteLine();
 
                 try
                 {
@@ -103,12 +105,11 @@ namespace DiscImageChef.Commands
                         return;
                     }
 
-                    DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
-                    DicConsole.DebugWriteLine("Analyze command", "Image without headers is {0} bytes.",
-                                              imageFormat.Info.ImageSize);
-                    DicConsole.DebugWriteLine("Analyze command", "Image has {0} sectors.", imageFormat.Info.Sectors);
-                    DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.",
-                                              imageFormat.Info.MediaType);
+                    if(options.Verbose)
+                    {
+                        Core.ImageInfo.PrintImageInfo(imageFormat);
+                        DicConsole.WriteLine();
+                    }
 
                     Core.Statistics.AddMediaFormat(imageFormat.Format);
                     Core.Statistics.AddMedia(imageFormat.Info.MediaType, false);

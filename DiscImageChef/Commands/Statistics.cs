@@ -63,6 +63,9 @@ namespace DiscImageChef.Commands
                 if(Core.Statistics.AllStats.Commands.Compare > 0)
                     DicConsole.WriteLine("You have called the Compare command {0} times",
                                          Core.Statistics.AllStats.Commands.Compare);
+                if(Core.Statistics.AllStats.Commands.ConvertImage > 0)
+                    DicConsole.WriteLine("You have called the Convert-Image command {0} times",
+                                         Core.Statistics.AllStats.Commands.ConvertImage);
                 if(Core.Statistics.AllStats.Commands.CreateSidecar > 0)
                     DicConsole.WriteLine("You have called the Create-Sidecar command {0} times",
                                          Core.Statistics.AllStats.Commands.CreateSidecar);
@@ -84,6 +87,9 @@ namespace DiscImageChef.Commands
                 if(Core.Statistics.AllStats.Commands.Formats > 0)
                     DicConsole.WriteLine("You have called the Formats command {0} times",
                                          Core.Statistics.AllStats.Commands.Formats);
+                if(Core.Statistics.AllStats.Commands.ImageInfo > 0)
+                    DicConsole.WriteLine("You have called the Image-Info command {0} times",
+                                         Core.Statistics.AllStats.Commands.ImageInfo);
                 if(Core.Statistics.AllStats.Commands.MediaInfo > 0)
                     DicConsole.WriteLine("You have called the Media-Info command {0} times",
                                          Core.Statistics.AllStats.Commands.MediaInfo);
@@ -171,8 +177,8 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("=================");
                 foreach(DeviceStats ds in Core.Statistics.AllStats.Devices)
                     DicConsole
-                        .WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.",
-                                   ds.Model, ds.Manufacturer, ds.Revision, ds.Bus);
+                       .WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.",
+                                  ds.Model, ds.Manufacturer, ds.Revision, ds.Bus);
 
                 DicConsole.WriteLine();
                 thereAreStats = true;
@@ -196,7 +202,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("=====================");
                 DicConsole.WriteLine("Scanned a total of {0} sectors",
                                      Core.Statistics.AllStats.MediaScan.Sectors.Total);
-                DicConsole.WriteLine("{0} of them correctly", Core.Statistics.AllStats.MediaScan.Sectors.Correct);
+                DicConsole.WriteLine("{0} of them correctly",  Core.Statistics.AllStats.MediaScan.Sectors.Correct);
                 DicConsole.WriteLine("{0} of them had errors", Core.Statistics.AllStats.MediaScan.Sectors.Error);
                 DicConsole.WriteLine("{0} of them took less than 3 ms",
                                      Core.Statistics.AllStats.MediaScan.Times.LessThan3ms);

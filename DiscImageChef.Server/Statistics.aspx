@@ -52,7 +52,8 @@
 </head>
 <body id="body" runat="server">
 <h1 align="center">
-    Welcome to <i>
+    Welcome to
+    <i>
         <a href="http://github.com/claunia/discimagechef" target="_blank">DiscImageChef</a>
     </i> Server version <asp:Label id="lblVersion" runat="server"/>
 </h1>
@@ -64,7 +65,8 @@
             <ItemTemplate>
                 <tr>
                     <td>
-                        DiscImageChef has run on <i>
+                        DiscImageChef has run on
+                        <i>
                             <asp:Label runat="server" Text='<%# Eval("name") %>'/>
                         </i> <asp:Label runat="server" Text='<%# Eval("Value") %>'/> times.
                     </td>
@@ -80,7 +82,8 @@
             <ItemTemplate>
                 <tr>
                     <td>
-                        DiscImageChef version <i>
+                        DiscImageChef version
+                        <i>
                             <asp:Label runat="server" Text='<%# Eval("name") %>'/>
                         </i> has been used <asp:Label runat="server" Text='<%# Eval("Value") %>'/> times.
                     </td>
@@ -106,6 +109,7 @@
         <i>entropy</i> command has been run <asp:Label id="lblEntropy" runat="server"/> times<br/>
         <i>extract-files</i> command has been run <asp:Label id="lblExtractFiles" runat="server"/> times<br/>
         <i>formats</i> command has been run <asp:Label id="lblFormats" runat="server"/> times<br/>
+        <i>image-info</i> command has been run <asp:Label id="lblImageInfo" runat="server"/> times<br/>
         <i>list-devices</i> command has been run <asp:Label id="lblListDevices" runat="server"/> times<br/>
         <i>list-encodings</i> command has been run <asp:Label id="lblListEncodings" runat="server"/> times<br/>
         <i>ls</i> command has been run <asp:Label id="lblLs" runat="server"/> times<br/>

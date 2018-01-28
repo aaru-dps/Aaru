@@ -56,7 +56,7 @@ namespace DiscImageChef
                                           typeof(ConvertImageOptions), typeof(CreateSidecarOptions),
                                           typeof(DecodeOptions), typeof(DeviceInfoOptions), typeof(DeviceReportOptions),
                                           typeof(DumpMediaOptions), typeof(EntropyOptions), typeof(ExtractFilesOptions),
-                                          typeof(FormatsOptions), typeof(ListDevicesOptions),
+                                          typeof(FormatsOptions), typeof(ImageInfoOptions), typeof(ListDevicesOptions),
                                           typeof(ListEncodingsOptions), typeof(ListOptionsOptions), typeof(LsOptions),
                                           typeof(MediaInfoOptions), typeof(MediaScanOptions), typeof(PrintHexOptions),
                                           typeof(StatsOptions), typeof(VerifyOptions))
@@ -186,6 +186,12 @@ namespace DiscImageChef
                        if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                        PrintCopyright();
                        ConvertImage.DoConvert(opts);
+                   }).WithParsed<ImageInfoOptions>(opts =>
+                   {
+                       if(opts.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                       PrintCopyright();
+                       ImageInfo.GetImageInfo(opts);
                    }).WithParsed<ConfigureOptions>(opts =>
                    {
                        PrintCopyright();

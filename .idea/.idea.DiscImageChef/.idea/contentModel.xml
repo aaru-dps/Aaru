@@ -31,6 +31,7 @@
           <e p="Entropy.cs" t="Include" />
           <e p="ExtractFiles.cs" t="Include" />
           <e p="Formats.cs" t="Include" />
+          <e p="ImageInfo.cs" t="Include" />
           <e p="ListDevices.cs" t="Include" />
           <e p="ListEncodings.cs" t="Include" />
           <e p="ListOptions.cs" t="Include" />
@@ -155,6 +156,7 @@
         <e p="DiscImageChef.Core.csproj" t="IncludeRecursive" />
         <e p="Filesystems.cs" t="Include" />
         <e p="ImageFormat.cs" t="Include" />
+        <e p="ImageInfo.cs" t="Include" />
         <e p="Logging" t="Include">
           <e p="DumpLog.cs" t="Include" />
           <e p="IBGLog.cs" t="Include" />
@@ -163,6 +165,7 @@
         <e p="Options.cs" t="Include" />
         <e p="Partitions.cs" t="Include" />
         <e p="PluginBase.cs" t="Include" />
+        <e p="PrintScsiModePages.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
         </e>

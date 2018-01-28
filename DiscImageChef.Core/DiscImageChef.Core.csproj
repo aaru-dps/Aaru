@@ -37,9 +37,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImageInfo.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PluginBase.cs" />
     <Compile Include="ImageFormat.cs" />
+    <Compile Include="PrintScsiModePages.cs" />
     <Compile Include="Statistics.cs" />
     <Compile Include="Checksum.cs" />
     <Compile Include="Logging\IBGLog.cs" />
