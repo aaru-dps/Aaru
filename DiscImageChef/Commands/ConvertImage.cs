@@ -34,10 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
+using DiscImageChef.Metadata;
 using Schemas;
 using Version = DiscImageChef.Interop.Version;
 
@@ -68,6 +70,8 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Analyze command", "--drive-model={0}",        options.DriveModel);
             DicConsole.DebugWriteLine("Analyze command", "--drive-serial={0}",       options.DriveSerialNumber);
             DicConsole.DebugWriteLine("Analyze command", "--drive-revision={0}",     options.DriveFirmwareRevision);
+            DicConsole.DebugWriteLine("Analyze command", "--cicm-xml={0}",           options.CicmXml);
+            DicConsole.DebugWriteLine("Analyze command", "--resume-file={0}",        options.ResumeFile);
             DicConsole.DebugWriteLine("Analyze command", "--options={0}",            options.Options);
 
             Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
@@ -80,6 +84,49 @@ namespace DiscImageChef.Commands
                 DicConsole.ErrorWriteLine("Need to specify more than 0 sectors to copy at once");
                 return;
             }
+
+            Resume           resume  = null;
+            CICMMetadataType sidecar = null;
+
+            XmlSerializer xs = new XmlSerializer(typeof(CICMMetadataType));
+            if(options.CicmXml != null)
+                if(File.Exists(options.CicmXml))
+                    try
+                    {
+                        StreamReader sr = new StreamReader(options.CicmXml);
+                        sidecar         = (CICMMetadataType)xs.Deserialize(sr);
+                        sr.Close();
+                    }
+                    catch
+                    {
+                        DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
+                        return;
+                    }
+                else
+                {
+                    DicConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
+                    return;
+                }
+
+            xs = new XmlSerializer(typeof(Resume));
+            if(options.ResumeFile != null)
+                if(File.Exists(options.ResumeFile))
+                    try
+                    {
+                        StreamReader sr = new StreamReader(options.ResumeFile);
+                        resume          = (Resume)xs.Deserialize(sr);
+                        sr.Close();
+                    }
+                    catch
+                    {
+                        DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
+                        return;
+                    }
+                else
+                {
+                    DicConsole.ErrorWriteLine("Could not find resume file, not continuing...");
+                    return;
+                }
 
             FiltersList filtersList = new FiltersList();
             IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
@@ -588,10 +635,17 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if(dumpHardware != null && outputFormat.SetDumpHardware(dumpHardware))
-                DicConsole.WriteLine("Written dump hardware list to output image.");
-            if(cicmMetadata != null && outputFormat.SetCicmMetadata(cicmMetadata))
-                DicConsole.WriteLine("Written CICM XML metadata to output image.");
+            bool ret;
+
+            if(resume            != null) ret = outputFormat.SetDumpHardware(resume.Tries);
+            else if(dumpHardware != null)
+                ret = outputFormat.SetDumpHardware(dumpHardware);
+            if(ret) DicConsole.WriteLine("Written dump hardware list to output image.");
+
+            if(sidecar           != null) ret = outputFormat.SetCicmMetadata(sidecar);
+            else if(cicmMetadata != null)
+                ret = outputFormat.SetCicmMetadata(cicmMetadata);
+            if(ret) DicConsole.WriteLine("Written CICM XML metadata to output image.");
 
             DicConsole.WriteLine("Closing output image.");
 

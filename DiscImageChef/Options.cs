@@ -432,6 +432,12 @@ namespace DiscImageChef
         [Option('O', "options", Default = null,
             HelpText                    = "Comma separated name=value pairs of options to pass to output image plugin")]
         public string Options { get; set; }
+        
+        [Option('x', "cicm-xml", Default = null, HelpText = "Take metadata from existing CICM XML sidecar.")]
+        public string CicmXml { get; set; }
+
+        [Option('r', "resume-file", Default = null, HelpText = "Take list of dump hardware from existing resume file.")]
+        public string ResumeFile { get; set; }
     }
 
     [Verb("image-info", HelpText =
