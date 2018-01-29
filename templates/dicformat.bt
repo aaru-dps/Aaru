@@ -766,6 +766,43 @@ typedef struct
     char xml[length];
 } CicmMetadataBlock;
 
+typedef struct
+{
+    uint64 start;
+    uint64 end;
+} DumpHardwareExtent;
+
+typedef struct
+{
+    uint manufacturerLength;
+    uint modelLength;
+    uint revisionLength;
+    uint firmwareLength;
+    uint serialLength;
+    uint softwareNameLength;
+    uint softwareVersionLength;
+    uint softwareOperatingSystemLength;
+    uint extentCount;
+    char manufacturer[manufacturerLength];
+    char model[modelLength];
+    char revision[revisionLength];
+    char firmware[firmwareLength];
+    char serial[serialLength];
+    char softwareName[softwareNameLength];
+    char softwareVersion[softwareVersionLength];
+    char softwareOperatingSystem[softwareOperatingSystemLength];
+    DumpHardwareExtent extents[extentCount];
+} DumpHardwareEntry;
+
+typedef struct
+{
+    BlockType identifier;
+    ushort entries;
+    uint length;
+    uint64 crc64 <format=hex>;
+    DumpHardwareEntry dumpHardware[entries];
+} DumpHardwareHeader;
+
 LittleEndian();
 
 local int i;
@@ -858,6 +895,9 @@ for(i = 0; i < index.entries; i++)
             break;
         case 0x4D434943:
             CicmMetadataBlock cicmMetadata;
+            break;
+        case 0x2A504D44:
+            DumpHardwareHeader dumpHardware;
             break;
     }
 }

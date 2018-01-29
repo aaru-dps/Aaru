@@ -53,7 +53,7 @@
  TODO: Streaming tapes contain a file block that describes the files and an optional partition block that describes the tape
  partitions.
  
- TODO: There are also blocks for image metadata, contents metadata and dump hardware information.
+ There are also blocks for image metadata, contents metadata and dump hardware information.
  
  A differencing image will have all the metadata and deduplication tables, but the entries in these ones will be set to
  0 if the block is stored in the parent image. TODO: This is not yet implemented.
@@ -777,6 +777,125 @@ namespace DiscImageChef.DiscImages
                             CicmMetadata = null;
                         }
 
+                        break;
+                    // Dump hardware block
+                    case BlockType.DumpHardwareBlock:
+                        DumpHardwareHeader dumpBlock = new DumpHardwareHeader();
+                        structureBytes               = new byte[Marshal.SizeOf(dumpBlock)];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpBlock));
+                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(dumpBlock));
+                        dumpBlock = (DumpHardwareHeader)Marshal.PtrToStructure(structurePointer,
+                                                                               typeof(DumpHardwareHeader));
+                        Marshal.FreeHGlobal(structurePointer);
+                        if(dumpBlock.identifier != BlockType.DumpHardwareBlock) break;
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Found dump hardware block at position {0}", entry.offset);
+
+                        structureBytes = new byte[dumpBlock.length];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        Crc64Context.Data(structureBytes, out byte[] dumpCrc);
+                        if(BitConverter.ToUInt64(dumpCrc, 0) != dumpBlock.crc64)
+                        {
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                      BitConverter.ToUInt64(dumpCrc, 0), dumpBlock.crc64);
+                            break;
+                        }
+
+                        imageStream.Position -= structureBytes.Length;
+
+                        DumpHardware = new List<DumpHardwareType>();
+
+                        for(ushort i = 0; i < dumpBlock.entries; i++)
+                        {
+                            DumpHardwareEntry dumpEntry = new DumpHardwareEntry();
+                            structureBytes              = new byte[Marshal.SizeOf(dumpEntry)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpEntry));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(dumpEntry));
+                            dumpEntry = (DumpHardwareEntry)Marshal.PtrToStructure(structurePointer,
+                                                                                  typeof(DumpHardwareEntry));
+                            Marshal.FreeHGlobal(structurePointer);
+
+                            DumpHardwareType dump = new DumpHardwareType
+                            {
+                                Software = new SoftwareType(),
+                                Extents  = new ExtentType[dumpEntry.extents]
+                            };
+
+                            byte[] tmp;
+
+                            if(dumpEntry.manufacturerLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.manufacturerLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Manufacturer = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            if(dumpEntry.modelLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.modelLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Model = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            if(dumpEntry.revisionLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.revisionLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Revision = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            if(dumpEntry.firmwareLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.firmwareLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Firmware = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            if(dumpEntry.serialLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.serialLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Serial = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            if(dumpEntry.softwareNameLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.softwareNameLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Software.Name = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            if(dumpEntry.softwareVersionLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.softwareVersionLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Software.Version = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            if(dumpEntry.softwareOperatingSystemLength > 0)
+                            {
+                                tmp = new byte[dumpEntry.softwareOperatingSystemLength - 1];
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Software.OperatingSystem = Encoding.UTF8.GetString(tmp);
+                            }
+
+                            tmp = new byte[16];
+                            for(uint j = 0; j < dumpEntry.extents; j++)
+                            {
+                                imageStream.Read(tmp, 0, tmp.Length);
+                                dump.Extents[0].Start = BitConverter.ToUInt64(tmp, 0);
+                                dump.Extents[0].End   = BitConverter.ToUInt64(tmp, 8);
+                            }
+
+                            dump.Extents = dump.Extents.OrderBy(t => t.Start).ToArray();
+                            if(dump.Extents.Length > 0) DumpHardware.Add(dump);
+                        }
+
+                        if(DumpHardware.Count == 0) DumpHardware = null;
                         break;
                 }
             }
@@ -2083,8 +2202,8 @@ namespace DiscImageChef.DiscImages
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
                             structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(cicmBlock));
                             Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(cicmBlock));
-                            cicmBlock =
-                                (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer, typeof(GeometryBlock));
+                            cicmBlock = (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer,
+                                                                                  typeof(CicmMetadataBlock));
                             Marshal.FreeHGlobal(structurePointer);
                             if(cicmBlock.identifier != BlockType.CicmBlock) break;
 
@@ -2109,6 +2228,125 @@ namespace DiscImageChef.DiscImages
                                 CicmMetadata = null;
                             }
 
+                            break;
+                        // Dump hardware block
+                        case BlockType.DumpHardwareBlock:
+                            DumpHardwareHeader dumpBlock = new DumpHardwareHeader();
+                            structureBytes               = new byte[Marshal.SizeOf(dumpBlock)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpBlock));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(dumpBlock));
+                            dumpBlock = (DumpHardwareHeader)Marshal.PtrToStructure(structurePointer,
+                                                                                   typeof(DumpHardwareHeader));
+                            Marshal.FreeHGlobal(structurePointer);
+                            if(dumpBlock.identifier != BlockType.DumpHardwareBlock) break;
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Found dump hardware block at position {0}", entry.offset);
+
+                            structureBytes = new byte[dumpBlock.length];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            Crc64Context.Data(structureBytes, out byte[] dumpCrc);
+                            if(BitConverter.ToUInt64(dumpCrc, 0) != dumpBlock.crc64)
+                            {
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                          "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                          BitConverter.ToUInt64(dumpCrc, 0), dumpBlock.crc64);
+                                break;
+                            }
+
+                            imageStream.Position -= structureBytes.Length;
+
+                            DumpHardware = new List<DumpHardwareType>();
+
+                            for(ushort i = 0; i < dumpBlock.entries; i++)
+                            {
+                                DumpHardwareEntry dumpEntry = new DumpHardwareEntry();
+                                structureBytes              = new byte[Marshal.SizeOf(dumpEntry)];
+                                imageStream.Read(structureBytes, 0, structureBytes.Length);
+                                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpEntry));
+                                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(dumpEntry));
+                                dumpEntry = (DumpHardwareEntry)Marshal.PtrToStructure(structurePointer,
+                                                                                      typeof(DumpHardwareEntry));
+                                Marshal.FreeHGlobal(structurePointer);
+
+                                DumpHardwareType dump = new DumpHardwareType
+                                {
+                                    Software = new SoftwareType(),
+                                    Extents  = new ExtentType[dumpEntry.extents]
+                                };
+
+                                byte[] tmp;
+
+                                if(dumpEntry.manufacturerLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.manufacturerLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Manufacturer = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                if(dumpEntry.modelLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.modelLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Model = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                if(dumpEntry.revisionLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.revisionLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Revision = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                if(dumpEntry.firmwareLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.firmwareLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Firmware = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                if(dumpEntry.serialLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.serialLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Serial = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                if(dumpEntry.softwareNameLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.softwareNameLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Software.Name = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                if(dumpEntry.softwareVersionLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.softwareVersionLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Software.Version = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                if(dumpEntry.softwareOperatingSystemLength > 0)
+                                {
+                                    tmp = new byte[dumpEntry.softwareOperatingSystemLength - 1];
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Software.OperatingSystem = Encoding.UTF8.GetString(tmp);
+                                }
+
+                                tmp = new byte[16];
+                                for(uint j = 0; j < dumpEntry.extents; j++)
+                                {
+                                    imageStream.Read(tmp, 0, tmp.Length);
+                                    dump.Extents[0].Start = BitConverter.ToUInt64(tmp, 0);
+                                    dump.Extents[0].End   = BitConverter.ToUInt64(tmp, 8);
+                                }
+
+                                dump.Extents = dump.Extents.OrderBy(t => t.Start).ToArray();
+                                if(dump.Extents.Length > 0) DumpHardware.Add(dump);
+                            }
+
+                            if(DumpHardware.Count == 0) DumpHardware = null;
                             break;
                     }
                 }
@@ -2800,6 +3038,145 @@ namespace DiscImageChef.DiscImages
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
 
                 index.RemoveAll(t => t.blockType == BlockType.GeometryBlock && t.dataType == DataType.NoData);
+
+                index.Add(idxEntry);
+            }
+
+            // If we have dump hardware, write it
+            if(DumpHardware != null)
+            {
+                MemoryStream dumpMs = new MemoryStream();
+                foreach(DumpHardwareType dump in DumpHardware)
+                {
+                    byte[] dumpManufacturer            = null;
+                    byte[] dumpModel                   = null;
+                    byte[] dumpRevision                = null;
+                    byte[] dumpFirmware                = null;
+                    byte[] dumpSerial                  = null;
+                    byte[] dumpSoftwareName            = null;
+                    byte[] dumpSoftwareVersion         = null;
+                    byte[] dumpSoftwareOperatingSystem = null;
+
+                    if(!string.IsNullOrWhiteSpace(dump.Manufacturer))
+                        dumpManufacturer =
+                            Encoding.UTF8.GetBytes(dump.Manufacturer);
+                    if(!string.IsNullOrWhiteSpace(dump.Model)) dumpModel       = Encoding.UTF8.GetBytes(dump.Model);
+                    if(!string.IsNullOrWhiteSpace(dump.Revision)) dumpRevision = Encoding.UTF8.GetBytes(dump.Revision);
+                    if(!string.IsNullOrWhiteSpace(dump.Firmware)) dumpFirmware = Encoding.UTF8.GetBytes(dump.Firmware);
+                    if(!string.IsNullOrWhiteSpace(dump.Serial)) dumpSerial     = Encoding.UTF8.GetBytes(dump.Serial);
+                    if(dump.Software != null)
+                    {
+                        if(!string.IsNullOrWhiteSpace(dump.Software.Name))
+                            dumpSoftwareName = Encoding.UTF8.GetBytes(dump.Software.Name);
+                        if(!string.IsNullOrWhiteSpace(dump.Software.Version))
+                            dumpSoftwareVersion = Encoding.UTF8.GetBytes(dump.Software.Version);
+                        if(!string.IsNullOrWhiteSpace(dump.Software.OperatingSystem))
+                            dumpSoftwareOperatingSystem = Encoding.UTF8.GetBytes(dump.Software.OperatingSystem);
+                    }
+
+                    DumpHardwareEntry dumpEntry = new DumpHardwareEntry
+                    {
+                        manufacturerLength            = (uint)(dumpManufacturer?.Length            + 1 ?? 0),
+                        modelLength                   = (uint)(dumpModel?.Length                   + 1 ?? 0),
+                        revisionLength                = (uint)(dumpRevision?.Length                + 1 ?? 0),
+                        firmwareLength                = (uint)(dumpFirmware?.Length                + 1 ?? 0),
+                        serialLength                  = (uint)(dumpSerial?.Length                  + 1 ?? 0),
+                        softwareNameLength            = (uint)(dumpSoftwareName?.Length            + 1 ?? 0),
+                        softwareVersionLength         = (uint)(dumpSoftwareVersion?.Length         + 1 ?? 0),
+                        softwareOperatingSystemLength = (uint)(dumpSoftwareOperatingSystem?.Length + 1 ?? 0),
+                        extents                       = (uint)dump.Extents.Length
+                    };
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpEntry));
+                    structureBytes   = new byte[Marshal.SizeOf(dumpEntry)];
+                    Marshal.StructureToPtr(dumpEntry, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    dumpMs.Write(structureBytes, 0, structureBytes.Length);
+
+                    if(dumpManufacturer != null)
+                    {
+                        dumpMs.Write(dumpManufacturer, 0, dumpManufacturer.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    if(dumpModel != null)
+                    {
+                        dumpMs.Write(dumpModel, 0, dumpModel.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    if(dumpRevision != null)
+                    {
+                        dumpMs.Write(dumpRevision, 0, dumpRevision.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    if(dumpFirmware != null)
+                    {
+                        dumpMs.Write(dumpFirmware, 0, dumpFirmware.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    if(dumpSerial != null)
+                    {
+                        dumpMs.Write(dumpSerial, 0, dumpSerial.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    if(dumpSoftwareName != null)
+                    {
+                        dumpMs.Write(dumpSoftwareName, 0, dumpSoftwareName.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    if(dumpSoftwareVersion != null)
+                    {
+                        dumpMs.Write(dumpSoftwareVersion, 0, dumpSoftwareVersion.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    if(dumpSoftwareOperatingSystem != null)
+                    {
+                        dumpMs.Write(dumpSoftwareOperatingSystem, 0, dumpSoftwareOperatingSystem.Length);
+                        dumpMs.WriteByte(0);
+                    }
+
+                    foreach(ExtentType extent in dump.Extents)
+                    {
+                        dumpMs.Write(BitConverter.GetBytes(extent.Start), 0, sizeof(ulong));
+                        dumpMs.Write(BitConverter.GetBytes(extent.End),   0, sizeof(ulong));
+                    }
+                }
+
+                idxEntry = new IndexEntry
+                {
+                    blockType = BlockType.DumpHardwareBlock,
+                    dataType  = DataType.NoData,
+                    offset    = (ulong)imageStream.Position
+                };
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing dump hardware block to position {0}",
+                                          idxEntry.offset);
+
+                Crc64Context.Data(dumpMs.ToArray(), out byte[] dumpCrc);
+                DumpHardwareHeader dumpBlock = new DumpHardwareHeader
+                {
+                    identifier = BlockType.DumpHardwareBlock,
+                    entries    = (ushort)DumpHardware.Count,
+                    crc64      = BitConverter.ToUInt64(dumpCrc, 0),
+                    length     = (uint)dumpMs.Length
+                };
+
+                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpBlock));
+                structureBytes   = new byte[Marshal.SizeOf(dumpBlock)];
+                Marshal.StructureToPtr(dumpBlock, structurePointer, true);
+                Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                Marshal.FreeHGlobal(structurePointer);
+                imageStream.Write(structureBytes,   0, structureBytes.Length);
+                imageStream.Write(dumpMs.ToArray(), 0, (int)dumpMs.Length);
+
+                index.RemoveAll(t => t.blockType == BlockType.DumpHardwareBlock && t.dataType == DataType.NoData);
 
                 index.Add(idxEntry);
             }
@@ -3577,8 +3954,8 @@ namespace DiscImageChef.DiscImages
 
         public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
         {
-            // TODO: Implement
-            return false;
+            DumpHardware = dumpHardware;
+            return true;
         }
 
         public bool SetCicmMetadata(CICMMetadataType metadata)
@@ -4137,7 +4514,7 @@ namespace DiscImageChef.DiscImages
             SnapshotBlock = 0x50414E53,
             /// <summary>TODO: Block containing how to locate the parent image</summary>
             ParentBlock = 0x50524E54,
-            /// <summary>TODO: Block containing an array of hardware used to create the image</summary>
+            /// <summary>Block containing an array of hardware used to create the image</summary>
             DumpHardwareBlock = 0x2A504D44,
             /// <summary>TODO: Block containing list of files for a tape image</summary>
             TapeFileBlock = 0x454C4654
@@ -4355,6 +4732,52 @@ namespace DiscImageChef.DiscImages
             /// <summary>Identifier, <see cref="BlockType.CicmBlock" /></summary>
             public BlockType identifier;
             public uint      length;
+        }
+
+        /// <summary>Dump hardware block, contains a list of hardware used to dump the media on this image</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DumpHardwareHeader
+        {
+            /// <summary>Identifier, <see cref="BlockType.DumpHardwareBlock" /></summary>
+            public BlockType identifier;
+            /// <summary>How many entries follow this header</summary>
+            public ushort entries;
+            /// <summary>Size of the whole block, not including this header, in bytes</summary>
+            public uint length;
+            /// <summary>CRC64-ECMA of the block</summary>
+            public ulong crc64;
+        }
+
+        /// <summary>Dump hardware entry, contains length of strings that follow, in the same order as the length, this structure</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DumpHardwareEntry
+        {
+            /// <summary>Length of UTF-8 manufacturer string</summary>
+            public uint manufacturerLength;
+            /// <summary>Length of UTF-8 model string</summary>
+            public uint modelLength;
+            /// <summary>Length of UTF-8 revision string</summary>
+            public uint revisionLength;
+            /// <summary>Length of UTF-8 firmware version string</summary>
+            public uint firmwareLength;
+            /// <summary>Length of UTF-8 serial string</summary>
+            public uint serialLength;
+            /// <summary>Length of UTF-8 software name string</summary>
+            public uint softwareNameLength;
+            /// <summary>Length of UTF-8 software version string</summary>
+            public uint softwareVersionLength;
+            /// <summary>Length of UTF-8 software operating system string</summary>
+            public uint softwareOperatingSystemLength;
+            /// <summary>How many extents are after the strings</summary>
+            public uint extents;
+        }
+
+        /// <summary>Dump hardware extent, first and last sector dumped, both inclusive</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DumpHardwareExtent
+        {
+            public ulong start;
+            public ulong end;
         }
     }
 }
