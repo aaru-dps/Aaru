@@ -839,6 +839,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.manufacturerLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Manufacturer = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -846,6 +847,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.modelLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Model = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -853,6 +855,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.revisionLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Revision = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -860,6 +863,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.firmwareLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Firmware = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -867,6 +871,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.serialLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Serial = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -874,6 +879,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.softwareNameLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Software.Name = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -881,6 +887,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.softwareVersionLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Software.Version = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -888,6 +895,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 tmp = new byte[dumpEntry.softwareOperatingSystemLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
+                                imageStream.Position += 1;
                                 dump.Software.OperatingSystem = Encoding.UTF8.GetString(tmp);
                             }
 
@@ -2354,6 +2362,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     tmp = new byte[dumpEntry.manufacturerLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
+                                    imageStream.Position += 1;
                                     dump.Manufacturer = Encoding.UTF8.GetString(tmp);
                                 }
 
@@ -2361,6 +2370,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     tmp = new byte[dumpEntry.modelLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
+                                    imageStream.Position += 1;
                                     dump.Model = Encoding.UTF8.GetString(tmp);
                                 }
 
@@ -2368,6 +2378,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     tmp = new byte[dumpEntry.revisionLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
+                                    imageStream.Position += 1;
                                     dump.Revision = Encoding.UTF8.GetString(tmp);
                                 }
 
@@ -2375,6 +2386,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     tmp = new byte[dumpEntry.firmwareLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
+                                    imageStream.Position += 1;
                                     dump.Firmware = Encoding.UTF8.GetString(tmp);
                                 }
 
@@ -2382,6 +2394,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     tmp = new byte[dumpEntry.serialLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
+                                    imageStream.Position += 1;
                                     dump.Serial = Encoding.UTF8.GetString(tmp);
                                 }
 
@@ -2389,6 +2402,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     tmp = new byte[dumpEntry.softwareNameLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
+                                    imageStream.Position += 1;
                                     dump.Software.Name = Encoding.UTF8.GetString(tmp);
                                 }
 
@@ -2396,12 +2410,14 @@ namespace DiscImageChef.DiscImages
                                 {
                                     tmp = new byte[dumpEntry.softwareVersionLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
+                                    imageStream.Position += 1;
                                     dump.Software.Version = Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.softwareOperatingSystemLength > 0)
                                 {
                                     tmp = new byte[dumpEntry.softwareOperatingSystemLength - 1];
+                                    imageStream.Position += 1;
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     dump.Software.OperatingSystem = Encoding.UTF8.GetString(tmp);
                                 }
@@ -2410,8 +2426,11 @@ namespace DiscImageChef.DiscImages
                                 for(uint j = 0; j < dumpEntry.extents; j++)
                                 {
                                     imageStream.Read(tmp, 0, tmp.Length);
-                                    dump.Extents[0].Start = BitConverter.ToUInt64(tmp, 0);
-                                    dump.Extents[0].End   = BitConverter.ToUInt64(tmp, 8);
+                                    dump.Extents[j] = new ExtentType
+                                    {
+                                        Start = BitConverter.ToUInt64(tmp, 0),
+                                        End   = BitConverter.ToUInt64(tmp, 8)
+                                    };
                                 }
 
                                 dump.Extents = dump.Extents.OrderBy(t => t.Start).ToArray();
