@@ -810,7 +810,7 @@ typedef struct
     uint length;
     uint64 crc64 <format=hex>;
     DumpHardwareEntry dumpHardware[entries];
-} DumpHardwareHeader;
+} DumpHardwareHeader <optimize=false>;
 
 typedef struct
 {

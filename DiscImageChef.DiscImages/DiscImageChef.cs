@@ -761,7 +761,7 @@ namespace DiscImageChef.DiscImages
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(cicmBlock));
                         Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(cicmBlock));
-                        cicmBlock = (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer, typeof(GeometryBlock));
+                        cicmBlock = (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer, typeof(CicmMetadataBlock));
                         Marshal.FreeHGlobal(structurePointer);
                         if(cicmBlock.identifier != BlockType.CicmBlock) break;
 
@@ -895,8 +895,11 @@ namespace DiscImageChef.DiscImages
                             for(uint j = 0; j < dumpEntry.extents; j++)
                             {
                                 imageStream.Read(tmp, 0, tmp.Length);
-                                dump.Extents[0].Start = BitConverter.ToUInt64(tmp, 0);
-                                dump.Extents[0].End   = BitConverter.ToUInt64(tmp, 8);
+                                dump.Extents[j] = new ExtentType
+                                {
+                                    Start = BitConverter.ToUInt64(tmp, 0),
+                                    End   = BitConverter.ToUInt64(tmp, 8)
+                                };
                             }
 
                             dump.Extents = dump.Extents.OrderBy(t => t.Start).ToArray();
