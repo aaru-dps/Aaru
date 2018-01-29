@@ -117,6 +117,7 @@ namespace DiscImageChef.DiscImages
         ///     smaller than 256.
         /// </summary>
         const int MIN_FLAKE_BLOCK = 256;
+        bool      alreadyWrittenZero;
 
         /// <summary>Cache of uncompressed blocks.</summary>
         Dictionary<ulong, byte[]> blockCache;
@@ -153,23 +154,29 @@ namespace DiscImageChef.DiscImages
         /// <summary>Index.</summary>
         List<IndexEntry> index;
         /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
-        bool inMemoryDdt;
+        bool  inMemoryDdt;
+        ulong lastWrittenBlock;
         /// <summary>LZMA stream.</summary>
         LzmaStream lzmaBlockStream;
         /// <summary>LZMA properties.</summary>
         LzmaEncoderProperties lzmaEncoderProperties;
+        Md5Context            md5Provider;
         /// <summary>Cache of media tags.</summary>
         Dictionary<MediaTagType, byte[]> mediaTags;
         /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
         long outMemoryDdtPosition;
+        bool rewinded;
         /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
         byte[] sectorPrefix;
         /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
         byte[] sectorSubchannel;
         /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
-        byte[] sectorSuffix;
+        byte[]        sectorSuffix;
+        Sha1Context   sha1Provider;
+        Sha256Context sha256Provider;
         /// <summary>Shift for calculating number of sectors in a block.</summary>
-        byte shift;
+        byte           shift;
+        SpamSumContext spamsumProvider;
         /// <summary>Cache for bytes to write/rad on-disk.</summary>
         byte[] structureBytes;
         /// <summary>Cache for pointer for marshaling structures.</summary>
@@ -180,6 +187,7 @@ namespace DiscImageChef.DiscImages
         Dictionary<byte, string> trackIsrcs;
         /// <summary>In-memory deduplication table</summary>
         ulong[] userDataDdt;
+        bool    writingLong;
 
         public DiscImageChef()
         {
@@ -1862,7 +1870,11 @@ namespace DiscImageChef.DiscImages
                 "How many sectors to store per block (will be rounded to next power of two)"),
                 ("dictionary", typeof(uint), "Size, in bytes, of the LZMA dictionary"),
                 ("max_ddt_size", typeof(uint),
-                "Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk")
+                "Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk"),
+                ("md5", typeof(bool), "Calculate and store MD5 of image's user data"),
+                ("sha1", typeof(bool), "Calculate and store SHA1 of image's user data"),
+                ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data"),
+                ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data")
             };
         public IEnumerable<string> KnownExtensions => new[] {".dicf"};
         public bool                IsWriting       { get; private set; }
@@ -1874,6 +1886,10 @@ namespace DiscImageChef.DiscImages
             uint sectorsPerBlock;
             uint dictionary;
             uint maxDdtSize;
+            bool doMd5;
+            bool doSha1;
+            bool doSha256;
+            bool doSpamsum;
 
             if(options != null)
             {
@@ -1906,12 +1922,56 @@ namespace DiscImageChef.DiscImages
                     }
                 }
                 else maxDdtSize = 256;
+
+                if(options.TryGetValue("md5", out tmpValue))
+                {
+                    if(!bool.TryParse(tmpValue, out doMd5))
+                    {
+                        ErrorMessage = "Invalid value for md5 option";
+                        return false;
+                    }
+                }
+                else doMd5 = false;
+
+                if(options.TryGetValue("sha1", out tmpValue))
+                {
+                    if(!bool.TryParse(tmpValue, out doSha1))
+                    {
+                        ErrorMessage = "Invalid value for sha1 option";
+                        return false;
+                    }
+                }
+                else doSha1 = false;
+
+                if(options.TryGetValue("sha256", out tmpValue))
+                {
+                    if(!bool.TryParse(tmpValue, out doSha256))
+                    {
+                        ErrorMessage = "Invalid value for sha256 option";
+                        return false;
+                    }
+                }
+                else doSha256 = false;
+
+                if(options.TryGetValue("spamsum", out tmpValue))
+                {
+                    if(!bool.TryParse(tmpValue, out doSpamsum))
+                    {
+                        ErrorMessage = "Invalid value for spamsum option";
+                        return false;
+                    }
+                }
+                else doSpamsum = false;
             }
             else
             {
                 sectorsPerBlock = 4096;
                 dictionary      = 1 << 25;
                 maxDdtSize      = 256;
+                doMd5           = false;
+                doSha1          = false;
+                doSha256        = false;
+                doSpamsum       = false;
             }
 
             // This really, cannot happen
@@ -2001,6 +2061,12 @@ namespace DiscImageChef.DiscImages
             // If there exists an index, we are appending, so read index
             if(header.indexOffset > 0)
             {
+                // Can't calculate checksum of an appended image
+                md5Provider     = null;
+                sha1Provider    = null;
+                sha256Provider  = null;
+                spamsumProvider = null;
+
                 imageStream.Position  = (long)header.indexOffset;
                 IndexHeader idxHeader = new IndexHeader();
                 structureBytes        = new byte[Marshal.SizeOf(idxHeader)];
@@ -2033,6 +2099,9 @@ namespace DiscImageChef.DiscImages
                                               entry.blockType, entry.dataType, entry.offset);
                     index.Add(entry);
                 }
+
+                // Invalidate previous checksum block
+                index.RemoveAll(t => t.blockType == BlockType.ChecksumBlock && t.dataType == DataType.NoData);
 
                 bool foundUserDataDdt = false;
                 foreach(IndexEntry entry in index)
@@ -2399,6 +2468,30 @@ namespace DiscImageChef.DiscImages
                     imageStream.Position += (long)(sectors * sizeof(ulong)) - 1;
                     imageStream.WriteByte(0);
                 }
+
+                if(doMd5)
+                {
+                    md5Provider = new Md5Context();
+                    md5Provider.Init();
+                }
+
+                if(doSha1)
+                {
+                    sha1Provider = new Sha1Context();
+                    sha1Provider.Init();
+                }
+
+                if(doSha256)
+                {
+                    sha256Provider = new Sha256Context();
+                    sha256Provider.Init();
+                }
+
+                if(doSpamsum)
+                {
+                    spamsumProvider = new SpamSumContext();
+                    spamsumProvider.Init();
+                }
             }
 
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "In memory DDT?: {0}", inMemoryDdt);
@@ -2475,7 +2568,27 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            if((imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !writingLong) && !rewinded)
+            {
+                if(sectorAddress <= lastWrittenBlock && alreadyWrittenZero)
+                {
+                    rewinded        = true;
+                    md5Provider     = null;
+                    sha1Provider    = null;
+                    sha256Provider  = null;
+                    spamsumProvider = null;
+                }
+
+                md5Provider?.Update(data);
+                sha1Provider?.Update(data);
+                sha256Provider?.Update(data);
+                spamsumProvider?.Update(data);
+                lastWrittenBlock = sectorAddress;
+            }
+
             byte[] hash = checksumProvider.ComputeHash(data);
+
+            if(sectorAddress == 0) alreadyWrittenZero = true;
 
             if(deduplicationTable.TryGetValue(hash, out ulong pointer))
             {
@@ -2658,6 +2771,25 @@ namespace DiscImageChef.DiscImages
                     {
                         ErrorMessage = "Incorrect data size";
                         return false;
+                    }
+
+                    writingLong = true;
+                    if(!rewinded)
+                    {
+                        if(sectorAddress <= lastWrittenBlock && alreadyWrittenZero)
+                        {
+                            rewinded        = true;
+                            md5Provider     = null;
+                            sha1Provider    = null;
+                            sha256Provider  = null;
+                            spamsumProvider = null;
+                        }
+
+                        md5Provider?.Update(data);
+                        sha1Provider?.Update(data);
+                        sha256Provider?.Update(data);
+                        spamsumProvider?.Update(data);
+                        lastWrittenBlock = sectorAddress;
                     }
 
                     // Split raw cd sector data in prefix (sync, header), user data and suffix (edc, ecc p, ecc q)
@@ -3211,6 +3343,99 @@ namespace DiscImageChef.DiscImages
                 index.RemoveAll(t => t.blockType == BlockType.CicmBlock && t.dataType == DataType.NoData);
 
                 index.Add(idxEntry);
+            }
+
+            // If we have checksums, write it to disk
+            if(md5Provider != null || sha1Provider != null || sha256Provider != null || spamsumProvider != null)
+            {
+                MemoryStream   chkMs     = new MemoryStream();
+                ChecksumHeader chkHeader = new ChecksumHeader {identifier = BlockType.ChecksumBlock};
+
+                if(md5Provider != null)
+                {
+                    byte[]        md5           = md5Provider.Final();
+                    ChecksumEntry md5Entry      =
+                        new ChecksumEntry {type = ChecksumAlgorithm.Md5, length = (uint)md5.Length};
+                    structurePointer            = Marshal.AllocHGlobal(Marshal.SizeOf(md5Entry));
+                    structureBytes              = new byte[Marshal.SizeOf(md5Entry)];
+                    Marshal.StructureToPtr(md5Entry, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    chkMs.Write(structureBytes, 0, structureBytes.Length);
+                    chkMs.Write(md5,            0, md5.Length);
+                    chkHeader.entries++;
+                }
+
+                if(sha1Provider != null)
+                {
+                    byte[]        sha1          = sha1Provider.Final();
+                    ChecksumEntry sha1Entry     =
+                        new ChecksumEntry {type = ChecksumAlgorithm.Sha1, length = (uint)sha1.Length};
+                    structurePointer            = Marshal.AllocHGlobal(Marshal.SizeOf(sha1Entry));
+                    structureBytes              = new byte[Marshal.SizeOf(sha1Entry)];
+                    Marshal.StructureToPtr(sha1Entry, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    chkMs.Write(structureBytes, 0, structureBytes.Length);
+                    chkMs.Write(sha1,           0, sha1.Length);
+                    chkHeader.entries++;
+                }
+
+                if(sha256Provider != null)
+                {
+                    byte[]        sha256        = sha256Provider.Final();
+                    ChecksumEntry sha256Entry   =
+                        new ChecksumEntry {type = ChecksumAlgorithm.Sha256, length = (uint)sha256.Length};
+                    structurePointer            = Marshal.AllocHGlobal(Marshal.SizeOf(sha256Entry));
+                    structureBytes              = new byte[Marshal.SizeOf(sha256Entry)];
+                    Marshal.StructureToPtr(sha256Entry, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    chkMs.Write(structureBytes, 0, structureBytes.Length);
+                    chkMs.Write(sha256,         0, sha256.Length);
+                    chkHeader.entries++;
+                }
+
+                if(spamsumProvider != null)
+                {
+                    byte[]        spamsum       = Encoding.ASCII.GetBytes(spamsumProvider.End());
+                    ChecksumEntry spamsumEntry  =
+                        new ChecksumEntry {type = ChecksumAlgorithm.SpamSum, length = (uint)spamsum.Length};
+                    structurePointer            = Marshal.AllocHGlobal(Marshal.SizeOf(spamsumEntry));
+                    structureBytes              = new byte[Marshal.SizeOf(spamsumEntry)];
+                    Marshal.StructureToPtr(spamsumEntry, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    chkMs.Write(structureBytes, 0, structureBytes.Length);
+                    chkMs.Write(spamsum,        0, spamsum.Length);
+                    chkHeader.entries++;
+                }
+
+                if(chkHeader.entries > 0)
+                {
+                    chkHeader.length = (uint)chkMs.Length;
+                    idxEntry         = new IndexEntry
+                    {
+                        blockType = BlockType.ChecksumBlock,
+                        dataType  = DataType.NoData,
+                        offset    = (ulong)imageStream.Position
+                    };
+
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing checksum block to position {0}",
+                                              idxEntry.offset);
+
+                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(chkHeader));
+                    structureBytes   = new byte[Marshal.SizeOf(chkHeader)];
+                    Marshal.StructureToPtr(chkHeader, structurePointer, true);
+                    Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                    Marshal.FreeHGlobal(structurePointer);
+                    imageStream.Write(structureBytes,  0, structureBytes.Length);
+                    imageStream.Write(chkMs.ToArray(), 0, (int)chkMs.Length);
+
+                    index.RemoveAll(t => t.blockType == BlockType.ChecksumBlock && t.dataType == DataType.NoData);
+
+                    index.Add(idxEntry);
+                }
             }
 
             // If the DDT is in-memory, write it to disk
@@ -4506,7 +4731,7 @@ namespace DiscImageChef.DiscImages
             TracksBlock = 0x534B5254,
             /// <summary>Block containing CICM XML metadata</summary>
             CicmBlock = 0x4D434943,
-            /// <summary>TODO: Block containing contents checksums</summary>
+            /// <summary>Block containing contents checksums</summary>
             ChecksumBlock = 0x4D534B43,
             /// <summary>TODO: Block containing data position measurements</summary>
             DataPositionMeasurementBlock = 0x2A4D5044,
@@ -4778,6 +5003,40 @@ namespace DiscImageChef.DiscImages
         {
             public ulong start;
             public ulong end;
+        }
+
+        /// <summary>
+        ///     Checksum block, contains a checksum of all user data sectors (except for optical discs that is 2352 bytes raw
+        ///     sector if available
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChecksumHeader
+        {
+            /// <summary>Identifier, <see cref="BlockType.ChecksumBlock" /></summary>
+            public BlockType identifier;
+            /// <summary>Length in bytes of the block</summary>
+            public uint length;
+            /// <summary>How many checksums follow</summary>
+            public byte entries;
+        }
+
+        enum ChecksumAlgorithm : byte
+        {
+            Invalid = 0,
+            Md5     = 1,
+            Sha1    = 2,
+            Sha256  = 3,
+            SpamSum = 4
+        }
+
+        /// <summary>Checksum entry, followed by checksum data itself</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ChecksumEntry
+        {
+            /// <summary>Checksum algorithm</summary>
+            public ChecksumAlgorithm type;
+            /// <summary>Length in bytes of checksum that follows this structure</summary>
+            public uint length;
         }
     }
 }

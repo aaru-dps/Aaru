@@ -645,6 +645,15 @@ enum <byte> TrackType
     CdMode2Form2 = 5
 };
 
+enum <byte> ChecksumAlgorithm
+{
+    Invalid = 0,
+    Md5 = 1,
+    Sha1 = 2,
+    Sha256 = 3,
+    SpamSum = 4
+};
+
 typedef struct 
 {
     char identifier[8];
@@ -803,6 +812,24 @@ typedef struct
     DumpHardwareEntry dumpHardware[entries];
 } DumpHardwareHeader;
 
+typedef struct
+{
+    ChecksumAlgorithm type;
+    uint length;
+    if(type == 4)
+        char checksum[length] <format=hex>;
+    else
+        byte checksum[length];
+} ChecksumEntry <optimize=false>;
+
+typedef struct
+{
+    BlockType identifier;
+    uint length;
+    byte entries;
+    ChecksumEntry checksums[entries];
+} ChecksumHeader;
+
 LittleEndian();
 
 local int i;
@@ -898,6 +925,9 @@ for(i = 0; i < index.entries; i++)
             break;
         case 0x2A504D44:
             DumpHardwareHeader dumpHardware;
+            break;
+        case 0x4D534B43:
+            ChecksumHeader checksum;
             break;
     }
 }
