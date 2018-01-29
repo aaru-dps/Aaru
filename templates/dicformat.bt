@@ -752,9 +752,9 @@ typedef struct
 {
     byte      sequence;
     TrackType type;
-    long      start;
-    long      end;
-    long      pregap;
+    int64      start;
+    int64      end;
+    int64      pregap;
     byte      session;
     char isrc[13];
     byte   flags;
