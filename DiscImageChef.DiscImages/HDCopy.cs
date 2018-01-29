@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -247,7 +247,7 @@ namespace DiscImageChef.DiscImages
         public byte[] ReadSector(ulong sectorAddress)
         {
             int trackNum     = (int)(sectorAddress / imageInfo.SectorsPerTrack);
-            int sectorOffset = (int)(sectorAddress % (imageInfo.SectorsPerTrack * imageInfo.SectorSize));
+            int sectorOffset = (int)(sectorAddress % imageInfo.SectorsPerTrack);
 
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -262,7 +262,7 @@ namespace DiscImageChef.DiscImages
                 // track is present in file, make sure it has been loaded
                 if(!trackCache.ContainsKey(trackNum)) ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
 
-                Array.Copy(trackCache[trackNum], sectorOffset, result, 0, imageInfo.SectorSize);
+                Array.Copy(trackCache[trackNum], sectorOffset * imageInfo.SectorSize, result, 0, imageInfo.SectorSize);
             }
 
             return result;
