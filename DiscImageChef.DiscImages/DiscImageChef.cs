@@ -4048,6 +4048,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.DriveModel            = metadata.DriveModel;
             imageInfo.DriveSerialNumber     = metadata.DriveSerialNumber;
             imageInfo.DriveFirmwareRevision = metadata.DriveFirmwareRevision;
+            imageInfo.MediaTitle            = metadata.MediaTitle;
 
             return true;
         }
