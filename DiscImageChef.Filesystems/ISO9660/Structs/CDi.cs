@@ -42,12 +42,12 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor
             {
-                SystemIdentifier = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim('\0'),
-                VolumeIdentifier = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim('\0'),
-                VolumeSetIdentifier = Encoding.ASCII.GetString(pvd.volume_set_id).TrimEnd().Trim('\0'),
-                PublisherIdentifier = Encoding.ASCII.GetString(pvd.publisher_id).TrimEnd().Trim('\0'),
-                DataPreparerIdentifier = Encoding.ASCII.GetString(pvd.preparer_id).TrimEnd().Trim('\0'),
-                ApplicationIdentifier = Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim('\0')
+                SystemIdentifier = StringHandlers.CToString(pvd.system_id).TrimEnd(),
+                VolumeIdentifier = StringHandlers.CToString(pvd.volume_id).TrimEnd(),
+                VolumeSetIdentifier = StringHandlers.CToString(pvd.volume_set_id).TrimEnd(),
+                PublisherIdentifier = StringHandlers.CToString(pvd.publisher_id).TrimEnd(),
+                DataPreparerIdentifier = StringHandlers.CToString(pvd.preparer_id).TrimEnd(),
+                ApplicationIdentifier = StringHandlers.CToString(pvd.application_data).TrimEnd()
             };
 
             if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00) decodedVD.CreationTime = DateTime.MinValue;
