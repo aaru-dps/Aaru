@@ -189,6 +189,7 @@ namespace DiscImageChef.DiscImages
         ulong[] userDataDdt;
         bool    writingLong;
         bool deduplicate;
+        MemoryStream decompressedStream;
 
         public DiscImageChef()
         {
@@ -2688,13 +2689,24 @@ namespace DiscImageChef.DiscImages
                     lzmaProperties = lzmaBlockStream.Properties;
                     lzmaBlockStream.Close();
                     cmpCrc64Context.Update(lzmaProperties);
+                    if(blockStream.Length > decompressedStream.Length)
+                        currentBlockHeader.compression = CompressionType.None;
+                }
+
+                if(currentBlockHeader.compression == CompressionType.None)
+                {
+                    blockStream = decompressedStream;
+                    currentBlockHeader.cmpCrc64 = currentBlockHeader.crc64;
+                }
+                else
+                {
+                    cmpCrc64Context.Update(blockStream.ToArray());
+                    currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
                 }
 
                 currentBlockHeader.cmpLength = (uint)blockStream.Length;
                 if(currentBlockHeader.compression == CompressionType.Lzma)
                     currentBlockHeader.cmpLength += LZMA_PROPERTIES_LENGTH;
-                cmpCrc64Context.Update(blockStream.ToArray());
-                currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
                 index.Add(new IndexEntry
                 {
@@ -2712,6 +2724,7 @@ namespace DiscImageChef.DiscImages
                 structureBytes = null;
                 if(currentBlockHeader.compression == CompressionType.Lzma)
                     imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                 blockStream        = null;
                 currentBlockOffset = 0;
@@ -2732,6 +2745,7 @@ namespace DiscImageChef.DiscImages
                     currentBlockHeader.compression = CompressionType.Flac;
 
                 blockStream = new MemoryStream();
+                decompressedStream = new MemoryStream();
                 if(currentBlockHeader.compression == CompressionType.Flac)
                     flakeWriter      = new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
                 else lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
@@ -2747,7 +2761,11 @@ namespace DiscImageChef.DiscImages
                 AudioBuffer audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, data, SAMPLES_PER_SECTOR);
                 flakeWriter.Write(audioBuffer);
             }
-            else lzmaBlockStream.Write(data, 0, data.Length);
+            else
+            {
+                decompressedStream.Write(data, 0, data.Length);
+                lzmaBlockStream.Write(data, 0, data.Length);
+            }
 
             SetDdtEntry(sectorAddress, ddtEntry);
             crc64.Update(data);
@@ -3093,14 +3111,24 @@ namespace DiscImageChef.DiscImages
                 {
                     lzmaProperties = lzmaBlockStream.Properties;
                     lzmaBlockStream.Close();
-                    cmpCrc64Context.Update(lzmaProperties);
+                    if(blockStream.Length > decompressedStream.Length)
+                        currentBlockHeader.compression = CompressionType.None;
+                }
+
+                if(currentBlockHeader.compression == CompressionType.None)
+                {
+                    blockStream                 = decompressedStream;
+                    currentBlockHeader.cmpCrc64 = currentBlockHeader.crc64;
+                }
+                else
+                {
+                    cmpCrc64Context.Update(blockStream.ToArray());
+                    currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
                 }
 
                 currentBlockHeader.cmpLength = (uint)blockStream.Length;
                 if(currentBlockHeader.compression == CompressionType.Lzma)
                     currentBlockHeader.cmpLength += LZMA_PROPERTIES_LENGTH;
-                cmpCrc64Context.Update(blockStream.ToArray());
-                currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
                 index.Add(new IndexEntry
                 {
