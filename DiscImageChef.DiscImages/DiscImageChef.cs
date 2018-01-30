@@ -1977,7 +1977,7 @@ namespace DiscImageChef.DiscImages
                 }
                 else doSpamsum = false;
 
-                if(options.TryGetValue("spamsum", out tmpValue))
+                if(options.TryGetValue("deduplicate", out tmpValue))
                 {
                     if(!bool.TryParse(tmpValue, out deduplicate))
                     {
