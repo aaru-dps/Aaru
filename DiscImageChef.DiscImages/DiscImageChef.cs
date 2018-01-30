@@ -188,6 +188,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>In-memory deduplication table</summary>
         ulong[] userDataDdt;
         bool    writingLong;
+        bool deduplicate;
 
         public DiscImageChef()
         {
@@ -1885,7 +1886,8 @@ namespace DiscImageChef.DiscImages
                 ("md5", typeof(bool), "Calculate and store MD5 of image's user data"),
                 ("sha1", typeof(bool), "Calculate and store SHA1 of image's user data"),
                 ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data"),
-                ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data")
+                ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data"),
+                ("deduplicate", typeof(bool), "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default")
             };
         public IEnumerable<string> KnownExtensions => new[] {".dicf"};
         public bool                IsWriting       { get; private set; }
@@ -1973,6 +1975,16 @@ namespace DiscImageChef.DiscImages
                     }
                 }
                 else doSpamsum = false;
+
+                if(options.TryGetValue("spamsum", out tmpValue))
+                {
+                    if(!bool.TryParse(tmpValue, out deduplicate))
+                    {
+                        ErrorMessage = "Invalid value for deduplicate option";
+                        return false;
+                    }
+                }
+                else deduplicate = true;
             }
             else
             {
@@ -1983,6 +1995,7 @@ namespace DiscImageChef.DiscImages
                 doSha1          = false;
                 doSha256        = false;
                 doSpamsum       = false;
+                deduplicate     = true;
             }
 
             // This really, cannot happen
@@ -2608,11 +2621,15 @@ namespace DiscImageChef.DiscImages
                 lastWrittenBlock = sectorAddress;
             }
 
-            byte[] hash = checksumProvider.ComputeHash(data);
-
             if(sectorAddress == 0) alreadyWrittenZero = true;
 
-            if(deduplicationTable.TryGetValue(hash, out ulong pointer))
+            byte[] hash = null;
+                
+            // Compute hash only if asked to deduplicate, or the sector is empty (those will always be deduplicated)
+            if(deduplicate || ArrayHelpers.ArrayIsNullOrEmpty(data))
+                hash = checksumProvider.ComputeHash(data);
+
+            if(hash != null && deduplicationTable.TryGetValue(hash, out ulong pointer))
             {
                 SetDdtEntry(sectorAddress, pointer);
                 ErrorMessage = "";
@@ -2723,7 +2740,8 @@ namespace DiscImageChef.DiscImages
             }
 
             ulong ddtEntry = (ulong)((imageStream.Position << shift) + currentBlockOffset);
-            deduplicationTable.Add(hash, ddtEntry);
+            if(hash != null)
+                deduplicationTable.Add(hash, ddtEntry);
             if(currentBlockHeader.compression == CompressionType.Flac)
             {
                 AudioBuffer audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, data, SAMPLES_PER_SECTOR);
