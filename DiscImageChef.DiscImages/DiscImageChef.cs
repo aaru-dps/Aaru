@@ -382,7 +382,6 @@ namespace DiscImageChef.DiscImages
 
                         // Check CRC, if not correct, skip it
                         Crc64Context.Data(data, out byte[] blockCrc);
-                        blockCrc = blockCrc.Reverse().ToArray();
                         if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
                         {
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -1773,7 +1772,7 @@ namespace DiscImageChef.DiscImages
 
                         while(readBytes + VERIFY_SIZE < blockHeader.cmpLength)
                         {
-                            verifyBytes = new byte[readBytes];
+                            verifyBytes = new byte[VERIFY_SIZE];
                             imageStream.Read(verifyBytes, 0, verifyBytes.Length);
                             crcVerify.Update(verifyBytes);
                             readBytes += (ulong)verifyBytes.LongLength;
