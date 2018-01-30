@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems
                 spc
             };
 
-            foreach(byte[] sb_sector in locations.TakeWhile(i => i + sb_size_in_sectors < (int)imagePlugin.Info.Sectors)
+            foreach(byte[] sb_sector in locations.TakeWhile(i => (ulong)i + partition.Start + sb_size_in_sectors < imagePlugin.Info.Sectors)
                                                  .Select(i => imagePlugin.ReadSectors((ulong)i + partition.Start,
                                                                                       sb_size_in_sectors)))
             {
