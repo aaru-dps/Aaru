@@ -39,8 +39,10 @@ using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
+using DiscImageChef.Metadata;
 using Schemas;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Session = DiscImageChef.DiscImages.Session;
 using TrackType = Schemas.TrackType;
 
@@ -266,6 +268,9 @@ namespace DiscImageChef.Core
                 trksLst                          = new List<TrackType>();
             }
 
+            if(sidecar.OpticalDisc[0].Dimensions == null && image.Info.MediaType != MediaType.Unknown)
+                sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
+            
             InitProgress();
             foreach(Track trk in tracks)
             {
