@@ -903,7 +903,13 @@ namespace DiscImageChef.Metadata
                     dmns.Thickness = 78.7;
                     return dmns;
                 #endregion Apple Hard Disks
-
+                case CommonTypes.MediaType.UMD:
+                    dmns.Height          = 64;
+                    dmns.HeightSpecified = true;
+                    dmns.Width           = 63;
+                    dmns.WidthSpecified  = true;
+                    dmns.Thickness       = 4;
+                    return dmns;
                 default: return null;
             }
         }
