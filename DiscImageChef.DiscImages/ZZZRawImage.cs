@@ -908,6 +908,16 @@ namespace DiscImageChef.DiscImages
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 32;
                     break;
+                case MediaType.ZIP100:
+                    imageInfo.Cylinders       = 96;
+                    imageInfo.Heads           = 64;
+                    imageInfo.SectorsPerTrack = 32;
+                    break;
+                case MediaType.ZIP250:
+                    imageInfo.Cylinders       = 239;
+                    imageInfo.Heads           = 64;
+                    imageInfo.SectorsPerTrack = 32;
+                    break;
                 default:
                     imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
                     imageInfo.Heads           = 16;
@@ -1574,11 +1584,13 @@ namespace DiscImageChef.DiscImages
                 case 9338880:    return MediaType.NEC_35_TD;
                 case 33554432:   return MediaType.FD32MB;
                 case 40387584:   return MediaType.PocketZip;
+                case 100663296:  return MediaType.ZIP100;
                 case 126222336:  return MediaType.LS120;
                 case 127923200:  return MediaType.ECMA_154;
                 case 201410560:  return MediaType.HiFD;
                 case 229632000:  return MediaType.ECMA_201;
                 case 240386048:  return MediaType.LS240;
+                case 250640384:  return MediaType.ZIP250;
                 case 481520640:  return MediaType.ECMA_183_512;
                 case 533403648:  return MediaType.ECMA_183;
                 case 596787200:  return MediaType.ECMA_184_512;
