@@ -1031,12 +1031,32 @@ namespace DiscImageChef.DiscImages
             switch(imageInfo.MediaType)
             {
                 case MediaType.CD:
-                case MediaType.DVDPR:
-                case MediaType.DVDR:
-                case MediaType.DVDRDL:
-                case MediaType.DVDPRDL:
+                case MediaType.CDRW:
+                case MediaType.CDR:
+                case MediaType.BDRE:
+                case MediaType.BDROM:
                 case MediaType.BDR:
                 case MediaType.BDRXL:
+                case MediaType.DVDPR:
+                case MediaType.DVDPRDL:
+                case MediaType.DVDPRW:
+                case MediaType.DVDPRWDL:
+                case MediaType.DVDRDL:
+                case MediaType.DVDR:
+                case MediaType.DVDRAM:
+                case MediaType.DVDROM:
+                case MediaType.DVDRWDL:
+                case MediaType.DVDRW:
+                case MediaType.HDDVDR:
+                case MediaType.HDDVDRAM:
+                case MediaType.HDDVDROM:
+                case MediaType.HDDVDRW:
+                case MediaType.GOD:
+                case MediaType.WOD:
+                case MediaType.UMD:
+                case MediaType.XGD:
+                case MediaType.XGD2:
+                case MediaType.XGD3:
                     imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
                     break;
                 default:
