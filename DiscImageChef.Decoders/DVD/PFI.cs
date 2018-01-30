@@ -1064,6 +1064,13 @@ namespace DiscImageChef.Decoders.DVD
         {
             if(response == null) return null;
 
+            if(response.Length == 2048)
+            {
+                byte[] tmp2 = new byte[2052];
+                Array.Copy(response, 0, tmp2, 4, 2048);
+                response = tmp2;
+            }
+            
             if(response.Length < 2052) return null;
 
             PhysicalFormatInformation pfi = new PhysicalFormatInformation();
