@@ -42,6 +42,7 @@ using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.DiscImages;
+using Schemas;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
@@ -489,6 +490,22 @@ namespace DiscImageChef.Core
 
                 DicConsole.WriteLine("Xbox Security Sectors contained in image:");
                 DicConsole.Write("{0}", SS.Prettify(toc));
+                DicConsole.WriteLine();
+            }
+
+            if(imageFormat.DumpHardware != null)
+            {
+                DicConsole.WriteLine("Dump hardware information:");
+                DicConsole.WriteLine("{0,-16}{1,-20}{2,-20}{3,-16}{4,-10}{5,-18}{6,-10}{7,-10}", "Manufacturer",
+                                     "Model", "Serial", "Software", "Version", "Operating system", "Start", "End");
+                DicConsole.WriteLine("========================================================================================================================");
+                foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+                {
+                    foreach(ExtentType extent in dump.Extents)
+                        DicConsole.WriteLine("{0,-16}{1,-20}{2,-20}{3,-16}{4,-10}{5,-18}{6,-10}{7,-10}", dump.Manufacturer,
+                                             dump.Model, dump.Serial, dump.Software.Name, dump.Software.Version,
+                                             dump.Software.OperatingSystem, extent.Start, extent.End);
+                }
                 DicConsole.WriteLine();
             }
         }
