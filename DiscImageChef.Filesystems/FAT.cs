@@ -58,6 +58,90 @@ namespace DiscImageChef.Filesystems
         public string Name => "Microsoft File Allocation Table";
         public Guid Id => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
 
+        (string hash, string name)[] knownBootHashes =
+        {
+            ("b639b4d5b25f63560e3b34a3a0feb732aa65486f", "Amstrad MS-DOS 3.20 (8-sector floppy)"),
+            ("9311151f13f7611b1431593da05ddd3153370574", "Amstrad MS-DOS 3.20 (Spanish)"),
+            ("55eda6a9b955f5199020e6b56a6954fa6fcb7dc6", "AT&T MS-DOS 2.11"),
+            ("d5e10822977efa96e4fbaec2b268ca008d74fe6f", "Atari TOS"),
+            ("17f11a12b96899d2a4976d889cef160502167f2d", "BeOS"),
+            ("d0e31673028fcfcea38dff71a7be13669aa20b8d", "Compaq MS-DOS 3.30"),
+            ("3aa4ce2fa6f9a297b5b15aaef930401af369fcbc", "Compaq MS-DOS 3.30 (8-sector floppy)"),
+            ("8f1d33520343f35034aa3ce47e4180b10e960b43", "Compaq MS-DOS 3.30 (8-sector floppy)"),
+            ("2f4011ae0670ff3aff2bdd412a4651f255b600a9", "Compaq MS-DOS 3.31"),
+            ("afc3fb751089a52c9f0bd37098d3137d32ab4982", "Concurrent DOS 6.0"),
+            ("c25e2d93d3b8bf9870043bf9d12580ef07f5375e", "CrossDOS"),
+            ("43fb2afa1ab3102b3f8d0fe901b652a5b0a973e1", "DR-DOS >=7.02"),
+            ("92d83b7e9e3bd4b73c6b98f8c6434206eac7212f", "DR-DOS 3.40"),
+            ("6a7aba05f91c5a7108edc5d5ccc9dac0ebf5dd28", "DR-DOS 3.40"),
+            ("715e78bb1e38b56452dd1c15db8c096dc506eea3", "DR-DOS 3.41"),
+            ("01e46cb2bc6d65ddd89ba28d254baf563d8fc609", "DR-DOS 5.00"),
+            ("dd297f159eef8a61f5eec638ce7318a098fa26f4", "DR-DOS 5.00"),
+            ("f590e53ae7f9caec5dba93241e557710be61b6fe", "DR-DOS 6.00"),
+            ("630e4aaf230f15eb2d09985f294815b6bc50384c", "DR-DOS 6.00"),
+            ("8851459816d714f53b9c469472e51460ebd44b98", "DR-DOS 7.03"),
+            ("cf24388b61eb1b137f2bb8a4c319e7461d460b72", "DR-DOS 7.03"),
+            ("26bf8efe8368e598397b1f79d635faccf5ca4f87", "DR-DOS 8.00"),
+            ("36ddd6bf8686801f5a2a3cbd4656afa175cabdfc", "DR-DOS 8.00"),
+            ("9ac09781e4090d9ba5e1a31816b4ebfa6b54f39e", "DR-DOS 8.00"),
+            ("f5d68f26abec8392ac23716581c4ab1d6e8456a2", "eComStation"),
+            ("e2a852db8c3eb3d86ca86a706186a9dd54cdc815", "Epson MS-DOS 3.10"),
+            ("74675d158dd0f6b5983bd30dda7018a814bd34dd", "Epson MS-DOS 3.20"),
+            ("683a04f34714555df5e862f709f9abc7de51488e", "Epson MS-DOS 5.00 (PC-98)"),
+            ("1b062df94fc576af069e40603bf2558000a2ca10", "FreeBSD, NetBSD, Mac OS X"),
+            ("33c8e306b3a51e09668fd60f099450019a1238ea", "FreeBSD, NetBSD, Mac OS X"),
+            ("ca386b1cefaf964a49192c2cd08077aff09b82af", "FreeDOS"),
+            ("26033e0db1ee4f439f07077b790e189d1b77688c", "HP MS-DOS 3.20"),
+            ("66867cd665e0e87c32de0bcb721ecfe91a551bc5", "mkfs.vfat"),
+            ("48d4811dbea5d724803017d6d45a49d604982b7b", "mkfs.vfat"),
+            ("02d615c5fb68bc49766bf89777dd36accb1428b7", "MS-DOS >=4.01, PC-DOS >=5.00 (8-sector floppy)"),
+            ("cffb1dc01bf9f533ba63d949c359c9ae97944c9b", "MS-DOS >=5.00"),
+            ("bd099151f2f9f8b3815eef7d9fed90abead52d97", "MS-DOS 3.21"),
+            ("f338eeff68f4e03ce489eb165e18fd94f8a0c63e", "MS-DOS 3.30A"),
+            ("0eb0c789e141d59d91f075ef14d63fd4255aeac2", "MS-DOS 3.30A, 5.00, 6.xx (8-sector floppy)"),
+            ("7aa06595490f92e542965b43805eaa0d6da9c86c", "MS-DOS 3.31"),
+            ("00401ca66900d7defcbc3d794654d1ba2376e83d", "MS-DOS 3.31"),
+            ("00e39a27d9b36e88f2b0caaa1959a8e17223bf31", "MS-DOS 3.31 (8-sector floppy)"),
+            ("1e74fbad5948582247280b116e7175b5a16bcede", "MS-DOS 3.31 (8-sector floppy)"),
+            ("1cfb2cc3a34c8164b8f5051c118643b23a60f4d0", "MS-DOS 4.01"),
+            ("d370551c8aca9cfcd964e2a1235071329f93cc03", "Multiuser DOS 7.22r4"),
+            ("7106ea11dd0b9a39649cbb4f6314a0fa1241da38", "NEC >=MS-DOS 5.00 (PC-98)"),
+            ("30d4f5f54215af0fc69236594e52b94989b35c21", "NEC MS-DOS 3.30 (PC-98)"),
+            ("eae42777f562eb81ed624f0c0479347ba11158c9", "Novell DOS 7.00"),
+            ("c67a7d0bab94a960cca8720d476f5317c960b2fb", "Novell DOS 7.00"),
+            ("0ed508c71bcf1418a1701b9267ddf166e7993b6b", "Olivetti MS-DOS 3.10"),
+            ("3e1a3f22973d9f2d15f9a053204c2f7b72de00a9", "OS/2 1.00"),
+            ("4acb13943f21a266f9eb110969980481783c41c4", "OS/2 1.10"),
+            ("cc7b32236c76d34edefdac3ca6a7be8e26163cea", "OS/2 1.20, 1.30"),
+            ("05c6706189fa0532ea83a7484b88d1dcba63e167", "OS/2 2.00"),
+            ("eefb4383b3e2b05f7f7e0051d58f4617a4f39e42", "OS/2 2.1x, Warp 3"),
+            ("b1d9666ae8781958242da27d319e73aa2dda6805", "OS/2 Warp 4"),
+            ("661d92970ab0f81cec453dc7584e0debdd1b4928", "PC-DOS >=5.00"),
+            ("78522b303fe5752f3cb37eabb6cb54e6cb0cd276", "PC-DOS 2.xx"),
+            ("277edfefdc3f05a219f9378076227c4126b6c8ef", "PC-DOS 3.00"),
+            ("f72ef6ff4c90a170bc8cdd1b01e8d98235c16a3b", "PC-DOS 3.10"),
+            ("cb6b6c1bc024e025710288da652d0d93527a71db", "PC-DOS 3.30"),
+            ("3b844e2a411182958c2d9e6ee17c6d4fff18bd73", "PC-DOS 4.00"),
+            ("45e82fcff4c6f8a9c31418323bc063011f5730e5", "PCExchange 2.0"),
+            ("707849fd75b6a52fd219c3cebe060ecb23c40fc7", "SCO OpenServer"),
+            ("9f7f146b513b00ff9e8b5b927aee24025c3f3fb8", "Toshiba MS-DOS 3.30"),
+            ("30eafc45a4606a7b840dcd5899dfb977a837c835", "Toshiba MS-DOS 4.01"),
+            ("5695a9a69637bd4d4eaa531b976d6f3b71e8d4ad", "Toshiba MS-DOS 4.01"),
+            ("036a59138d620c16e8d0dba45af4dec4ae1376f7", "Windows 10"),
+            ("3dd2941b79f0f6644b3a973c7d81e64e434c0b70", "Windows 2000"),
+            ("cd1e2fced2e49825df23c08a3d1e280c1cf468a7", "Windows 2000"),
+            ("c20c6e706be97091768da8654fffc2f3c0431318", "Windows 95"),
+            ("cf750cc0d2d52251a1a0fb9f2568fed3ff81717a", "Windows 95 >=OSR2"),
+            ("48865a298d4bbe73f89c4de10153e16250c1a9ae", "Windows 95 >=OSR2"),
+            ("1d2df8f3b1b336fc4aa1c6e49b21956194884b41", "Windows 98 (Spanish)"),
+            ("6e6fb4a3ea034415d716b1f81217ffecf78813c3", "Windows 98 (Spanish)"),
+            ("9b5e6be09200145a6ed7c22d14b1e6b4de2f362b", "Windows 98 (Spanish)"),
+            ("3cea1921d29fcd3343d36c090cb3e3dba926781d", "Windows 98, Me"),
+            ("037f9c8caed602d93c88f7e9d8f13a732b3ada76", "Windows NT"),
+            ("a63806bfe11140c873082318dd4da834068be327", "Windows Vista"),
+            ("8f024b3d501c39ee6e3f8ca28173ad6a780d3eb0", "Windows Vista, 8, 10")
+        };
+        
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
@@ -348,6 +432,8 @@ namespace DiscImageChef.Filesystems
 
             byte[] bpbSector = imagePlugin.ReadSectors(partition.Start, 2);
 
+            byte minBootNearJump = 0;
+
             if(imagePlugin.Info.SectorSize >= 256)
             {
                 IntPtr bpbPtr = Marshal.AllocHGlobal(512);
@@ -447,6 +533,7 @@ namespace DiscImageChef.Filesystems
                 {
                     DicConsole.DebugWriteLine("FAT plugin", "Using FAT32 BPB");
                     useLongFat32 = true;
+                    minBootNearJump = 0x58;
                 }
                 else if(bitsInBpsFat32Short == 1 && correctSpcFat32Short && shortFat32Bpb.fats_no <= 2 &&
                         shortFat32Bpb.sectors == 0 && shortFat32Bpb.spfat == 0 && shortFat32Bpb.signature == 0x28)
@@ -455,6 +542,7 @@ namespace DiscImageChef.Filesystems
                     useShortFat32 = shortFat32Bpb.big_sectors == 0
                                         ? shortFat32Bpb.huge_sectors <= partition.End - partition.Start + 1
                                         : shortFat32Bpb.big_sectors <= partition.End - partition.Start + 1;
+                    minBootNearJump = 0x57;
                 }
                 else if(bitsInBpsMsx == 1 && correctSpcMsx && msxBpb.fats_no <= 2 && msxBpb.root_ent > 0 &&
                         msxBpb.sectors <= partition.End - partition.Start + 1 && msxBpb.spfat > 0 &&
@@ -481,11 +569,13 @@ namespace DiscImageChef.Filesystems
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
                                 useExtendedBpb = true;
+                                minBootNearJump = 0x3C;
                             }
                             else
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
                                 userShortExtendedBpb = true;
+                                minBootNearJump = 0x29;
                             }
                     }
                     else if(ebpb.sectors <= partition.End - partition.Start + 1)
@@ -493,11 +583,13 @@ namespace DiscImageChef.Filesystems
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
                             useExtendedBpb = true;
+                            minBootNearJump = 0x3C;
                         }
                         else
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
                             userShortExtendedBpb = true;
+                            minBootNearJump = 0x29;
                         }
                 }
                 else if(bitsInBpsDos33 == 1 && correctSpcDos33 && dos33Bpb.rsectors < partition.End - partition.Start &&
@@ -507,6 +599,7 @@ namespace DiscImageChef.Filesystems
                     {
                         DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
                         useDos33Bpb = true;
+                        minBootNearJump = 0x22;
                     }
                     else if(dos33Bpb.big_sectors == 0 && dos33Bpb.hsectors <= partition.Start && dos33Bpb.sectors > 0 &&
                             dos33Bpb.sectors <= partition.End - partition.Start + 1)
@@ -520,6 +613,7 @@ namespace DiscImageChef.Filesystems
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
                             useDos33Bpb = true;
+                            minBootNearJump = 0x22;
                         }
                     else
                     {
@@ -528,6 +622,7 @@ namespace DiscImageChef.Filesystems
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.2 BPB");
                             useDos32Bpb = true;
+                            minBootNearJump = 0x1E;
                         }
                         else if(dos30Bpb.sptrk > 0 && dos30Bpb.sptrk < 64 && dos30Bpb.heads > 0 && dos30Bpb.heads < 256)
                             if(atariBpb.jump[0] == 0x60 || atariBpb.jump[0] == 0xE9 && atariBpb.jump[1] == 0x00 &&
@@ -540,6 +635,7 @@ namespace DiscImageChef.Filesystems
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.0 BPB");
                                 useDos3Bpb = true;
+                                minBootNearJump = 0x1C;
                             }
                         else
                         {
@@ -553,6 +649,7 @@ namespace DiscImageChef.Filesystems
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 2.0 BPB");
                                 useDos2Bpb = true;
+                                minBootNearJump = 0x16;
                             }
                         }
                     }
@@ -797,7 +894,8 @@ namespace DiscImageChef.Filesystems
                 }
 
                 // This assumes a bootable sector will jump somewhere or disable interrupts in x86 code
-                XmlFsType.Bootable |= bpbSector[0] == 0xFA || bpbSector[0] == 0xEB && bpbSector[1] <= 0x7F;
+                XmlFsType.Bootable |= bpbSector[0] == 0xFA || (bpbSector[0] == 0xEB && bpbSector[1] <= 0x7F) ||
+                                      (bpbSector[0] == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC);
                 fakeBpb.boot_code = bpbSector;
             }
             else if(useShortFat32 || useLongFat32)
@@ -890,8 +988,8 @@ namespace DiscImageChef.Filesystems
 
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-                XmlFsType.Bootable |= fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] > 0x58 && fat32Bpb.jump[1] < 0x80 &&
-                                      fat32Bpb.boot_signature == 0xAA55;
+                XmlFsType.Bootable |= ((fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80) ||
+                                       (fat32Bpb.jump[0] == 0xE9 && fat32Bpb.jump.Length >= 3 && BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump && BitConverter.ToUInt16(fat32Bpb.jump, 1) <= 0x1FC));
 
                 sectorsPerRealSector = fat32Bpb.bps / imagePlugin.Info.SectorSize;
                 // First root directory sector
@@ -1262,11 +1360,14 @@ namespace DiscImageChef.Filesystems
 
                 bootChk = sha1Ctx.Data(fakeBpb.boot_code, out _);
 
+                // Workaround that PCExchange jumps into "FAT16   "... 
+                if(XmlFsType.SystemIdentifier == "PCX 2.0 ") fakeBpb.jump[1] += 8;
+                
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
                 if(XmlFsType.Bootable == false && fakeBpb.jump != null)
-                    XmlFsType.Bootable |= fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] > 0x58 && fakeBpb.jump[1] < 0x80 &&
-                                          fakeBpb.boot_signature == 0xAA55;
+                    XmlFsType.Bootable |= (fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80) ||
+                        (fakeBpb.jump[0] == 0xE9 && fakeBpb.jump.Length >= 3 && BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump && BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC);
 
                 sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
                 // First root directory sector
@@ -1343,8 +1444,34 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Volume label: {0}", XmlFsType.VolumeName).AppendLine();
             if(XmlFsType.Bootable)
             {
+                // Intel short jump
+                if(bpbSector[0] == 0xEB && bpbSector[1] < 0x80)
+                {
+                    int sigSize = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
+                    byte[] bootCode = new byte[512 - sigSize - bpbSector[1] - 2];
+                    Array.Copy(bpbSector, bpbSector[1] + 2, bootCode, 0, bootCode.Length);
+                    sha1Ctx = new Sha1Context();
+                    sha1Ctx.Init();
+                    sha1Ctx.Update(bootCode);
+                    bootChk = sha1Ctx.End();
+                }
+                // Intel big jump
+                else if(bpbSector[0] == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) < 0x1FC)
+                {
+                    int    sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
+                    byte[] bootCode = new byte[512                                                    - sigSize - BitConverter.ToUInt16(bpbSector, 1) - 3];
+                    Array.Copy(bpbSector, BitConverter.ToUInt16(bpbSector, 1) + 3, bootCode, 0, bootCode.Length);
+                    sha1Ctx = new Sha1Context();
+                    sha1Ctx.Init();
+                    sha1Ctx.Update(bootCode);
+                    bootChk = sha1Ctx.End();
+                }
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
+                string bootName = knownBootHashes.FirstOrDefault(t => t.hash == bootChk).name;
+                if(string.IsNullOrWhiteSpace(bootName)) sb.AppendLine("Unknown boot code.");
+                else
+                    sb.AppendFormat("Boot code corresponds to {0}", bootName).AppendLine();
             }
 
             information = sb.ToString();
