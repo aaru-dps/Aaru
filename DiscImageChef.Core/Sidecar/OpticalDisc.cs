@@ -156,12 +156,12 @@ namespace DiscImageChef.Core
                         if(DMI.IsXbox(image.ReadDiskTag(MediaTagType.DVD_DMI)))
                         {
                             dskType                           = MediaType.XGD;
-                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType {Diameter = 120};
+                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType {Diameter = 120, Thickness = 1.2};
                         }
                         else if(DMI.IsXbox360(image.ReadDiskTag(MediaTagType.DVD_DMI)))
                         {
                             dskType                           = MediaType.XGD2;
-                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType {Diameter = 120};
+                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType {Diameter = 120, Thickness = 1.2};
                         }
 
                         break;
@@ -229,15 +229,25 @@ namespace DiscImageChef.Core
 
                                 sidecar.OpticalDisc[0].Dimensions =
                                     new DimensionsType();
-                                if(dskType == MediaType.UMD) sidecar.OpticalDisc[0].Dimensions.Diameter = 60;
+                                if(dskType == MediaType.UMD)
+                                {
+                                    sidecar.OpticalDisc[0].Dimensions.Height          = 64;
+                                    sidecar.OpticalDisc[0].Dimensions.HeightSpecified = true;
+                                    sidecar.OpticalDisc[0].Dimensions.Width           = 63;
+                                    sidecar.OpticalDisc[0].Dimensions.WidthSpecified  = true;
+                                    sidecar.OpticalDisc[0].Dimensions.Thickness       = 4;
+
+                                }
                                 else
                                     switch(pfi.Value.DiscSize)
                                     {
                                         case DVDSize.Eighty:
                                             sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
+                                            sidecar.OpticalDisc[0].Dimensions.Thickness = 1.2;
                                             break;
                                         case DVDSize.OneTwenty:
                                             sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                                            sidecar.OpticalDisc[0].Dimensions.Thickness = 1.2;
                                             break;
                                     }
                             }
