@@ -264,20 +264,21 @@ namespace DiscImageChef.Commands
             {
                 Application           = "DiscImageChef",
                 ApplicationVersion    = Version.GetVersion(),
-                Comments              = options.Comments,
-                Creator               = options.Creator,
-                DriveFirmwareRevision = options.DriveFirmwareRevision,
-                DriveManufacturer     = options.DriveManufacturer,
-                DriveModel            = options.DriveModel,
-                DriveSerialNumber     = options.DriveSerialNumber,
-                LastMediaSequence     = options.LastMediaSequence,
-                MediaBarcode          = options.MediaBarcode,
-                MediaManufacturer     = options.MediaManufacturer,
-                MediaModel            = options.MediaModel,
-                MediaPartNumber       = options.MediaPartNumber,
-                MediaSequence         = options.MediaSequence,
-                MediaSerialNumber     = options.MediaSerialNumber,
-                MediaTitle            = options.MediaTitle
+                Comments              = options.Comments              ?? inputFormat.Info.Comments,
+                Creator               = options.Creator               ?? inputFormat.Info.Creator,
+                DriveFirmwareRevision = options.DriveFirmwareRevision ?? inputFormat.Info.DriveFirmwareRevision,
+                DriveManufacturer     = options.DriveManufacturer     ?? inputFormat.Info.DriveManufacturer,
+                DriveModel            = options.DriveModel            ?? inputFormat.Info.DriveModel,
+                DriveSerialNumber     = options.DriveSerialNumber     ?? inputFormat.Info.DriveSerialNumber,
+                LastMediaSequence     =
+                    options.LastMediaSequence != 0 ? options.LastMediaSequence : inputFormat.Info.LastMediaSequence,
+                MediaBarcode      = options.MediaBarcode      ?? inputFormat.Info.MediaBarcode,
+                MediaManufacturer = options.MediaManufacturer ?? inputFormat.Info.MediaManufacturer,
+                MediaModel        = options.MediaModel        ?? inputFormat.Info.MediaModel,
+                MediaPartNumber   = options.MediaPartNumber   ?? inputFormat.Info.MediaPartNumber,
+                MediaSequence     = options.MediaSequence != 0 ? options.MediaSequence : inputFormat.Info.MediaSequence,
+                MediaSerialNumber = options.MediaSerialNumber ?? inputFormat.Info.MediaSerialNumber,
+                MediaTitle        = options.MediaTitle        ?? inputFormat.Info.MediaTitle
             };
 
             if(!outputFormat.SetMetadata(metadata))
