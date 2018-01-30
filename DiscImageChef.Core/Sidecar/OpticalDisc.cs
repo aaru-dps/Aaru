@@ -243,10 +243,12 @@ namespace DiscImageChef.Core
                                     {
                                         case DVDSize.Eighty:
                                             sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
+                                            sidecar.OpticalDisc[0].Dimensions.DiameterSpecified= true;
                                             sidecar.OpticalDisc[0].Dimensions.Thickness = 1.2;
                                             break;
                                         case DVDSize.OneTwenty:
                                             sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                                            sidecar.OpticalDisc[0].Dimensions.DiameterSpecified = true;
                                             sidecar.OpticalDisc[0].Dimensions.Thickness = 1.2;
                                             break;
                                     }
