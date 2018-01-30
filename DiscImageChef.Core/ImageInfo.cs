@@ -102,7 +102,9 @@ namespace DiscImageChef.Core
                 DicConsole.WriteLine("Drive serial number: {0}", imageFormat.Info.DriveSerialNumber);
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
                 DicConsole.WriteLine("Drive firmware info: {0}", imageFormat.Info.DriveFirmwareRevision);
-            if(imageFormat.Info.Cylinders > 0 && imageFormat.Info.Heads > 0 && imageFormat.Info.SectorsPerTrack > 0 && imageFormat.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(imageFormat.Info.Cylinders       > 0 && imageFormat.Info.Heads > 0 &&
+               imageFormat.Info.SectorsPerTrack > 0 &&
+               imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc)
                 DicConsole.WriteLine("Media geometry: {0} cylinders, {1} heads, {2} sectors per track",
                                      imageFormat.Info.Cylinders, imageFormat.Info.Heads,
                                      imageFormat.Info.SectorsPerTrack);
@@ -110,14 +112,16 @@ namespace DiscImageChef.Core
             if(imageFormat.Info.ReadableMediaTags != null && imageFormat.Info.ReadableMediaTags.Count > 0)
             {
                 DicConsole.WriteLine("Contains {0} readable media tags:", imageFormat.Info.ReadableMediaTags.Count);
-                foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t)) DicConsole.Write("{0} ", tag);
+                foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
+                    DicConsole.Write("{0} ", tag);
                 DicConsole.WriteLine();
             }
 
             if(imageFormat.Info.ReadableSectorTags != null && imageFormat.Info.ReadableSectorTags.Count > 0)
             {
                 DicConsole.WriteLine("Contains {0} readable sector tags:", imageFormat.Info.ReadableSectorTags.Count);
-                foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t)) DicConsole.Write("{0} ", tag);
+                foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
+                    DicConsole.Write("{0} ", tag);
                 DicConsole.WriteLine();
             }
 
@@ -493,21 +497,71 @@ namespace DiscImageChef.Core
                 DicConsole.WriteLine();
             }
 
-            if(imageFormat.DumpHardware != null)
+            if(imageFormat.DumpHardware == null) return;
+
+            const string MANUFACTURER_STRING = "Manufacturer";
+            const string MODEL_STRING        = "Model";
+            const string SERIAL_STRING       = "Serial";
+            const string SOFTWARE_STRING     = "Software";
+            const string VERSION_STRING      = "Version";
+            const string OS_STRING           = "Operating system";
+            const string START_STRING        = "Start";
+            const string END_STRING          = "End";
+            int          manufacturerLen     = MANUFACTURER_STRING.Length;
+            int          modelLen            = MODEL_STRING.Length;
+            int          serialLen           = SERIAL_STRING.Length;
+            int          softwareLen         = SOFTWARE_STRING.Length;
+            int          versionLen          = VERSION_STRING.Length;
+            int          osLen               = OS_STRING.Length;
+            int          sectorLen           = START_STRING.Length;
+
+            foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
-                DicConsole.WriteLine("Dump hardware information:");
-                DicConsole.WriteLine("{0,-16}{1,-20}{2,-20}{3,-16}{4,-10}{5,-18}{6,-10}{7,-10}", "Manufacturer",
-                                     "Model", "Serial", "Software", "Version", "Operating system", "Start", "End");
-                DicConsole.WriteLine("========================================================================================================================");
-                foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+                if(dump.Manufacturer.Length > manufacturerLen)
+                    manufacturerLen                                 = dump.Manufacturer.Length;
+                if(dump.Model.Length         > modelLen) modelLen   = dump.Model.Length;
+                if(dump.Serial.Length        > serialLen) serialLen = dump.Serial.Length;
+                if(dump.Software.Name.Length > softwareLen)
+                    softwareLen = dump.Software.Name.Length;
+                if(dump.Software.Version.Length > versionLen)
+                    versionLen = dump.Software.Version.Length;
+                if(dump.Software.OperatingSystem.Length > osLen)
+                    osLen = dump.Software.OperatingSystem.Length;
+                foreach(ExtentType extent in dump.Extents)
                 {
-                    foreach(ExtentType extent in dump.Extents)
-                        DicConsole.WriteLine("{0,-16}{1,-20}{2,-20}{3,-16}{4,-10}{5,-18}{6,-10}{7,-10}", dump.Manufacturer,
-                                             dump.Model, dump.Serial, dump.Software.Name, dump.Software.Version,
-                                             dump.Software.OperatingSystem, extent.Start, extent.End);
+                    if($"{extent.Start}".Length > sectorLen) sectorLen = $"{extent.Start}".Length;
+                    if($"{extent.End}".Length   > sectorLen) sectorLen = $"{extent.End}".Length;
                 }
-                DicConsole.WriteLine();
             }
+
+            manufacturerLen += 2;
+            modelLen        += 2;
+            serialLen       += 2;
+            softwareLen     += 2;
+            versionLen      += 2;
+            osLen           += 2;
+            sectorLen       += 2;
+            sectorLen       += 2;
+
+            char[] separator = new char[manufacturerLen + modelLen + serialLen + softwareLen + versionLen + osLen +
+                                        sectorLen       + sectorLen];
+            for(int i = 0; i < separator.Length; i++) separator[i] = '=';
+            string format                                          =
+                $"{{0,-{manufacturerLen}}}{{1,-{modelLen}}}{{2,-{serialLen}}}{{3,-{softwareLen}}}{{4,-{versionLen}}}{{5,-{osLen}}}{{6,-{sectorLen}}}{{7,-{sectorLen}}}";
+
+            DicConsole.WriteLine("Dump hardware information:");
+            DicConsole.WriteLine(format, MANUFACTURER_STRING, MODEL_STRING, SERIAL_STRING, SOFTWARE_STRING,
+                                 VERSION_STRING, OS_STRING, START_STRING, END_STRING);
+            DicConsole.WriteLine(new string(separator));
+            foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+            {
+                foreach(ExtentType extent in dump.Extents)
+                    DicConsole.WriteLine(format, dump.Manufacturer, dump.Model, dump.Serial, dump.Software.Name,
+                                         dump.Software.Version, dump.Software.OperatingSystem, extent.Start,
+                                         extent.End);
+            }
+
+            DicConsole.WriteLine();
         }
     }
 }
