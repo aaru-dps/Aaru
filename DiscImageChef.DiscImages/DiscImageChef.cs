@@ -4419,6 +4419,7 @@ namespace DiscImageChef.DiscImages
                 case MediaType.SuperCDROM2:
                 case MediaType.JaguarCD:
                 case MediaType.ThreeDO:
+                case MediaType.PCFX:
                 case MediaType.GOD:
                 case MediaType.WOD:
                 case MediaType.WUOD: return XmlMediaType.OpticalDisc;

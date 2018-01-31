@@ -704,6 +704,10 @@ namespace DiscImageChef.Metadata
                     discType = "Compact Disc";
                     discSubType = "3DO";
                     break;
+                case CommonTypes.MediaType.PCFX:
+                    discType    = "PC-FX";
+                    discSubType = "3DO";
+                    break;
                 case CommonTypes.MediaType.ZIP100:
                     discType = "Iomega ZIP";
                     discSubType = "Iomega ZIP100";

@@ -267,6 +267,8 @@ namespace DiscImageChef.CommonTypes
         JaguarCD = 172,
         /// <summary>3DO CD</summary>
         ThreeDO = 173,
+        /// <summary>NEC PC-FX</summary>
+        PCFX = 174,
         #endregion Other game media, types 170 to 179
 
         #region Apple standard floppy format, types 180 to 189

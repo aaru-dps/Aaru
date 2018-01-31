@@ -122,6 +122,7 @@ enum <uint> MediaType
     SuperCDROM2 = 171,
     JaguarCD = 172,
     ThreeDO = 173,
+    PCFX = 174,
 
     Apple32SS = 180,
     Apple32DS = 181,

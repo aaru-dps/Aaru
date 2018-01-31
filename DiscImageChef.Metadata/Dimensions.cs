@@ -875,6 +875,7 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.ThreeDO:
                 case CommonTypes.MediaType.WOD:
                 case CommonTypes.MediaType.WUOD:
+                case CommonTypes.MediaType.PCFX:
                     dmns.Diameter = 120;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness = 1.2;
