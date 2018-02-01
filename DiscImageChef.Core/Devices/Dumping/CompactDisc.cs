@@ -714,10 +714,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                            subSize);
                             }
 
-                            outputPlugin.WriteSectors(data, i, blocksToRead);
+                            outputPlugin.WriteSectorsLong(data, i, blocksToRead);
                             outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
                         }
-                        else outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
+                        else outputPlugin.WriteSectorsLong(readBuffer, i, blocksToRead);
                     }
                     else
                     {
@@ -727,11 +727,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                         // Write empty data
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
-                            outputPlugin.WriteSectors(new byte[SECTOR_SIZE * blocksToRead], i, blocksToRead);
+                            outputPlugin.WriteSectorsLong(new byte[SECTOR_SIZE * blocksToRead], i, blocksToRead);
                             outputPlugin.WriteSectorsTag(new byte[subSize  * blocksToRead], i, blocksToRead,
                                                          SectorTagType.CdSectorSubchannel);
                         }
-                        else outputPlugin.WriteSectors(new byte[blockSize * blocksToRead], i, blocksToRead);
+                        else outputPlugin.WriteSectorsLong(new byte[blockSize * blocksToRead], i, blocksToRead);
 
                         for(ulong b = i; b < i + blocksToRead; b++) resume.BadBlocks.Add(b);
 
