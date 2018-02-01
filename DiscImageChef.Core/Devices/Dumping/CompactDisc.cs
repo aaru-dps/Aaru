@@ -482,6 +482,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            DumpHardwareType currentTry = null;
+            ExtentsULong     extents    = null;
+            ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
+                                  ref resume, ref currentTry, ref extents);
+            if(currentTry == null || extents == null)
+                throw new InvalidOperationException("Could not process resume file, not continuing...");
+
             // Try to read the Lead-in
             if(dumpLeadIn)
             {
@@ -573,13 +580,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine("Device reports {0} bytes per logical block.", blockSize);
             DicConsole.WriteLine("SCSI device type: {0}.",                      dev.ScsiType);
             DicConsole.WriteLine("Media identified as {0}.",                    dskType);
-
-            DumpHardwareType currentTry = null;
-            ExtentsULong     extents    = null;
-            ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
-                                  ref resume, ref currentTry, ref extents);
-            if(currentTry == null || extents == null)
-                throw new InvalidOperationException("Could not process resume file, not continuing...");
 
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
@@ -888,14 +888,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     throw new ArgumentException(outputPlugin.ErrorMessage);
                 }
 
+            resume.BadBlocks.Sort();
+            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+
             outputPlugin.SetDumpHardware(resume.Tries);
             if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
             outputPlugin.Close();
-
-            resume.BadBlocks.Sort();
-            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             if(aborted)
             {

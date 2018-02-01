@@ -771,14 +771,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 throw new ArgumentException(outputPlugin.ErrorMessage);
             }
 
+            resume.BadBlocks.Sort();
+            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+
             outputPlugin.SetDumpHardware(resume.Tries);
             if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
             outputPlugin.Close();
-
-            resume.BadBlocks.Sort();
-            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             if(aborted)
             {
