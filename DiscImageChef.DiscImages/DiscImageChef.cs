@@ -2209,7 +2209,7 @@ namespace DiscImageChef.DiscImages
                             }
 
                             Crc64Context.Data(data, out byte[] blockCrc);
-                            blockCrc = blockCrc.Reverse().ToArray();
+                            blockCrc = blockCrc.ToArray();
                             if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
                             {
                                 DicConsole.DebugWriteLine("DiscImageChef format plugin",
