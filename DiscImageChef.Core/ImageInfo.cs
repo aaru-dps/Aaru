@@ -45,6 +45,7 @@ using DiscImageChef.DiscImages;
 using Schemas;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using Session = DiscImageChef.DiscImages.Session;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core
@@ -495,6 +496,40 @@ namespace DiscImageChef.Core
                 DicConsole.WriteLine("Xbox Security Sectors contained in image:");
                 DicConsole.Write("{0}", SS.Prettify(toc));
                 DicConsole.WriteLine();
+            }
+
+            try
+            {
+                if(imageFormat.Sessions != null && imageFormat.Sessions.Count > 0)
+                {
+                    DicConsole.WriteLine("Image sessions:");
+                    DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", "Session", "First track", "Last track", "Start", "End");
+                    DicConsole.WriteLine("=========================================================");
+                    foreach(Session session in imageFormat.Sessions)
+                        DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", session.SessionSequence, session.StartTrack, session.EndTrack, session.StartSector, session.EndSector);
+                    DicConsole.WriteLine();
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            try
+            {
+                if(imageFormat.Tracks != null && imageFormat.Tracks.Count > 0)
+                {
+                    DicConsole.WriteLine("Image tracks:");
+                    DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", "Track", "Type", "Bps", "Raw bps", "Subchannel", "Pregap", "Start", "End");
+                    DicConsole.WriteLine("=================================================================================");
+                    foreach(Track track in imageFormat.Tracks)
+                        DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", track.TrackSequence, track.TrackType, track.TrackBytesPerSector, track.TrackRawBytesPerSector, track.TrackSubchannelType, track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
+                    DicConsole.WriteLine();
+                }
+            }
+            catch
+            {
+                // ignored
             }
 
             if(imageFormat.DumpHardware == null) return;
