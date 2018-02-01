@@ -552,15 +552,15 @@ namespace DiscImageChef.Core
 
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
-                if(dump.Manufacturer.Length > manufacturerLen)
+                if(dump.Manufacturer?.Length > manufacturerLen)
                     manufacturerLen                                 = dump.Manufacturer.Length;
-                if(dump.Model.Length         > modelLen) modelLen   = dump.Model.Length;
-                if(dump.Serial.Length        > serialLen) serialLen = dump.Serial.Length;
-                if(dump.Software.Name.Length > softwareLen)
+                if(dump.Model?.Length         > modelLen) modelLen   = dump.Model.Length;
+                if(dump.Serial?.Length        > serialLen) serialLen = dump.Serial.Length;
+                if(dump.Software?.Name?.Length > softwareLen)
                     softwareLen = dump.Software.Name.Length;
-                if(dump.Software.Version.Length > versionLen)
+                if(dump.Software?.Version?.Length > versionLen)
                     versionLen = dump.Software.Version.Length;
-                if(dump.Software.OperatingSystem.Length > osLen)
+                if(dump.Software?.OperatingSystem?.Length > osLen)
                     osLen = dump.Software.OperatingSystem.Length;
                 foreach(ExtentType extent in dump.Extents)
                 {
