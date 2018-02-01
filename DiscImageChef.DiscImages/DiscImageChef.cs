@@ -1841,7 +1841,7 @@ namespace DiscImageChef.DiscImages
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(trkHeader));
                         Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(trkHeader));
-                        trkHeader = (TracksHeader)Marshal.PtrToStructure(structurePointer, typeof(IndexHeader));
+                        trkHeader = (TracksHeader)Marshal.PtrToStructure(structurePointer, typeof(TracksHeader));
                         Marshal.FreeHGlobal(structurePointer);
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
