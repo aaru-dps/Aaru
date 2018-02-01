@@ -418,6 +418,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
                     }
 
+                    foreach(ulong bad in resume.BadBlocks)
+                        dumpLog.WriteLine("Sector {0} could not be read.", bad);
                     outputPlugin.SetDumpHardware(resume.Tries);
                     if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
                     dumpLog.WriteLine("Closing output file.");

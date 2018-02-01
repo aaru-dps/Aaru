@@ -889,6 +889,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
             resume.BadBlocks.Sort();
+            foreach(ulong bad in resume.BadBlocks)
+                dumpLog.WriteLine("Sector {0} could not be read.", bad);
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             outputPlugin.SetDumpHardware(resume.Tries);
@@ -918,7 +920,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
-            if(preSidecar == null)
+            if(preSidecar != null)
             {
                 preSidecar.OpticalDisc = sidecar.OpticalDisc;
                 sidecar                = preSidecar;
