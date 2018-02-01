@@ -647,8 +647,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
             resume.BadBlocks.Sort();
-            foreach(ulong bad in resume.BadBlocks)
-                dumpLog.WriteLine("Sector {0} could not be read.", bad);
+            foreach(ulong bad in resume.BadBlocks) dumpLog.WriteLine("Sector {0} could not be read.", bad);
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             outputPlugin.SetDumpHardware(resume.Tries);
@@ -686,6 +685,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar                = preSidecar;
                 }
 
+                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                if(sidecar.OpticalDisc[0].Track != null)
+                    filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
+                                         where xmlTrack.FileSystemInformation != null
+                                         from partition in xmlTrack.FileSystemInformation
+                                         where partition.FileSystems != null
+                                         from fileSystem in partition.FileSystems
+                                         select ((ulong)partition.StartSector, fileSystem.Type));
+
+                if(filesystems.Count > 0)
+                    foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                        dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
                 // TODO: Implement layers
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
                 Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
@@ -825,6 +836,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
+                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                if(sidecar.BlockMedia[0].FileSystemInformation != null)
+                    filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                                         where partition.FileSystems != null
+                                         from fileSystem in partition.FileSystems
+                                         select ((ulong)partition.StartSector, fileSystem.Type));
+
+                if(filesystems.Count > 0)
+                    foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                        dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
                 sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
                 Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
                 sidecar.BlockMedia[0].DiskType    = xmlDskTyp;

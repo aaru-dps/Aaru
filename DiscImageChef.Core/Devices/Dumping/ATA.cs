@@ -418,8 +418,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
                     }
 
-                    foreach(ulong bad in resume.BadBlocks)
-                        dumpLog.WriteLine("Sector {0} could not be read.", bad);
+                    foreach(ulong bad in resume.BadBlocks) dumpLog.WriteLine("Sector {0} could not be read.", bad);
                     outputPlugin.SetDumpHardware(resume.Tries);
                     if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
                     dumpLog.WriteLine("Closing output file.");
@@ -537,6 +536,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Sidecar created in {0} seconds.", (chkEnd - chkStart).TotalSeconds);
                     dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                       (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+                    List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                    if(sidecar.BlockMedia[0].FileSystemInformation != null)
+                        filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                                             where partition.FileSystems != null
+                                             from fileSystem in partition.FileSystems
+                                             select ((ulong)partition.StartSector, fileSystem.Type));
+
+                    if(filesystems.Count > 0)
+                        foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                            dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
 
                     DicConsole.WriteLine();
                     string xmlDskTyp, xmlDskSubTyp;

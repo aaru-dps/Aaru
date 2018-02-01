@@ -772,8 +772,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             resume.BadBlocks.Sort();
-            foreach(ulong bad in resume.BadBlocks)
-                dumpLog.WriteLine("Sector {0} could not be read.", bad);
+            foreach(ulong bad in resume.BadBlocks) dumpLog.WriteLine("Sector {0} could not be read.", bad);
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             outputPlugin.SetDumpHardware(resume.Tries);
@@ -811,6 +810,19 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                 Mmc.AddMediaTagToSidecar(outputPath, tag, ref sidecar);
+
+            List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+            if(sidecar.OpticalDisc[0].Track != null)
+                filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
+                                     where xmlTrack.FileSystemInformation != null
+                                     from partition in xmlTrack.FileSystemInformation
+                                     where partition.FileSystems != null
+                                     from fileSystem in partition.FileSystems
+                                     select ((ulong)partition.StartSector, fileSystem.Type));
+
+            if(filesystems.Count > 0)
+                foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                    dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
 
             sidecar.OpticalDisc[0].Layers = new LayersType
             {
