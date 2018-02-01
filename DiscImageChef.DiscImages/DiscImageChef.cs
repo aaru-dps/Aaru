@@ -3114,6 +3114,7 @@ namespace DiscImageChef.DiscImages
                 {
                     lzmaProperties = lzmaBlockStream.Properties;
                     lzmaBlockStream.Close();
+                    cmpCrc64Context.Update(lzmaProperties);
                     if(blockStream.Length > decompressedStream.Length)
                         currentBlockHeader.compression = CompressionType.None;
                 }
@@ -3148,7 +3149,8 @@ namespace DiscImageChef.DiscImages
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
                 if(currentBlockHeader.compression == CompressionType.Lzma)
-                    imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
+                    imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
+
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
             }
 
@@ -3195,8 +3197,12 @@ namespace DiscImageChef.DiscImages
                 }
                 else
                 {
-                    tagData = blockStream.ToArray();
-                    Crc64Context.Data(tagData, out tagCrc);
+                    tagData               = blockStream.ToArray();
+                    Crc64Context crc64Ctx = new Crc64Context();
+                    crc64Ctx.Init();
+                    crc64Ctx.Update(lzmaProperties);
+                    crc64Ctx.Update(tagData);
+                    tagCrc               = crc64Ctx.Final();
                     tagBlock.cmpLength   = (uint)tagData.Length + LZMA_PROPERTIES_LENGTH;
                     tagBlock.cmpCrc64    = BitConverter.ToUInt64(tagCrc, 0);
                     tagBlock.compression = CompressionType.Lzma;
