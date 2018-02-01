@@ -100,6 +100,7 @@ namespace DiscImageChef.Core
                     case MediaTagType.CD_ATIP:
                         sidecar.OpticalDisc[0].ATIP = new DumpType
                         {
+                            Image     = Path.GetFileName(imagePath),
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray(),
                             Size      = image.ReadDiskTag(MediaTagType.CD_ATIP).Length
                         };
@@ -113,6 +114,7 @@ namespace DiscImageChef.Core
                     case MediaTagType.DVD_BCA:
                         sidecar.OpticalDisc[0].BCA = new DumpType
                         {
+                            Image     = Path.GetFileName(imagePath),
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_BCA)).ToArray(),
                             Size      = image.ReadDiskTag(MediaTagType.DVD_BCA).Length
                         };
@@ -120,6 +122,7 @@ namespace DiscImageChef.Core
                     case MediaTagType.BD_BCA:
                         sidecar.OpticalDisc[0].BCA = new DumpType
                         {
+                            Image     = Path.GetFileName(imagePath),
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.BD_BCA)).ToArray(),
                             Size      = image.ReadDiskTag(MediaTagType.BD_BCA).Length
                         };
@@ -127,6 +130,7 @@ namespace DiscImageChef.Core
                     case MediaTagType.DVD_CMI:
                         sidecar.OpticalDisc[0].CMI = new DumpType
                         {
+                            Image     = Path.GetFileName(imagePath),
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_CMI)).ToArray(),
                             Size      = image.ReadDiskTag(MediaTagType.DVD_CMI).Length
                         };
@@ -150,6 +154,7 @@ namespace DiscImageChef.Core
                     case MediaTagType.DVD_DMI:
                         sidecar.OpticalDisc[0].DMI = new DumpType
                         {
+                            Image     = Path.GetFileName(imagePath),
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_DMI)).ToArray(),
                             Size      = image.ReadDiskTag(MediaTagType.DVD_DMI).Length
                         };
@@ -168,6 +173,7 @@ namespace DiscImageChef.Core
                     case MediaTagType.DVD_PFI:
                         sidecar.OpticalDisc[0].PFI = new DumpType
                         {
+                            Image     = Path.GetFileName(imagePath),
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray(),
                             Size      = image.ReadDiskTag(MediaTagType.DVD_PFI).Length
                         };
@@ -227,8 +233,7 @@ namespace DiscImageChef.Core
                                 if(dskType == MediaType.GOD && pfi.Value.DiscSize == DVDSize.OneTwenty)
                                     dskType = MediaType.WOD;
 
-                                sidecar.OpticalDisc[0].Dimensions =
-                                    new DimensionsType();
+                                sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
                                 if(dskType == MediaType.UMD)
                                 {
                                     sidecar.OpticalDisc[0].Dimensions.Height          = 64;
@@ -236,20 +241,19 @@ namespace DiscImageChef.Core
                                     sidecar.OpticalDisc[0].Dimensions.Width           = 63;
                                     sidecar.OpticalDisc[0].Dimensions.WidthSpecified  = true;
                                     sidecar.OpticalDisc[0].Dimensions.Thickness       = 4;
-
                                 }
                                 else
                                     switch(pfi.Value.DiscSize)
                                     {
                                         case DVDSize.Eighty:
-                                            sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
-                                            sidecar.OpticalDisc[0].Dimensions.DiameterSpecified= true;
-                                            sidecar.OpticalDisc[0].Dimensions.Thickness = 1.2;
+                                            sidecar.OpticalDisc[0].Dimensions.Diameter          = 80;
+                                            sidecar.OpticalDisc[0].Dimensions.DiameterSpecified = true;
+                                            sidecar.OpticalDisc[0].Dimensions.Thickness         = 1.2;
                                             break;
                                         case DVDSize.OneTwenty:
-                                            sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                                            sidecar.OpticalDisc[0].Dimensions.Diameter          = 120;
                                             sidecar.OpticalDisc[0].Dimensions.DiameterSpecified = true;
-                                            sidecar.OpticalDisc[0].Dimensions.Thickness = 1.2;
+                                            sidecar.OpticalDisc[0].Dimensions.Thickness         = 1.2;
                                             break;
                                     }
                             }
@@ -258,8 +262,69 @@ namespace DiscImageChef.Core
                     case MediaTagType.CD_PMA:
                         sidecar.OpticalDisc[0].PMA = new DumpType
                         {
+                            Image     = Path.GetFileName(imagePath),
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_PMA)).ToArray(),
                             Size      = image.ReadDiskTag(MediaTagType.CD_PMA).Length
+                        };
+                        break;
+                    case MediaTagType.CD_FullTOC:
+                        sidecar.OpticalDisc[0].TOC = new DumpType
+                        {
+                            Image     = Path.GetFileName(imagePath),
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_FullTOC)).ToArray(),
+                            Size      = image.ReadDiskTag(MediaTagType.CD_FullTOC).Length
+                        };
+                        break;
+                    case MediaTagType.CD_LeadIn:
+                        sidecar.OpticalDisc[0].LeadIn = new[]
+                        {
+                            new BorderType
+                            {
+                                Image     = Path.GetFileName(imagePath),
+                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_LeadIn)).ToArray(),
+                                Size      = image.ReadDiskTag(MediaTagType.CD_LeadIn).Length
+                            }
+                        };
+                        break;
+                    case MediaTagType.Xbox_SecuritySector:
+                        if(sidecar.OpticalDisc[0].Xbox == null) sidecar.OpticalDisc[0].Xbox = new XboxType();
+
+                        sidecar.OpticalDisc[0].Xbox.SecuritySectors = new[]
+                        {
+                            new XboxSecuritySectorsType
+                            {
+                                RequestNumber   = 0,
+                                RequestVersion  = 1,
+                                SecuritySectors = new DumpType
+                                {
+                                    Image     = Path.GetFileName(imagePath),
+                                    Checksums =
+                                        Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_SecuritySector))
+                                                .ToArray(),
+                                    Size = image.ReadDiskTag(MediaTagType.Xbox_SecuritySector).Length
+                                }
+                            }
+                        };
+
+                        break;
+                    case MediaTagType.Xbox_PFI:
+                        if(sidecar.OpticalDisc[0].Xbox == null) sidecar.OpticalDisc[0].Xbox = new XboxType();
+
+                        sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
+                        {
+                            Image     = Path.GetFileName(imagePath),
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_PFI)).ToArray(),
+                            Size      = image.ReadDiskTag(MediaTagType.Xbox_PFI).Length
+                        };
+                        break;
+                    case MediaTagType.Xbox_DMI:
+                        if(sidecar.OpticalDisc[0].Xbox == null) sidecar.OpticalDisc[0].Xbox = new XboxType();
+
+                        sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
+                        {
+                            Image     = Path.GetFileName(imagePath),
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_DMI)).ToArray(),
+                            Size      = image.ReadDiskTag(MediaTagType.Xbox_DMI).Length
                         };
                         break;
                 }
@@ -282,7 +347,7 @@ namespace DiscImageChef.Core
 
             if(sidecar.OpticalDisc[0].Dimensions == null && image.Info.MediaType != MediaType.Unknown)
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
-            
+
             InitProgress();
             foreach(Track trk in tracks)
             {

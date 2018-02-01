@@ -793,6 +793,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
+                case MediaTagType.CD_LeadIn:
+                    sidecar.OpticalDisc[0].LeadIn = new[]
+                    {
+                        new BorderType
+                        {
+                            Image = outputPath,
+                            Size = tag.Value.Length,
+                            Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        }
+                    };
+                    break;
             }
         }
     }
