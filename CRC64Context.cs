@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.IO;
 using System.Text;
 
@@ -89,7 +90,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(hashInt ^= CRC64_SEED);
         }
 
@@ -100,7 +101,7 @@ namespace DiscImageChef.Checksums
         {
             StringBuilder crc64Output = new StringBuilder();
 
-            BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^= CRC64_SEED).Length; i++)
                 crc64Output.Append(BigEndianBitConverter.GetBytes(hashInt ^= CRC64_SEED)[i].ToString("x2"));
 
@@ -144,7 +145,7 @@ namespace DiscImageChef.Checksums
                 localhashInt = (localhashInt >> 8) ^ localTable[(ulong)fileStream.ReadByte() ^ (localhashInt & 0xffL)];
 
             localhashInt ^= CRC64_SEED;
-            BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             hash = BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc64Output = new StringBuilder();
@@ -196,7 +197,7 @@ namespace DiscImageChef.Checksums
                 localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)];
 
             localhashInt ^= CRC64_SEED;
-            BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             hash = BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc64Output = new StringBuilder();
