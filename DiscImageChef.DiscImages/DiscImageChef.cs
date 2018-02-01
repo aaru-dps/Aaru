@@ -137,6 +137,8 @@ namespace DiscImageChef.DiscImages
         uint currentCacheSize;
         /// <summary>Cache of DDT entries.</summary>
         Dictionary<ulong, ulong> ddtEntryCache;
+        MemoryStream             decompressedStream;
+        bool                     deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
         Dictionary<byte[], ulong> deduplicationTable;
         /// <summary><see cref="CUETools.Codecs.FLAKE" /> writer.</summary>
@@ -188,8 +190,6 @@ namespace DiscImageChef.DiscImages
         /// <summary>In-memory deduplication table</summary>
         ulong[] userDataDdt;
         bool    writingLong;
-        bool deduplicate;
-        MemoryStream decompressedStream;
 
         public DiscImageChef()
         {
@@ -762,7 +762,8 @@ namespace DiscImageChef.DiscImages
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(cicmBlock));
                         Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(cicmBlock));
-                        cicmBlock = (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer, typeof(CicmMetadataBlock));
+                        cicmBlock = (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer,
+                                                                              typeof(CicmMetadataBlock));
                         Marshal.FreeHGlobal(structurePointer);
                         if(cicmBlock.identifier != BlockType.CicmBlock) break;
 
@@ -841,7 +842,7 @@ namespace DiscImageChef.DiscImages
                                 tmp = new byte[dumpEntry.manufacturerLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
                                 imageStream.Position += 1;
-                                dump.Manufacturer = Encoding.UTF8.GetString(tmp);
+                                dump.Manufacturer    =  Encoding.UTF8.GetString(tmp);
                             }
 
                             if(dumpEntry.modelLength > 0)
@@ -849,7 +850,7 @@ namespace DiscImageChef.DiscImages
                                 tmp = new byte[dumpEntry.modelLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
                                 imageStream.Position += 1;
-                                dump.Model = Encoding.UTF8.GetString(tmp);
+                                dump.Model           =  Encoding.UTF8.GetString(tmp);
                             }
 
                             if(dumpEntry.revisionLength > 0)
@@ -857,7 +858,7 @@ namespace DiscImageChef.DiscImages
                                 tmp = new byte[dumpEntry.revisionLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
                                 imageStream.Position += 1;
-                                dump.Revision = Encoding.UTF8.GetString(tmp);
+                                dump.Revision        =  Encoding.UTF8.GetString(tmp);
                             }
 
                             if(dumpEntry.firmwareLength > 0)
@@ -865,7 +866,7 @@ namespace DiscImageChef.DiscImages
                                 tmp = new byte[dumpEntry.firmwareLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
                                 imageStream.Position += 1;
-                                dump.Firmware = Encoding.UTF8.GetString(tmp);
+                                dump.Firmware        =  Encoding.UTF8.GetString(tmp);
                             }
 
                             if(dumpEntry.serialLength > 0)
@@ -873,7 +874,7 @@ namespace DiscImageChef.DiscImages
                                 tmp = new byte[dumpEntry.serialLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
                                 imageStream.Position += 1;
-                                dump.Serial = Encoding.UTF8.GetString(tmp);
+                                dump.Serial          =  Encoding.UTF8.GetString(tmp);
                             }
 
                             if(dumpEntry.softwareNameLength > 0)
@@ -881,23 +882,23 @@ namespace DiscImageChef.DiscImages
                                 tmp = new byte[dumpEntry.softwareNameLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
                                 imageStream.Position += 1;
-                                dump.Software.Name = Encoding.UTF8.GetString(tmp);
+                                dump.Software.Name   =  Encoding.UTF8.GetString(tmp);
                             }
 
                             if(dumpEntry.softwareVersionLength > 0)
                             {
                                 tmp = new byte[dumpEntry.softwareVersionLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
-                                imageStream.Position += 1;
-                                dump.Software.Version = Encoding.UTF8.GetString(tmp);
+                                imageStream.Position  += 1;
+                                dump.Software.Version =  Encoding.UTF8.GetString(tmp);
                             }
 
                             if(dumpEntry.softwareOperatingSystemLength > 0)
                             {
                                 tmp = new byte[dumpEntry.softwareOperatingSystemLength - 1];
                                 imageStream.Read(tmp, 0, tmp.Length);
-                                imageStream.Position += 1;
-                                dump.Software.OperatingSystem = Encoding.UTF8.GetString(tmp);
+                                imageStream.Position          += 1;
+                                dump.Software.OperatingSystem =  Encoding.UTF8.GetString(tmp);
                             }
 
                             tmp = new byte[16];
@@ -1469,7 +1470,7 @@ namespace DiscImageChef.DiscImages
                         throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                               "Can't found track containing requested sector");
 
-                    if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
+                    if(sectorAddress + length > trk.TrackEndSector + 1)
                         throw new ArgumentOutOfRangeException(nameof(length),
                                                               $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
 
@@ -1486,12 +1487,16 @@ namespace DiscImageChef.DiscImages
                             data    = ReadSectors(sectorAddress, length);
                             for(uint i = 0; i < length; i++)
                             {
-                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors,
-                                           (int)((sectorAddress               + i) * 2352), 16);
-                                Array.Copy(data, (int)((sectorAddress         + i) * 2048), sectors,
-                                           (int)((sectorAddress               + i) * 2352) + 16, 2048);
-                                Array.Copy(sectorSuffix, (int)((sectorAddress + i) * 288), sectors,
-                                           (int)((sectorAddress               + i) * 2352) + 2064, 288);
+                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
+                                           16);
+                                Array.Copy(data, (int)(i * 2048), sectors,
+                                           (int)(i       * 2352) + 16, 2048);
+                                Array.Copy(sectorSuffix,
+                                           (int)((sectorAddress + i) * 288),
+                                           sectors,
+                                           (int)
+                                           (i *
+                                            2352) + 2064, 288);
                             }
 
                             return sectors;
@@ -1505,10 +1510,10 @@ namespace DiscImageChef.DiscImages
                             data    = ReadSectors(sectorAddress, length);
                             for(uint i = 0; i < length; i++)
                             {
-                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors,
-                                           (int)((sectorAddress               + i) * 2352), 16);
-                                Array.Copy(data, (int)((sectorAddress         + i) * 2336), sectors,
-                                           (int)((sectorAddress               + i) * 2352) + 16, 2336);
+                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
+                                           16);
+                                Array.Copy(data, (int)(i * 2336), sectors,
+                                           (int)(i       * 2352) + 16, 2336);
                             }
 
                             return sectors;
@@ -1550,9 +1555,9 @@ namespace DiscImageChef.DiscImages
                             for(uint i = 0; i < length; i++)
                             {
                                 Array.Copy(sectorSubchannel, (int)((sectorAddress + i) * tagSize), sectors,
-                                           (int)((sectorAddress                   + i) * sectorSize + 512), tagSize);
-                                Array.Copy(data, (int)((sectorAddress             + i) * 512), sectors,
-                                           (int)((sectorAddress                   + i) * 512), 512);
+                                           (int)(i                                     * sectorSize + 512), tagSize);
+                                Array.Copy(data, (int)((sectorAddress                               + i) * 512),
+                                           sectors, (int)(i                                              * 512), 512);
                             }
 
                             return sectors;
@@ -1887,7 +1892,8 @@ namespace DiscImageChef.DiscImages
                 ("sha1", typeof(bool), "Calculate and store SHA1 of image's user data"),
                 ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data"),
                 ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data"),
-                ("deduplicate", typeof(bool), "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default")
+                ("deduplicate", typeof(bool),
+                "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default")
             };
         public IEnumerable<string> KnownExtensions => new[] {".dicf"};
         public bool                IsWriting       { get; private set; }
@@ -2376,7 +2382,7 @@ namespace DiscImageChef.DiscImages
                                     tmp = new byte[dumpEntry.manufacturerLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     imageStream.Position += 1;
-                                    dump.Manufacturer = Encoding.UTF8.GetString(tmp);
+                                    dump.Manufacturer    =  Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.modelLength > 0)
@@ -2384,7 +2390,7 @@ namespace DiscImageChef.DiscImages
                                     tmp = new byte[dumpEntry.modelLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     imageStream.Position += 1;
-                                    dump.Model = Encoding.UTF8.GetString(tmp);
+                                    dump.Model           =  Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.revisionLength > 0)
@@ -2392,7 +2398,7 @@ namespace DiscImageChef.DiscImages
                                     tmp = new byte[dumpEntry.revisionLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     imageStream.Position += 1;
-                                    dump.Revision = Encoding.UTF8.GetString(tmp);
+                                    dump.Revision        =  Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.firmwareLength > 0)
@@ -2400,7 +2406,7 @@ namespace DiscImageChef.DiscImages
                                     tmp = new byte[dumpEntry.firmwareLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     imageStream.Position += 1;
-                                    dump.Firmware = Encoding.UTF8.GetString(tmp);
+                                    dump.Firmware        =  Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.serialLength > 0)
@@ -2408,7 +2414,7 @@ namespace DiscImageChef.DiscImages
                                     tmp = new byte[dumpEntry.serialLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     imageStream.Position += 1;
-                                    dump.Serial = Encoding.UTF8.GetString(tmp);
+                                    dump.Serial          =  Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.softwareNameLength > 0)
@@ -2416,20 +2422,20 @@ namespace DiscImageChef.DiscImages
                                     tmp = new byte[dumpEntry.softwareNameLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     imageStream.Position += 1;
-                                    dump.Software.Name = Encoding.UTF8.GetString(tmp);
+                                    dump.Software.Name   =  Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.softwareVersionLength > 0)
                                 {
                                     tmp = new byte[dumpEntry.softwareVersionLength - 1];
                                     imageStream.Read(tmp, 0, tmp.Length);
-                                    imageStream.Position += 1;
-                                    dump.Software.Version = Encoding.UTF8.GetString(tmp);
+                                    imageStream.Position  += 1;
+                                    dump.Software.Version =  Encoding.UTF8.GetString(tmp);
                                 }
 
                                 if(dumpEntry.softwareOperatingSystemLength > 0)
                                 {
-                                    tmp = new byte[dumpEntry.softwareOperatingSystemLength - 1];
+                                    tmp                  =  new byte[dumpEntry.softwareOperatingSystemLength - 1];
                                     imageStream.Position += 1;
                                     imageStream.Read(tmp, 0, tmp.Length);
                                     dump.Software.OperatingSystem = Encoding.UTF8.GetString(tmp);
@@ -2624,10 +2630,9 @@ namespace DiscImageChef.DiscImages
             if(sectorAddress == 0) alreadyWrittenZero = true;
 
             byte[] hash = null;
-                
+
             // Compute hash only if asked to deduplicate, or the sector is empty (those will always be deduplicated)
-            if(deduplicate || ArrayHelpers.ArrayIsNullOrEmpty(data))
-                hash = checksumProvider.ComputeHash(data);
+            if(deduplicate || ArrayHelpers.ArrayIsNullOrEmpty(data)) hash = checksumProvider.ComputeHash(data);
 
             if(hash != null && deduplicationTable.TryGetValue(hash, out ulong pointer))
             {
@@ -2694,7 +2699,7 @@ namespace DiscImageChef.DiscImages
 
                 if(currentBlockHeader.compression == CompressionType.None)
                 {
-                    blockStream = decompressedStream;
+                    blockStream                 = decompressedStream;
                     currentBlockHeader.cmpCrc64 = currentBlockHeader.crc64;
                 }
                 else
@@ -2722,8 +2727,8 @@ namespace DiscImageChef.DiscImages
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
                 if(currentBlockHeader.compression == CompressionType.Lzma)
-                    imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
-                
+                    imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
+
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                 blockStream        = null;
                 currentBlockOffset = 0;
@@ -2743,7 +2748,7 @@ namespace DiscImageChef.DiscImages
                 if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && trk.TrackType == TrackType.Audio)
                     currentBlockHeader.compression = CompressionType.Flac;
 
-                blockStream = new MemoryStream();
+                blockStream        = new MemoryStream();
                 decompressedStream = new MemoryStream();
                 if(currentBlockHeader.compression == CompressionType.Flac)
                     flakeWriter      = new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
@@ -2753,8 +2758,7 @@ namespace DiscImageChef.DiscImages
             }
 
             ulong ddtEntry = (ulong)((imageStream.Position << shift) + currentBlockOffset);
-            if(hash != null)
-                deduplicationTable.Add(hash, ddtEntry);
+            if(hash                           != null) deduplicationTable.Add(hash, ddtEntry);
             if(currentBlockHeader.compression == CompressionType.Flac)
             {
                 AudioBuffer audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, data, SAMPLES_PER_SECTOR);
