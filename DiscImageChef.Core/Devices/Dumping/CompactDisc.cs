@@ -666,7 +666,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             start = DateTime.UtcNow;
             for(int t = 0; t < tracks.Length; t++)
             {
-                dumpLog.WriteLine("Reading track {0}", t);
+                dumpLog.WriteLine("Reading track {0}", t + 1);
 
                 for(ulong i = resume.NextBlock; i <= tracks[t].TrackEndSector; i += blocksToRead)
                 {
