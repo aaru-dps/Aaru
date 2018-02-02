@@ -190,6 +190,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>In-memory deduplication table</summary>
         ulong[] userDataDdt;
         bool    writingLong;
+        bool nocompress;
 
         public DiscImageChef()
         {
@@ -1893,7 +1894,8 @@ namespace DiscImageChef.DiscImages
                 ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data"),
                 ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data"),
                 ("deduplicate", typeof(bool),
-                "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default")
+                "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default"),
+                ("nocompress", typeof(bool), "Don't compress user data blocks. Other blocks will still be compressed")
             };
         public IEnumerable<string> KnownExtensions => new[] {".dicf"};
         public bool                IsWriting       { get; private set; }
@@ -1991,6 +1993,16 @@ namespace DiscImageChef.DiscImages
                     }
                 }
                 else deduplicate = true;
+
+                if(options.TryGetValue("nocompress", out tmpValue))
+                {
+                    if(!bool.TryParse(tmpValue, out nocompress))
+                    {
+                        ErrorMessage = "Invalid value for nocompress option";
+                        return false;
+                    }
+                }
+                else nocompress = false;
             }
             else
             {
@@ -2002,6 +2014,7 @@ namespace DiscImageChef.DiscImages
                 doSha256        = false;
                 doSpamsum       = false;
                 deduplicate     = true;
+                nocompress      = false;
             }
 
             // This really, cannot happen
@@ -2688,7 +2701,7 @@ namespace DiscImageChef.DiscImages
                     Array.Copy(blockStream.GetBuffer(), 0, buffer, 0, realLength);
                     blockStream = new MemoryStream(buffer);
                 }
-                else
+                else if(currentBlockHeader.compression == CompressionType.Lzma)
                 {
                     lzmaProperties = lzmaBlockStream.Properties;
                     lzmaBlockStream.Close();
@@ -2741,11 +2754,11 @@ namespace DiscImageChef.DiscImages
                 {
                     identifier  = BlockType.DataBlock,
                     type        = DataType.UserData,
-                    compression = CompressionType.Lzma,
+                    compression = nocompress ? CompressionType.None : CompressionType.Lzma,
                     sectorSize  = (uint)data.Length
                 };
 
-                if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && trk.TrackType == TrackType.Audio)
+                if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && trk.TrackType == TrackType.Audio && !nocompress)
                     currentBlockHeader.compression = CompressionType.Flac;
 
                 blockStream        = new MemoryStream();
@@ -2767,7 +2780,8 @@ namespace DiscImageChef.DiscImages
             else
             {
                 decompressedStream.Write(data, 0, data.Length);
-                lzmaBlockStream.Write(data, 0, data.Length);
+                if(currentBlockHeader.compression == CompressionType.Lzma)
+                    lzmaBlockStream.Write(data, 0, data.Length);
             }
 
             SetDdtEntry(sectorAddress, ddtEntry);
@@ -3110,7 +3124,7 @@ namespace DiscImageChef.DiscImages
                     Array.Copy(blockStream.GetBuffer(), 0, buffer, 0, realLength);
                     blockStream = new MemoryStream(buffer);
                 }
-                else
+                else if(currentBlockHeader.compression == CompressionType.Lzma)
                 {
                     lzmaProperties = lzmaBlockStream.Properties;
                     lzmaBlockStream.Close();
