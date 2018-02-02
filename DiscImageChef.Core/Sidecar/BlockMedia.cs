@@ -244,6 +244,36 @@ namespace DiscImageChef.Core
                             Size = image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD).Length
                         };
                         break;
+                    case MediaTagType.USB_Descriptors:
+                        if(sidecar.BlockMedia[0].USB == null)
+                            sidecar.BlockMedia[0].USB = new USBType();
+                        sidecar.BlockMedia[0].USB.Descriptors = new DumpType
+                        {
+                            Checksums =
+                                Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.USB_Descriptors)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.USB_Descriptors).Length
+                        };
+                        break;
+                    case MediaTagType.SCSI_MODESENSE_6:
+                        if(sidecar.BlockMedia[0].SCSI == null)
+                            sidecar.BlockMedia[0].SCSI = new SCSIType();
+                        sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
+                        {
+                            Checksums =
+                                Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6).Length
+                        };
+                        break;
+                    case MediaTagType.SCSI_MODESENSE_10:
+                        if(sidecar.BlockMedia[0].SCSI == null)
+                            sidecar.BlockMedia[0].SCSI = new SCSIType();
+                        sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
+                        {
+                            Checksums =
+                                Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10).Length
+                        };
+                        break;
                 }
 
             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
