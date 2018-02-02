@@ -84,7 +84,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   string
                                       outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                                   CICMMetadataType
-                                      preSidecar)
+                                      preSidecar, uint skip)
         {
             bool   sense;
             ulong  blocks;
@@ -200,7 +200,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 CompactDisc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
                                  ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                                 formatOptions, preSidecar);
+                                 formatOptions, preSidecar, skip);
                 return;
             }
 
@@ -602,13 +602,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 Xgd.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
                          ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                         preSidecar);
+                         preSidecar, skip);
                 return;
             }
 
             Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
                      ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                     preSidecar);
+                     preSidecar, skip);
         }
 
         internal static void AddMediaTagToSidecar(string                             outputPath,
@@ -798,8 +798,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         new BorderType
                         {
-                            Image = outputPath,
-                            Size = tag.Value.Length,
+                            Image     = outputPath,
+                            Size      = tag.Value.Length,
                             Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                         }
                     };

@@ -308,6 +308,9 @@ namespace DiscImageChef
 
         [Option('x', "cicm-xml", Default = null, HelpText = "Take metadata from existing CICM XML sidecar.")]
         public string CicmXml { get; set; }
+
+        [Option('k', "skip", Default = 512, HelpText = "When an unreadable sector is found skip this many sectors.")]
+        public uint Skip { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]
@@ -432,7 +435,7 @@ namespace DiscImageChef
         [Option('O', "options", Default = null,
             HelpText                    = "Comma separated name=value pairs of options to pass to output image plugin")]
         public string Options { get; set; }
-        
+
         [Option('x', "cicm-xml", Default = null, HelpText = "Take metadata from existing CICM XML sidecar.")]
         public string CicmXml { get; set; }
 

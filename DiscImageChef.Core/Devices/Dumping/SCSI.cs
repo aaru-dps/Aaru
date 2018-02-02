@@ -79,7 +79,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 string
                                     outputPath, Dictionary<string, string> formatOptions,
                                 CICMMetadataType
-                                    preSidecar)
+                                    preSidecar, uint skip)
         {
             MediaType dskType = MediaType.Unknown;
             int       resets  = 0;
@@ -212,12 +212,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     Mmc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
                              ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                             formatOptions, preSidecar);
+                             formatOptions, preSidecar, skip);
                     return;
                 default:
                     Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, null,
                              ref dskType, false, ref resume, ref dumpLog, encoding, outputPrefix, outputPath,
-                             formatOptions, preSidecar);
+                             formatOptions, preSidecar, skip);
                     break;
             }
         }

@@ -79,7 +79,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     DumpLog dumpLog, Encoding encoding, string outputPrefix,
                                 string      outputPath,
                                 Dictionary<string, string>
-                                    formatOptions, CICMMetadataType preSidecar)
+                                    formatOptions, CICMMetadataType preSidecar, uint skip)
         {
             bool aborted;
 
@@ -234,6 +234,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
 
+            if(skip < blocksToRead) skip = blocksToRead;
+
             DumpHardwareType currentTry = null;
             ExtentsULong     extents    = null;
             ResumeSupport.Process(true, false, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
@@ -281,9 +283,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 
-            start = DateTime.UtcNow;
+            start                     = DateTime.UtcNow;
             double imageWriteDuration = 0;
-            
+
             for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
             {
                 if(aborted)
@@ -316,15 +318,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
-                    for(ulong b = i; b < i + blocksToRead; b++) resume.BadBlocks.Add(b);
+                    for(ulong b = i; b < i + skip; b++) resume.BadBlocks.Add(b);
 
                     mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
                     ibgLog.Write(i, 0);
                     DateTime writeStart = DateTime.Now;
-                    outputPlugin.WriteSectors(new byte[blockSize * blocksToRead], i, blocksToRead);
+                    outputPlugin.WriteSectors(new byte[blockSize * skip], i, skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
-                    dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
+                    dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
+                    i += skip - blocksToRead;
                 }
 
                 double newSpeed =
@@ -598,7 +601,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine();
 
             DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing).",
-                                 (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000, imageWriteDuration, (closeEnd -closeStart).TotalSeconds);
+                                 (end - start).TotalSeconds, totalDuration / 1000,
+                                 totalChkDuration                          / 1000,
+                                 imageWriteDuration, (closeEnd - closeStart).TotalSeconds);
             DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
                                  (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);

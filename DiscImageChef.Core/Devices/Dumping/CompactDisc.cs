@@ -91,7 +91,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   string
                                       outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                                   CICMMetadataType
-                                      preSidecar)
+                                      preSidecar, uint skip)
         {
             uint               subSize;
             DateTime           start;
@@ -661,7 +661,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 
             double imageWriteDuration = 0;
-            
+
+            if(skip < blocksToRead) skip = blocksToRead;
+
             // Start reading
             start = DateTime.UtcNow;
             for(int t = 0; t < tracks.Length; t++)
@@ -733,20 +735,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DateTime writeStart = DateTime.Now;
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
-                            outputPlugin.WriteSectorsLong(new byte[SECTOR_SIZE * blocksToRead], i, blocksToRead);
-                            outputPlugin.WriteSectorsTag(new byte[subSize      * blocksToRead], i, blocksToRead,
+                            outputPlugin.WriteSectorsLong(new byte[SECTOR_SIZE * skip], i, skip);
+                            outputPlugin.WriteSectorsTag(new byte[subSize      * skip], i, skip,
                                                          SectorTagType.CdSectorSubchannel);
                         }
-                        else outputPlugin.WriteSectorsLong(new byte[blockSize * blocksToRead], i, blocksToRead);
+                        else outputPlugin.WriteSectorsLong(new byte[blockSize * skip], i, skip);
+
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                        for(ulong b = i; b < i + blocksToRead; b++) resume.BadBlocks.Add(b);
+                        for(ulong b = i; b < i + skip; b++) resume.BadBlocks.Add(b);
 
                         DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
                         mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                         ibgLog.Write(i, 0);
-                        dumpLog.WriteLine("Error reading {0} sectors from sector {1}.", blocksToRead, i);
+                        dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
+                        i += skip - blocksToRead;
                     }
 
                     double newSpeed =
@@ -963,7 +967,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine();
 
             DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing).",
-                                 (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000, imageWriteDuration, (closeEnd-closeStart).TotalSeconds);
+                                 (end - start).TotalSeconds, totalDuration / 1000,
+                                 totalChkDuration                          / 1000,
+                                 imageWriteDuration, (closeEnd - closeStart).TotalSeconds);
             DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
                                  (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
