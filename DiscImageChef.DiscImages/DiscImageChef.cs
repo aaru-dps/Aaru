@@ -3626,21 +3626,34 @@ namespace DiscImageChef.DiscImages
                             identifier = BlockType.DataBlock,
                             type       = DataType.CdSectorPrefix,
                             length     = (uint)sectorPrefix.Length,
-                            crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
+                            sectorSize = 16
                         };
+                        
+                        byte[] lzmaProperties = null;
+                        
+                        if(nocompress)
+                        {
+                            prefixBlock.compression = CompressionType.None;
+                            prefixBlock.cmpCrc64 = prefixBlock.crc64;
+                            prefixBlock.cmpLength = prefixBlock.length;
+                            blockStream = new MemoryStream(sectorPrefix);
+                        }
+                        else
+                        {
+                            blockStream     = new MemoryStream();
+                            lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                            lzmaBlockStream.Write(sectorPrefix, 0, sectorPrefix.Length);
+                            lzmaProperties = lzmaBlockStream.Properties;
+                            lzmaBlockStream.Close();
 
-                        blockStream     = new MemoryStream();
-                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        lzmaBlockStream.Write(sectorPrefix, 0, sectorPrefix.Length);
-                        byte[] lzmaProperties = lzmaBlockStream.Properties;
-                        lzmaBlockStream.Close();
+                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                            prefixBlock.compression = CompressionType.Lzma;
 
-                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                        prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                        prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                        prefixBlock.compression = CompressionType.Lzma;
-
-                        lzmaBlockStream = null;
+                            lzmaBlockStream = null;
+                        }
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
                         structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
@@ -3651,6 +3664,7 @@ namespace DiscImageChef.DiscImages
                         if(prefixBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        
 
                         index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                              t.dataType  == DataType.CdSectorPrefix);
@@ -3674,21 +3688,32 @@ namespace DiscImageChef.DiscImages
                             identifier = BlockType.DataBlock,
                             type       = DataType.CdSectorSuffix,
                             length     = (uint)sectorSuffix.Length,
-                            crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
+                            sectorSize = 288
                         };
 
-                        blockStream     = new MemoryStream();
-                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        lzmaBlockStream.Write(sectorSuffix, 0, sectorSuffix.Length);
-                        lzmaProperties = lzmaBlockStream.Properties;
-                        lzmaBlockStream.Close();
+                        if(nocompress)
+                        {
+                            prefixBlock.compression = CompressionType.None;
+                            prefixBlock.cmpCrc64    = prefixBlock.crc64;
+                            prefixBlock.cmpLength   = prefixBlock.length;
+                            blockStream             = new MemoryStream(sectorSuffix);
+                        }
+                        else
+                        {
+                            blockStream     = new MemoryStream();
+                            lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                            lzmaBlockStream.Write(sectorSuffix, 0, sectorSuffix.Length);
+                            lzmaProperties = lzmaBlockStream.Properties;
+                            lzmaBlockStream.Close();
 
-                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                        prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                        prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                        prefixBlock.compression = CompressionType.Lzma;
+                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                            prefixBlock.compression = CompressionType.Lzma;
 
-                        lzmaBlockStream = null;
+                            lzmaBlockStream = null;
+                        }
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(prefixBlock));
                         structureBytes   = new byte[Marshal.SizeOf(prefixBlock)];
@@ -3726,21 +3751,34 @@ namespace DiscImageChef.DiscImages
                             identifier = BlockType.DataBlock,
                             type       = DataType.CdSectorSubchannel,
                             length     = (uint)sectorSubchannel.Length,
-                            crc64      = BitConverter.ToUInt64(blockCrc, 0)
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
+                            sectorSize = 96
                         };
 
-                        blockStream     = new MemoryStream();
-                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        lzmaBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
-                        byte[] lzmaProperties = lzmaBlockStream.Properties;
-                        lzmaBlockStream.Close();
+                        byte[] lzmaProperties = null;
 
-                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                        subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                        subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                        subchannelBlock.compression = CompressionType.Lzma;
+                        if(nocompress)
+                        {
+                            subchannelBlock.compression = CompressionType.None;
+                            subchannelBlock.cmpCrc64    = subchannelBlock.crc64;
+                            subchannelBlock.cmpLength   = subchannelBlock.length;
+                            blockStream             = new MemoryStream(sectorSubchannel);
+                        }
+                        else
+                        {
+                            blockStream     = new MemoryStream();
+                            lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                            lzmaBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                            lzmaProperties = lzmaBlockStream.Properties;
+                            lzmaBlockStream.Close();
 
-                        lzmaBlockStream = null;
+                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                            subchannelBlock.compression = CompressionType.Lzma;
+
+                            lzmaBlockStream = null;
+                        }
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
                         structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
@@ -3873,18 +3911,46 @@ namespace DiscImageChef.DiscImages
                             crc64      = BitConverter.ToUInt64(blockCrc, 0)
                         };
 
-                        blockStream     = new MemoryStream();
-                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
-                        lzmaBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
-                        byte[] lzmaProperties = lzmaBlockStream.Properties;
-                        lzmaBlockStream.Close();
+                        switch(imageInfo.MediaType)
+                        {
+                            case MediaType.AppleSonySS:
+                            case MediaType.AppleSonyDS:
+                                subchannelBlock.sectorSize = 12;
+                                break;
+                            case MediaType.AppleFileWare:
+                            case MediaType.AppleProfile:
+                            case MediaType.AppleWidget:
+                                subchannelBlock.sectorSize = 20;
+                                break;
+                            case MediaType.PriamDataTower:
+                                subchannelBlock.sectorSize = 24;
+                                break;
+                        }
 
-                        Crc64Context.Data(blockStream.ToArray(), out blockCrc);
-                        subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
-                        subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
-                        subchannelBlock.compression = CompressionType.Lzma;
+                        byte[] lzmaProperties = null;
+                        
+                        if(nocompress)
+                        {
+                            subchannelBlock.compression = CompressionType.None;
+                            subchannelBlock.cmpCrc64    = subchannelBlock.crc64;
+                            subchannelBlock.cmpLength   = subchannelBlock.length;
+                            blockStream                 = new MemoryStream(sectorSubchannel);
+                        }
+                        else
+                        {
+                            blockStream     = new MemoryStream();
+                            lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                            lzmaBlockStream.Write(sectorSubchannel, 0, sectorSubchannel.Length);
+                            lzmaProperties = lzmaBlockStream.Properties;
+                            lzmaBlockStream.Close();
 
-                        lzmaBlockStream = null;
+                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                            subchannelBlock.compression = CompressionType.Lzma;
+
+                            lzmaBlockStream = null;
+                        }
 
                         structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subchannelBlock));
                         structureBytes   = new byte[Marshal.SizeOf(subchannelBlock)];
