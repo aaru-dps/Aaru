@@ -140,7 +140,7 @@ namespace DiscImageChef.DiscImages
         MemoryStream             decompressedStream;
         bool                     deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
-        Dictionary<byte[], ulong> deduplicationTable;
+        Dictionary<string, ulong> deduplicationTable;
         /// <summary><see cref="CUETools.Codecs.FLAKE" /> writer.</summary>
         FlakeWriter flakeWriter;
         /// <summary><see cref="CUETools.Codecs.FLAKE" /> settings.</summary>
@@ -165,6 +165,7 @@ namespace DiscImageChef.DiscImages
         Md5Context            md5Provider;
         /// <summary>Cache of media tags.</summary>
         Dictionary<MediaTagType, byte[]> mediaTags;
+        bool                             nocompress;
         /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
         long outMemoryDdtPosition;
         bool rewinded;
@@ -190,7 +191,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>In-memory deduplication table</summary>
         ulong[] userDataDdt;
         bool    writingLong;
-        bool nocompress;
+        ulong   writtenSectors;
 
         public DiscImageChef()
         {
@@ -2554,7 +2555,7 @@ namespace DiscImageChef.DiscImages
             imageStream.Seek(0, SeekOrigin.End);
             mediaTags          = new Dictionary<MediaTagType, byte[]>();
             checksumProvider   = SHA256.Create();
-            deduplicationTable = new Dictionary<byte[], ulong>();
+            deduplicationTable = new Dictionary<string, ulong>();
             trackIsrcs         = new Dictionary<byte, string>();
             trackFlags         = new Dictionary<byte, byte>();
 
@@ -2643,15 +2644,24 @@ namespace DiscImageChef.DiscImages
             if(sectorAddress == 0) alreadyWrittenZero = true;
 
             byte[] hash = null;
+            writtenSectors++;
 
             // Compute hash only if asked to deduplicate, or the sector is empty (those will always be deduplicated)
             if(deduplicate || ArrayHelpers.ArrayIsNullOrEmpty(data)) hash = checksumProvider.ComputeHash(data);
+            string hashString                                             = null;
 
-            if(hash != null && deduplicationTable.TryGetValue(hash, out ulong pointer))
+            if(hash != null)
             {
-                SetDdtEntry(sectorAddress, pointer);
-                ErrorMessage = "";
-                return true;
+                StringBuilder hashSb = new StringBuilder();
+                foreach(byte h in hash) hashSb.Append(h.ToString("x2"));
+                hashString = hashSb.ToString();
+
+                if(deduplicationTable.TryGetValue(hashString, out ulong pointer))
+                {
+                    SetDdtEntry(sectorAddress, pointer);
+                    ErrorMessage = "";
+                    return true;
+                }
             }
 
             Track trk = new Track();
@@ -2758,8 +2768,8 @@ namespace DiscImageChef.DiscImages
                     sectorSize  = (uint)data.Length
                 };
 
-                if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && trk.TrackType == TrackType.Audio && !nocompress)
-                    currentBlockHeader.compression = CompressionType.Flac;
+                if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && trk.TrackType == TrackType.Audio && !nocompress
+                ) currentBlockHeader.compression = CompressionType.Flac;
 
                 blockStream        = new MemoryStream();
                 decompressedStream = new MemoryStream();
@@ -2771,7 +2781,7 @@ namespace DiscImageChef.DiscImages
             }
 
             ulong ddtEntry = (ulong)((imageStream.Position << shift) + currentBlockOffset);
-            if(hash                           != null) deduplicationTable.Add(hash, ddtEntry);
+            if(hash                           != null) deduplicationTable.Add(hashString, ddtEntry);
             if(currentBlockHeader.compression == CompressionType.Flac)
             {
                 AudioBuffer audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, data, SAMPLES_PER_SECTOR);
@@ -2780,8 +2790,7 @@ namespace DiscImageChef.DiscImages
             else
             {
                 decompressedStream.Write(data, 0, data.Length);
-                if(currentBlockHeader.compression == CompressionType.Lzma)
-                    lzmaBlockStream.Write(data, 0, data.Length);
+                if(currentBlockHeader.compression == CompressionType.Lzma) lzmaBlockStream.Write(data, 0, data.Length);
             }
 
             SetDdtEntry(sectorAddress, ddtEntry);
@@ -3167,6 +3176,11 @@ namespace DiscImageChef.DiscImages
 
                 imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
             }
+
+            if(deduplicate)
+                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                          "Of {0} sectors written, {1} are unique ({2:P})", writtenSectors,
+                                          deduplicationTable.Count, (double)deduplicationTable.Count / writtenSectors);
 
             IndexEntry idxEntry;
 
