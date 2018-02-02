@@ -100,7 +100,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             bool         sense;
             const ushort ATA_PROFILE = 0x0001;
             const uint   TIMEOUT     = 5;
-
+            double imageWriteDuration = 0;
+            
             dumpLog.WriteLine("Requesting ATA IDENTIFY DEVICE.");
             sense = dev.AtaIdentify(out byte[] cmdBuf, out _);
             if(!sense && Identify.Decode(cmdBuf).HasValue)
@@ -262,7 +263,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 mhddLog.Write(i, duration);
                                 ibgLog.Write(i, currentSpeed * 1024);
+                                DateTime writeStart = DateTime.Now;
                                 outputPlugin.WriteSectors(cmdBuf, i, blocksToRead);
+                                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                 extents.Add(i, blocksToRead, true);
                             }
                             else
@@ -272,7 +275,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
                                 ibgLog.Write(i, 0);
+                                DateTime writeStart = DateTime.Now;
                                 outputPlugin.WriteSectors(new byte[blockSize * blocksToRead], i, blocksToRead);
+                                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                 dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
                             }
 
@@ -292,6 +297,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           (end - start).TotalSeconds);
                         dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+                        dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+                                          (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
                         #region Error handling
                         if(resume.BadBlocks.Count > 0 && !aborted)
@@ -381,8 +388,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     {
                                         mhddLog.Write(currentBlock, duration);
                                         ibgLog.Write(currentBlock, currentSpeed * 1024);
+                                        DateTime writeStart = DateTime.Now;
                                         outputPlugin.WriteSector(cmdBuf,
                                                                  (ulong)((cy * heads + hd) * sectors + (sc - 1)));
+                                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                         extents.Add(currentBlock);
                                         dumpLog.WriteLine("Error reading cylinder {0} head {1} sector {2}.", cy, hd,
                                                           sc);
@@ -393,8 +402,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
 
                                         ibgLog.Write(currentBlock, 0);
+                                        DateTime writeStart = DateTime.Now;
                                         outputPlugin.WriteSector(new byte[blockSize],
                                                                  (ulong)((cy * heads + hd) * sectors + (sc - 1)));
+                                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                     }
 
                                     double newSpeed =
@@ -416,6 +427,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           (end - start).TotalSeconds);
                         dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+                        dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+                                          (double)blockSize * (double)(blocks + 1) / 1024 / (imageWriteDuration / 1000));
                     }
 
                     foreach(ulong bad in resume.BadBlocks) dumpLog.WriteLine("Sector {0} could not be read.", bad);
@@ -423,7 +436,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
                     dumpLog.WriteLine("Closing output file.");
                     DicConsole.WriteLine("Closing output file.");
+                    DateTime closeStart = DateTime.Now;
                     outputPlugin.Close();
+                    DateTime closeEnd = DateTime.Now;
+                    dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
 
                     if(aborted)
                     {
@@ -578,9 +594,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     DicConsole.WriteLine();
 
-                    DicConsole
-                       .WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).",
-                                  (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
+                    DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing).",
+                                         (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000, imageWriteDuration, (closeEnd -closeStart).TotalSeconds);
                     DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
                                          (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
                     DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);

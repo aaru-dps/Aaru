@@ -288,7 +288,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             start = DateTime.UtcNow;
-
+            double imageWriteDuration = 0;
+            
             if(opticalDisc)
                 outputPlugin.SetTracks(new List<Track>
                 {
@@ -374,7 +375,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
+                    DateTime writeStart = DateTime.Now;
                     outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(i, blocksToRead, true);
                 }
                 else
@@ -383,7 +386,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(stopOnError) return; // TODO: Return more cleanly
 
                     // Write empty data
+                    DateTime writeStart = DateTime.Now;
                     outputPlugin.WriteSectors(new byte[blockSize * blocksToRead], i, blocksToRead);
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                     for(ulong b = i; b < i + blocksToRead; b++) resume.BadBlocks.Add(b);
 
@@ -409,6 +414,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+            dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+                              (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Error handling
             if(resume.BadBlocks.Count > 0 && !aborted)
@@ -654,7 +661,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
             DicConsole.WriteLine("Closing output file.");
+            DateTime closeStart = DateTime.Now;
             outputPlugin.Close();
+            DateTime closeEnd = DateTime.Now;
+            dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
 
             if(aborted)
             {
@@ -872,9 +882,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             DicConsole.WriteLine();
-
-            DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).",
-                                 (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
+            DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing).",
+                                 (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000, imageWriteDuration, (closeEnd -closeStart).TotalSeconds);
             DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
                                  (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
