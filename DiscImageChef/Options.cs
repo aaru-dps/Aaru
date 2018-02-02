@@ -310,7 +310,10 @@ namespace DiscImageChef
         public string CicmXml { get; set; }
 
         [Option('k', "skip", Default = 512, HelpText = "When an unreadable sector is found skip this many sectors.")]
-        public uint Skip { get; set; }
+        public int Skip { get; set; }
+
+        [Option("no-metadata", Default = false, HelpText = "Disables creating CICM XML sidecar.")]
+        public bool NoMetadata { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]

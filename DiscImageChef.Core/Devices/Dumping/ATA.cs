@@ -81,7 +81,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     DumpLog dumpLog, Encoding encoding, string outputPrefix,
                                 string      outputPath,
                                 Dictionary<string, string>
-                                    formatOptions, CICMMetadataType preSidecar, uint skip)
+                                    formatOptions, CICMMetadataType preSidecar, uint skip,
+                                bool
+                                    nometadata)
         {
             bool aborted;
 
@@ -115,11 +117,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     DateTime start;
                     DateTime end;
-                    double   totalDuration    = 0;
-                    double   totalChkDuration = 0;
-                    double   currentSpeed     = 0;
-                    double   maxSpeed         = double.MinValue;
-                    double   minSpeed         = double.MaxValue;
+                    double   totalDuration = 0;
+                    double   currentSpeed  = 0;
+                    double   maxSpeed      = double.MinValue;
+                    double   minSpeed      = double.MaxValue;
 
                     aborted                       =  false;
                     System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
@@ -450,149 +451,165 @@ namespace DiscImageChef.Core.Devices.Dumping
                         return;
                     }
 
-                    dumpLog.WriteLine("Creating sidecar.");
-                    FiltersList filters     = new FiltersList();
-                    IFilter     filter      = filters.GetFilter(outputPath);
-                    IMediaImage inputPlugin = ImageFormat.Detect(filter);
-                    if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
-
-                    DateTime         chkStart = DateTime.UtcNow;
-                    CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
-                    if(preSidecar != null)
+                    double totalChkDuration = 0;
+                    if(!nometadata)
                     {
-                        preSidecar.BlockMedia = sidecar.BlockMedia;
-                        sidecar               = preSidecar;
-                    }
+                        dumpLog.WriteLine("Creating sidecar.");
+                        FiltersList filters     = new FiltersList();
+                        IFilter     filter      = filters.GetFilter(outputPath);
+                        IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                        if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
 
-                    if(dev.IsUsb)
-                    {
-                        dumpLog.WriteLine("Reading USB descriptors.");
-                        ret = outputPlugin.WriteMediaTag(dev.UsbDescriptors, MediaTagType.USB_Descriptors);
-
-                        if(ret)
-                            sidecar.BlockMedia[0].USB = new USBType
-                            {
-                                ProductID   = dev.UsbProductId,
-                                VendorID    = dev.UsbVendorId,
-                                Descriptors = new DumpType
-                                {
-                                    Image     = outputPath,
-                                    Size      = dev.UsbDescriptors.Length,
-                                    Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
-                                }
-                            };
-                    }
-
-                    if(dev.IsPcmcia)
-                    {
-                        dumpLog.WriteLine("Reading PCMCIA CIS.");
-                        ret = outputPlugin.WriteMediaTag(dev.Cis, MediaTagType.PCMCIA_CIS);
-
-                        if(ret)
-                            sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
-                            {
-                                CIS = new DumpType
-                                {
-                                    Image     = outputPath,
-                                    Size      = dev.Cis.Length,
-                                    Checksums = Checksum.GetChecksums(dev.Cis).ToArray()
-                                }
-                            };
-
-                        dumpLog.WriteLine("Decoding PCMCIA CIS.");
-                        Tuple[] tuples = CIS.GetTuples(dev.Cis);
-                        if(tuples != null)
-                            foreach(Tuple tuple in tuples)
-                                switch(tuple.Code)
-                                {
-                                    case TupleCodes.CISTPL_MANFID:
-                                        ManufacturerIdentificationTuple manfid =
-                                            CIS.DecodeManufacturerIdentificationTuple(tuple);
-
-                                        if(manfid != null)
-                                        {
-                                            sidecar.BlockMedia[0].PCMCIA.ManufacturerCode =
-                                                manfid.ManufacturerID;
-                                            sidecar.BlockMedia[0].PCMCIA.CardCode                  = manfid.CardID;
-                                            sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
-                                            sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified         = true;
-                                        }
-
-                                        break;
-                                    case TupleCodes.CISTPL_VERS_1:
-                                        Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
-
-                                        if(vers != null)
-                                        {
-                                            sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
-                                            sidecar.BlockMedia[0].PCMCIA.ProductName  = vers.Product;
-                                            sidecar.BlockMedia[0].PCMCIA.Compliance   =
-                                                $"{vers.MajorVersion}.{vers.MinorVersion}";
-                                            sidecar.BlockMedia[0].PCMCIA.AdditionalInformation =
-                                                vers.AdditionalInformation;
-                                        }
-
-                                        break;
-                                }
-                    }
-
-                    ret = outputPlugin.WriteMediaTag(ataIdentify, MediaTagType.ATA_IDENTIFY);
-
-                    if(ret)
-                        sidecar.BlockMedia[0].ATA = new ATAType
+                        DateTime         chkStart = DateTime.UtcNow;
+                        CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
+                        if(preSidecar != null)
                         {
-                            Identify = new DumpType
+                            preSidecar.BlockMedia = sidecar.BlockMedia;
+                            sidecar               = preSidecar;
+                        }
+
+                        if(dev.IsUsb)
+                        {
+                            dumpLog.WriteLine("Reading USB descriptors.");
+                            ret = outputPlugin.WriteMediaTag(dev.UsbDescriptors, MediaTagType.USB_Descriptors);
+
+                            if(ret)
+                                sidecar.BlockMedia[0].USB = new USBType
+                                {
+                                    ProductID   = dev.UsbProductId,
+                                    VendorID    = dev.UsbVendorId,
+                                    Descriptors = new DumpType
+                                    {
+                                        Image     = outputPath,
+                                        Size      = dev.UsbDescriptors.Length,
+                                        Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
+                                    }
+                                };
+                        }
+
+                        if(dev.IsPcmcia)
+                        {
+                            dumpLog.WriteLine("Reading PCMCIA CIS.");
+                            ret = outputPlugin.WriteMediaTag(dev.Cis, MediaTagType.PCMCIA_CIS);
+
+                            if(ret)
+                                sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
+                                {
+                                    CIS = new DumpType
+                                    {
+                                        Image     = outputPath,
+                                        Size      = dev.Cis.Length,
+                                        Checksums = Checksum.GetChecksums(dev.Cis).ToArray()
+                                    }
+                                };
+
+                            dumpLog.WriteLine("Decoding PCMCIA CIS.");
+                            Tuple[] tuples = CIS.GetTuples(dev.Cis);
+                            if(tuples != null)
+                                foreach(Tuple tuple in tuples)
+                                    switch(tuple.Code)
+                                    {
+                                        case TupleCodes.CISTPL_MANFID:
+                                            ManufacturerIdentificationTuple manfid =
+                                                CIS.DecodeManufacturerIdentificationTuple(tuple);
+
+                                            if(manfid != null)
+                                            {
+                                                sidecar.BlockMedia[0].PCMCIA.ManufacturerCode =
+                                                    manfid.ManufacturerID;
+                                                sidecar.BlockMedia[0].PCMCIA.CardCode                  = manfid.CardID;
+                                                sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
+                                                sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified         = true;
+                                            }
+
+                                            break;
+                                        case TupleCodes.CISTPL_VERS_1:
+                                            Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+
+                                            if(vers != null)
+                                            {
+                                                sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
+                                                sidecar.BlockMedia[0].PCMCIA.ProductName  = vers.Product;
+                                                sidecar.BlockMedia[0].PCMCIA.Compliance   =
+                                                    $"{vers.MajorVersion}.{vers.MinorVersion}";
+                                                sidecar.BlockMedia[0].PCMCIA.AdditionalInformation =
+                                                    vers.AdditionalInformation;
+                                            }
+
+                                            break;
+                                    }
+                        }
+
+                        ret = outputPlugin.WriteMediaTag(ataIdentify, MediaTagType.ATA_IDENTIFY);
+
+                        if(ret)
+                            sidecar.BlockMedia[0].ATA = new ATAType
                             {
-                                Image     = outputPath,
-                                Size      = cmdBuf.Length,
-                                Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
-                            }
-                        };
+                                Identify = new DumpType
+                                {
+                                    Image     = outputPath,
+                                    Size      = cmdBuf.Length,
+                                    Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                }
+                            };
 
-                    DateTime chkEnd = DateTime.UtcNow;
+                        DateTime chkEnd = DateTime.UtcNow;
 
-                    totalChkDuration = (chkEnd                                   - chkStart).TotalMilliseconds;
-                    dumpLog.WriteLine("Sidecar created in {0} seconds.", (chkEnd - chkStart).TotalSeconds);
-                    dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                      (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+                        totalChkDuration = (chkEnd                                   - chkStart).TotalMilliseconds;
+                        dumpLog.WriteLine("Sidecar created in {0} seconds.", (chkEnd - chkStart).TotalSeconds);
+                        dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                          (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
-                    List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
-                    if(sidecar.BlockMedia[0].FileSystemInformation != null)
-                        filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
-                                             where partition.FileSystems != null
-                                             from fileSystem in partition.FileSystems
-                                             select ((ulong)partition.StartSector, fileSystem.Type));
+                        List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                        if(sidecar.BlockMedia[0].FileSystemInformation != null)
+                            filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                                                 where partition.FileSystems != null
+                                                 from fileSystem in partition.FileSystems
+                                                 select ((ulong)partition.StartSector, fileSystem.Type));
 
-                    if(filesystems.Count > 0)
-                        foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
-                            dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                        if(filesystems.Count > 0)
+                            foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                                dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type,
+                                                  filesystem.start);
 
-                    DicConsole.WriteLine();
-                    string xmlDskTyp, xmlDskSubTyp;
-                    if(dev.IsCompactFlash)
-                        Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp, out xmlDskSubTyp);
-                    else if(dev.IsPcmcia)
-                        Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI, out xmlDskTyp, out xmlDskSubTyp);
-                    else
-                        Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp, out xmlDskSubTyp);
-                    sidecar.BlockMedia[0].DiskType          = xmlDskTyp;
-                    sidecar.BlockMedia[0].DiskSubType       = xmlDskSubTyp;
-                    sidecar.BlockMedia[0].Interface         = "ATA";
-                    sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
-                    sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalsectorsize;
-                    sidecar.BlockMedia[0].LogicalBlockSize  = (int)blockSize;
-                    sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
-                    sidecar.BlockMedia[0].Model             = dev.Model;
-                    sidecar.BlockMedia[0].Serial            = dev.Serial;
-                    sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
-                    if(cylinders > 0 && heads > 0 && sectors > 0)
-                    {
-                        sidecar.BlockMedia[0].Cylinders                = cylinders;
-                        sidecar.BlockMedia[0].CylindersSpecified       = true;
-                        sidecar.BlockMedia[0].Heads                    = heads;
-                        sidecar.BlockMedia[0].HeadsSpecified           = true;
-                        sidecar.BlockMedia[0].SectorsPerTrack          = sectors;
-                        sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
+                        DicConsole.WriteLine();
+                        string xmlDskTyp, xmlDskSubTyp;
+                        if(dev.IsCompactFlash)
+                            Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp,
+                                                                 out xmlDskSubTyp);
+                        else if(dev.IsPcmcia)
+                            Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI, out xmlDskTyp,
+                                                                 out xmlDskSubTyp);
+                        else
+                            Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp,
+                                                                 out xmlDskSubTyp);
+                        sidecar.BlockMedia[0].DiskType          = xmlDskTyp;
+                        sidecar.BlockMedia[0].DiskSubType       = xmlDskSubTyp;
+                        sidecar.BlockMedia[0].Interface         = "ATA";
+                        sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
+                        sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalsectorsize;
+                        sidecar.BlockMedia[0].LogicalBlockSize  = (int)blockSize;
+                        sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
+                        sidecar.BlockMedia[0].Model             = dev.Model;
+                        sidecar.BlockMedia[0].Serial            = dev.Serial;
+                        sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
+                        if(cylinders > 0 && heads > 0 && sectors > 0)
+                        {
+                            sidecar.BlockMedia[0].Cylinders                = cylinders;
+                            sidecar.BlockMedia[0].CylindersSpecified       = true;
+                            sidecar.BlockMedia[0].Heads                    = heads;
+                            sidecar.BlockMedia[0].HeadsSpecified           = true;
+                            sidecar.BlockMedia[0].SectorsPerTrack          = sectors;
+                            sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
+                        }
+
+                        DicConsole.WriteLine("Writing metadata sidecar");
+
+                        FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
+
+                        XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                        xmlSer.Serialize(xmlFs, sidecar);
+                        xmlFs.Close();
                     }
 
                     DicConsole.WriteLine();
@@ -608,17 +625,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DicConsole.WriteLine("{0} sectors could not be read.",       resume.BadBlocks.Count);
                     if(resume.BadBlocks.Count > 0) resume.BadBlocks.Sort();
                     DicConsole.WriteLine();
-
-                    if(!aborted)
-                    {
-                        DicConsole.WriteLine("Writing metadata sidecar");
-
-                        FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
-
-                        XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                        xmlSer.Serialize(xmlFs, sidecar);
-                        xmlFs.Close();
-                    }
                 }
 
                 if(dev.IsCompactFlash) Statistics.AddMedia(MediaType.CompactFlash, true);

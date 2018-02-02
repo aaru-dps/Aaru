@@ -77,6 +77,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--options={0}",       options.Options);
             DicConsole.DebugWriteLine("Dump-Media command", "--cicm-xml={0}",      options.CicmXml);
             DicConsole.DebugWriteLine("Dump-Media command", "--skip={0}",          options.Skip);
+            DicConsole.DebugWriteLine("Dump-Media command", "--no-metadata={0}",   options.NoMetadata);
 
             Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
             DicConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
@@ -206,24 +207,26 @@ namespace DiscImageChef.Commands
                 case DeviceType.ATA:
                     Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                             options.OutputFile, parsedOptions, sidecar, options.Skip);
+                             options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
                     SecureDigital.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
                                        options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog,
-                                       encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, options.Skip);
+                                       encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
+                                       options.NoMetadata);
                     break;
                 case DeviceType.NVMe:
                     NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                              options.OutputFile, parsedOptions, sidecar, options.Skip);
+                              options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
                     Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, options.LeadIn,
-                              encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, options.Skip);
+                              encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
+                              options.NoMetadata);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");

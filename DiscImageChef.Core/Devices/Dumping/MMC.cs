@@ -84,7 +84,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   string
                                       outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                                   CICMMetadataType
-                                      preSidecar, uint skip)
+                                      preSidecar, uint skip, bool nometadata)
         {
             bool   sense;
             ulong  blocks;
@@ -200,7 +200,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 CompactDisc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
                                  ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                                 formatOptions, preSidecar, skip);
+                                 formatOptions, preSidecar, skip, nometadata);
                 return;
             }
 
@@ -602,13 +602,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 Xgd.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
                          ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                         preSidecar, skip);
+                         preSidecar, skip, nometadata);
                 return;
             }
 
             Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
                      ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                     preSidecar, skip);
+                     preSidecar, skip, nometadata);
         }
 
         internal static void AddMediaTagToSidecar(string                             outputPath,

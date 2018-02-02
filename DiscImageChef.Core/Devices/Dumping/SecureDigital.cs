@@ -79,7 +79,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     DumpLog dumpLog, Encoding encoding, string outputPrefix,
                                 string      outputPath,
                                 Dictionary<string, string>
-                                    formatOptions, CICMMetadataType preSidecar, uint skip)
+                                    formatOptions, CICMMetadataType preSidecar, uint skip, bool nometadata)
         {
             bool aborted;
 
@@ -196,7 +196,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             DateTime start;
             DateTime end;
             double   totalDuration    = 0;
-            double   totalChkDuration = 0;
             double   currentSpeed     = 0;
             double   maxSpeed         = double.MinValue;
             double   minSpeed         = double.MaxValue;
@@ -417,186 +416,198 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            dumpLog.WriteLine("Creating sidecar.");
-            FiltersList filters     = new FiltersList();
-            IFilter     filter      = filters.GetFilter(outputPath);
-            IMediaImage inputPlugin = ImageFormat.Detect(filter);
-            if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
-
-            DateTime         chkStart = DateTime.UtcNow;
-            CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
-
-            if(preSidecar != null)
+            double totalChkDuration = 0;
+            if(!nometadata)
             {
-                preSidecar.BlockMedia = sidecar.BlockMedia;
-                sidecar               = preSidecar;
-            }
+                dumpLog.WriteLine("Creating sidecar.");
+                FiltersList filters     = new FiltersList();
+                IFilter     filter      = filters.GetFilter(outputPath);
+                IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
 
-            switch(dev.Type)
-            {
-                case DeviceType.MMC:
-                    sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
-                    break;
-                case DeviceType.SecureDigital:
-                    sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
-                    break;
-            }
+                DateTime         chkStart = DateTime.UtcNow;
+                CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
 
-            DumpType cidDump = null;
-            DumpType csdDump = null;
-            DumpType ocrDump = null;
-
-            if(cid != null)
-            {
-                cidDump = new DumpType
+                if(preSidecar != null)
                 {
-                    Image     = outputPath,
-                    Size      = cid.Length,
-                    Checksums = Checksum.GetChecksums(cid).ToArray()
-                };
-
-                ret =
-                    outputPlugin.WriteMediaTag(cid,
-                                               dev.Type == DeviceType.SecureDigital
-                                                   ? MediaTagType.SD_CID
-                                                   : MediaTagType.MMC_CID);
-
-                // Cannot write CID to image
-                if(!ret && !force)
-                {
-                    dumpLog.WriteLine("Cannot write CID to output image.");
-                    throw new ArgumentException(outputPlugin.ErrorMessage);
+                    preSidecar.BlockMedia = sidecar.BlockMedia;
+                    sidecar               = preSidecar;
                 }
-            }
 
-            if(csd != null)
-            {
-                csdDump = new DumpType
+                switch(dev.Type)
                 {
-                    Image     = outputPath,
-                    Size      = csd.Length,
-                    Checksums = Checksum.GetChecksums(csd).ToArray()
-                };
-
-                ret =
-                    outputPlugin.WriteMediaTag(csd,
-                                               dev.Type == DeviceType.SecureDigital
-                                                   ? MediaTagType.SD_CSD
-                                                   : MediaTagType.MMC_CSD);
-
-                // Cannot write CSD to image
-                if(!ret && !force)
-                {
-                    dumpLog.WriteLine("Cannot write CSD to output image.");
-                    throw new ArgumentException(outputPlugin.ErrorMessage);
+                    case DeviceType.MMC:
+                        sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        break;
+                    case DeviceType.SecureDigital:
+                        sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                        break;
                 }
-            }
 
-            if(ecsd != null)
-            {
-                sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
+                DumpType cidDump = null;
+                DumpType csdDump = null;
+                DumpType ocrDump = null;
+
+                if(cid != null)
                 {
-                    Image     = outputPath,
-                    Size      = ecsd.Length,
-                    Checksums = Checksum.GetChecksums(ecsd).ToArray()
-                };
+                    cidDump = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = cid.Length,
+                        Checksums = Checksum.GetChecksums(cid).ToArray()
+                    };
 
-                ret = outputPlugin.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
+                    ret =
+                        outputPlugin.WriteMediaTag(cid,
+                                                   dev.Type == DeviceType.SecureDigital
+                                                       ? MediaTagType.SD_CID
+                                                       : MediaTagType.MMC_CID);
 
-                // Cannot write Extended CSD to image
-                if(!ret && !force)
-                {
-                    dumpLog.WriteLine("Cannot write Extended CSD to output image.");
-                    throw new ArgumentException(outputPlugin.ErrorMessage);
+                    // Cannot write CID to image
+                    if(!ret && !force)
+                    {
+                        dumpLog.WriteLine("Cannot write CID to output image.");
+                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                    }
                 }
-            }
 
-            if(ocr != null)
-            {
-                ocrDump = new DumpType
+                if(csd != null)
                 {
-                    Image     = outputPath,
-                    Size      = ocr.Length,
-                    Checksums = Checksum.GetChecksums(ocr).ToArray()
-                };
+                    csdDump = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = csd.Length,
+                        Checksums = Checksum.GetChecksums(csd).ToArray()
+                    };
 
-                ret =
-                    outputPlugin.WriteMediaTag(ocr,
-                                               dev.Type == DeviceType.SecureDigital
-                                                   ? MediaTagType.SD_OCR
-                                                   : MediaTagType.MMC_OCR);
+                    ret =
+                        outputPlugin.WriteMediaTag(csd,
+                                                   dev.Type == DeviceType.SecureDigital
+                                                       ? MediaTagType.SD_CSD
+                                                       : MediaTagType.MMC_CSD);
 
-                // Cannot write OCR to image
-                if(!ret && !force)
-                {
-                    dumpLog.WriteLine("Cannot write OCR to output image.");
-                    throw new ArgumentException(outputPlugin.ErrorMessage);
+                    // Cannot write CSD to image
+                    if(!ret && !force)
+                    {
+                        dumpLog.WriteLine("Cannot write CSD to output image.");
+                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                    }
                 }
-            }
 
-            if(scr != null)
-            {
-                sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
+                if(ecsd != null)
                 {
-                    Image     = outputPath,
-                    Size      = scr.Length,
-                    Checksums = Checksum.GetChecksums(scr).ToArray()
-                };
+                    sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = ecsd.Length,
+                        Checksums = Checksum.GetChecksums(ecsd).ToArray()
+                    };
 
-                ret = outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);
+                    ret = outputPlugin.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
 
-                // Cannot write SCR to image
-                if(!ret && !force)
-                {
-                    dumpLog.WriteLine("Cannot write SCR to output image.");
-                    throw new ArgumentException(outputPlugin.ErrorMessage);
+                    // Cannot write Extended CSD to image
+                    if(!ret && !force)
+                    {
+                        dumpLog.WriteLine("Cannot write Extended CSD to output image.");
+                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                    }
                 }
+
+                if(ocr != null)
+                {
+                    ocrDump = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = ocr.Length,
+                        Checksums = Checksum.GetChecksums(ocr).ToArray()
+                    };
+
+                    ret =
+                        outputPlugin.WriteMediaTag(ocr,
+                                                   dev.Type == DeviceType.SecureDigital
+                                                       ? MediaTagType.SD_OCR
+                                                       : MediaTagType.MMC_OCR);
+
+                    // Cannot write OCR to image
+                    if(!ret && !force)
+                    {
+                        dumpLog.WriteLine("Cannot write OCR to output image.");
+                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                    }
+                }
+
+                if(scr != null)
+                {
+                    sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
+                    {
+                        Image     = outputPath,
+                        Size      = scr.Length,
+                        Checksums = Checksum.GetChecksums(scr).ToArray()
+                    };
+
+                    ret = outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);
+
+                    // Cannot write SCR to image
+                    if(!ret && !force)
+                    {
+                        dumpLog.WriteLine("Cannot write SCR to output image.");
+                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                    }
+                }
+
+                switch(dev.Type)
+                {
+                    case DeviceType.MMC:
+                        sidecar.BlockMedia[0].MultiMediaCard.CID = cidDump;
+                        sidecar.BlockMedia[0].MultiMediaCard.CSD = csdDump;
+                        sidecar.BlockMedia[0].MultiMediaCard.OCR = ocrDump;
+                        break;
+                    case DeviceType.SecureDigital:
+                        sidecar.BlockMedia[0].SecureDigital.CID = cidDump;
+                        sidecar.BlockMedia[0].SecureDigital.CSD = csdDump;
+                        sidecar.BlockMedia[0].SecureDigital.OCR = ocrDump;
+                        break;
+                }
+
+                end = DateTime.UtcNow;
+
+                totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
+                dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+                dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                  (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+                string xmlDskTyp = null, xmlDskSubTyp = null;
+                switch(dev.Type)
+                {
+                    case DeviceType.MMC:
+                        Metadata.MediaType.MediaTypeToString(MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
+                        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
+                        break;
+                    case DeviceType.SecureDigital:
+                        Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
+                        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+                        break;
+                }
+
+                sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
+                sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
+                // TODO: Implement device firmware revision
+                sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
+                sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : (int)blockSize;
+                sidecar.BlockMedia[0].LogicalBlockSize  = (int)blockSize;
+                sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
+                sidecar.BlockMedia[0].Model             = dev.Model;
+                sidecar.BlockMedia[0].Serial            = dev.Serial;
+                sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
+                
+                DicConsole.WriteLine("Writing metadata sidecar");
+
+                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
+
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                xmlSer.Serialize(xmlFs, sidecar);
+                xmlFs.Close();
             }
-
-            switch(dev.Type)
-            {
-                case DeviceType.MMC:
-                    sidecar.BlockMedia[0].MultiMediaCard.CID = cidDump;
-                    sidecar.BlockMedia[0].MultiMediaCard.CSD = csdDump;
-                    sidecar.BlockMedia[0].MultiMediaCard.OCR = ocrDump;
-                    break;
-                case DeviceType.SecureDigital:
-                    sidecar.BlockMedia[0].SecureDigital.CID = cidDump;
-                    sidecar.BlockMedia[0].SecureDigital.CSD = csdDump;
-                    sidecar.BlockMedia[0].SecureDigital.OCR = ocrDump;
-                    break;
-            }
-
-            end = DateTime.UtcNow;
-
-            totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
-            dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
-            dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
-
-            string xmlDskTyp = null, xmlDskSubTyp = null;
-            switch(dev.Type)
-            {
-                case DeviceType.MMC:
-                    Metadata.MediaType.MediaTypeToString(MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
-                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
-                    break;
-                case DeviceType.SecureDigital:
-                    Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
-                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
-                    break;
-            }
-
-            sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
-            sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
-            // TODO: Implement device firmware revision
-            sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
-            sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : (int)blockSize;
-            sidecar.BlockMedia[0].LogicalBlockSize  = (int)blockSize;
-            sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
-            sidecar.BlockMedia[0].Model             = dev.Model;
-            sidecar.BlockMedia[0].Serial            = dev.Serial;
-            sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
 
             DicConsole.WriteLine();
 
@@ -611,17 +622,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine("{0} sectors could not be read.",       resume.BadBlocks.Count);
             if(resume.BadBlocks.Count > 0) resume.BadBlocks.Sort();
             DicConsole.WriteLine();
-
-            if(!aborted)
-            {
-                DicConsole.WriteLine("Writing metadata sidecar");
-
-                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
-
-                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
-            }
 
             switch(dev.Type)
             {

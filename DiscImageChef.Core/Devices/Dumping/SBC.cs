@@ -87,7 +87,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   string                           outputPath,
                                   Dictionary<string, string>       formatOptions,
                                   CICMMetadataType                 preSidecar,
-                                  uint                             skip)
+                                  uint                             skip, bool nometadata)
         {
             bool         sense;
             ulong        blocks;
@@ -101,7 +101,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             DateTime     start;
             DateTime     end;
             double       totalDuration    = 0;
-            double       totalChkDuration = 0;
             double       currentSpeed     = 0;
             double       maxSpeed         = double.MinValue;
             double       minSpeed         = double.MaxValue;
@@ -674,213 +673,225 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            dumpLog.WriteLine("Creating sidecar.");
-            FiltersList filters     = new FiltersList();
-            IFilter     filter      = filters.GetFilter(outputPath);
-            IMediaImage inputPlugin = ImageFormat.Detect(filter);
-            if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
-
-            DateTime         chkStart = DateTime.UtcNow;
-            CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
-            end                       = DateTime.UtcNow;
-
-            totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
-            dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
-            dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
-
-            if(opticalDisc)
+            double totalChkDuration = 0;
+            if(!nometadata)
             {
-                if(preSidecar != null)
+                dumpLog.WriteLine("Creating sidecar.");
+                FiltersList filters     = new FiltersList();
+                IFilter     filter      = filters.GetFilter(outputPath);
+                IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+
+                DateTime         chkStart = DateTime.UtcNow;
+                CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
+                end                       = DateTime.UtcNow;
+
+                totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
+                dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+                dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                  (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+                if(opticalDisc)
                 {
-                    preSidecar.OpticalDisc = sidecar.OpticalDisc;
-                    sidecar                = preSidecar;
-                }
-
-                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
-                if(sidecar.OpticalDisc[0].Track != null)
-                    filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
-                                         where xmlTrack.FileSystemInformation != null
-                                         from partition in xmlTrack.FileSystemInformation
-                                         where partition.FileSystems != null
-                                         from fileSystem in partition.FileSystems
-                                         select ((ulong)partition.StartSector, fileSystem.Type));
-
-                if(filesystems.Count > 0)
-                    foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
-                        dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
-                // TODO: Implement layers
-                sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-                Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
-                sidecar.OpticalDisc[0].DiscType          = xmlDskTyp;
-                sidecar.OpticalDisc[0].DiscSubType       = xmlDskSubTyp;
-                sidecar.OpticalDisc[0].DumpHardwareArray = resume.Tries.ToArray();
-
-                foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
-                    if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
-                        Mmc.AddMediaTagToSidecar(outputPath, tag, ref sidecar);
-            }
-            else
-            {
-                if(preSidecar != null)
-                {
-                    preSidecar.BlockMedia = sidecar.BlockMedia;
-                    sidecar               = preSidecar;
-                }
-
-                // All USB flash drives report as removable, even if the media is not removable
-                if(!dev.IsRemovable || dev.IsUsb)
-                {
-                    if(dev.IsUsb)
-                        if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
-                            sidecar.BlockMedia[0].USB = new USBType
-                            {
-                                ProductID   = dev.UsbProductId,
-                                VendorID    = dev.UsbVendorId,
-                                Descriptors = new DumpType
-                                {
-                                    Image     = outputPath,
-                                    Size      = dev.UsbDescriptors.Length,
-                                    Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
-                                }
-                            };
-
-                    byte[] cmdBuf;
-                    if(dev.Type == DeviceType.ATAPI)
+                    if(preSidecar != null)
                     {
-                        sense = dev.AtapiIdentify(out cmdBuf, out _);
-                        if(!sense)
-                            if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
-                                sidecar.BlockMedia[0].ATA = new ATAType
+                        preSidecar.OpticalDisc = sidecar.OpticalDisc;
+                        sidecar                = preSidecar;
+                    }
+
+                    List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                    if(sidecar.OpticalDisc[0].Track != null)
+                        filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
+                                             where xmlTrack.FileSystemInformation != null
+                                             from partition in xmlTrack.FileSystemInformation
+                                             where partition.FileSystems != null
+                                             from fileSystem in partition.FileSystems
+                                             select ((ulong)partition.StartSector, fileSystem.Type));
+
+                    if(filesystems.Count > 0)
+                        foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                            dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                    // TODO: Implement layers
+                    sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                    Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
+                    sidecar.OpticalDisc[0].DiscType          = xmlDskTyp;
+                    sidecar.OpticalDisc[0].DiscSubType       = xmlDskSubTyp;
+                    sidecar.OpticalDisc[0].DumpHardwareArray = resume.Tries.ToArray();
+
+                    foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
+                        if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
+                            Mmc.AddMediaTagToSidecar(outputPath, tag, ref sidecar);
+                }
+                else
+                {
+                    if(preSidecar != null)
+                    {
+                        preSidecar.BlockMedia = sidecar.BlockMedia;
+                        sidecar               = preSidecar;
+                    }
+
+                    // All USB flash drives report as removable, even if the media is not removable
+                    if(!dev.IsRemovable || dev.IsUsb)
+                    {
+                        if(dev.IsUsb)
+                            if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
+                                sidecar.BlockMedia[0].USB = new USBType
                                 {
-                                    Identify = new DumpType
+                                    ProductID   = dev.UsbProductId,
+                                    VendorID    = dev.UsbVendorId,
+                                    Descriptors = new DumpType
+                                    {
+                                        Image     = outputPath,
+                                        Size      = dev.UsbDescriptors.Length,
+                                        Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
+                                    }
+                                };
+
+                        byte[] cmdBuf;
+                        if(dev.Type == DeviceType.ATAPI)
+                        {
+                            sense = dev.AtapiIdentify(out cmdBuf, out _);
+                            if(!sense)
+                                if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
+                                    sidecar.BlockMedia[0].ATA = new ATAType
+                                    {
+                                        Identify = new DumpType
+                                        {
+                                            Image     = outputPath,
+                                            Size      = cmdBuf.Length,
+                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                        }
+                                    };
+                        }
+
+                        sense = dev.ScsiInquiry(out cmdBuf, out _);
+                        if(!sense)
+                        {
+                            if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
+                                sidecar.BlockMedia[0].SCSI = new SCSIType
+                                {
+                                    Inquiry = new DumpType
                                     {
                                         Image     = outputPath,
                                         Size      = cmdBuf.Length,
                                         Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                     }
                                 };
-                    }
 
-                    sense = dev.ScsiInquiry(out cmdBuf, out _);
-                    if(!sense)
-                    {
-                        if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
-                            sidecar.BlockMedia[0].SCSI = new SCSIType
+                            // TODO: SCSI Extended Vendor Page descriptors
+                            /*
+                            dumpLog.WriteLine("Reading SCSI Extended Vendor Page Descriptors.");
+                            sense = dev.ScsiInquiry(out cmdBuf, out _, 0x00);
+                            if(!sense)
                             {
-                                Inquiry = new DumpType
+                                byte[] pages = EVPD.DecodePage00(cmdBuf);
+    
+                                if(pages != null)
                                 {
-                                    Image     = outputPath,
-                                    Size      = cmdBuf.Length,
-                                    Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
-                                }
-                            };
-
-                        // TODO: SCSI Extended Vendor Page descriptors
-                        /*
-                        dumpLog.WriteLine("Reading SCSI Extended Vendor Page Descriptors.");
-                        sense = dev.ScsiInquiry(out cmdBuf, out _, 0x00);
-                        if(!sense)
-                        {
-                            byte[] pages = EVPD.DecodePage00(cmdBuf);
-
-                            if(pages != null)
-                            {
-                                List<EVPDType> evpds = new List<EVPDType>();
-                                foreach(byte page in pages)
-                                {
-                                    dumpLog.WriteLine("Requesting page {0:X2}h.", page);
-                                    sense = dev.ScsiInquiry(out cmdBuf, out _, page);
-                                    if(sense) continue;
-
-                                    EVPDType evpd = new EVPDType
+                                    List<EVPDType> evpds = new List<EVPDType>();
+                                    foreach(byte page in pages)
                                     {
-                                        Image = $"{outputPrefix}.evpd_{page:X2}h.bin",
-                                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray(),
-                                        Size = cmdBuf.Length
-                                    };
-                                    evpd.Checksums = Checksum.GetChecksums(cmdBuf).ToArray();
-                                    DataFile.WriteTo("SCSI Dump", evpd.Image, cmdBuf);
-                                    evpds.Add(evpd);
+                                        dumpLog.WriteLine("Requesting page {0:X2}h.", page);
+                                        sense = dev.ScsiInquiry(out cmdBuf, out _, page);
+                                        if(sense) continue;
+    
+                                        EVPDType evpd = new EVPDType
+                                        {
+                                            Image = $"{outputPrefix}.evpd_{page:X2}h.bin",
+                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray(),
+                                            Size = cmdBuf.Length
+                                        };
+                                        evpd.Checksums = Checksum.GetChecksums(cmdBuf).ToArray();
+                                        DataFile.WriteTo("SCSI Dump", evpd.Image, cmdBuf);
+                                        evpds.Add(evpd);
+                                    }
+    
+                                    if(evpds.Count > 0) sidecar.BlockMedia[0].SCSI.EVPD = evpds.ToArray();
                                 }
-
-                                if(evpds.Count > 0) sidecar.BlockMedia[0].SCSI.EVPD = evpds.ToArray();
                             }
-                        }
-                        */
+                            */
 
-                        dumpLog.WriteLine("Requesting MODE SENSE (10).");
-                        sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                                0xFF, 5, out _);
-                        if(!sense || dev.Error)
+                            dumpLog.WriteLine("Requesting MODE SENSE (10).");
                             sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
-                                                    0x3F, 0x00, 5, out _);
+                                                    0x3F, 0xFF, 5, out _);
+                            if(!sense || dev.Error)
+                                sense = dev.ModeSense10(out cmdBuf, out _, false, true,
+                                                        ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
 
-                        decMode = null;
+                            decMode = null;
 
-                        if(!sense && !dev.Error)
-                            if(Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
-                                if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
-                                    sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
-                                    {
-                                        Image     = outputPath,
-                                        Size      = cmdBuf.Length,
-                                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
-                                    };
+                            if(!sense && !dev.Error)
+                                if(Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
+                                    if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
+                                        sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
+                                        {
+                                            Image     = outputPath,
+                                            Size      = cmdBuf.Length,
+                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                        };
 
-                        dumpLog.WriteLine("Requesting MODE SENSE (6).");
-                        sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                               5, out _);
-                        if(sense || dev.Error)
+                            dumpLog.WriteLine("Requesting MODE SENSE (6).");
                             sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
                                                    0x00, 5, out _);
-                        if(sense || dev.Error) sense = dev.ModeSense(out cmdBuf, out _, 5, out _);
+                            if(sense || dev.Error)
+                                sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                                       0x00, 5, out _);
+                            if(sense || dev.Error) sense = dev.ModeSense(out cmdBuf, out _, 5, out _);
 
-                        if(!sense && !dev.Error)
-                            if(Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
-                                if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
-                                    sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
-                                    {
-                                        Image     = outputPath,
-                                        Size      = cmdBuf.Length,
-                                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
-                                    };
+                            if(!sense && !dev.Error)
+                                if(Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
+                                    if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
+                                        sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
+                                        {
+                                            Image     = outputPath,
+                                            Size      = cmdBuf.Length,
+                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                        };
+                        }
                     }
+
+                    List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                    if(sidecar.BlockMedia[0].FileSystemInformation != null)
+                        filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                                             where partition.FileSystems != null
+                                             from fileSystem in partition.FileSystems
+                                             select ((ulong)partition.StartSector, fileSystem.Type));
+
+                    if(filesystems.Count > 0)
+                        foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                            dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                    Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
+                    sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
+                    sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
+                    // TODO: Implement device firmware revision
+                    if(!dev.IsRemovable || dev.IsUsb)
+                        if(dev.Type == DeviceType.ATAPI)
+                            sidecar.BlockMedia[0].Interface = "ATAPI";
+                        else if(dev.IsUsb)
+                            sidecar.BlockMedia[0].Interface = "USB";
+                        else if(dev.IsFireWire)
+                            sidecar.BlockMedia[0].Interface = "FireWire";
+                        else
+                            sidecar.BlockMedia[0].Interface = "SCSI";
+                    sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
+                    sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalBlockSize;
+                    sidecar.BlockMedia[0].LogicalBlockSize  = (int)logicalBlockSize;
+                    sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
+                    sidecar.BlockMedia[0].Model             = dev.Model;
+                    sidecar.BlockMedia[0].Serial            = dev.Serial;
+                    sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
+
+                    if(dev.IsRemovable) sidecar.BlockMedia[0].DumpHardwareArray = resume.Tries.ToArray();
                 }
 
-                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
-                if(sidecar.BlockMedia[0].FileSystemInformation != null)
-                    filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
-                                         where partition.FileSystems != null
-                                         from fileSystem in partition.FileSystems
-                                         select ((ulong)partition.StartSector, fileSystem.Type));
+                DicConsole.WriteLine("Writing metadata sidecar");
 
-                if(filesystems.Count > 0)
-                    foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
-                        dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
-                sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-                Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
-                sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
-                sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
-                // TODO: Implement device firmware revision
-                if(!dev.IsRemovable || dev.IsUsb)
-                    if(dev.Type == DeviceType.ATAPI)
-                        sidecar.BlockMedia[0].Interface = "ATAPI";
-                    else if(dev.IsUsb)
-                        sidecar.BlockMedia[0].Interface = "USB";
-                    else if(dev.IsFireWire)
-                        sidecar.BlockMedia[0].Interface = "FireWire";
-                    else
-                        sidecar.BlockMedia[0].Interface = "SCSI";
-                sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
-                sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalBlockSize;
-                sidecar.BlockMedia[0].LogicalBlockSize  = (int)logicalBlockSize;
-                sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
-                sidecar.BlockMedia[0].Model             = dev.Model;
-                sidecar.BlockMedia[0].Serial            = dev.Serial;
-                sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
+                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                if(dev.IsRemovable) sidecar.BlockMedia[0].DumpHardwareArray = resume.Tries.ToArray();
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                xmlSer.Serialize(xmlFs, sidecar);
+                xmlFs.Close();
             }
 
             DicConsole.WriteLine();
@@ -894,17 +905,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
             DicConsole.WriteLine("{0} sectors could not be read.",       resume.BadBlocks.Count);
             DicConsole.WriteLine();
-
-            if(!aborted)
-            {
-                DicConsole.WriteLine("Writing metadata sidecar");
-
-                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
-
-                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
-            }
 
             Statistics.AddMedia(dskType, true);
         }
