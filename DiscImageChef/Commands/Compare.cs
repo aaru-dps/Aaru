@@ -133,7 +133,7 @@ namespace DiscImageChef.Commands
                 // ignored
             }
             #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-            image1Info.HasSessions           |= image1Sessions.Count > 0;
+            image1Info.HasSessions           |= image1Sessions?.Count > 0;
             image1Info.ImageSize             =  input1Format.Info.ImageSize;
             image1Info.Sectors               =  input1Format.Info.Sectors;
             image1Info.SectorSize            =  input1Format.Info.SectorSize;
@@ -180,7 +180,7 @@ namespace DiscImageChef.Commands
                 // ignored
             }
             #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-            image2Info.HasSessions           |= image2Sessions.Count > 0;
+            image2Info.HasSessions           |= image2Sessions?.Count > 0;
             image2Info.ImageSize             =  input2Format.Info.ImageSize;
             image2Info.Sectors               =  input2Format.Info.Sectors;
             image2Info.SectorSize            =  input2Format.Info.SectorSize;
