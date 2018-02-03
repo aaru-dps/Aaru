@@ -819,10 +819,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                         byte[] sub  = new byte[subSize];
                         Array.Copy(readBuffer, 0,           data, 0, SECTOR_SIZE);
                         Array.Copy(readBuffer, SECTOR_SIZE, sub,  0, subSize);
-                        outputPlugin.WriteSector(data, badSector);
+                        outputPlugin.WriteSectorLong(data, badSector);
                         outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
                     }
-                    else outputPlugin.WriteSector(readBuffer, badSector);
+                    else outputPlugin.WriteSectorLong(readBuffer, badSector);
                 }
 
                 if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
