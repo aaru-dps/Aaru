@@ -173,12 +173,11 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            ushort     localSum1, localSum2, block;
-            uint       finalSum;
+            ushort     block;
             byte[]     blockBytes;
 
-            localSum1 = 0xFFFF;
-            localSum2 = 0xFFFF;
+            ushort localSum1 = 0xFFFF;
+            ushort localSum2 = 0xFFFF;
 
             if(fileStream.Length % 2 == 0)
                 for(int i = 0; i     < fileStream.Length; i += 2)
@@ -209,7 +208,7 @@ namespace DiscImageChef.Checksums
                 localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
             }
 
-            finalSum = (uint)(localSum1 + (localSum2 << 16));
+            uint finalSum = (uint)(localSum1 + (localSum2 << 16));
 
             hash = BitConverter.GetBytes(finalSum);
 
@@ -228,11 +227,10 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            ushort localSum1, localSum2, block;
-            uint   finalSum;
+            ushort block;
 
-            localSum1 = 0xFFFF;
-            localSum2 = 0xFFFF;
+            ushort localSum1 = 0xFFFF;
+            ushort localSum2 = 0xFFFF;
 
             if(len % 2           == 0)
                 for(int i = 0; i < len; i += 2)
@@ -259,7 +257,7 @@ namespace DiscImageChef.Checksums
                 localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
             }
 
-            finalSum = (uint)(localSum1 + (localSum2 << 16));
+            uint finalSum = (uint)(localSum1 + (localSum2 << 16));
 
             hash = BitConverter.GetBytes(finalSum);
 
@@ -281,14 +279,14 @@ namespace DiscImageChef.Checksums
         }
     }
 
-    public class Fletcher16Context
+    public class Fletcher16Context : IChecksum
     {
         byte sum1, sum2;
 
         /// <summary>
         ///     Initializes the Fletcher16 sums
         /// </summary>
-        public void Init()
+        public Fletcher16Context()
         {
             sum1 = 0xFF;
             sum2 = 0xFF;
@@ -358,20 +356,18 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            byte       localSum1, localSum2, block;
-            ushort     finalSum;
 
-            localSum1 = 0xFF;
-            localSum2 = 0xFF;
+            byte localSum1 = 0xFF;
+            byte localSum2 = 0xFF;
 
             for(int i = 0; i < fileStream.Length; i += 2)
             {
-                block     = (byte)fileStream.ReadByte();
-                localSum1 = (byte)((localSum1 + block)     % 0xFF);
-                localSum2 = (byte)((localSum2 + localSum1) % 0xFF);
+                byte block = (byte)fileStream.ReadByte();
+                localSum1  = (byte)((localSum1 + block)     % 0xFF);
+                localSum2  = (byte)((localSum2 + localSum1) % 0xFF);
             }
 
-            finalSum = (ushort)(localSum1 + (localSum2 << 8));
+            ushort finalSum = (ushort)(localSum1 + (localSum2 << 8));
 
             hash = BitConverter.GetBytes(finalSum);
 
@@ -390,11 +386,8 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            byte   localSum1, localSum2;
-            ushort finalSum;
-
-            localSum1 = 0xFF;
-            localSum2 = 0xFF;
+            byte localSum1 = 0xFF;
+            byte localSum2 = 0xFF;
 
             for(int i = 0; i < len; i++)
             {
@@ -402,7 +395,7 @@ namespace DiscImageChef.Checksums
                 localSum2 = (byte)((localSum2 + localSum1) % 0xFF);
             }
 
-            finalSum = (ushort)(localSum1 + (localSum2 << 8));
+            ushort finalSum = (ushort)(localSum1 + (localSum2 << 8));
 
             hash = BitConverter.GetBytes(finalSum);
 

@@ -119,11 +119,9 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            ushort     localSum1, localSum2;
-            uint       finalSum;
 
-            localSum1 = 1;
-            localSum2 = 0;
+            ushort localSum1 = 1;
+            ushort localSum2 = 0;
 
             for(int i = 0; i < fileStream.Length; i++)
             {
@@ -131,7 +129,7 @@ namespace DiscImageChef.Checksums
                 localSum2 = (ushort)((localSum2 + localSum1)             % ADLER_MODULE);
             }
 
-            finalSum = (uint)((localSum2 << 16) | localSum1);
+            uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             hash                                 = BigEndianBitConverter.GetBytes(finalSum);
@@ -153,11 +151,8 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            ushort localSum1, localSum2;
-            uint   finalSum;
-
-            localSum1 = 1;
-            localSum2 = 0;
+            ushort localSum1 = 1;
+            ushort localSum2 = 0;
 
             for(int i = 0; i < len; i++)
             {
@@ -165,7 +160,7 @@ namespace DiscImageChef.Checksums
                 localSum2 = (ushort)((localSum2 + localSum1) % ADLER_MODULE);
             }
 
-            finalSum = (uint)((localSum2 << 16) | localSum1);
+            uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             hash                                 = BigEndianBitConverter.GetBytes(finalSum);

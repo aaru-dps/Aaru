@@ -217,9 +217,7 @@ namespace DiscImageChef.Checksums
         /// <param name="seed">CRC seed</param>
         public static string Data(byte[] data, uint len, out byte[] hash, uint polynomial, uint seed)
         {
-            uint localhashInt;
-
-            localhashInt = seed;
+            uint localhashInt = seed;
 
             uint[] localTable = new uint[256];
             for(int i = 0; i < 256; i++)
