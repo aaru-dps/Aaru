@@ -84,7 +84,6 @@ namespace DiscImageChef.Commands
 
                     foreach(Track currentTrack in inputTracks)
                     {
-                        Sha1Context sha1CtxTrack           = new Sha1Context();
                         entTable                           = new ulong[256];
                         ulong        trackSize             = 0;
                         List<string> uniqueSectorsPerTrack = new List<string>();
@@ -99,7 +98,7 @@ namespace DiscImageChef.Commands
 
                             if(options.DuplicatedSectors)
                             {
-                                string sectorHash = sha1CtxTrack.Data(sector, out _);
+                                string sectorHash = Sha1Context.Data(sector, out _);
                                 if(!uniqueSectorsPerTrack.Contains(sectorHash)) uniqueSectorsPerTrack.Add(sectorHash);
                             }
 
@@ -129,7 +128,6 @@ namespace DiscImageChef.Commands
 
             if(!options.WholeDisc) return;
 
-            Sha1Context sha1Ctx        = new Sha1Context();
             entTable                   = new ulong[256];
             ulong        diskSize      = 0;
             List<string> uniqueSectors = new List<string>();
@@ -144,7 +142,7 @@ namespace DiscImageChef.Commands
 
                 if(options.DuplicatedSectors)
                 {
-                    string sectorHash = sha1Ctx.Data(sector, out _);
+                    string sectorHash = Sha1Context.Data(sector, out _);
                     if(!uniqueSectors.Contains(sectorHash)) uniqueSectors.Add(sectorHash);
                 }
 

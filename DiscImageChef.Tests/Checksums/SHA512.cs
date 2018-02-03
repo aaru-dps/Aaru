@@ -53,8 +53,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha512EmptyFile()
         {
-            Sha512Context ctx    = new Sha512Context();
-            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            byte[] result = Sha512Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -67,8 +66,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Sha512Context ctx = new Sha512Context();
-            ctx.Data(data, out byte[] result);
+            Sha512Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -90,8 +88,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha512RandomFile()
         {
-            Sha512Context ctx    = new Sha512Context();
-            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            byte[] result = Sha512Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
@@ -104,8 +101,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Sha512Context ctx = new Sha512Context();
-            ctx.Data(data, out byte[] result);
+            Sha512Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 

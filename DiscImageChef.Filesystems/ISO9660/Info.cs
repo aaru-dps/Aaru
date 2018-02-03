@@ -567,8 +567,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(torito != null)
             {
-                vdSector            = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
-                Sha1Context sha1Ctx = new Sha1Context();
+                vdSector = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
 
                 int toritoOff = 0;
 
@@ -642,7 +641,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     isoMetadata.AppendFormat("\tSystem type: 0x{0:X2}", initialEntry.system_type).AppendLine();
                     if(bootImage != null)
-                        isoMetadata.AppendFormat("\tBootable image's SHA1: {0}", sha1Ctx.Data(bootImage, out _))
+                        isoMetadata.AppendFormat("\tBootable image's SHA1: {0}", Sha1Context.Data(bootImage, out _))
                                    .AppendLine();
                 }
                 else isoMetadata.AppendLine("\tNot bootable");
@@ -725,7 +724,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                        .AppendLine();
                             if(bootImage != null)
                                 isoMetadata.AppendFormat("\t\tBootable image's SHA1: {0}",
-                                                         sha1Ctx.Data(bootImage, out _)).AppendLine();
+                                                         Sha1Context.Data(bootImage, out _)).AppendLine();
                         }
                         else isoMetadata.AppendLine("\t\tNot bootable");
 

@@ -186,8 +186,7 @@ namespace DiscImageChef.Filesystems
                hpfsBpb.signature2 == 0xAA55)
             {
                 XmlFsType.Bootable  = true;
-                Sha1Context sha1Ctx = new Sha1Context();
-                string      bootChk = sha1Ctx.Data(hpfsBpb.boot_code, out byte[] sha1_out);
+                string      bootChk = Sha1Context.Data(hpfsBpb.boot_code, out byte[] _);
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }

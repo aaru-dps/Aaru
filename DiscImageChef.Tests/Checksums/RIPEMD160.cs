@@ -49,8 +49,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Ripemd160EmptyFile()
         {
-            Ripemd160Context ctx    = new Ripemd160Context();
-            byte[]           result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            byte[] result = Ripemd160Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -63,8 +62,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Ripemd160Context ctx = new Ripemd160Context();
-            ctx.Data(data, out byte[] result);
+            Ripemd160Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -86,8 +84,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Ripemd160RandomFile()
         {
-            Ripemd160Context ctx    = new Ripemd160Context();
-            byte[]           result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            byte[] result = Ripemd160Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
@@ -100,8 +97,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Ripemd160Context ctx = new Ripemd160Context();
-            ctx.Data(data, out byte[] result);
+            Ripemd160Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 

@@ -122,9 +122,8 @@ namespace DiscImageChef.Filesystems
 
             if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 && ntfsBb.signature2 == 0xAA55)
             {
-                XmlFsType.Bootable  = true;
-                Sha1Context sha1Ctx = new Sha1Context();
-                string      bootChk = sha1Ctx.Data(ntfsBb.boot_code, out _);
+                XmlFsType.Bootable = true;
+                string bootChk     = Sha1Context.Data(ntfsBb.boot_code, out _);
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }

@@ -43,8 +43,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Md5EmptyFile()
         {
-            Md5Context ctx    = new Md5Context();
-            byte[]     result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            byte[] result = Md5Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -57,8 +56,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Md5Context ctx = new Md5Context();
-            ctx.Data(data, out byte[] result);
+            Md5Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -80,8 +78,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Md5RandomFile()
         {
-            Md5Context ctx    = new Md5Context();
-            byte[]     result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            byte[] result = Md5Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
@@ -94,8 +91,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Md5Context ctx = new Md5Context();
-            ctx.Data(data, out byte[] result);
+            Md5Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 

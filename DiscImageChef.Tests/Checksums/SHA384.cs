@@ -51,8 +51,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha384EmptyFile()
         {
-            Sha384Context ctx    = new Sha384Context();
-            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            byte[] result = Sha384Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -65,8 +64,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Sha384Context ctx = new Sha384Context();
-            ctx.Data(data, out byte[] result);
+            Sha384Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -88,8 +86,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha384RandomFile()
         {
-            Sha384Context ctx    = new Sha384Context();
-            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            byte[] result = Sha384Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
@@ -102,8 +99,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Sha384Context ctx = new Sha384Context();
-            ctx.Data(data, out byte[] result);
+            Sha384Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 

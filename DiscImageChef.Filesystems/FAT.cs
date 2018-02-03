@@ -704,7 +704,6 @@ namespace DiscImageChef.Filesystems
             ulong                  rootDirectorySector = 0;
             string                 extraInfo           = null;
             string                 bootChk             = null;
-            Sha1Context            sha1Ctx             = new Sha1Context();
 
             // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
             uint sectorsPerRealSector;
@@ -1036,9 +1035,9 @@ namespace DiscImageChef.Filesystems
                 {
                     XmlFsType.VolumeName = Encoding.ASCII.GetString(fat32Bpb.volume_label);
                     sb.AppendFormat("Filesystem type: {0}", Encoding.ASCII.GetString(fat32Bpb.fs_type)).AppendLine();
-                    bootChk = sha1Ctx.Data(fat32Bpb.boot_code, out _);
+                    bootChk = Sha1Context.Data(fat32Bpb.boot_code, out _);
                 }
-                else bootChk = sha1Ctx.Data(shortFat32Bpb.boot_code, out _);
+                else bootChk = Sha1Context.Data(shortFat32Bpb.boot_code, out _);
 
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
@@ -1426,7 +1425,7 @@ namespace DiscImageChef.Filesystems
                 else if(useAtariBpb && XmlFsType.VolumeSerial != null)
                     sb.AppendFormat("Volume Serial Number: {0}", XmlFsType.VolumeSerial).AppendLine();
 
-                bootChk = sha1Ctx.Data(fakeBpb.boot_code, out _);
+                bootChk = Sha1Context.Data(fakeBpb.boot_code, out _);
 
                 // Workaround that PCExchange jumps into "FAT16   "... 
                 if(XmlFsType.SystemIdentifier == "PCX 2.0 ") fakeBpb.jump[1] += 8;
@@ -1525,9 +1524,7 @@ namespace DiscImageChef.Filesystems
                     int    sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
                     byte[] bootCode = new byte[512     - sigSize - bpbSector[1] - 2];
                     Array.Copy(bpbSector, bpbSector[1] + 2, bootCode, 0, bootCode.Length);
-                    sha1Ctx = new Sha1Context();
-                    sha1Ctx.Update(bootCode);
-                    bootChk = sha1Ctx.End();
+                    Sha1Context.Data(bootCode, out _);
                 }
                 // Intel big jump
                 else if(bpbSector[0] == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) < 0x1FC)
@@ -1536,9 +1533,7 @@ namespace DiscImageChef.Filesystems
                     byte[] bootCode = new byte[512 - sigSize - BitConverter.ToUInt16(bpbSector, 1) - 3];
                     Array.Copy(bpbSector, BitConverter.ToUInt16(bpbSector,                      1) + 3, bootCode, 0,
                                bootCode.Length);
-                    sha1Ctx = new Sha1Context();
-                    sha1Ctx.Update(bootCode);
-                    bootChk = sha1Ctx.End();
+                    Sha1Context.Data(bootCode, out _);
                 }
 
                 sb.AppendLine("Volume is bootable");
