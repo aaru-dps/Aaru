@@ -93,13 +93,13 @@ namespace DiscImageChef
         [Option("crc64", Default = false, HelpText = "Calculates CRC64 (ECMA).")]
         public bool DoCrc64 { get; set; }
 
-        /*[Option("fletcher16", Default = false,
+        [Option("fletcher16", Default = false,
             HelpText = "Calculates Fletcher-16.")]
         public bool DoFletcher16 { get; set; }
 
         [Option("fletcher32", Default = false,
             HelpText = "Calculates Fletcher-32.")]
-        public bool DoFletcher32 { get; set; }*/
+        public bool DoFletcher32 { get; set; }
 
         [Option('m', "md5", Default = true, HelpText = "Calculates MD5.")]
         public bool DoMd5 { get; set; }

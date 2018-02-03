@@ -38,21 +38,21 @@ using System.Text;
 
 namespace DiscImageChef.Checksums
 {
+    /// <summary>
+    ///     Implements the Fletcher-32 algorithm
+    /// </summary>
     public class Fletcher32Context : IChecksum
     {
-        bool   inodd;
-        byte   oddValue;
-        ushort sum1, sum2;
+        const ushort FLETCHER_MODULE = 0xFFFF;
+        ushort       sum1, sum2;
 
         /// <summary>
-        ///     Initializes the Fletcher32 sums
+        ///     Initializes the Fletcher-32 sums
         /// </summary>
         public Fletcher32Context()
         {
-            sum1     = 0xFFFF;
-            sum2     = 0xFFFF;
-            oddValue = 0;
-            inodd    = false;
+            sum1 = 0xFFFF;
+            sum2 = 0xFFFF;
         }
 
         /// <summary>
@@ -62,64 +62,10 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            ushort block;
-            if(!inodd)
-                if(len % 2 != 0)
-                {
-                    oddValue = data[len - 1];
-                    inodd    = true;
-
-                    for(int i = 0; i < len - 1; i += 2)
-                    {
-                        block = BigEndianBitConverter.ToUInt16(data, i);
-                        sum1  = (ushort)((sum1 + block) % 0xFFFF);
-                        sum2  = (ushort)((sum2 + sum1)  % 0xFFFF);
-                    }
-                }
-                else
-                {
-                    inodd = false;
-                    for(int i = 0; i < len; i += 2)
-                    {
-                        block = BigEndianBitConverter.ToUInt16(data, i);
-                        sum1  = (ushort)((sum1 + block) % 0xFFFF);
-                        sum2  = (ushort)((sum2 + sum1)  % 0xFFFF);
-                    }
-                }
-            // Carrying odd
-            else
+            for(int i = 0; i < len; i++)
             {
-                byte[] oddData = new byte[2];
-                oddData[0]     = oddValue;
-                oddData[1]     = data[0];
-
-                block = BigEndianBitConverter.ToUInt16(oddData, 0);
-                sum1  = (ushort)((sum1 + block) % 0xFFFF);
-                sum2  = (ushort)((sum2 + sum1)  % 0xFFFF);
-
-                // Even size, carrying odd
-                if(len % 2 == 0)
-                {
-                    oddValue = data[len - 1];
-                    inodd    = true;
-
-                    for(int i = 1; i < len - 1; i += 2)
-                    {
-                        block = BigEndianBitConverter.ToUInt16(data, i);
-                        sum1  = (ushort)((sum1 + block) % 0xFFFF);
-                        sum2  = (ushort)((sum2 + sum1)  % 0xFFFF);
-                    }
-                }
-                else
-                {
-                    inodd = false;
-                    for(int i = 1; i < len; i += 2)
-                    {
-                        block = BigEndianBitConverter.ToUInt16(data, i);
-                        sum1  = (ushort)((sum1 + block) % 0xFFFF);
-                        sum2  = (ushort)((sum2 + sum1)  % 0xFFFF);
-                    }
-                }
+                sum1 = (ushort)((sum1 + data[i]) % FLETCHER_MODULE);
+                sum2 = (ushort)((sum2 + sum1)    % FLETCHER_MODULE);
             }
         }
 
@@ -137,7 +83,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            uint finalSum = (uint)(sum1 + (sum2 << 16));
+            uint finalSum                        = (uint)((sum2 << 16) | sum1);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
@@ -146,9 +93,10 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            uint          finalSum       = (uint)(sum1 + (sum2 << 16));
+            uint          finalSum       = (uint)((sum2 << 16) | sum1);
             StringBuilder fletcherOutput = new StringBuilder();
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
                 fletcherOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
 
@@ -173,48 +121,26 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            ushort     block;
-            byte[]     blockBytes;
 
             ushort localSum1 = 0xFFFF;
             ushort localSum2 = 0xFFFF;
 
-            if(fileStream.Length % 2 == 0)
-                for(int i = 0; i     < fileStream.Length; i += 2)
-                {
-                    blockBytes = new byte[2];
-                    fileStream.Read(blockBytes, 0, 2);
-                    block     = BigEndianBitConverter.ToUInt16(blockBytes, 0);
-                    localSum1 = (ushort)((localSum1 + block)     % 0xFFFF);
-                    localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
-                }
-            else
+            for(int i = 0; i < fileStream.Length; i++)
             {
-                for(int i = 0; i < fileStream.Length - 1; i += 2)
-                {
-                    blockBytes = new byte[2];
-                    fileStream.Read(blockBytes, 0, 2);
-                    block     = BigEndianBitConverter.ToUInt16(blockBytes, 0);
-                    localSum1 = (ushort)((localSum1 + block)     % 0xFFFF);
-                    localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
-                }
-
-                byte[] oddData = new byte[2];
-                oddData[0]     = (byte)fileStream.ReadByte();
-                oddData[1]     = 0;
-
-                block     = BigEndianBitConverter.ToUInt16(oddData, 0);
-                localSum1 = (ushort)((localSum1 + block)     % 0xFFFF);
-                localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
+                localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % FLETCHER_MODULE);
+                localSum2 = (ushort)((localSum2 + localSum1)             % FLETCHER_MODULE);
             }
 
-            uint finalSum = (uint)(localSum1 + (localSum2 << 16));
+            uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            hash = BitConverter.GetBytes(finalSum);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder fletcherOutput = new StringBuilder();
 
             foreach(byte h in hash) fletcherOutput.Append(h.ToString("x2"));
+
+            fileStream.Close();
 
             return fletcherOutput.ToString();
         }
@@ -227,45 +153,25 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            ushort block;
-
             ushort localSum1 = 0xFFFF;
             ushort localSum2 = 0xFFFF;
 
-            if(len % 2           == 0)
-                for(int i = 0; i < len; i += 2)
-                {
-                    block     = BigEndianBitConverter.ToUInt16(data, i);
-                    localSum1 = (ushort)((localSum1 + block)     % 0xFFFF);
-                    localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
-                }
-            else
+            for(int i = 0; i < len; i++)
             {
-                for(int i = 0; i < len - 1; i += 2)
-                {
-                    block     = BigEndianBitConverter.ToUInt16(data, i);
-                    localSum1 = (ushort)((localSum1 + block)     % 0xFFFF);
-                    localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
-                }
-
-                byte[] oddData = new byte[2];
-                oddData[0]     = data[len - 1];
-                oddData[1]     = 0;
-
-                block     = BigEndianBitConverter.ToUInt16(oddData, 0);
-                localSum1 = (ushort)((localSum1 + block)     % 0xFFFF);
-                localSum2 = (ushort)((localSum2 + localSum1) % 0xFFFF);
+                localSum1 = (ushort)((localSum1 + data[i])   % FLETCHER_MODULE);
+                localSum2 = (ushort)((localSum2 + localSum1) % FLETCHER_MODULE);
             }
 
-            uint finalSum = (uint)(localSum1 + (localSum2 << 16));
+            uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            hash = BitConverter.GetBytes(finalSum);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
 
-            StringBuilder fletcherOutput = new StringBuilder();
+            StringBuilder adlerOutput = new StringBuilder();
 
-            foreach(byte h in hash) fletcherOutput.Append(h.ToString("x2"));
+            foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
-            return fletcherOutput.ToString();
+            return adlerOutput.ToString();
         }
 
         /// <summary>
@@ -279,12 +185,16 @@ namespace DiscImageChef.Checksums
         }
     }
 
+    /// <summary>
+    ///     Implements the Fletcher-16 algorithm
+    /// </summary>
     public class Fletcher16Context : IChecksum
     {
-        byte sum1, sum2;
+        const byte FLETCHER_MODULE = 0xFF;
+        byte       sum1, sum2;
 
         /// <summary>
-        ///     Initializes the Fletcher16 sums
+        ///     Initializes the Fletcher-16 sums
         /// </summary>
         public Fletcher16Context()
         {
@@ -301,8 +211,8 @@ namespace DiscImageChef.Checksums
         {
             for(int i = 0; i < len; i++)
             {
-                sum1 = (byte)((sum1 + data[i]) % 0xFF);
-                sum2 = (byte)((sum2 + sum1)    % 0xFF);
+                sum1 = (byte)((sum1 + data[i]) % FLETCHER_MODULE);
+                sum2 = (byte)((sum2 + sum1)    % FLETCHER_MODULE);
             }
         }
 
@@ -320,7 +230,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            ushort finalSum = (ushort)(sum1 + (sum2 << 8));
+            ushort finalSum                      = (ushort)((sum2 << 8) | sum1);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
@@ -329,9 +240,10 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            ushort        finalSum       = (ushort)(sum1 + (sum2 << 8));
+            ushort        finalSum       = (ushort)((sum2 << 8) | sum1);
             StringBuilder fletcherOutput = new StringBuilder();
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
                 fletcherOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
 
@@ -360,20 +272,22 @@ namespace DiscImageChef.Checksums
             byte localSum1 = 0xFF;
             byte localSum2 = 0xFF;
 
-            for(int i = 0; i < fileStream.Length; i += 2)
+            for(int i = 0; i < fileStream.Length; i++)
             {
-                byte block = (byte)fileStream.ReadByte();
-                localSum1  = (byte)((localSum1 + block)     % 0xFF);
-                localSum2  = (byte)((localSum2 + localSum1) % 0xFF);
+                localSum1 = (byte)((localSum1 + fileStream.ReadByte()) % FLETCHER_MODULE);
+                localSum2 = (byte)((localSum2 + localSum1)             % FLETCHER_MODULE);
             }
 
-            ushort finalSum = (ushort)(localSum1 + (localSum2 << 8));
+            ushort finalSum = (ushort)((localSum2 << 8) | localSum1);
 
-            hash = BitConverter.GetBytes(finalSum);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder fletcherOutput = new StringBuilder();
 
             foreach(byte h in hash) fletcherOutput.Append(h.ToString("x2"));
+
+            fileStream.Close();
 
             return fletcherOutput.ToString();
         }
@@ -391,19 +305,20 @@ namespace DiscImageChef.Checksums
 
             for(int i = 0; i < len; i++)
             {
-                localSum1 = (byte)((localSum1 + data[i])   % 0xFF);
-                localSum2 = (byte)((localSum2 + localSum1) % 0xFF);
+                localSum1 = (byte)((localSum1 + data[i])   % FLETCHER_MODULE);
+                localSum2 = (byte)((localSum2 + localSum1) % FLETCHER_MODULE);
             }
 
-            ushort finalSum = (ushort)(localSum1 + (localSum2 << 8));
+            ushort finalSum = (ushort)((localSum2 << 8) | localSum1);
 
-            hash = BitConverter.GetBytes(finalSum);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
 
-            StringBuilder fletcherOutput = new StringBuilder();
+            StringBuilder adlerOutput = new StringBuilder();
 
-            foreach(byte h in hash) fletcherOutput.Append(h.ToString("x2"));
+            foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
-            return fletcherOutput.ToString();
+            return adlerOutput.ToString();
         }
 
         /// <summary>

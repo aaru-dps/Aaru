@@ -168,6 +168,70 @@ namespace DiscImageChef.Core
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion Adler32
+            
+            #region Fletcher16
+            ctx = new Fletcher16Context();
+            ms.Seek(0, SeekOrigin.Begin);
+            mem                                           = GC.GetTotalMemory(false);
+            if(mem > results.MaxMemory) results.MaxMemory = mem;
+            if(mem < results.MinMemory) results.MinMemory = mem;
+            start                                         = DateTime.Now;
+            InitProgress();
+            for(int i = 0; i < bufferSize / blockSize; i++)
+            {
+                UpdateProgress("Checksumming block {0} of {1} with Fletcher-16.", i + 1, bufferSize / blockSize);
+                byte[] tmp = new byte[blockSize];
+                ms.Read(tmp, 0, blockSize);
+                ctx.Update(tmp);
+            }
+
+            EndProgress();
+            ctx.End();
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
+            if(mem > results.MaxMemory) results.MaxMemory = mem;
+            if(mem < results.MinMemory) results.MinMemory = mem;
+
+            results.Entries.Add("Fletcher16",
+                                new BenchmarkEntry
+                                {
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                });
+            results.SeparateTime += (end - start).TotalSeconds;
+            #endregion Fletcher16
+
+            #region Fletcher32
+            ctx = new Fletcher32Context();
+            ms.Seek(0, SeekOrigin.Begin);
+            mem                                           = GC.GetTotalMemory(false);
+            if(mem > results.MaxMemory) results.MaxMemory = mem;
+            if(mem < results.MinMemory) results.MinMemory = mem;
+            start                                         = DateTime.Now;
+            InitProgress();
+            for(int i = 0; i < bufferSize / blockSize; i++)
+            {
+                UpdateProgress("Checksumming block {0} of {1} with Fletcher-32.", i + 1, bufferSize / blockSize);
+                byte[] tmp = new byte[blockSize];
+                ms.Read(tmp, 0, blockSize);
+                ctx.Update(tmp);
+            }
+
+            EndProgress();
+            ctx.End();
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
+            if(mem > results.MaxMemory) results.MaxMemory = mem;
+            if(mem < results.MinMemory) results.MinMemory = mem;
+
+            results.Entries.Add("Fletcher32",
+                                new BenchmarkEntry
+                                {
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                });
+            results.SeparateTime += (end - start).TotalSeconds;
+            #endregion Fletcher32
 
             #region CRC16
             ctx = new Crc16Context();
@@ -515,7 +579,7 @@ namespace DiscImageChef.Core
             results.EntropyTime  = (end                          - start).TotalSeconds;
             results.EntropySpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
             #endregion Entropy
-
+/*
             #region Multitasking
             start                 = DateTime.Now;
             Checksum allChecksums = new Checksum();
@@ -541,7 +605,7 @@ namespace DiscImageChef.Core
             results.TotalTime  = (end - start).TotalSeconds;
             results.TotalSpeed = bufferSize / 1048576.0 / results.TotalTime;
             #endregion
-
+*/
             results.SeparateSpeed = bufferSize / 1048576.0 / results.SeparateTime;
 
             return results;

@@ -41,18 +41,20 @@ namespace DiscImageChef.Core
     [Flags]
     public enum EnableChecksum
     {
-        Adler32   = 1,
-        Crc16     = 2,
-        Crc32     = 4,
-        Crc64     = 8,
-        Md5       = 16,
-        Ripemd160 = 32,
-        Sha1      = 64,
-        Sha256    = 128,
-        Sha384    = 256,
-        Sha512    = 512,
-        SpamSum   = 1024,
-        All       = Adler32 | Crc16 | Crc32 | Crc64 | Md5 | Ripemd160 | Sha1 | Sha256 | Sha384 | Sha512 | SpamSum
+        Adler32    = 1,
+        Crc16      = 2,
+        Crc32      = 4,
+        Crc64      = 8,
+        Md5        = 16,
+        Ripemd160  = 32,
+        Sha1       = 64,
+        Sha256     = 128,
+        Sha384     = 256,
+        Sha512     = 512,
+        SpamSum    = 1024,
+        Fletcher16 = 2048,
+        Fletcher32 = 4096,
+        All        = Adler32 | Crc16 | Crc32 | Crc64 | Md5 | Ripemd160 | Sha1 | Sha256 | Sha384 | Sha512 | SpamSum | Fletcher16 | Fletcher32
     }
 
     /// <summary>
@@ -94,6 +96,12 @@ namespace DiscImageChef.Core
         HashPacket     spamsumPkt;
         Thread         spamsumThread;
         IChecksum      ssctx;
+        HashPacket f16Pkt;
+        Thread     f16Thread;
+        IChecksum  f16Ctx;
+        HashPacket f32Pkt;
+        Thread     f32Thread;
+        IChecksum  f32Ctx;
 
         public Checksum(EnableChecksum enabled = EnableChecksum.All)
         {
@@ -165,6 +173,18 @@ namespace DiscImageChef.Core
                 spamsumPkt = new HashPacket {Context = ssctx};
             }
 
+            if(enabled.HasFlag(EnableChecksum.Fletcher16))
+            {
+                f16Ctx = new Fletcher16Context();
+                f16Pkt = new HashPacket {Context = f16Ctx};
+            }
+
+            if(enabled.HasFlag(EnableChecksum.Fletcher32))
+            {
+                f32Ctx = new Fletcher32Context();
+                f32Pkt = new HashPacket {Context = f32Ctx};
+            }
+
             adlerThread     = new Thread(UpdateHash);
             crc16Thread     = new Thread(UpdateHash);
             crc32Thread     = new Thread(UpdateHash);
@@ -176,6 +196,8 @@ namespace DiscImageChef.Core
             sha384Thread    = new Thread(UpdateHash);
             sha512Thread    = new Thread(UpdateHash);
             spamsumThread   = new Thread(UpdateHash);
+            f16Thread = new Thread(UpdateHash);
+            f32Thread = new Thread(UpdateHash);
         }
 
         public void Update(byte[] data)
@@ -246,9 +268,21 @@ namespace DiscImageChef.Core
                 spamsumThread.Start(spamsumPkt);
             }
 
+            if(enabled.HasFlag(EnableChecksum.Fletcher16))
+            {
+                f16Pkt.Data = data;
+                f16Thread.Start(f16Pkt);
+            }
+
+            if(enabled.HasFlag(EnableChecksum.Fletcher32))
+            {
+                f32Pkt.Data = data;
+                f32Thread.Start(f32Pkt);
+            }
+
             while(adlerThread.IsAlive  || crc16Thread.IsAlive     || crc32Thread.IsAlive || crc64Thread.IsAlive  ||
                   md5Thread.IsAlive    || ripemd160Thread.IsAlive || sha1Thread.IsAlive  || sha256Thread.IsAlive ||
-                  sha384Thread.IsAlive || sha512Thread.IsAlive    || spamsumThread.IsAlive) { }
+                  sha384Thread.IsAlive || sha512Thread.IsAlive    || spamsumThread.IsAlive || f16Thread.IsAlive || f32Thread.IsAlive) { }
 
             if(enabled.HasFlag(EnableChecksum.SpamSum)) adlerThread     = new Thread(UpdateHash);
             if(enabled.HasFlag(EnableChecksum.SpamSum)) crc16Thread     = new Thread(UpdateHash);
@@ -261,6 +295,8 @@ namespace DiscImageChef.Core
             if(enabled.HasFlag(EnableChecksum.SpamSum)) sha384Thread    = new Thread(UpdateHash);
             if(enabled.HasFlag(EnableChecksum.SpamSum)) sha512Thread    = new Thread(UpdateHash);
             if(enabled.HasFlag(EnableChecksum.SpamSum)) spamsumThread   = new Thread(UpdateHash);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) f16Thread = new Thread(UpdateHash);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) f32Thread = new Thread(UpdateHash);
         }
 
         public List<ChecksumType> End()
@@ -329,9 +365,21 @@ namespace DiscImageChef.Core
                 chks.Add(chk);
             }
 
-            if(!enabled.HasFlag(EnableChecksum.SpamSum)) return chks;
+            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            {
+                chk = new ChecksumType {type = ChecksumTypeType.spamsum, Value = ssctx.End()};
+                chks.Add(chk);
+            }
 
-            chk = new ChecksumType {type = ChecksumTypeType.spamsum, Value = ssctx.End()};
+            if(enabled.HasFlag(EnableChecksum.Fletcher16))
+            {
+                chk = new ChecksumType {type = ChecksumTypeType.fletcher16, Value = f16Ctx.End()};
+                chks.Add(chk);
+            }
+
+            if(!enabled.HasFlag(EnableChecksum.Fletcher32)) return chks;
+
+            chk = new ChecksumType {type = ChecksumTypeType.fletcher32, Value = f32Ctx.End()};
             chks.Add(chk);
 
             return chks;
@@ -350,6 +398,8 @@ namespace DiscImageChef.Core
             IChecksum sha384CtxData    = null;
             IChecksum sha512CtxData    = null;
             IChecksum ssctxData        = null;
+            IChecksum f16ctxData = null;
+            IChecksum f32ctxData = null;
 
             Thread adlerThreadData     = new Thread(UpdateHash);
             Thread crc16ThreadData     = new Thread(UpdateHash);
@@ -362,6 +412,8 @@ namespace DiscImageChef.Core
             Thread sha384ThreadData    = new Thread(UpdateHash);
             Thread sha512ThreadData    = new Thread(UpdateHash);
             Thread spamsumThreadData   = new Thread(UpdateHash);
+            Thread f16ThreadData = new Thread(UpdateHash);
+            Thread f32ThreadData = new Thread(UpdateHash);
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
@@ -440,10 +492,24 @@ namespace DiscImageChef.Core
                 spamsumThreadData.Start(spamsumPktData);
             }
 
+            if(enabled.HasFlag(EnableChecksum.Fletcher16))
+            {
+                f16ctxData            = new Fletcher16Context();
+                HashPacket f16PktData = new HashPacket {Context = f16ctxData, Data = data};
+                f16ThreadData.Start(f16PktData);
+            }
+
+            if(enabled.HasFlag(EnableChecksum.Fletcher32))
+            {
+                f32ctxData            = new Fletcher32Context();
+                HashPacket f32PktData = new HashPacket {Context = f32ctxData, Data = data};
+                f32ThreadData.Start(f32PktData);
+            }
+            
             while(adlerThreadData.IsAlive  || crc16ThreadData.IsAlive  || crc32ThreadData.IsAlive     ||
                   crc64ThreadData.IsAlive  || md5ThreadData.IsAlive    || ripemd160ThreadData.IsAlive ||
                   sha1ThreadData.IsAlive   || sha256ThreadData.IsAlive || sha384ThreadData.IsAlive    ||
-                  sha512ThreadData.IsAlive || spamsumThreadData.IsAlive) { }
+                  sha512ThreadData.IsAlive || spamsumThreadData.IsAlive || f16ThreadData.IsAlive || f32ThreadData.IsAlive) { }
 
             List<ChecksumType> dataChecksums = new List<ChecksumType>();
             ChecksumType       chk;
@@ -508,10 +574,23 @@ namespace DiscImageChef.Core
                 dataChecksums.Add(chk);
             }
 
-            if(!enabled.HasFlag(EnableChecksum.SpamSum)) return dataChecksums;
+            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            {
+                chk = new ChecksumType {type = ChecksumTypeType.spamsum, Value = ssctxData.End()};
+                dataChecksums.Add(chk);
+            }
 
-            chk = new ChecksumType {type = ChecksumTypeType.spamsum, Value = ssctxData.End()};
-            dataChecksums.Add(chk);
+            if(enabled.HasFlag(EnableChecksum.Fletcher16))
+            {
+                chk = new ChecksumType {type = ChecksumTypeType.fletcher16, Value = f16ctxData.End()};
+                dataChecksums.Add(chk);
+            }
+
+            if(enabled.HasFlag(EnableChecksum.Fletcher32))
+            {
+                chk = new ChecksumType {type = ChecksumTypeType.fletcher32, Value = f32ctxData.End()};
+                dataChecksums.Add(chk);
+            }
 
             return dataChecksums;
         }

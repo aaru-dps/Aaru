@@ -63,6 +63,8 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Checksum command", "--sha384={0}", options.DoSha384);
             DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", options.DoSha512);
             DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", options.DoSpamSum);
+            DicConsole.DebugWriteLine("Checksum command", "--fletcher16={0}", options.DoFletcher16);
+            DicConsole.DebugWriteLine("Checksum command", "--fletcher32={0}", options.DoFletcher32);
 
             FiltersList filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(options.InputFile);
@@ -98,6 +100,8 @@ namespace DiscImageChef.Commands
             if(options.DoSha384) enabledChecksums |= EnableChecksum.Sha384;
             if(options.DoSha512) enabledChecksums |= EnableChecksum.Sha512;
             if(options.DoSpamSum) enabledChecksums |= EnableChecksum.SpamSum;
+            if(options.DoFletcher16) enabledChecksums |= EnableChecksum.Fletcher16;
+            if(options.DoFletcher32) enabledChecksums |= EnableChecksum.Fletcher32;
 
             Core.Checksum mediaChecksum = null;
 
