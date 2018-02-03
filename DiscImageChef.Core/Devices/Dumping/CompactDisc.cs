@@ -776,6 +776,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Compact Disc Error handling
+            // TODO: Pass 0 should be called differently, splitting, or something like that, because we are just
+            // separating skipped good sectors from really bad sectors and it's getting too chatty on log there...
             if(resume.BadBlocks.Count > 0 && !aborted)
             {
                 int  pass              = 0;
