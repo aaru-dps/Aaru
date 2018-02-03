@@ -774,9 +774,7 @@ namespace DiscImageChef.DiscImages
             currentChunk     = new BlockChunk();
             currentSector    = 0;
             dataForkChecksum = new Crc32Context();
-            dataForkChecksum.Init();
-            masterChecksum = new Crc32Context();
-            masterChecksum.Init();
+            masterChecksum   = new Crc32Context();
 
             IsWriting    = true;
             ErrorMessage = null;

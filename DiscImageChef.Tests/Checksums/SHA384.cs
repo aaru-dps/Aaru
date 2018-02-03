@@ -51,23 +51,21 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha384EmptyFile()
         {
-            Sha384Context ctx = new Sha384Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            Sha384Context ctx    = new Sha384Context();
+            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
         public void Sha384EmptyData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Sha384Context ctx = new Sha384Context();
-            ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
@@ -75,14 +73,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha384EmptyInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Sha384Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedEmpty, result);
@@ -91,23 +88,21 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha384RandomFile()
         {
-            Sha384Context ctx = new Sha384Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            Sha384Context ctx    = new Sha384Context();
+            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
         public void Sha384RandomData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Sha384Context ctx = new Sha384Context();
-            ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
@@ -115,14 +110,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha384RandomInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Sha384Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedRandom, result);

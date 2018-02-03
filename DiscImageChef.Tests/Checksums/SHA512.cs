@@ -53,23 +53,21 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha512EmptyFile()
         {
-            Sha512Context ctx = new Sha512Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            Sha512Context ctx    = new Sha512Context();
+            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
         public void Sha512EmptyData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Sha512Context ctx = new Sha512Context();
-            ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
@@ -77,14 +75,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha512EmptyInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Sha512Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedEmpty, result);
@@ -93,23 +90,21 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha512RandomFile()
         {
-            Sha512Context ctx = new Sha512Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            Sha512Context ctx    = new Sha512Context();
+            byte[]        result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
         public void Sha512RandomData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Sha512Context ctx = new Sha512Context();
-            ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
@@ -117,14 +112,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha512RandomInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Sha512Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedRandom, result);

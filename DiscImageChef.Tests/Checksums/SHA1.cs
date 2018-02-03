@@ -49,23 +49,21 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha1EmptyFile()
         {
-            Sha1Context ctx = new Sha1Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            Sha1Context ctx    = new Sha1Context();
+            byte[]      result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
         public void Sha1EmptyData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Sha1Context ctx = new Sha1Context();
-            ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
@@ -73,14 +71,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha1EmptyInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Sha1Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedEmpty, result);
@@ -89,23 +86,21 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha1RandomFile()
         {
-            Sha1Context ctx = new Sha1Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            Sha1Context ctx    = new Sha1Context();
+            byte[]      result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
         public void Sha1RandomData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Sha1Context ctx = new Sha1Context();
-            ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
@@ -113,14 +108,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha1RandomInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Sha1Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedRandom, result);

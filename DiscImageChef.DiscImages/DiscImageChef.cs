@@ -1770,7 +1770,6 @@ namespace DiscImageChef.DiscImages
                         Marshal.FreeHGlobal(structurePointer);
 
                         crcVerify = new Crc64Context();
-                        crcVerify.Init();
                         readBytes = 0;
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -1807,7 +1806,6 @@ namespace DiscImageChef.DiscImages
                         Marshal.FreeHGlobal(structurePointer);
 
                         crcVerify = new Crc64Context();
-                        crcVerify.Init();
                         readBytes = 0;
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -2524,29 +2522,13 @@ namespace DiscImageChef.DiscImages
                     imageStream.WriteByte(0);
                 }
 
-                if(doMd5)
-                {
-                    md5Provider = new Md5Context();
-                    md5Provider.Init();
-                }
+                if(doMd5) md5Provider = new Md5Context();
 
-                if(doSha1)
-                {
-                    sha1Provider = new Sha1Context();
-                    sha1Provider.Init();
-                }
+                if(doSha1) sha1Provider = new Sha1Context();
 
-                if(doSha256)
-                {
-                    sha256Provider = new Sha256Context();
-                    sha256Provider.Init();
-                }
+                if(doSha256) sha256Provider = new Sha256Context();
 
-                if(doSpamsum)
-                {
-                    spamsumProvider = new SpamSumContext();
-                    spamsumProvider.Init();
-                }
+                if(doSpamsum) spamsumProvider = new SpamSumContext();
             }
 
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "In memory DDT?: {0}", inMemoryDdt);
@@ -2689,7 +2671,6 @@ namespace DiscImageChef.DiscImages
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
 
                 Crc64Context cmpCrc64Context = new Crc64Context();
-                cmpCrc64Context.Init();
 
                 byte[] lzmaProperties = new byte[0];
 
@@ -2777,7 +2758,6 @@ namespace DiscImageChef.DiscImages
                     flakeWriter      = new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
                 else lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
                 crc64                = new Crc64Context();
-                crc64.Init();
             }
 
             ulong ddtEntry = (ulong)((imageStream.Position << shift) + currentBlockOffset);
@@ -3111,7 +3091,6 @@ namespace DiscImageChef.DiscImages
                 currentBlockHeader.crc64  = BitConverter.ToUInt64(crc64.Final(), 0);
 
                 Crc64Context cmpCrc64Context = new Crc64Context();
-                cmpCrc64Context.Init();
 
                 byte[] lzmaProperties = new byte[0];
 
@@ -3227,7 +3206,6 @@ namespace DiscImageChef.DiscImages
                 {
                     tagData               = blockStream.ToArray();
                     Crc64Context crc64Ctx = new Crc64Context();
-                    crc64Ctx.Init();
                     crc64Ctx.Update(lzmaProperties);
                     crc64Ctx.Update(tagData);
                     tagCrc               = crc64Ctx.Final();
@@ -3569,7 +3547,6 @@ namespace DiscImageChef.DiscImages
                 blockStream     = new MemoryStream();
                 lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
                 crc64           = new Crc64Context();
-                crc64.Init();
                 for(ulong i = 0; i < (ulong)userDataDdt.LongLength; i++)
                 {
                     byte[] ddtEntry = BitConverter.GetBytes(userDataDdt[i]);
@@ -3581,7 +3558,6 @@ namespace DiscImageChef.DiscImages
                 lzmaBlockStream.Close();
                 ddtHeader.cmpLength          = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                 Crc64Context cmpCrc64Context = new Crc64Context();
-                cmpCrc64Context.Init();
                 cmpCrc64Context.Update(lzmaProperties);
                 cmpCrc64Context.Update(blockStream.ToArray());
                 ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
@@ -3629,15 +3605,15 @@ namespace DiscImageChef.DiscImages
                             crc64      = BitConverter.ToUInt64(blockCrc, 0),
                             sectorSize = 16
                         };
-                        
+
                         byte[] lzmaProperties = null;
-                        
+
                         if(nocompress)
                         {
                             prefixBlock.compression = CompressionType.None;
-                            prefixBlock.cmpCrc64 = prefixBlock.crc64;
-                            prefixBlock.cmpLength = prefixBlock.length;
-                            blockStream = new MemoryStream(sectorPrefix);
+                            prefixBlock.cmpCrc64    = prefixBlock.crc64;
+                            prefixBlock.cmpLength   = prefixBlock.length;
+                            blockStream             = new MemoryStream(sectorPrefix);
                         }
                         else
                         {
@@ -3664,7 +3640,6 @@ namespace DiscImageChef.DiscImages
                         if(prefixBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties,    0, lzmaProperties.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
-                        
 
                         index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                              t.dataType  == DataType.CdSectorPrefix);
@@ -3762,7 +3737,7 @@ namespace DiscImageChef.DiscImages
                             subchannelBlock.compression = CompressionType.None;
                             subchannelBlock.cmpCrc64    = subchannelBlock.crc64;
                             subchannelBlock.cmpLength   = subchannelBlock.length;
-                            blockStream             = new MemoryStream(sectorSubchannel);
+                            blockStream                 = new MemoryStream(sectorSubchannel);
                         }
                         else
                         {
@@ -3928,7 +3903,7 @@ namespace DiscImageChef.DiscImages
                         }
 
                         byte[] lzmaProperties = null;
-                        
+
                         if(nocompress)
                         {
                             subchannelBlock.compression = CompressionType.None;

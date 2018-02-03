@@ -276,14 +276,14 @@ namespace DiscImageChef.Partitions
         const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
         public string Name => "Amiga Rigid Disk Block";
-        public Guid Id => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+        public Guid   Id   => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
-            partitions = new List<Partition>();
+            partitions                           = new List<Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            ulong rdbBlock = 0;
-            bool foundRdb = false;
+            ulong rdbBlock                       = 0;
+            bool  foundRdb                       = false;
 
             while(rdbBlock < 16)
             {
@@ -292,7 +292,7 @@ namespace DiscImageChef.Partitions
                 if(rdbBlock + sectorOffset >= imagePlugin.Info.Sectors) break;
 
                 byte[] tmpSector = imagePlugin.ReadSector(rdbBlock + sectorOffset);
-                uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
+                uint   magic     = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", rdbBlock,
                                           magic);
@@ -316,64 +316,64 @@ namespace DiscImageChef.Partitions
 
             byte[] sector = imagePlugin.ReadSector(rdbBlock);
 
-            rdb.Magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
-            rdb.Size = BigEndianBitConverter.ToUInt32(sector, 0x04);
-            rdb.Checksum = BigEndianBitConverter.ToInt32(sector, 0x08);
-            rdb.TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C);
-            rdb.BlockSize = BigEndianBitConverter.ToUInt32(sector, 0x10);
-            rdb.Flags = BigEndianBitConverter.ToUInt32(sector, 0x04);
-            rdb.BadblockPtr = BigEndianBitConverter.ToUInt32(sector, 0x18);
-            rdb.PartitionPtr = BigEndianBitConverter.ToUInt32(sector, 0x1C);
-            rdb.FsheaderPtr = BigEndianBitConverter.ToUInt32(sector, 0x20);
-            rdb.Driveinitcode = BigEndianBitConverter.ToUInt32(sector, 0x24);
-            rdb.Reserved1 = BigEndianBitConverter.ToUInt32(sector, 0x28);
-            rdb.Reserved2 = BigEndianBitConverter.ToUInt32(sector, 0x2C);
-            rdb.Reserved3 = BigEndianBitConverter.ToUInt32(sector, 0x30);
-            rdb.Reserved4 = BigEndianBitConverter.ToUInt32(sector, 0x34);
-            rdb.Reserved5 = BigEndianBitConverter.ToUInt32(sector, 0x38);
-            rdb.Reserved6 = BigEndianBitConverter.ToUInt32(sector, 0x3C);
-            rdb.Cylinders = BigEndianBitConverter.ToUInt32(sector, 0x40);
-            rdb.Spt = BigEndianBitConverter.ToUInt32(sector, 0x44);
-            rdb.Heads = BigEndianBitConverter.ToUInt32(sector, 0x48);
-            rdb.Interleave = BigEndianBitConverter.ToUInt32(sector, 0x4C);
-            rdb.Parking = BigEndianBitConverter.ToUInt32(sector, 0x50);
-            rdb.Reserved7 = BigEndianBitConverter.ToUInt32(sector, 0x54);
-            rdb.Reserved8 = BigEndianBitConverter.ToUInt32(sector, 0x58);
-            rdb.Reserved9 = BigEndianBitConverter.ToUInt32(sector, 0x5C);
-            rdb.Writeprecomp = BigEndianBitConverter.ToUInt32(sector, 0x60);
-            rdb.Reducedwrite = BigEndianBitConverter.ToUInt32(sector, 0x64);
-            rdb.Steprate = BigEndianBitConverter.ToUInt32(sector, 0x68);
-            rdb.Reserved10 = BigEndianBitConverter.ToUInt32(sector, 0x6C);
-            rdb.Reserved11 = BigEndianBitConverter.ToUInt32(sector, 0x70);
-            rdb.Reserved12 = BigEndianBitConverter.ToUInt32(sector, 0x74);
-            rdb.Reserved13 = BigEndianBitConverter.ToUInt32(sector, 0x78);
-            rdb.Reserved14 = BigEndianBitConverter.ToUInt32(sector, 0x7C);
-            rdb.RdbBlockLow = BigEndianBitConverter.ToUInt32(sector, 0x80);
-            rdb.RdbBlockHigh = BigEndianBitConverter.ToUInt32(sector, 0x84);
-            rdb.LowCylinder = BigEndianBitConverter.ToUInt32(sector, 0x88);
-            rdb.HighCylinder = BigEndianBitConverter.ToUInt32(sector, 0x8C);
-            rdb.CylBlocks = BigEndianBitConverter.ToUInt32(sector, 0x90);
+            rdb.Magic           = BigEndianBitConverter.ToUInt32(sector, 0x00);
+            rdb.Size            = BigEndianBitConverter.ToUInt32(sector, 0x04);
+            rdb.Checksum        = BigEndianBitConverter.ToInt32(sector, 0x08);
+            rdb.TargetId        = BigEndianBitConverter.ToUInt32(sector, 0x0C);
+            rdb.BlockSize       = BigEndianBitConverter.ToUInt32(sector, 0x10);
+            rdb.Flags           = BigEndianBitConverter.ToUInt32(sector, 0x04);
+            rdb.BadblockPtr     = BigEndianBitConverter.ToUInt32(sector, 0x18);
+            rdb.PartitionPtr    = BigEndianBitConverter.ToUInt32(sector, 0x1C);
+            rdb.FsheaderPtr     = BigEndianBitConverter.ToUInt32(sector, 0x20);
+            rdb.Driveinitcode   = BigEndianBitConverter.ToUInt32(sector, 0x24);
+            rdb.Reserved1       = BigEndianBitConverter.ToUInt32(sector, 0x28);
+            rdb.Reserved2       = BigEndianBitConverter.ToUInt32(sector, 0x2C);
+            rdb.Reserved3       = BigEndianBitConverter.ToUInt32(sector, 0x30);
+            rdb.Reserved4       = BigEndianBitConverter.ToUInt32(sector, 0x34);
+            rdb.Reserved5       = BigEndianBitConverter.ToUInt32(sector, 0x38);
+            rdb.Reserved6       = BigEndianBitConverter.ToUInt32(sector, 0x3C);
+            rdb.Cylinders       = BigEndianBitConverter.ToUInt32(sector, 0x40);
+            rdb.Spt             = BigEndianBitConverter.ToUInt32(sector, 0x44);
+            rdb.Heads           = BigEndianBitConverter.ToUInt32(sector, 0x48);
+            rdb.Interleave      = BigEndianBitConverter.ToUInt32(sector, 0x4C);
+            rdb.Parking         = BigEndianBitConverter.ToUInt32(sector, 0x50);
+            rdb.Reserved7       = BigEndianBitConverter.ToUInt32(sector, 0x54);
+            rdb.Reserved8       = BigEndianBitConverter.ToUInt32(sector, 0x58);
+            rdb.Reserved9       = BigEndianBitConverter.ToUInt32(sector, 0x5C);
+            rdb.Writeprecomp    = BigEndianBitConverter.ToUInt32(sector, 0x60);
+            rdb.Reducedwrite    = BigEndianBitConverter.ToUInt32(sector, 0x64);
+            rdb.Steprate        = BigEndianBitConverter.ToUInt32(sector, 0x68);
+            rdb.Reserved10      = BigEndianBitConverter.ToUInt32(sector, 0x6C);
+            rdb.Reserved11      = BigEndianBitConverter.ToUInt32(sector, 0x70);
+            rdb.Reserved12      = BigEndianBitConverter.ToUInt32(sector, 0x74);
+            rdb.Reserved13      = BigEndianBitConverter.ToUInt32(sector, 0x78);
+            rdb.Reserved14      = BigEndianBitConverter.ToUInt32(sector, 0x7C);
+            rdb.RdbBlockLow     = BigEndianBitConverter.ToUInt32(sector, 0x80);
+            rdb.RdbBlockHigh    = BigEndianBitConverter.ToUInt32(sector, 0x84);
+            rdb.LowCylinder     = BigEndianBitConverter.ToUInt32(sector, 0x88);
+            rdb.HighCylinder    = BigEndianBitConverter.ToUInt32(sector, 0x8C);
+            rdb.CylBlocks       = BigEndianBitConverter.ToUInt32(sector, 0x90);
             rdb.AutoParkSeconds = BigEndianBitConverter.ToUInt32(sector, 0x94);
-            rdb.HighCylinder = BigEndianBitConverter.ToUInt32(sector, 0x98);
-            rdb.Reserved15 = BigEndianBitConverter.ToUInt32(sector, 0x9C);
+            rdb.HighCylinder    = BigEndianBitConverter.ToUInt32(sector, 0x98);
+            rdb.Reserved15      = BigEndianBitConverter.ToUInt32(sector, 0x9C);
 
             byte[] tmpString = new byte[8];
             Array.Copy(sector, 0xA0, tmpString, 0, 8);
             rdb.DiskVendor = StringHandlers.SpacePaddedToString(tmpString);
-            tmpString = new byte[16];
+            tmpString      = new byte[16];
             Array.Copy(sector, 0xA8, tmpString, 0, 16);
             rdb.DiskProduct = StringHandlers.SpacePaddedToString(tmpString);
-            tmpString = new byte[4];
+            tmpString       = new byte[4];
             Array.Copy(sector, 0xB8, tmpString, 0, 4);
             rdb.DiskRevision = StringHandlers.SpacePaddedToString(tmpString);
 
             tmpString = new byte[8];
             Array.Copy(sector, 0xBC, tmpString, 0, 8);
             rdb.ControllerVendor = StringHandlers.SpacePaddedToString(tmpString);
-            tmpString = new byte[16];
+            tmpString            = new byte[16];
             Array.Copy(sector, 0xC4, tmpString, 0, 16);
             rdb.ControllerProduct = StringHandlers.SpacePaddedToString(tmpString);
-            tmpString = new byte[4];
+            tmpString             = new byte[4];
             Array.Copy(sector, 0xD4, tmpString, 0, 4);
             rdb.ControllerRevision = StringHandlers.SpacePaddedToString(tmpString);
 
@@ -388,73 +388,73 @@ namespace DiscImageChef.Partitions
             rdb.Reserved24 = BigEndianBitConverter.ToUInt32(sector, 0xF8);
             rdb.Reserved25 = BigEndianBitConverter.ToUInt32(sector, 0xFC);
 
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.magic = 0x{0:X8}", rdb.Magic);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.size = {0} longs, {1} bytes", rdb.Size, rdb.Size * 4);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.checksum = 0x{0:X8}", rdb.Checksum);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.targetID = {0}", rdb.TargetId);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.block_size = {0}", rdb.BlockSize);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.badblock_ptr = {0}", rdb.BadblockPtr);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.partition_ptr = {0}", rdb.PartitionPtr);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.fsheader_ptr = {0}", rdb.FsheaderPtr);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.driveinitcode = {0}", rdb.Driveinitcode);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved1 = 0x{0:X8}", rdb.Reserved1);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved2 = 0x{0:X8}", rdb.Reserved2);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved3 = 0x{0:X8}", rdb.Reserved3);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved4 = 0x{0:X8}", rdb.Reserved4);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved5 = 0x{0:X8}", rdb.Reserved5);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved6 = 0x{0:X8}", rdb.Reserved6);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.cylinders = {0}", rdb.Cylinders);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.spt = {0}", rdb.Spt);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.heads = {0}", rdb.Heads);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.interleave = {0}", rdb.Interleave);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.parking = {0}", rdb.Parking);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved7 = 0x{0:X8}", rdb.Reserved7);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved8 = 0x{0:X8}", rdb.Reserved8);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved9 = 0x{0:X8}", rdb.Reserved9);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.writeprecomp = {0}", rdb.Writeprecomp);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reducedwrite = {0}", rdb.Reducedwrite);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.steprate = {0}", rdb.Steprate);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved10 = 0x{0:X8}", rdb.Reserved10);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved11 = 0x{0:X8}", rdb.Reserved11);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved12 = 0x{0:X8}", rdb.Reserved12);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved13 = 0x{0:X8}", rdb.Reserved13);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved14 = 0x{0:X8}", rdb.Reserved14);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockLow = {0}", rdb.RdbBlockLow);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockHigh = {0}", rdb.RdbBlockHigh);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.LowCylinder = {0}", rdb.LowCylinder);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}", rdb.HighCylinder);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.CylBlocks = {0}", rdb.CylBlocks);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.AutoParkSeconds = {0}", rdb.AutoParkSeconds);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}", rdb.HighCylinder);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved15 = 0x{0:X8}", rdb.Reserved15);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskVendor = \"{0}\"", rdb.DiskVendor);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskProduct = \"{0}\"", rdb.DiskProduct);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskRevision = \"{0}\"", rdb.DiskRevision);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerVendor = \"{0}\"", rdb.ControllerVendor);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerProduct = \"{0}\"", rdb.ControllerProduct);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.magic = 0x{0:X8}",             rdb.Magic);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.size = {0} longs, {1} bytes",  rdb.Size, rdb.Size * 4);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.checksum = 0x{0:X8}",          rdb.Checksum);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.targetID = {0}",               rdb.TargetId);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.block_size = {0}",             rdb.BlockSize);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.badblock_ptr = {0}",           rdb.BadblockPtr);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.partition_ptr = {0}",          rdb.PartitionPtr);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.fsheader_ptr = {0}",           rdb.FsheaderPtr);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.driveinitcode = {0}",          rdb.Driveinitcode);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved1 = 0x{0:X8}",         rdb.Reserved1);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved2 = 0x{0:X8}",         rdb.Reserved2);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved3 = 0x{0:X8}",         rdb.Reserved3);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved4 = 0x{0:X8}",         rdb.Reserved4);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved5 = 0x{0:X8}",         rdb.Reserved5);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved6 = 0x{0:X8}",         rdb.Reserved6);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.cylinders = {0}",              rdb.Cylinders);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.spt = {0}",                    rdb.Spt);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.heads = {0}",                  rdb.Heads);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.interleave = {0}",             rdb.Interleave);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.parking = {0}",                rdb.Parking);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved7 = 0x{0:X8}",         rdb.Reserved7);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved8 = 0x{0:X8}",         rdb.Reserved8);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved9 = 0x{0:X8}",         rdb.Reserved9);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.writeprecomp = {0}",           rdb.Writeprecomp);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reducedwrite = {0}",           rdb.Reducedwrite);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.steprate = {0}",               rdb.Steprate);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved10 = 0x{0:X8}",        rdb.Reserved10);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved11 = 0x{0:X8}",        rdb.Reserved11);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved12 = 0x{0:X8}",        rdb.Reserved12);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved13 = 0x{0:X8}",        rdb.Reserved13);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved14 = 0x{0:X8}",        rdb.Reserved14);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockLow = {0}",            rdb.RdbBlockLow);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockHigh = {0}",           rdb.RdbBlockHigh);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.LowCylinder = {0}",            rdb.LowCylinder);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}",           rdb.HighCylinder);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.CylBlocks = {0}",              rdb.CylBlocks);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.AutoParkSeconds = {0}",        rdb.AutoParkSeconds);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}",           rdb.HighCylinder);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved15 = 0x{0:X8}",        rdb.Reserved15);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskVendor = \"{0}\"",         rdb.DiskVendor);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskProduct = \"{0}\"",        rdb.DiskProduct);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskRevision = \"{0}\"",       rdb.DiskRevision);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerVendor = \"{0}\"",   rdb.ControllerVendor);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerProduct = \"{0}\"",  rdb.ControllerProduct);
             DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerRevision = \"{0}\"", rdb.ControllerRevision);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved16 = 0x{0:X8}", rdb.Reserved16);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved17 = 0x{0:X8}", rdb.Reserved17);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved18 = 0x{0:X8}", rdb.Reserved18);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved19 = 0x{0:X8}", rdb.Reserved19);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved20 = 0x{0:X8}", rdb.Reserved20);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved21 = 0x{0:X8}", rdb.Reserved21);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved22 = 0x{0:X8}", rdb.Reserved22);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved23 = 0x{0:X8}", rdb.Reserved23);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved24 = 0x{0:X8}", rdb.Reserved24);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved25 = 0x{0:X8}", rdb.Reserved25);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved16 = 0x{0:X8}",        rdb.Reserved16);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved17 = 0x{0:X8}",        rdb.Reserved17);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved18 = 0x{0:X8}",        rdb.Reserved18);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved19 = 0x{0:X8}",        rdb.Reserved19);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved20 = 0x{0:X8}",        rdb.Reserved20);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved21 = 0x{0:X8}",        rdb.Reserved21);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved22 = 0x{0:X8}",        rdb.Reserved22);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved23 = 0x{0:X8}",        rdb.Reserved23);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved24 = 0x{0:X8}",        rdb.Reserved24);
+            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved25 = 0x{0:X8}",        rdb.Reserved25);
 
             ulong nextBlock;
 
             // Reading BadBlock list
             List<BadBlockList> badBlockChain = new List<BadBlockList>();
-            nextBlock = rdb.BadblockPtr;
+            nextBlock                        = rdb.BadblockPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block",
                                           nextBlock);
 
-                sector = imagePlugin.ReadSector(nextBlock);
+                sector     = imagePlugin.ReadSector(nextBlock);
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != BAD_BLOCK_LIST_MAGIC) break;
@@ -463,27 +463,28 @@ namespace DiscImageChef.Partitions
 
                 BadBlockList chainEntry = new BadBlockList
                 {
-                    Magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
-                    Size = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                    Magic    = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                    Size     = BigEndianBitConverter.ToUInt32(sector, 0x04),
                     Checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
                     TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C),
-                    NextPtr = BigEndianBitConverter.ToUInt32(sector, 0x10),
+                    NextPtr  = BigEndianBitConverter.ToUInt32(sector, 0x10),
                     Reserved = BigEndianBitConverter.ToUInt32(sector, 0x14)
                 };
-                ulong entries = (chainEntry.Size - 6) / 2;
+                ulong entries         = (chainEntry.Size - 6) / 2;
                 chainEntry.BlockPairs = new BadBlockEntry[entries];
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.magic = 0x{0:X8}", chainEntry.Magic);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.size = {0} longs, {1} bytes", chainEntry.Size,
                                           chainEntry.Size * 4);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.checksum = 0x{0:X8}", chainEntry.Checksum);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.targetID = {0}", chainEntry.TargetId);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.next_ptr = {0}", chainEntry.NextPtr);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.targetID = {0}",      chainEntry.TargetId);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.next_ptr = {0}",      chainEntry.NextPtr);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.reserved = 0x{0:X8}", chainEntry.Reserved);
 
                 for(ulong i = 0; i < entries; i++)
                 {
-                    chainEntry.BlockPairs[i].BadBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
+                    chainEntry.BlockPairs[i].BadBlock =
+                        BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
                     chainEntry.BlockPairs[i].GoodBlock =
                         BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
 
@@ -497,13 +498,13 @@ namespace DiscImageChef.Partitions
 
             // Reading BadBlock list
             List<PartitionEntry> partitionEntries = new List<PartitionEntry>();
-            nextBlock = rdb.PartitionPtr;
+            nextBlock                             = rdb.PartitionPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block",
                                           nextBlock + sectorOffset);
 
-                sector = imagePlugin.ReadSector(nextBlock + sectorOffset);
+                sector     = imagePlugin.ReadSector(nextBlock + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != PARTITION_BLOCK_MAGIC) break;
@@ -512,53 +513,53 @@ namespace DiscImageChef.Partitions
 
                 PartitionEntry partEntry = new PartitionEntry
                 {
-                    Magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
-                    Size = BigEndianBitConverter.ToUInt32(sector, 0x04),
-                    Checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
-                    TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C),
-                    NextPtr = BigEndianBitConverter.ToUInt32(sector, 0x10),
-                    Flags = BigEndianBitConverter.ToUInt32(sector, 0x14),
-                    Reserved1 = BigEndianBitConverter.ToUInt32(sector, 0x18),
-                    Reserved2 = BigEndianBitConverter.ToUInt32(sector, 0x1C),
-                    DevFlags = BigEndianBitConverter.ToUInt32(sector, 0x20),
+                    Magic        = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                    Size         = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                    Checksum     = BigEndianBitConverter.ToInt32(sector, 0x08),
+                    TargetId     = BigEndianBitConverter.ToUInt32(sector, 0x0C),
+                    NextPtr      = BigEndianBitConverter.ToUInt32(sector, 0x10),
+                    Flags        = BigEndianBitConverter.ToUInt32(sector, 0x14),
+                    Reserved1    = BigEndianBitConverter.ToUInt32(sector, 0x18),
+                    Reserved2    = BigEndianBitConverter.ToUInt32(sector, 0x1C),
+                    DevFlags     = BigEndianBitConverter.ToUInt32(sector, 0x20),
                     DriveNameLen = sector[0x24],
-                    Reserved3 = BigEndianBitConverter.ToUInt32(sector, 0x44),
-                    Reserved4 = BigEndianBitConverter.ToUInt32(sector, 0x48),
-                    Reserved5 = BigEndianBitConverter.ToUInt32(sector, 0x4C),
-                    Reserved6 = BigEndianBitConverter.ToUInt32(sector, 0x50),
-                    Reserved7 = BigEndianBitConverter.ToUInt32(sector, 0x54),
-                    Reserved8 = BigEndianBitConverter.ToUInt32(sector, 0x58),
-                    Reserved9 = BigEndianBitConverter.ToUInt32(sector, 0x5C),
-                    Reserved10 = BigEndianBitConverter.ToUInt32(sector, 0x60),
-                    Reserved11 = BigEndianBitConverter.ToUInt32(sector, 0x64),
-                    Reserved12 = BigEndianBitConverter.ToUInt32(sector, 0x68),
-                    Reserved13 = BigEndianBitConverter.ToUInt32(sector, 0x6C),
-                    Reserved14 = BigEndianBitConverter.ToUInt32(sector, 0x70),
-                    Reserved15 = BigEndianBitConverter.ToUInt32(sector, 0x74),
-                    Reserved16 = BigEndianBitConverter.ToUInt32(sector, 0x78),
-                    Reserved17 = BigEndianBitConverter.ToUInt32(sector, 0x7C),
-                    DosEnvVec = new DosEnvironmentVector
+                    Reserved3    = BigEndianBitConverter.ToUInt32(sector, 0x44),
+                    Reserved4    = BigEndianBitConverter.ToUInt32(sector, 0x48),
+                    Reserved5    = BigEndianBitConverter.ToUInt32(sector, 0x4C),
+                    Reserved6    = BigEndianBitConverter.ToUInt32(sector, 0x50),
+                    Reserved7    = BigEndianBitConverter.ToUInt32(sector, 0x54),
+                    Reserved8    = BigEndianBitConverter.ToUInt32(sector, 0x58),
+                    Reserved9    = BigEndianBitConverter.ToUInt32(sector, 0x5C),
+                    Reserved10   = BigEndianBitConverter.ToUInt32(sector, 0x60),
+                    Reserved11   = BigEndianBitConverter.ToUInt32(sector, 0x64),
+                    Reserved12   = BigEndianBitConverter.ToUInt32(sector, 0x68),
+                    Reserved13   = BigEndianBitConverter.ToUInt32(sector, 0x6C),
+                    Reserved14   = BigEndianBitConverter.ToUInt32(sector, 0x70),
+                    Reserved15   = BigEndianBitConverter.ToUInt32(sector, 0x74),
+                    Reserved16   = BigEndianBitConverter.ToUInt32(sector, 0x78),
+                    Reserved17   = BigEndianBitConverter.ToUInt32(sector, 0x7C),
+                    DosEnvVec    = new DosEnvironmentVector
                     {
-                        Size = BigEndianBitConverter.ToUInt32(sector, 0x80),
-                        BlockSize = BigEndianBitConverter.ToUInt32(sector, 0x84),
-                        SecOrg = BigEndianBitConverter.ToUInt32(sector, 0x88),
-                        Surfaces = BigEndianBitConverter.ToUInt32(sector, 0x8C),
-                        Spb = BigEndianBitConverter.ToUInt32(sector, 0x90),
-                        Bpt = BigEndianBitConverter.ToUInt32(sector, 0x94),
+                        Size           = BigEndianBitConverter.ToUInt32(sector, 0x80),
+                        BlockSize      = BigEndianBitConverter.ToUInt32(sector, 0x84),
+                        SecOrg         = BigEndianBitConverter.ToUInt32(sector, 0x88),
+                        Surfaces       = BigEndianBitConverter.ToUInt32(sector, 0x8C),
+                        Spb            = BigEndianBitConverter.ToUInt32(sector, 0x90),
+                        Bpt            = BigEndianBitConverter.ToUInt32(sector, 0x94),
                         Reservedblocks = BigEndianBitConverter.ToUInt32(sector, 0x98),
-                        Prealloc = BigEndianBitConverter.ToUInt32(sector, 0x9C),
-                        Interleave = BigEndianBitConverter.ToUInt32(sector, 0xA0),
-                        LowCylinder = BigEndianBitConverter.ToUInt32(sector, 0xA4),
-                        HighCylinder = BigEndianBitConverter.ToUInt32(sector, 0xA8),
-                        NumBuffer = BigEndianBitConverter.ToUInt32(sector, 0xAC),
-                        BufMemType = BigEndianBitConverter.ToUInt32(sector, 0xB0),
-                        MaxTransfer = BigEndianBitConverter.ToUInt32(sector, 0xB4),
-                        Mask = BigEndianBitConverter.ToUInt32(sector, 0xB8),
-                        BootPriority = BigEndianBitConverter.ToUInt32(sector, 0xBC),
-                        DosType = BigEndianBitConverter.ToUInt32(sector, 0xC0),
-                        Baud = BigEndianBitConverter.ToUInt32(sector, 0xC4),
-                        Control = BigEndianBitConverter.ToUInt32(sector, 0xC8),
-                        BootBlocks = BigEndianBitConverter.ToUInt32(sector, 0xCC)
+                        Prealloc       = BigEndianBitConverter.ToUInt32(sector, 0x9C),
+                        Interleave     = BigEndianBitConverter.ToUInt32(sector, 0xA0),
+                        LowCylinder    = BigEndianBitConverter.ToUInt32(sector, 0xA4),
+                        HighCylinder   = BigEndianBitConverter.ToUInt32(sector, 0xA8),
+                        NumBuffer      = BigEndianBitConverter.ToUInt32(sector, 0xAC),
+                        BufMemType     = BigEndianBitConverter.ToUInt32(sector, 0xB0),
+                        MaxTransfer    = BigEndianBitConverter.ToUInt32(sector, 0xB4),
+                        Mask           = BigEndianBitConverter.ToUInt32(sector, 0xB8),
+                        BootPriority   = BigEndianBitConverter.ToUInt32(sector, 0xBC),
+                        DosType        = BigEndianBitConverter.ToUInt32(sector, 0xC0),
+                        Baud           = BigEndianBitConverter.ToUInt32(sector, 0xC4),
+                        Control        = BigEndianBitConverter.ToUInt32(sector, 0xC8),
+                        BootBlocks     = BigEndianBitConverter.ToUInt32(sector, 0xCC)
                     }
                 };
 
@@ -569,22 +570,23 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.magic = 0x{0:X8}", partEntry.Magic);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.size = {0} longs, {1} bytes", partEntry.Size,
                                           partEntry.Size * 4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.checksum = 0x{0:X8}", partEntry.Checksum);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.targetID = {0}", partEntry.TargetId);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.next_ptr = {0}", partEntry.NextPtr);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.flags = 0x{0:X8}", partEntry.Flags);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.checksum = 0x{0:X8}",  partEntry.Checksum);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.targetID = {0}",       partEntry.TargetId);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.next_ptr = {0}",       partEntry.NextPtr);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.flags = 0x{0:X8}",     partEntry.Flags);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved1 = 0x{0:X8}", partEntry.Reserved1);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved2 = 0x{0:X8}", partEntry.Reserved2);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.devFlags = 0x{0:X8}", partEntry.DevFlags);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveNameLen = {0}", partEntry.DriveNameLen);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveName = \"{0}\"", partEntry.DriveName);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved3 = 0x{0:X8}", partEntry.Reserved3);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved4 = 0x{0:X8}", partEntry.Reserved4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved5 = 0x{0:X8}", partEntry.Reserved5);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved6 = 0x{0:X8}", partEntry.Reserved6);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved7 = 0x{0:X8}", partEntry.Reserved7);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved8 = 0x{0:X8}", partEntry.Reserved8);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved9 = 0x{0:X8}", partEntry.Reserved9);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.devFlags = 0x{0:X8}",  partEntry.DevFlags);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveNameLen = {0}",
+                                          partEntry.DriveNameLen);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveName = \"{0}\"",   partEntry.DriveName);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved3 = 0x{0:X8}",  partEntry.Reserved3);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved4 = 0x{0:X8}",  partEntry.Reserved4);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved5 = 0x{0:X8}",  partEntry.Reserved5);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved6 = 0x{0:X8}",  partEntry.Reserved6);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved7 = 0x{0:X8}",  partEntry.Reserved7);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved8 = 0x{0:X8}",  partEntry.Reserved8);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved9 = 0x{0:X8}",  partEntry.Reserved9);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved10 = 0x{0:X8}", partEntry.Reserved10);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved11 = 0x{0:X8}", partEntry.Reserved11);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved12 = 0x{0:X8}", partEntry.Reserved12);
@@ -638,15 +640,15 @@ namespace DiscImageChef.Partitions
             }
 
             // Reading BadBlock list
-            List<FileSystemHeader> fshdEntries = new List<FileSystemHeader>();
-            List<LoadSegment> segmentEntries = new List<LoadSegment>();
-            nextBlock = rdb.FsheaderPtr;
+            List<FileSystemHeader> fshdEntries    = new List<FileSystemHeader>();
+            List<LoadSegment>      segmentEntries = new List<LoadSegment>();
+            nextBlock                             = rdb.FsheaderPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin",
                                           "Going to block {0} in search of a FileSystemHeader block", nextBlock);
 
-                sector = imagePlugin.ReadSector(nextBlock);
+                sector     = imagePlugin.ReadSector(nextBlock);
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != FILESYSTEM_HEADER_MAGIC) break;
@@ -655,65 +657,66 @@ namespace DiscImageChef.Partitions
 
                 FileSystemHeader fshd = new FileSystemHeader
                 {
-                    Magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
-                    Size = BigEndianBitConverter.ToUInt32(sector, 0x04),
-                    Checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
-                    TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C),
-                    NextPtr = BigEndianBitConverter.ToUInt32(sector, 0x10),
-                    Flags = BigEndianBitConverter.ToUInt32(sector, 0x14),
-                    Reserved1 = BigEndianBitConverter.ToUInt32(sector, 0x18),
-                    Reserved2 = BigEndianBitConverter.ToUInt32(sector, 0x1C),
-                    DosType = BigEndianBitConverter.ToUInt32(sector, 0x20),
-                    Version = BigEndianBitConverter.ToUInt32(sector, 0x24),
+                    Magic      = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                    Size       = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                    Checksum   = BigEndianBitConverter.ToInt32(sector, 0x08),
+                    TargetId   = BigEndianBitConverter.ToUInt32(sector, 0x0C),
+                    NextPtr    = BigEndianBitConverter.ToUInt32(sector, 0x10),
+                    Flags      = BigEndianBitConverter.ToUInt32(sector, 0x14),
+                    Reserved1  = BigEndianBitConverter.ToUInt32(sector, 0x18),
+                    Reserved2  = BigEndianBitConverter.ToUInt32(sector, 0x1C),
+                    DosType    = BigEndianBitConverter.ToUInt32(sector, 0x20),
+                    Version    = BigEndianBitConverter.ToUInt32(sector, 0x24),
                     PatchFlags = BigEndianBitConverter.ToUInt32(sector, 0x28),
-                    Dnode = new DeviceNode
+                    Dnode      = new DeviceNode
                     {
-                        Type = BigEndianBitConverter.ToUInt32(sector, 0x2C),
-                        Task = BigEndianBitConverter.ToUInt32(sector, 0x30),
-                        Locked = BigEndianBitConverter.ToUInt32(sector, 0x34),
-                        Handler = BigEndianBitConverter.ToUInt32(sector, 0x38),
-                        StackSize = BigEndianBitConverter.ToUInt32(sector, 0x3C),
-                        Priority = BigEndianBitConverter.ToUInt32(sector, 0x40),
-                        Startup = BigEndianBitConverter.ToUInt32(sector, 0x44),
+                        Type       = BigEndianBitConverter.ToUInt32(sector, 0x2C),
+                        Task       = BigEndianBitConverter.ToUInt32(sector, 0x30),
+                        Locked     = BigEndianBitConverter.ToUInt32(sector, 0x34),
+                        Handler    = BigEndianBitConverter.ToUInt32(sector, 0x38),
+                        StackSize  = BigEndianBitConverter.ToUInt32(sector, 0x3C),
+                        Priority   = BigEndianBitConverter.ToUInt32(sector, 0x40),
+                        Startup    = BigEndianBitConverter.ToUInt32(sector, 0x44),
                         SeglistPtr = BigEndianBitConverter.ToUInt32(sector, 0x48),
-                        GlobalVec = BigEndianBitConverter.ToUInt32(sector, 0x4C)
+                        GlobalVec  = BigEndianBitConverter.ToUInt32(sector, 0x4C)
                     }
                 };
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.magic = 0x{0:X8}", fshd.Magic);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.size = {0} longs, {1} bytes", fshd.Size,
                                           fshd.Size * 4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.checksum = 0x{0:X8}", fshd.Checksum);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.targetID = {0}", fshd.TargetId);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.next_ptr = {0}", fshd.NextPtr);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.flags = 0x{0:X8}", fshd.Flags);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.checksum = 0x{0:X8}",  fshd.Checksum);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.targetID = {0}",       fshd.TargetId);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.next_ptr = {0}",       fshd.NextPtr);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.flags = 0x{0:X8}",     fshd.Flags);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.reserved1 = 0x{0:X8}", fshd.Reserved1);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.reserved2 = 0x{0:X8}", fshd.Reserved2);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dosType = {0}", AmigaDosTypeToString(fshd.DosType));
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dosType = {0}",
+                                          AmigaDosTypeToString(fshd.DosType));
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.version = {0:D2}.{1:D2} (0x{2:X8})",
                                           (fshd.Version & 0xFFFF0000) >> 16, fshd.Version & 0xFFFF, fshd.Version);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.patchFlags = 0x{0:X8}", fshd.PatchFlags);
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.type = {0}", fshd.Dnode.Type);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.task = {0}", fshd.Dnode.Task);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.locked = {0}", fshd.Dnode.Locked);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.handler = {0}", fshd.Dnode.Handler);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.type = {0}",      fshd.Dnode.Type);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.task = {0}",      fshd.Dnode.Task);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.locked = {0}",    fshd.Dnode.Locked);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.handler = {0}",   fshd.Dnode.Handler);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.stackSize = {0}", fshd.Dnode.StackSize);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.priority = {0}", fshd.Dnode.Priority);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.startup = {0}", fshd.Dnode.Startup);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.seglist_ptr = {0}", fshd.Dnode.SeglistPtr);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.priority = {0}",  fshd.Dnode.Priority);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.startup = {0}",   fshd.Dnode.Startup);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.seglist_ptr = {0}",
+                                          fshd.Dnode.SeglistPtr);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.global_vec = 0x{0:X8}", fshd.Dnode.GlobalVec);
 
-                nextBlock = fshd.Dnode.SeglistPtr;
-                bool thereAreLoadSegments = false;
-                Sha1Context sha1Ctx = new Sha1Context();
-                sha1Ctx.Init();
+                nextBlock                        = fshd.Dnode.SeglistPtr;
+                bool        thereAreLoadSegments = false;
+                Sha1Context sha1Ctx              = new Sha1Context();
                 while(nextBlock != 0xFFFFFFFF)
                 {
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a LoadSegment block",
                                               nextBlock);
 
-                    sector = imagePlugin.ReadSector(nextBlock);
+                    sector        = imagePlugin.ReadSector(nextBlock);
                     uint magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
                     if(magicSeg != LOAD_SEG_MAGIC) break;
@@ -721,23 +724,23 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Found LoadSegment block");
 
                     thereAreLoadSegments = true;
-                    LoadSegment loadSeg = new LoadSegment
+                    LoadSegment loadSeg  = new LoadSegment
                     {
-                        Magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
-                        Size = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                        Magic    = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                        Size     = BigEndianBitConverter.ToUInt32(sector, 0x04),
                         Checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
                         TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C),
-                        NextPtr = BigEndianBitConverter.ToUInt32(sector, 0x10)
+                        NextPtr  = BigEndianBitConverter.ToUInt32(sector, 0x10)
                     };
-                    loadSeg.LoadData = new byte[(loadSeg.Size - 5) * 4];
+                    loadSeg.LoadData = new byte[(loadSeg.Size                   - 5) * 4];
                     Array.Copy(sector, 0x14, loadSeg.LoadData, 0, (loadSeg.Size - 5) * 4);
 
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.magic = 0x{0:X8}", loadSeg.Magic);
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.size = {0} longs, {1} bytes", loadSeg.Size,
                                               loadSeg.Size * 4);
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.checksum = 0x{0:X8}", loadSeg.Checksum);
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.targetID = {0}", loadSeg.TargetId);
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.next_ptr = {0}", loadSeg.NextPtr);
+                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.targetID = {0}",      loadSeg.TargetId);
+                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.next_ptr = {0}",      loadSeg.NextPtr);
 
                     segmentEntries.Add(loadSeg);
                     nextBlock = loadSeg.NextPtr;
@@ -759,21 +762,23 @@ namespace DiscImageChef.Partitions
             foreach(Partition entry in partitionEntries.Select(rdbEntry => new Partition
             {
                 Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
-                Name = rdbEntry.DriveName,
-                Sequence = sequence,
-                Length =
+                Name        = rdbEntry.DriveName,
+                Sequence    = sequence,
+                Length      =
                     (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                    rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
+                    rdbEntry.DosEnvVec.Surfaces                                            * rdbEntry.DosEnvVec.Bpt,
                 Start =
                     rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
                     sectorOffset,
-                Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
+                Type   = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
                 Scheme = Name,
                 Offset =
-                    (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
-                     sectorOffset) * rdb.BlockSize,
+                    (rdbEntry.DosEnvVec.LowCylinder                                           *
+                     rdbEntry.DosEnvVec.Surfaces                                              * rdbEntry.DosEnvVec.Bpt +
+                     sectorOffset)                                                            * rdb.BlockSize,
                 Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                       rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt * rdb.BlockSize
+                       rdbEntry.DosEnvVec.Surfaces                                            * rdbEntry.DosEnvVec.Bpt *
+                       rdb.BlockSize
             }))
             {
                 partitions.Add(entry);
@@ -787,28 +792,28 @@ namespace DiscImageChef.Partitions
         {
             switch(amigaDosType)
             {
-                case TYPEID_OFS: return "Amiga Original File System";
-                case TYPEID_FFS: return "Amiga Fast File System";
-                case TYPEID_OFS_INTL: return "Amiga Original File System with international characters";
-                case TYPEID_FFS_INTL: return "Amiga Fast File System with international characters";
-                case TYPEID_OFS_CACHE: return "Amiga Original File System with directory cache";
-                case TYPEID_FFS_CACHE: return "Amiga Fast File System with directory cache";
-                case TYPEID_OFS2: return "Amiga Original File System with long filenames";
-                case TYPEID_FFS2: return "Amiga Fast File System with long filenames";
-                case TYPEID_AMIX_SYSV: return "Amiga UNIX System V filesystem";
-                case TYPEID_AMIX_BOOT: return "Amiga UNIX boot filesystem";
-                case TYPEID_AMIX_FFS: return "Amiga UNIX BSD filesystem";
+                case TYPEID_OFS:           return "Amiga Original File System";
+                case TYPEID_FFS:           return "Amiga Fast File System";
+                case TYPEID_OFS_INTL:      return "Amiga Original File System with international characters";
+                case TYPEID_FFS_INTL:      return "Amiga Fast File System with international characters";
+                case TYPEID_OFS_CACHE:     return "Amiga Original File System with directory cache";
+                case TYPEID_FFS_CACHE:     return "Amiga Fast File System with directory cache";
+                case TYPEID_OFS2:          return "Amiga Original File System with long filenames";
+                case TYPEID_FFS2:          return "Amiga Fast File System with long filenames";
+                case TYPEID_AMIX_SYSV:     return "Amiga UNIX System V filesystem";
+                case TYPEID_AMIX_BOOT:     return "Amiga UNIX boot filesystem";
+                case TYPEID_AMIX_FFS:      return "Amiga UNIX BSD filesystem";
                 case TYPEID_AMIX_RESERVED: return "Amiga UNIX Reserved partition (swap)";
                 case TYPEID_PFS:
                 case TYPEID_PFS2:
                 case TYPEID_PFS_MUSER:
-                case TYPEID_AFS: return "ProfessionalFileSystem";
-                case TYPEID_SFS: return "SmartFileSystem v1";
-                case TYPEID_SFS2: return "SmartFileSystem v2";
-                case TYPEID_JXFS: return "JXFS";
+                case TYPEID_AFS:       return "ProfessionalFileSystem";
+                case TYPEID_SFS:       return "SmartFileSystem v1";
+                case TYPEID_SFS2:      return "SmartFileSystem v2";
+                case TYPEID_JXFS:      return "JXFS";
                 case TYPEID_CROSS_DOS: return "FAT, as set by CrossDOS";
                 case TYPEID_CROSS_MAC: return "HFS, as set by CrossMac";
-                case TYPEID_BFFS: return "4.2UFS, for BFFS";
+                case TYPEID_BFFS:      return "4.2UFS, for BFFS";
                 case TYPEID_OFS_MUSER: return "Amiga Original File System with multi-user patches";
                 case TYPEID_FFS_MUSER: return "Amiga Fast File System with multi-user patches";
                 case TYPEID_OFS_INTL_MUSER:
@@ -819,19 +824,19 @@ namespace DiscImageChef.Partitions
                     return "Amiga Original File System with directory cache and multi-user patches";
                 case TYPEID_FFS_CACHE_MUSER:
                     return "Amiga Fast File System with directory cache and multi-user patches";
-                case TYPEID_OLD_BSD_UNUSED: return "BSD unused";
-                case TYPEID_OLD_BSD_SWAP: return "BSD swap";
-                case TYPEID_OLD_BSD42_FFS: return "BSD 4.2 FFS";
-                case TYPEID_OLD_BSD44_LFS: return "BSD 4.4 LFS";
+                case TYPEID_OLD_BSD_UNUSED:     return "BSD unused";
+                case TYPEID_OLD_BSD_SWAP:       return "BSD swap";
+                case TYPEID_OLD_BSD42_FFS:      return "BSD 4.2 FFS";
+                case TYPEID_OLD_BSD44_LFS:      return "BSD 4.4 LFS";
                 case TYPEID_NETBSD_ROOT_UNUSED: return "NetBSD unused root partition";
-                case TYPEID_NETBSD_ROOT_42FFS: return "NetBSD 4.2 FFS root partition";
-                case TYPEID_NETBSD_ROOT_44LFS: return "NetBSD 4.4 LFS root partition";
+                case TYPEID_NETBSD_ROOT_42FFS:  return "NetBSD 4.2 FFS root partition";
+                case TYPEID_NETBSD_ROOT_44LFS:  return "NetBSD 4.4 LFS root partition";
                 case TYPEID_NETBSD_USER_UNUSED: return "NetBSD unused user partition";
-                case TYPEID_NETBSD_USER_42FFS: return "NetBSD 4.2 FFS user partition";
-                case TYPEID_NETBSD_USER_44LFS: return "NetBSD 4.4 LFS user partition";
-                case TYPEID_NETBSD_SWAP: return "NetBSD swap partition";
-                case TYPEID_LINUX: return "Linux filesystem partition";
-                case TYPEID_LINUX_SWAP: return "Linux swap partition";
+                case TYPEID_NETBSD_USER_42FFS:  return "NetBSD 4.2 FFS user partition";
+                case TYPEID_NETBSD_USER_44LFS:  return "NetBSD 4.4 LFS user partition";
+                case TYPEID_NETBSD_SWAP:        return "NetBSD swap partition";
+                case TYPEID_LINUX:              return "Linux filesystem partition";
+                case TYPEID_LINUX_SWAP:         return "Linux swap partition";
                 case TYPEID_RAID_FRAME:
                 case TYPEID_RAID_FRAME0: return "RaidFrame partition";
 
@@ -864,7 +869,7 @@ namespace DiscImageChef.Partitions
                     if((amigaDosType & TYPEID_NETBSD_SWAP) == TYPEID_NETBSD_SWAP)
                         return $"Unknown NetBSD swap filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
-                    if((amigaDosType & TYPEID_LINUX) == TYPEID_LINUX ||
+                    if((amigaDosType & TYPEID_LINUX)      == TYPEID_LINUX ||
                        (amigaDosType & TYPEID_LINUX_SWAP) == TYPEID_LINUX_SWAP)
                         return $"Unknown Linux filesystem type {AmigaDosTypeToString(amigaDosType)}";
 

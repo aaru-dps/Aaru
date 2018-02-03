@@ -370,7 +370,6 @@ namespace DiscImageChef.DiscImages
             thisDateTime = thisDateTime.AddSeconds(thisFooter.Timestamp);
 
             Sha1Context sha1Ctx = new Sha1Context();
-            sha1Ctx.Init();
             sha1Ctx.Update(thisFooter.Reserved);
 
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.cookie = 0x{0:X8}",   thisFooter.Cookie);
@@ -590,7 +589,6 @@ namespace DiscImageChef.DiscImages
                 parentDateTime = parentDateTime.AddSeconds(thisDynamic.ParentTimestamp);
 
                 sha1Ctx = new Sha1Context();
-                sha1Ctx.Init();
                 sha1Ctx.Update(thisDynamic.Reserved2);
 
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.cookie = 0x{0:X8}", thisDynamic.Cookie);

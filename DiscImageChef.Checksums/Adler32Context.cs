@@ -42,12 +42,12 @@ namespace DiscImageChef.Checksums
     public class Adler32Context : IChecksum
     {
         const ushort ADLER_MODULE = 65521;
-        ushort sum1, sum2;
+        ushort       sum1, sum2;
 
         /// <summary>
         ///     Initializes the Adler-32 sums
         /// </summary>
-        public void Init()
+        public Adler32Context()
         {
             sum1 = 1;
             sum2 = 0;
@@ -63,7 +63,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < len; i++)
             {
                 sum1 = (ushort)((sum1 + data[i]) % ADLER_MODULE);
-                sum2 = (ushort)((sum2 + sum1) % ADLER_MODULE);
+                sum2 = (ushort)((sum2 + sum1)    % ADLER_MODULE);
             }
         }
 
@@ -81,7 +81,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            uint finalSum = (uint)((sum2 << 16) | sum1);
+            uint finalSum                        = (uint)((sum2 << 16) | sum1);
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }
@@ -91,7 +91,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            uint finalSum = (uint)((sum2 << 16) | sum1);
+            uint          finalSum    = (uint)((sum2 << 16) | sum1);
             StringBuilder adlerOutput = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -119,8 +119,8 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            ushort localSum1, localSum2;
-            uint finalSum;
+            ushort     localSum1, localSum2;
+            uint       finalSum;
 
             localSum1 = 1;
             localSum2 = 0;
@@ -128,13 +128,13 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < fileStream.Length; i++)
             {
                 localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % ADLER_MODULE);
-                localSum2 = (ushort)((localSum2 + localSum1) % ADLER_MODULE);
+                localSum2 = (ushort)((localSum2 + localSum1)             % ADLER_MODULE);
             }
 
             finalSum = (uint)((localSum2 << 16) | localSum1);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash = BigEndianBitConverter.GetBytes(finalSum);
+            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 
@@ -154,21 +154,21 @@ namespace DiscImageChef.Checksums
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
             ushort localSum1, localSum2;
-            uint finalSum;
+            uint   finalSum;
 
             localSum1 = 1;
             localSum2 = 0;
 
             for(int i = 0; i < len; i++)
             {
-                localSum1 = (ushort)((localSum1 + data[i]) % ADLER_MODULE);
+                localSum1 = (ushort)((localSum1 + data[i])   % ADLER_MODULE);
                 localSum2 = (ushort)((localSum2 + localSum1) % ADLER_MODULE);
             }
 
             finalSum = (uint)((localSum2 << 16) | localSum1);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash = BigEndianBitConverter.GetBytes(finalSum);
+            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 

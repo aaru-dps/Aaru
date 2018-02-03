@@ -45,15 +45,15 @@ namespace DiscImageChef.Commands
     {
         internal static void DoEntropy(EntropyOptions options)
         {
-            DicConsole.DebugWriteLine("Entropy command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Entropy command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}", options.SeparatedTracks);
-            DicConsole.DebugWriteLine("Entropy command", "--whole-disc={0}", options.WholeDisc);
-            DicConsole.DebugWriteLine("Entropy command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("Entropy command", "--debug={0}",              options.Debug);
+            DicConsole.DebugWriteLine("Entropy command", "--verbose={0}",            options.Verbose);
+            DicConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}",   options.SeparatedTracks);
+            DicConsole.DebugWriteLine("Entropy command", "--whole-disc={0}",         options.WholeDisc);
+            DicConsole.DebugWriteLine("Entropy command", "--input={0}",              options.InputFile);
             DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", options.DuplicatedSectors);
 
             FiltersList filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -73,9 +73,9 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddMediaFormat(inputFormat.Format);
             Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
-            double entropy = 0;
+            double  entropy = 0;
             ulong[] entTable;
-            ulong sectors;
+            ulong   sectors;
 
             if(options.SeparatedTracks)
                 try
@@ -84,9 +84,9 @@ namespace DiscImageChef.Commands
 
                     foreach(Track currentTrack in inputTracks)
                     {
-                        Sha1Context sha1CtxTrack = new Sha1Context();
-                        entTable = new ulong[256];
-                        ulong trackSize = 0;
+                        Sha1Context sha1CtxTrack           = new Sha1Context();
+                        entTable                           = new ulong[256];
+                        ulong        trackSize             = 0;
                         List<string> uniqueSectorsPerTrack = new List<string>();
 
                         sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
@@ -108,7 +108,7 @@ namespace DiscImageChef.Commands
                             trackSize += (ulong)sector.LongLength;
                         }
 
-                        entropy += entTable.Select(l => (double)l / (double)trackSize)
+                        entropy += entTable.Select(l => (double)l           / (double)trackSize)
                                            .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
                         DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", currentTrack.TrackSequence, entropy);
@@ -129,15 +129,13 @@ namespace DiscImageChef.Commands
 
             if(!options.WholeDisc) return;
 
-            Sha1Context sha1Ctx = new Sha1Context();
-            entTable = new ulong[256];
-            ulong diskSize = 0;
+            Sha1Context sha1Ctx        = new Sha1Context();
+            entTable                   = new ulong[256];
+            ulong        diskSize      = 0;
             List<string> uniqueSectors = new List<string>();
 
             sectors = inputFormat.Info.Sectors;
             DicConsole.WriteLine("Sectors {0}", sectors);
-
-            sha1Ctx.Init();
 
             for(ulong i = 0; i < sectors; i++)
             {
@@ -155,7 +153,7 @@ namespace DiscImageChef.Commands
                 diskSize += (ulong)sector.LongLength;
             }
 
-            entropy += entTable.Select(l => (double)l / (double)diskSize)
+            entropy += entTable.Select(l => (double)l           / (double)diskSize)
                                .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
             DicConsole.WriteLine();

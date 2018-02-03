@@ -705,7 +705,6 @@ namespace DiscImageChef.Filesystems
             string                 extraInfo           = null;
             string                 bootChk             = null;
             Sha1Context            sha1Ctx             = new Sha1Context();
-            sha1Ctx.Init();
 
             // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
             uint sectorsPerRealSector;
@@ -1527,7 +1526,6 @@ namespace DiscImageChef.Filesystems
                     byte[] bootCode = new byte[512     - sigSize - bpbSector[1] - 2];
                     Array.Copy(bpbSector, bpbSector[1] + 2, bootCode, 0, bootCode.Length);
                     sha1Ctx = new Sha1Context();
-                    sha1Ctx.Init();
                     sha1Ctx.Update(bootCode);
                     bootChk = sha1Ctx.End();
                 }
@@ -1539,7 +1537,6 @@ namespace DiscImageChef.Filesystems
                     Array.Copy(bpbSector, BitConverter.ToUInt16(bpbSector,                      1) + 3, bootCode, 0,
                                bootCode.Length);
                     sha1Ctx = new Sha1Context();
-                    sha1Ctx.Init();
                     sha1Ctx.Update(bootCode);
                     bootChk = sha1Ctx.End();
                 }

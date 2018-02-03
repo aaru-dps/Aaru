@@ -46,7 +46,7 @@ namespace DiscImageChef.Checksums
         /// <summary>
         ///     Initializes the SHA1 hash provider
         /// </summary>
-        public void Init()
+        public Sha1Context()
         {
             sha1Provider = SHA1.Create();
         }
@@ -99,7 +99,7 @@ namespace DiscImageChef.Checksums
         public byte[] File(string filename)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            byte[] result = sha1Provider.ComputeHash(fileStream);
+            byte[]     result     = sha1Provider.ComputeHash(fileStream);
             fileStream.Close();
             return result;
         }
@@ -111,8 +111,8 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public string File(string filename, out byte[] hash)
         {
-            FileStream fileStream = new FileStream(filename, FileMode.Open);
-            hash = sha1Provider.ComputeHash(fileStream);
+            FileStream fileStream    = new FileStream(filename, FileMode.Open);
+            hash                     = sha1Provider.ComputeHash(fileStream);
             StringBuilder sha1Output = new StringBuilder();
 
             foreach(byte h in hash) sha1Output.Append(h.ToString("x2"));
@@ -130,7 +130,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public string Data(byte[] data, uint len, out byte[] hash)
         {
-            hash = sha1Provider.ComputeHash(data, 0, (int)len);
+            hash                     = sha1Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha1Output = new StringBuilder();
 
             foreach(byte h in hash) sha1Output.Append(h.ToString("x2"));

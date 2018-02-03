@@ -36,9 +36,9 @@ namespace DiscImageChef.Tests.Filters
     [TestFixture]
     public class MacBinary3
     {
-        const string EXPECTED_FILE = "3a7363a6109fb52a264b0b45dfa16694";
-        const string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
-        const string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
+        const    string EXPECTED_FILE     = "3a7363a6109fb52a264b0b45dfa16694";
+        const    string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
+        const    string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
         readonly string location;
 
         public MacBinary3()
@@ -49,9 +49,8 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckCorrectFile()
         {
-            Md5Context ctx = new Md5Context();
-            ctx.Init();
-            string result = ctx.File(location, out _);
+            Md5Context ctx    = new Md5Context();
+            string     result = ctx.File(location, out _);
             Assert.AreEqual(EXPECTED_FILE, result);
         }
 
@@ -67,7 +66,7 @@ namespace DiscImageChef.Tests.Filters
         {
             IFilter filter = new MacBinary();
             filter.Open(location);
-            Assert.AreEqual(true, filter.IsOpened());
+            Assert.AreEqual(true,   filter.IsOpened());
             Assert.AreEqual(737280, filter.GetDataForkLength());
             Assert.AreNotEqual(null, filter.GetDataForkStream());
             Assert.AreEqual(286, filter.GetResourceForkLength());
@@ -81,15 +80,14 @@ namespace DiscImageChef.Tests.Filters
         {
             IFilter filter = new MacBinary();
             filter.Open(location);
-            Stream str = filter.GetDataForkStream();
+            Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[737280];
             str.Read(data, 0, 737280);
             str.Close();
             str.Dispose();
             filter.Close();
-            Md5Context ctx = new Md5Context();
-            ctx.Init();
-            string result = ctx.Data(data, out _);
+            Md5Context ctx    = new Md5Context();
+            string     result = ctx.Data(data, out _);
             Assert.AreEqual(EXPECTED_CONTENTS, result);
         }
 
@@ -98,15 +96,14 @@ namespace DiscImageChef.Tests.Filters
         {
             IFilter filter = new MacBinary();
             filter.Open(location);
-            Stream str = filter.GetResourceForkStream();
+            Stream str  = filter.GetResourceForkStream();
             byte[] data = new byte[286];
             str.Read(data, 0, 286);
             str.Close();
             str.Dispose();
             filter.Close();
-            Md5Context ctx = new Md5Context();
-            ctx.Init();
-            string result = ctx.Data(data, out _);
+            Md5Context ctx    = new Md5Context();
+            string     result = ctx.Data(data, out _);
             Assert.AreEqual(EXPECTED_RESOURCE, result);
         }
     }

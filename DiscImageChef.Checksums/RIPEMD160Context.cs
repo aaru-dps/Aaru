@@ -46,7 +46,7 @@ namespace DiscImageChef.Checksums
         /// <summary>
         ///     Initializes the RIPEMD160 hash provider
         /// </summary>
-        public void Init()
+        public Ripemd160Context()
         {
             ripemd160Provider = RIPEMD160.Create();
         }
@@ -99,7 +99,7 @@ namespace DiscImageChef.Checksums
         public byte[] File(string filename)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            byte[] result = ripemd160Provider.ComputeHash(fileStream);
+            byte[]     result     = ripemd160Provider.ComputeHash(fileStream);
             fileStream.Close();
             return result;
         }
@@ -111,8 +111,8 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public string File(string filename, out byte[] hash)
         {
-            FileStream fileStream = new FileStream(filename, FileMode.Open);
-            hash = ripemd160Provider.ComputeHash(fileStream);
+            FileStream fileStream         = new FileStream(filename, FileMode.Open);
+            hash                          = ripemd160Provider.ComputeHash(fileStream);
             StringBuilder ripemd160Output = new StringBuilder();
 
             foreach(byte h in hash) ripemd160Output.Append(h.ToString("x2"));
@@ -130,7 +130,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public string Data(byte[] data, uint len, out byte[] hash)
         {
-            hash = ripemd160Provider.ComputeHash(data, 0, (int)len);
+            hash                          = ripemd160Provider.ComputeHash(data, 0, (int)len);
             StringBuilder ripemd160Output = new StringBuilder();
 
             foreach(byte h in hash) ripemd160Output.Append(h.ToString("x2"));

@@ -35,7 +35,7 @@ namespace DiscImageChef.Tests.Checksums
     [TestFixture]
     public class Adler32
     {
-        static readonly byte[] ExpectedEmpty = {0x00, 0xf0, 0x00, 0x01};
+        static readonly byte[] ExpectedEmpty  = {0x00, 0xf0, 0x00, 0x01};
         static readonly byte[] ExpectedRandom = {0x37, 0x28, 0xd1, 0x86};
 
         [Test]
@@ -48,9 +48,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Adler32EmptyData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -61,14 +61,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Adler32EmptyInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Adler32Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedEmpty, result);
@@ -84,9 +83,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Adler32RandomData()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -97,14 +96,13 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Adler32RandomInstance()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+            byte[]     data = new byte[1048576];
+            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                             FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             IChecksum ctx = new Adler32Context();
-            ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedRandom, result);

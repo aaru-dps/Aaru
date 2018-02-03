@@ -33,26 +33,25 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using DiscImageChef.Checksums;
 
 namespace DiscImageChef.Core
 {
     public struct BenchmarkResults
     {
-        public double FillTime;
-        public double FillSpeed;
-        public double ReadTime;
-        public double ReadSpeed;
-        public double EntropyTime;
-        public double EntropySpeed;
+        public double                             FillTime;
+        public double                             FillSpeed;
+        public double                             ReadTime;
+        public double                             ReadSpeed;
+        public double                             EntropyTime;
+        public double                             EntropySpeed;
         public Dictionary<string, BenchmarkEntry> Entries;
-        public long MinMemory;
-        public long MaxMemory;
-        public double SeparateTime;
-        public double SeparateSpeed;
-        public double TotalTime;
-        public double TotalSpeed;
+        public long                               MinMemory;
+        public long                               MaxMemory;
+        public double                             SeparateTime;
+        public double                             SeparateSpeed;
+        public double                             TotalTime;
+        public double                             TotalSpeed;
     }
 
     public struct BenchmarkEntry
@@ -66,9 +65,9 @@ namespace DiscImageChef.Core
     /// </summary>
     public static class Benchmark
     {
-        public static event InitProgressHandler InitProgressEvent;
+        public static event InitProgressHandler   InitProgressEvent;
         public static event UpdateProgressHandler UpdateProgressEvent;
-        public static event EndProgressHandler EndProgressEvent;
+        public static event EndProgressHandler    EndProgressEvent;
 
         static void InitProgress()
         {
@@ -89,16 +88,16 @@ namespace DiscImageChef.Core
         {
             BenchmarkResults results = new BenchmarkResults
             {
-                Entries = new Dictionary<string, BenchmarkEntry>(),
-                MinMemory = long.MaxValue,
-                MaxMemory = 0,
+                Entries      = new Dictionary<string, BenchmarkEntry>(),
+                MinMemory    = long.MaxValue,
+                MaxMemory    = 0,
                 SeparateTime = 0
             };
-            MemoryStream ms = new MemoryStream(bufferSize);
-            Random rnd = new Random();
-            DateTime start;
-            DateTime end;
-            long mem;
+            MemoryStream ms  = new MemoryStream(bufferSize);
+            Random       rnd = new Random();
+            DateTime     start;
+            DateTime     end;
+            long         mem;
 
             start = DateTime.Now;
             InitProgress();
@@ -113,14 +112,14 @@ namespace DiscImageChef.Core
             EndProgress();
             end = DateTime.Now;
 
-            results.FillTime = (end - start).TotalSeconds;
+            results.FillTime  = (end                          - start).TotalSeconds;
             results.FillSpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
 
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -130,22 +129,21 @@ namespace DiscImageChef.Core
             }
 
             EndProgress();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
-            results.ReadTime = (end - start).TotalSeconds;
+            results.ReadTime  = (end                          - start).TotalSeconds;
             results.ReadSpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
 
             #region Adler32
             IChecksum ctx = new Adler32Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -157,28 +155,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("Adler32",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion Adler32
 
             #region CRC16
             ctx = new Crc16Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -190,28 +187,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("CRC16",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion CRC16
 
             #region CRC32
             ctx = new Crc32Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -223,28 +219,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("CRC32",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion CRC32
 
             #region CRC64
             ctx = new Crc64Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -256,28 +251,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("CRC64",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion CRC64
 
             #region MD5
             ctx = new Md5Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -289,28 +283,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("MD5",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion MD5
 
             #region RIPEMD160
             ctx = new Ripemd160Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -322,28 +315,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("RIPEMD160",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion RIPEMD160
 
             #region SHA1
             ctx = new Sha1Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -355,28 +347,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA1",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA1
 
             #region SHA256
             ctx = new Sha256Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -388,28 +379,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA256",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA256
 
             #region SHA384
             ctx = new Sha384Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -421,28 +411,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA384",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA384
 
             #region SHA512
             ctx = new Sha512Context();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -454,28 +443,27 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA512",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA512
 
             #region SpamSum
             ctx = new SpamSumContext();
-            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -487,16 +475,16 @@ namespace DiscImageChef.Core
 
             EndProgress();
             ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SpamSum",
                                 new BenchmarkEntry
                                 {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
+                                    TimeSpan = (end                          - start).TotalSeconds,
+                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SpamSum
@@ -504,10 +492,10 @@ namespace DiscImageChef.Core
             #region Entropy
             ulong[] entTable = new ulong[256];
             ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
+            start                                         = DateTime.Now;
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
@@ -518,20 +506,18 @@ namespace DiscImageChef.Core
             }
 
             EndProgress();
-            double entropy = entTable.Select(l => (double)l / (double)bufferSize)
-                                     .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
-            results.EntropyTime = (end - start).TotalSeconds;
+            results.EntropyTime  = (end                          - start).TotalSeconds;
             results.EntropySpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
             #endregion Entropy
 
             #region Multitasking
-            start = DateTime.Now;
+            start                 = DateTime.Now;
             Checksum allChecksums = new Checksum();
             InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
@@ -547,12 +533,12 @@ namespace DiscImageChef.Core
             EndProgress();
 
             allChecksums.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
+            end                                           = DateTime.Now;
+            mem                                           = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
 
-            results.TotalTime = (end - start).TotalSeconds;
+            results.TotalTime  = (end - start).TotalSeconds;
             results.TotalSpeed = bufferSize / 1048576.0 / results.TotalTime;
             #endregion
 

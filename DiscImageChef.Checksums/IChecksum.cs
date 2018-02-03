@@ -35,11 +35,6 @@ namespace DiscImageChef.Checksums
     public interface IChecksum
     {
         /// <summary>
-        ///     Initializes the algorithm
-        /// </summary>
-        void Init();
-
-        /// <summary>
         ///     Updates the hash with data.
         /// </summary>
         /// <param name="data">Data buffer.</param>

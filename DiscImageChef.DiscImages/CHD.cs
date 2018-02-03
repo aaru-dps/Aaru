@@ -1318,7 +1318,6 @@ namespace DiscImageChef.DiscImages
             if(mapVersion >= 3)
             {
                 Sha1Context sha1Ctx = new Sha1Context();
-                sha1Ctx.Init();
                 for(uint i = 0; i < totalHunks; i++) sha1Ctx.Update(GetHunk(i));
 
                 calculated = sha1Ctx.Final();
@@ -1326,7 +1325,6 @@ namespace DiscImageChef.DiscImages
             else
             {
                 Md5Context md5Ctx = new Md5Context();
-                md5Ctx.Init();
                 for(uint i = 0; i < totalHunks; i++) md5Ctx.Update(GetHunk(i));
 
                 calculated = md5Ctx.Final();
@@ -1713,7 +1711,7 @@ namespace DiscImageChef.DiscImages
 
             if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-                track      = GetTrack(sectorAddress);
+                track           = GetTrack(sectorAddress);
                 uint sectorSize = (uint)track.TrackRawBytesPerSector;
 
                 ulong hunkNo = sectorAddress / sectorsPerHunk;

@@ -569,7 +569,6 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 vdSector            = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
                 Sha1Context sha1Ctx = new Sha1Context();
-                sha1Ctx.Init();
 
                 int toritoOff = 0;
 

@@ -50,9 +50,8 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckCorrectFile()
         {
-            Md5Context ctx = new Md5Context();
-            ctx.Init();
-            byte[] result = ctx.File(location);
+            Md5Context ctx    = new Md5Context();
+            byte[]     result = ctx.File(location);
             Assert.AreEqual(ExpectedFile, result);
         }
 
@@ -68,11 +67,11 @@ namespace DiscImageChef.Tests.Filters
         {
             IFilter filter = new DiscImageChef.Filters.BZip2();
             filter.Open(location);
-            Assert.AreEqual(true, filter.IsOpened());
+            Assert.AreEqual(true,    filter.IsOpened());
             Assert.AreEqual(1048576, filter.GetDataForkLength());
             Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(0, filter.GetResourceForkLength());
-            Assert.AreEqual(null, filter.GetResourceForkStream());
+            Assert.AreEqual(0,     filter.GetResourceForkLength());
+            Assert.AreEqual(null,  filter.GetResourceForkStream());
             Assert.AreEqual(false, filter.HasResourceFork());
             filter.Close();
         }
@@ -82,14 +81,13 @@ namespace DiscImageChef.Tests.Filters
         {
             IFilter filter = new DiscImageChef.Filters.BZip2();
             filter.Open(location);
-            Stream str = filter.GetDataForkStream();
+            Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[1048576];
             str.Read(data, 0, 1048576);
             str.Close();
             str.Dispose();
             filter.Close();
             Md5Context ctx = new Md5Context();
-            ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedContents, result);
         }

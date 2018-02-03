@@ -42,21 +42,21 @@ namespace DiscImageChef.Partitions
 {
     public class AtariPartitions : IPartition
     {
-        const uint TypeGEMDOS = 0x0047454D;
-        const uint TypeBigGEMDOS = 0x0042474D;
-        const uint TypeExtended = 0x0058474D;
-        const uint TypeLinux = 0x004C4E58;
-        const uint TypeSwap = 0x00535750;
-        const uint TypeRAW = 0x00524157;
-        const uint TypeNetBSD = 0x004E4244;
+        const uint TypeGEMDOS     = 0x0047454D;
+        const uint TypeBigGEMDOS  = 0x0042474D;
+        const uint TypeExtended   = 0x0058474D;
+        const uint TypeLinux      = 0x004C4E58;
+        const uint TypeSwap       = 0x00535750;
+        const uint TypeRAW        = 0x00524157;
+        const uint TypeNetBSD     = 0x004E4244;
         const uint TypeNetBSDSwap = 0x004E4253;
-        const uint TypeSysV = 0x00554E58;
-        const uint TypeMac = 0x004D4143;
-        const uint TypeMinix = 0x004D4958;
-        const uint TypeMinix2 = 0x004D4E58;
+        const uint TypeSysV       = 0x00554E58;
+        const uint TypeMac        = 0x004D4143;
+        const uint TypeMinix      = 0x004D4958;
+        const uint TypeMinix2     = 0x004D4E58;
 
         public string Name => "Atari partitions";
-        public Guid Id => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
+        public Guid   Id   => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -70,18 +70,18 @@ namespace DiscImageChef.Partitions
 
             AtariTable table = new AtariTable
             {
-                boot = new byte[342],
+                boot       = new byte[342],
                 icdEntries = new AtariEntry[8],
-                unused = new byte[12],
-                entries = new AtariEntry[4]
+                unused     = new byte[12],
+                entries    = new AtariEntry[4]
             };
 
             Array.Copy(sector, 0, table.boot, 0, 342);
 
             for(int i = 0; i < 8; i++)
             {
-                table.icdEntries[i].type = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 0);
-                table.icdEntries[i].start = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 4);
+                table.icdEntries[i].type   = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 0);
+                table.icdEntries[i].start  = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 4);
                 table.icdEntries[i].length = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 8);
             }
 
@@ -91,17 +91,16 @@ namespace DiscImageChef.Partitions
 
             for(int i = 0; i < 4; i++)
             {
-                table.entries[i].type = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 0);
-                table.entries[i].start = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 4);
+                table.entries[i].type   = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 0);
+                table.entries[i].start  = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 4);
                 table.entries[i].length = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 8);
             }
 
-            table.badStart = BigEndianBitConverter.ToUInt32(sector, 502);
+            table.badStart  = BigEndianBitConverter.ToUInt32(sector, 502);
             table.badLength = BigEndianBitConverter.ToUInt32(sector, 506);
-            table.checksum = BigEndianBitConverter.ToUInt16(sector, 510);
+            table.checksum  = BigEndianBitConverter.ToUInt16(sector, 510);
 
             Sha1Context sha1Ctx = new Sha1Context();
-            sha1Ctx.Init();
             sha1Ctx.Update(table.boot);
             DicConsole.DebugWriteLine("Atari partition plugin", "Boot code SHA1: {0}", sha1Ctx.End());
 
@@ -131,11 +130,11 @@ namespace DiscImageChef.Partitions
                                           table.entries[i].length);
             }
 
-            DicConsole.DebugWriteLine("Atari partition plugin", "table.badStart = {0}", table.badStart);
-            DicConsole.DebugWriteLine("Atari partition plugin", "table.badLength = {0}", table.badLength);
+            DicConsole.DebugWriteLine("Atari partition plugin", "table.badStart = {0}",      table.badStart);
+            DicConsole.DebugWriteLine("Atari partition plugin", "table.badLength = {0}",     table.badLength);
             DicConsole.DebugWriteLine("Atari partition plugin", "table.checksum = 0x{0:X4}", table.checksum);
 
-            bool validTable = false;
+            bool  validTable        = false;
             ulong partitionSequence = 0;
             for(int i = 0; i < 4; i++)
             {
@@ -162,24 +161,24 @@ namespace DiscImageChef.Partitions
                                 DicConsole.DebugWriteLine("Atari partition plugin",
                                                           "WARNING: End of partition goes beyond device size");
 
-                            ulong sectorSize = imagePlugin.Info.SectorSize;
+                            ulong sectorSize                                        = imagePlugin.Info.SectorSize;
                             if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                             byte[] partType = new byte[3];
-                            partType[0] = (byte)((type & 0xFF0000) >> 16);
-                            partType[1] = (byte)((type & 0x00FF00) >> 8);
-                            partType[2] = (byte)(type & 0x0000FF);
+                            partType[0]     = (byte)((type & 0xFF0000) >> 16);
+                            partType[1]     = (byte)((type & 0x00FF00) >> 8);
+                            partType[2]     = (byte)(type  & 0x0000FF);
 
                             Partition part = new Partition
                             {
-                                Size = table.entries[i].length * sectorSize,
-                                Length = table.entries[i].length,
+                                Size     = table.entries[i].length * sectorSize,
+                                Length   = table.entries[i].length,
                                 Sequence = partitionSequence,
-                                Name = "",
-                                Offset = table.entries[i].start * sectorSize,
-                                Start = table.entries[i].start,
-                                Type = Encoding.ASCII.GetString(partType),
-                                Scheme = Name
+                                Name     = "",
+                                Offset   = table.entries[i].start * sectorSize,
+                                Start    = table.entries[i].start,
+                                Type     = Encoding.ASCII.GetString(partType),
+                                Scheme   = Name
                             };
                             switch(type)
                             {
@@ -225,9 +224,9 @@ namespace DiscImageChef.Partitions
 
                         break;
                     case TypeExtended:
-                        byte[] extendedSector = imagePlugin.ReadSector(table.entries[i].start);
-                        AtariTable extendedTable = new AtariTable();
-                        extendedTable.entries = new AtariEntry[4];
+                        byte[]     extendedSector = imagePlugin.ReadSector(table.entries[i].start);
+                        AtariTable extendedTable  = new AtariTable();
+                        extendedTable.entries     = new AtariEntry[4];
 
                         for(int j = 0; j < 4; j++)
                         {
@@ -244,9 +243,11 @@ namespace DiscImageChef.Partitions
                             uint extendedType = extendedTable.entries[j].type & 0x00FFFFFF;
 
                             if(extendedType != TypeGEMDOS && extendedType != TypeBigGEMDOS &&
-                               extendedType != TypeLinux && extendedType != TypeSwap && extendedType != TypeRAW &&
+                               extendedType != TypeLinux  && extendedType != TypeSwap      &&
+                               extendedType != TypeRAW    &&
                                extendedType != TypeNetBSD && extendedType != TypeNetBSDSwap &&
-                               extendedType != TypeSysV && extendedType != TypeMac && extendedType != TypeMinix &&
+                               extendedType != TypeSysV   && extendedType != TypeMac        &&
+                               extendedType != TypeMinix  &&
                                extendedType != TypeMinix2) continue;
 
                             validTable = true;
@@ -257,24 +258,24 @@ namespace DiscImageChef.Partitions
                                 DicConsole.DebugWriteLine("Atari partition plugin",
                                                           "WARNING: End of partition goes beyond device size");
 
-                            ulong sectorSize = imagePlugin.Info.SectorSize;
+                            ulong sectorSize                                        = imagePlugin.Info.SectorSize;
                             if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                             byte[] partType = new byte[3];
-                            partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
-                            partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
-                            partType[2] = (byte)(extendedType & 0x0000FF);
+                            partType[0]     = (byte)((extendedType & 0xFF0000) >> 16);
+                            partType[1]     = (byte)((extendedType & 0x00FF00) >> 8);
+                            partType[2]     = (byte)(extendedType  & 0x0000FF);
 
                             Partition part = new Partition
                             {
-                                Size = extendedTable.entries[j].length * sectorSize,
-                                Length = extendedTable.entries[j].length,
+                                Size     = extendedTable.entries[j].length * sectorSize,
+                                Length   = extendedTable.entries[j].length,
                                 Sequence = partitionSequence,
-                                Name = "",
-                                Offset = extendedTable.entries[j].start * sectorSize,
-                                Start = extendedTable.entries[j].start,
-                                Type = Encoding.ASCII.GetString(partType),
-                                Scheme = Name
+                                Name     = "",
+                                Offset   = extendedTable.entries[j].start * sectorSize,
+                                Start    = extendedTable.entries[j].start,
+                                Type     = Encoding.ASCII.GetString(partType),
+                                Scheme   = Name
                             };
                             switch(extendedType)
                             {
@@ -328,9 +329,9 @@ namespace DiscImageChef.Partitions
             {
                 uint type = table.icdEntries[i].type & 0x00FFFFFF;
 
-                if(type != TypeGEMDOS && type != TypeBigGEMDOS && type != TypeLinux && type != TypeSwap &&
-                   type != TypeRAW && type != TypeNetBSD && type != TypeNetBSDSwap && type != TypeSysV &&
-                   type != TypeMac && type != TypeMinix && type != TypeMinix2) continue;
+                if(type != TypeGEMDOS && type != TypeBigGEMDOS && type != TypeLinux      && type != TypeSwap &&
+                   type != TypeRAW    && type != TypeNetBSD    && type != TypeNetBSDSwap && type != TypeSysV &&
+                   type != TypeMac    && type != TypeMinix     && type != TypeMinix2) continue;
 
                 if(table.icdEntries[i].start > imagePlugin.Info.Sectors) continue;
 
@@ -338,24 +339,24 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("Atari partition plugin",
                                               "WARNING: End of partition goes beyond device size");
 
-                ulong sectorSize = imagePlugin.Info.SectorSize;
+                ulong sectorSize                                        = imagePlugin.Info.SectorSize;
                 if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                 byte[] partType = new byte[3];
-                partType[0] = (byte)((type & 0xFF0000) >> 16);
-                partType[1] = (byte)((type & 0x00FF00) >> 8);
-                partType[2] = (byte)(type & 0x0000FF);
+                partType[0]     = (byte)((type & 0xFF0000) >> 16);
+                partType[1]     = (byte)((type & 0x00FF00) >> 8);
+                partType[2]     = (byte)(type  & 0x0000FF);
 
                 Partition part = new Partition
                 {
-                    Size = table.icdEntries[i].length * sectorSize,
-                    Length = table.icdEntries[i].length,
+                    Size     = table.icdEntries[i].length * sectorSize,
+                    Length   = table.icdEntries[i].length,
                     Sequence = partitionSequence,
-                    Name = "",
-                    Offset = table.icdEntries[i].start * sectorSize,
-                    Start = table.icdEntries[i].start,
-                    Type = Encoding.ASCII.GetString(partType),
-                    Scheme = Name
+                    Name     = "",
+                    Offset   = table.icdEntries[i].start * sectorSize,
+                    Start    = table.icdEntries[i].start,
+                    Type     = Encoding.ASCII.GetString(partType),
+                    Scheme   = Name
                 };
                 switch(type)
                 {

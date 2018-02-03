@@ -44,17 +44,15 @@ namespace DiscImageChef.Filesystems
     public class NTFS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "New Technology File System (NTFS)";
-        public Guid Id => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "New Technology File System (NTFS)";
+        public Guid           Id        => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
             byte[] eigthBytes = new byte[8];
-            byte fatsNo;
-            ushort spFat, signature;
 
             byte[] ntfsBpb = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -63,23 +61,20 @@ namespace DiscImageChef.Filesystems
 
             if(oemName != "NTFS    ") return false;
 
-            fatsNo = ntfsBpb[0x010];
+            byte   fatsNo    = ntfsBpb[0x010];
+            ushort spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
+            ushort signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
 
             if(fatsNo != 0) return false;
-
-            spFat = BitConverter.ToUInt16(ntfsBpb, 0x016);
-
-            if(spFat != 0) return false;
-
-            signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
+            if(spFat  != 0) return false;
 
             return signature == 0xAA55;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = Encoding.Unicode;
+            Encoding    = Encoding.Unicode;
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -91,7 +86,7 @@ namespace DiscImageChef.Filesystems
             NtfsBootBlock ntfsBb = (NtfsBootBlock)Marshal.PtrToStructure(bpbPtr, typeof(NtfsBootBlock));
             Marshal.FreeHGlobal(bpbPtr);
 
-            sb.AppendFormat("{0} bytes per sector", ntfsBb.bps).AppendLine();
+            sb.AppendFormat("{0} bytes per sector",                ntfsBb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfsBb.spc, ntfsBb.spc * ntfsBb.bps).AppendLine();
             //          sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
             //          sb.AppendFormat("{0} FATs", ntfs_bb.fats_no).AppendLine();
@@ -99,8 +94,8 @@ namespace DiscImageChef.Filesystems
             //          sb.AppendFormat("{0} sectors on volume (small)", ntfs_bb.sml_sectors).AppendLine();
             sb.AppendFormat("Media descriptor: 0x{0:X2}", ntfsBb.media).AppendLine();
             //          sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
-            sb.AppendFormat("{0} sectors per track", ntfsBb.sptrk).AppendLine();
-            sb.AppendFormat("{0} heads", ntfsBb.heads).AppendLine();
+            sb.AppendFormat("{0} sectors per track",                ntfsBb.sptrk).AppendLine();
+            sb.AppendFormat("{0} heads",                            ntfsBb.heads).AppendLine();
             sb.AppendFormat("{0} hidden sectors before filesystem", ntfsBb.hsectors).AppendLine();
             //          sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
             sb.AppendFormat("BIOS drive number: 0x{0:X2}", ntfsBb.drive_no).AppendLine();
@@ -108,7 +103,7 @@ namespace DiscImageChef.Filesystems
             //          sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfsBb.sectors, ntfsBb.sectors * ntfsBb.bps)
               .AppendLine();
-            sb.AppendFormat("Cluster where $MFT starts: {0}", ntfsBb.mft_lsn).AppendLine();
+            sb.AppendFormat("Cluster where $MFT starts: {0}",     ntfsBb.mft_lsn).AppendLine();
             sb.AppendFormat("Cluster where $MFTMirr starts: {0}", ntfsBb.mftmirror_lsn).AppendLine();
 
             if(ntfsBb.mft_rc_clusters > 0)
@@ -127,18 +122,17 @@ namespace DiscImageChef.Filesystems
 
             if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 && ntfsBb.signature2 == 0xAA55)
             {
-                XmlFsType.Bootable = true;
+                XmlFsType.Bootable  = true;
                 Sha1Context sha1Ctx = new Sha1Context();
-                sha1Ctx.Init();
-                string bootChk = sha1Ctx.Data(ntfsBb.boot_code, out _);
+                string      bootChk = sha1Ctx.Data(ntfsBb.boot_code, out _);
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }
 
-            XmlFsType.ClusterSize = ntfsBb.spc * ntfsBb.bps;
-            XmlFsType.Clusters = ntfsBb.sectors / ntfsBb.spc;
+            XmlFsType.ClusterSize  = ntfsBb.spc     * ntfsBb.bps;
+            XmlFsType.Clusters     = ntfsBb.sectors / ntfsBb.spc;
             XmlFsType.VolumeSerial = $"{ntfsBb.serial_no:X16}";
-            XmlFsType.Type = "NTFS";
+            XmlFsType.Type         = "NTFS";
 
             information = sb.ToString();
         }
@@ -151,9 +145,11 @@ namespace DiscImageChef.Filesystems
         {
             // Start of BIOS Parameter Block
             /// <summary>0x000, Jump to boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] jump;
             /// <summary>0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] oem_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] oem_name;
             /// <summary>0x00B, Bytes per sector</summary>
             public ushort bps;
             /// <summary>0x00D, Sectors per cluster</summary>
@@ -210,7 +206,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x048, Volume serial number</summary>
             public ulong serial_no;
             /// <summary>Boot code.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 430)] public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 430)]
+            public byte[] boot_code;
             /// <summary>0x1FE, 0xAA55</summary>
             public ushort signature2;
         }
