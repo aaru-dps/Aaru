@@ -978,8 +978,8 @@ namespace DiscImageChef.DiscImages
                     Sessions.Add(new Session
                     {
                         SessionSequence = (ushort)i,
-                        StartTrack      = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackSequence),
-                        EndTrack        = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackSequence),
+                        StartTrack      = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackSequence),
+                        EndTrack        = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackSequence),
                         StartSector     = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackStartSector),
                         EndSector       = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackEndSector)
                     });
