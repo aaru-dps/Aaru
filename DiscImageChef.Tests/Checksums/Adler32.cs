@@ -67,7 +67,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Adler32Context ctx = new Adler32Context();
+            IChecksum ctx = new Adler32Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -103,7 +103,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Adler32Context ctx = new Adler32Context();
+            IChecksum ctx = new Adler32Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

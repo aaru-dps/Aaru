@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Wraps up .NET RIPEMD160 implementation to a Init(), Update(), Final() context.
     /// </summary>
-    public class Ripemd160Context
+    public class Ripemd160Context : IChecksum
     {
         RIPEMD160 ripemd160Provider;
 

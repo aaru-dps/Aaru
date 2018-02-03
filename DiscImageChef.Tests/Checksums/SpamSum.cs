@@ -60,7 +60,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SpamSumContext ctx = new SpamSumContext();
+            IChecksum ctx = new SpamSumContext();
             ctx.Init();
             ctx.Update(data);
             string result = ctx.End();
@@ -89,7 +89,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SpamSumContext ctx = new SpamSumContext();
+            IChecksum ctx = new SpamSumContext();
             ctx.Init();
             ctx.Update(data);
             string result = ctx.End();

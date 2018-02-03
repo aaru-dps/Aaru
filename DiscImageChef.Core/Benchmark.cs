@@ -139,8 +139,8 @@ namespace DiscImageChef.Core
             results.ReadSpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
 
             #region Adler32
-            object ctx = new Adler32Context();
-            ((Adler32Context)ctx).Init();
+            IChecksum ctx = new Adler32Context();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -152,11 +152,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with Adler32.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Adler32Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Adler32Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -173,7 +173,7 @@ namespace DiscImageChef.Core
 
             #region CRC16
             ctx = new Crc16Context();
-            ((Crc16Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -185,11 +185,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with CRC16.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Crc16Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Crc16Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -206,7 +206,7 @@ namespace DiscImageChef.Core
 
             #region CRC32
             ctx = new Crc32Context();
-            ((Crc32Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -218,11 +218,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with CRC32.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Crc32Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Crc32Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -239,7 +239,7 @@ namespace DiscImageChef.Core
 
             #region CRC64
             ctx = new Crc64Context();
-            ((Crc64Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -251,11 +251,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with CRC64.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Crc64Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Crc64Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -272,7 +272,7 @@ namespace DiscImageChef.Core
 
             #region MD5
             ctx = new Md5Context();
-            ((Md5Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -284,11 +284,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with MD5.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Md5Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Md5Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -305,7 +305,7 @@ namespace DiscImageChef.Core
 
             #region RIPEMD160
             ctx = new Ripemd160Context();
-            ((Ripemd160Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -317,11 +317,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with RIPEMD160.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Ripemd160Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Ripemd160Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -338,7 +338,7 @@ namespace DiscImageChef.Core
 
             #region SHA1
             ctx = new Sha1Context();
-            ((Sha1Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -350,11 +350,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with SHA1.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Sha1Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Sha1Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -371,7 +371,7 @@ namespace DiscImageChef.Core
 
             #region SHA256
             ctx = new Sha256Context();
-            ((Sha256Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -383,11 +383,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with SHA256.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Sha256Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Sha256Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -404,7 +404,7 @@ namespace DiscImageChef.Core
 
             #region SHA384
             ctx = new Sha384Context();
-            ((Sha384Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -416,11 +416,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with SHA384.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Sha384Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Sha384Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -437,7 +437,7 @@ namespace DiscImageChef.Core
 
             #region SHA512
             ctx = new Sha512Context();
-            ((Sha512Context)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -449,11 +449,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with SHA512.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((Sha512Context)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((Sha512Context)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -470,7 +470,7 @@ namespace DiscImageChef.Core
 
             #region SpamSum
             ctx = new SpamSumContext();
-            ((SpamSumContext)ctx).Init();
+            ctx.Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
@@ -482,11 +482,11 @@ namespace DiscImageChef.Core
                 UpdateProgress("Checksumming block {0} of {1} with SpamSum.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
-                ((SpamSumContext)ctx).Update(tmp);
+                ctx.Update(tmp);
             }
 
             EndProgress();
-            ((SpamSumContext)ctx).End();
+            ctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;

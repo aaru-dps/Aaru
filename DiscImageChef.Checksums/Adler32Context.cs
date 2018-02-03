@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Implements the Adler-32 algorithm
     /// </summary>
-    public class Adler32Context
+    public class Adler32Context : IChecksum
     {
         const ushort ADLER_MODULE = 65521;
         ushort sum1, sum2;

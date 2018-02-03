@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Wraps up .NET MD5 implementation to a Init(), Update(), Final() context.
     /// </summary>
-    public class Md5Context
+    public class Md5Context : IChecksum
     {
         MD5 md5Provider;
 

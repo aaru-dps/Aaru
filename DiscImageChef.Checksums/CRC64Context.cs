@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Implements a CRC64 (ECMA) algorithm
     /// </summary>
-    public class Crc64Context
+    public class Crc64Context : IChecksum
     {
         const ulong CRC64_POLY = 0xC96C5795D7870F42;
         const ulong CRC64_SEED = 0xFFFFFFFFFFFFFFFF;

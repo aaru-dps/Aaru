@@ -31,14 +31,14 @@
 // ****************************************************************************/
 
 // Disabled because the speed is abnormally slow
-/*
+
 using System;
 using System.IO;
 using System.Text;
 
 namespace DiscImageChef.Checksums
 {
-    public class Fletcher32Context
+    public class Fletcher32Context : IChecksum
     {
         bool inodd;
         byte oddValue;
@@ -423,4 +423,4 @@ namespace DiscImageChef.Checksums
             return Data(data, (uint)data.Length, out hash);
         }
     }
-}*/
+}

@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.
     /// </summary>
-    public class Sha1Context
+    public class Sha1Context : IChecksum
     {
         SHA1 sha1Provider;
 

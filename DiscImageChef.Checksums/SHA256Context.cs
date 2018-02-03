@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Wraps up .NET SHA256 implementation to a Init(), Update(), Final() context.
     /// </summary>
-    public class Sha256Context
+    public class Sha256Context : IChecksum
     {
         SHA256 sha256Provider;
 

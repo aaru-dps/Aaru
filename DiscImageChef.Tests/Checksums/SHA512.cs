@@ -83,7 +83,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Sha512Context ctx = new Sha512Context();
+            IChecksum ctx = new Sha512Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -123,7 +123,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Sha512Context ctx = new Sha512Context();
+            IChecksum ctx = new Sha512Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

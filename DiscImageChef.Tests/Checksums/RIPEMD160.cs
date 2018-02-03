@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Ripemd160Context ctx = new Ripemd160Context();
+            IChecksum ctx = new Ripemd160Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -119,7 +119,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Ripemd160Context ctx = new Ripemd160Context();
+            IChecksum ctx = new Ripemd160Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

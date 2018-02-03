@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Wraps up .NET SHA384 implementation to a Init(), Update(), Final() context.
     /// </summary>
-    public class Sha384Context
+    public class Sha384Context : IChecksum
     {
         SHA384 sha384Provider;
 
