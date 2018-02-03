@@ -317,6 +317,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
+                    if(i + skip > blocks) skip = (uint)(blocks - i);
+                        
                     for(ulong b = i; b < i + skip; b++) resume.BadBlocks.Add(b);
 
                     mhddLog.Write(i, duration < 500 ? 65535 : duration);

@@ -385,6 +385,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // TODO: Reset device after X errors
                     if(stopOnError) return; // TODO: Return more cleanly
 
+                    if(i + skip > blocks) skip = (uint)(blocks - i);
+                        
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
                     outputPlugin.WriteSectors(new byte[blockSize * skip], i, skip);
