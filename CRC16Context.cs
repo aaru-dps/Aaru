@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements a CRC16-CCITT algorithm.
+//     Implements a CRC16 algorithm.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -37,22 +37,26 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    ///     Implements a CRC16-CCITT algorithm
+    ///     Implements a CRC16 algorithm
     /// </summary>
     public class Crc16Context : IChecksum
     {
-        const ushort CRC16_POLY = 0xA001;
-        const ushort CRC16_SEED = 0x0000;
+        public const ushort CRC16_IBM_POLY   = 0xA001;
+        public const ushort CRC16_IBM_SEED   = 0x0000;
+        public const ushort CRC16_CCITT_POLY = 0x8408;
+        public const ushort CRC16_CCITT_SEED = 0x0000;
 
+        readonly ushort   finalSeed;
         readonly ushort[] table;
         ushort            hashInt;
 
         /// <summary>
-        ///     Initializes the CRC16 table and seed
+        ///     Initializes the CRC16 table and seed as CRC16-IBM
         /// </summary>
         public Crc16Context()
         {
-            hashInt = CRC16_SEED;
+            hashInt   = CRC16_IBM_SEED;
+            finalSeed = CRC16_IBM_SEED;
 
             table = new ushort[256];
             for(int i = 0; i < 256; i++)
@@ -60,7 +64,29 @@ namespace DiscImageChef.Checksums
                 ushort entry = (ushort)i;
                 for(int j = 0; j   < 8; j++)
                     if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ CRC16_POLY);
+                        entry = (ushort)((entry >> 1) ^ CRC16_IBM_POLY);
+                    else
+                        entry = (ushort)(entry >> 1);
+
+                table[i] = entry;
+            }
+        }
+
+        /// <summary>
+        ///     Initializes the CRC16 table with a custom polynomial and seed
+        /// </summary>
+        public Crc16Context(ushort polynomial, ushort seed)
+        {
+            hashInt   = seed;
+            finalSeed = seed;
+
+            table = new ushort[256];
+            for(int i = 0; i < 256; i++)
+            {
+                ushort entry = (ushort)i;
+                for(int j = 0; j   < 8; j++)
+                    if((entry & 1) == 1)
+                        entry = (ushort)((entry >> 1) ^ polynomial);
                     else
                         entry = (ushort)(entry >> 1);
 
@@ -93,7 +119,7 @@ namespace DiscImageChef.Checksums
         public byte[] Final()
         {
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            return BigEndianBitConverter.GetBytes((ushort)(hashInt ^ CRC16_SEED));
+            return BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed));
         }
 
         /// <summary>
@@ -104,8 +130,8 @@ namespace DiscImageChef.Checksums
             StringBuilder crc16Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes((ushort)(hashInt     ^ CRC16_SEED)).Length; i++)
-                crc16Output.Append(BigEndianBitConverter.GetBytes((ushort)(hashInt ^ CRC16_SEED))[i].ToString("x2"));
+            for(int i = 0; i < BigEndianBitConverter.GetBytes((ushort)(hashInt     ^ finalSeed)).Length; i++)
+                crc16Output.Append(BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed))[i].ToString("x2"));
 
             return crc16Output.ToString();
         }
@@ -127,10 +153,19 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string File(string filename, out byte[] hash)
         {
-            FileStream fileStream = new FileStream(filename, FileMode.Open);
-            ushort     localhashInt;
+            return File(filename, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
+        }
 
-            localhashInt = CRC16_SEED;
+        /// <summary>
+        ///     Gets the hash of a file in hexadecimal and as a byte array.
+        /// </summary>
+        /// <param name="filename">File path.</param>
+        /// <param name="hash">Byte array of the hash value.</param>
+        public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed)
+        {
+            FileStream fileStream = new FileStream(filename, FileMode.Open);
+
+            ushort localhashInt = seed;
 
             ushort[] localTable = new ushort[256];
             for(int i = 0; i < 256; i++)
@@ -138,7 +173,7 @@ namespace DiscImageChef.Checksums
                 ushort entry = (ushort)i;
                 for(int j = 0; j   < 8; j++)
                     if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ CRC16_POLY);
+                        entry = (ushort)((entry >> 1) ^ polynomial);
                     else
                         entry = (ushort)(entry >> 1);
 
@@ -149,8 +184,9 @@ namespace DiscImageChef.Checksums
                 localhashInt =
                     (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)]);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(localhashInt);
+            localhashInt                         ^= seed;
+            BigEndianBitConverter.IsLittleEndian =  BitConverter.IsLittleEndian;
+            hash                                 =  BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc16Output = new StringBuilder();
 
@@ -169,7 +205,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            return Data(data, len, out hash, CRC16_POLY, CRC16_SEED);
+            return Data(data, len, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
         }
 
         /// <summary>
@@ -182,9 +218,7 @@ namespace DiscImageChef.Checksums
         /// <param name="seed">CRC seed</param>
         public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed)
         {
-            ushort localhashInt;
-
-            localhashInt = seed;
+            ushort localhashInt = seed;
 
             ushort[] localTable = new ushort[256];
             for(int i = 0; i < 256; i++)
@@ -202,8 +236,9 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < len; i++)
                 localhashInt = (ushort)((localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)]);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(localhashInt);
+            localhashInt                         ^= seed;
+            BigEndianBitConverter.IsLittleEndian =  BitConverter.IsLittleEndian;
+            hash                                 =  BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc16Output = new StringBuilder();
 
