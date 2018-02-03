@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Wraps up .NET SHA512 implementation to a Init(), Update(), Final() context.
     /// </summary>
-    public class Sha512Context
+    public class Sha512Context : IChecksum
     {
         SHA512 sha512Provider;
 

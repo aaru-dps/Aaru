@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Implements a CRC16-CCITT algorithm
     /// </summary>
-    public class Crc16Context
+    public class Crc16Context : IChecksum
     {
         const ushort CRC16_POLY = 0xA001;
         const ushort CRC16_SEED = 0x0000;

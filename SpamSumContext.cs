@@ -47,7 +47,7 @@ namespace DiscImageChef.Checksums
     /// <summary>
     ///     Implements the SpamSum fuzzy hashing algorithm.
     /// </summary>
-    public class SpamSumContext
+    public class SpamSumContext : IChecksum
     {
         const uint ROLLING_WINDOW = 7;
         const uint MIN_BLOCKSIZE = 3;
