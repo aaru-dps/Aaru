@@ -233,12 +233,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            if(toc == null)
-            {
-                DicConsole.ErrorWriteLine("Error trying to decode TOC...");
-                return;
-            }
-
             MmcSubchannel supportedSubchannel = MmcSubchannel.Raw;
             dumpLog.WriteLine("Checking if drive supports full raw subchannel reading...");
             DicConsole.WriteLine("Checking if drive supports full raw subchannel reading...");
@@ -292,11 +286,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            FullTOC.TrackDataDescriptor[] sortedTracks =
-                toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
-            List<Track> trackList  = new List<Track>();
-            long        lastSector = 0;
-
             // Check if output format supports subchannels
             if(!outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
                supportedSubchannel != MmcSubchannel.None)
@@ -335,64 +324,78 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine("Building track map...");
             dumpLog.WriteLine("Building track map...");
 
-            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR      == 4))
-                if(trk.POINT                                                             >= 0x01 && trk.POINT <= 0x63)
-                    trackList.Add(new Track
-                    {
-                        TrackSequence = trk.POINT,
-                        TrackSession  = trk.SessionNumber,
-                        TrackType     =
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                ? TrackType.Data
-                                : TrackType.Audio,
-                        TrackStartSector =
-                            (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
-                        TrackBytesPerSector    = (int)SECTOR_SIZE,
-                        TrackRawBytesPerSector = (int)SECTOR_SIZE,
-                        TrackSubchannelType    = subType
-                    });
-                else if(trk.POINT == 0xA2)
-                {
-                    int phour, pmin, psec, pframe;
-                    if(trk.PFRAME == 0)
-                    {
-                        pframe = 74;
+            List<Track>            trackList      = new List<Track>();
+            long                   lastSector     = 0;
+            Dictionary<byte, byte> trackFlags     = new Dictionary<byte, byte>();
+            TrackType              firstTrackType = TrackType.Audio;
 
-                        if(trk.PSEC == 0)
+            if(toc.HasValue)
+            {
+                FullTOC.TrackDataDescriptor[] sortedTracks =
+                    toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
+
+                foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                    if(trk.POINT                                                             >= 0x01 &&
+                       trk.POINT                                                             <= 0x63)
+                    {
+                        trackList.Add(new Track
                         {
-                            psec = 59;
+                            TrackSequence = trk.POINT,
+                            TrackSession  = trk.SessionNumber,
+                            TrackType     =
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                    ? TrackType.Data
+                                    : TrackType.Audio,
+                            TrackStartSector =
+                                (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
+                            TrackBytesPerSector    = (int)SECTOR_SIZE,
+                            TrackRawBytesPerSector = (int)SECTOR_SIZE,
+                            TrackSubchannelType    = subType
+                        });
+                        trackFlags.Add(trk.POINT, trk.CONTROL);
+                    }
+                    else if(trk.POINT == 0xA2)
+                    {
+                        int phour, pmin, psec, pframe;
+                        if(trk.PFRAME == 0)
+                        {
+                            pframe = 74;
 
-                            if(trk.PMIN == 0)
+                            if(trk.PSEC == 0)
                             {
-                                pmin  = 59;
-                                phour = trk.PHOUR - 1;
+                                psec = 59;
+
+                                if(trk.PMIN == 0)
+                                {
+                                    pmin  = 59;
+                                    phour = trk.PHOUR - 1;
+                                }
+                                else
+                                {
+                                    pmin  = trk.PMIN - 1;
+                                    phour = trk.PHOUR;
+                                }
                             }
                             else
                             {
-                                pmin  = trk.PMIN - 1;
+                                psec  = trk.PSEC - 1;
+                                pmin  = trk.PMIN;
                                 phour = trk.PHOUR;
                             }
                         }
                         else
                         {
-                            psec  = trk.PSEC - 1;
-                            pmin  = trk.PMIN;
-                            phour = trk.PHOUR;
+                            pframe = trk.PFRAME - 1;
+                            psec   = trk.PSEC;
+                            pmin   = trk.PMIN;
+                            phour  = trk.PHOUR;
                         }
-                    }
-                    else
-                    {
-                        pframe = trk.PFRAME - 1;
-                        psec   = trk.PSEC;
-                        pmin   = trk.PMIN;
-                        phour  = trk.PHOUR;
-                    }
 
-                    lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
-                }
-            else if(trk.POINT == 0xA0 && trk.ADR == 1)
-                {
+                        lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
+                    }
+                    else if(trk.POINT == 0xA0 && trk.ADR == 1)
+                    {
                         switch(trk.PSEC)
                         {
                             case 0x10:
@@ -402,52 +405,94 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 dskType = MediaType.CDROMXA;
                                 break;
                         }
-                }
 
-            if(trackList.Count == 0)
-            {
-                DicConsole.WriteLine("TOC with no tracks found, trying old method...");
-                dumpLog.WriteLine("TOC with no tracks found, trying old method...");
-                dumpLog.WriteLine("Reading old TOC");
-                tocSense = dev.ReadToc(out cmdBuf, out senseBuf, false, 0, dev.Timeout, out _);
-                
-                TOC.CDTOC? oldToc = Decoders.CD.TOC.Decode(cmdBuf);
-                if(tocSense ||!oldToc.HasValue)
-                {
-                    DicConsole.WriteLine("Could not read TOC, cannot continue...");
-                    dumpLog.WriteLine("Could not read TOC, cannot continue...");
-                    return;
-                }
-
-                lastSector = 0;
-                
-            foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.OrderBy(t=>t.TrackNumber).Where(trk => trk.ADR == 1 || trk.ADR      == 4))
-                if(trk.TrackNumber >= 0x01 && trk.TrackNumber <= 0x63)
-                    trackList.Add(new Track
-                    {
-                        TrackSequence = trk.TrackNumber,
-                        TrackSession  = 1,
-                        TrackType     =
+                        firstTrackType =
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                 ? TrackType.Data
-                                : TrackType.Audio,
-                        TrackStartSector = trk.TrackStartAddress,
-                        TrackBytesPerSector    = (int)SECTOR_SIZE,
-                        TrackRawBytesPerSector = (int)SECTOR_SIZE,
-                        TrackSubchannelType    = subType
-                    });
-                else if(trk.TrackNumber == 0xAA)
-                    lastSector = trk.TrackStartAddress - 1;
+                                : TrackType.Audio;
+                    }
+            }
+            else
+            {
+                DicConsole.WriteLine("Cannot read RAW TOC, requesting processed one...");
+                dumpLog.WriteLine("Cannot read RAW TOC, requesting processed one...");
+                tocSense = dev.ReadToc(out cmdBuf, out senseBuf, false, 0, dev.Timeout, out _);
+
+                TOC.CDTOC? oldToc = TOC.Decode(cmdBuf);
+                if((tocSense || !oldToc.HasValue) && !force)
+                {
+                    DicConsole
+                       .WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+                    dumpLog.WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+                    return;
+                }
+
+                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc
+                                                           .Value.TrackDescriptors.OrderBy(t => t.TrackNumber)
+                                                           .Where(trk => trk.ADR == 1 || trk.ADR            == 4))
+                    if(trk.TrackNumber                                           >= 0x01 && trk.TrackNumber <= 0x63)
+                    {
+                        trackList.Add(new Track
+                        {
+                            TrackSequence = trk.TrackNumber,
+                            TrackSession  = 1,
+                            TrackType     =
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                    ? TrackType.Data
+                                    : TrackType.Audio,
+                            TrackStartSector       = trk.TrackStartAddress,
+                            TrackBytesPerSector    = (int)SECTOR_SIZE,
+                            TrackRawBytesPerSector = (int)SECTOR_SIZE,
+                            TrackSubchannelType    = subType
+                        });
+                        trackFlags.Add(trk.TrackNumber, trk.CONTROL);
+                    }
+                    else if(trk.TrackNumber == 0xAA)
+                    {
+                        firstTrackType =
+                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                ? TrackType.Data
+                                : TrackType.Audio;
+                        lastSector = trk.TrackStartAddress - 1;
+                    }
+            }
+
+            if(trackList.Count == 0)
+            {
+                DicConsole.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
+                dumpLog.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
+
+                trackList.Add(new Track
+                {
+                    TrackSequence          = 1,
+                    TrackSession           = 1,
+                    TrackType              = firstTrackType,
+                    TrackStartSector       = 0,
+                    TrackBytesPerSector    = (int)SECTOR_SIZE,
+                    TrackRawBytesPerSector = (int)SECTOR_SIZE,
+                    TrackSubchannelType    = subType
+                });
+                trackFlags.Add(1, (byte)(firstTrackType == TrackType.Audio ? 0 : 4));
             }
 
             if(lastSector == 0)
             {
+                if(!force)
+                {
+                    DicConsole
+                       .WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+                    dumpLog.WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+                    return;
+                }
+
                 DicConsole.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
                 dumpLog.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
                 lastSector = 360000;
             }
-            
+
             Track[] tracks                                                      = trackList.ToArray();
             for(int t = 1; t < tracks.Length; t++) tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
 
@@ -701,17 +746,15 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             // Set track flags
-            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => (trk.ADR  == 1 || trk.ADR == 4) &&
-                                                                                 trk.POINT >= 0x01               &&
-                                                                                 trk.POINT <= 0x63))
+            foreach(KeyValuePair<byte, byte> kvp in trackFlags)
             {
-                Track track = tracks.FirstOrDefault(t => t.TrackSequence == trk.POINT);
+                Track track = tracks.FirstOrDefault(t => t.TrackSequence == kvp.Key);
 
                 if(track.TrackSequence == 0) continue;
 
                 dumpLog.WriteLine("Setting flags for track {0}...", track.TrackSequence);
                 DicConsole.WriteLine("Setting flags for track {0}...", track.TrackSequence);
-                outputPlugin.WriteSectorTag(new[] {trk.CONTROL}, track.TrackStartSector, SectorTagType.CdTrackFlags);
+                outputPlugin.WriteSectorTag(new[] {kvp.Value}, track.TrackStartSector, SectorTagType.CdTrackFlags);
             }
 
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
@@ -788,7 +831,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(stopOnError) return; // TODO: Return more cleanly
 
                         if(i + skip > blocks) skip = (uint)(blocks - i);
-                        
+
                         // Write empty data
                         DateTime writeStart = DateTime.Now;
                         if(supportedSubchannel != MmcSubchannel.None)
