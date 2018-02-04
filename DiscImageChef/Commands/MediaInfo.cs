@@ -56,9 +56,9 @@ namespace DiscImageChef.Commands
     {
         internal static void DoMediaInfo(MediaInfoOptions options)
         {
-            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Media-Info command", "--device={0}", options.DevicePath);
+            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}",         options.Debug);
+            DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}",       options.Verbose);
+            DicConsole.DebugWriteLine("Media-Info command", "--device={0}",        options.DevicePath);
             DicConsole.DebugWriteLine("Media-Info command", "--output-prefix={0}", options.OutputPrefix);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
@@ -114,13 +114,13 @@ namespace DiscImageChef.Commands
 
         static void DoScsiMediaInfo(string outputPrefix, Device dev)
         {
-            byte[] cmdBuf;
-            byte[] senseBuf;
-            bool sense;
-            MediaType dskType = MediaType.Unknown;
-            ulong blocks = 0;
-            uint blockSize = 0;
-            int resets = 0;
+            byte[]    cmdBuf;
+            byte[]    senseBuf;
+            bool      sense;
+            MediaType dskType   = MediaType.Unknown;
+            ulong     blocks    = 0;
+            uint      blockSize = 0;
+            int       resets    = 0;
 
             if(dev.IsRemovable)
             {
@@ -192,7 +192,7 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            Modes.DecodedMode? decMode = null;
+            Modes.DecodedMode?    decMode = null;
             PeripheralDeviceTypes devType = dev.ScsiType;
 
             sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
@@ -218,8 +218,8 @@ namespace DiscImageChef.Commands
             if(!sense)
                 DataFile.WriteTo("Media-Info command", outputPrefix, "_scsi_modesense.bin", "SCSI MODE SENSE", modeBuf);
 
-            byte scsiMediumType = 0;
-            byte scsiDensityCode = 0;
+            byte scsiMediumType     = 0;
+            byte scsiDensityCode    = 0;
             bool containsFloppyPage = false;
 
             if(decMode.HasValue)
@@ -246,15 +246,15 @@ namespace DiscImageChef.Commands
                     {
                         DataFile.WriteTo("Media-Info command", outputPrefix, "_readcapacity.bin", "SCSI READ CAPACITY",
                                          cmdBuf);
-                        blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                        blocks    = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                        blockSize = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                     }
 
                     if(sense || blocks == 0xFFFFFFFF)
                     {
                         sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
-                        if(sense && blocks == 0)
+                        if(sense && blocks  == 0)
                             if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                             {
                                 DicConsole.ErrorWriteLine("Unable to get media capacity");
@@ -269,7 +269,7 @@ namespace DiscImageChef.Commands
 
                             Array.Copy(cmdBuf, 0, temp, 0, 8);
                             Array.Reverse(temp);
-                            blocks = BitConverter.ToUInt64(temp, 0);
+                            blocks    = BitConverter.ToUInt64(temp, 0);
                             blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                         }
                     }
@@ -280,6 +280,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
                                              blocks, blockSize, blocks * blockSize);
                     }
+
                     break;
                 case PeripheralDeviceTypes.SequentialAccess:
                     byte[] medBuf;
@@ -318,6 +319,7 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine("Medium types currently inserted in device:");
                                 DicConsole.WriteLine(DensitySupport.PrettifyMediumType(meds));
                             }
+
                             DicConsole.WriteLine(DensitySupport.PrettifyMediumType(seqBuf));
                         }
                     }
@@ -472,12 +474,12 @@ namespace DiscImageChef.Commands
                 */
 
                 #region All DVD and HD DVD types
-                if(dskType == MediaType.DVDDownload || dskType == MediaType.DVDPR || dskType == MediaType.DVDPRDL ||
-                   dskType == MediaType.DVDPRW || dskType == MediaType.DVDPRWDL || dskType == MediaType.DVDR ||
-                   dskType == MediaType.DVDRAM || dskType == MediaType.DVDRDL || dskType == MediaType.DVDROM ||
-                   dskType == MediaType.DVDRW || dskType == MediaType.DVDRWDL || dskType == MediaType.HDDVDR ||
-                   dskType == MediaType.HDDVDRAM || dskType == MediaType.HDDVDRDL || dskType == MediaType.HDDVDROM ||
-                   dskType == MediaType.HDDVDRW || dskType == MediaType.HDDVDRWDL)
+                if(dskType == MediaType.DVDDownload || dskType == MediaType.DVDPR    || dskType == MediaType.DVDPRDL  ||
+                   dskType == MediaType.DVDPRW      || dskType == MediaType.DVDPRWDL || dskType == MediaType.DVDR     ||
+                   dskType == MediaType.DVDRAM      || dskType == MediaType.DVDRDL   || dskType == MediaType.DVDROM   ||
+                   dskType == MediaType.DVDRW       || dskType == MediaType.DVDRWDL  || dskType == MediaType.HDDVDR   ||
+                   dskType == MediaType.HDDVDRAM    || dskType == MediaType.HDDVDRDL || dskType == MediaType.HDDVDROM ||
+                   dskType == MediaType.HDDVDRW     || dskType == MediaType.HDDVDRWDL)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
@@ -566,9 +568,9 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Xbox 360 DMI:\n{0}", DMI.PrettifyXbox360(cmdBuf));
 
                             // All XGD3 all have the same number of blocks
-                            if(blocks == 25063 || // Locked (or non compatible drive)
+                            if(blocks == 25063   || // Locked (or non compatible drive)
                                blocks == 4229664 || // Xtreme unlock
-                               blocks == 4246304) // Wxripper unlock
+                               blocks == 4246304)   // Wxripper unlock
                                 dskType = MediaType.XGD3;
                         }
                     }
@@ -628,6 +630,7 @@ namespace DiscImageChef.Commands
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
                             DicConsole.WriteLine("Disc Definition Structure:\n{0}", DDS.Prettify(cmdBuf));
                         }
+
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                       MmcDiscStructureFormat.DvdramMediumStatus, 0, dev.Timeout, out _);
                         if(sense)
@@ -639,6 +642,7 @@ namespace DiscImageChef.Commands
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
                             DicConsole.WriteLine("Medium Status:\n{0}", Cartridge.Prettify(cmdBuf));
                         }
+
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                       MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, dev.Timeout,
                                                       out _);
@@ -651,6 +655,7 @@ namespace DiscImageChef.Commands
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
                             DicConsole.WriteLine("Spare Area Information:\n{0}", Spare.Prettify(cmdBuf));
                         }
+
                         break;
                     case MediaType.DVDR:
                     case MediaType.HDDVDR:
@@ -914,6 +919,7 @@ namespace DiscImageChef.Commands
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
                             DicConsole.WriteLine("Blu-ray Disc Information:\n{0}", DI.Prettify(cmdBuf));
                         }
+
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                                       MmcDiscStructureFormat.Pac, 0, dev.Timeout, out _);
                         if(sense)
@@ -941,6 +947,7 @@ namespace DiscImageChef.Commands
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
                             DicConsole.WriteLine("Blu-ray Burst Cutting Area:\n{0}", BCA.Prettify(cmdBuf));
                         }
+
                         break;
                     #endregion BD-ROM only
 
@@ -961,6 +968,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Blu-ray Disc Definition Structure:\n{0}",
                                                  Decoders.Bluray.DDS.Prettify(cmdBuf));
                         }
+
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                                       MmcDiscStructureFormat.CartridgeStatus, 0, dev.Timeout, out _);
                         if(sense)
@@ -973,6 +981,7 @@ namespace DiscImageChef.Commands
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
                             DicConsole.WriteLine("Blu-ray Cartridge Status:\n{0}", DI.Prettify(cmdBuf));
                         }
+
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                                       MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout,
                                                       out _);
@@ -986,6 +995,7 @@ namespace DiscImageChef.Commands
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
                             DicConsole.WriteLine("Blu-ray Spare Area Information:\n{0}", DI.Prettify(cmdBuf));
                         }
+
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                                       MmcDiscStructureFormat.RawDfl, 0, dev.Timeout, out _);
                         if(sense)
@@ -1005,6 +1015,7 @@ namespace DiscImageChef.Commands
                             DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscinformation_001b.bin",
                                              "SCSI READ DISC INFORMATION", cmdBuf);
                         }
+
                         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf,
                                                         MmcDiscInformationDataTypes.PowResources, dev.Timeout, out _);
                         if(sense)
@@ -1016,6 +1027,7 @@ namespace DiscImageChef.Commands
                             DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscinformation_010b.bin",
                                              "SCSI READ DISC INFORMATION", cmdBuf);
                         }
+
                         break;
                     #endregion Writable Blu-ray only
 
@@ -1096,7 +1108,7 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            int sessions = 1;
+                            int sessions              = 1;
                             int firstTrackLastSession = 0;
 
                             sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
@@ -1111,30 +1123,32 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine("Session information:\n{0}", Session.Prettify(session));
                                 if(session.HasValue)
                                 {
-                                    sessions = session.Value.LastCompleteSession;
+                                    sessions              = session.Value.LastCompleteSession;
                                     firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
                                 }
                             }
 
                             if(dskType == MediaType.CD)
                             {
-                                bool hasDataTrack = false;
-                                bool hasAudioTrack = false;
+                                bool hasDataTrack                  = false;
+                                bool hasAudioTrack                 = false;
                                 bool allFirstSessionTracksAreAudio = true;
-                                bool hasVideoTrack = false;
+                                bool hasVideoTrack                 = false;
 
                                 if(toc.HasValue)
                                     foreach(TOC.CDTOCTrackDataDescriptor track in toc.Value.TrackDescriptors)
                                     {
-                                        if(track.TrackNumber == 1 &&
-                                           ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                            (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental))
+                                        if(track.TrackNumber                   == 1 &&
+                                           ((TocControl)(track.CONTROL & 0x0D) ==
+                                            TocControl.DataTrack ||
+                                            (TocControl)(track.CONTROL & 0x0D) ==
+                                            TocControl.DataTrackIncremental))
                                             allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
 
                                         if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
                                            (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                                         {
-                                            hasDataTrack = true;
+                                            hasDataTrack                  =  true;
                                             allFirstSessionTracksAreAudio &= track.TrackNumber >= firstTrackLastSession;
                                         }
                                         else hasAudioTrack = true;
@@ -1143,10 +1157,10 @@ namespace DiscImageChef.Commands
                                     }
 
                                 if(hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
-                                    dskType = MediaType.CDPLUS;
-                                if(!hasDataTrack && hasAudioTrack && sessions == 1) dskType = MediaType.CDDA;
-                                if(hasDataTrack && !hasAudioTrack && sessions == 1) dskType = MediaType.CDROM;
-                                if(hasVideoTrack && !hasDataTrack && sessions == 1) dskType = MediaType.CDV;
+                                    dskType                                                  = MediaType.CDPLUS;
+                                if(!hasDataTrack && hasAudioTrack  && sessions == 1) dskType = MediaType.CDDA;
+                                if(hasDataTrack  && !hasAudioTrack && sessions == 1) dskType = MediaType.CDROM;
+                                if(hasVideoTrack && !hasDataTrack  && sessions == 1) dskType = MediaType.CDV;
                             }
 
                             sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out _);
@@ -1163,9 +1177,9 @@ namespace DiscImageChef.Commands
                                 if(fullToc.HasValue)
                                 {
                                     FullTOC.TrackDataDescriptor a0Track =
-                                        fullToc.Value.TrackDescriptors.FirstOrDefault(t => t.POINT == 0xA0 && t.ADR == 1);
-                                    if(a0Track.POINT == 0xA0)
-                                    {
+                                        fullToc.Value.TrackDescriptors
+                                               .FirstOrDefault(t => t.POINT == 0xA0 && t.ADR == 1);
+                                    if(a0Track.POINT                        == 0xA0)
                                         switch(a0Track.PSEC)
                                         {
                                             case 0x10:
@@ -1175,9 +1189,9 @@ namespace DiscImageChef.Commands
                                                 dskType = MediaType.CDROMXA;
                                                 break;
                                         }
-                                    }
                                 }
                             }
+
                             sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
                             if(sense)
                                 DicConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: PMA\n{0}",
@@ -1199,6 +1213,16 @@ namespace DiscImageChef.Commands
                                                  "SCSI READ TOC/PMA/ATIP", cmdBuf);
                                 if(CDTextOnLeadIn.Decode(cmdBuf).HasValue)
                                     DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", CDTextOnLeadIn.Prettify(cmdBuf));
+                            }
+
+                            sense = dev.ReadMcn(out string mcn, out _, out _, dev.Timeout, out _);
+                            if(!sense && mcn != null && mcn != "0000000000000") DicConsole.WriteLine("MCN: {0}", mcn);
+
+                            for(byte i = toc.Value.FirstTrack; i <= toc.Value.LastTrack; i++)
+                            {
+                                sense = dev.ReadIsrc(i, out string isrc, out _, out _, dev.Timeout, out _);
+                                if(!sense && isrc != null && isrc != "000000000000")
+                                    DicConsole.WriteLine("Track's {0} ISRC: {1}", i, isrc);
                             }
                         }
 
@@ -1223,7 +1247,7 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.WriteLine("PFI:\n{0}", PFI.Prettify(cmdBuf));
                             if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
-                               nintendoPfi.Value.PartVersion == 15)
+                               nintendoPfi.Value.PartVersion  == 15)
                                 switch(nintendoPfi.Value.DiscSize)
                                 {
                                     case DVDSize.Eighty:
@@ -1294,8 +1318,9 @@ namespace DiscImageChef.Commands
                             }
 
                             totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                            sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                          MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
+                            sense     = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd,
+                                                              0, 0,
+                                                              MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
                             if(sense)
                             {
                                 DicConsole.ErrorWriteLine("Cannot get PFI.");
@@ -1304,9 +1329,9 @@ namespace DiscImageChef.Commands
 
                             DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors",
                                                       totalSize);
-                            l0Video = PFI.Decode(cmdBuf).Value.Layer0EndPSN -
+                            l0Video = PFI.Decode(cmdBuf).Value.Layer0EndPSN     -
                                       PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1;
-                            l1Video = totalSize - l0Video + 1;
+                            l1Video = totalSize                                 - l0Video + 1;
 
                             // Get game partition size
                             DicConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
@@ -1346,8 +1371,9 @@ namespace DiscImageChef.Commands
                             }
 
                             totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                            sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                          MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
+                            sense     = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd,
+                                                              0, 0,
+                                                              MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
                             if(sense)
                             {
                                 DicConsole.ErrorWriteLine("Cannot get PFI.");
@@ -1357,18 +1383,20 @@ namespace DiscImageChef.Commands
                             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors",
                                                       totalSize);
                             middleZone =
-                                totalSize - (PFI.Decode(cmdBuf).Value.Layer0EndPSN -
-                                             PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) - gameSize + 1;
+                                totalSize                                  -
+                                (PFI.Decode(cmdBuf).Value.Layer0EndPSN     -
+                                 PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) -
+                                gameSize                                   + 1;
 
-                            totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
-                            layerBreak = l0Video + middleZone + gameSize / 2;
+                            totalSize  = l0Video + l1Video    + middleZone * 2 + gameSize;
+                            layerBreak = l0Video + middleZone + gameSize   / 2;
 
                             DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);
                             DicConsole.WriteLine("Video layer 1 size: {0} sectors", l1Video);
-                            DicConsole.WriteLine("Middle zone size: {0} sectors", middleZone);
-                            DicConsole.WriteLine("Game data size: {0} sectors", gameSize);
-                            DicConsole.WriteLine("Total size: {0} sectors", totalSize);
-                            DicConsole.WriteLine("Real layer break: {0}", layerBreak);
+                            DicConsole.WriteLine("Middle zone size: {0} sectors",   middleZone);
+                            DicConsole.WriteLine("Game data size: {0} sectors",     gameSize);
+                            DicConsole.WriteLine("Total size: {0} sectors",         totalSize);
+                            DicConsole.WriteLine("Real layer break: {0}",           layerBreak);
                             DicConsole.WriteLine();
                         }
                     }

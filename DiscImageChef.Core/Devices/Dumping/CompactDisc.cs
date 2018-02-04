@@ -57,7 +57,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implement dumping Compact Discs
     /// </summary>
-    // TODO: ISRC, MCN and pregaps
+    // TODO: Barcode and pregaps
     static class CompactDisc
     {
         /// <summary>
@@ -755,6 +755,29 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Setting flags for track {0}...", track.TrackSequence);
                 DicConsole.WriteLine("Setting flags for track {0}...", track.TrackSequence);
                 outputPlugin.WriteSectorTag(new[] {kvp.Value}, track.TrackStartSector, SectorTagType.CdTrackFlags);
+            }
+
+            // Set MCN
+            sense = dev.ReadMcn(out string mcn, out _, out _, dev.Timeout, out _);
+            if(!sense && mcn != null && mcn != "0000000000000")
+                if(outputPlugin.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
+                {
+                    DicConsole.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
+                    dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
+                }
+
+            // Set ISRCs
+            foreach(Track trk in tracks)
+            {
+                sense = dev.ReadIsrc((byte)trk.TrackSequence, out string isrc, out _, out _, dev.Timeout, out _);
+                if(sense || isrc == null || isrc == "000000000000") continue;
+
+                if(outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc), trk.TrackStartSector,
+                                               SectorTagType.CdTrackIsrc))
+                {
+                    DicConsole.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
+                    dumpLog.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
+                }
             }
 
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
