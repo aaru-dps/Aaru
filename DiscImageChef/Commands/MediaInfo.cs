@@ -1158,6 +1158,25 @@ namespace DiscImageChef.Commands
                                 DataFile.WriteTo("Media-Info command", outputPrefix, "_rawtoc.bin",
                                                  "SCSI READ TOC/PMA/ATIP", cmdBuf);
                                 DicConsole.WriteLine("Raw TOC:\n{0}", FullTOC.Prettify(cmdBuf));
+
+                                FullTOC.CDFullTOC? fullToc = FullTOC.Decode(cmdBuf);
+                                if(fullToc.HasValue)
+                                {
+                                    FullTOC.TrackDataDescriptor a0Track =
+                                        fullToc.Value.TrackDescriptors.FirstOrDefault(t => t.POINT == 0xA0 && t.ADR == 1);
+                                    if(a0Track.POINT == 0xA0)
+                                    {
+                                        switch(a0Track.PSEC)
+                                        {
+                                            case 0x10:
+                                                dskType = MediaType.CDI;
+                                                break;
+                                            case 0x20:
+                                                dskType = MediaType.CDROMXA;
+                                                break;
+                                        }
+                                    }
+                                }
                             }
                             sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
                             if(sense)

@@ -391,6 +391,18 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                 }
+            else if(trk.POINT == 0xA0 && trk.ADR == 1)
+                {
+                        switch(trk.PSEC)
+                        {
+                            case 0x10:
+                                dskType = MediaType.CDI;
+                                break;
+                            case 0x20:
+                                dskType = MediaType.CDROMXA;
+                                break;
+                        }
+                }
 
             if(trackList.Count == 0)
             {
