@@ -429,6 +429,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     lastSector = trk.TrackStartAddress - 1;
             }
 
+            if(lastSector == 0)
+            {
+                DicConsole.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+                dumpLog.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+                lastSector = 360000;
+            }
+            
             Track[] tracks                                                      = trackList.ToArray();
             for(int t = 1; t < tracks.Length; t++) tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
 
