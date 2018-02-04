@@ -119,7 +119,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // We discarded all discs that falsify a TOC before requesting a real TOC
             // No TOC, no CD (or an empty one)
             dumpLog.WriteLine("Reading full TOC");
-            bool tocSense = dev.ReadRawToc(out byte[] cmdBuf, out byte[] senseBuf, 1, dev.Timeout, out _);
+            bool tocSense = dev.ReadRawToc(out byte[] cmdBuf, out byte[] senseBuf, 0, dev.Timeout, out _);
             if(!tocSense)
             {
                 toc = FullTOC.Decode(cmdBuf);
@@ -391,6 +391,43 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                 }
+
+            if(trackList.Count == 0)
+            {
+                DicConsole.WriteLine("TOC with no tracks found, trying old method...");
+                dumpLog.WriteLine("TOC with no tracks found, trying old method...");
+                dumpLog.WriteLine("Reading old TOC");
+                tocSense = dev.ReadToc(out cmdBuf, out senseBuf, false, 0, dev.Timeout, out _);
+                
+                TOC.CDTOC? oldToc = Decoders.CD.TOC.Decode(cmdBuf);
+                if(tocSense ||!oldToc.HasValue)
+                {
+                    DicConsole.WriteLine("Could not read TOC, cannot continue...");
+                    dumpLog.WriteLine("Could not read TOC, cannot continue...");
+                    return;
+                }
+
+                lastSector = 0;
+                
+            foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.OrderBy(t=>t.TrackNumber).Where(trk => trk.ADR == 1 || trk.ADR      == 4))
+                if(trk.TrackNumber >= 0x01 && trk.TrackNumber <= 0x63)
+                    trackList.Add(new Track
+                    {
+                        TrackSequence = trk.TrackNumber,
+                        TrackSession  = 1,
+                        TrackType     =
+                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                ? TrackType.Data
+                                : TrackType.Audio,
+                        TrackStartSector = trk.TrackStartAddress,
+                        TrackBytesPerSector    = (int)SECTOR_SIZE,
+                        TrackRawBytesPerSector = (int)SECTOR_SIZE,
+                        TrackSubchannelType    = subType
+                    });
+                else if(trk.TrackNumber == 0xAA)
+                    lastSector = trk.TrackStartAddress - 1;
+            }
 
             Track[] tracks                                                      = trackList.ToArray();
             for(int t = 1; t < tracks.Length; t++) tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
