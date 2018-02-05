@@ -48,6 +48,7 @@ using DiscImageChef.Metadata;
 using Extents;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using TrackType = DiscImageChef.DiscImages.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -359,6 +360,20 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(currentTry == null || extents == null)
                 throw new NotImplementedException("Could not process resume file, not continuing...");
 
+            outputPlugin.SetTracks(new List<Track>
+            {
+                new Track
+                {
+                    TrackBytesPerSector    = (int)BLOCK_SIZE,
+                    TrackEndSector         = blocks - 1,
+                    TrackSequence          = 1,
+                    TrackRawBytesPerSector = (int)BLOCK_SIZE,
+                    TrackSubchannelType    = TrackSubchannelType.None,
+                    TrackSession           = 1,
+                    TrackType              = TrackType.Data
+                }
+            });
+            
             ulong currentSector = resume.NextBlock;
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 

@@ -47,6 +47,7 @@ using DiscImageChef.Metadata;
 using Extents;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using TrackType = DiscImageChef.DiscImages.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -300,7 +301,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         TrackSequence          = 1,
                         TrackRawBytesPerSector = (int)blockSize,
                         TrackSubchannelType    = TrackSubchannelType.None,
-                        TrackSession           = 1
+                        TrackSession           = 1,
+                        TrackType = TrackType.Data
                     }
                 });
             else if(decMode.HasValue)
