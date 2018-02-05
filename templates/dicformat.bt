@@ -123,6 +123,7 @@ enum <uint> MediaType
     JaguarCD = 172,
     ThreeDO = 173,
     PCFX = 174,
+    NeoGeoCD = 175,
 
     Apple32SS = 180,
     Apple32DS = 181,
