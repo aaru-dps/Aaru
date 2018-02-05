@@ -269,6 +269,8 @@ namespace DiscImageChef.CommonTypes
         ThreeDO = 173,
         /// <summary>NEC PC-FX</summary>
         PCFX = 174,
+        /// <summary>NEO-GEO CD</summary>
+        NeoGeoCD = 175,
         #endregion Other game media, types 170 to 179
 
         #region Apple standard floppy format, types 180 to 189
