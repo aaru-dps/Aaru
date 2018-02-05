@@ -3623,7 +3623,10 @@ namespace DiscImageChef.DiscImages
                             lzmaProperties = lzmaBlockStream.Properties;
                             lzmaBlockStream.Close();
 
-                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            Crc64Context cmpCrc = new Crc64Context();
+                            cmpCrc.Update(lzmaProperties);
+                            cmpCrc.Update(blockStream.ToArray());
+                            blockCrc = cmpCrc.Final();
                             prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             prefixBlock.compression = CompressionType.Lzma;
@@ -3682,7 +3685,10 @@ namespace DiscImageChef.DiscImages
                             lzmaProperties = lzmaBlockStream.Properties;
                             lzmaBlockStream.Close();
 
-                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            Crc64Context cmpCrc = new Crc64Context();
+                            cmpCrc.Update(lzmaProperties);
+                            cmpCrc.Update(blockStream.ToArray());
+                            blockCrc = cmpCrc.Final();
                             prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             prefixBlock.compression = CompressionType.Lzma;
@@ -3747,7 +3753,10 @@ namespace DiscImageChef.DiscImages
                             lzmaProperties = lzmaBlockStream.Properties;
                             lzmaBlockStream.Close();
 
-                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            Crc64Context cmpCrc = new Crc64Context();
+                            cmpCrc.Update(lzmaProperties);
+                            cmpCrc.Update(blockStream.ToArray());
+                            blockCrc = cmpCrc.Final();
                             subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subchannelBlock.compression = CompressionType.Lzma;
@@ -3919,7 +3928,10 @@ namespace DiscImageChef.DiscImages
                             lzmaProperties = lzmaBlockStream.Properties;
                             lzmaBlockStream.Close();
 
-                            Crc64Context.Data(blockStream.ToArray(), out blockCrc);
+                            Crc64Context cmpCrc = new Crc64Context();
+                            cmpCrc.Update(lzmaProperties);
+                            cmpCrc.Update(blockStream.ToArray());
+                            blockCrc = cmpCrc.Final();
                             subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subchannelBlock.compression = CompressionType.Lzma;
