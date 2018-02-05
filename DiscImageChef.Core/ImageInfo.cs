@@ -207,6 +207,16 @@ namespace DiscImageChef.Core
             {
                 byte[] toc = imageFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
 
+                ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
+                if(dataLen + 2 != toc.Length)
+                {
+                    byte[] tmp = new byte[toc.Length + 2];
+                    Array.Copy(toc, 0, tmp, 2, toc.Length);
+                    tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
+                    tmp[1] = (byte)(toc.Length & 0xFF);
+                    toc = tmp;
+                }
+
                 DicConsole.WriteLine("CompactDisc Table of Contents contained in image:");
                 DicConsole.Write("{0}", FullTOC.Prettify(toc));
                 DicConsole.WriteLine();
@@ -216,6 +226,16 @@ namespace DiscImageChef.Core
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_PMA))
             {
                 byte[] pma = imageFormat.ReadDiskTag(MediaTagType.CD_PMA);
+
+                ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
+                if(dataLen + 2 != pma.Length)
+                {
+                    byte[] tmp = new byte[pma.Length + 2];
+                    Array.Copy(pma, 0, tmp, 2, pma.Length);
+                    tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
+                    tmp[1] = (byte)(pma.Length  & 0xFF);
+                    pma = tmp;
+                }
 
                 DicConsole.WriteLine("CompactDisc Power Management Area contained in image:");
                 DicConsole.Write("{0}", PMA.Prettify(pma));
@@ -227,6 +247,18 @@ namespace DiscImageChef.Core
             {
                 byte[] atip = imageFormat.ReadDiskTag(MediaTagType.CD_ATIP);
 
+                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
+                if(dataLen + 4 != atip.Length)
+                {
+                    byte[] tmp = new byte[atip.Length + 4];
+                    Array.Copy(atip, 0, tmp, 4, atip.Length);
+                    tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
+                    tmp[1] = (byte)((atip.Length & 0xFF0000) >> 16);
+                    tmp[2] = (byte)((atip.Length & 0xFF00) >> 8);
+                    tmp[3] = (byte)(atip.Length  & 0xFF);
+                    atip = tmp;
+                }
+
                 DicConsole.WriteLine("CompactDisc Absolute Time In Pregroove (ATIP) contained in image:");
                 DicConsole.Write("{0}", ATIP.Prettify(atip));
                 DicConsole.WriteLine();
@@ -236,6 +268,18 @@ namespace DiscImageChef.Core
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_TEXT))
             {
                 byte[] cdtext = imageFormat.ReadDiskTag(MediaTagType.CD_TEXT);
+
+                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
+                if(dataLen + 4 != cdtext.Length)
+                {
+                    byte[] tmp = new byte[cdtext.Length + 4];
+                    Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
+                    tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
+                    tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
+                    tmp[2] = (byte)((cdtext.Length & 0xFF00)     >> 8);
+                    tmp[3] = (byte)(cdtext.Length  & 0xFF);
+                    cdtext = tmp;
+                }
 
                 DicConsole.WriteLine("CompactDisc Lead-in's CD-Text contained in image:");
                 DicConsole.Write("{0}", CDTextOnLeadIn.Prettify(cdtext));
