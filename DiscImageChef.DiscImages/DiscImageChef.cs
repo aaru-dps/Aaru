@@ -1791,9 +1791,12 @@ namespace DiscImageChef.DiscImages
                         verifyCrc = crcVerify.Final();
 
                         if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
+                        {
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                                      "Expected block CRC {0:X16} but got {1:X16}",
-                                                      blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
+                                                      "Expected block CRC {0:X16} but got {1:X16}", blockHeader.cmpCrc64,
+                                                      BitConverter.ToUInt64(verifyCrc, 0));
+                            return false;
+                        }
 
                         break;
                     case BlockType.DeDuplicationTable:
@@ -1829,7 +1832,7 @@ namespace DiscImageChef.DiscImages
                         if(BitConverter.ToUInt64(verifyCrc, 0) != ddtHeader.cmpCrc64)
                         {
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                                      "Expected block CRC {0:X16} but got {1:X16}", ddtHeader.cmpCrc64,
+                                                      "Expected DDT CRC {0:X16} but got {1:X16}", ddtHeader.cmpCrc64,
                                                       BitConverter.ToUInt64(verifyCrc, 0));
                             return false;
                         }
