@@ -1395,7 +1395,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
                 MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.DTSCD, MediaType.JaguarCD,
                 MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD,
-                MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD
+                MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD,
+                MediaType.PCFX
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
