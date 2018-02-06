@@ -2,7 +2,4 @@ language: csharp
 solution: DiscImageChef.sln
 mono:
  - latest
- - alpha
- - beta
- - weekly
  - 5.2.0
