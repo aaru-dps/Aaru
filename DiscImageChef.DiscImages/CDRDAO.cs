@@ -1110,7 +1110,17 @@ namespace DiscImageChef.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            if(dicTrack.Tracktype != CDRDAO_TRACK_TYPE_AUDIO) return buffer;
+
+            byte[] swapped = new byte[buffer.Length];
+            for(long i = 0; i < buffer.Length; i += 2)
+            {
+                swapped[i] = buffer[i + 1];
+                swapped[i             + 1] = buffer[i];
+            }
+
+            return swapped;
         }
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
@@ -1385,7 +1395,17 @@ namespace DiscImageChef.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            if(dicTrack.Tracktype != CDRDAO_TRACK_TYPE_AUDIO) return buffer;
+
+            byte[] swapped = new byte[buffer.Length];
+            for(long i = 0; i < buffer.Length; i += 2)
+            {
+                swapped[i] = buffer[i + 1];
+                swapped[i             + 1] = buffer[i];
+            }
+
+            return swapped;
         }
 
         public List<Track> GetSessionTracks(Session session)
@@ -1615,6 +1635,19 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
+            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            if(track.TrackType == TrackType.Audio)
+            {
+                byte[] swapped = new byte[data.Length];
+                for(long i = 0; i < swapped.Length; i += 2)
+                {
+                    swapped[i] = data[i + 1];
+                    swapped[i + 1] = data[i];
+                }
+
+                data = swapped;
+            }
+            
             trackStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
                              SeekOrigin.Begin);
             trackStream.Write(data, 0, data.Length);
@@ -1664,6 +1697,19 @@ namespace DiscImageChef.DiscImages
             {
                 ErrorMessage = "Incorrect data size";
                 return false;
+            }
+
+            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            if(track.TrackType == TrackType.Audio)
+            {
+                byte[] swapped = new byte[data.Length];
+                for(long i = 0; i < swapped.Length; i += 2)
+                {
+                    swapped[i] = data[i + 1];
+                    swapped[i           + 1] = data[i];
+                }
+
+                data = swapped;
             }
 
             switch(track.TrackSubchannelType)
@@ -1726,6 +1772,19 @@ namespace DiscImageChef.DiscImages
                 ErrorMessage = "Incorrect data size";
                 return false;
             }
+            
+            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            if(track.TrackType == TrackType.Audio)
+            {
+                byte[] swapped = new byte[data.Length];
+                for(long i = 0; i < swapped.Length; i += 2)
+                {
+                    swapped[i] = data[i + 1];
+                    swapped[i           + 1] = data[i];
+                }
+
+                data = swapped;
+            }
 
             uint subchannelSize = (uint)(track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0);
 
@@ -1772,6 +1831,19 @@ namespace DiscImageChef.DiscImages
             {
                 ErrorMessage = "Incorrect data size";
                 return false;
+            }
+            
+            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            if(track.TrackType == TrackType.Audio)
+            {
+                byte[] swapped = new byte[data.Length];
+                for(long i = 0; i < swapped.Length; i += 2)
+                {
+                    swapped[i] = data[i + 1];
+                    swapped[i           + 1] = data[i];
+                }
+
+                data = swapped;
             }
 
             uint subchannelSize = (uint)(track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0);
