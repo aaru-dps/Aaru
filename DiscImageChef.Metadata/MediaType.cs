@@ -708,6 +708,10 @@ namespace DiscImageChef.Metadata
                     discType    = "Compact Disc";
                     discSubType = "PC-FX";
                     break;
+                case CommonTypes.MediaType.NeoGeoCD:
+                    discType    = "Compact Disc";
+                    discSubType = "NEO-GEO CD";
+                    break;
                 case CommonTypes.MediaType.ZIP100:
                     discType = "Iomega ZIP";
                     discSubType = "Iomega ZIP100";
