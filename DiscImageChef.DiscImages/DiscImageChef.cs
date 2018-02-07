@@ -1793,8 +1793,8 @@ namespace DiscImageChef.DiscImages
                         if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
                         {
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                                      "Expected block CRC {0:X16} but got {1:X16}", blockHeader.cmpCrc64,
-                                                      BitConverter.ToUInt64(verifyCrc, 0));
+                                                      "Expected block CRC {0:X16} but got {1:X16}",
+                                                      blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
                             return false;
                         }
 
@@ -2755,6 +2755,12 @@ namespace DiscImageChef.DiscImages
                 if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc && trk.TrackType == TrackType.Audio && !nocompress
                 ) currentBlockHeader.compression = CompressionType.Flac;
 
+                // JaguarCD stores data in audio tracks. FLAC is too inefficient, use LZMA there.
+                if(imageInfo.MediaType == MediaType.JaguarCD              && trk.TrackType == TrackType.Audio &&
+                   !nocompress                                            &&
+                   currentBlockHeader.compression == CompressionType.Flac &&
+                   trk.TrackSession               > 1) currentBlockHeader.compression = CompressionType.Lzma;
+
                 blockStream        = new MemoryStream();
                 decompressedStream = new MemoryStream();
                 if(currentBlockHeader.compression == CompressionType.Flac)
@@ -3629,7 +3635,7 @@ namespace DiscImageChef.DiscImages
                             Crc64Context cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
                             cmpCrc.Update(blockStream.ToArray());
-                            blockCrc = cmpCrc.Final();
+                            blockCrc                = cmpCrc.Final();
                             prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             prefixBlock.compression = CompressionType.Lzma;
@@ -3691,7 +3697,7 @@ namespace DiscImageChef.DiscImages
                             Crc64Context cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
                             cmpCrc.Update(blockStream.ToArray());
-                            blockCrc = cmpCrc.Final();
+                            blockCrc                = cmpCrc.Final();
                             prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             prefixBlock.compression = CompressionType.Lzma;
@@ -3759,7 +3765,7 @@ namespace DiscImageChef.DiscImages
                             Crc64Context cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
                             cmpCrc.Update(blockStream.ToArray());
-                            blockCrc = cmpCrc.Final();
+                            blockCrc                    = cmpCrc.Final();
                             subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subchannelBlock.compression = CompressionType.Lzma;
@@ -3934,7 +3940,7 @@ namespace DiscImageChef.DiscImages
                             Crc64Context cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
                             cmpCrc.Update(blockStream.ToArray());
-                            blockCrc = cmpCrc.Final();
+                            blockCrc                    = cmpCrc.Final();
                             subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subchannelBlock.compression = CompressionType.Lzma;
