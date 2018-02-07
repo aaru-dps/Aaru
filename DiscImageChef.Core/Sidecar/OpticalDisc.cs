@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Decoders.CD;
@@ -349,6 +350,11 @@ namespace DiscImageChef.Core
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
 
             InitProgress();
+            
+            UpdateStatus("Checking filesystems");
+            List<Partition> partitions = Partitions.GetAll(image);
+            Partitions.AddSchemesToStats(partitions);
+
             foreach(Track trk in tracks)
             {
                 TrackType xmlTrk = new TrackType();
@@ -549,35 +555,32 @@ namespace DiscImageChef.Core
                 // For fast debugging, skip checksum
                 //skipChecksum:
 
-                UpdateStatus("Checking filesystems on track {0} from sector {1} to {2}", xmlTrk.Sequence.TrackNumber,
-                             xmlTrk.StartSector,                                         xmlTrk.EndSector);
-
-                List<Partition> partitions = Partitions.GetAll(image);
-                Partitions.AddSchemesToStats(partitions);
-
+                List<Partition> trkPartitions =
+                    partitions.Where(p => p.Start >= trk.TrackStartSector && p.End <= trk.TrackEndSector).ToList();
+                
                 xmlTrk.FileSystemInformation = new PartitionType[1];
-                if(partitions.Count > 0)
+                if(trkPartitions.Count > 0)
                 {
-                    xmlTrk.FileSystemInformation = new PartitionType[partitions.Count];
-                    for(int i = 0; i < partitions.Count; i++)
+                    xmlTrk.FileSystemInformation = new PartitionType[trkPartitions.Count];
+                    for(int i = 0; i < trkPartitions.Count; i++)
                     {
                         xmlTrk.FileSystemInformation[i] = new PartitionType
                         {
-                            Description = partitions[i].Description,
-                            EndSector   = (int)partitions[i].End,
-                            Name        = partitions[i].Name,
-                            Sequence    = (int)partitions[i].Sequence,
-                            StartSector = (int)partitions[i].Start,
-                            Type        = partitions[i].Type
+                            Description = trkPartitions[i].Description,
+                            EndSector   = (int)trkPartitions[i].End,
+                            Name        = trkPartitions[i].Name,
+                            Sequence    = (int)trkPartitions[i].Sequence,
+                            StartSector = (int)trkPartitions[i].Start,
+                            Type        = trkPartitions[i].Type
                         };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
                         foreach(IFilesystem plugin in plugins.PluginsList.Values)
                             try
                             {
-                                if(!plugin.Identify(image, partitions[i])) continue;
+                                if(!plugin.Identify(image, trkPartitions[i])) continue;
 
-                                plugin.GetInformation(image, partitions[i], out _, encoding);
+                                plugin.GetInformation(image, trkPartitions[i], out _, encoding);
                                 lstFs.Add(plugin.XmlFsType);
                                 Statistics.AddFilesystem(plugin.XmlFsType.Type);
 
