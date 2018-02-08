@@ -617,7 +617,8 @@ enum <ushort> DataType
     CdSectorSubchannel               = 71,
     AppleProfileTag                  = 72,
     AppleSonyTag                     = 73,
-    PriamDataTowerTag                = 74
+    PriamDataTowerTag                = 74,
+    CompactDiscMediaCatalogueNumber  = 75
 };
 
 enum <uint> BlockType

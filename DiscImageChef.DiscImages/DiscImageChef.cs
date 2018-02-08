@@ -4637,6 +4637,7 @@ namespace DiscImageChef.DiscImages
                 case DataType.UsbDescriptors:                   return MediaTagType.USB_Descriptors;
                 case DataType.XboxDmi:                          return MediaTagType.Xbox_DMI;
                 case DataType.XboxPfi:                          return MediaTagType.Xbox_PFI;
+                case DataType.CompactDiscMediaCatalogueNumber:  return MediaTagType.CD_MCN;
                 default:                                        throw new ArgumentOutOfRangeException();
             }
         }
@@ -4713,6 +4714,7 @@ namespace DiscImageChef.DiscImages
                 case MediaTagType.USB_Descriptors:               return DataType.UsbDescriptors;
                 case MediaTagType.Xbox_DMI:                      return DataType.XboxDmi;
                 case MediaTagType.Xbox_PFI:                      return DataType.XboxPfi;
+                case MediaTagType.CD_MCN:                        return DataType.CompactDiscMediaCatalogueNumber;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tag), tag, null);
             }
@@ -4881,7 +4883,9 @@ namespace DiscImageChef.DiscImages
             /// <summary>Apple Sony (12 byte) tag</summary>
             AppleSonyTag = 73,
             /// <summary>Priam Data Tower (24 byte) tag</summary>
-            PriamDataTowerTag = 74
+            PriamDataTowerTag = 74,
+            /// <summary>CompactDisc Media Catalogue Number (as in Lead-in), 13 bytes, ASCII</summary>
+            CompactDiscMediaCatalogueNumber = 75
         }
 
         /// <summary>List of known blocks types</summary>
