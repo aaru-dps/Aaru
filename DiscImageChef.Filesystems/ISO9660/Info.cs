@@ -254,7 +254,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 }
             }
 
-            byte[]                 rootDir         = imagePlugin.ReadSectors(rootLocation + partition.Start, rootSize);
+            byte[]                 rootDir         = new byte[0];
             int                    rootOff         = 0;
             bool                   xaExtensions    = false;
             bool                   apple           = false;
@@ -266,6 +266,9 @@ namespace DiscImageChef.Filesystems.ISO9660
             List<ContinuationArea> contareas       = new List<ContinuationArea>();
             List<byte[]>           refareas        = new List<byte[]>();
             StringBuilder          suspInformation = new StringBuilder();
+
+            if(rootLocation + rootSize < imagePlugin.Info.Sectors)
+                rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
