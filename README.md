@@ -181,7 +181,8 @@ Supported file systems for identification and information only
 * Microsoft/IBM High Performance File System (HPFS)
 * Minix v2 file system
 * Minix v3 file system
-* NEC PC-Engine file system
+* NEC PC-Engine executable
+* NEC PC-FX executable
 * NILFS2
 * OS-9 Random Block File
 * Professional File System
