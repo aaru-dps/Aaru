@@ -156,13 +156,13 @@ namespace DiscImageChef.Checksums
                channel[0x008] != 0xFF || channel[0x009] != 0xFF || channel[0x00A] != 0xFF ||
                channel[0x00B] != 0x00) return null;
 
-            DicConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
-                                      channel[0x00D], channel[0x00E]);
+            //DicConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
+            //                          channel[0x00D], channel[0x00E]);
 
             if(channel[0x00F] == 0x00) // mode (1 byte)
             {
-                DicConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
-                                          channel[0x00C], channel[0x00D], channel[0x00E]);
+                //DicConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //                          channel[0x00C], channel[0x00D], channel[0x00E]);
                 for(int i = 0x010; i < 0x930; i++)
                     if(channel[i] != 0x00)
                     {
@@ -177,8 +177,8 @@ namespace DiscImageChef.Checksums
 
             if(channel[0x00F] == 0x01) // mode (1 byte)
             {
-                DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
-                                          channel[0x00C], channel[0x00D], channel[0x00E]);
+                //DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //                          channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 if(channel[0x814] != 0x00 || // reserved (8 bytes)
                    channel[0x815] != 0x00 || channel[0x816] != 0x00 || channel[0x817] != 0x00 ||
