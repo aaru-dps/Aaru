@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
@@ -49,6 +50,8 @@ namespace DiscImageChef.DiscImages
 {
     public class ZZZRawImage : IWritableImage
     {
+        readonly byte[] CdSync =
+            {0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00};
         readonly (MediaTagType tag, string name)[] readWriteSidecars =
         {
             (MediaTagType.ATA_IDENTIFY, ".identify.bin"), (MediaTagType.BD_DI, ".di.bin"),
@@ -80,8 +83,11 @@ namespace DiscImageChef.DiscImages
         string                           basepath;
         bool                             differentTrackZeroSize;
         string                           extension;
+        bool                             hasSubchannel;
         ImageInfo                        imageInfo;
         Dictionary<MediaTagType, byte[]> mediaTags;
+        bool                             mode2;
+        bool                             rawCompactDisc;
         IFilter                          rawImageFilter;
         FileStream                       writingStream;
 
@@ -128,17 +134,20 @@ namespace DiscImageChef.DiscImages
 
                 Track trk = new Track
                 {
-                    TrackBytesPerSector    = (int)imageInfo.SectorSize,
+                    TrackBytesPerSector    = rawCompactDisc ? (mode2 ? 2336 : 2048) : (int)imageInfo.SectorSize,
                     TrackEndSector         = imageInfo.Sectors - 1,
                     TrackFile              = rawImageFilter.GetFilename(),
                     TrackFileOffset        = 0,
                     TrackFileType          = "BINARY",
-                    TrackRawBytesPerSector = (int)imageInfo.SectorSize,
+                    TrackRawBytesPerSector = rawCompactDisc ? 2352 : (int)imageInfo.SectorSize,
                     TrackSequence          = 1,
                     TrackStartSector       = 0,
-                    TrackSubchannelType    = TrackSubchannelType.None,
-                    TrackType              = TrackType.Data,
-                    TrackSession           = 1
+                    TrackSubchannelType    =
+                        hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
+                    TrackType = rawCompactDisc
+                                                 ? (mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1)
+                                                 : TrackType.Data,
+                    TrackSession = 1
                 };
                 List<Track> lst = new List<Track> {trk};
                 return lst;
@@ -179,7 +188,7 @@ namespace DiscImageChef.DiscImages
                     Length   = imageInfo.Sectors,
                     Offset   = 0,
                     Sequence = 0,
-                    Type     = "MODE1/2048",
+                    Type     = rawCompactDisc ? (mode2 ? "MODE2/2352" : "MODE1/2352") : "MODE1/2048",
                     Size     = imageInfo.Sectors * imageInfo.SectorSize
                 };
                 parts.Add(part);
@@ -194,7 +203,18 @@ namespace DiscImageChef.DiscImages
 
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            if(extension == ".hdf" && imageInfo.ImageSize % 256 == 0) return true;
+            if(extension == ".hdf" && imageFilter.GetDataForkLength() % 256 == 0) return true;
+
+            // Only for single track data CDs
+            if(imageFilter.GetDataForkLength() % 2352 == 0 && imageFilter.GetDataForkLength() <= 846720000 ||
+               imageFilter.GetDataForkLength() % 2448 == 0 && imageFilter.GetDataForkLength() <= 881280000)
+            {
+                byte[] sync     = new byte[12];
+                Stream stream   = imageFilter.GetDataForkStream();
+                stream.Position = 0;
+                stream.Read(sync, 0, 12);
+                return CdSync.SequenceEqual(sync);
+            }
 
             // Check known disk sizes with sectors smaller than 512
             switch(imageFilter.GetDataForkLength())
@@ -408,6 +428,24 @@ namespace DiscImageChef.DiscImages
             }
 
             imageInfo.MediaType = CalculateDiskType();
+
+            if(imageInfo.ImageSize % 2352 == 0 || imageInfo.ImageSize % 2448 == 0)
+            {
+                byte[] sync   = new byte[12];
+                byte[] header = new byte[4];
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(sync,   0, 12);
+                stream.Read(header, 0, 4);
+                if(CdSync.SequenceEqual(sync))
+                {
+                    rawCompactDisc       = true;
+                    hasSubchannel        = imageInfo.ImageSize % 2448 == 0;
+                    imageInfo.Sectors    = imageInfo.ImageSize / (ulong)(hasSubchannel ? 2448 : 2352);
+                    imageInfo.MediaType  = MediaType.CD;
+                    mode2                = header[3] == 0x02;
+                    imageInfo.SectorSize = (uint)(mode2 ? 2336 : 2048);
+                }
+            }
 
             // Sharp X68000 SASI hard disks
             if(extension                     == ".hdf")
@@ -1087,6 +1125,41 @@ namespace DiscImageChef.DiscImages
 
             imageInfo.ReadableMediaTags = new List<MediaTagType>(mediaTags.Keys);
 
+            if(!rawCompactDisc) return true;
+
+            if(hasSubchannel)
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+
+            if(mode2)
+            {
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+            }
+            else
+            {
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+            }
+
             return true;
         }
 
@@ -1105,47 +1178,134 @@ namespace DiscImageChef.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
-
             Stream stream = rawImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            uint sectorOffset = 0;
+            uint sectorSize   = imageInfo.SectorSize;
+            uint sectorSkip   = 0;
 
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            if(rawCompactDisc)
+            {
+                sectorOffset = 16;
+                sectorSize   = (uint)(mode2 ? 2336 : 2048);
+                sectorSkip   = (uint)(mode2 ? 0 : 288);
+            }
+
+            if(hasSubchannel) sectorSkip += 96;
+
+            byte[] buffer = new byte[sectorSize * length];
+
+            BinaryReader br = new BinaryReader(stream);
+            br.BaseStream
+              .Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                    SeekOrigin.Begin);
+            if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
+            else
+                for(int i = 0; i < length; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                }
 
             return buffer;
         }
 
         public bool? VerifySector(ulong sectorAddress)
         {
-            return null;
+            if(!rawCompactDisc) return null;
+
+            byte[] buffer = ReadSectorLong(sectorAddress);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
-            return null;
+            if(!rawCompactDisc) return null;
+
+            byte[] buffer = ReadSectorLong(sectorAddress, track);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out                                   List<ulong> unknownLbas)
         {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+            if(!rawCompactDisc)
+            {
+                failingLbas = new List<ulong>();
+                unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
+                for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
-            return null;
+                return null;
+            }
+
+            byte[] buffer = ReadSectorsLong(sectorAddress, length);
+            int    bps    = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            failingLbas   = new List<ulong>();
+            unknownLbas   = new List<ulong>();
+
+            for(int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+
+                switch(sectorStatus)
+                {
+                    case null:
+                        unknownLbas.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        failingLbas.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if(unknownLbas.Count > 0) return null;
+
+            return failingLbas.Count <= 0;
         }
 
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out                                               List<ulong> unknownLbas)
         {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+            if(!rawCompactDisc)
+            {
+                failingLbas = new List<ulong>();
+                unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
+                for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
-            return null;
+                return null;
+            }
+
+            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
+            int    bps    = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            failingLbas   = new List<ulong>();
+            unknownLbas   = new List<ulong>();
+
+            for(int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+
+                switch(sectorStatus)
+                {
+                    case null:
+                        unknownLbas.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        failingLbas.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if(unknownLbas.Count > 0) return null;
+
+            return failingLbas.Count <= 0;
         }
 
         public bool? VerifyMediaImage()
@@ -1237,7 +1397,7 @@ namespace DiscImageChef.DiscImages
 
             if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            return ReadSector(sectorAddress);
+            return ReadSectorsLong(sectorAddress, 1);
         }
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
@@ -1247,27 +1407,159 @@ namespace DiscImageChef.DiscImages
 
             if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            return ReadSectors(sectorAddress, length);
+            return ReadSectorsLong(sectorAddress, length);
         }
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !rawCompactDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+            return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !rawCompactDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+            if(sectorAddress > imageInfo.Sectors - 1)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+            if(sectorAddress + length > imageInfo.Sectors)
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+
+            uint sectorOffset;
+            uint sectorSize;
+            uint sectorSkip = 0;
+
+            if(!hasSubchannel && tag == SectorTagType.CdSectorSubchannel)
+                throw new ArgumentException("No tags in image for requested track", nameof(tag));
+
+            // Requires reading sector
+            if(mode2)
+            {
+                if(tag != SectorTagType.CdSectorSubchannel)
+                    throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
+
+                sectorOffset = 2352;
+                sectorSize   = 96;
+            }
+            else
+                switch(tag)
+                {
+                    case SectorTagType.CdSectorSync:
+                    {
+                        sectorOffset = 0;
+                        sectorSize   = 12;
+                        sectorSkip   = 2340;
+                        break;
+                    }
+                    case SectorTagType.CdSectorHeader:
+                    {
+                        sectorOffset = 12;
+                        sectorSize   = 4;
+                        sectorSkip   = 2336;
+                        break;
+                    }
+                    case SectorTagType.CdSectorSubchannel:
+                    {
+                        sectorOffset = 2352;
+                        sectorSize   = 96;
+                        break;
+                    }
+                    case SectorTagType.CdSectorSubHeader:
+                        throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                    case SectorTagType.CdSectorEcc:
+                    {
+                        sectorOffset = 2076;
+                        sectorSize   = 276;
+                        sectorSkip   = 0;
+                        break;
+                    }
+                    case SectorTagType.CdSectorEccP:
+                    {
+                        sectorOffset = 2076;
+                        sectorSize   = 172;
+                        sectorSkip   = 104;
+                        break;
+                    }
+                    case SectorTagType.CdSectorEccQ:
+                    {
+                        sectorOffset = 2248;
+                        sectorSize   = 104;
+                        sectorSkip   = 0;
+                        break;
+                    }
+                    case SectorTagType.CdSectorEdc:
+                    {
+                        sectorOffset = 2064;
+                        sectorSize   = 4;
+                        sectorSkip   = 284;
+                        break;
+                    }
+                    default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                }
+
+            byte[] buffer = new byte[sectorSize * length];
+
+            Stream       stream = rawImageFilter.GetDataForkStream();
+            BinaryReader br     = new BinaryReader(stream);
+            br.BaseStream
+              .Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                    SeekOrigin.Begin);
+            if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
+            else
+                for(int i = 0; i < length; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                }
+
+            return buffer;
         }
 
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ReadSectorsLong(sectorAddress, 1);
         }
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !rawCompactDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+            if(sectorAddress > imageInfo.Sectors - 1)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+            if(sectorAddress + length > imageInfo.Sectors)
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+
+            const uint SECTOR_SIZE = 2352;
+            uint       sectorSkip  = 0;
+
+            if(hasSubchannel) sectorSkip += 96;
+
+            byte[] buffer = new byte[SECTOR_SIZE * length];
+
+            Stream       stream = rawImageFilter.GetDataForkStream();
+            BinaryReader br     = new BinaryReader(stream);
+
+            br.BaseStream.Seek((long)(sectorAddress * (SECTOR_SIZE + sectorSkip)), SeekOrigin.Begin);
+
+            if(sectorSkip == 0) buffer = br.ReadBytes((int)(SECTOR_SIZE * length));
+            else
+                for(int i = 0; i < length; i++)
+                {
+                    byte[] sector = br.ReadBytes((int)SECTOR_SIZE);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+
+                    Array.Copy(sector, 0, buffer, i * SECTOR_SIZE, SECTOR_SIZE);
+                }
+
+            return buffer;
         }
 
         public byte[] ReadDiskTag(MediaTagType tag)
@@ -1279,12 +1571,22 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !rawCompactDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+            if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+
+            return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !rawCompactDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+            if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+
+            return ReadSectorsTag(sectorAddress, length, tag);
         }
 
         public IEnumerable<MediaTagType> SupportedMediaTags =>

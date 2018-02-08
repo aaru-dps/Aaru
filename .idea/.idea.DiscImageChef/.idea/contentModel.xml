@@ -586,6 +586,7 @@
         <e p="ODS.cs" t="Include" />
         <e p="Opera.cs" t="Include" />
         <e p="PCEngine.cs" t="Include" />
+        <e p="PCFX.cs" t="Include" />
         <e p="PFS.cs" t="Include" />
         <e p="ProDOS.cs" t="Include" />
         <e p="Properties" t="Include">
