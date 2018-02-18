@@ -231,6 +231,9 @@ void GetVolumeInfo(const char *path, size_t *clusterSize)
         case 0x0100:
             printf("ProDOS\n");
             break;
+        case 0x4953:
+            printf("FAT\n");
+            break;
         default:
             printf("unknown id 0x%04X\n", fsId);
             break;
