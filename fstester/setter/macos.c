@@ -9,7 +9,7 @@ Component      : fstester.setter
 
 --[ Description ] -----------------------------------------------------------
 
-Contains Mac OS code
+Contains Mac OS code.
 
 --[ License ] ---------------------------------------------------------------
      This program is free software: you can redistribute it and/or modify
@@ -959,8 +959,8 @@ void ResourceFork(const char *path)
     rc = HCreate(refNum, dirId, "\pICON", ostUnknown, ftGenericDocumentPC);
     if(!rc)
     {
-        rRc = SaveResourceToNewFile(refNum, dirId, "\pICON", rtIcons, -16455, "\pIcon resource", IcnsResource,
-                                    sizeof(IcnsResource));
+        rRc = SaveResourceToNewFile(refNum, dirId, "\pICON", rtIcons, -16455, "\pIcon resource",
+                                    (unsigned char *)IcnsResource, sizeof(IcnsResource));
         rc  = HOpenDF(refNum, dirId, "\pICON", 0, &refFile);
         if(!rc)
         {
@@ -980,8 +980,8 @@ void ResourceFork(const char *path)
     rc = HCreate(refNum, dirId, "\pPICT", ostUnknown, ftGenericDocumentPC);
     if(!rc)
     {
-        rRc = SaveResourceToNewFile(refNum, dirId, "\pPICT", ftPICTFile, 29876, "\pPicture resource", PictResource,
-                                    sizeof(PictResource));
+        rRc = SaveResourceToNewFile(refNum, dirId, "\pPICT", ftPICTFile, 29876, "\pPicture resource",
+                                    (unsigned char *)PictResource, sizeof(PictResource));
         rc  = HOpenDF(refNum, dirId, "\pPICT", 0, &refFile);
         if(!rc)
         {
@@ -1000,8 +1000,8 @@ void ResourceFork(const char *path)
     rc = HCreate(refNum, dirId, "\pVERSION", ostUnknown, ftGenericDocumentPC);
     if(!rc)
     {
-        rRc = SaveResourceToNewFile(refNum, dirId, "\pVERSION", rtVersion, 1, "\pVersion resource", VersResource,
-                                    sizeof(VersResource));
+        rRc = SaveResourceToNewFile(refNum, dirId, "\pVERSION", rtVersion, 1, "\pVersion resource",
+                                    (unsigned char *)VersResource, sizeof(VersResource));
         rc  = HOpenDF(refNum, dirId, "\pVERSION", 0, &refFile);
         if(!rc)
         {
@@ -1020,12 +1020,12 @@ void ResourceFork(const char *path)
     rc = HCreate(refNum, dirId, "\pALL", ostUnknown, ftGenericDocumentPC);
     if(!rc)
     {
-        rRc  = SaveResourceToNewFile(refNum, dirId, "\pALL", rtIcons, -16455, "\pIcon resource", IcnsResource,
-                                     sizeof(IcnsResource));
-        rRc2 = SaveResourceToNewFile(refNum, dirId, "\pALL", ftPICTFile, 29876, "\pPicture resource", PictResource,
-                                     sizeof(PictResource));
-        rRc3 = SaveResourceToNewFile(refNum, dirId, "\pALL", rtVersion, 1, "\pVersion resource", VersResource,
-                                     sizeof(VersResource));
+        rRc  = SaveResourceToNewFile(refNum, dirId, "\pALL", rtIcons, -16455, "\pIcon resource",
+                                     (unsigned char *)IcnsResource, sizeof(IcnsResource));
+        rRc2 = SaveResourceToNewFile(refNum, dirId, "\pALL", ftPICTFile, 29876, "\pPicture resource",
+                                     (unsigned char *)PictResource, sizeof(PictResource));
+        rRc3 = SaveResourceToNewFile(refNum, dirId, "\pALL", rtVersion, 1, "\pVersion resource",
+                                     (unsigned char *)VersResource, sizeof(VersResource));
         rc   = HOpenDF(refNum, dirId, "\pALL", 0, &refFile);
         if(!rc)
         {
