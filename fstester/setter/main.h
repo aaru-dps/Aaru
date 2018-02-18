@@ -55,7 +55,7 @@ Copyright (C) 2011-2018 Natalia Portillo
 #define OS_ARCH "parisc"
 #elif defined(__ppc64__) || defined (__PPC64__) || defined (_ARCH_PPC64)
 #define OS_ARCH "ppc64"
-#elif defined(__powerpc__) || defined (_M_PPC) || defined (__PPC__) || defined (_ARCH_PPC)
+#elif defined(__powerpc__) || defined (_M_PPC) || defined (__PPC__) || defined (_ARCH_PPC) || defined (__POWERPC__)
 #define OS_ARCH "ppc"
 #elif defined(_POWER)
 #define OS_ARCH "power"

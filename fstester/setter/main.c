@@ -34,9 +34,18 @@ Copyright (C) 2011-2018 Natalia Portillo
 #include "main.h"
 #include "defs.h"
 
+#if defined(macintosh)
+#include <console.h>
+#include <SIOUX.h>
+#endif
+
 int main(int argc, char **argv)
 {
     size_t clusterSize = 0;
+
+#if defined(macintosh)
+    argc = ccommand(&argv);
+#endif
 
     printf("The Disc Image Chef Filesystem Tester (Setter) %s\n", DIC_FSTESTER_VERSION);
     printf("%s\n", DIC_COPYRIGHT);
