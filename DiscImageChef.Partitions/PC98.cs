@@ -56,6 +56,9 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(1);
             if(bootSector[bootSector.Length - 2] != 0x55 || bootSector[bootSector.Length - 1] != 0xAA) return false;
 
+            // Prevent false positives with some FAT BPBs
+            if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == "FAT") return false;
+            
             IntPtr tablePtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(sector, 0, tablePtr, 256);
             PC98Table table = (PC98Table)Marshal.PtrToStructure(tablePtr, typeof(PC98Table));
