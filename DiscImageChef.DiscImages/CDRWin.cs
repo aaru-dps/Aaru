@@ -661,7 +661,7 @@ namespace DiscImageChef.DiscImages
                                         cuetracks[currenttrack.Sequence - 2].Sectors *
                                         cuetracks[currenttrack.Sequence - 2].Bps;
                                     DicConsole.DebugWriteLine("CDRWin plugin",
-                                                              "Sets currentfile.offset to {0} at line 553",
+                                                              "Sets currentfile.offset to {0}",
                                                               currentfile.Offset);
                                     DicConsole.DebugWriteLine("CDRWin plugin",
                                                               "cuetracks[currenttrack.sequence-2].sectors = {0}",
@@ -674,7 +674,7 @@ namespace DiscImageChef.DiscImages
                             if((index                == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0)) &&
                                currenttrack.Sequence == 1)
                             {
-                                DicConsole.DebugWriteLine("CDRWin plugin", "Sets currentfile.offset to {0} at line 559",
+                                DicConsole.DebugWriteLine("CDRWin plugin", "Sets currentfile.offset to {0}",
                                                           offset * currenttrack.Bps);
                                 currentfile.Offset = offset      * currenttrack.Bps;
                             }
