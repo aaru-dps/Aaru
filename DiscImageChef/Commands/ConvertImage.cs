@@ -243,7 +243,8 @@ namespace DiscImageChef.Commands
 
                 if(options.Force)
                 {
-                    useLong = false;
+                    if(sectorTag != SectorTagType.CdTrackFlags && sectorTag != SectorTagType.CdTrackIsrc &&
+                       sectorTag != SectorTagType.CdSectorSubchannel) useLong = false;
                     continue;
                 }
 
@@ -311,6 +312,9 @@ namespace DiscImageChef.Commands
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
+                if(options.Force && !outputFormat.SupportedMediaTags.Contains(mediaTag))
+                    continue;
+                
                 DicConsole.WriteLine("Converting media tag {0}", mediaTag);
                 byte[] tag = inputFormat.ReadDiskTag(mediaTag);
                 if(outputFormat.WriteMediaTag(tag, mediaTag)) continue;
@@ -411,6 +415,9 @@ namespace DiscImageChef.Commands
                             // This tags are inline in long sector
                             continue;
                     }
+
+                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag))
+                        continue;
 
                     doneSectors = 0;
                     while(doneSectors < inputFormat.Info.Sectors)
@@ -546,6 +553,9 @@ namespace DiscImageChef.Commands
                             // This tags are inline in long sector
                             continue;
                     }
+                    
+                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag))
+                        continue;
 
                     foreach(Track track in tracks)
                     {
