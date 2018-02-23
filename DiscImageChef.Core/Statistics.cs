@@ -186,7 +186,7 @@ namespace DiscImageChef.Core
                 fs.Close();
             }
 
-            if(Settings.Settings.Current.Stats.ShareStats) SubmitStats();
+            if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats) SubmitStats();
         }
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace DiscImageChef.Core
                         System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
                         #else
                     DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
-                                                #endif
+                                                                        #endif
 
                         FileStream    fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
                         XmlSerializer xs = new XmlSerializer(stats.GetType());
@@ -258,7 +258,7 @@ namespace DiscImageChef.Core
                         throw;
                         #else
                         continue;
-                                                #endif
+                                                                                                #endif
                     }
 
                 submitStatsLock = false;

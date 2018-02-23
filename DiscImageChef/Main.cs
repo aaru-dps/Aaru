@@ -49,7 +49,8 @@ namespace DiscImageChef
 
             Settings.Settings.LoadSettings();
             Statistics.LoadStats();
-            if(Settings.Settings.Current.Stats.ShareStats) Statistics.SubmitStats();
+            if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
+                Statistics.SubmitStats();
 
             Parser.Default.ParseArguments(args, typeof(AnalyzeOptions), typeof(BenchmarkOptions),
                                           typeof(ChecksumOptions), typeof(CompareOptions), typeof(ConfigureOptions),
