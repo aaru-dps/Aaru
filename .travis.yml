@@ -4,7 +4,9 @@ mono:
  - latest
  - 5.2.0
 notifications:
-  irc: "chat.freenode.net#DiscImageChef"
+  irc:
+    channels:
+      - "chat.freenode.net#DiscImageChef"
     skip_join: true
     template:
       - "Commit %{commit} by %{author} in %{branch} did %{result} after %{duration}."
