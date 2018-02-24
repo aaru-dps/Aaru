@@ -9,5 +9,5 @@ notifications:
       - "chat.freenode.net#DiscImageChef"
     skip_join: true
     template:
-      - "Commit %{commit} by %{author} in %{branch} did %{result} after %{duration}."
+      - "Commit %{commit} by %{author} in %{branch} %{result} after %{duration}."
       - "Details on %{build_url}, changes on %{compare_url}"
