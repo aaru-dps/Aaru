@@ -10,5 +10,5 @@ notifications:
     skip_join: true
     template:
       - "Commit %{commit} by %{author} in %{branch} %{result} after %{duration}."
-      - "Commit changes: {commit_subject}"
+      - "Commit changes: %{commit_subject}"
       - "Details on %{build_url}, changes on %{compare_url}"
