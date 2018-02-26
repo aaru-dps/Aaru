@@ -1904,6 +1904,7 @@ namespace DiscImageChef.DiscImages
                 case 1884160:    return MediaType.XDF_35;
                 case 2949120:    return MediaType.DOS_35_ED;
                 case 9338880:    return MediaType.NEC_35_TD;
+                case 20818944:   return MediaType.Floptical;
                 case 33554432:   return MediaType.FD32MB;
                 case 40387584:   return MediaType.PocketZip;
                 case 100663296:  return MediaType.ZIP100;

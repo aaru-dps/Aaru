@@ -68,7 +68,7 @@ namespace DiscImageChef.CommonTypes
                 (82, 2, 17, 512, MediaEncoding.MFM, false, MediaType.FDFORMAT_525_HD),
                 (82, 2, 21, 512, MediaEncoding.MFM, false, MediaType.FDFORMAT_35_HD),
                 (240, 2, 38, 512, MediaEncoding.MFM, false, MediaType.NEC_35_TD),
-                (652, 2, 0, 512, MediaEncoding.MFM, false, MediaType.Floptical),
+                (753, 2, 27, 512, MediaEncoding.MFM, false, MediaType.Floptical),
                 // Following ones are what the device itself report, not the physical geometry
                 (154, 16, 32, 512, MediaEncoding.MFM, false, MediaType.PocketZip),
                 (262, 32, 56, 512, MediaEncoding.MFM, false, MediaType.LS240),
