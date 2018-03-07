@@ -140,7 +140,8 @@ namespace DiscImageChef.Filesystems
             ), // Need to check Windows >= 2000 (Spanish)
             //("a48b0e4b696317eed829e960d1aa576562a4f185", "TracerST"), // Unknown OEM ID, apparently Tracer, unconfirmed
             ("fe477972602ba76658ff7143859045b3c4036ca5", "iomega"
-            ) // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
+            ), // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
+            ("ef79a1f33e5237827eb812dda548f0e4e916d815", "GEOS") // OEM ID: "GEOWORKS"
         };
 
         public FileSystemType XmlFsType { get; private set; }
