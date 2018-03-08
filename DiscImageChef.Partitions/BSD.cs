@@ -52,7 +52,7 @@ namespace DiscImageChef.Partitions
         readonly uint[] labelOffsets = {0, 9, 64, 128, 516};
 
         public string Name => "BSD disklabel";
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid   Id   => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -60,8 +60,8 @@ namespace DiscImageChef.Partitions
             uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.Info.SectorSize;
             if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0) run++;
 
-            DiskLabel dl = new DiskLabel();
-            bool found = false;
+            DiskLabel dl    = new DiskLabel();
+            bool      found = false;
 
             foreach(ulong location in labelLocations)
             {
@@ -90,44 +90,46 @@ namespace DiscImageChef.Partitions
 
             if(dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM) dl = SwapDiskLabel(dl);
 
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}", dl.d_type);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}",    dl.d_type);
             DicConsole.DebugWriteLine("BSD plugin", "dl.d_subtype = {0}", dl.d_subtype);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_typename = {0}", StringHandlers.CToString(dl.d_typename));
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_packname = {0}", StringHandlers.CToString(dl.d_packname));
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secsize = {0}", dl.d_secsize);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_nsectors = {0}", dl.d_nsectors);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ntracks = {0}", dl.d_ntracks);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ncylinders = {0}", dl.d_ncylinders);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secpercyl = {0}", dl.d_secpercyl);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secperunit = {0}", dl.d_secperunit);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_typename = {0}",
+                                      StringHandlers.CToString(dl.d_typename));
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_packname = {0}",
+                                      StringHandlers.CToString(dl.d_packname));
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secsize = {0}",        dl.d_secsize);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_nsectors = {0}",       dl.d_nsectors);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ntracks = {0}",        dl.d_ntracks);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ncylinders = {0}",     dl.d_ncylinders);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secpercyl = {0}",      dl.d_secpercyl);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secperunit = {0}",     dl.d_secperunit);
             DicConsole.DebugWriteLine("BSD plugin", "dl.d_sparespertrack = {0}", dl.d_sparespertrack);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sparespercyl = {0}", dl.d_sparespercyl);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_acylinders = {0}", dl.d_acylinders);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_rpm = {0}", dl.d_rpm);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_interleave = {0}", dl.d_interleave);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trackskew = {0}", dl.d_trackskew);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_cylskeew = {0}", dl.d_cylskeew);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_headswitch = {0}", dl.d_headswitch);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trkseek = {0}", dl.d_trkseek);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_flags = {0}", dl.d_flags);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[0] = {0}", dl.d_drivedata[0]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[1] = {0}", dl.d_drivedata[1]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[2] = {0}", dl.d_drivedata[2]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[3] = {0}", dl.d_drivedata[3]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[4] = {0}", dl.d_drivedata[4]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[0] = {0}", dl.d_spare[0]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[1] = {0}", dl.d_spare[1]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[2] = {0}", dl.d_spare[2]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[3] = {0}", dl.d_spare[3]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[4] = {0}", dl.d_spare[4]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_magic2 = 0x{0:X8}", dl.d_magic2);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_checksum = 0x{0:X8}", dl.d_checksum);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_npartitions = {0}", dl.d_npartitions);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_bbsize = {0}", dl.d_bbsize);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}", dl.d_sbsize);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sparespercyl = {0}",   dl.d_sparespercyl);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_acylinders = {0}",     dl.d_acylinders);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_rpm = {0}",            dl.d_rpm);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_interleave = {0}",     dl.d_interleave);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trackskew = {0}",      dl.d_trackskew);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_cylskeew = {0}",       dl.d_cylskeew);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_headswitch = {0}",     dl.d_headswitch);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trkseek = {0}",        dl.d_trkseek);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_flags = {0}",          dl.d_flags);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[0] = {0}",   dl.d_drivedata[0]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[1] = {0}",   dl.d_drivedata[1]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[2] = {0}",   dl.d_drivedata[2]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[3] = {0}",   dl.d_drivedata[3]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[4] = {0}",   dl.d_drivedata[4]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[0] = {0}",       dl.d_spare[0]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[1] = {0}",       dl.d_spare[1]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[2] = {0}",       dl.d_spare[2]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[3] = {0}",       dl.d_spare[3]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[4] = {0}",       dl.d_spare[4]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_magic2 = 0x{0:X8}",    dl.d_magic2);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_checksum = 0x{0:X8}",  dl.d_checksum);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_npartitions = {0}",    dl.d_npartitions);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_bbsize = {0}",         dl.d_bbsize);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}",         dl.d_sbsize);
 
-            ulong counter = 0;
-            bool addSectorOffset = false;
+            ulong counter         = 0;
+            bool  addSectorOffset = false;
 
             for(int i = 0; i < dl.d_npartitions && i < 22; i++)
             {
@@ -138,23 +140,25 @@ namespace DiscImageChef.Partitions
                                           dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
                 Partition part = new Partition
                 {
-                    Start = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.Info.SectorSize,
-                    Offset = dl.d_partitions[i].p_offset * dl.d_secsize,
-                    Length = dl.d_partitions[i].p_size * dl.d_secsize / imagePlugin.Info.SectorSize,
-                    Size = dl.d_partitions[i].p_size * dl.d_secsize,
-                    Type = fsTypeToString(dl.d_partitions[i].p_fstype),
+                    Start    = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.Info.SectorSize,
+                    Offset   = dl.d_partitions[i].p_offset                * dl.d_secsize,
+                    Length   = dl.d_partitions[i].p_size * dl.d_secsize   / imagePlugin.Info.SectorSize,
+                    Size     = dl.d_partitions[i].p_size                  * dl.d_secsize,
+                    Type     = fsTypeToString(dl.d_partitions[i].p_fstype),
                     Sequence = counter,
-                    Scheme = Name
+                    Scheme   = Name
                 };
                 if(dl.d_partitions[i].p_fstype == fsType.Unused) continue;
+
                 // Crude and dirty way to know if the disklabel is relative to its parent partition...
                 if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset) addSectorOffset = true;
 
                 if(addSectorOffset)
                 {
-                    part.Start += sectorOffset;
+                    part.Start  += sectorOffset;
                     part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
                 }
+
                 DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
                 DicConsole.DebugWriteLine("BSD plugin", "Adding it...");
                 partitions.Add(part);
@@ -168,54 +172,55 @@ namespace DiscImageChef.Partitions
         {
             switch(typ)
             {
-                case fsType.Unused: return "Unused entry";
-                case fsType.Swap: return "Swap partition";
-                case fsType.V6: return "UNIX 6th Edition";
-                case fsType.V7: return "UNIX 7th Edition";
+                case fsType.Unused:  return "Unused entry";
+                case fsType.Swap:    return "Swap partition";
+                case fsType.V6:      return "UNIX 6th Edition";
+                case fsType.V7:      return "UNIX 7th Edition";
                 case fsType.SystemV: return "UNIX System V";
-                case fsType.V7_1K: return "UNIX 7th Edition with 1K blocks";
-                case fsType.V8: return "UNIX 8th Edition with 4K blocks";
-                case fsType.BSDFFS: return "4.2BSD Fast File System";
-                case fsType.BSDLFS: return "4.4LFS";
-                case fsType.HPFS: return "HPFS";
+                case fsType.V7_1K:   return "UNIX 7th Edition with 1K blocks";
+                case fsType.V8:      return "UNIX 8th Edition with 4K blocks";
+                case fsType.BSDFFS:  return "4.2BSD Fast File System";
+                case fsType.BSDLFS:  return "4.4LFS";
+                case fsType.HPFS:    return "HPFS";
                 case fsType.ISO9660: return "ISO9660";
                 case fsType.Boot:
                 case fsType.SysVBoot: return "Boot";
-                case fsType.AFFS: return "Amiga FFS";
-                case fsType.HFS: return "Apple HFS";
-                case fsType.ADVfs: return "Digital Advanced File System";
-                case fsType.LSMpublic: return "Digital LSM Public Region";
+                case fsType.AFFS:       return "Amiga FFS";
+                case fsType.HFS:        return "Apple HFS";
+                case fsType.ADVfs:      return "Digital Advanced File System";
+                case fsType.LSMpublic:  return "Digital LSM Public Region";
                 case fsType.LSMprivate: return "Digital LSM Private Region";
-                case fsType.LSMsimple: return "Digital LSM Simple Disk";
-                case fsType.CCD: return "Concatenated disk";
-                case fsType.JFS2: return "IBM JFS2";
-                case fsType.HAMMER: return "Hammer";
-                case fsType.HAMMER2: return "Hammer2";
-                case fsType.UDF: return "UDF";
-                case fsType.EFS: return "EFS";
-                case fsType.ZFS: return "ZFS";
-                case fsType.NANDFS: return "FreeBSD nandfs";
-                case fsType.MSDOS: return "FAT";
-                case fsType.Other: return "Other or unknown";
-                default: return "Unknown";
+                case fsType.LSMsimple:  return "Digital LSM Simple Disk";
+                case fsType.CCD:        return "Concatenated disk";
+                case fsType.JFS2:       return "IBM JFS2";
+                case fsType.HAMMER:     return "Hammer";
+                case fsType.HAMMER2:    return "Hammer2";
+                case fsType.UDF:        return "UDF";
+                case fsType.EFS:        return "EFS";
+                case fsType.ZFS:        return "ZFS";
+                case fsType.NANDFS:     return "FreeBSD nandfs";
+                case fsType.MSDOS:      return "FAT";
+                case fsType.Other:      return "Other or unknown";
+                default:                return "Unknown";
             }
         }
 
         static DiskLabel GetDiskLabel(byte[] disklabel)
         {
-            GCHandle handle = GCHandle.Alloc(disklabel, GCHandleType.Pinned);
-            DiskLabel dl = (DiskLabel)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskLabel));
+            GCHandle  handle = GCHandle.Alloc(disklabel, GCHandleType.Pinned);
+            DiskLabel dl     = (DiskLabel)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskLabel));
             handle.Free();
             return dl;
         }
 
         static DiskLabel SwapDiskLabel(DiskLabel disklabel)
         {
-            DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
+            DiskLabel dl =
+                (DiskLabel)BigEndianMarshal.SwapStructureMembersEndian(disklabel);
             for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
-            for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
+            for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i]         = Swapping.Swap(dl.d_spare[i]);
             for(int i = 0; i < dl.d_partitions.Length; i++)
-                dl.d_partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
+                dl.d_partitions[i] = (BSDPartition)BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
 
             return dl;
         }
@@ -382,9 +387,11 @@ namespace DiscImageChef.Partitions
             /// <summary>Disk subtype</summary>
             public ushort d_subtype;
             /// <summary>Type name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] d_typename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] d_typename;
             /// <summary>Pack identifier</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] d_packname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] d_packname;
             /// <summary>Bytes per sector</summary>
             public uint d_secsize;
             /// <summary>Sectors per track</summary>
@@ -420,9 +427,11 @@ namespace DiscImageChef.Partitions
             /// </summary>
             public dFlags d_flags;
             /// <summary>Drive-specific information</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] d_drivedata;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public uint[] d_drivedata;
             /// <summary>Reserved</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] d_spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public uint[] d_spare;
             /// <summary><see cref="DISKMAGIC" /> again</summary>
             public uint d_magic2;
             /// <summary>XOR of data</summary>
@@ -434,7 +443,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Maximum size of superblock in bytes</summary>
             public uint d_sbsize;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)] public BSDPartition[] d_partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
+            public BSDPartition[] d_partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

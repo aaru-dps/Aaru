@@ -65,13 +65,13 @@ namespace DiscImageChef.Partitions
         /// <summary>Size of padding in SunOS disk label</summary>
         const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + NDKMAP * 8 + 14 * 2);
         /// <summary>Size of padding in Solaris disk label with 8 partitions</summary>
-        const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136 + // sizeof(dk_vtoc8)
-                                                  NDKMAP * 8 + 14 * 2 + 2 * 2);
-        const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456 + // sizeof(dk_vtoc16)
+        const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136    + // sizeof(dk_vtoc8)
+                                                  NDKMAP * 8    + 14 * 2 + 2 * 2);
+        const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456   + // sizeof(dk_vtoc16)
                                                    4 * 4 + 12 * 2 + 2 * 2);
 
         public string Name => "Sun Disklabel";
-        public Guid Id => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
+        public Guid   Id   => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -85,42 +85,44 @@ namespace DiscImageChef.Partitions
 
             byte[] sunSector = imagePlugin.ReadSector(sectorOffset);
 
-            GCHandle handle = GCHandle.Alloc(sunSector, GCHandleType.Pinned);
-            dk_label dkl = (dk_label)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label));
-            dk_label8 dkl8 = (dk_label8)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label8));
-            dk_label16 dkl16 = (dk_label16)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label16));
+            GCHandle   handle = GCHandle.Alloc(sunSector, GCHandleType.Pinned);
+            dk_label   dkl    = (dk_label)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),   typeof(dk_label));
+            dk_label8  dkl8   = (dk_label8)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),  typeof(dk_label8));
+            dk_label16 dkl16  = (dk_label16)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label16));
             handle.Free();
 
-            DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_magic = 0x{0:X4}", dkl.dkl_magic);
-            DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}", dkl8.dkl_vtoc.v_sanity);
+            DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_magic = 0x{0:X4}",           dkl.dkl_magic);
+            DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}",  dkl8.dkl_vtoc.v_sanity);
             DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
 
             if(dkl.dkl_magic == DKL_MAGIC || dkl.dkl_magic == DKL_CIGAM)
-                if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl16 = true;
+                if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
+                    useDkl16                                                                                = true;
                 else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE || dkl8.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl8 = true;
-                else useDkl = true;
+                else useDkl                                                                                 = true;
 
             if(!useDkl && !useDkl8 && !useDkl16)
             {
                 sunSector = imagePlugin.ReadSector(sectorOffset + 1);
 
                 handle = GCHandle.Alloc(sunSector, GCHandleType.Pinned);
-                dkl = (dk_label)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label));
-                dkl8 = (dk_label8)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label8));
-                dkl16 = (dk_label16)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label16));
+                dkl    = (dk_label)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),   typeof(dk_label));
+                dkl8   = (dk_label8)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),  typeof(dk_label8));
+                dkl16  = (dk_label16)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label16));
                 handle.Free();
 
                 if(dkl.dkl_magic == DKL_MAGIC || dkl.dkl_magic == DKL_CIGAM)
-                    if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl16 = true;
+                    if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
+                        useDkl16                                                                                = true;
                     else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE || dkl8.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl8 = true;
-                    else useDkl = true;
+                    else useDkl                                                                                 = true;
             }
 
             if(!useDkl && !useDkl8 && !useDkl16) return false;
 
-            if(useDkl16 && dkl16.dkl_magic == DKL_CIGAM) dkl16 = SwapDiskLabel(dkl16);
-            else if(useDkl8 && dkl8.dkl_magic == DKL_CIGAM) dkl8 = SwapDiskLabel(dkl8);
-            else if(useDkl && dkl.dkl_magic == DKL_CIGAM) dkl = SwapDiskLabel(dkl);
+            if(useDkl16     && dkl16.dkl_magic == DKL_CIGAM) dkl16 = SwapDiskLabel(dkl16);
+            else if(useDkl8 && dkl8.dkl_magic  == DKL_CIGAM) dkl8  = SwapDiskLabel(dkl8);
+            else if(useDkl  && dkl.dkl_magic   == DKL_CIGAM) dkl   = SwapDiskLabel(dkl);
 
             if(useDkl)
             {
@@ -128,18 +130,18 @@ namespace DiscImageChef.Partitions
 
                 DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_asciilabel = \"{0}\"",
                                           StringHandlers.CToString(dkl.dkl_asciilabel));
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_rpm = {0}", dkl.dkl_rpm);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_pcyl = {0}", dkl.dkl_pcyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_apc = {0}", dkl.dkl_apc);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap1 = {0}", dkl.dkl_gap1);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap2 = {0}", dkl.dkl_gap2);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_rpm = {0}",    dkl.dkl_rpm);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_pcyl = {0}",   dkl.dkl_pcyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_apc = {0}",    dkl.dkl_apc);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap1 = {0}",   dkl.dkl_gap1);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap2 = {0}",   dkl.dkl_gap2);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_intrlv = {0}", dkl.dkl_intrlv);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ncyl = {0}", dkl.dkl_ncyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_acyl = {0}", dkl.dkl_acyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nhead = {0}", dkl.dkl_nhead);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nsect = {0}", dkl.dkl_nsect);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_bhead = {0}", dkl.dkl_bhead);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ppart = {0}", dkl.dkl_ppart);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ncyl = {0}",   dkl.dkl_ncyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_acyl = {0}",   dkl.dkl_acyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nhead = {0}",  dkl.dkl_nhead);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nsect = {0}",  dkl.dkl_nsect);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_bhead = {0}",  dkl.dkl_bhead);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ppart = {0}",  dkl.dkl_ppart);
                 for(int i = 0; i < NDKMAP; i++)
                 {
                     DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_map[{0}].dkl_cylno = {1}", i,
@@ -157,15 +159,14 @@ namespace DiscImageChef.Partitions
                     {
                         Partition part = new Partition
                         {
-                            Size = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                            Length =
-                                (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                            Size     = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
+                            Length   = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                             Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
                                     DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
-                            Type = "SunOS partition",
+                            Type   = "SunOS partition",
                             Scheme = Name
                         };
                         if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
@@ -181,22 +182,22 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_version = {0}", dkl8.dkl_vtoc.v_version);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_volume = \"{0}\"",
                                           StringHandlers.CToString(dkl8.dkl_vtoc.v_volume));
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_nparts = {0}", dkl8.dkl_vtoc.v_nparts);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_nparts = {0}",      dkl8.dkl_vtoc.v_nparts);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}", dkl8.dkl_vtoc.v_sanity);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_write_reinstruct = {0}", dkl8.dkl_write_reinstruct);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_read_reinstruct = {0}", dkl8.dkl_read_reinstruct);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_rpm = {0}", dkl8.dkl_rpm);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_pcyl = {0}", dkl8.dkl_pcyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_apc = {0}", dkl8.dkl_apc);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs1 = {0}", dkl8.dkl_obs1);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs2 = {0}", dkl8.dkl_obs2);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_intrlv = {0}", dkl8.dkl_intrlv);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_ncyl = {0}", dkl8.dkl_ncyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_acyl = {0}", dkl8.dkl_acyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nhead = {0}", dkl8.dkl_nhead);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nsect = {0}", dkl8.dkl_nsect);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs3 = {0}", dkl8.dkl_obs3);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs4 = {0}", dkl8.dkl_obs4);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_write_reinstruct = {0}",   dkl8.dkl_write_reinstruct);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_read_reinstruct = {0}",    dkl8.dkl_read_reinstruct);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_rpm = {0}",                dkl8.dkl_rpm);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_pcyl = {0}",               dkl8.dkl_pcyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_apc = {0}",                dkl8.dkl_apc);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs1 = {0}",               dkl8.dkl_obs1);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs2 = {0}",               dkl8.dkl_obs2);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_intrlv = {0}",             dkl8.dkl_intrlv);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_ncyl = {0}",               dkl8.dkl_ncyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_acyl = {0}",               dkl8.dkl_acyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nhead = {0}",              dkl8.dkl_nhead);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nsect = {0}",              dkl8.dkl_nsect);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs3 = {0}",               dkl8.dkl_obs3);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs4 = {0}",               dkl8.dkl_obs4);
                 for(int i = 0; i < NDKMAP; i++)
                 {
                     DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_map[{0}].dkl_cylno = {1}", i,
@@ -213,18 +214,18 @@ namespace DiscImageChef.Partitions
 
                 DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_magic = 0x{0:X4}", dkl8.dkl_magic);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_cksum = 0x{0:X4}", dkl8.dkl_cksum);
-                DicConsole.DebugWriteLine("Sun plugin", "sectorsPerCylinder = {0}", sectorsPerCylinder);
+                DicConsole.DebugWriteLine("Sun plugin", "sectorsPerCylinder = {0}",  sectorsPerCylinder);
 
                 if(dkl8.dkl_vtoc.v_nparts > NDKMAP) return false;
 
                 for(int i = 0; i < dkl8.dkl_vtoc.v_nparts; i++)
-                    if(dkl8.dkl_map[i].dkl_nblk > 0 && dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
+                    if(dkl8.dkl_map[i].dkl_nblk      > 0 && dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
                        dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
                     {
                         Partition part = new Partition
                         {
                             Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
-                            Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
+                            Size        = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
                             Length =
                                 (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
@@ -232,7 +233,7 @@ namespace DiscImageChef.Partitions
                                 ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                             Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
                                     DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
-                            Type = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
+                            Type   = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name
                         };
                         if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
@@ -246,25 +247,25 @@ namespace DiscImageChef.Partitions
             else
             {
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_version = {0}", dkl16.dkl_vtoc.v_version);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_version = {0}",     dkl16.dkl_vtoc.v_version);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_volume = \"{0}\"",
                                           StringHandlers.CToString(dkl16.dkl_vtoc.v_volume));
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sectorsz = {0}", dkl16.dkl_vtoc.v_sectorsz);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_nparts = {0}", dkl16.dkl_vtoc.v_nparts);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_nparts = {0}",   dkl16.dkl_vtoc.v_nparts);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_asciilabel = \"{0}\"",
                                           StringHandlers.CToString(dkl16.dkl_vtoc.v_asciilabel));
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_pcyl = {0}", dkl16.dkl_pcyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_ncyl = {0}", dkl16.dkl_ncyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_acyl = {0}", dkl16.dkl_acyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_bcyl = {0}", dkl16.dkl_bcyl);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nhead = {0}", dkl16.dkl_nhead);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nsect = {0}", dkl16.dkl_nsect);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_intrlv = {0}", dkl16.dkl_intrlv);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_skew = {0}", dkl16.dkl_skew);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_apc = {0}", dkl16.dkl_apc);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_rpm = {0}", dkl16.dkl_rpm);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_pcyl = {0}",             dkl16.dkl_pcyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_ncyl = {0}",             dkl16.dkl_ncyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_acyl = {0}",             dkl16.dkl_acyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_bcyl = {0}",             dkl16.dkl_bcyl);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nhead = {0}",            dkl16.dkl_nhead);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nsect = {0}",            dkl16.dkl_nsect);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_intrlv = {0}",           dkl16.dkl_intrlv);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_skew = {0}",             dkl16.dkl_skew);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_apc = {0}",              dkl16.dkl_apc);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_rpm = {0}",              dkl16.dkl_rpm);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_write_reinstruct = {0}", dkl16.dkl_write_reinstruct);
-                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_read_reinstruct = {0}", dkl16.dkl_read_reinstruct);
+                DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_read_reinstruct = {0}",  dkl16.dkl_read_reinstruct);
                 for(int i = 0; i < NDKMAP16; i++)
                 {
                     DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_part[{0}].p_start = {1}", i,
@@ -286,12 +287,12 @@ namespace DiscImageChef.Partitions
 
                 for(int i = 0; i < dkl16.dkl_vtoc.v_nparts; i++)
                     if(dkl16.dkl_vtoc.v_part[i].p_size > 0 && dkl16.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
-                       dkl16.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
+                       dkl16.dkl_vtoc.v_part[i].p_tag  != SunTag.SunWholeDisk)
                     {
                         Partition part = new Partition
                         {
                             Description = SunFlagsToString(dkl16.dkl_vtoc.v_part[i].p_flag),
-                            Size = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
+                            Size        = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
                             Length =
                                 (ulong)(dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz /
                                         imagePlugin.Info.SectorSize),
@@ -300,7 +301,7 @@ namespace DiscImageChef.Partitions
                                 ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
                             Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
                                     dkl16.dkl_vtoc.v_sectorsz / imagePlugin.Info.SectorSize,
-                            Type = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
+                            Type   = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name
                         };
                         if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
@@ -317,9 +318,9 @@ namespace DiscImageChef.Partitions
         static dk_label SwapDiskLabel(dk_label label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label");
-            dk_label lebal = BigEndianMarshal.SwapStructureMembersEndian(label);
+            dk_label lebal = (dk_label)BigEndianMarshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_map.Length; i++)
-                lebal.dkl_map[i] = BigEndianMarshal.SwapStructureMembersEndian(label.dkl_map[i]);
+                lebal.dkl_map[i] = (dk_map)BigEndianMarshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
             return lebal;
         }
@@ -327,17 +328,17 @@ namespace DiscImageChef.Partitions
         static dk_label8 SwapDiskLabel(dk_label8 label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label8");
-            dk_label8 lebal = BigEndianMarshal.SwapStructureMembersEndian(label);
-            lebal.dkl_vtoc = BigEndianMarshal.SwapStructureMembersEndian(label.dkl_vtoc);
+            dk_label8 lebal = (dk_label8)BigEndianMarshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_map.Length; i++)
-                lebal.dkl_map[i] = BigEndianMarshal.SwapStructureMembersEndian(label.dkl_map[i]);
+                lebal.dkl_map[i] = (dk_map)BigEndianMarshal.SwapStructureMembersEndian(label.dkl_map[i]);
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
                 lebal.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
             for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
             {
                 lebal.dkl_vtoc.v_part[i].p_flag = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
-                lebal.dkl_vtoc.v_part[i].p_tag = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
+                lebal.dkl_vtoc.v_part[i].p_tag  = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
             }
+
             for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
                 lebal.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
             for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
@@ -349,17 +350,17 @@ namespace DiscImageChef.Partitions
         static dk_label16 SwapDiskLabel(dk_label16 label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label16");
-            dk_label16 lebal = BigEndianMarshal.SwapStructureMembersEndian(label);
-            lebal.dkl_vtoc = BigEndianMarshal.SwapStructureMembersEndian(label.dkl_vtoc);
+            dk_label16 lebal = (dk_label16)BigEndianMarshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
                 lebal.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
             for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
             {
-                lebal.dkl_vtoc.v_part[i].p_flag = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
-                lebal.dkl_vtoc.v_part[i].p_tag = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
-                lebal.dkl_vtoc.v_part[i].p_size = Swapping.Swap(label.dkl_vtoc.v_part[i].p_size);
+                lebal.dkl_vtoc.v_part[i].p_flag  = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
+                lebal.dkl_vtoc.v_part[i].p_tag   = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
+                lebal.dkl_vtoc.v_part[i].p_size  = Swapping.Swap(label.dkl_vtoc.v_part[i].p_size);
                 lebal.dkl_vtoc.v_part[i].p_start = Swapping.Swap(label.dkl_vtoc.v_part[i].p_start);
             }
+
             for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
                 lebal.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
             for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
@@ -380,66 +381,66 @@ namespace DiscImageChef.Partitions
         {
             switch(id)
             {
-                case SunTag.Linux: return "Linux";
-                case SunTag.LinuxRaid: return "Linux RAID";
-                case SunTag.LinuxSwap: return "Linux swap";
-                case SunTag.LVM: return "LVM";
-                case SunTag.SunBoot: return "Sun boot";
-                case SunTag.SunEmpty: return "Empty";
-                case SunTag.SunHome: return "Sun /home";
-                case SunTag.SunRoot: return "Sun /";
-                case SunTag.SunStand: return "Sun /stand";
-                case SunTag.SunSwap: return "Sun swap";
-                case SunTag.SunUsr: return "Sun /usr";
-                case SunTag.SunVar: return "Sun /var";
-                case SunTag.SunWholeDisk: return "Whole disk";
-                case SunTag.SunAlt: return "Replacement sectors";
-                case SunTag.SunCache: return "Sun cachefs";
-                case SunTag.SunReserved: return "Reserved for SMI";
-                case SunTag.VxVmPublic: return "Veritas public";
-                case SunTag.VxVmPrivate: return "Veritas private";
-                case SunTag.NetBSD: return "NetBSD";
-                case SunTag.FreeBSD_Swap: return "FreeBSD swap";
-                case SunTag.FreeBSD_UFS: return "FreeBSD";
-                case SunTag.FreeBSD_Vinum: return "Vinum";
-                case SunTag.FreeBSD_ZFS: return "FreeBSD ZFS";
+                case SunTag.Linux:          return "Linux";
+                case SunTag.LinuxRaid:      return "Linux RAID";
+                case SunTag.LinuxSwap:      return "Linux swap";
+                case SunTag.LVM:            return "LVM";
+                case SunTag.SunBoot:        return "Sun boot";
+                case SunTag.SunEmpty:       return "Empty";
+                case SunTag.SunHome:        return "Sun /home";
+                case SunTag.SunRoot:        return "Sun /";
+                case SunTag.SunStand:       return "Sun /stand";
+                case SunTag.SunSwap:        return "Sun swap";
+                case SunTag.SunUsr:         return "Sun /usr";
+                case SunTag.SunVar:         return "Sun /var";
+                case SunTag.SunWholeDisk:   return "Whole disk";
+                case SunTag.SunAlt:         return "Replacement sectors";
+                case SunTag.SunCache:       return "Sun cachefs";
+                case SunTag.SunReserved:    return "Reserved for SMI";
+                case SunTag.VxVmPublic:     return "Veritas public";
+                case SunTag.VxVmPrivate:    return "Veritas private";
+                case SunTag.NetBSD:         return "NetBSD";
+                case SunTag.FreeBSD_Swap:   return "FreeBSD swap";
+                case SunTag.FreeBSD_UFS:    return "FreeBSD";
+                case SunTag.FreeBSD_Vinum:  return "Vinum";
+                case SunTag.FreeBSD_ZFS:    return "FreeBSD ZFS";
                 case SunTag.FreeBSD_NANDFS: return "FreeBSD nandfs";
-                default: return "Unknown";
+                default:                    return "Unknown";
             }
         }
 
         enum SunTag : ushort
         {
-            SunEmpty = 0x0000,
-            SunBoot = 0x0001,
-            SunRoot = 0x0002,
-            SunSwap = 0x0003,
-            SunUsr = 0x0004,
-            SunWholeDisk = 0x0005,
-            SunStand = 0x0006,
-            SunVar = 0x0007,
-            SunHome = 0x0008,
-            SunAlt = 0x0009,
-            SunCache = 0x000A,
-            SunReserved = 0x000B,
-            VxVmPublic = 0x000E,
-            VxVmPrivate = 0x000F,
-            LinuxSwap = 0x0082,
-            Linux = 0x0083,
-            LVM = 0x008E,
-            LinuxRaid = 0x00FD,
-            NetBSD = 0x00FF,
-            FreeBSD_Swap = 0x0901,
-            FreeBSD_UFS = 0x0902,
-            FreeBSD_Vinum = 0x0903,
-            FreeBSD_ZFS = 0x0904,
+            SunEmpty       = 0x0000,
+            SunBoot        = 0x0001,
+            SunRoot        = 0x0002,
+            SunSwap        = 0x0003,
+            SunUsr         = 0x0004,
+            SunWholeDisk   = 0x0005,
+            SunStand       = 0x0006,
+            SunVar         = 0x0007,
+            SunHome        = 0x0008,
+            SunAlt         = 0x0009,
+            SunCache       = 0x000A,
+            SunReserved    = 0x000B,
+            VxVmPublic     = 0x000E,
+            VxVmPrivate    = 0x000F,
+            LinuxSwap      = 0x0082,
+            Linux          = 0x0083,
+            LVM            = 0x008E,
+            LinuxRaid      = 0x00FD,
+            NetBSD         = 0x00FF,
+            FreeBSD_Swap   = 0x0901,
+            FreeBSD_UFS    = 0x0902,
+            FreeBSD_Vinum  = 0x0903,
+            FreeBSD_ZFS    = 0x0904,
             FreeBSD_NANDFS = 0x0905
         }
 
         [Flags]
         enum SunFlags : ushort
         {
-            NoMount = 0x0001,
+            NoMount  = 0x0001,
             ReadOnly = 0x0010
         }
 
@@ -458,9 +459,11 @@ namespace DiscImageChef.Partitions
         struct dk_label
         {
             /// <summary>Informative string</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)] public byte[] dkl_asciilabel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)]
+            public byte[] dkl_asciilabel;
             /// <summary>Padding</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD)] public byte[] dkl_pad;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD)]
+            public byte[] dkl_pad;
             /// <summary>rotations per minute</summary>
             public ushort dkl_rpm;
             /// <summary># physical cylinders</summary>
@@ -486,7 +489,8 @@ namespace DiscImageChef.Partitions
             /// <summary>physical partition #</summary>
             public ushort dkl_ppart;
             /// <summary>Logical partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)] public dk_map[] dkl_map;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
+            public dk_map[] dkl_map;
             /// <summary>identifies this label format</summary>
             public ushort dkl_magic;
             /// <summary>xor checksum of sector</summary>
@@ -523,53 +527,65 @@ namespace DiscImageChef.Partitions
             /// <summary> layout version</summary>
             public uint v_version;
             /// <summary> volume name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_VVOL)] public byte[] v_volume;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_VVOL)]
+            public byte[] v_volume;
             /// <summary> number of partitions </summary>
             public ushort v_nparts;
             /// <summary> partition hdrs, sec 2</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)] public dk_map2[] v_part;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
+            public dk_map2[] v_part;
             /// <summary>Alignment</summary>
             public ushort padding;
             /// <summary> info needed by mboot</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] v_bootinfo;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public uint[] v_bootinfo;
             /// <summary> to verify vtoc sanity</summary>
             public uint v_sanity;
             /// <summary> free space</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public uint[] v_reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public uint[] v_reserved;
             /// <summary> partition timestamp</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)] public int[] v_timestamp;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
+            public int[] v_timestamp;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct dk_vtoc16
         {
             /// <summary>info needed by mboot</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] v_bootinfo;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public uint[] v_bootinfo;
             /// <summary>to verify vtoc sanity</summary>
             public uint v_sanity;
             /// <summary>layout version</summary>
             public uint v_version;
             /// <summary>volume name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_VVOL)] public byte[] v_volume;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_VVOL)]
+            public byte[] v_volume;
             /// <summary>sector size in bytes</summary>
             public ushort v_sectorsz;
             /// <summary>number of partitions</summary>
             public ushort v_nparts;
             /// <summary>free space</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public uint[] v_reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public uint[] v_reserved;
             /// <summary>partition headers</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP16)] public dkl_partition[] v_part;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP16)]
+            public dkl_partition[] v_part;
             /// <summary>partition timestamp</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP16)] public int[] v_timestamp;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP16)]
+            public int[] v_timestamp;
             /// <summary>for compatibility</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)] public byte[] v_asciilabel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)]
+            public byte[] v_asciilabel;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct dk_label8
         {
             /// <summary>for compatibility</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)] public byte[] dkl_asciilabel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)]
+            public byte[] dkl_asciilabel;
             /// <summary>vtoc inclusions from AT&amp;T SVr4</summary>
             public dk_vtoc8 dkl_vtoc;
             /// <summary># sectors to skip, writes</summary>
@@ -577,7 +593,8 @@ namespace DiscImageChef.Partitions
             /// <summary># sectors to skip, reads</summary>
             public ushort dkl_read_reinstruct;
             /// <summary>unused part of 512 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD8)] public byte[] dkl_pad;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD8)]
+            public byte[] dkl_pad;
             /// <summary>rotations per minute</summary>
             public ushort dkl_rpm;
             /// <summary># physical cylinders</summary>
@@ -603,7 +620,8 @@ namespace DiscImageChef.Partitions
             /// <summary>obsolete</summary>
             public ushort dkl_obs4;
             /// <summary>logical partition headers</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)] public dk_map[] dkl_map;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
+            public dk_map[] dkl_map;
             /// <summary>identifies this label format</summary>
             public ushort dkl_magic;
             /// <summary>xor checksum of sector</summary>
@@ -640,9 +658,11 @@ namespace DiscImageChef.Partitions
             /// <summary># sectors to skip, reads </summary>
             public ushort dkl_read_reinstruct;
             /// <summary>for compatible expansion</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public ushort[] dkl_extra;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public ushort[] dkl_extra;
             /// <summary>unused part of 512 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD16)] public byte[] dkl_pad;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD16)]
+            public byte[] dkl_pad;
             /// <summary>identifies this label format</summary>
             public ushort dkl_magic;
             /// <summary>xor checksum of sector</summary>

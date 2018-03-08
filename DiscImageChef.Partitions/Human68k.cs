@@ -45,14 +45,14 @@ namespace DiscImageChef.Partitions
         const uint X68K_MAGIC = 0x5836384B;
 
         public string Name => "Human 68k partitions";
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid   Id   => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
             byte[] sector;
-            ulong sectsPerUnit;
+            ulong  sectsPerUnit;
 
             DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
@@ -61,15 +61,15 @@ namespace DiscImageChef.Partitions
             switch(imagePlugin.Info.SectorSize)
             {
                 case 256:
-                    sector = imagePlugin.ReadSector(4 + sectorOffset);
+                    sector       = imagePlugin.ReadSector(4 + sectorOffset);
                     sectsPerUnit = 1;
                     break;
                 case 512:
-                    sector = imagePlugin.ReadSector(4 + sectorOffset);
+                    sector       = imagePlugin.ReadSector(4 + sectorOffset);
                     sectsPerUnit = 2;
                     break;
                 case 1024:
-                    sector = imagePlugin.ReadSector(2 + sectorOffset);
+                    sector       = imagePlugin.ReadSector(2 + sectorOffset);
                     sectsPerUnit = 1;
                     break;
                 default: return false;
@@ -82,10 +82,10 @@ namespace DiscImageChef.Partitions
             if(table.magic != X68K_MAGIC) return false;
 
             for(int i = 0; i < table.entries.Length; i++)
-                table.entries[i] = BigEndianMarshal.SwapStructureMembersEndian(table.entries[i]);
+                table.entries[i] = (X68kEntry)BigEndianMarshal.SwapStructureMembersEndian(table.entries[i]);
 
-            DicConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);
-            DicConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}", table.size2);
+            DicConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}",    table.size);
+            DicConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}",   table.size2);
             DicConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
 
             ulong counter = 0;
@@ -95,20 +95,20 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
                                           StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
-                DicConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}", entry.length);
+                DicConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}",     entry.length);
                 DicConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
                                           imagePlugin.Info.SectorSize);
 
                 Partition part = new Partition
                 {
-                    Start = (entry.stateStart & 0xFFFFFF) * sectsPerUnit,
-                    Length = entry.length * sectsPerUnit,
-                    Type = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)),
+                    Start    = (entry.stateStart & 0xFFFFFF) * sectsPerUnit,
+                    Length   = entry.length                  * sectsPerUnit,
+                    Type     = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)),
                     Sequence = counter,
-                    Scheme = Name
+                    Scheme   = Name
                 };
-                part.Offset = part.Start * (ulong)sector.Length;
-                part.Size = part.Length * (ulong)sector.Length;
+                part.Offset = part.Start  * (ulong)sector.Length;
+                part.Size   = part.Length * (ulong)sector.Length;
                 if(entry.length <= 0) continue;
 
                 partitions.Add(part);
@@ -125,13 +125,15 @@ namespace DiscImageChef.Partitions
             public uint size;
             public uint size2;
             public uint unknown;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public X68kEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public X68kEntry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct X68kEntry
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] name;
             public uint stateStart;
             public uint length;
         }

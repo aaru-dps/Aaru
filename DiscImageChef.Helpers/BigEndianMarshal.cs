@@ -49,9 +49,9 @@ namespace DiscImageChef
         public static T ByteArrayToStructureBigEndian<T>(byte[] bytes) where T : struct
         {
             GCHandle ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-            T str = (T)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
+            T        str = (T)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
             ptr.Free();
-            return SwapStructureMembersEndian(str);
+            return (T)SwapStructureMembersEndian(str);
         }
 
         /// <summary>
@@ -60,67 +60,82 @@ namespace DiscImageChef
         /// </summary>
         /// <returns>The structure with its members endian swapped.</returns>
         /// <param name="str">The structure.</param>
-        /// <typeparam name="T">Structure type.</typeparam>
-        public static T SwapStructureMembersEndian<T>(T str) where T : struct
+        public static object SwapStructureMembersEndian(object str)
         {
-            Type t = str.GetType();
+            Type        t         = str.GetType();
             FieldInfo[] fieldInfo = t.GetFields();
             foreach(FieldInfo fi in fieldInfo)
                 if(fi.FieldType == typeof(short))
                 {
-                    short int16 = (short)fi.GetValue(str);
+                    short  int16   = (short)fi.GetValue(str);
                     byte[] int16_b = BitConverter.GetBytes(int16);
                     byte[] int16_r = int16_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToInt16(int16_r, 0));
+                    fi.SetValue(str, BitConverter.ToInt16(int16_r, 0));
                 }
                 else if(fi.FieldType == typeof(int))
                 {
-                    int int32 = (int)fi.GetValue(str);
+                    int    int32   = (int)fi.GetValue(str);
                     byte[] int32_b = BitConverter.GetBytes(int32);
                     byte[] int32_r = int32_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToInt32(int32_r, 0));
+                    fi.SetValue(str, BitConverter.ToInt32(int32_r, 0));
                 }
                 else if(fi.FieldType == typeof(long))
                 {
-                    long int64 = (long)fi.GetValue(str);
+                    long   int64   = (long)fi.GetValue(str);
                     byte[] int64_b = BitConverter.GetBytes(int64);
                     byte[] int64_r = int64_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToInt64(int64_r, 0));
+                    fi.SetValue(str, BitConverter.ToInt64(int64_r, 0));
                 }
                 else if(fi.FieldType == typeof(ushort))
                 {
-                    ushort uint16 = (ushort)fi.GetValue(str);
+                    ushort uint16   = (ushort)fi.GetValue(str);
                     byte[] uint16_b = BitConverter.GetBytes(uint16);
                     byte[] uint16_r = uint16_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToUInt16(uint16_r, 0));
+                    fi.SetValue(str, BitConverter.ToUInt16(uint16_r, 0));
                 }
                 else if(fi.FieldType == typeof(uint))
                 {
-                    uint uint32 = (uint)fi.GetValue(str);
+                    uint   uint32   = (uint)fi.GetValue(str);
                     byte[] uint32_b = BitConverter.GetBytes(uint32);
                     byte[] uint32_r = uint32_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToUInt32(uint32_r, 0));
+                    fi.SetValue(str, BitConverter.ToUInt32(uint32_r, 0));
                 }
                 else if(fi.FieldType == typeof(ulong))
                 {
-                    ulong uint64 = (ulong)fi.GetValue(str);
+                    ulong  uint64   = (ulong)fi.GetValue(str);
                     byte[] uint64_b = BitConverter.GetBytes(uint64);
                     byte[] uint64_r = uint64_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToUInt64(uint64_r, 0));
+                    fi.SetValue(str, BitConverter.ToUInt64(uint64_r, 0));
                 }
                 else if(fi.FieldType == typeof(float))
                 {
-                    float flt = (float)fi.GetValue(str);
+                    float  flt   = (float)fi.GetValue(str);
                     byte[] flt_b = BitConverter.GetBytes(flt);
                     byte[] flt_r = flt_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToSingle(flt_r, 0));
+                    fi.SetValue(str, BitConverter.ToSingle(flt_r, 0));
                 }
                 else if(fi.FieldType == typeof(double))
                 {
-                    double dbl = (double)fi.GetValue(str);
+                    double dbl   = (double)fi.GetValue(str);
                     byte[] dbl_b = BitConverter.GetBytes(dbl);
                     byte[] dbl_r = dbl_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToDouble(dbl_r, 0));
+                    fi.SetValue(str, BitConverter.ToDouble(dbl_r, 0));
+                }
+                else if(fi.FieldType == typeof(byte) || fi.FieldType == typeof(sbyte))
+                {
+                    // Do nothing, can't byteswap them!
+                }
+                else if(fi.FieldType == typeof(Guid))
+                {
+                    // TODO: Swap GUID
+                }
+                // TODO: Swap arrays and enums
+                else if(fi.FieldType.IsValueType && !fi.FieldType.IsEnum && !fi.FieldType.IsArray)
+                {
+                    object obj  = fi.GetValue(str);
+                    Type   ty   = obj.GetType();
+                    object strc = SwapStructureMembersEndian(obj);
+                    fi.SetValue(str, strc);
                 }
 
             return str;
