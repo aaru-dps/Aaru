@@ -61,8 +61,8 @@ namespace DiscImageChef.Decoders.Bluray
     {
         #region Private constants
         const string DiscTypeBDROM = "BDO";
-        const string DiscTypeBDRE = "BDW";
-        const string DiscTypeBDR = "BDR";
+        const string DiscTypeBDRE  = "BDW";
+        const string DiscTypeBDR   = "BDR";
 
         /// <summary>
         ///     Disc Information Unit Identifier "DI"
@@ -88,11 +88,11 @@ namespace DiscImageChef.Decoders.Bluray
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(DIResponse, 0);
-            decoded.Reserved1 = DIResponse[2];
-            decoded.Reserved2 = DIResponse[3];
+            decoded.Reserved1  = DIResponse[2];
+            decoded.Reserved2  = DIResponse[3];
 
-            int offset = 4;
-            List<DiscInformationUnits> units = new List<DiscInformationUnits>();
+            int                        offset = 4;
+            List<DiscInformationUnits> units  = new List<DiscInformationUnits>();
 
             while(true)
             {
@@ -105,12 +105,12 @@ namespace DiscImageChef.Decoders.Bluray
 
                 if(unit.Signature != DIUIdentifier) break;
 
-                unit.Format = DIResponse[2 + offset];
-                unit.UnitsPerBlock = DIResponse[3 + offset];
-                unit.Legacy = DIResponse[4 + offset];
-                unit.Sequence = DIResponse[5 + offset];
-                unit.Length = DIResponse[6 + offset];
-                unit.Reserved = DIResponse[7 + offset];
+                unit.Format             = DIResponse[2 + offset];
+                unit.UnitsPerBlock      = DIResponse[3 + offset];
+                unit.Legacy             = DIResponse[4 + offset];
+                unit.Sequence           = DIResponse[5 + offset];
+                unit.Length             = DIResponse[6 + offset];
+                unit.Reserved           = DIResponse[7 + offset];
                 unit.DiscTypeIdentifier = new byte[3];
                 Array.Copy(DIResponse, 8 + offset, unit.DiscTypeIdentifier, 0, 3);
                 unit.DiscSizeClassVersion = DIResponse[11 + offset];
@@ -119,20 +119,20 @@ namespace DiscImageChef.Decoders.Bluray
                     case DiscTypeBDROM:
                     {
                         unit.FormatDependentContents = new byte[52];
-                        Array.Copy(DIResponse, 12 + offset, unit.DiscTypeIdentifier, 0, 52);
+                        Array.Copy(DIResponse, 12 + offset, unit.FormatDependentContents, 0, 52);
                         break;
                     }
                     case DiscTypeBDRE:
                     case DiscTypeBDR:
                     {
                         unit.FormatDependentContents = new byte[88];
-                        Array.Copy(DIResponse, 12 + offset, unit.DiscTypeIdentifier, 0, 88);
+                        Array.Copy(DIResponse, 12 + offset, unit.FormatDependentContents, 0, 88);
                         unit.ManufacturerID = new byte[6];
                         Array.Copy(DIResponse, 100 + offset, unit.ManufacturerID, 0, 6);
                         unit.MediaTypeID = new byte[3];
                         Array.Copy(DIResponse, 106 + offset, unit.MediaTypeID, 0, 3);
-                        unit.TimeStamp = BigEndianBitConverter.ToUInt16(DIResponse, 109 + offset);
-                        unit.ProductRevisionNumber = DIResponse[111 + offset];
+                        unit.TimeStamp             = BigEndianBitConverter.ToUInt16(DIResponse, 109 + offset);
+                        unit.ProductRevisionNumber = DIResponse[111                                 + offset];
                         break;
                     }
                     default:
