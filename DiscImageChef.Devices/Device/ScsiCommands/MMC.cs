@@ -155,7 +155,34 @@ namespace DiscImageChef.Devices
             if(sense) return true;
 
             ushort strctLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
-            buffer             = new byte[strctLength];
+            
+            // WORKAROUND: Some drives return incorrect length information. As these structures are fixed length just apply known length.
+            if(mediaType == MmcDiscStructureMediaType.Bd)
+            {
+                switch(format)
+                {
+                    case MmcDiscStructureFormat.DiscInformation:
+                        buffer = new byte[4100];
+                        break;
+                    case MmcDiscStructureFormat.BdBurstCuttingArea:
+                        buffer = new byte[68];
+                        break;
+                    case MmcDiscStructureFormat.BdDds:
+                        buffer = new byte[strctLength < 100 ? 100 : strctLength];
+                        break;
+                    case MmcDiscStructureFormat.CartridgeStatus:
+                        buffer = new byte[8];
+                        break;
+                    case MmcDiscStructureFormat.BdSpareAreaInformation:
+                        buffer = new byte[16];
+                        break;
+                    default:
+                        buffer = new byte[strctLength];
+                        break;
+                }
+            }
+            else
+                buffer             = new byte[strctLength];
             cdb[8]             = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[9]             = (byte)(buffer.Length  & 0xFF);
             senseBuffer        = new byte[32];
