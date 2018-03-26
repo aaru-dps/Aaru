@@ -247,14 +247,14 @@ namespace DiscImageChef.Commands
                         DataFile.WriteTo("Media-Info command", outputPrefix, "_readcapacity.bin", "SCSI READ CAPACITY",
                                          cmdBuf);
                         blocks    = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                        blockSize = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8)  + cmdBuf[7]);
                     }
 
                     if(sense || blocks == 0xFFFFFFFF)
                     {
                         sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
-                        if(sense && blocks  == 0)
+                        if(sense && blocks == 0)
                             if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                             {
                                 DicConsole.ErrorWriteLine("Unable to get media capacity");
@@ -979,7 +979,8 @@ namespace DiscImageChef.Commands
                         {
                             DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_bd_cartstatus.bin",
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
-                            DicConsole.WriteLine("Blu-ray Cartridge Status:\n{0}", DI.Prettify(cmdBuf));
+                            DicConsole.WriteLine("Blu-ray Cartridge Status:\n{0}",
+                                                 Decoders.Bluray.Cartridge.Prettify(cmdBuf));
                         }
 
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
@@ -993,7 +994,8 @@ namespace DiscImageChef.Commands
                         {
                             DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_bd_spare.bin",
                                              "SCSI READ DISC STRUCTURE", cmdBuf);
-                            DicConsole.WriteLine("Blu-ray Spare Area Information:\n{0}", DI.Prettify(cmdBuf));
+                            DicConsole.WriteLine("Blu-ray Spare Area Information:\n{0}",
+                                                 Decoders.Bluray.Spare.Prettify(cmdBuf));
                         }
 
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
@@ -1138,11 +1140,9 @@ namespace DiscImageChef.Commands
                                 if(toc.HasValue)
                                     foreach(TOC.CDTOCTrackDataDescriptor track in toc.Value.TrackDescriptors)
                                     {
-                                        if(track.TrackNumber                   == 1 &&
-                                           ((TocControl)(track.CONTROL & 0x0D) ==
-                                            TocControl.DataTrack ||
-                                            (TocControl)(track.CONTROL & 0x0D) ==
-                                            TocControl.DataTrackIncremental))
+                                        if(track.TrackNumber == 1 &&
+                                           ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                            (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental))
                                             allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
 
                                         if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
@@ -1157,10 +1157,10 @@ namespace DiscImageChef.Commands
                                     }
 
                                 if(hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
-                                    dskType                                                  = MediaType.CDPLUS;
-                                if(!hasDataTrack && hasAudioTrack  && sessions == 1) dskType = MediaType.CDDA;
-                                if(hasDataTrack  && !hasAudioTrack && sessions == 1) dskType = MediaType.CDROM;
-                                if(hasVideoTrack && !hasDataTrack  && sessions == 1) dskType = MediaType.CDV;
+                                    dskType = MediaType.CDPLUS;
+                                if(!hasDataTrack && hasAudioTrack && sessions == 1) dskType = MediaType.CDDA;
+                                if(hasDataTrack && !hasAudioTrack && sessions == 1) dskType = MediaType.CDROM;
+                                if(hasVideoTrack && !hasDataTrack && sessions == 1) dskType = MediaType.CDV;
                             }
 
                             sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out _);
@@ -1179,7 +1179,7 @@ namespace DiscImageChef.Commands
                                     FullTOC.TrackDataDescriptor a0Track =
                                         fullToc.Value.TrackDescriptors
                                                .FirstOrDefault(t => t.POINT == 0xA0 && t.ADR == 1);
-                                    if(a0Track.POINT                        == 0xA0)
+                                    if(a0Track.POINT == 0xA0)
                                         switch(a0Track.PSEC)
                                         {
                                             case 0x10:
@@ -1318,9 +1318,8 @@ namespace DiscImageChef.Commands
                             }
 
                             totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                            sense     = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd,
-                                                              0, 0,
-                                                              MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
+                            sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                          MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
                             if(sense)
                             {
                                 DicConsole.ErrorWriteLine("Cannot get PFI.");
@@ -1329,9 +1328,9 @@ namespace DiscImageChef.Commands
 
                             DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors",
                                                       totalSize);
-                            l0Video = PFI.Decode(cmdBuf).Value.Layer0EndPSN     -
+                            l0Video = PFI.Decode(cmdBuf).Value.Layer0EndPSN -
                                       PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1;
-                            l1Video = totalSize                                 - l0Video + 1;
+                            l1Video = totalSize - l0Video + 1;
 
                             // Get game partition size
                             DicConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
@@ -1371,9 +1370,8 @@ namespace DiscImageChef.Commands
                             }
 
                             totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                            sense     = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd,
-                                                              0, 0,
-                                                              MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
+                            sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                          MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
                             if(sense)
                             {
                                 DicConsole.ErrorWriteLine("Cannot get PFI.");
@@ -1383,13 +1381,12 @@ namespace DiscImageChef.Commands
                             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors",
                                                       totalSize);
                             middleZone =
-                                totalSize                                  -
-                                (PFI.Decode(cmdBuf).Value.Layer0EndPSN     -
-                                 PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) -
-                                gameSize                                   + 1;
+                                totalSize -
+                                (PFI.Decode(cmdBuf).Value.Layer0EndPSN -
+                                 PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) - gameSize + 1;
 
-                            totalSize  = l0Video + l1Video    + middleZone * 2 + gameSize;
-                            layerBreak = l0Video + middleZone + gameSize   / 2;
+                            totalSize  = l0Video + l1Video + middleZone * 2 + gameSize;
+                            layerBreak = l0Video + middleZone               + gameSize / 2;
 
                             DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);
                             DicConsole.WriteLine("Video layer 1 size: {0} sectors", l1Video);
