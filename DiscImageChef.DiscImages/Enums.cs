@@ -266,7 +266,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>XGD unlocked DMI</summary>
         Xbox_DMI,
         /// <summary>XDG unlocked PFI</summary>
-        Xbox_PFI,
+        Xbox_PFI
     }
 
     /// <summary>
@@ -304,5 +304,53 @@ namespace DiscImageChef.DiscImages
         CopyPermitted = 0x02,
         /// <summary>Track has pre-emphasis.</summary>
         PreEmphasis = 0x01
+    }
+
+    /// <summary>Status of a requested floppy sector</summary>
+    [Flags]
+    public enum FloppySectorStatus : byte
+    {
+        /// <summary>Both address mark and data checksums are correct.</summary>
+        Correct = 0x01,
+        /// <summary>Data checksum is incorrect.</summary>
+        DataError = 0x02,
+        /// <summary>Addres mark checksum is incorrect.</summary>
+        AddressMarkError = 0x04,
+        /// <summary>There is another sector in the same track/head with same sector id.</summary>
+        Duplicated = 0x08,
+        /// <summary>Sector data section is not magnetized.</summary>
+        Demagnetized = 0x10,
+        /// <summary>Sector data section has a physically visible hole.</summary>
+        Hole = 0x20,
+        /// <summary>There is no address mark containing the requested sector id in the track/head.</summary>
+        NotFound = 0x40
+    }
+
+    public enum FloppyTypes : byte
+    {
+        /// <summary>8" floppy</summary>
+        Floppy,
+        /// <summary>5.25" floppy</summary>
+        MiniFloppy,
+        /// <summary>3.5" floppy</summary>
+        MicroFloppy,
+        /// <summary>3" floppy</summary>
+        CompactFloppy,
+        /// <summary>5.25" twiggy</summary>
+        FileWare,
+        /// <summary>2.5" quickdisk</summary>
+        QuickDisk
+    }
+
+    public enum FloppyDensities : byte
+    {
+        /// <summary>Standard coercitivity (about 300Oe as found in 8" and 5.25"-double-density disks).</summary>
+        Standard,
+        /// <summary>Double density coercitivity (about 600Oe as found in 5.25" HD and 3.5" DD disks).</summary>
+        Double,
+        /// <summary>High density coercitivity (about 700Oe as found in 3.5" HD disks).</summary>
+        High,
+        /// <summary>Extended density coercitivity (about 750Oe as found in 3.5" ED disks).</summary>
+        Extended
     }
 }

@@ -59,6 +59,8 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="HDCopy.cs" />
+    <Compile Include="IFloppyImage.cs" />
+    <Compile Include="IWritableFloppyImage.cs" />
     <Compile Include="IWritableImage.cs" />
     <Compile Include="KryoFlux.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
