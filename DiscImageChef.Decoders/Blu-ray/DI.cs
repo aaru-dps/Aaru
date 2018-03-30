@@ -96,7 +96,7 @@ namespace DiscImageChef.Decoders.Bluray
 
             while(true)
             {
-                if(offset >= 100) break;
+                if(offset >= 4100) break;
 
                 DiscInformationUnits unit = new DiscInformationUnits
                 {
@@ -106,33 +106,54 @@ namespace DiscImageChef.Decoders.Bluray
                 if(unit.Signature != DIUIdentifier) break;
 
                 unit.Format             = DIResponse[2 + offset];
-                unit.UnitsPerBlock      = DIResponse[3 + offset];
+                unit.UnitsPerBlock      = (byte)((DIResponse[3 + offset] & 0xF8) >> 3);
+                unit.Layer              = (byte)(DIResponse[3 + offset] & 0x07);
                 unit.Legacy             = DIResponse[4 + offset];
                 unit.Sequence           = DIResponse[5 + offset];
-                unit.Length             = DIResponse[6 + offset];
+                unit.Continuation       = (DIResponse[6       + offset] & 0x80) == 0x80;
+                unit.Length             = (byte)(DIResponse[6 + offset] & 0x7F);
                 unit.Reserved           = DIResponse[7 + offset];
                 unit.DiscTypeIdentifier = new byte[3];
                 Array.Copy(DIResponse, 8 + offset, unit.DiscTypeIdentifier, 0, 3);
-                unit.DiscSizeClassVersion = DIResponse[11 + offset];
+                unit.DiscSize         = (BluSize)((DIResponse[11 + offset] & 0xC0) >> 6);
+                unit.DiscClass        = (byte)((DIResponse[11    + offset] & 0x30) >> 4);
+                unit.DiscVersion      = (byte)(DIResponse[11 + offset] & 0x0F);
+                unit.Layers           = (byte)((DIResponse[12        + offset] & 0xF0) >> 4);
+                unit.DvdLayer         = (HybridLayer)((DIResponse[13 + offset] & 0xC0) >> 6);
+                unit.CdLayer          = (HybridLayer)((DIResponse[13 + offset] & 0x30) >> 4);
+                unit.ChannelLength    = (ChannelLength)(DIResponse[13 + offset] & 0x0F);
+                unit.Polarity         = DIResponse[14 + offset];
+                unit.RecordedPolarity = DIResponse[14 + offset];
+                unit.Bca              = (byte)(DIResponse[16 + offset] & 0x0F);
+                unit.MaxTransfer      = DIResponse[17 + offset];
+                unit.LastPsn = (uint)((DIResponse[20 + offset] << 24) + (DIResponse[21 + offset] << 16) +
+                                      (DIResponse[22 + offset] << 8)  + DIResponse[23 + offset]);
+                // TODO: In -R/-RE how does this relate to layer size???
+                unit.FirstAun = (uint)((DIResponse[24 + offset] << 24) + (DIResponse[25 + offset] << 16) +
+                                       (DIResponse[26 + offset] << 8)  + DIResponse[27 + offset]);
+                unit.LastAun = (uint)((DIResponse[28 + offset] << 24) + (DIResponse[29 + offset] << 16) +
+                                      (DIResponse[30 + offset] << 8)  + DIResponse[31 + offset]);
                 switch(Encoding.ASCII.GetString(unit.DiscTypeIdentifier))
                 {
                     case DiscTypeBDROM:
                     {
-                        unit.FormatDependentContents = new byte[52];
-                        Array.Copy(DIResponse, 12 + offset, unit.FormatDependentContents, 0, 52);
+                        unit.FormatDependentContents = new byte[32];
+                        Array.Copy(DIResponse, 32 + offset, unit.FormatDependentContents, 0, 32);
                         break;
                     }
                     case DiscTypeBDRE:
                     case DiscTypeBDR:
                     {
-                        unit.FormatDependentContents = new byte[88];
-                        Array.Copy(DIResponse, 12 + offset, unit.FormatDependentContents, 0, 88);
+                        unit.FormatDependentContents = new byte[66];
+                        Array.Copy(DIResponse, 32 + offset, unit.FormatDependentContents, 0, 66);
                         unit.ManufacturerID = new byte[6];
                         Array.Copy(DIResponse, 100 + offset, unit.ManufacturerID, 0, 6);
                         unit.MediaTypeID = new byte[3];
                         Array.Copy(DIResponse, 106 + offset, unit.MediaTypeID, 0, 3);
                         unit.TimeStamp             = BigEndianBitConverter.ToUInt16(DIResponse, 109 + offset);
                         unit.ProductRevisionNumber = DIResponse[111                                 + offset];
+
+                        offset += 14;
                         break;
                     }
                     default:
@@ -170,12 +191,125 @@ namespace DiscImageChef.Decoders.Bluray
                 sb.AppendFormat("DI Unit Sequence: {0}", unit.Sequence).AppendLine();
                 sb.AppendFormat("DI Unit Format: 0x{0:X2}", unit.Format).AppendLine();
                 sb.AppendFormat("There are {0} per block", unit.UnitsPerBlock).AppendLine();
-                if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) != DiscTypeBDROM)
+                sb.AppendFormat("This DI refers to layer {0}", unit.Layer).AppendLine();
+                if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDRE)
                     sb.AppendFormat("Legacy value: 0x{0:X2}", unit.Legacy).AppendLine();
+                sb.AppendLine(unit.Continuation ? "This DI continues previous unit" : "This DI starts a new unit");
                 sb.AppendFormat("DI Unit is {0} bytes", unit.Length).AppendLine();
                 sb.AppendFormat("Disc type identifier: \"{0}\"", Encoding.ASCII.GetString(unit.DiscTypeIdentifier))
                   .AppendLine();
-                sb.AppendFormat("Disc size/class/version: {0}", unit.DiscSizeClassVersion).AppendLine();
+                switch(unit.DiscSize)
+                {
+                    case BluSize.OneTwenty:
+                        sb.AppendLine("Disc size: 120mm");
+                        break;
+                    case BluSize.Eighty:
+                        sb.AppendLine("Disc size: 80mm");
+                        break;
+                    default:
+                        sb.AppendFormat("Disc size: Unknown code {0}", (byte)unit.DiscSize).AppendLine();
+                        break;
+                }
+
+                sb.AppendFormat("Disc class: {0}", unit.DiscClass).AppendLine();
+                sb.AppendFormat("Disc version: {0}", unit.DiscVersion).AppendLine();
+                sb.AppendFormat("This disc has {0} layers", unit.Layers).AppendLine();
+                switch(unit.DvdLayer)
+                {
+                    case HybridLayer.None:
+                        sb.AppendLine("This disc does not contain a DVD layer.");
+                        break;
+                    case HybridLayer.ReadOnly:
+                        sb.AppendLine("This disc contains a DVD-ROM layer.");
+                        break;
+                    case HybridLayer.Recordable:
+                        sb.AppendLine("This disc contains a DVD-R layer.");
+                        break;
+                    case HybridLayer.Rewritable:
+                        sb.AppendLine("This disc contains a DVD-RW layer.");
+                        break;
+                }
+
+                switch(unit.CdLayer)
+                {
+                    case HybridLayer.None:
+                        sb.AppendLine("This disc does not contain a CD layer.");
+                        break;
+                    case HybridLayer.ReadOnly:
+                        sb.AppendLine("This disc contains a CD-ROM layer.");
+                        break;
+                    case HybridLayer.Recordable:
+                        sb.AppendLine("This disc contains a CD-R layer.");
+                        break;
+                    case HybridLayer.Rewritable:
+                        sb.AppendLine("This disc contains a CD-RW layer.");
+                        break;
+                }
+
+                switch(unit.ChannelLength)
+                {
+                    case ChannelLength.Seventy:
+                        sb.AppendLine("Disc uses a 74.5nm channel giving 25 Gb per layer.");
+                        break;
+                    case ChannelLength.Sixty:
+                        sb.AppendLine("Disc uses a 69.0nm channel giving 27 Gb per layer.");
+                        break;
+                    default:
+                        sb.AppendFormat("Disc uses unknown channel length with code {0}", (byte)unit.ChannelLength)
+                          .AppendLine();
+                        break;
+                }
+
+                switch(unit.Polarity)
+                {
+                    case 0:
+                        sb.AppendLine("Disc uses positive polarity.");
+                        break;
+                    case 1:
+                        sb.AppendLine("Disc uses negative polarity.");
+                        break;
+                    default:
+                        sb.AppendFormat("Disc uses unknown polarity with code {0}", unit.Polarity).AppendLine();
+                        break;
+                }
+
+                if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDR)
+                    switch(unit.RecordedPolarity)
+                    {
+                        case 0:
+                            sb.AppendLine("Recorded marks have a lower reflectivity than unrecorded ones (HTL disc).");
+                            break;
+                        case 1:
+                            sb.AppendLine("Recorded marks have a higher reflectivity than unrecorded ones (LTH disc).");
+                            break;
+                        default:
+                            sb.AppendFormat("Disc uses unknown recorded reflectivity polarity with code {0}",
+                                            unit.RecordedPolarity).AppendLine();
+                            break;
+                    }
+
+                switch(unit.Bca)
+                {
+                    case 0:
+                        sb.AppendLine("Disc doesn't have a BCA.");
+                        break;
+                    case 1:
+                        sb.AppendLine("Disc has a BCA.");
+                        break;
+                    default:
+                        sb.AppendFormat("Disc uses unknown BCA code {0}", unit.Bca).AppendLine();
+                        break;
+                }
+
+                if(unit.MaxTransfer > 0)
+                    sb.AppendFormat("Disc has a maximum transfer rate of {0} Mbit/sec.", unit.MaxTransfer).AppendLine();
+                else sb.AppendLine("Disc does not specify a maximum transfer rate.");
+
+                sb.AppendFormat("Last user data PSN for disc: {0}", unit.LastPsn).AppendLine();
+                sb.AppendFormat("First address unit number of data zone in this layer: {0}", unit.FirstAun)
+                  .AppendLine();
+                sb.AppendFormat("Last address unit number of data zone in this layer: {0}", unit.LastAun).AppendLine();
+
                 if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDR ||
                    Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDRE)
                 {
@@ -238,10 +372,15 @@ namespace DiscImageChef.Decoders.Bluray
             /// </summary>
             public byte Format;
             /// <summary>
-            ///     Byte 3
+            ///     Byte 3, bits 7 to 3
             ///     Number of DI units per block
             /// </summary>
             public byte UnitsPerBlock;
+            /// <summary>
+            ///     Byte 3, bits 2 to 0
+            ///     Layer this DI refers to
+            /// </summary>
+            public byte Layer;
             /// <summary>
             ///     Byte 4
             ///     Reserved for BD-ROM, legacy information for BD-R/-RE
@@ -253,7 +392,12 @@ namespace DiscImageChef.Decoders.Bluray
             /// </summary>
             public byte Sequence;
             /// <summary>
-            ///     Byte 6
+            ///     Byte 6, bit 7
+            ///     If set this DI is a continuation of the previous one
+            /// </summary>
+            public bool Continuation;
+            /// <summary>
+            ///     Byte 6, bits 6 to 0
             ///     Number of bytes used by this DI unit, should be 64 for BD-ROM and 112 for BD-R/-RE
             /// </summary>
             public byte Length;
@@ -268,12 +412,92 @@ namespace DiscImageChef.Decoders.Bluray
             /// </summary>
             public byte[] DiscTypeIdentifier;
             /// <summary>
-            ///     Byte 11
-            ///     Disc size/class/version
+            ///     Byte 11, bits 7 to 6
+            ///     Disc size
             /// </summary>
-            public byte DiscSizeClassVersion;
+            public BluSize DiscSize;
             /// <summary>
-            ///     Bytes 12 to 63 for BD-ROM, bytes 12 to 99 for BD-R/-RE
+            ///     Byte 11, bits 5 to 4
+            ///     Disc class
+            /// </summary>
+            public byte DiscClass;
+            /// <summary>
+            ///     Byte 11, bits 3 to 0
+            ///     Disc version
+            /// </summary>
+            public byte DiscVersion;
+            /// <summary>
+            ///     Byte 12, bits 7 to 4
+            ///     Layers in this disc
+            /// </summary>
+            public byte Layers;
+            /// <summary>
+            ///     Byte 12, bits 3 to 0
+            ///     Reserved
+            /// </summary>
+            public byte Reserved2;
+            /// <summary>
+            ///     Byte 13, bits 7 to 6
+            ///     DVD layer
+            /// </summary>
+            public HybridLayer DvdLayer;
+            /// <summary>
+            ///     Byte 13, bits 5 to 4
+            ///     CD layer
+            /// </summary>
+            public HybridLayer CdLayer;
+            /// <summary>
+            ///     Byte 13, bits 3 to 0
+            ///     Channel length
+            /// </summary>
+            public ChannelLength ChannelLength;
+            /// <summary>
+            ///     Byte 14
+            ///     Polarity
+            /// </summary>
+            public byte Polarity;
+            /// <summary>
+            ///     Byte 15
+            ///     Recorded polarity
+            /// </summary>
+            public byte RecordedPolarity;
+            /// <summary>
+            ///     Byte 16, bits 7 to 4
+            ///     Reserved
+            /// </summary>
+            public byte Reserved3;
+            /// <summary>
+            ///     Byte 16, bits 3 to 0
+            ///     If 0 no BCA, if 1 BCA, rest not defined
+            /// </summary>
+            public byte Bca;
+            /// <summary>
+            ///     Byte 17
+            ///     Maximum transfer speed in megabits/second, 0 if no maximum
+            /// </summary>
+            public byte MaxTransfer;
+            /// <summary>
+            ///     Bytes 18 to 19
+            ///     Reserved
+            /// </summary>
+            public ushort Reserved4;
+            /// <summary>
+            ///     Bytes 20 to 23
+            ///     Last user data PSN for disc
+            /// </summary>
+            public uint LastPsn;
+            /// <summary>
+            ///     Bytes 24 to 27
+            ///     First address unit number of data zone in this layer
+            /// </summary>
+            public uint FirstAun;
+            /// <summary>
+            ///     Bytes 28 to 31
+            ///     Last address unit number of data zone in this layer
+            /// </summary>
+            public uint LastAun;
+            /// <summary>
+            ///     Bytes 32 to 63 for BD-ROM, bytes 32 to 99 for BD-R/-RE
             ///     Format dependent contents, disclosed in private blu-ray specifications
             /// </summary>
             public byte[] FormatDependentContents;
@@ -299,5 +523,33 @@ namespace DiscImageChef.Decoders.Bluray
             public byte ProductRevisionNumber;
         }
         #endregion Public structures
+
+        public enum BluSize : byte
+        {
+            /// <summary>120mm</summary>
+            OneTwenty = 0,
+            /// <summary>80mm</summary>
+            Eighty = 1
+        }
+
+        public enum HybridLayer : byte
+        {
+            /// <summary>No hybrid layer</summary>
+            None = 0,
+            /// <summary>-ROM layer</summary>
+            ReadOnly = 1,
+            /// <summary>-R layer</summary>
+            Recordable = 2,
+            /// <summary>-RW layer</summary>
+            Rewritable = 3
+        }
+
+        public enum ChannelLength : byte
+        {
+            /// <summary>74.5nm channel or 25Gb/layer</summary>
+            Seventy = 1,
+            /// <summary>69.0nm channel or 27Gb/layer</summary>
+            Sixty = 2
+        }
     }
 }
