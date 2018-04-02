@@ -82,31 +82,31 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <exception cref="NotImplementedException">If trying to dump scrambled sectors</exception>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         /// <exception cref="ArgumentOutOfRangeException">If the track type is unknown (never)</exception>
-        internal static void Dump(Device        dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
-                                  bool          force, bool dumpRaw, bool              persistent, bool     stopOnError,
-                                  ref MediaType dskType,
-                                  ref
-                                      Resume resume, ref DumpLog dumpLog, bool dumpLeadIn,
-                                  Encoding   encoding,
-                                  string
-                                      outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
-                                  CICMMetadataType
-                                      preSidecar, uint skip, bool nometadata)
+        internal static void Dump(Device                     dev,          string      devicePath,
+                                  IWritableImage             outputPlugin, ushort      retryPasses,
+                                  bool                       force,        bool        dumpRaw,
+                                  bool                       persistent,   bool        stopOnError, ref MediaType dskType,
+                                  ref Resume                 resume,       ref DumpLog dumpLog,
+                                  bool                       dumpLeadIn,   Encoding    encoding,
+                                  string                     outputPrefix, string      outputPath,
+                                  Dictionary<string, string> formatOptions,
+                                  CICMMetadataType           preSidecar, uint skip,
+                                  bool                       nometadata)
         {
             uint               subSize;
             DateTime           start;
             DateTime           end;
             bool               readcd;
-            bool               sense                   = false;
-            const uint         SECTOR_SIZE             = 2352;
-            FullTOC.CDFullTOC? toc                     = null;
-            double             totalDuration           = 0;
-            double             currentSpeed            = 0;
-            double             maxSpeed                = double.MinValue;
-            double             minSpeed                = double.MaxValue;
-            uint               blocksToRead            = 64;
-            bool               aborted                 = false;
-            System.Console.CancelKeyPress              += (sender, e) => e.Cancel = aborted = true;
+            bool               sense         = false;
+            const uint         SECTOR_SIZE   = 2352;
+            FullTOC.CDFullTOC? toc           = null;
+            double             totalDuration = 0;
+            double             currentSpeed  = 0;
+            double             maxSpeed      = double.MinValue;
+            double             minSpeed      = double.MaxValue;
+            uint               blocksToRead  = 64;
+            bool               aborted       = false;
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 
             if(dumpRaw)
@@ -125,7 +125,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 toc = FullTOC.Decode(cmdBuf);
                 if(toc.HasValue)
                 {
-                    byte[] tmpBuf = new byte[cmdBuf.Length         - 2];
+                    byte[] tmpBuf = new byte[cmdBuf.Length - 2];
                     Array.Copy(cmdBuf, 2, tmpBuf, 0, cmdBuf.Length - 2);
                     mediaTags.Add(MediaTagType.CD_FullTOC, tmpBuf);
 
@@ -140,7 +140,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             // Only CD-R and CD-RW have ATIP
                             dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
 
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
                         }
@@ -205,10 +205,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
                         if(hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
-                            dskType                                                  = MediaType.CDPLUS;
-                        if(!hasDataTrack && hasAudioTrack  && sessions == 1) dskType = MediaType.CDDA;
-                        if(hasDataTrack  && !hasAudioTrack && sessions == 1) dskType = MediaType.CDROM;
-                        if(hasVideoTrack && !hasDataTrack  && sessions == 1) dskType = MediaType.CDV;
+                            dskType = MediaType.CDPLUS;
+                        if(!hasDataTrack && hasAudioTrack && sessions == 1) dskType = MediaType.CDDA;
+                        if(hasDataTrack && !hasAudioTrack && sessions == 1) dskType = MediaType.CDROM;
+                        if(hasVideoTrack && !hasDataTrack && sessions == 1) dskType = MediaType.CDV;
                     }
 
                     dumpLog.WriteLine("Reading PMA");
@@ -216,7 +216,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(PMA.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
                         }
@@ -226,7 +226,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(CDTextOnLeadIn.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
                         }
@@ -335,14 +335,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
 
                 foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4))
-                    if(trk.POINT                                                             >= 0x01 &&
-                       trk.POINT                                                             <= 0x63)
+                    if(trk.POINT >= 0x01 && trk.POINT <= 0x63)
                     {
                         trackList.Add(new Track
                         {
                             TrackSequence = trk.POINT,
                             TrackSession  = trk.SessionNumber,
-                            TrackType     =
+                            TrackType =
                                 (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                                 (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                     ? TrackType.Data
@@ -430,14 +429,14 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc
                                                            .Value.TrackDescriptors.OrderBy(t => t.TrackNumber)
-                                                           .Where(trk => trk.ADR == 1 || trk.ADR            == 4))
-                    if(trk.TrackNumber                                           >= 0x01 && trk.TrackNumber <= 0x63)
+                                                           .Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                    if(trk.TrackNumber >= 0x01 && trk.TrackNumber <= 0x63)
                     {
                         trackList.Add(new Track
                         {
                             TrackSequence = trk.TrackNumber,
                             TrackSession  = 1,
-                            TrackType     =
+                            TrackType =
                                 (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                                 (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                     ? TrackType.Data
@@ -496,8 +495,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             Track[] tracks                                                      = trackList.ToArray();
             for(int t = 1; t < tracks.Length; t++) tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
 
-            tracks[tracks.Length - 1].TrackEndSector = (ulong)lastSector;
-            ulong blocks                             = (ulong)(lastSector + 1);
+            tracks[tracks.Length              - 1].TrackEndSector = (ulong)lastSector;
+            ulong blocks = (ulong)(lastSector + 1);
 
             if(blocks == 0)
             {
@@ -728,12 +727,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(!force) return;
 
-                    supportedSubchannel                                                  = MmcSubchannel.None;
-                    subSize                                                              = 0;
-                    blockSize                                                            = SECTOR_SIZE + subSize;
+                    supportedSubchannel = MmcSubchannel.None;
+                    subSize             = 0;
+                    blockSize           = SECTOR_SIZE + subSize;
                     for(int t = 0; t < tracks.Length; t++) tracks[t].TrackSubchannelType = TrackSubchannelType.None;
-                    ret                                                                  =
-                        outputPlugin.SetTracks(tracks.ToList());
+                    ret = outputPlugin.SetTracks(tracks.ToList());
                     if(!ret)
                     {
                         dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
@@ -803,7 +801,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     double cmdDuration = 0;
 
-                    if(tracks[t].TrackEndSector                        + 1 - i < blocksToRead)
+                    if(tracks[t].TrackEndSector + 1 - i < blocksToRead)
                         blocksToRead = (uint)(tracks[t].TrackEndSector + 1 - i);
 
                     #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
@@ -860,7 +858,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
                             outputPlugin.WriteSectorsLong(new byte[SECTOR_SIZE * skip], i, skip);
-                            outputPlugin.WriteSectorsTag(new byte[subSize      * skip], i, skip,
+                            outputPlugin.WriteSectorsTag(new byte[subSize * skip], i, skip,
                                                          SectorTagType.CdSectorSubchannel);
                         }
                         else outputPlugin.WriteSectorsLong(new byte[blockSize * skip], i, skip);
@@ -880,7 +878,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double newSpeed =
                         (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
                     if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                    resume.NextBlock                              = i + blocksToRead;
+                    resume.NextBlock = i + blocksToRead;
                 }
             }
 
@@ -888,10 +886,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.UtcNow;
             mhddLog.Close();
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize                                                        * (double)(blocks + 1) /
-                         1024                                                             / (totalDuration       / 1000), devicePath);
-            dumpLog.WriteLine("Dump finished in {0} seconds.",
-                              (end - start).TotalSeconds);
+                         blockSize * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
+                         devicePath);
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
@@ -905,6 +902,44 @@ namespace DiscImageChef.Core.Devices.Dumping
                 int  pass              = 0;
                 bool forward           = true;
                 bool runningPersistent = false;
+
+                Modes.ModePage? currentModePage = null;
+                byte[]          md6;
+                byte[]          md10;
+
+                if(persistent)
+                {
+                    Modes.ModePage_01_MMC pgMmc =
+                        new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
+                    Modes.DecodedMode md = new Modes.DecodedMode
+                    {
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
+                        {
+                            new Modes.ModePage
+                            {
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            }
+                        }
+                    };
+                    md6  = Modes.EncodeMode6(md, dev.ScsiType);
+                    md10 = Modes.EncodeMode10(md, dev.ScsiType);
+
+                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
+                    sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
+
+                    if(sense)
+                    {
+                        DicConsole
+                           .WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                        DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                        dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    }
+                    else runningPersistent = true;
+                }
 
                 cdRepeatRetry:
                 ulong[] tmpArray = resume.BadBlocks.ToArray();
@@ -960,42 +995,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     goto cdRepeatRetry;
                 }
 
-                Modes.ModePage? currentModePage = null;
-                byte[]          md6;
-                byte[]          md10;
-
-                if(!runningPersistent && persistent)
-                {
-                    Modes.ModePage_01_MMC pgMmc       =
-                        new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
-                    Modes.DecodedMode md              = new Modes.DecodedMode
-                    {
-                        Header = new Modes.ModeHeader(),
-                        Pages  = new[]
-                        {
-                            new Modes.ModePage
-                            {
-                                Page         = 0x01,
-                                Subpage      = 0x00,
-                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
-                            }
-                        }
-                    };
-                    md6  = Modes.EncodeMode6(md, dev.ScsiType);
-                    md10 = Modes.EncodeMode10(md, dev.ScsiType);
-
-                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
-                    sense           = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
-                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
-
-                    runningPersistent = true;
-                    if(!sense && !dev.Error)
-                    {
-                        pass--;
-                        goto cdRepeatRetry;
-                    }
-                }
-                else if(runningPersistent && persistent && currentModePage.HasValue)
+                if(runningPersistent && currentModePage.HasValue)
                 {
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
@@ -1057,9 +1057,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
-                end                       = DateTime.UtcNow;
+                end = DateTime.UtcNow;
 
-                totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
+                totalChkDuration = (end - chkStart).TotalMilliseconds;
                 dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
                 dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                   (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));

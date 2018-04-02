@@ -77,18 +77,17 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
-        internal static void Dump(Device                           dev, string              devicePath,
-                                  IWritableImage                   outputPlugin, ushort     retryPasses,
-                                  bool                             force, bool              dumpRaw,
-                                  bool                             persistent, bool         stopOnError,
-                                  Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType,
+        internal static void Dump(Device                           dev,          string        devicePath,
+                                  IWritableImage                   outputPlugin, ushort        retryPasses,
+                                  bool                             force,        bool          dumpRaw,
+                                  bool                             persistent,   bool          stopOnError,
+                                  Dictionary<MediaTagType, byte[]> mediaTags,    ref MediaType dskType,
                                   bool                             opticalDisc,
-                                  ref Resume                       resume,
-                                  ref DumpLog                      dumpLog, Encoding encoding, string outputPrefix,
-                                  string                           outputPath,
-                                  Dictionary<string, string>       formatOptions,
-                                  CICMMetadataType                 preSidecar,
-                                  uint                             skip, bool nometadata)
+                                  ref Resume                       resume,     ref DumpLog                dumpLog,
+                                  Encoding                         encoding,   string                     outputPrefix,
+                                  string                           outputPath, Dictionary<string, string> formatOptions,
+                                  CICMMetadataType                 preSidecar, uint                       skip,
+                                  bool                             nometadata)
         {
             bool         sense;
             ulong        blocks;
@@ -101,20 +100,20 @@ namespace DiscImageChef.Core.Devices.Dumping
             const ushort SBC_PROFILE        = 0x0001;
             DateTime     start;
             DateTime     end;
-            double       totalDuration    = 0;
-            double       currentSpeed     = 0;
-            double       maxSpeed         = double.MinValue;
-            double       minSpeed         = double.MaxValue;
+            double       totalDuration = 0;
+            double       currentSpeed  = 0;
+            double       maxSpeed      = double.MinValue;
+            double       minSpeed      = double.MaxValue;
             byte[]       readBuffer;
             uint         blocksToRead;
-            bool         aborted          = false;
+            bool         aborted = false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
-            Modes.DecodedMode? decMode    = null;
+            Modes.DecodedMode? decMode = null;
 
             dumpLog.WriteLine("Initializing reader.");
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
-            blocks            = scsiReader.GetDeviceBlocks();
-            blockSize         = scsiReader.LogicalBlockSize;
+            blocks    = scsiReader.GetDeviceBlocks();
+            blockSize = scsiReader.LogicalBlockSize;
             if(scsiReader.FindReadCommand())
             {
                 dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", scsiReader.ErrorMessage);
@@ -152,12 +151,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 mediaTags = new Dictionary<MediaTagType, byte[]>();
 
-                if(dev.IsUsb && dev.UsbDescriptors != null)
-                    mediaTags.Add(MediaTagType.USB_Descriptors, null);
-                if(dev.Type == DeviceType.ATAPI)
-                    mediaTags.Add(MediaTagType.ATAPI_IDENTIFY, null);
-                if(dev.IsPcmcia && dev.Cis != null)
-                    mediaTags.Add(MediaTagType.PCMCIA_CIS, null);
+                if(dev.IsUsb && dev.UsbDescriptors != null) mediaTags.Add(MediaTagType.USB_Descriptors, null);
+                if(dev.Type == DeviceType.ATAPI) mediaTags.Add(MediaTagType.ATAPI_IDENTIFY,             null);
+                if(dev.IsPcmcia && dev.Cis != null) mediaTags.Add(MediaTagType.PCMCIA_CIS,              null);
 
                 sense = dev.ScsiInquiry(out byte[] cmdBuf, out _);
                 mediaTags.Add(MediaTagType.SCSI_INQUIRY, cmdBuf);
@@ -276,7 +272,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", SBC_PROFILE);
-            ret             = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, blockSize);
+            ret = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
@@ -288,7 +284,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            start                     = DateTime.UtcNow;
+            start = DateTime.UtcNow;
             double imageWriteDuration = 0;
 
             if(opticalDisc)
@@ -302,7 +298,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         TrackRawBytesPerSector = (int)blockSize,
                         TrackSubchannelType    = TrackSubchannelType.None,
                         TrackSession           = 1,
-                        TrackType = TrackType.Data
+                        TrackType              = TrackType.Data
                     }
                 });
             else if(decMode.HasValue)
@@ -388,7 +384,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(stopOnError) return; // TODO: Return more cleanly
 
                     if(i + skip > blocks) skip = (uint)(blocks - i);
-                        
+
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
                     outputPlugin.WriteSectors(new byte[blockSize * skip], i, skip);
@@ -406,17 +402,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double newSpeed =
                     (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
                 if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                resume.NextBlock                              = i + blocksToRead;
+                resume.NextBlock = i + blocksToRead;
             }
 
             end = DateTime.UtcNow;
             DicConsole.WriteLine();
             mhddLog.Close();
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize                                                        * (double)(blocks + 1) /
-                         1024                                                             / (totalDuration       / 1000), devicePath);
-            dumpLog.WriteLine("Dump finished in {0} seconds.",
-                              (end - start).TotalSeconds);
+                         blockSize * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
+                         devicePath);
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
@@ -429,58 +424,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                 bool forward           = true;
                 bool runningPersistent = false;
 
-                repeatRetry:
-                ulong[] tmpArray = resume.BadBlocks.ToArray();
-                foreach(ulong badSector in tmpArray)
-                {
-                    if(aborted)
-                    {
-                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                        dumpLog.WriteLine("Aborted!");
-                        break;
-                    }
-
-                    DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1,
-                                     forward ? "forward" : "reverse",
-                                     runningPersistent ? "recovering partial data, " : "");
-
-                    sense         =  scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration);
-                    totalDuration += cmdDuration;
-
-                    if(!sense && !dev.Error)
-                    {
-                        resume.BadBlocks.Remove(badSector);
-                        extents.Add(badSector);
-                        outputPlugin.WriteSector(readBuffer, badSector);
-                        dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
-                    }
-                    else if(runningPersistent)
-                        outputPlugin.WriteSector(readBuffer, badSector);
-                }
-
-                if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
-                {
-                    pass++;
-                    forward = !forward;
-                    resume.BadBlocks.Sort();
-                    resume.BadBlocks.Reverse();
-                    goto repeatRetry;
-                }
-
                 Modes.ModePage? currentModePage = null;
                 byte[]          md6;
                 byte[]          md10;
 
-                if(!runningPersistent && persistent)
+                if(persistent)
                 {
                     if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        Modes.ModePage_01_MMC pgMmc       =
+                        Modes.ModePage_01_MMC pgMmc =
                             new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
-                        Modes.DecodedMode md              = new Modes.DecodedMode
+                        Modes.DecodedMode md = new Modes.DecodedMode
                         {
                             Header = new Modes.ModeHeader(),
-                            Pages  = new[]
+                            Pages = new[]
                             {
                                 new Modes.ModePage
                                 {
@@ -511,7 +468,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Modes.DecodedMode md = new Modes.DecodedMode
                         {
                             Header = new Modes.ModeHeader(),
-                            Pages  = new[]
+                            Pages = new[]
                             {
                                 new Modes.ModePage
                                 {
@@ -526,17 +483,57 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
-                    sense           = dev.ModeSelect(md6, out _, true, false, dev.Timeout, out _);
-                    if(sense) sense = dev.ModeSelect10(md10, out _, true, false, dev.Timeout, out _);
+                    sense = dev.ModeSelect(md6, out byte[] senseBuf, true, false, dev.Timeout, out _);
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
 
-                    runningPersistent = true;
+                    if(sense)
+                    {
+                        DicConsole
+                           .WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                        DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                        dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    }
+                    else runningPersistent = true;
+                }
+
+                repeatRetry:
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                foreach(ulong badSector in tmpArray)
+                {
+                    if(aborted)
+                    {
+                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
+                        break;
+                    }
+
+                    DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1,
+                                     forward ? "forward" : "reverse",
+                                     runningPersistent ? "recovering partial data, " : "");
+
+                    sense         =  scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration);
+                    totalDuration += cmdDuration;
+
                     if(!sense && !dev.Error)
                     {
-                        pass--;
-                        goto repeatRetry;
+                        resume.BadBlocks.Remove(badSector);
+                        extents.Add(badSector);
+                        outputPlugin.WriteSector(readBuffer, badSector);
+                        dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
+                    else if(runningPersistent) outputPlugin.WriteSector(readBuffer, badSector);
                 }
-                else if(runningPersistent && persistent && currentModePage.HasValue)
+
+                if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
+                {
+                    pass++;
+                    forward = !forward;
+                    resume.BadBlocks.Sort();
+                    resume.BadBlocks.Reverse();
+                    goto repeatRetry;
+                }
+
+                if(runningPersistent && currentModePage.HasValue)
                 {
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
@@ -688,9 +685,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
-                end                       = DateTime.UtcNow;
+                end = DateTime.UtcNow;
 
-                totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
+                totalChkDuration = (end - chkStart).TotalMilliseconds;
                 dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
                 dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                   (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
@@ -741,8 +738,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
                                 sidecar.BlockMedia[0].USB = new USBType
                                 {
-                                    ProductID   = dev.UsbProductId,
-                                    VendorID    = dev.UsbVendorId,
+                                    ProductID = dev.UsbProductId,
+                                    VendorID  = dev.UsbVendorId,
                                     Descriptors = new DumpType
                                     {
                                         Image     = outputPath,
@@ -871,13 +868,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // TODO: Implement device firmware revision
                     if(!dev.IsRemovable || dev.IsUsb)
                         if(dev.Type == DeviceType.ATAPI)
-                            sidecar.BlockMedia[0].Interface = "ATAPI";
-                        else if(dev.IsUsb)
-                            sidecar.BlockMedia[0].Interface = "USB";
-                        else if(dev.IsFireWire)
-                            sidecar.BlockMedia[0].Interface = "FireWire";
-                        else
-                            sidecar.BlockMedia[0].Interface = "SCSI";
+                            sidecar.BlockMedia[0].Interface                     = "ATAPI";
+                        else if(dev.IsUsb) sidecar.BlockMedia[0].Interface      = "USB";
+                        else if(dev.IsFireWire) sidecar.BlockMedia[0].Interface = "FireWire";
+                        else sidecar.BlockMedia[0].Interface                    = "SCSI";
                     sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
                     sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalBlockSize;
                     sidecar.BlockMedia[0].LogicalBlockSize  = (int)logicalBlockSize;
