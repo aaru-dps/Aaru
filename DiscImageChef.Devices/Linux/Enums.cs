@@ -41,71 +41,71 @@ namespace DiscImageChef.Devices.Linux
         /// <summary>
         ///     O_RDONLY
         /// </summary>
-        Readonly = 00000000,
+        Readonly = 0x0,
         /// <summary>
         ///     O_WRONLY
         /// </summary>
-        Writeonly = 00000001,
+        Writeonly = 0x1,
         /// <summary>
         ///     O_RDWR
         /// </summary>
-        ReadWrite = 00000002,
+        ReadWrite = 0x2,
         /// <summary>
         ///     O_CREAT
         /// </summary>
-        OpenOrCreate = 00000100,
+        OpenOrCreate = 0x40,
         /// <summary>
         ///     O_EXCL
         /// </summary>
-        CreateNew = 00000200,
+        CreateNew = 0x80,
         /// <summary>
         ///     O_NOCTTY
         /// </summary>
-        NoControlTty = 00000400,
+        NoControlTty = 0x100,
         /// <summary>
         ///     O_TRUNC
         /// </summary>
-        Truncate = 00001000,
+        Truncate = 0x200,
         /// <summary>
         ///     O_APPEND
         /// </summary>
-        Append = 00002000,
+        Append = 0x400,
         /// <summary>
         ///     O_NONBLOCK
         /// </summary>
-        NonBlocking = 00004000,
+        NonBlocking = 0x800,
         /// <summary>
         ///     O_DSYNC
         /// </summary>
-        Synchronous = 00010000,
+        Synchronous = 0x1000,
         /// <summary>
         ///     O_ASYNC
         /// </summary>
-        Async = 00020000,
+        Async = 0x2000,
         /// <summary>
         ///     O_DIRECT
         /// </summary>
-        Direct = 00040000,
+        Direct = 0x4000,
         /// <summary>
         ///     O_LARGEFILE
         /// </summary>
-        LargeFile = 00100000,
+        LargeFile = 0x8000,
         /// <summary>
         ///     O_DIRECTORY
         /// </summary>
-        Directory = 00200000,
+        Directory = 0x10000,
         /// <summary>
         ///     O_NOFOLLOW
         /// </summary>
-        NoFollowSymlink = 00400000,
+        NoFollowSymlink = 0x20000,
         /// <summary>
         ///     O_NOATIME
         /// </summary>
-        NoAccessTime = 01000000,
+        NoAccessTime = 0x40000,
         /// <summary>
         ///     O_CLOEXEC
         /// </summary>
-        CloseOnExec = 02000000
+        CloseOnExec = 0x80000
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ namespace DiscImageChef.Devices.Linux
     {
         // SCSI IOCtls
         SgGetVersionNum = 0x2282,
-        SgIo = 0x2285,
+        SgIo            = 0x2285,
         // MMC IOCtl
         MmcIocCmd = 0xC048B300
     }
@@ -181,5 +181,16 @@ namespace DiscImageChef.Devices.Linux
         ///     Partial direct and partial indirect I/O
         /// </summary>
         MixedIo = 0x04
+    }
+
+    [Flags]
+    enum SgFlags : uint
+    {
+        DirectIo         = 1,
+        UnusedLunInhibit = 2,
+        MmapIo           = 4,
+        NoDxfer          = 0x10000,
+        QAtTail          = 0x10,
+        QAtHead          = 0x20
     }
 }
