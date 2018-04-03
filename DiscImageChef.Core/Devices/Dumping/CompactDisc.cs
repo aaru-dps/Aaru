@@ -942,7 +942,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 cdRepeatRetry:
-                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                ulong[]     tmpArray              = resume.BadBlocks.ToArray();
+                List<ulong> sectorsNotEvenPartial = new List<ulong>();
                 foreach(ulong badSector in tmpArray)
                 {
                     if(aborted)
@@ -958,6 +959,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(readcd)
                     {
+                        sense = true;
                         sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                            true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
@@ -965,13 +967,24 @@ namespace DiscImageChef.Core.Devices.Dumping
                         totalDuration += cmdDuration;
                     }
 
-                    if((sense || dev.Error) && !runningPersistent) continue;
+                    if(sense || dev.Error)
+                    {
+                        if(!runningPersistent) continue;
+
+                        FixedSense? decSense = Sense.DecodeFixed(senseBuf);
+
+                        // MEDIUM ERROR, retry with ignore error below
+                        if(decSense.HasValue && decSense.Value.ASC == 0x11)
+                            if(!sectorsNotEvenPartial.Contains(badSector))
+                                sectorsNotEvenPartial.Add(badSector);
+                    }
 
                     if(!sense && !dev.Error)
                     {
                         resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
                         dumpLog.WriteLine("Correctly retried sector {0} in pass {1}.", badSector, pass);
+                        sectorsNotEvenPartial.Remove(badSector);
                     }
 
                     if(supportedSubchannel != MmcSubchannel.None)
@@ -993,6 +1006,76 @@ namespace DiscImageChef.Core.Devices.Dumping
                     resume.BadBlocks.Sort();
                     resume.BadBlocks.Reverse();
                     goto cdRepeatRetry;
+                }
+
+                // Try to ignore read errors, on some drives this allows to recover partial even if damaged data
+                if(persistent && sectorsNotEvenPartial.Count > 0)
+                {
+                    Modes.ModePage_01_MMC pgMmc =
+                        new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x01};
+                    Modes.DecodedMode md = new Modes.DecodedMode
+                    {
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
+                        {
+                            new Modes.ModePage
+                            {
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            }
+                        }
+                    };
+                    md6  = Modes.EncodeMode6(md, dev.ScsiType);
+                    md10 = Modes.EncodeMode10(md, dev.ScsiType);
+
+                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
+                    sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
+
+                    if(!sense)
+                    {
+                        runningPersistent = true;
+                        DicConsole.WriteLine();
+
+                        tmpArray = resume.BadBlocks.ToArray();
+                        foreach(ulong badSector in sectorsNotEvenPartial)
+                        {
+                            if(aborted)
+                            {
+                                currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                                dumpLog.WriteLine("Aborted!");
+                                break;
+                            }
+
+                            DicConsole.Write("\rTrying to get partial data for sector {0}", badSector);
+
+                            if(readcd)
+                            {
+                                sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1,
+                                                   MmcSectorTypes.AllTypes, false, false, true,
+                                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                   supportedSubchannel, dev.Timeout, out double cmdDuration);
+                                totalDuration += cmdDuration;
+                            }
+
+                            if(!sense && !dev.Error)
+                            {
+                                dumpLog.WriteLine("Got partial data for sector {0} in pass {1}.", badSector, pass);
+
+                                if(supportedSubchannel != MmcSubchannel.None)
+                                {
+                                    byte[] data = new byte[SECTOR_SIZE];
+                                    byte[] sub  = new byte[subSize];
+                                    Array.Copy(readBuffer, 0,           data, 0, SECTOR_SIZE);
+                                    Array.Copy(readBuffer, SECTOR_SIZE, sub,  0, subSize);
+                                    outputPlugin.WriteSectorLong(data, badSector);
+                                    outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+                                }
+                                else outputPlugin.WriteSectorLong(readBuffer, badSector);
+                            }
+                        }
+                    }
                 }
 
                 if(runningPersistent && currentModePage.HasValue)
