@@ -72,14 +72,15 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public static void Dump(Device     dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
-                                bool       force, bool dumpRaw, bool              persistent, bool     stopOnError,
-                                ref Resume resume,
-                                ref
-                                    DumpLog dumpLog, Encoding encoding, string outputPrefix,
-                                string      outputPath,
-                                Dictionary<string, string>
-                                    formatOptions, CICMMetadataType preSidecar, uint skip, bool nometadata)
+        public static void Dump(Device                     dev,           string           devicePath,
+                                IWritableImage             outputPlugin,  ushort           retryPasses,
+                                bool                       force,         bool             dumpRaw,
+                                bool                       persistent,    bool             stopOnError, ref Resume resume,
+                                ref DumpLog                dumpLog,       Encoding         encoding,
+                                string                     outputPrefix,  string           outputPath,
+                                Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
+                                uint                       skip,
+                                bool                       nometadata)
         {
             bool aborted;
 
@@ -121,12 +122,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                     {
                         ExtendedCSD ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
-                        blocksToRead            = ecsdDecoded.OptimalReadSize;
-                        blocks                  = ecsdDecoded.SectorCount;
-                        blockSize               = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
-                        if(ecsdDecoded.NativeSectorSize                         == 0) physicalBlockSize = 512;
-                        else if(ecsdDecoded.NativeSectorSize                    == 1)
-                            physicalBlockSize = 4096;
+                        blocksToRead = ecsdDecoded.OptimalReadSize;
+                        blocks       = ecsdDecoded.SectorCount;
+                        blockSize    = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
+                        if(ecsdDecoded.NativeSectorSize      == 0) physicalBlockSize = 512;
+                        else if(ecsdDecoded.NativeSectorSize == 1) physicalBlockSize = 4096;
                         // Supposing it's high-capacity MMC if it has Extended CSD...
                         byteAddressed = false;
                         mediaTags.Add(MediaTagType.MMC_ExtendedCSD, null);
@@ -140,9 +140,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(blocks == 0)
                         {
                             CSD csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
-                            blocks         =
-                                (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
-                            blockSize = (uint)Math.Pow(2,                   csdDecoded.ReadBlockLength);
+                            blocks    = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
+                            blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
                         }
 
                         mediaTags.Add(MediaTagType.MMC_CSD, null);
@@ -150,7 +149,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     else csd = null;
 
                     dumpLog.WriteLine("Reading OCR");
-                    sense         = dev.ReadOcr(out ocr, out _, TIMEOUT, out duration);
+                    sense = dev.ReadOcr(out ocr, out _, TIMEOUT, out duration);
                     if(sense) ocr = null;
                     else mediaTags.Add(MediaTagType.MMC_OCR, null);
 
@@ -163,10 +162,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                     {
                         Decoders.SecureDigital.CSD csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
-                        blocks                                = (ulong)(csdDecoded.Structure == 0
-                                                                            ? (csdDecoded.Size                      + 1) *
-                                                                              Math.Pow(2, csdDecoded.SizeMultiplier + 2)
-                                                                            : (csdDecoded.Size                      + 1) * 1024);
+                        blocks = (ulong)(csdDecoded.Structure == 0
+                                             ? (csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2)
+                                             : (csdDecoded.Size + 1) * 1024);
                         blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
                         // Structure >=1 for SDHC/SDXC, so that's block addressed
                         byteAddressed = csdDecoded.Structure == 0;
@@ -175,12 +173,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     else csd = null;
 
                     dumpLog.WriteLine("Reading OCR");
-                    sense         = dev.ReadSdocr(out ocr, out _, TIMEOUT, out duration);
+                    sense = dev.ReadSdocr(out ocr, out _, TIMEOUT, out duration);
                     if(sense) ocr = null;
                     else mediaTags.Add(MediaTagType.SD_OCR, null);
 
                     dumpLog.WriteLine("Reading SCR");
-                    sense         = dev.ReadScr(out scr, out _, TIMEOUT, out duration);
+                    sense = dev.ReadScr(out scr, out _, TIMEOUT, out duration);
                     if(sense) scr = null;
                     else mediaTags.Add(MediaTagType.SD_SCR, null);
 
@@ -189,16 +187,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             dumpLog.WriteLine("Reading CID");
-            sense         = dev.ReadCid(out byte[] cid, out _, TIMEOUT, out duration);
+            sense = dev.ReadCid(out byte[] cid, out _, TIMEOUT, out duration);
             if(sense) cid = null;
             else mediaTags.Add(dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_CID : MediaTagType.MMC_CID, null);
 
             DateTime start;
             DateTime end;
-            double   totalDuration    = 0;
-            double   currentSpeed     = 0;
-            double   maxSpeed         = double.MinValue;
-            double   minSpeed         = double.MaxValue;
+            double   totalDuration = 0;
+            double   currentSpeed  = 0;
+            double   maxSpeed      = double.MinValue;
+            double   minSpeed      = double.MaxValue;
 
             aborted                       =  false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
@@ -264,11 +262,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", SD_PROFILE);
-            ret             = outputPlugin.Create(outputPath,
-                                                  dev.Type == DeviceType.SecureDigital
-                                                      ? MediaType.SecureDigital
-                                                      : MediaType.MMC,
-                                                  formatOptions, blocks, blockSize);
+            ret = outputPlugin.Create(outputPath,
+                                      dev.Type == DeviceType.SecureDigital ? MediaType.SecureDigital : MediaType.MMC,
+                                      formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
@@ -282,7 +278,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 
-            start                     = DateTime.UtcNow;
+            start = DateTime.UtcNow;
             double imageWriteDuration = 0;
 
             for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
@@ -318,7 +314,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else
                 {
                     if(i + skip > blocks) skip = (uint)(blocks - i);
-                        
+
                     for(ulong b = i; b < i + skip; b++) resume.BadBlocks.Add(b);
 
                     mhddLog.Write(i, duration < 500 ? 65535 : duration);
@@ -334,24 +330,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double newSpeed =
                     (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
                 if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                resume.NextBlock                              = i + blocksToRead;
+                resume.NextBlock = i + blocksToRead;
             }
 
             end = DateTime.Now;
             DicConsole.WriteLine();
             mhddLog.Close();
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize                                                        * (double)(blocks + 1) /
-                         1024                                                             / (totalDuration       / 1000), devicePath);
-            dumpLog.WriteLine("Dump finished in {0} seconds.",
-                              (end - start).TotalSeconds);
+                         blockSize * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
+                         devicePath);
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Error handling
-            if(resume.BadBlocks.Count > 0 && !aborted)
+            if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)
             {
                 int  pass              = 0;
                 bool forward           = true;
@@ -384,8 +379,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         outputPlugin.WriteSector(cmdBuf, badSector);
                         dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
-                    else if(runningPersistent)
-                        outputPlugin.WriteSector(cmdBuf, badSector);
+                    else if(runningPersistent) outputPlugin.WriteSector(cmdBuf, badSector);
                 }
 
                 if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
@@ -573,7 +567,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 end = DateTime.UtcNow;
 
-                totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
+                totalChkDuration = (end - chkStart).TotalMilliseconds;
                 dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
                 dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                   (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
@@ -601,7 +595,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0].Model             = dev.Model;
                 sidecar.BlockMedia[0].Serial            = dev.Serial;
                 sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
-                
+
                 DicConsole.WriteLine("Writing metadata sidecar");
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);

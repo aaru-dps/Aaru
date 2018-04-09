@@ -418,7 +418,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Error handling
-            if(resume.BadBlocks.Count > 0 && !aborted)
+            if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)
             {
                 int  pass              = 0;
                 bool forward           = true;

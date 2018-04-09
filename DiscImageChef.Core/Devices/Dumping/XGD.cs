@@ -80,16 +80,17 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     If the provided resume does not correspond with the current in progress
         ///     dump
         /// </exception>
-        internal static void Dump(Device                           dev, string              devicePath,
-                                  IWritableImage                   outputPlugin, ushort     retryPasses,
-                                  bool                             force, bool              dumpRaw,
-                                  bool                             persistent, bool         stopOnError,
-                                  Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType,
-                                  ref                                             Resume    resume,
-                                  ref                                             DumpLog   dumpLog,
-                                  Encoding                                                  encoding, string outputPrefix, string outputPath,
-                                  Dictionary<string, string>                                formatOptions,
-                                  CICMMetadataType                                          preSidecar, uint skip, bool nometadata)
+        internal static void Dump(Device                           dev,          string        devicePath,
+                                  IWritableImage                   outputPlugin, ushort        retryPasses,
+                                  bool                             force,        bool          dumpRaw,
+                                  bool                             persistent,   bool          stopOnError,
+                                  Dictionary<MediaTagType, byte[]> mediaTags,    ref MediaType dskType,
+                                  ref Resume                       resume,
+                                  ref DumpLog                      dumpLog,       Encoding         encoding,
+                                  string                           outputPrefix,  string           outputPath,
+                                  Dictionary<string, string>       formatOptions, CICMMetadataType preSidecar,
+                                  uint                             skip,
+                                  bool                             nometadata)
         {
             bool       sense;
             ulong      blocks;
@@ -97,11 +98,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint       blocksToRead = 64;
             DateTime   start;
             DateTime   end;
-            double     totalDuration      = 0;
-            double     currentSpeed       = 0;
-            double     maxSpeed           = double.MinValue;
-            double     minSpeed           = double.MaxValue;
-            bool       aborted            = false;
+            double     totalDuration = 0;
+            double     currentSpeed  = 0;
+            double     maxSpeed      = double.MinValue;
+            double     minSpeed      = double.MaxValue;
+            bool       aborted       = false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             if(mediaTags.ContainsKey(MediaTagType.DVD_PFI)) mediaTags.Remove(MediaTagType.DVD_PFI);
@@ -125,7 +126,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            byte[] tmpBuf = new byte[ssBuf.Length        - 4];
+            byte[] tmpBuf = new byte[ssBuf.Length - 4];
             Array.Copy(ssBuf, 4, tmpBuf, 0, ssBuf.Length - 4);
             mediaTags.Add(MediaTagType.Xbox_SecuritySector, tmpBuf);
 
@@ -162,7 +163,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            tmpBuf = new byte[readBuffer.Length                    - 4];
+            tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
             DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
@@ -178,7 +179,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            tmpBuf = new byte[readBuffer.Length                    - 4];
+            tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.DVD_DMI, tmpBuf);
 
@@ -238,13 +239,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
-            blocks     = totalSize + 1;
+            blocks = totalSize + 1;
             middleZone =
-                totalSize                                                        - (PFI.Decode(readBuffer).Value.Layer0EndPSN -
+                totalSize - (PFI.Decode(readBuffer).Value.Layer0EndPSN -
                                    PFI.Decode(readBuffer).Value.DataAreaStartPSN +
-                                   1)                                            - gameSize + 1;
+                                   1) - gameSize + 1;
 
-            tmpBuf = new byte[readBuffer.Length                    - 4];
+            tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.Xbox_PFI, tmpBuf);
 
@@ -258,12 +259,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            tmpBuf = new byte[readBuffer.Length                    - 4];
+            tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.Xbox_DMI, tmpBuf);
 
-            totalSize  = l0Video + l1Video    + middleZone * 2 + gameSize;
-            layerBreak = l0Video + middleZone + gameSize   / 2;
+            totalSize  = l0Video + l1Video + middleZone * 2 + gameSize;
+            layerBreak = l0Video + middleZone               + gameSize / 2;
 
             DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);
             DicConsole.WriteLine("Video layer 1 size: {0} sectors", l1Video);
@@ -336,7 +337,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, BLOCK_SIZE, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0010);
-            ret             = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, BLOCK_SIZE);
+            ret = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, BLOCK_SIZE);
 
             // Cannot create image
             if(!ret)
@@ -348,7 +349,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            start                     = DateTime.UtcNow;
+            start = DateTime.UtcNow;
             double imageWriteDuration = 0;
 
             double           cmdDuration      = 0;
@@ -373,7 +374,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     TrackType              = TrackType.Data
                 }
             });
-            
+
             ulong currentSector = resume.NextBlock;
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 
@@ -397,13 +398,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(xboxSs.Value.Extents[e].StartPSN <= xboxSs.Value.Layer0EndPSN)
                         extentStart = xboxSs.Value.Extents[e].StartPSN - 0x30000;
                     else
-                        extentStart = (xboxSs.Value.Layer0EndPSN                     + 1) * 2 -
-                                      ((xboxSs.Value.Extents[e].StartPSN ^ 0xFFFFFF) + 1)     - 0x30000;
+                        extentStart = (xboxSs.Value.Layer0EndPSN + 1) * 2                 -
+                                      ((xboxSs.Value.Extents[e].StartPSN ^ 0xFFFFFF) + 1) - 0x30000;
                     if(xboxSs.Value.Extents[e].EndPSN <= xboxSs.Value.Layer0EndPSN)
                         extentEnd = xboxSs.Value.Extents[e].EndPSN - 0x30000;
                     else
-                        extentEnd = (xboxSs.Value.Layer0EndPSN                   + 1) * 2 -
-                                    ((xboxSs.Value.Extents[e].EndPSN ^ 0xFFFFFF) + 1)     - 0x30000;
+                        extentEnd = (xboxSs.Value.Layer0EndPSN + 1) * 2               -
+                                    ((xboxSs.Value.Extents[e].EndPSN ^ 0xFFFFFF) + 1) - 0x30000;
                 }
                 // After last extent
                 else
@@ -453,7 +454,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(stopOnError) return; // TODO: Return more cleanly
 
                         if(i + skip > blocks) skip = (uint)(blocks - i);
-                        
+
                         // Write empty data
                         DateTime writeStart = DateTime.Now;
                         outputPlugin.WriteSectors(new byte[BLOCK_SIZE * skip], i, skip);
@@ -467,7 +468,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         ibgLog.Write(i, 0);
 
                         dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
-                        i                   += skip - blocksToRead;
+                        i += skip - blocksToRead;
                         string[] senseLines = Sense.PrettifySense(senseBuf).Split(new[] {Environment.NewLine},
                                                                                   StringSplitOptions
                                                                                      .RemoveEmptyEntries);
@@ -477,9 +478,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double newSpeed =
                         (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
                     if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                    blocksToRead                                  = saveBlocksToRead;
-                    currentSector                                 = i + 1;
-                    resume.NextBlock                              = currentSector;
+                    blocksToRead     = saveBlocksToRead;
+                    currentSector    = i + 1;
+                    resume.NextBlock = currentSector;
                 }
 
                 for(ulong i = extentStart; i <= extentEnd; i += blocksToRead)
@@ -607,7 +608,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     ibgLog.Write(l1, 0);
                     dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, l1);
-                    l1                  += skip - blocksToRead;
+                    l1 += skip - blocksToRead;
                     string[] senseLines = Sense.PrettifySense(senseBuf).Split(new[] {Environment.NewLine},
                                                                               StringSplitOptions.RemoveEmptyEntries);
                     foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
@@ -615,9 +616,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 double newSpeed =
                     (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
-                if(!double.IsInfinity(newSpeed)) currentSpeed =  newSpeed;
-                currentSector                                 += blocksToRead;
-                resume.NextBlock                              =  currentSector;
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                currentSector    += blocksToRead;
+                resume.NextBlock =  currentSector;
             }
 
             dumpLog.WriteLine("Unlocking drive (Wxripper).");
@@ -640,17 +641,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine();
             mhddLog.Close();
             ibgLog.Close(dev, blocks, BLOCK_SIZE, (end - start).TotalSeconds, currentSpeed * 1024,
-                         BLOCK_SIZE                                                        * (double)(blocks + 1) /
-                         1024                                                              / (totalDuration       / 1000), devicePath);
-            dumpLog.WriteLine("Dump finished in {0} seconds.",
-                              (end - start).TotalSeconds);
+                         BLOCK_SIZE * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
+                         devicePath);
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
                               (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Error handling
-            if(resume.BadBlocks.Count > 0 && !aborted)
+            if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)
             {
                 List<ulong> tmpList = new List<ulong>();
 
@@ -692,8 +692,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         outputPlugin.WriteSector(readBuffer, badSector);
                         dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
-                    else if(runningPersistent)
-                        outputPlugin.WriteSector(readBuffer, badSector);
+                    else if(runningPersistent) outputPlugin.WriteSector(readBuffer, badSector);
                 }
 
                 if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
@@ -713,12 +712,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        Modes.ModePage_01_MMC pgMmc       =
+                        Modes.ModePage_01_MMC pgMmc =
                             new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
-                        Modes.DecodedMode md              = new Modes.DecodedMode
+                        Modes.DecodedMode md = new Modes.DecodedMode
                         {
                             Header = new Modes.ModeHeader(),
-                            Pages  = new[]
+                            Pages = new[]
                             {
                                 new Modes.ModePage
                                 {
@@ -749,7 +748,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Modes.DecodedMode md = new Modes.DecodedMode
                         {
                             Header = new Modes.ModeHeader(),
-                            Pages  = new[]
+                            Pages = new[]
                             {
                                 new Modes.ModePage
                                 {
@@ -764,7 +763,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
-                    sense           = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
+                    sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
                     if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
 
                     runningPersistent = true;
@@ -836,7 +835,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
-                end                       = DateTime.UtcNow;
+                end = DateTime.UtcNow;
 
                 if(preSidecar != null)
                 {
@@ -844,7 +843,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar                = preSidecar;
                 }
 
-                totalChkDuration = (end                                   - chkStart).TotalMilliseconds;
+                totalChkDuration = (end - chkStart).TotalMilliseconds;
                 dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
                 dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                   (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));

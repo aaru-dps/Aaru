@@ -74,16 +74,15 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
-        public static void Dump(Device     dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
-                                bool       force, bool dumpRaw, bool              persistent, bool     stopOnError,
-                                ref Resume resume,
-                                ref
-                                    DumpLog dumpLog, Encoding encoding, string outputPrefix,
-                                string      outputPath,
-                                Dictionary<string, string>
-                                    formatOptions, CICMMetadataType preSidecar, uint skip,
-                                bool
-                                    nometadata)
+        public static void Dump(Device                     dev,           string           devicePath,
+                                IWritableImage             outputPlugin,  ushort           retryPasses,
+                                bool                       force,         bool             dumpRaw,
+                                bool                       persistent,    bool             stopOnError, ref Resume resume,
+                                ref DumpLog                dumpLog,       Encoding         encoding,
+                                string                     outputPrefix,  string           outputPath,
+                                Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
+                                uint                       skip,
+                                bool                       nometadata)
         {
             bool aborted;
 
@@ -113,7 +112,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     Identify.IdentifyDevice ataId       = ataIdNullable.Value;
                     byte[]                  ataIdentify = cmdBuf;
-                    cmdBuf                              = new byte[0];
+                    cmdBuf = new byte[0];
 
                     DateTime start;
                     DateTime end;
@@ -273,7 +272,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             else
                             {
                                 if(i + skip > blocks) skip = (uint)(blocks - i);
-                        
+
                                 for(ulong b = i; b < i + skip; b++) resume.BadBlocks.Add(b);
 
                                 mhddLog.Write(i, duration < 500 ? 65535 : duration);
@@ -289,24 +288,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                             double newSpeed =
                                 (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
                             if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                            resume.NextBlock                              = i + blocksToRead;
+                            resume.NextBlock = i + blocksToRead;
                         }
 
                         end = DateTime.Now;
                         DicConsole.WriteLine();
                         mhddLog.Close();
                         ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                     blockSize                                                        *
-                                     (double)(blocks + 1)                                             / 1024 / (totalDuration / 1000), devicePath);
-                        dumpLog.WriteLine("Dump finished in {0} seconds.",
-                                          (end - start).TotalSeconds);
+                                     blockSize * (double)(blocks + 1) / 1024 /
+                                     (totalDuration / 1000), devicePath);
+                        dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
                         dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
                         dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
                         #region Error handling
-                        if(resume.BadBlocks.Count > 0 && !aborted)
+                        if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)
                         {
                             int  pass    = 0;
                             bool forward = true;
@@ -337,8 +335,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     outputPlugin.WriteSector(cmdBuf, badSector);
                                     dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                                 }
-                                else if(persistent)
-                                    outputPlugin.WriteSector(cmdBuf, badSector);
+                                else if(persistent) outputPlugin.WriteSector(cmdBuf, badSector);
                             }
 
                             if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
@@ -362,8 +359,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         ibgLog  = new IbgLog(outputPrefix  + ".ibg", ATA_PROFILE);
 
                         ulong currentBlock = 0;
-                        blocks             = (ulong)(cylinders * heads * sectors);
-                        start              = DateTime.UtcNow;
+                        blocks = (ulong)(cylinders * heads * sectors);
+                        start  = DateTime.UtcNow;
                         for(ushort cy = 0; cy < cylinders; cy++)
                         {
                             for(byte hd = 0; hd < heads; hd++)
@@ -396,7 +393,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         DateTime writeStart = DateTime.Now;
                                         outputPlugin.WriteSector(cmdBuf,
                                                                  (ulong)((cy * heads + hd) * sectors + (sc - 1)));
-                                        imageWriteDuration += (DateTime.Now          - writeStart).TotalSeconds;
+                                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                         extents.Add(currentBlock);
                                         dumpLog.WriteLine("Error reading cylinder {0} head {1} sector {2}.", cy, hd,
                                                           sc);
@@ -410,7 +407,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         DateTime writeStart = DateTime.Now;
                                         outputPlugin.WriteSector(new byte[blockSize],
                                                                  (ulong)((cy * heads + hd) * sectors + (sc - 1)));
-                                        imageWriteDuration += (DateTime.Now          - writeStart).TotalSeconds;
+                                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                     }
 
                                     double newSpeed =
@@ -426,14 +423,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DicConsole.WriteLine();
                         mhddLog.Close();
                         ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                     blockSize                                                        *
-                                     (double)(blocks + 1)                                             / 1024 / (totalDuration / 1000), devicePath);
-                        dumpLog.WriteLine("Dump finished in {0} seconds.",
-                                          (end - start).TotalSeconds);
+                                     blockSize * (double)(blocks + 1) / 1024 /
+                                     (totalDuration / 1000), devicePath);
+                        dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
                         dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
                         dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                                          (double)blockSize   * (double)(blocks + 1) / 1024 /
+                                          (double)blockSize * (double)(blocks + 1) / 1024 /
                                           (imageWriteDuration / 1000));
                     }
 
@@ -478,8 +474,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(ret)
                                 sidecar.BlockMedia[0].USB = new USBType
                                 {
-                                    ProductID   = dev.UsbProductId,
-                                    VendorID    = dev.UsbVendorId,
+                                    ProductID = dev.UsbProductId,
+                                    VendorID  = dev.UsbVendorId,
                                     Descriptors = new DumpType
                                     {
                                         Image     = outputPath,
@@ -532,7 +528,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                             {
                                                 sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
                                                 sidecar.BlockMedia[0].PCMCIA.ProductName  = vers.Product;
-                                                sidecar.BlockMedia[0].PCMCIA.Compliance   =
+                                                sidecar.BlockMedia[0].PCMCIA.Compliance =
                                                     $"{vers.MajorVersion}.{vers.MinorVersion}";
                                                 sidecar.BlockMedia[0].PCMCIA.AdditionalInformation =
                                                     vers.AdditionalInformation;
@@ -557,7 +553,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DateTime chkEnd = DateTime.UtcNow;
 
-                        totalChkDuration = (chkEnd                                   - chkStart).TotalMilliseconds;
+                        totalChkDuration = (chkEnd - chkStart).TotalMilliseconds;
                         dumpLog.WriteLine("Sidecar created in {0} seconds.", (chkEnd - chkStart).TotalSeconds);
                         dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
@@ -630,10 +626,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 if(dev.IsCompactFlash) Statistics.AddMedia(MediaType.CompactFlash, true);
-                else if(dev.IsPcmcia)
-                    Statistics.AddMedia(MediaType.PCCardTypeI, true);
-                else
-                    Statistics.AddMedia(MediaType.GENERIC_HDD, true);
+                else if(dev.IsPcmcia) Statistics.AddMedia(MediaType.PCCardTypeI,   true);
+                else Statistics.AddMedia(MediaType.GENERIC_HDD,                    true);
             }
             else DicConsole.ErrorWriteLine("Unable to communicate with ATA device.");
         }
