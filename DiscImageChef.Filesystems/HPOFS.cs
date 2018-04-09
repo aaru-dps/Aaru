@@ -62,6 +62,8 @@ namespace DiscImageChef.Filesystems
             byte[] hpofsBpbSector =
                 imagePlugin.ReadSector(0 + partition.Start); // Seek to BIOS parameter block, on logical sector 0
 
+            if(hpofsBpbSector.Length < 512) return false;
+
             IntPtr bpbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(hpofsBpbSector, 0, bpbPtr, 512);
             BiosParameterBlock bpb = (BiosParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock));
@@ -162,39 +164,36 @@ namespace DiscImageChef.Filesystems
                                       ArrayHelpers.ArrayIsNullOrEmpty(vib.filler));
 
             sb.AppendLine("High Performance Optical File System");
-            sb.AppendFormat("OEM name: {0}", StringHandlers.SpacePaddedToString(bpb.oem_name))
-              .AppendLine();
-            sb.AppendFormat("{0} bytes per sector",              bpb.bps).AppendLine();
-            sb.AppendFormat("{0} sectors per cluster",           bpb.spc).AppendLine();
-            sb.AppendFormat("Media descriptor: 0x{0:X2}",        bpb.media).AppendLine();
-            sb.AppendFormat("{0} sectors per track",             bpb.sptrk).AppendLine();
-            sb.AppendFormat("{0} heads",                         bpb.heads).AppendLine();
-            sb.AppendFormat("{0} sectors hidden before BPB",     bpb.hsectors).AppendLine();
+            sb.AppendFormat("OEM name: {0}", StringHandlers.SpacePaddedToString(bpb.oem_name)).AppendLine();
+            sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
+            sb.AppendFormat("{0} sectors per cluster", bpb.spc).AppendLine();
+            sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
+            sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
+            sb.AppendFormat("{0} heads", bpb.heads).AppendLine();
+            sb.AppendFormat("{0} sectors hidden before BPB", bpb.hsectors).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", mib.sectors, mib.sectors * bpb.bps).AppendLine();
-            sb.AppendFormat("BIOS Drive Number: 0x{0:X2}",       bpb.drive_no).AppendLine();
-            sb.AppendFormat("Serial number: 0x{0:X8}",           mib.serial).AppendLine();
-            sb.AppendFormat("Volume label: {0}",
-                            StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding))
+            sb.AppendFormat("BIOS Drive Number: 0x{0:X2}", bpb.drive_no).AppendLine();
+            sb.AppendFormat("Serial number: 0x{0:X8}", mib.serial).AppendLine();
+            sb.AppendFormat("Volume label: {0}", StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding))
               .AppendLine();
             sb.AppendFormat("Volume comment: {0}", StringHandlers.SpacePaddedToString(mib.comment, Encoding))
               .AppendLine();
-            sb.AppendFormat("Volume owner: {0}", StringHandlers.SpacePaddedToString(vib.owner, Encoding))
-              .AppendLine();
+            sb.AppendFormat("Volume owner: {0}", StringHandlers.SpacePaddedToString(vib.owner, Encoding)).AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime))
               .AppendLine();
-            sb.AppendFormat("Volume uses {0} codepage {1}", mib.codepageType       > 0 && mib.codepageType < 3
+            sb.AppendFormat("Volume uses {0} codepage {1}", mib.codepageType > 0 && mib.codepageType < 3
                                                                 ? mib.codepageType == 2
                                                                       ? "EBCDIC"
                                                                       : "ASCII"
                                                                 : "Unknown", mib.codepage).AppendLine();
-            sb.AppendFormat("RPS level: {0}",                  mib.rps).AppendLine();
-            sb.AppendFormat("Filesystem version: {0}.{1}",     mib.major, mib.minor).AppendLine();
+            sb.AppendFormat("RPS level: {0}", mib.rps).AppendLine();
+            sb.AppendFormat("Filesystem version: {0}.{1}", mib.major, mib.minor).AppendLine();
             sb.AppendFormat("Volume can be filled up to {0}%", vib.percentFull).AppendLine();
 
             XmlFsType = new FileSystemType
             {
                 Clusters               = mib.sectors / bpb.spc,
-                ClusterSize            = bpb.bps * bpb.spc,
+                ClusterSize            = bpb.bps     * bpb.spc,
                 CreationDate           = DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime),
                 CreationDateSpecified  = true,
                 DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, Encoding),
