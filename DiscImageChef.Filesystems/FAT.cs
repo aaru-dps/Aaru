@@ -136,12 +136,14 @@ namespace DiscImageChef.Filesystems
             ("8f024b3d501c39ee6e3f8ca28173ad6a780d3eb0", "Windows Vista, 8, 10"),
             ("d3e93f8b82ef250db216037d827a4896dc97d2be", "TracerST"), // OEM ID: "TracerST"
             //("b741f85ef40288ccc8887de1f6e849009097e1c9", "Norton Utilities"), // OEM ID: "IBM PNCI", need to confirm
-            ("c49b275537ac7237cac64d83f34d2024ae0ca96a", "Windows NT (Spanish)"
-            ), // Need to check Windows >= 2000 (Spanish)
+            ("c49b275537ac7237cac64d83f34d2024ae0ca96a",
+                "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
             //("a48b0e4b696317eed829e960d1aa576562a4f185", "TracerST"), // Unknown OEM ID, apparently Tracer, unconfirmed
-            ("fe477972602ba76658ff7143859045b3c4036ca5", "iomega"
-            ), // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
-            ("ef79a1f33e5237827eb812dda548f0e4e916d815", "GEOS") // OEM ID: "GEOWORKS"
+            ("fe477972602ba76658ff7143859045b3c4036ca5",
+                "iomega"),                                        // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
+            ("ef79a1f33e5237827eb812dda548f0e4e916d815", "GEOS"), // OEM ID: "GEOWORKS"
+            ("8524587ee91494cc51cc2c9d07453e84be0cdc33", "Hero Soft v1.10"),
+            ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00")
         };
 
         public FileSystemType XmlFsType { get; private set; }
@@ -173,8 +175,43 @@ namespace DiscImageChef.Filesystems
             byte[] atariOem = new byte[6];
             ushort bootable = 0;
 
-            byte[] bpbSector = imagePlugin.ReadSector(0 + partition.Start);
-            byte[] fatSector = imagePlugin.ReadSector(1 + partition.Start);
+            uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
+
+            byte[] bpbSector = imagePlugin.ReadSectors(0            + partition.Start, sectorsPerBpb);
+            byte[] fatSector = imagePlugin.ReadSector(sectorsPerBpb + partition.Start);
+
+            HumanParameterBlock humanBpb =
+                BigEndianMarshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
+
+            ulong expectedClusters = humanBpb.bpc > 0 ? partition.Size / humanBpb.bpc : 0;
+
+            DicConsole.DebugWriteLine("FAT plugin", "Human bpc = {0}",               humanBpb.bpc);
+            DicConsole.DebugWriteLine("FAT plugin", "Human clusters = {0}",          humanBpb.clusters);
+            DicConsole.DebugWriteLine("FAT plugin", "Human big_clusters = {0}",      humanBpb.big_clusters);
+            DicConsole.DebugWriteLine("FAT plugin", "Human expected clusters = {0}", expectedClusters);
+
+            // Check clusters for Human68k are correct
+            bool humanClustersCorrect = humanBpb.clusters           == 0
+                                            ? humanBpb.big_clusters == expectedClusters
+                                            : humanBpb.clusters     == expectedClusters;
+
+            // Check OEM for Human68k is correct
+            bool humanOemCorrect = bpbSector[2]  >= 0x20 && bpbSector[3]  >= 0x20 && bpbSector[4]  >= 0x20 &&
+                                   bpbSector[5]  >= 0x20 && bpbSector[6]  >= 0x20 && bpbSector[7]  >= 0x20 &&
+                                   bpbSector[8]  >= 0x20 && bpbSector[9]  >= 0x20 && bpbSector[10] >= 0x20 &&
+                                   bpbSector[11] >= 0x20 && bpbSector[12] >= 0x20 && bpbSector[13] >= 0x20 &&
+                                   bpbSector[14] >= 0x20 && bpbSector[15] >= 0x20 && bpbSector[16] >= 0x20 &&
+                                   bpbSector[17] >= 0x20;
+
+            // Check correct branch for Human68k
+            bool humanBranchCorrect = bpbSector[0] == 0x60 && bpbSector[1] >= 0x20 && bpbSector[1] < 0xFE;
+
+            DicConsole.DebugWriteLine("FAT plugin", "humanClustersCorrect = {0}", humanClustersCorrect);
+            DicConsole.DebugWriteLine("FAT plugin", "humanOemCorrect = {0}",      humanOemCorrect);
+            DicConsole.DebugWriteLine("FAT plugin", "humanBranchCorrect = {0}",   humanBranchCorrect);
+
+            // If all Human68k checks are correct, it is a Human68k FAT16
+            if(humanClustersCorrect && humanOemCorrect && humanBranchCorrect && expectedClusters > 0) return true;
 
             Array.Copy(bpbSector, 0x02, atariOem, 0, 6);
             Array.Copy(bpbSector, 0x03, dosOem,   0, 8);
@@ -191,21 +228,18 @@ namespace DiscImageChef.Filesystems
             bpbSignature   = bpbSector[0x026];
             fat32Signature = bpbSector[0x042];
             Array.Copy(bpbSector, 0x052, fat32Id, 0, 8);
-            hugeSectors                                     = BitConverter.ToUInt64(bpbSector, 0x052);
-            fatId                                           = fatSector[0];
+            hugeSectors = BitConverter.ToUInt64(bpbSector, 0x052);
+            fatId       = fatSector[0];
             int bitsInBps                                   = CountBits.Count(bps);
             if(imagePlugin.Info.SectorSize >= 512) bootable = BitConverter.ToUInt16(bpbSector, 0x1FE);
 
-            bool correctSpc =
-                spc == 1 || spc == 2 || spc == 4 || spc == 8 || spc == 16 || spc == 32 || spc == 64;
-            string msxString       = Encoding.ASCII.GetString(msxId);
-            string fat32String     = Encoding.ASCII.GetString(fat32Id);
-            bool   atariOemCorrect = atariOem[0] >= 0x20 && atariOem[1] >= 0x20 && atariOem[2] >= 0x20 &&
-                                     atariOem[3] >= 0x20 && atariOem[4] >= 0x20 && atariOem[5] >= 0x20;
-            bool dosOemCorrect = dosOem[0]       >= 0x20 && dosOem[1]   >= 0x20 && dosOem[2]   >= 0x20 &&
-                                 dosOem[3]       >= 0x20 &&
-                                 dosOem[4]       >= 0x20 && dosOem[5] >= 0x20 && dosOem[6] >= 0x20 &&
-                                 dosOem[7]       >= 0x20;
+            bool   correctSpc  = spc == 1 || spc == 2 || spc == 4 || spc == 8 || spc == 16 || spc == 32 || spc == 64;
+            string msxString   = Encoding.ASCII.GetString(msxId);
+            string fat32String = Encoding.ASCII.GetString(fat32Id);
+            bool atariOemCorrect = atariOem[0] >= 0x20 && atariOem[1] >= 0x20 && atariOem[2] >= 0x20 &&
+                                   atariOem[3] >= 0x20 && atariOem[4] >= 0x20 && atariOem[5] >= 0x20;
+            bool dosOemCorrect = dosOem[0] >= 0x20 && dosOem[1] >= 0x20 && dosOem[2] >= 0x20 && dosOem[3] >= 0x20 &&
+                                 dosOem[4] >= 0x20 && dosOem[5] >= 0x20 && dosOem[6] >= 0x20 && dosOem[7] >= 0x20;
             string atariString = Encoding.ASCII.GetString(atariOem);
             string oemString   = Encoding.ASCII.GetString(dosOem);
 
@@ -237,9 +271,8 @@ namespace DiscImageChef.Filesystems
             ushort apricotSectors         = BitConverter.ToUInt16(bpbSector, 0x58);
             byte   apricotMediaDescriptor = bpbSector[0x5A];
             ushort apricotFatSectors      = BitConverter.ToUInt16(bpbSector, 0x5B);
-            bool   apricotCorrectSpc      = apricotSpc == 1  || apricotSpc == 2 || apricotSpc == 4 ||
-                                            apricotSpc == 8  ||
-                                            apricotSpc == 16 || apricotSpc == 32 || apricotSpc == 64;
+            bool apricotCorrectSpc = apricotSpc == 1  || apricotSpc == 2  || apricotSpc == 4 || apricotSpc == 8 ||
+                                     apricotSpc == 16 || apricotSpc == 32 || apricotSpc == 64;
             int  bitsInApricotBps  = CountBits.Count(apricotBps);
             byte apricotPartitions = bpbSector[0x0C];
 
@@ -290,8 +323,8 @@ namespace DiscImageChef.Filesystems
                 case 1 when correctSpc && numberOfFats <= 2    && sectors     == 0 && fatSectors == 0 &&
                             fat32Signature             == 0x29 && fat32String == "FAT32   ": return true;
                 // short FAT32
-                case 1 when correctSpc && numberOfFats <= 2 && sectors == 0 && fatSectors == 0 && fat32Signature == 0x28
-                :
+                case 1
+                    when correctSpc && numberOfFats <= 2 && sectors == 0 && fatSectors == 0 && fat32Signature == 0x28:
                     return bigSectors        == 0
                                ? hugeSectors <= partition.End - partition.Start + 1
                                : bigSectors  <= partition.End - partition.Start + 1;
@@ -300,17 +333,17 @@ namespace DiscImageChef.Filesystems
                             sectors                    <= partition.End - partition.Start + 1 && fatSectors  > 0 &&
                             msxString                  == "VOL_ID": return true;
                 // EBPB
-                case 1 when correctSpc && numberOfFats <= 2 && rootEntries     > 0 && fatSectors > 0 &&
-                            (bpbSignature              == 0x28 || bpbSignature == 0x29):
-                    return sectors                     == 0
-                               ? bigSectors            <= partition.End - partition.Start + 1
-                               : sectors               <= partition.End - partition.Start + 1;
+                case 1 when correctSpc && numberOfFats <= 2 && rootEntries > 0 && fatSectors > 0 &&
+                            (bpbSignature == 0x28 || bpbSignature == 0x29):
+                    return sectors          == 0
+                               ? bigSectors <= partition.End - partition.Start + 1
+                               : sectors    <= partition.End - partition.Start + 1;
                 // BPB
                 case 1 when correctSpc && reservedSecs < partition.End - partition.Start && numberOfFats <= 2 &&
                             rootEntries                > 0                               && fatSectors   > 0:
-                    return sectors                     == 0
-                               ? bigSectors            <= partition.End - partition.Start + 1
-                               : sectors               <= partition.End - partition.Start + 1;
+                    return sectors          == 0
+                               ? bigSectors <= partition.End - partition.Start + 1
+                               : sectors    <= partition.End - partition.Start + 1;
             }
 
             // Apricot BPB
@@ -345,7 +378,7 @@ namespace DiscImageChef.Filesystems
                 // Iterate all root directory
                 for(int e = 0; e < 96 * 32; e += 32)
                 {
-                    for(int c = 0; c      < 11; c++)
+                    for(int c = 0; c < 11; c++)
                         if(rootDir[c + e] < 0x20 && rootDir[c + e] != 0x00 && rootDir[c + e] != 0x05 ||
                            rootDir[c + e] == 0xFF                                                    ||
                            rootDir[c + e] == 0x2E)
@@ -377,21 +410,15 @@ namespace DiscImageChef.Filesystems
                     break;
                 case 0xFD:
                     if(imagePlugin.Info.Sectors      == 4004 && imagePlugin.Info.SectorSize == 128) fat2SectorNo = 7;
-                    else if(imagePlugin.Info.Sectors == 2002 && imagePlugin.Info.SectorSize == 128)
-                        fat2SectorNo = 7;
+                    else if(imagePlugin.Info.Sectors == 2002 && imagePlugin.Info.SectorSize == 128) fat2SectorNo = 7;
                     break;
                 case 0xFE:
-                    if(imagePlugin.Info.Sectors      == 320  && imagePlugin.Info.SectorSize == 512) fat2SectorNo = 2;
-                    else if(imagePlugin.Info.Sectors == 2002 && imagePlugin.Info.SectorSize == 128)
-                        fat2SectorNo = 7;
-                    else if(imagePlugin.Info.Sectors == 1232 && imagePlugin.Info.SectorSize == 1024)
-                        fat2SectorNo = 3;
-                    else if(imagePlugin.Info.Sectors == 616 && imagePlugin.Info.SectorSize == 1024)
-                        fat2SectorNo = 2;
-                    else if(imagePlugin.Info.Sectors == 720 && imagePlugin.Info.SectorSize == 128)
-                        fat2SectorNo = 5;
-                    else if(imagePlugin.Info.Sectors == 640 && imagePlugin.Info.SectorSize == 512)
-                        fat2SectorNo = 2;
+                    if(imagePlugin.Info.Sectors      == 320  && imagePlugin.Info.SectorSize == 512) fat2SectorNo  = 2;
+                    else if(imagePlugin.Info.Sectors == 2002 && imagePlugin.Info.SectorSize == 128) fat2SectorNo  = 7;
+                    else if(imagePlugin.Info.Sectors == 1232 && imagePlugin.Info.SectorSize == 1024) fat2SectorNo = 3;
+                    else if(imagePlugin.Info.Sectors == 616  && imagePlugin.Info.SectorSize == 1024) fat2SectorNo = 2;
+                    else if(imagePlugin.Info.Sectors == 720  && imagePlugin.Info.SectorSize == 128) fat2SectorNo  = 5;
+                    else if(imagePlugin.Info.Sectors == 640  && imagePlugin.Info.SectorSize == 512) fat2SectorNo  = 2;
                     break;
                 case 0xFF:
                     if(imagePlugin.Info.Sectors == 640 && imagePlugin.Info.SectorSize == 512) fat2SectorNo = 2;
@@ -424,7 +451,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            XmlFsType        = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             bool useAtariBpb          = false;
             bool useMsxBpb            = false;
@@ -439,6 +466,7 @@ namespace DiscImageChef.Filesystems
             bool andosOemCorrect      = false;
             bool useApricotBpb        = false;
             bool useDecRainbowBpb     = false;
+            bool useHumanBpb;
 
             AtariParameterBlock         atariBpb      = new AtariParameterBlock();
             MsxParameterBlock           msxBpb        = new MsxParameterBlock();
@@ -452,27 +480,57 @@ namespace DiscImageChef.Filesystems
             Fat32ParameterBlock         fat32Bpb      = new Fat32ParameterBlock();
             ApricotLabel                apricotBpb    = new ApricotLabel();
 
-            byte[] bpbSector = imagePlugin.ReadSectors(partition.Start, 2);
+            uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
+
+            byte[] bpbSector = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb);
+
+            HumanParameterBlock humanBpb =
+                BigEndianMarshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
+
+            ulong expectedClusters = humanBpb.bpc > 0 ? partition.Size / humanBpb.bpc : 0;
+
+            // Check clusters for Human68k are correct
+            bool humanClustersCorrect = humanBpb.clusters           == 0
+                                            ? humanBpb.big_clusters == expectedClusters
+                                            : humanBpb.clusters     == expectedClusters;
+
+            // Check OEM for Human68k is correct
+            bool humanOemCorrect = bpbSector[2]  >= 0x20 && bpbSector[3]  >= 0x20 && bpbSector[4]  >= 0x20 &&
+                                   bpbSector[5]  >= 0x20 && bpbSector[6]  >= 0x20 && bpbSector[7]  >= 0x20 &&
+                                   bpbSector[8]  >= 0x20 && bpbSector[9]  >= 0x20 && bpbSector[10] >= 0x20 &&
+                                   bpbSector[11] >= 0x20 && bpbSector[12] >= 0x20 && bpbSector[13] >= 0x20 &&
+                                   bpbSector[14] >= 0x20 && bpbSector[15] >= 0x20 && bpbSector[16] >= 0x20 &&
+                                   bpbSector[17] >= 0x20;
+
+            // Check correct branch for Human68k
+            bool humanBranchCorrect = bpbSector[0] == 0x60 && bpbSector[1] >= 0x20 && bpbSector[1] < 0xFE;
+
+            DicConsole.DebugWriteLine("FAT plugin", "humanClustersCorrect = {0}", humanClustersCorrect);
+            DicConsole.DebugWriteLine("FAT plugin", "humanOemCorrect = {0}",      humanOemCorrect);
+            DicConsole.DebugWriteLine("FAT plugin", "humanBranchCorrect = {0}",   humanBranchCorrect);
+
+            // If all Human68k checks are correct, it is a Human68k FAT16
+            useHumanBpb = humanClustersCorrect && humanOemCorrect && humanBranchCorrect && expectedClusters > 0;
+            if(useHumanBpb) DicConsole.DebugWriteLine("FAT plugin", "Using Human68k BPB");
 
             byte minBootNearJump = 0;
 
-            if(imagePlugin.Info.SectorSize >= 256)
+            if(imagePlugin.Info.SectorSize >= 256 && !useHumanBpb)
             {
                 IntPtr bpbPtr = Marshal.AllocHGlobal(512);
                 Marshal.Copy(bpbSector, 0, bpbPtr, 512);
 
-                atariBpb  = (AtariParameterBlock)Marshal.PtrToStructure(bpbPtr,  typeof(AtariParameterBlock));
-                msxBpb    = (MsxParameterBlock)Marshal.PtrToStructure(bpbPtr,    typeof(MsxParameterBlock));
-                dos2Bpb   = (BiosParameterBlock2)Marshal.PtrToStructure(bpbPtr,  typeof(BiosParameterBlock2));
-                dos30Bpb  = (BiosParameterBlock30)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock30));
-                dos32Bpb  = (BiosParameterBlock32)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock32));
-                dos33Bpb  = (BiosParameterBlock33)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock33));
+                atariBpb = (AtariParameterBlock)Marshal.PtrToStructure(bpbPtr,  typeof(AtariParameterBlock));
+                msxBpb   = (MsxParameterBlock)Marshal.PtrToStructure(bpbPtr,    typeof(MsxParameterBlock));
+                dos2Bpb  = (BiosParameterBlock2)Marshal.PtrToStructure(bpbPtr,  typeof(BiosParameterBlock2));
+                dos30Bpb = (BiosParameterBlock30)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock30));
+                dos32Bpb = (BiosParameterBlock32)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock32));
+                dos33Bpb = (BiosParameterBlock33)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock33));
                 shortEbpb =
-                    (BiosParameterBlockShortEbpb)
-                    Marshal.PtrToStructure(bpbPtr,                                     typeof(BiosParameterBlockShortEbpb));
-                ebpb          = (BiosParameterBlockEbpb)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockEbpb));
+                    (BiosParameterBlockShortEbpb)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockShortEbpb));
+                ebpb = (BiosParameterBlockEbpb)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockEbpb));
                 shortFat32Bpb =
-                    (Fat32ParameterBlockShort)Marshal.PtrToStructure(bpbPtr,     typeof(Fat32ParameterBlockShort));
+                    (Fat32ParameterBlockShort)Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlockShort));
                 fat32Bpb   = (Fat32ParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlock));
                 apricotBpb = (ApricotLabel)Marshal.PtrToStructure(bpbPtr,        typeof(ApricotLabel));
 
@@ -490,37 +548,34 @@ namespace DiscImageChef.Filesystems
                 int bitsInBpsFat32      = CountBits.Count(fat32Bpb.bps);
                 int bitsInBpsApricot    = CountBits.Count(apricotBpb.mainBPB.bps);
 
-                bool correctSpcAtari = atariBpb.spc             == 1 || atariBpb.spc == 2  || atariBpb.spc == 4  ||
-                                       atariBpb.spc             == 8 || atariBpb.spc == 16 || atariBpb.spc == 32 ||
-                                       atariBpb.spc             == 64;
-                bool correctSpcMsx = msxBpb.spc                 == 1  || msxBpb.spc == 2 || msxBpb.spc == 4 ||
-                                     msxBpb.spc                 == 8  ||
-                                     msxBpb.spc                 == 16 || msxBpb.spc  == 32 || msxBpb.spc  == 64;
-                bool correctSpcDos20 = dos2Bpb.spc              == 1  || dos2Bpb.spc == 2  || dos2Bpb.spc == 4 ||
-                                       dos2Bpb.spc              == 8  ||
-                                       dos2Bpb.spc              == 16 || dos2Bpb.spc  == 32 || dos2Bpb.spc  == 64;
-                bool correctSpcDos30 = dos30Bpb.spc             == 1  || dos30Bpb.spc == 2  || dos30Bpb.spc == 4  ||
-                                       dos30Bpb.spc             == 8  || dos30Bpb.spc == 16 || dos30Bpb.spc == 32 ||
-                                       dos30Bpb.spc             == 64;
-                bool correctSpcDos32 = dos32Bpb.spc             == 1 || dos32Bpb.spc == 2  || dos32Bpb.spc == 4  ||
-                                       dos32Bpb.spc             == 8 || dos32Bpb.spc == 16 || dos32Bpb.spc == 32 ||
-                                       dos32Bpb.spc             == 64;
-                bool correctSpcDos33 = dos33Bpb.spc             == 1 || dos33Bpb.spc == 2  || dos33Bpb.spc == 4  ||
-                                       dos33Bpb.spc             == 8 || dos33Bpb.spc == 16 || dos33Bpb.spc == 32 ||
-                                       dos33Bpb.spc             == 64;
-                bool correctSpcDos34 = shortEbpb.spc            == 1 || shortEbpb.spc == 2  || shortEbpb.spc == 4  ||
-                                       shortEbpb.spc            == 8 || shortEbpb.spc == 16 || shortEbpb.spc == 32 ||
-                                       shortEbpb.spc            == 64;
-                bool correctSpcDos40 = ebpb.spc                 == 1  || ebpb.spc == 2 || ebpb.spc == 4 ||
-                                       ebpb.spc                 == 8  ||
-                                       ebpb.spc                 == 16 || ebpb.spc          == 32 || ebpb.spc == 64;
-                bool correctSpcFat32Short = shortFat32Bpb.spc   == 1  || shortFat32Bpb.spc == 2  ||
-                                            shortFat32Bpb.spc   == 4  || shortFat32Bpb.spc == 8  ||
-                                            shortFat32Bpb.spc   == 16 || shortFat32Bpb.spc == 32 ||
-                                            shortFat32Bpb.spc   == 64;
-                bool correctSpcFat32 = fat32Bpb.spc             == 1 || fat32Bpb.spc == 2  || fat32Bpb.spc == 4  ||
-                                       fat32Bpb.spc             == 8 || fat32Bpb.spc == 16 || fat32Bpb.spc == 32 ||
-                                       fat32Bpb.spc             == 64;
+                bool correctSpcAtari = atariBpb.spc == 1 || atariBpb.spc == 2  || atariBpb.spc == 4  ||
+                                       atariBpb.spc == 8 || atariBpb.spc == 16 || atariBpb.spc == 32 ||
+                                       atariBpb.spc == 64;
+                bool correctSpcMsx = msxBpb.spc == 1  || msxBpb.spc == 2  || msxBpb.spc == 4 || msxBpb.spc == 8 ||
+                                     msxBpb.spc == 16 || msxBpb.spc == 32 || msxBpb.spc == 64;
+                bool correctSpcDos20 = dos2Bpb.spc == 1  || dos2Bpb.spc == 2  || dos2Bpb.spc == 4 || dos2Bpb.spc == 8 ||
+                                       dos2Bpb.spc == 16 || dos2Bpb.spc == 32 || dos2Bpb.spc == 64;
+                bool correctSpcDos30 = dos30Bpb.spc == 1 || dos30Bpb.spc == 2  || dos30Bpb.spc == 4  ||
+                                       dos30Bpb.spc == 8 || dos30Bpb.spc == 16 || dos30Bpb.spc == 32 ||
+                                       dos30Bpb.spc == 64;
+                bool correctSpcDos32 = dos32Bpb.spc == 1 || dos32Bpb.spc == 2  || dos32Bpb.spc == 4  ||
+                                       dos32Bpb.spc == 8 || dos32Bpb.spc == 16 || dos32Bpb.spc == 32 ||
+                                       dos32Bpb.spc == 64;
+                bool correctSpcDos33 = dos33Bpb.spc == 1 || dos33Bpb.spc == 2  || dos33Bpb.spc == 4  ||
+                                       dos33Bpb.spc == 8 || dos33Bpb.spc == 16 || dos33Bpb.spc == 32 ||
+                                       dos33Bpb.spc == 64;
+                bool correctSpcDos34 = shortEbpb.spc == 1 || shortEbpb.spc == 2  || shortEbpb.spc == 4  ||
+                                       shortEbpb.spc == 8 || shortEbpb.spc == 16 || shortEbpb.spc == 32 ||
+                                       shortEbpb.spc == 64;
+                bool correctSpcDos40 = ebpb.spc == 1  || ebpb.spc == 2  || ebpb.spc == 4 || ebpb.spc == 8 ||
+                                       ebpb.spc == 16 || ebpb.spc == 32 || ebpb.spc == 64;
+                bool correctSpcFat32Short = shortFat32Bpb.spc == 1  || shortFat32Bpb.spc == 2  ||
+                                            shortFat32Bpb.spc == 4  || shortFat32Bpb.spc == 8  ||
+                                            shortFat32Bpb.spc == 16 || shortFat32Bpb.spc == 32 ||
+                                            shortFat32Bpb.spc == 64;
+                bool correctSpcFat32 = fat32Bpb.spc == 1 || fat32Bpb.spc == 2  || fat32Bpb.spc == 4  ||
+                                       fat32Bpb.spc == 8 || fat32Bpb.spc == 16 || fat32Bpb.spc == 32 ||
+                                       fat32Bpb.spc == 64;
                 bool correctSpcApricot = apricotBpb.mainBPB.spc == 1  || apricotBpb.mainBPB.spc == 2  ||
                                          apricotBpb.mainBPB.spc == 4  || apricotBpb.mainBPB.spc == 8  ||
                                          apricotBpb.mainBPB.spc == 16 || apricotBpb.mainBPB.spc == 32 ||
@@ -591,13 +646,12 @@ namespace DiscImageChef.Filesystems
                     DicConsole.DebugWriteLine("FAT plugin", "Using Apricot BPB");
                     useApricotBpb = true;
                 }
-                else if(bitsInBpsDos40 == 1 && correctSpcDos40 && ebpb.fats_no <= 2 && ebpb.root_ent     > 0 &&
-                        ebpb.spfat     > 0  && (ebpb.signature                 == 0x28 || ebpb.signature == 0x29 ||
-                                                andosOemCorrect))
+                else if(bitsInBpsDos40 == 1 && correctSpcDos40 && ebpb.fats_no <= 2 && ebpb.root_ent > 0 &&
+                        ebpb.spfat     > 0  && (ebpb.signature == 0x28 || ebpb.signature == 0x29 || andosOemCorrect))
                 {
                     if(ebpb.sectors == 0)
                     {
-                        if(ebpb.big_sectors   <= partition.End - partition.Start + 1)
+                        if(ebpb.big_sectors <= partition.End - partition.Start + 1)
                             if(ebpb.signature == 0x29 || andosOemCorrect)
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
@@ -611,7 +665,7 @@ namespace DiscImageChef.Filesystems
                                 minBootNearJump      = 0x29;
                             }
                     }
-                    else if(ebpb.sectors  <= partition.End - partition.Start + 1)
+                    else if(ebpb.sectors <= partition.End - partition.Start + 1)
                         if(ebpb.signature == 0x29 || andosOemCorrect)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
@@ -625,26 +679,21 @@ namespace DiscImageChef.Filesystems
                             minBootNearJump      = 0x29;
                         }
                 }
-                else if(bitsInBpsDos33      == 1                              && correctSpcDos33 &&
-                        dos33Bpb.rsectors   < partition.End - partition.Start &&
-                        dos33Bpb.fats_no    <= 2                              &&
-                        dos33Bpb.root_ent   > 0                               &&
-                        dos33Bpb.spfat      > 0)
-                    if(dos33Bpb.sectors     == 0               &&
-                       dos33Bpb.hsectors    <= partition.Start &&
-                       dos33Bpb.big_sectors > 0                &&
+                else if(bitsInBpsDos33    == 1                              && correctSpcDos33 &&
+                        dos33Bpb.rsectors < partition.End - partition.Start &&
+                        dos33Bpb.fats_no  <= 2                              &&
+                        dos33Bpb.root_ent > 0                               && dos33Bpb.spfat > 0)
+                    if(dos33Bpb.sectors     == 0 && dos33Bpb.hsectors <= partition.Start && dos33Bpb.big_sectors > 0 &&
                        dos33Bpb.big_sectors <= partition.End - partition.Start + 1)
                     {
                         DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
                         useDos33Bpb     = true;
                         minBootNearJump = 0x22;
                     }
-                    else if(dos33Bpb.big_sectors                       == 0 && dos33Bpb.hsectors <= partition.Start &&
-                            dos33Bpb.sectors                           > 0  &&
-                            dos33Bpb.sectors                           <= partition.End - partition.Start + 1)
-                        if(atariBpb.jump[0]                            == 0x60 || atariBpb.jump[0] == 0xE9 &&
-                           atariBpb.jump[1]                            == 0x00                             &&
-                           Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
+                    else if(dos33Bpb.big_sectors == 0 && dos33Bpb.hsectors <= partition.Start && dos33Bpb.sectors > 0 &&
+                            dos33Bpb.sectors     <= partition.End - partition.Start + 1)
+                        if(atariBpb.jump[0] == 0x60 || atariBpb.jump[0] == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                           Encoding.ASCII.GetString(dos33Bpb.oem_name)  != "NEXT    ")
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                             useAtariBpb = true;
@@ -664,11 +713,9 @@ namespace DiscImageChef.Filesystems
                             useDos32Bpb     = true;
                             minBootNearJump = 0x1E;
                         }
-                        else if(dos30Bpb.sptrk                             > 0 && dos30Bpb.sptrk       < 64 &&
-                                dos30Bpb.heads                             > 0 && dos30Bpb.heads       < 256)
-                            if(atariBpb.jump[0]                            == 0x60 || atariBpb.jump[0] == 0xE9 &&
-                               atariBpb.jump[1]                            == 0x00                             &&
-                               Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
+                        else if(dos30Bpb.sptrk > 0 && dos30Bpb.sptrk < 64 && dos30Bpb.heads > 0 && dos30Bpb.heads < 256)
+                            if(atariBpb.jump[0] == 0x60 || atariBpb.jump[0] == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                               Encoding.ASCII.GetString(dos33Bpb.oem_name)  != "NEXT    ")
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                                 useAtariBpb = true;
@@ -681,9 +728,8 @@ namespace DiscImageChef.Filesystems
                             }
                         else
                         {
-                            if(atariBpb.jump[0]                            == 0x60 || atariBpb.jump[0] == 0xE9 &&
-                               atariBpb.jump[1]                            == 0x00                             &&
-                               Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
+                            if(atariBpb.jump[0] == 0x60 || atariBpb.jump[0] == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                               Encoding.ASCII.GetString(dos33Bpb.oem_name)  != "NEXT    ")
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                                 useAtariBpb = true;
@@ -715,7 +761,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.Sectors == 800 && imagePlugin.Info.SectorSize == 512 && !useAtariBpb && !useMsxBpb   &&
                !useDos2Bpb                     && !useDos3Bpb                        && !useDos32Bpb && !useDos33Bpb &&
                !userShortExtendedBpb           && !useExtendedBpb                    &&
-               !useShortFat32                  && !useLongFat32                      && !useApricotBpb)
+               !useHumanBpb                    && !useShortFat32                     && !useLongFat32 && !useApricotBpb)
             {
                 // DEC Rainbow boots up with a Z80, first byte should be DI (disable interrupts)
                 byte z80Di = bpbSector[0];
@@ -735,7 +781,7 @@ namespace DiscImageChef.Filesystems
                 // Iterate all root directory
                 for(int e = 0; e < 96 * 32; e += 32)
                 {
-                    for(int c = 0; c      < 11; c++)
+                    for(int c = 0; c < 11; c++)
                         if(rootDir[c + e] < 0x20 && rootDir[c + e] != 0x00 && rootDir[c + e] != 0x05 ||
                            rootDir[c + e] == 0xFF                                                    ||
                            rootDir[c + e] == 0x2E)
@@ -769,12 +815,12 @@ namespace DiscImageChef.Filesystems
                 }
             }
 
-            if(!useAtariBpb          && !useMsxBpb && !useDos2Bpb && !useDos3Bpb && !useDos32Bpb &&
-               !useDos33Bpb          &&
-               !userShortExtendedBpb && !useExtendedBpb && !useShortFat32 && !useLongFat32 && !useApricotBpb &&
-               !useDecRainbowBpb)
+            if(!useAtariBpb   && !useMsxBpb && !useDos2Bpb && !useDos3Bpb && !useDos32Bpb &&
+               !useDos33Bpb   &&
+               !useHumanBpb   && !userShortExtendedBpb && !useExtendedBpb && !useShortFat32 && !useLongFat32 &&
+               !useApricotBpb && !useDecRainbowBpb)
             {
-                isFat12          = true;
+                isFat12 = true;
                 byte[] fatSector = imagePlugin.ReadSector(1 + partition.Start);
                 switch(fatSector[0])
                 {
@@ -942,8 +988,8 @@ namespace DiscImageChef.Filesystems
                 }
 
                 // This assumes a bootable sector will jump somewhere or disable interrupts in x86 code
-                XmlFsType.Bootable |= bpbSector[0]                        == 0xFA                         ||
-                                      bpbSector[0]                        == 0xEB && bpbSector[1] <= 0x7F ||
+                XmlFsType.Bootable |= bpbSector[0] == 0xFA                         ||
+                                      bpbSector[0] == 0xEB && bpbSector[1] <= 0x7F ||
                                       bpbSector[0]                        == 0xE9 &&
                                       BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC;
                 fakeBpb.boot_code = bpbSector;
@@ -973,42 +1019,42 @@ namespace DiscImageChef.Filesystems
                     XmlFsType.Type = "FAT32";
                 }
 
-                if(fat32Bpb.oem_name        != null)
+                if(fat32Bpb.oem_name != null)
                     if(fat32Bpb.oem_name[5] == 0x49 && fat32Bpb.oem_name[6] == 0x48 && fat32Bpb.oem_name[7] == 0x43)
                         sb.AppendLine("Volume has been modified by Windows 9x/Me Volume Tracker.");
                     else
                         XmlFsType.SystemIdentifier = StringHandlers.CToString(fat32Bpb.oem_name);
 
                 if(!string.IsNullOrEmpty(XmlFsType.SystemIdentifier))
-                    sb.AppendFormat("OEM Name: {0}",        XmlFsType.SystemIdentifier.Trim()).AppendLine();
-                sb.AppendFormat("{0} bytes per sector.",    fat32Bpb.bps).AppendLine();
+                    sb.AppendFormat("OEM Name: {0}", XmlFsType.SystemIdentifier.Trim()).AppendLine();
+                sb.AppendFormat("{0} bytes per sector.", fat32Bpb.bps).AppendLine();
                 sb.AppendFormat("{0} sectors per cluster.", fat32Bpb.spc).AppendLine();
                 XmlFsType.ClusterSize = fat32Bpb.bps * fat32Bpb.spc;
                 sb.AppendFormat("{0} sectors reserved between BPB and FAT.", fat32Bpb.rsectors).AppendLine();
                 if(fat32Bpb.big_sectors == 0 && fat32Bpb.signature == 0x28)
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", shortFat32Bpb.huge_sectors,
-                                    shortFat32Bpb.huge_sectors             * shortFat32Bpb.bps).AppendLine();
+                                    shortFat32Bpb.huge_sectors * shortFat32Bpb.bps).AppendLine();
                     XmlFsType.Clusters = (long)(shortFat32Bpb.huge_sectors / shortFat32Bpb.spc);
                 }
                 else
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", fat32Bpb.big_sectors,
-                                    fat32Bpb.big_sectors      * fat32Bpb.bps).AppendLine();
+                                    fat32Bpb.big_sectors * fat32Bpb.bps).AppendLine();
                     XmlFsType.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
                 }
 
-                sb.AppendFormat("{0} clusters on volume.",                     XmlFsType.Clusters).AppendLine();
-                sb.AppendFormat("Media descriptor: 0x{0:X2}",                  fat32Bpb.media).AppendLine();
-                sb.AppendFormat("{0} sectors per FAT.",                        fat32Bpb.big_spfat).AppendLine();
-                sb.AppendFormat("{0} sectors per track.",                      fat32Bpb.sptrk).AppendLine();
-                sb.AppendFormat("{0} heads.",                                  fat32Bpb.heads).AppendLine();
-                sb.AppendFormat("{0} hidden sectors before BPB.",              fat32Bpb.hsectors).AppendLine();
-                sb.AppendFormat("Cluster of root directory: {0}",              fat32Bpb.root_cluster).AppendLine();
-                sb.AppendFormat("Sector of FSINFO structure: {0}",             fat32Bpb.fsinfo_sector).AppendLine();
+                sb.AppendFormat("{0} clusters on volume.", XmlFsType.Clusters).AppendLine();
+                sb.AppendFormat("Media descriptor: 0x{0:X2}", fat32Bpb.media).AppendLine();
+                sb.AppendFormat("{0} sectors per FAT.", fat32Bpb.big_spfat).AppendLine();
+                sb.AppendFormat("{0} sectors per track.", fat32Bpb.sptrk).AppendLine();
+                sb.AppendFormat("{0} heads.", fat32Bpb.heads).AppendLine();
+                sb.AppendFormat("{0} hidden sectors before BPB.", fat32Bpb.hsectors).AppendLine();
+                sb.AppendFormat("Cluster of root directory: {0}", fat32Bpb.root_cluster).AppendLine();
+                sb.AppendFormat("Sector of FSINFO structure: {0}", fat32Bpb.fsinfo_sector).AppendLine();
                 sb.AppendFormat("Sector of backup FAT32 parameter block: {0}", fat32Bpb.backup_sector).AppendLine();
-                sb.AppendFormat("Drive number: 0x{0:X2}",                      fat32Bpb.drive_no).AppendLine();
-                sb.AppendFormat("Volume Serial Number: 0x{0:X8}",              fat32Bpb.serial_no).AppendLine();
+                sb.AppendFormat("Drive number: 0x{0:X2}", fat32Bpb.drive_no).AppendLine();
+                sb.AppendFormat("Volume Serial Number: 0x{0:X8}", fat32Bpb.serial_no).AppendLine();
                 XmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
 
                 if((fat32Bpb.flags & 0xF8) == 0x00)
@@ -1022,7 +1068,7 @@ namespace DiscImageChef.Filesystems
                     if((fat32Bpb.flags & 0x02) == 0x02) sb.AppendLine("Disk surface should be on next mount.");
                 }
 
-                if((fat32Bpb.mirror_flags                                                              & 0x80) == 0x80)
+                if((fat32Bpb.mirror_flags & 0x80) == 0x80)
                     sb.AppendFormat("FATs are out of sync. FAT #{0} is in use.", fat32Bpb.mirror_flags & 0xF)
                       .AppendLine();
                 else sb.AppendLine("All copies of FAT are the same.");
@@ -1043,10 +1089,8 @@ namespace DiscImageChef.Filesystems
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
                 XmlFsType.Bootable |=
-                    fat32Bpb.jump[0]                        == 0xEB            &&
-                    fat32Bpb.jump[1]                        >= minBootNearJump && fat32Bpb.jump[1] < 0x80 ||
-                    fat32Bpb.jump[0]                        == 0xE9            &&
-                    fat32Bpb.jump.Length                    >= 3               &&
+                    fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80 ||
+                    fat32Bpb.jump[0]                        == 0xE9            && fat32Bpb.jump.Length >= 3 &&
                     BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump &&
                     BitConverter.ToUInt16(fat32Bpb.jump, 1) <= 0x1FC;
 
@@ -1054,7 +1098,7 @@ namespace DiscImageChef.Filesystems
                 // First root directory sector
                 rootDirectorySector =
                     (ulong)((fat32Bpb.root_cluster - 2) * fat32Bpb.spc + fat32Bpb.big_spfat * fat32Bpb.fats_no +
-                            fat32Bpb.rsectors)          * sectorsPerRealSector;
+                            fat32Bpb.rsectors) * sectorsPerRealSector;
                 sectorsForRootDirectory = 1;
 
                 if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
@@ -1080,8 +1124,7 @@ namespace DiscImageChef.Filesystems
                     }
                 }
             }
-            else if(useExtendedBpb)
-                fakeBpb = ebpb;
+            else if(useExtendedBpb) fakeBpb = ebpb;
             else if(userShortExtendedBpb)
             {
                 fakeBpb.jump           = shortEbpb.jump;
@@ -1213,14 +1256,14 @@ namespace DiscImageChef.Filesystems
                 fakeBpb.heads     = atariBpb.heads;
                 fakeBpb.boot_code = atariBpb.boot_code;
 
-                ushort sum                                       = 0;
-                BigEndianBitConverter.IsLittleEndian             =  BitConverter.IsLittleEndian;
+                ushort sum = 0;
+                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
                 for(int i = 0; i < bpbSector.Length; i += 2) sum += BigEndianBitConverter.ToUInt16(bpbSector, i);
 
                 // TODO: Check this
                 if(sum == 0x1234)
                 {
-                    XmlFsType.Bootable    = true;
+                    XmlFsType.Bootable = true;
                     StringBuilder atariSb = new StringBuilder();
                     atariSb.AppendFormat("cmdload will be loaded with value {0:X4}h",
                                          BigEndianBitConverter.ToUInt16(bpbSector, 0x01E)).AppendLine();
@@ -1233,7 +1276,7 @@ namespace DiscImageChef.Filesystems
                         byte[] tmp = new byte[8];
                         Array.Copy(atariBpb.fname, 0, tmp, 0, 8);
                         string fname = Encoding.ASCII.GetString(tmp).Trim();
-                        tmp          = new byte[3];
+                        tmp = new byte[3];
                         Array.Copy(atariBpb.fname, 8, tmp, 0, 3);
                         string extension = Encoding.ASCII.GetString(tmp).Trim();
                         string filename;
@@ -1271,6 +1314,21 @@ namespace DiscImageChef.Filesystems
                                                                 (uint)(apricotBpb.sectorSize * apricotBpb.bootSize) /
                                                                 imagePlugin.Info.SectorSize);
             }
+            // Some fields could overflow fake BPB, those will be handled below
+            else if(useHumanBpb)
+            {
+                isFat16            = true;
+                fakeBpb.jump       = humanBpb.jump;
+                fakeBpb.oem_name   = humanBpb.oem_name;
+                fakeBpb.bps        = (ushort)imagePlugin.Info.SectorSize;
+                fakeBpb.spc        = (byte)(humanBpb.bpc / fakeBpb.bps);
+                fakeBpb.fats_no    = 2;
+                fakeBpb.root_ent   = humanBpb.root_ent;
+                fakeBpb.media      = humanBpb.media;
+                fakeBpb.spfat      = (ushort)(humanBpb.cpfat * fakeBpb.spc);
+                fakeBpb.boot_code  = humanBpb.boot_code;
+                XmlFsType.Bootable = true;
+            }
 
             if(!isFat32)
             {
@@ -1295,7 +1353,7 @@ namespace DiscImageChef.Filesystems
                 {
                     ulong clusters;
 
-                    if(fakeBpb.sectors          == 0)
+                    if(fakeBpb.sectors == 0)
                         clusters  = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
                     else clusters = fakeBpb.spc == 0 ? fakeBpb.sectors : (ulong)fakeBpb.sectors  / fakeBpb.spc;
 
@@ -1306,15 +1364,17 @@ namespace DiscImageChef.Filesystems
                 if(isFat12)
                 {
                     if(useAtariBpb) sb.AppendLine("Atari FAT12");
-                    else if(useApricotBpb)
-                        sb.AppendLine("Apricot FAT12");
-                    else
-                        sb.AppendLine("Microsoft FAT12");
+                    else if(useApricotBpb) sb.AppendLine("Apricot FAT12");
+                    else sb.AppendLine("Microsoft FAT12");
                     XmlFsType.Type = "FAT12";
                 }
                 else if(isFat16)
                 {
-                    sb.AppendLine(useAtariBpb ? "Atari FAT16" : "Microsoft FAT16");
+                    sb.AppendLine(useAtariBpb
+                                      ? "Atari FAT16"
+                                      : useHumanBpb
+                                          ? "Human68k FAT16"
+                                          : "Microsoft FAT16");
                     XmlFsType.Type = "FAT16";
                 }
 
@@ -1326,8 +1386,7 @@ namespace DiscImageChef.Filesystems
                         XmlFsType.VolumeSerial =
                             $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]:X2}";
 
-                    XmlFsType.SystemIdentifier =
-                        StringHandlers.CToString(atariBpb.oem_name);
+                    XmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
                     if(string.IsNullOrEmpty(XmlFsType.SystemIdentifier)) XmlFsType.SystemIdentifier = null;
                 }
                 else if(fakeBpb.oem_name != null)
@@ -1364,27 +1423,33 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("OEM Name: {0}", XmlFsType.SystemIdentifier.Trim()).AppendLine();
 
                 sb.AppendFormat("{0} bytes per sector.", fakeBpb.bps).AppendLine();
-                if(fakeBpb.sectors == 0)
-                {
-                    sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.big_sectors,
-                                    fakeBpb.big_sectors * fakeBpb.bps)
-                   .AppendLine();
-                    XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
-                }
+                if(!useHumanBpb)
+                    if(fakeBpb.sectors == 0)
+                    {
+                        sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.big_sectors,
+                                        fakeBpb.big_sectors * fakeBpb.bps).AppendLine();
+                        XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
+                    }
+                    else
+                    {
+                        sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.sectors,
+                                        fakeBpb.sectors * fakeBpb.bps).AppendLine();
+                        XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.sectors : fakeBpb.sectors / fakeBpb.spc;
+                    }
                 else
                 {
-                    sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.sectors,
-                                    fakeBpb.sectors * fakeBpb.bps)
-                   .AppendLine();
-                    XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.sectors : fakeBpb.sectors / fakeBpb.spc;
+                    XmlFsType.Clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
+                    sb.AppendFormat("{0} sectors on volume ({1} bytes).",
+                                    XmlFsType.Clusters * humanBpb.bpc / imagePlugin.Info.SectorSize,
+                                    XmlFsType.Clusters                * humanBpb.bpc).AppendLine();
                 }
 
                 sb.AppendFormat("{0} sectors per cluster.", fakeBpb.spc).AppendLine();
-                sb.AppendFormat("{0} clusters on volume.",  XmlFsType.Clusters).AppendLine();
+                sb.AppendFormat("{0} clusters on volume.", XmlFsType.Clusters).AppendLine();
                 XmlFsType.ClusterSize = fakeBpb.bps * fakeBpb.spc;
                 sb.AppendFormat("{0} sectors reserved between BPB and FAT.", fakeBpb.rsectors).AppendLine();
-                sb.AppendFormat("{0} FATs.",                                 fakeBpb.fats_no).AppendLine();
-                sb.AppendFormat("{0} entries on root directory.",            fakeBpb.root_ent).AppendLine();
+                sb.AppendFormat("{0} FATs.", fakeBpb.fats_no).AppendLine();
+                sb.AppendFormat("{0} entries on root directory.", fakeBpb.root_ent).AppendLine();
 
                 if(fakeBpb.media > 0) sb.AppendFormat("Media descriptor: 0x{0:X2}", fakeBpb.media).AppendLine();
 
@@ -1393,7 +1458,7 @@ namespace DiscImageChef.Filesystems
                 if(fakeBpb.sptrk > 0 && fakeBpb.sptrk < 64 && fakeBpb.heads > 0 && fakeBpb.heads < 256)
                 {
                     sb.AppendFormat("{0} sectors per track.", fakeBpb.sptrk).AppendLine();
-                    sb.AppendFormat("{0} heads.",             fakeBpb.heads).AppendLine();
+                    sb.AppendFormat("{0} heads.", fakeBpb.heads).AppendLine();
                 }
 
                 if(fakeBpb.hsectors <= partition.Start)
@@ -1435,20 +1500,16 @@ namespace DiscImageChef.Filesystems
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
                 if(XmlFsType.Bootable == false && fakeBpb.jump != null)
                     XmlFsType.Bootable |=
-                        fakeBpb.jump[0]                        == 0xEB            &&
-                        fakeBpb.jump[1]                        >= minBootNearJump && fakeBpb.jump[1] < 0x80 ||
-                        fakeBpb.jump[0]                        == 0xE9            &&
-                        fakeBpb.jump.Length                    >= 3               &&
+                        fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80 ||
+                        fakeBpb.jump[0]                        == 0xE9            && fakeBpb.jump.Length >= 3 &&
                         BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
                         BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC;
 
                 sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
                 // First root directory sector
                 rootDirectorySector =
-                    (ulong)(fakeBpb.spfat * fakeBpb.fats_no + fakeBpb.rsectors) *
-                    sectorsPerRealSector;
-                sectorsForRootDirectory =
-                    (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
+                    (ulong)(fakeBpb.spfat * fakeBpb.fats_no + fakeBpb.rsectors) * sectorsPerRealSector;
+                sectorsForRootDirectory = (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
             }
 
             if(extraInfo != null) sb.Append(extraInfo);
@@ -1495,7 +1556,7 @@ namespace DiscImageChef.Filesystems
                     {
                         XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
                         if(entry.ctime_ms > 0)
-                            XmlFsType.CreationDate      = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
+                            XmlFsType.CreationDate = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
                         XmlFsType.CreationDateSpecified = true;
                         sb.AppendFormat("Volume created on {0}", XmlFsType.CreationDate).AppendLine();
                     }
@@ -1523,7 +1584,7 @@ namespace DiscImageChef.Filesystems
                 if(bpbSector[0] == 0xEB && bpbSector[1] < 0x80)
                 {
                     int    sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
-                    byte[] bootCode = new byte[512     - sigSize - bpbSector[1] - 2];
+                    byte[] bootCode = new byte[512 - sigSize - bpbSector[1] - 2];
                     Array.Copy(bpbSector, bpbSector[1] + 2, bootCode, 0, bootCode.Length);
                     Sha1Context.Data(bootCode, out _);
                 }
@@ -1532,8 +1593,7 @@ namespace DiscImageChef.Filesystems
                 {
                     int    sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
                     byte[] bootCode = new byte[512 - sigSize - BitConverter.ToUInt16(bpbSector, 1) - 3];
-                    Array.Copy(bpbSector, BitConverter.ToUInt16(bpbSector,                      1) + 3, bootCode, 0,
-                               bootCode.Length);
+                    Array.Copy(bpbSector, BitConverter.ToUInt16(bpbSector, 1) + 3, bootCode, 0, bootCode.Length);
                     Sha1Context.Data(bootCode, out _);
                 }
 
@@ -2303,6 +2363,39 @@ namespace DiscImageChef.Filesystems
             public uint signature3;
         }
 
+        /// <summary>Human68k Parameter Block, big endian, 512 bytes even on 256 bytes/sector.</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HumanParameterBlock
+        {
+            /// <summary>68k bra.S</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] jump;
+            /// <summary>OEM Name, 16 bytes, space-padded</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] oem_name;
+            /// <summary>Bytes per cluster</summary>
+            public ushort bpc;
+            /// <summary>Unknown, seen 1, 2 and 16</summary>
+            public byte unknown1;
+            /// <summary>Unknown, always 512?</summary>
+            public ushort unknown2;
+            /// <summary>Unknown, always 1?</summary>
+            public byte unknown3;
+            /// <summary>Number of entries on root directory</summary>
+            public ushort root_ent;
+            /// <summary>Clusters, set to 0 if more than 65536</summary>
+            public ushort clusters;
+            /// <summary>Media descriptor</summary>
+            public byte media;
+            /// <summary>Clusters per FAT, set to 0</summary>
+            public byte cpfat;
+            /// <summary>Clustersin volume</summary>
+            public uint big_clusters;
+            /// <summary>Boot code.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 478)]
+            public byte[] boot_code;
+        }
+
         [Flags]
         enum FatAttributes : byte
         {
@@ -2323,7 +2416,7 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public byte[] filename;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[]        extension;
+            public byte[] extension;
             public FatAttributes attributes;
             public byte          caseinfo;
             public byte          ctime_ms;

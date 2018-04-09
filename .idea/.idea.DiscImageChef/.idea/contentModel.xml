@@ -441,8 +441,10 @@
         <e p="Exceptions.cs" t="Include" />
         <e p="GDI.cs" t="Include" />
         <e p="HDCopy.cs" t="Include" />
+        <e p="IFloppyImage.cs" t="Include" />
         <e p="IMD.cs" t="Include" />
         <e p="IMediaImage.cs" t="Include" />
+        <e p="IWritableFloppyImage.cs" t="Include" />
         <e p="IWritableImage.cs" t="Include" />
         <e p="KryoFlux.cs" t="Include" />
         <e p="MaxiDisk.cs" t="Include" />

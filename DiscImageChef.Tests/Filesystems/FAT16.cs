@@ -124,8 +124,8 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
                 Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                IFilesystem fs        = new FAT();
-                Partition   wholePart = new Partition
+                IFilesystem fs = new FAT();
+                Partition wholePart = new Partition
                 {
                     Name   = "Whole device",
                     Length = image.Info.Sectors,
@@ -177,7 +177,7 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "DOS_FAT_16")
                     {
                         part = j;
@@ -231,7 +231,7 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "GEM" || partitions[j].Type == "BGM")
                     {
                         part = j;
@@ -285,7 +285,7 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Microsoft Basic data")
                     {
                         part = j;
@@ -454,8 +454,62 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x06")
+                    {
+                        part = j;
+                        break;
+                    }
+
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out _, null);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
+                Assert.AreEqual("FAT16",         fs.XmlFsType.Type,             testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
+                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
+            }
+        }
+    }
+
+    [TestFixture]
+    public class Fat16Human
+    {
+        readonly string[] testfiles = {"sasidisk.hdf.lz", "scsidisk.hds.lz"};
+
+        readonly ulong[] sectors = {162096, 204800};
+
+        readonly uint[] sectorsize = {256, 512};
+
+        readonly long[] clusters = {40510, 102367};
+
+        readonly int[] clustersize = {1024, 1024};
+
+        readonly string[] volumename = {null, null};
+
+        readonly string[] volumeserial = {null, null};
+
+        readonly string[] oemid = {"Hudson soft 2.00", " Hero Soft V1.10"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_human", testfiles[i]);
+                IFilter filter   = new LZip();
+                filter.Open(location);
+                IMediaImage image = new ZZZRawImage();
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                IFilesystem     fs         = new FAT();
+                int             part       = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                    if(partitions[j].Type == "Human68k")
                     {
                         part = j;
                         break;
