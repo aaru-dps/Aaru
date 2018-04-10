@@ -951,11 +951,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             #endregion Compact Disc Error trimming
 
             #region Compact Disc Error handling
-            // TODO: Pass 0 should be called differently, splitting, or something like that, because we are just
-            // separating skipped good sectors from really bad sectors and it's getting too chatty on log there...
             if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)
             {
-                int  pass              = 0;
+                int  pass              = 1;
                 bool forward           = true;
                 bool runningPersistent = false;
 
@@ -1009,7 +1007,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1,
+                    DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
                                      forward ? "forward" : "reverse",
                                      runningPersistent ? "recovering partial data, " : "");
 

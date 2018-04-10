@@ -343,7 +343,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         #region Error handling
                         if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)
                         {
-                            int  pass    = 0;
+                            int  pass    = 1;
                             bool forward = true;
 
                             repeatRetryLba:
@@ -357,7 +357,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     break;
                                 }
 
-                                DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1,
+                                DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
                                                  forward ? "forward" : "reverse",
                                                  persistent ? "recovering partial data, " : "");
 
