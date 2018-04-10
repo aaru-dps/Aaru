@@ -465,9 +465,83 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(persistent)
                 {
+                    Modes.ModePage_01_MMC pgMmc;
+                    Modes.ModePage_01 pg;
+                    
+                    sense = dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                           dev.Timeout, out _);
+                    if(sense)
+                    {
+                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current,
+                                                0x01, dev.Timeout, out _);
+
+                        if(!sense)
+                        {
+                            Modes.DecodedMode? dcMode10 =
+                                Modes.DecodeMode10(readBuffer, dev.ScsiType);
+                            
+                            if(dcMode10.HasValue)
+                            {
+                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
+                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00) currentModePage = modePage;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Modes.DecodedMode? dcMode6 =
+                            Modes.DecodeMode6(readBuffer, dev.ScsiType);
+
+                        if(dcMode6.HasValue)
+                        {
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
+                                if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
+                                    currentModePage = modePage;
+                        }
+                    }
+
+                    if(currentModePage == null)
+                    {
+                        if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
+                        {
+
+                            pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 32, Parameter = 0x00};
+                            currentModePage = new Modes.ModePage
+                            {
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            };
+                        }
+                        else
+                        {
+                            pg = new Modes.ModePage_01
+                            {
+                                PS             = false,
+                                AWRE           = true,
+                                ARRE           = true,
+                                TB             = false,
+                                RC             = false,
+                                EER            = true,
+                                PER            = false,
+                                DTE            = true,
+                                DCR            = false,
+                                ReadRetryCount = 32
+                            };
+                            
+                            currentModePage = 
+                                    new Modes.ModePage
+                                    {
+                                        Page         = 0x01,
+                                        Subpage      = 0x00,
+                                        PageResponse = Modes.EncodeModePage_01(pg)
+                                    }                            ;
+                        }
+                    }
+
                     if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        Modes.ModePage_01_MMC pgMmc =
+                        pgMmc =
                             new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
                         Modes.DecodedMode md = new Modes.DecodedMode
                         {
@@ -487,7 +561,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
-                        Modes.ModePage_01 pg = new Modes.ModePage_01
+                        pg = new Modes.ModePage_01
                         {
                             PS             = false,
                             AWRE           = false,
@@ -517,7 +591,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         md10 = Modes.EncodeMode10(md, dev.ScsiType);
                     }
 
-                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
+                    dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
                     sense = dev.ModeSelect(md6, out byte[] senseBuf, true, false, dev.Timeout, out _);
                     if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
 
@@ -578,7 +652,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     md6  = Modes.EncodeMode6(md, dev.ScsiType);
                     md10 = Modes.EncodeMode10(md, dev.ScsiType);
 
-                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
+                    dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
                     sense = dev.ModeSelect(md6, out _, true, false, dev.Timeout, out _);
                     if(sense) dev.ModeSelect10(md10, out _, true, false, dev.Timeout, out _);
                 }

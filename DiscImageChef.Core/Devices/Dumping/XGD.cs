@@ -702,7 +702,91 @@ namespace DiscImageChef.Core.Devices.Dumping
                 bool runningPersistent = false;
 
                 resume.BadBlocks = tmpList;
+                Modes.ModePage? currentModePage = null;
+                byte[]          md6;
+                byte[]          md10;
 
+                if(persistent)
+                {
+                    Modes.ModePage_01_MMC pgMmc;
+                    
+                    sense = dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                           dev.Timeout, out _);
+                    if(sense)
+                    {
+                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current,
+                                                0x01, dev.Timeout, out _);
+
+                        if(!sense)
+                        {
+                            Modes.DecodedMode? dcMode10 =
+                                Modes.DecodeMode10(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
+                            
+                            if(dcMode10.HasValue)
+                            {
+                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
+                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00) currentModePage = modePage;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Modes.DecodedMode? dcMode6 =
+                            Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
+
+                        if(dcMode6.HasValue)
+                        {
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
+                                if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
+                                    currentModePage = modePage;
+                        }
+                    }
+
+                    if(currentModePage == null)
+                    {
+                            
+                        pgMmc =
+                            new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 0x20, Parameter = 0x00};
+                        currentModePage = new Modes.ModePage
+                        {
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                        };
+                    }
+                    
+                    pgMmc =
+                        new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
+                    Modes.DecodedMode md = new Modes.DecodedMode
+                    {
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
+                        {
+                            new Modes.ModePage
+                            {
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            }
+                        }
+                    };
+                    md6  = Modes.EncodeMode6(md, dev.ScsiType);
+                    md10 = Modes.EncodeMode10(md, dev.ScsiType);
+
+                    dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+                    sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
+
+                    if(sense)
+                    {
+                        DicConsole
+                           .WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                        DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                        dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    }
+                    else runningPersistent = true;
+                }
+                
                 repeatRetry:
                 ulong[] tmpArray = resume.BadBlocks.ToArray();
                 foreach(ulong badSector in tmpArray)
@@ -741,76 +825,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     goto repeatRetry;
                 }
 
-                Modes.ModePage? currentModePage = null;
-                byte[]          md6;
-                byte[]          md10;
-
-                if(!runningPersistent && persistent)
-                {
-                    if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
-                    {
-                        Modes.ModePage_01_MMC pgMmc =
-                            new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
-                        Modes.DecodedMode md = new Modes.DecodedMode
-                        {
-                            Header = new Modes.ModeHeader(),
-                            Pages = new[]
-                            {
-                                new Modes.ModePage
-                                {
-                                    Page         = 0x01,
-                                    Subpage      = 0x00,
-                                    PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
-                                }
-                            }
-                        };
-                        md6  = Modes.EncodeMode6(md, dev.ScsiType);
-                        md10 = Modes.EncodeMode10(md, dev.ScsiType);
-                    }
-                    else
-                    {
-                        Modes.ModePage_01 pg = new Modes.ModePage_01
-                        {
-                            PS             = false,
-                            AWRE           = false,
-                            ARRE           = false,
-                            TB             = true,
-                            RC             = false,
-                            EER            = true,
-                            PER            = false,
-                            DTE            = false,
-                            DCR            = false,
-                            ReadRetryCount = 255
-                        };
-                        Modes.DecodedMode md = new Modes.DecodedMode
-                        {
-                            Header = new Modes.ModeHeader(),
-                            Pages = new[]
-                            {
-                                new Modes.ModePage
-                                {
-                                    Page         = 0x01,
-                                    Subpage      = 0x00,
-                                    PageResponse = Modes.EncodeModePage_01(pg)
-                                }
-                            }
-                        };
-                        md6  = Modes.EncodeMode6(md, dev.ScsiType);
-                        md10 = Modes.EncodeMode10(md, dev.ScsiType);
-                    }
-
-                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
-                    sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
-                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
-
-                    runningPersistent = true;
-                    if(!sense && !dev.Error)
-                    {
-                        pass--;
-                        goto repeatRetry;
-                    }
-                }
-                else if(runningPersistent && persistent && currentModePage.HasValue)
+                if(runningPersistent && currentModePage.HasValue)
                 {
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
@@ -820,7 +835,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     md6  = Modes.EncodeMode6(md, dev.ScsiType);
                     md10 = Modes.EncodeMode10(md, dev.ScsiType);
 
-                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
+                    dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
                     if(sense) dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
                 }
