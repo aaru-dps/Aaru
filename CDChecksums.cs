@@ -264,22 +264,14 @@ namespace DiscImageChef.Checksums
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     byte[] address = new byte[4];
-                    byte[] data    = new byte[2060];
-                    byte[] data2   = new byte[2232];
                     byte[] eccP    = new byte[172];
                     byte[] eccQ    = new byte[104];
 
-                    address[0] = 0;
-                    address[1] = 0;
-                    address[2] = 0;
-                    address[3] = 0;
-                    Array.Copy(channel, 0x10,  data,  0, 2060);
-                    Array.Copy(channel, 0x10,  data2, 0, 2232);
-                    Array.Copy(channel, 0x80C, eccP,  0, 172);
-                    Array.Copy(channel, 0x8B8, eccQ,  0, 104);
+                    Array.Copy(mode2Sector, 0x80C, eccP, 0, 172);
+                    Array.Copy(mode2Sector, 0x8B8, eccQ, 0, 104);
 
-                    bool failedEccP = !CheckEcc(address, data,  86, 24, 2,  86, eccP);
-                    bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
+                    bool failedEccP = !CheckEcc(address, mode2Sector, 86, 24, 2,  86, eccP);
+                    bool failedEccQ = !CheckEcc(address, mode2Sector, 52, 43, 86, 88, eccQ);
 
                     if(failedEccP)
                         DicConsole.DebugWriteLine("CD checksums",
