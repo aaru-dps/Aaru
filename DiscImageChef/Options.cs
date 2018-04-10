@@ -93,12 +93,10 @@ namespace DiscImageChef
         [Option("crc64", Default = false, HelpText = "Calculates CRC64 (ECMA).")]
         public bool DoCrc64 { get; set; }
 
-        [Option("fletcher16", Default = false,
-            HelpText = "Calculates Fletcher-16.")]
+        [Option("fletcher16", Default = false, HelpText = "Calculates Fletcher-16.")]
         public bool DoFletcher16 { get; set; }
 
-        [Option("fletcher32", Default = false,
-            HelpText = "Calculates Fletcher-32.")]
+        [Option("fletcher32", Default = false, HelpText = "Calculates Fletcher-32.")]
         public bool DoFletcher32 { get; set; }
 
         [Option('m', "md5", Default = true, HelpText = "Calculates MD5.")]
@@ -130,7 +128,7 @@ namespace DiscImageChef
     public class EntropyOptions : CommonOptions
     {
         [Option('p', "duplicated-sectors", Default = true,
-            HelpText                               =
+            HelpText =
                 "Calculates how many sectors are duplicated (have same exact data in user area).")]
         public bool DuplicatedSectors { get; set; }
 
@@ -251,11 +249,11 @@ namespace DiscImageChef
         [Option('i', "input", Required = true, HelpText = "Disc image.")]
         public string InputFile { get; set; }
         [Option('t', "tape", Required = false, Default = false,
-            HelpText                  =
+            HelpText =
                 "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device).")]
         public bool Tape { get; set; }
         [Option('b', "block-size", Required = false, Default = 512,
-            HelpText                        =
+            HelpText =
                 "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.")]
         public int BlockSize { get; set; }
 
@@ -298,7 +296,7 @@ namespace DiscImageChef
         public string OutputFile { get; set; }
 
         [Option('t', "format", Default = null,
-            HelpText                   =
+            HelpText =
                 "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")]
         public string OutputFormat { get; set; }
 
@@ -314,6 +312,9 @@ namespace DiscImageChef
 
         [Option("no-metadata", Default = false, HelpText = "Disables creating CICM XML sidecar.")]
         public bool NoMetadata { get; set; }
+
+        [Option("no-trim", Default = false, HelpText = "Disables trimming errored from skipped sectors.")]
+        public bool NoTrim { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]
@@ -386,7 +387,7 @@ namespace DiscImageChef
         public string OutputFile { get; set; }
 
         [Option('p', "format", Default = null,
-            HelpText                   =
+            HelpText =
                 "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")]
         public string OutputFormat { get; set; }
 
@@ -394,7 +395,7 @@ namespace DiscImageChef
         public int Count { get; set; }
 
         [Option('f', "force", Default = false,
-            HelpText                  =
+            HelpText =
                 "Continue conversion even if sector or media tags will be lost in the process.")]
         public bool Force { get; set; }
 
@@ -417,11 +418,11 @@ namespace DiscImageChef
         [Option("media-sequence", Default = 0, HelpText = "Number in sequence for the media represented by the image")]
         public int MediaSequence { get; set; }
         [Option("media-lastsequence", Default = 0,
-            HelpText                          =
+            HelpText =
                 "Last media of the sequence the media represented by the image corresponds to")]
         public int LastMediaSequence { get; set; }
         [Option("drive-manufacturer", Default = null,
-            HelpText                          =
+            HelpText =
                 "Manufacturer of the drive used to read the media represented by the image")]
         public string DriveManufacturer { get; set; }
         [Option("drive-model", Default = null,
@@ -431,7 +432,7 @@ namespace DiscImageChef
             HelpText                    = "Serial number of the drive used to read the media represented by the image")]
         public string DriveSerialNumber { get; set; }
         [Option("drive-revision", Default = null,
-            HelpText                      =
+            HelpText =
                 "Firmware revision of the drive used to read the media represented by the image")]
         public string DriveFirmwareRevision { get; set; }
 

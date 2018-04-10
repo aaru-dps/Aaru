@@ -70,16 +70,15 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public static void Dump(Device     dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
-                                bool       force, bool dumpRaw, bool              persistent, bool     stopOnError,
-                                ref Resume resume,
-                                ref
-                                    DumpLog dumpLog, bool dumpLeadIn, Encoding encoding,
-                                string      outputPrefix,
-                                string
-                                    outputPath, Dictionary<string, string> formatOptions,
-                                CICMMetadataType
-                                    preSidecar, uint skip, bool nometadata)
+        public static void Dump(Device           dev,          string                     devicePath,
+                                IWritableImage   outputPlugin, ushort                     retryPasses,
+                                bool             force,        bool                       dumpRaw,
+                                bool             persistent,   bool                       stopOnError, ref Resume resume,
+                                ref DumpLog      dumpLog,      bool                       dumpLeadIn,
+                                Encoding         encoding,     string                     outputPrefix,
+                                string           outputPath,   Dictionary<string, string> formatOptions,
+                                CICMMetadataType preSidecar,   uint                       skip, bool nometadata,
+                                bool             notrim)
         {
             MediaType dskType = MediaType.Unknown;
             int       resets  = 0;
@@ -212,12 +211,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     Mmc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
                              ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                             formatOptions, preSidecar, skip, nometadata);
+                             formatOptions, preSidecar, skip, nometadata, notrim);
                     return;
                 default:
                     Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, null,
                              ref dskType, false, ref resume, ref dumpLog, encoding, outputPrefix, outputPath,
-                             formatOptions, preSidecar, skip, nometadata);
+                             formatOptions, preSidecar, skip, nometadata, notrim);
                     break;
             }
         }

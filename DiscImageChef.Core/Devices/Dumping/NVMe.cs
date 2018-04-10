@@ -50,7 +50,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     DumpLog dumpLog, Encoding encoding, string outputPrefix,
                                 string      outputPath,
                                 Dictionary<string, string>
-                                    formatOptions, CICMMetadataType preSidecar, uint skip, bool nometadata)
+                                    formatOptions, CICMMetadataType preSidecar, uint skip, bool nometadata, bool notrim)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }

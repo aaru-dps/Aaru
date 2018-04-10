@@ -91,7 +91,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   string                     outputPrefix, string      outputPath,
                                   Dictionary<string, string> formatOptions,
                                   CICMMetadataType           preSidecar, uint skip,
-                                  bool                       nometadata)
+                                  bool                       nometadata, bool notrim)
         {
             uint               subSize;
             DateTime           start;
@@ -783,6 +783,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double imageWriteDuration = 0;
 
             if(skip < blocksToRead) skip = blocksToRead;
+            bool newTrim                 = false;
 
             // Start reading
             start = DateTime.UtcNow;
@@ -872,7 +873,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         ibgLog.Write(i, 0);
                         dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
-                        i += skip - blocksToRead;
+                        i       += skip - blocksToRead;
+                        newTrim =  true;
                     }
 
                     double newSpeed =
@@ -893,6 +895,60 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
+
+            #region Compact Disc Error trimming
+            if(resume.BadBlocks.Count > 0 && !aborted && !notrim && newTrim)
+            {
+                start = DateTime.UtcNow;
+                dumpLog.WriteLine("Trimming bad sectors");
+
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                foreach(ulong badSector in tmpArray)
+                {
+                    if(aborted)
+                    {
+                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
+                        break;
+                    }
+
+                    DicConsole.Write("\rTrimming sector {0}", badSector);
+
+                    if(readcd)
+                    {
+                        sense = true;
+                        sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1,
+                                           MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                           true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
+                                           out double cmdDuration);
+                        totalDuration += cmdDuration;
+                    }
+
+                    if(sense || dev.Error) continue;
+
+                    if(!sense && !dev.Error)
+                    {
+                        resume.BadBlocks.Remove(badSector);
+                        extents.Add(badSector);
+                    }
+
+                    if(supportedSubchannel != MmcSubchannel.None)
+                    {
+                        byte[] data = new byte[SECTOR_SIZE];
+                        byte[] sub  = new byte[subSize];
+                        Array.Copy(readBuffer, 0,           data, 0, SECTOR_SIZE);
+                        Array.Copy(readBuffer, SECTOR_SIZE, sub,  0, subSize);
+                        outputPlugin.WriteSectorLong(data, badSector);
+                        outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+                    }
+                    else outputPlugin.WriteSectorLong(readBuffer, badSector);
+                }
+
+                DicConsole.WriteLine();
+                end = DateTime.UtcNow;
+                dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+            }
+            #endregion Compact Disc Error trimming
 
             #region Compact Disc Error handling
             // TODO: Pass 0 should be called differently, splitting, or something like that, because we are just

@@ -75,16 +75,16 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="NotImplementedException">If trying to dump GOD or WOD, or XGDs without a Kreon drive</exception>
-        internal static void Dump(Device        dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
-                                  bool          force, bool dumpRaw, bool              persistent, bool     stopOnError,
-                                  ref MediaType dskType,
-                                  ref
-                                      Resume resume, ref DumpLog dumpLog, bool dumpLeadIn,
-                                  Encoding   encoding,
-                                  string
-                                      outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
-                                  CICMMetadataType
-                                      preSidecar, uint skip, bool nometadata)
+        internal static void Dump(Device                     dev,          string      devicePath,
+                                  IWritableImage             outputPlugin, ushort      retryPasses,
+                                  bool                       force,        bool        dumpRaw,
+                                  bool                       persistent,   bool        stopOnError, ref MediaType dskType,
+                                  ref Resume                 resume,       ref DumpLog dumpLog,
+                                  bool                       dumpLeadIn,   Encoding    encoding,
+                                  string                     outputPrefix, string      outputPath,
+                                  Dictionary<string, string> formatOptions,
+                                  CICMMetadataType           preSidecar, uint skip,
+                                  bool                       nometadata, bool notrim)
         {
             bool   sense;
             ulong  blocks;
@@ -200,12 +200,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 CompactDisc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
                                  ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                                 formatOptions, preSidecar, skip, nometadata);
+                                 formatOptions, preSidecar, skip, nometadata, notrim);
                 return;
             }
 
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
-            blocks            = scsiReader.GetDeviceBlocks();
+            blocks = scsiReader.GetDeviceBlocks();
             dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 
@@ -219,7 +219,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                     {
                         PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf);
-                        if(nintendoPfi                        != null)
+                        if(nintendoPfi != null)
                             if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
                                nintendoPfi.Value.PartVersion  == 15)
                             {
@@ -253,7 +253,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(PFI.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
 
@@ -352,7 +352,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         if(cmdBuf.Length == 2052)
                         {
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.DVD_DMI, tmpBuf);
                         }
@@ -374,7 +374,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(!sense)
                     if(CSS_CPRM.DecodeLeadInCopyright(cmdBuf).HasValue)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVD_CMI, tmpBuf);
                     }
@@ -392,7 +392,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVD_BCA, tmpBuf);
                     }
@@ -409,7 +409,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(DDS.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.DVDRAM_DDS, tmpBuf);
                         }
@@ -421,7 +421,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(Spare.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.DVDRAM_SpareArea, tmpBuf);
                         }
@@ -437,7 +437,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVDR_PreRecordedInfo, tmpBuf);
                     }
@@ -457,7 +457,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVDR_MediaIdentifier, tmpBuf);
                     }
@@ -468,7 +468,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVDR_PFI, tmpBuf);
                     }
@@ -486,7 +486,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.Adip, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVD_ADIP, tmpBuf);
                     }
@@ -496,7 +496,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.Dcb, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DCB, tmpBuf);
                     }
@@ -512,7 +512,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.HDDVD_CPI, tmpBuf);
                     }
@@ -532,7 +532,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                         if(DI.Decode(cmdBuf).HasValue)
                         {
-                            tmpBuf = new byte[cmdBuf.Length                - 4];
+                            tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.BD_DI, tmpBuf);
                         }
@@ -561,7 +561,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BdBurstCuttingArea, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.BD_BCA, tmpBuf);
                     }
@@ -579,7 +579,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BdDds, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.BD_DDS, tmpBuf);
                     }
@@ -589,7 +589,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout, out _);
                     if(!sense)
                     {
-                        tmpBuf = new byte[cmdBuf.Length                - 4];
+                        tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.BD_SpareArea, tmpBuf);
                     }
@@ -602,13 +602,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 Xgd.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
                          ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                         preSidecar, skip, nometadata);
+                         preSidecar, skip, nometadata, notrim);
                 return;
             }
 
             Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
                      ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                     preSidecar, skip, nometadata);
+                     preSidecar, skip, nometadata, notrim);
         }
 
         internal static void AddMediaTagToSidecar(string                             outputPath,
@@ -729,8 +729,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         new XboxSecuritySectorsType
                         {
-                            RequestNumber   = 0,
-                            RequestVersion  = 1,
+                            RequestNumber  = 0,
+                            RequestVersion = 1,
                             SecuritySectors = new DumpType
                             {
                                 Image     = outputPath,

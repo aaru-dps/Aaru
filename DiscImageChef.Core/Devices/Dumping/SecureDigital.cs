@@ -80,7 +80,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 string                     outputPrefix,  string           outputPath,
                                 Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
                                 uint                       skip,
-                                bool                       nometadata)
+                                bool                       nometadata, bool notrim)
         {
             bool aborted;
 
@@ -280,6 +280,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             start = DateTime.UtcNow;
             double imageWriteDuration = 0;
+            bool   newTrim            = false;
 
             for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
             {
@@ -324,7 +325,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     outputPlugin.WriteSectors(new byte[blockSize * skip], i, skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
-                    i += skip - blocksToRead;
+                    i       += skip - blocksToRead;
+                    newTrim =  true;
                 }
 
                 double newSpeed =
@@ -344,6 +346,42 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
+
+            #region Trimming
+            if(resume.BadBlocks.Count > 0 && !aborted && !notrim && newTrim)
+            {
+                start = DateTime.UtcNow;
+                dumpLog.WriteLine("Trimming bad sectors");
+
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                foreach(ulong badSector in tmpArray)
+                {
+                    if(aborted)
+                    {
+                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
+                        break;
+                    }
+
+                    DicConsole.Write("\rTrimming sector {0}", badSector);
+
+                    error = dev.Read(out cmdBuf, out _, (uint)badSector, blockSize, 1, byteAddressed, TIMEOUT,
+                                     out duration);
+
+                    totalDuration += duration;
+
+                    if(error) continue;
+
+                    resume.BadBlocks.Remove(badSector);
+                    extents.Add(badSector);
+                    outputPlugin.WriteSector(cmdBuf, badSector);
+                }
+
+                DicConsole.WriteLine();
+                end = DateTime.UtcNow;
+                dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+            }
+            #endregion Trimming
 
             #region Error handling
             if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)

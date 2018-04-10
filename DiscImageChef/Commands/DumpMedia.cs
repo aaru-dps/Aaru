@@ -121,7 +121,7 @@ namespace DiscImageChef.Commands
                 try
                 {
                     StreamReader sr = new StreamReader(outputPrefix + ".resume.xml");
-                    resume          = (Resume)xs.Deserialize(sr);
+                    resume = (Resume)xs.Deserialize(sr);
                     sr.Close();
                 }
                 catch
@@ -143,7 +143,7 @@ namespace DiscImageChef.Commands
                     try
                     {
                         StreamReader sr = new StreamReader(options.CicmXml);
-                        sidecar         = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                        sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
                         sr.Close();
                     }
                     catch
@@ -207,26 +207,28 @@ namespace DiscImageChef.Commands
                 case DeviceType.ATA:
                     Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                             options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata);
+                             options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata,
+                             options.NoTrim);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
                     SecureDigital.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
                                        options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog,
-                                       encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
-                                       options.NoMetadata);
+                                       encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar,
+                                       (uint)options.Skip, options.NoMetadata, options.NoTrim);
                     break;
                 case DeviceType.NVMe:
                     NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                              options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata);
+                              options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata,
+                              options.NoTrim);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
                     Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, options.LeadIn,
                               encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
-                              options.NoMetadata);
+                              options.NoMetadata, options.NoTrim);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");
@@ -242,7 +244,7 @@ namespace DiscImageChef.Commands
                 if(File.Exists(outputPrefix + ".resume.xml")) File.Delete(outputPrefix + ".resume.xml");
 
                 FileStream fs = new FileStream(outputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
-                xs            = new XmlSerializer(resume.GetType());
+                xs = new XmlSerializer(resume.GetType());
                 xs.Serialize(fs, resume);
                 fs.Close();
             }
