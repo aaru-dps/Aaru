@@ -116,7 +116,6 @@ namespace DiscImageChef.Commands
                 DateTime endCheck;
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
-                bool? checkStatus = null;
 
                 if(formatHasTracks)
                 {
@@ -136,20 +135,14 @@ namespace DiscImageChef.Commands
 
                             List<ulong> tempfailingLbas;
                             List<ulong> tempunknownLbas;
-                            bool? tempStatus;
 
                             if(remainingSectors < 512)
-                                tempStatus = inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
+                                inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
                                                                        currentTrack.TrackSequence, out tempfailingLbas,
                                                                        out tempunknownLbas);
                             else
-                                tempStatus = inputFormat.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
+                                inputFormat.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
                                                                        out tempfailingLbas, out tempunknownLbas);
-
-                            if(checkStatus == null || tempStatus == null) checkStatus = null;
-                            else if(checkStatus == false || tempStatus == false) checkStatus = false;
-                            else if(checkStatus == true && tempStatus == true) checkStatus = true;
-                            else checkStatus = null;
 
                             failingLbas.AddRange(tempfailingLbas);
 
@@ -184,19 +177,12 @@ namespace DiscImageChef.Commands
 
                         List<ulong> tempfailingLbas;
                         List<ulong> tempunknownLbas;
-                        bool? tempStatus;
 
                         if(remainingSectors < 512)
-                            tempStatus = inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
+                            inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
                                                                    out tempfailingLbas, out tempunknownLbas);
                         else
-                            tempStatus =
-                                inputFormat.VerifySectors(currentSector, 512, out tempfailingLbas, out tempunknownLbas);
-
-                        if(checkStatus == null || tempStatus == null) checkStatus = null;
-                        else if(checkStatus == false || tempStatus == false) checkStatus = false;
-                        else if(checkStatus == true && tempStatus == true) checkStatus = true;
-                        else checkStatus = null;
+                            inputFormat.VerifySectors(currentSector, 512, out tempfailingLbas, out tempunknownLbas);
 
                         failingLbas.AddRange(tempfailingLbas);
 
@@ -219,21 +205,15 @@ namespace DiscImageChef.Commands
 
                 TimeSpan checkTime = endCheck - startCheck;
 
-                DicConsole.Write("\r");
+                DicConsole.Write("\r" + new string(' ', System.Console.WindowWidth-1) + "\r");
 
-                switch(checkStatus)
-                {
-                    case true:
-                        DicConsole.WriteLine("All sector checksums are correct");
-                        break;
-                    case false:
-                        DicConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
-                        break;
-                    case null:
-                        DicConsole.WriteLine("There is at least one sector that does not contain a checksum");
-                        break;
-                }
-
+                if(unknownSectors > 0)
+                    DicConsole.WriteLine("There is at least one sector that does not contain a checksum");
+                if(errorSectors > 0)                
+                    DicConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
+                if(unknownSectors == 0 && errorSectors == 0)
+                    DicConsole.WriteLine("All sector checksums are correct");
+                
                 DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
 
                 if(options.Verbose)
