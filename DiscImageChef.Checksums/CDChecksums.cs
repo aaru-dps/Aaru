@@ -42,8 +42,8 @@ namespace DiscImageChef.Checksums
     /// </summary>
     public static class CdChecksums
     {
-        const uint CDCRC32_POLY = 0xD8018001;
-        const uint CDCRC32_SEED = 0x00000000;
+        const  uint   CDCRC32_POLY = 0xD8018001;
+        const  uint   CDCRC32_SEED = 0x00000000;
         static byte[] eccFTable;
         static byte[] eccBTable;
 
@@ -78,14 +78,14 @@ namespace DiscImageChef.Checksums
                 case 2448:
                 {
                     byte[] subchannel = new byte[96];
-                    byte[] channel = new byte[2352];
+                    byte[] channel    = new byte[2352];
 
-                    Array.Copy(buffer, 0, channel, 0, 2352);
+                    Array.Copy(buffer, 0,    channel,    0, 2352);
                     Array.Copy(buffer, 2352, subchannel, 0, 96);
 
-                    bool? channelStatus = CheckCdSectorChannel(channel);
+                    bool? channelStatus    = CheckCdSectorChannel(channel);
                     bool? subchannelStatus = CheckCdSectorSubChannel(subchannel);
-                    bool? status = null;
+                    bool? status           = null;
 
                     if(channelStatus == false || subchannelStatus == false) status = false;
                     switch(channelStatus)
@@ -101,7 +101,7 @@ namespace DiscImageChef.Checksums
                     return status;
                 }
                 case 2352: return CheckCdSectorChannel(buffer);
-                default: return null;
+                default:   return null;
             }
         }
 
@@ -113,31 +113,31 @@ namespace DiscImageChef.Checksums
             for(uint i = 0; i < 256; i++)
             {
                 uint j = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
-                eccFTable[i] = (byte)j;
+                eccFTable[i]     = (byte)j;
                 eccBTable[i ^ j] = (byte)i;
             }
         }
 
-        static bool CheckEcc(byte[] address, byte[] data, uint majorCount, uint minorCount, uint majorMult,
-                             uint minorInc, byte[] ecc)
+        static bool CheckEcc(byte[] address,  byte[] data, uint majorCount, uint minorCount, uint majorMult,
+                             uint   minorInc, byte[] ecc)
         {
             uint size = majorCount * minorCount;
             uint major;
             for(major = 0; major < majorCount; major++)
             {
                 uint index = (major >> 1) * majorMult + (major & 1);
-                byte eccA = 0;
-                byte eccB = 0;
+                byte eccA  = 0;
+                byte eccB  = 0;
                 uint minor;
                 for(minor = 0; minor < minorCount; minor++)
                 {
                     byte temp;
-                    temp = index < 4 ? address[index] : data[index - 4];
+                    temp  =  index < 4 ? address[index] : data[index - 4];
                     index += minorInc;
                     if(index >= size) index -= size;
                     eccA ^= temp;
                     eccB ^= temp;
-                    eccA = eccFTable[eccA];
+                    eccA =  eccFTable[eccA];
                 }
 
                 eccA = eccBTable[eccFTable[eccA] ^ eccB];
@@ -191,19 +191,19 @@ namespace DiscImageChef.Checksums
                 }
 
                 byte[] address = new byte[4];
-                byte[] data = new byte[2060];
-                byte[] data2 = new byte[2232];
-                byte[] eccP = new byte[172];
-                byte[] eccQ = new byte[104];
+                byte[] data    = new byte[2060];
+                byte[] data2   = new byte[2232];
+                byte[] eccP    = new byte[172];
+                byte[] eccQ    = new byte[104];
 
-                Array.Copy(channel, 0x0C, address, 0, 4);
-                Array.Copy(channel, 0x0C, data, 0, 2060);
-                Array.Copy(channel, 0x0C, data2, 0, 2232);
-                Array.Copy(channel, 0x81C, eccP, 0, 172);
-                Array.Copy(channel, 0x8C8, eccQ, 0, 104);
+                Array.Copy(channel, 0x0C,  address, 0, 4);
+                Array.Copy(channel, 0x10,  data,    0, 2060);
+                Array.Copy(channel, 0x10,  data2,   0, 2232);
+                Array.Copy(channel, 0x81C, eccP,    0, 172);
+                Array.Copy(channel, 0x8C8, eccQ,    0, 104);
 
-                bool failedEccP = CheckEcc(address, data, 86, 24, 2, 86, eccP);
-                bool failedEccQ = CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
+                bool failedEccP = !CheckEcc(address, data,  86, 24, 2,  86, eccP);
+                bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
 
                 if(failedEccP)
                     DicConsole.DebugWriteLine("CD checksums",
@@ -267,22 +267,22 @@ namespace DiscImageChef.Checksums
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     byte[] address = new byte[4];
-                    byte[] data = new byte[2060];
-                    byte[] data2 = new byte[2232];
-                    byte[] eccP = new byte[172];
-                    byte[] eccQ = new byte[104];
+                    byte[] data    = new byte[2060];
+                    byte[] data2   = new byte[2232];
+                    byte[] eccP    = new byte[172];
+                    byte[] eccQ    = new byte[104];
 
                     address[0] = 0;
                     address[1] = 0;
                     address[2] = 0;
                     address[3] = 0;
-                    Array.Copy(channel, 0x0C, data, 0, 2060);
-                    Array.Copy(channel, 0x0C, data2, 0, 2232);
-                    Array.Copy(channel, 0x80C, eccP, 0, 172);
-                    Array.Copy(channel, 0x8B8, eccQ, 0, 104);
+                    Array.Copy(channel, 0x10,  data,  0, 2060);
+                    Array.Copy(channel, 0x10,  data2, 0, 2232);
+                    Array.Copy(channel, 0x80C, eccP,  0, 172);
+                    Array.Copy(channel, 0x8B8, eccQ,  0, 104);
 
-                    bool failedEccP = CheckEcc(address, data, 86, 24, 2, 86, eccP);
-                    bool failedEccQ = CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
+                    bool failedEccP = !CheckEcc(address, data,  86, 24, 2,  86, eccP);
+                    bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
 
                     if(failedEccP)
                         DicConsole.DebugWriteLine("CD checksums",
@@ -320,18 +320,18 @@ namespace DiscImageChef.Checksums
 
         static bool? CheckCdSectorSubChannel(byte[] subchannel)
         {
-            bool? status = true;
-            byte[] qSubChannel = new byte[12];
-            byte[] cdTextPack1 = new byte[18];
-            byte[] cdTextPack2 = new byte[18];
-            byte[] cdTextPack3 = new byte[18];
-            byte[] cdTextPack4 = new byte[18];
+            bool?  status       = true;
+            byte[] qSubChannel  = new byte[12];
+            byte[] cdTextPack1  = new byte[18];
+            byte[] cdTextPack2  = new byte[18];
+            byte[] cdTextPack3  = new byte[18];
+            byte[] cdTextPack4  = new byte[18];
             byte[] cdSubRwPack1 = new byte[24];
             byte[] cdSubRwPack2 = new byte[24];
             byte[] cdSubRwPack3 = new byte[24];
             byte[] cdSubRwPack4 = new byte[24];
 
-            int i = 0;
+            int i                                      = 0;
             for(int j = 0; j < 12; j++) qSubChannel[j] = 0;
             for(int j = 0; j < 18; j++)
             {
@@ -340,6 +340,7 @@ namespace DiscImageChef.Checksums
                 cdTextPack3[j] = 0;
                 cdTextPack4[j] = 0;
             }
+
             for(int j = 0; j < 24; j++)
             {
                 cdSubRwPack1[j] = 0;
@@ -363,39 +364,42 @@ namespace DiscImageChef.Checksums
             i = 0;
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
-                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0xC0) >> 4));
-                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x0F) << 4));
-                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0x3C) >> 2));
-                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x03) << 6));
-                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
+                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j]   | ((subchannel[i++] & 0x3F) << 2));
+                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i]   & 0xC0) >> 4));
+                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j]   | ((subchannel[i++] & 0x0F) << 4));
+                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i]   & 0x3C) >> 2));
+                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j]   | ((subchannel[i++] & 0x03) << 6));
+                if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j]   | (subchannel[i++] & 0x3F));
             }
+
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
-                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0xC0) >> 4));
-                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x0F) << 4));
-                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0x3C) >> 2));
-                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x03) << 6));
-                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
+                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j]   | ((subchannel[i++] & 0x3F) << 2));
+                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i]   & 0xC0) >> 4));
+                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j]   | ((subchannel[i++] & 0x0F) << 4));
+                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i]   & 0x3C) >> 2));
+                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j]   | ((subchannel[i++] & 0x03) << 6));
+                if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j]   | (subchannel[i++] & 0x3F));
             }
+
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
-                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0xC0) >> 4));
-                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x0F) << 4));
-                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0x3C) >> 2));
-                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x03) << 6));
-                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
+                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j]   | ((subchannel[i++] & 0x3F) << 2));
+                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i]   & 0xC0) >> 4));
+                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j]   | ((subchannel[i++] & 0x0F) << 4));
+                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i]   & 0x3C) >> 2));
+                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j]   | ((subchannel[i++] & 0x03) << 6));
+                if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j]   | (subchannel[i++] & 0x3F));
             }
+
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
-                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0xC0) >> 4));
-                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x0F) << 4));
-                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0x3C) >> 2));
-                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
-                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
+                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j]   | ((subchannel[i++] & 0x3F) << 2));
+                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i]   & 0xC0) >> 4));
+                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j]   | ((subchannel[i++] & 0x0F) << 4));
+                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i]   & 0x3C) >> 2));
+                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j]   | ((subchannel[i++] & 0x03) << 6));
+                if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j]   | (subchannel[i++] & 0x3F));
             }
 
             i = 0;
@@ -437,7 +441,7 @@ namespace DiscImageChef.Checksums
 
             BigEndianBitConverter.IsLittleEndian = true;
 
-            ushort qSubChannelCrc = BigEndianBitConverter.ToUInt16(qSubChannel, 10);
+            ushort qSubChannelCrc    = BigEndianBitConverter.ToUInt16(qSubChannel, 10);
             byte[] qSubChannelForCrc = new byte[10];
             Array.Copy(qSubChannel, 0, qSubChannelForCrc, 0, 10);
             ushort calculatedQcrc = CalculateCCITT_CRC16(qSubChannelForCrc);
@@ -451,7 +455,7 @@ namespace DiscImageChef.Checksums
 
             if((cdTextPack1[0] & 0x80) == 0x80)
             {
-                ushort cdTextPack1Crc = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
+                ushort cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
                 byte[] cdTextPack1ForCrc = new byte[16];
                 Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
                 ushort calculatedCdtp1Crc = CalculateCCITT_CRC16(cdTextPack1ForCrc);
@@ -466,7 +470,7 @@ namespace DiscImageChef.Checksums
 
             if((cdTextPack2[0] & 0x80) == 0x80)
             {
-                ushort cdTextPack2Crc = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
+                ushort cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
                 byte[] cdTextPack2ForCrc = new byte[16];
                 Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
                 ushort calculatedCdtp2Crc = CalculateCCITT_CRC16(cdTextPack2ForCrc);
@@ -483,7 +487,7 @@ namespace DiscImageChef.Checksums
 
             if((cdTextPack3[0] & 0x80) == 0x80)
             {
-                ushort cdTextPack3Crc = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
+                ushort cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
                 byte[] cdTextPack3ForCrc = new byte[16];
                 Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
                 ushort calculatedCdtp3Crc = CalculateCCITT_CRC16(cdTextPack3ForCrc);
@@ -500,7 +504,7 @@ namespace DiscImageChef.Checksums
 
             if((cdTextPack4[0] & 0x80) != 0x80) return status;
 
-            ushort cdTextPack4Crc = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
+            ushort cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
             byte[] cdTextPack4ForCrc = new byte[16];
             Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
             ushort calculatedCdtp4Crc = CalculateCCITT_CRC16(cdTextPack4ForCrc);
