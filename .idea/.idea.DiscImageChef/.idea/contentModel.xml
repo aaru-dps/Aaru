@@ -3,11 +3,9 @@
   <component name="ContentModelStore">
     <e p="$USER_HOME$/.Rider2017.3/system/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_DiscImageChef.73225794.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
-      <e p=".github" t="Include">
-        <e p="CODE_OF_CONDUCT.md" t="Include" />
-        <e p="ISSUE_TEMPLATE.md" t="Include" />
-        <e p="PULL_REQUEST_TEMPLATE.md" t="Include" />
-      </e>
+      <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
+      <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
+      <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
       <e p=".travis.yml" t="Include" />
       <e p="CICMMetadata/dotnet/cicm.cs" t="Include" />
       <e p="CONTRIBUTING.md" t="Include" />
@@ -15,6 +13,7 @@
       <e p="DONATING.md" t="Include" />
       <e p="DiscImageChef" t="IncludeRecursive">
         <e p="AssemblyInfo.cs" t="Include" />
+        <e p="ChangeLog" t="Include" />
         <e p="Commands" t="Include">
           <e p="Analyze.cs" t="Include" />
           <e p="Benchmark.cs" t="Include" />
@@ -46,6 +45,9 @@
         <e p="Main.cs" t="Include" />
         <e p="Options.cs" t="Include" />
         <e p="Progress.cs" t="Include" />
+        <e p="Properties" t="Include" />
+        <e p="Settings.StyleCop" t="Include" />
+        <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
@@ -56,6 +58,7 @@
         <e p="CRC16Context.cs" t="Include" />
         <e p="CRC32Context.cs" t="Include" />
         <e p="CRC64Context.cs" t="Include" />
+        <e p="ChangeLog" t="Include" />
         <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
         <e p="FletcherContext.cs" t="Include" />
         <e p="IChecksum.cs" t="Include" />
@@ -74,6 +77,7 @@
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
+        <e p="ChangeLog" t="Include" />
         <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
         <e p="Geometry.cs" t="Include" />
         <e p="MediaType.cs" t="Include" />
@@ -103,6 +107,7 @@
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.Console" t="IncludeRecursive">
+        <e p="ChangeLog" t="Include" />
         <e p="DicConsole.cs" t="Include" />
         <e p="DiscImageChef.Console.csproj" t="IncludeRecursive" />
         <e p="Properties" t="Include">
@@ -113,6 +118,7 @@
       </e>
       <e p="DiscImageChef.Core" t="IncludeRecursive">
         <e p="Benchmark.cs" t="Include" />
+        <e p="ChangeLog" t="Include" />
         <e p="Checksum.cs" t="Include" />
         <e p="DataFile.cs" t="Include" />
         <e p="Delegates.cs" t="Include" />
@@ -155,6 +161,7 @@
           </e>
         </e>
         <e p="DiscImageChef.Core.csproj" t="IncludeRecursive" />
+        <e p="DiscImageChef.Core.csproj.DotSettings" t="Include" />
         <e p="Filesystems.cs" t="Include" />
         <e p="ImageFormat.cs" t="Include" />
         <e p="ImageInfo.cs" t="Include" />
@@ -208,6 +215,7 @@
           <e p="Session.cs" t="Include" />
           <e p="TOC.cs" t="Include" />
         </e>
+        <e p="ChangeLog" t="Include" />
         <e p="DVD" t="Include">
           <e p="AACS.cs" t="Include" />
           <e p="ADIP.cs" t="Include" />
@@ -226,6 +234,7 @@
           <e p="UDI.cs" t="Include" />
         </e>
         <e p="DiscImageChef.Decoders.csproj" t="IncludeRecursive" />
+        <e p="DiscImageChef.Decoders.csproj.DotSettings" t="Include" />
         <e p="Floppy" t="Include">
           <e p="Amiga.cs" t="Include" />
           <e p="Apple2.cs" t="Include" />
@@ -340,6 +349,7 @@
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.Devices" t="IncludeRecursive">
+        <e p="ChangeLog" t="Include" />
         <e p="Command.cs" t="Include" />
         <e p="Device" t="Include">
           <e p="AtaCommands" t="Include">
@@ -351,6 +361,7 @@
             <e p="MCPT.cs" t="Include" />
             <e p="Smart.cs" t="Include" />
           </e>
+          <e p="AtaCommands.cs" t="Include" />
           <e p="Commands.cs" t="Include" />
           <e p="Constructor.cs" t="Include" />
           <e p="Destructor.cs" t="Include" />
@@ -381,6 +392,7 @@
           <e p="Variables.cs" t="Include" />
         </e>
         <e p="DiscImageChef.Devices.csproj" t="IncludeRecursive" />
+        <e p="DiscImageChef.Devices.csproj.DotSettings" t="Include" />
         <e p="Enums.cs" t="Include" />
         <e p="FreeBSD" t="Include">
           <e p="Command.cs" t="Include" />
@@ -425,6 +437,7 @@
         <e p="CDRWin.cs" t="Include" />
         <e p="CHD.cs" t="Include" />
         <e p="CPCDSK.cs" t="Include" />
+        <e p="ChangeLog" t="Include" />
         <e p="CisCopy.cs" t="Include" />
         <e p="CloneCD.cs" t="Include" />
         <e p="CopyQM.cs" t="Include" />
@@ -521,6 +534,7 @@
           <e p="Xattr.cs" t="Include" />
           <e p="cpmdefs.xml" t="Include" />
         </e>
+        <e p="ChangeLog" t="Include" />
         <e p="Cram.cs" t="Include" />
         <e p="DiscImageChef.Filesystems.csproj" t="IncludeRecursive" />
         <e p="ECMA67.cs" t="Include" />
@@ -636,6 +650,7 @@
         <e p="AppleDouble.cs" t="Include" />
         <e p="AppleSingle.cs" t="Include" />
         <e p="BZip2.cs" t="Include" />
+        <e p="ChangeLog" t="Include" />
         <e p="DiscImageChef.Filters.csproj" t="IncludeRecursive" />
         <e p="Filters.cs" t="Include" />
         <e p="ForcedSeekStream.cs" t="Include" />
@@ -660,6 +675,7 @@
         <e p="BigEndianBitConverter.cs" t="Include" />
         <e p="BigEndianMarshal.cs" t="Include" />
         <e p="CHS.cs" t="Include" />
+        <e p="ChangeLog" t="Include" />
         <e p="CompareBytes.cs" t="Include" />
         <e p="CountBits.cs" t="Include" />
         <e p="DateHandlers.cs" t="Include" />
@@ -684,6 +700,7 @@
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.Interop" t="IncludeRecursive">
+        <e p="ChangeLog" t="Include" />
         <e p="DetectOS.cs" t="Include" />
         <e p="DiscImageChef.Interop.csproj" t="IncludeRecursive" />
         <e p="PlatformID.cs" t="Include" />
@@ -695,6 +712,7 @@
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.Metadata" t="IncludeRecursive">
+        <e p="ChangeLog" t="Include" />
         <e p="DeviceReport.cs" t="Include" />
         <e p="Dimensions.cs" t="Include" />
         <e p="DiscImageChef.Metadata.csproj" t="IncludeRecursive" />
@@ -715,6 +733,7 @@
         <e p="Apricot.cs" t="Include" />
         <e p="Atari.cs" t="Include" />
         <e p="BSD.cs" t="Include" />
+        <e p="ChangeLog" t="Include" />
         <e p="DEC.cs" t="Include" />
         <e p="DiscImageChef.Partitions.csproj" t="IncludeRecursive" />
         <e p="DragonFlyBSD.cs" t="Include" />
@@ -799,6 +818,7 @@
         <e p="usb.ids" t="Include" />
       </e>
       <e p="DiscImageChef.Settings" t="IncludeRecursive">
+        <e p="ChangeLog" t="Include" />
         <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
