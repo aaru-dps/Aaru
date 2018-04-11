@@ -3,16 +3,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B2ABC1F2-C365-4515-9F23-A5725050CC48}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>DiscImageChef.Tests</RootNamespace>
     <AssemblyName>DiscImageChef.Tests</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>4.0.99.1628</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Product>The Disc Image Chef</Product>
+    <Title>DiscImageChef.Tests</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

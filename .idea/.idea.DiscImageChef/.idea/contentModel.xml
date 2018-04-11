@@ -12,7 +12,6 @@
       <e p="Changelog.md" t="Include" />
       <e p="DONATING.md" t="Include" />
       <e p="DiscImageChef" t="IncludeRecursive">
-        <e p="AssemblyInfo.cs" t="Include" />
         <e p="ChangeLog" t="Include" />
         <e p="Commands" t="Include">
           <e p="Analyze.cs" t="Include" />
@@ -48,7 +47,15 @@
         <e p="Settings.StyleCop" t="Include" />
         <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="x86" t="Include">
+            <e p="Debug" t="Include">
+              <e p="net461" t="Include">
+                <e p="DiscImageChef.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Checksums" t="IncludeRecursive">
         <e p="Adler32Context.cs" t="Include" />
@@ -61,9 +68,6 @@
         <e p="FletcherContext.cs" t="Include" />
         <e p="IChecksum.cs" t="Include" />
         <e p="MD5Context.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="RIPEMD160Context.cs" t="Include" />
         <e p="ReedSolomon.cs" t="Include" />
         <e p="SHA1Context.cs" t="Include" />
@@ -72,7 +76,13 @@
         <e p="SHA512Context.cs" t="Include" />
         <e p="SpamSumContext.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Checksums.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
         <e p="ChangeLog" t="Include" />
@@ -81,11 +91,14 @@
         <e p="MediaType.cs" t="Include" />
         <e p="MediaTypeFromSCSI.cs" t="Include" />
         <e p="Partition.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Compression" t="IncludeRecursive">
         <e p="AppleRle.cs" t="Include" />
@@ -96,22 +109,28 @@
           <e p="Properties" t="Include" />
         </e>
         <e p="DiscImageChef.Compression.csproj" t="IncludeRecursive" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="TeleDiskLzh.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Compression.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Console" t="IncludeRecursive">
         <e p="ChangeLog" t="Include" />
         <e p="DicConsole.cs" t="Include" />
         <e p="DiscImageChef.Console.csproj" t="IncludeRecursive" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Core" t="IncludeRecursive">
         <e p="Benchmark.cs" t="Include" />
@@ -171,9 +190,6 @@
         <e p="Partitions.cs" t="Include" />
         <e p="PluginBase.cs" t="Include" />
         <e p="PrintScsiModePages.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="Remote.cs" t="Include" />
         <e p="Sidecar" t="Include">
           <e p="AudioMedia.cs" t="Include" />
@@ -187,7 +203,13 @@
         </e>
         <e p="Statistics.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Core.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Decoders" t="IncludeRecursive">
         <e p="ATA" t="Include">
@@ -255,9 +277,6 @@
           <e p="Enums.cs" t="Include" />
           <e p="Types.cs" t="Include" />
           <e p="VendorCode.cs" t="Include" />
-        </e>
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
         </e>
         <e p="SCSI" t="Include">
           <e p="DiscStructureCapabilities.cs" t="Include" />
@@ -342,7 +361,13 @@
           <e p="SS.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Decoders.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Devices" t="IncludeRecursive">
         <e p="ChangeLog" t="Include" />
@@ -404,9 +429,6 @@
           <e p="ListDevices.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
         </e>
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="Windows" t="Include">
           <e p="Command.cs" t="Include" />
           <e p="Enums.cs" t="Include" />
@@ -417,7 +439,13 @@
           <e p="UsbFunctions.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Devices.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.DiscImages" t="IncludeRecursive">
         <e p="Alcohol120.cs" t="Include" />
@@ -463,9 +491,6 @@
         <e p="Parallels.cs" t="Include" />
         <e p="PartClone.cs" t="Include" />
         <e p="Partimage.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="QCOW.cs" t="Include" />
         <e p="QCOW2.cs" t="Include" />
         <e p="QED.cs" t="Include" />
@@ -485,7 +510,13 @@
         <e p="Virtual98.cs" t="Include" />
         <e p="ZZZRawImage.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.DiscImages.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Filesystems" t="IncludeRecursive">
         <e p="AODOS.cs" t="Include" />
@@ -600,9 +631,6 @@
         <e p="PCFX.cs" t="Include" />
         <e p="PFS.cs" t="Include" />
         <e p="ProDOS.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="QNX4.cs" t="Include" />
         <e p="QNX6.cs" t="Include" />
         <e p="RBF.cs" t="Include" />
@@ -638,7 +666,13 @@
         <e p="exFAT.cs" t="Include" />
         <e p="ext2FS.cs" t="Include" />
         <e p="extFS.cs" t="Include" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Filesystems.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Filters" t="IncludeRecursive">
         <e p="AppleDouble.cs" t="Include" />
@@ -654,13 +688,16 @@
         <e p="MacBinary.cs" t="Include" />
         <e p="OffsetStream.cs" t="Include" />
         <e p="PCExchange.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="XZ.cs" t="Include" />
         <e p="ZZZNoFilter.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Filters.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Helpers" t="IncludeRecursive">
         <e p="ArrayFill.cs" t="Include" />
@@ -684,25 +721,31 @@
           <e p="ExtentsUShort.cs" t="Include" />
         </e>
         <e p="PrintHex.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="StringHandlers.cs" t="Include" />
         <e p="Swapping.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Helpers.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Interop" t="IncludeRecursive">
         <e p="ChangeLog" t="Include" />
         <e p="DetectOS.cs" t="Include" />
         <e p="DiscImageChef.Interop.csproj" t="IncludeRecursive" />
         <e p="PlatformID.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="Version.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Interop.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Metadata" t="IncludeRecursive">
         <e p="ChangeLog" t="Include" />
@@ -711,14 +754,17 @@
         <e p="DiscImageChef.Metadata.csproj" t="IncludeRecursive" />
         <e p="ExtentsConverter.cs" t="Include" />
         <e p="MediaType.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="Resume.cs" t="Include" />
         <e p="Statistics.cs" t="Include" />
         <e p="Version.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Metadata.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Partitions" t="IncludeRecursive">
         <e p="Acorn.cs" t="Include" />
@@ -737,9 +783,6 @@
         <e p="NeXT.cs" t="Include" />
         <e p="PC98.cs" t="Include" />
         <e p="Plan9.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="RDB.cs" t="Include" />
         <e p="RioKarma.cs" t="Include" />
         <e p="SGI.cs" t="Include" />
@@ -749,7 +792,13 @@
         <e p="XENIX.cs" t="Include" />
         <e p="Xbox.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Partitions.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Server" t="IncludeRecursive">
         <e p=".directory" t="Include" />
@@ -777,9 +826,6 @@
         <e p="DiscImageChef.Server.csproj" t="IncludeRecursive" />
         <e p="Global.asax" t="Include" />
         <e p="Global.asax.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="Reports" t="Include">
           <e p=".htaccess" t="Include" />
         </e>
@@ -808,19 +854,28 @@
           <e p="vga_squarepx.woff" t="Include" />
           <e p="vga_squarepx.woff2" t="Include" />
         </e>
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Server.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="packages.config" t="Include" />
         <e p="usb.ids" t="Include" />
       </e>
       <e p="DiscImageChef.Settings" t="IncludeRecursive">
         <e p="ChangeLog" t="Include" />
         <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="Settings.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Settings.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Tests" t="IncludeRecursive">
         <e p="Checksums" t="Include">
@@ -938,7 +993,13 @@
         </e>
         <e p="Program.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Tests.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Tests.Devices" t="IncludeRecursive">
         <e p="ATA" t="Include">
@@ -957,9 +1018,6 @@
         <e p="DiscImageChef.Tests.Devices.csproj" t="IncludeRecursive" />
         <e p="Main.cs" t="Include" />
         <e p="NVMe.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="SCSI" t="Include">
           <e p="Adaptec.cs" t="Include" />
           <e p="ArchiveCorp.cs" t="Include" />
@@ -986,7 +1044,15 @@
         </e>
         <e p="SecureDigital.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="x86" t="Include">
+            <e p="Debug" t="Include">
+              <e p="net461" t="Include">
+                <e p="DiscImageChef.Tests.Devices.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.sln" t="IncludeFlat" />
       <e p="LICENSE" t="Include" />

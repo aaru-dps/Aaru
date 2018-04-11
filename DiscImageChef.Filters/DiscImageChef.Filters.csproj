@@ -3,17 +3,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Filters</RootNamespace>
     <AssemblyName>DiscImageChef.Filters</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
-    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>4.0.99.1628</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Product>The Disc Image Chef</Product>
+    <Title>DiscImageChef.Filters</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,7 +40,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OffsetStream.cs" />
     <Compile Include="IFilter.cs" />
     <Compile Include="Filters.cs" />
@@ -67,7 +70,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.20.0" />

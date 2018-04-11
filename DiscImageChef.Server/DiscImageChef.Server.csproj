@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{75342D7A-C5EA-4A6F-A511-850B54310E5B}</ProjectGuid>
     <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -24,10 +23,16 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
-    <LangVersion>7.1</LangVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>4.0.99.1628</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Product>The Disc Image Chef</Product>
+    <Title>DiscImageChef.Server</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -94,7 +99,6 @@
     <Compile Include="App_Start\SscTestedMedia.cs" />
     <Compile Include="App_Start\TestedMedia.cs" />
     <Compile Include="Controllers\UploadStatsController.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\UploadReportController.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>

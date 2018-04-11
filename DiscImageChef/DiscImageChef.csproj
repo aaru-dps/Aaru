@@ -3,17 +3,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>DiscImageChef</RootNamespace>
     <AssemblyName>DiscImageChef</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>4.0.99.1628</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Product>The Disc Image Chef</Product>
+    <Title>The Disc Image Chef</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>

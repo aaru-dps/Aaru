@@ -3,17 +3,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Interop</RootNamespace>
     <AssemblyName>DiscImageChef.Interop</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
-    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>4.0.99.1628</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Product>The Disc Image Chef</Product>
+    <Title>DiscImageChef.Interop</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,7 +41,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DetectOS.cs" />
     <Compile Include="PlatformID.cs" />
     <Compile Include="Version.cs" />

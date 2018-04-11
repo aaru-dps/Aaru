@@ -3,17 +3,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Settings</RootNamespace>
     <AssemblyName>DiscImageChef.Settings</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
-    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>4.0.99.1628</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Product>The Disc Image Chef</Product>
+    <Title>DiscImageChef.Settings</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Settings.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
@@ -55,7 +58,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="plist-cil" Version="1.16.0" />
