@@ -233,7 +233,7 @@ namespace DiscImageChef.DiscImages
             imageStream = imageFilter.GetDataForkStream();
             imageStream.Seek(0, SeekOrigin.Begin);
 
-            if(imageStream.Length < 512) return false;
+            if(imageStream.Length < Marshal.SizeOf(header)) return false;
 
             header         = new DicHeader();
             structureBytes = new byte[Marshal.SizeOf(header)];
@@ -251,7 +251,7 @@ namespace DiscImageChef.DiscImages
             imageStream = imageFilter.GetDataForkStream();
             imageStream.Seek(0, SeekOrigin.Begin);
 
-            if(imageStream.Length < 512) return false;
+            if(imageStream.Length < Marshal.SizeOf(header)) return false;
 
             header         = new DicHeader();
             structureBytes = new byte[Marshal.SizeOf(header)];
