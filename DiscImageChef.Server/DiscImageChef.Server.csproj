@@ -11,7 +11,7 @@
     <RootNamespace>DiscImageChef.Server</RootNamespace>
     <AssemblyName>DiscImageChef.Server</AssemblyName>
     <ReleaseVersion>4.0.99.0</ReleaseVersion>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

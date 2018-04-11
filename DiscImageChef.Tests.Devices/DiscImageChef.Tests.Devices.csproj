@@ -8,7 +8,7 @@
     <RootNamespace>DiscImageChef.Tests.Devices</RootNamespace>
     <AssemblyName>DiscImageChef.Tests.Devices</AssemblyName>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <ReleaseVersion>4.0.99.0</ReleaseVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
