@@ -45,7 +45,6 @@
         <e p="Main.cs" t="Include" />
         <e p="Options.cs" t="Include" />
         <e p="Progress.cs" t="Include" />
-        <e p="Properties" t="Include" />
         <e p="Settings.StyleCop" t="Include" />
         <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
