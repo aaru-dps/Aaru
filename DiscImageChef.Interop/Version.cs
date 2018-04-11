@@ -36,6 +36,10 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.Reflection;
+using System.Runtime;
+
 namespace DiscImageChef.Interop
 {
     public static class Version
@@ -47,6 +51,29 @@ namespace DiscImageChef.Interop
         public static string GetVersion()
         {
             return typeof(Version).Assembly.GetName().Version.ToString();
+        }
+
+        public static string GetNetCoreVersion()
+        {
+            Assembly assembly = typeof(GCSettings).Assembly;
+            string[] assemblyPath =
+                assembly.CodeBase.Split(new[] {'/', '\\'}, StringSplitOptions.RemoveEmptyEntries);
+            int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
+            if(netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2)
+                return assemblyPath[netCoreAppIndex + 1];
+
+            return null;
+        }
+
+        public static string GetMonoVersion()
+        {
+            if(!DetectOS.IsMono) return null;
+
+            MethodInfo monoDisplayName = Type.GetType("Mono.Runtime")
+                                            ?.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+            if(monoDisplayName != null) return (string)monoDisplayName.Invoke(null, null);
+
+            return null;
         }
     }
 }

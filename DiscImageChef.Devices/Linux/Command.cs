@@ -450,7 +450,7 @@ namespace DiscImageChef.Devices.Linux
             IntPtr buf = Marshal.AllocHGlobal(4096);
             int    resultSize;
 
-            if(DetectOS.Is64Bit())
+            if(DetectOS.Is64Bit)
             {
                 long result64 = Extern.readlink64(path, buf, 4096);
                 if(result64 <= 0) return null;

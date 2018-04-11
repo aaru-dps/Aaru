@@ -62,19 +62,12 @@ namespace DiscImageChef.Core.Logging
 
             PlatformID platId      = DetectOS.GetRealPlatformID();
             string     platVer     = DetectOS.GetVersion();
-            Type       monoRunType = Type.GetType("Mono.Runtime");
 
             logSw.WriteLine("################# System information #################");
             logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
                             Environment.Is64BitOperatingSystem ? 64 : 32);
-            if(monoRunType != null)
-            {
-                string     monoVer         = "unknown version";
-                MethodInfo monoDisplayName =
-                    monoRunType.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
-                if(monoDisplayName != null) monoVer = (string)monoDisplayName.Invoke(null, null);
-                logSw.WriteLine("Mono {0}", monoVer);
-            }
+            if(DetectOS.IsMono) 
+                logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
             else logSw.WriteLine(".NET Framework {0}", Environment.Version);
 
             logSw.WriteLine();
