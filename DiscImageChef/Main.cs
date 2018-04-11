@@ -211,12 +211,13 @@ namespace DiscImageChef
             object[] attributes =
                 typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
             string assemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
-            attributes           =
-                typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-            Version assemblyVersion   = typeof(MainClass).Assembly.GetName().Version;
-            string  assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+            attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+            AssemblyInformationalVersionAttribute assemblyVersion =
+                Attribute.GetCustomAttribute(typeof(MainClass).Assembly, typeof(AssemblyInformationalVersionAttribute))
+                    as AssemblyInformationalVersionAttribute;
+            string assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
-            DicConsole.WriteLine("{0} {1}", assemblyTitle, assemblyVersion);
+            DicConsole.WriteLine("{0} {1}", assemblyTitle, assemblyVersion?.InformationalVersion);
             DicConsole.WriteLine("{0}",     assemblyCopyright);
             DicConsole.WriteLine();
         }

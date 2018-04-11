@@ -60,21 +60,23 @@ namespace DiscImageChef.Core.Logging
 
             logSw.WriteLine("Start logging at {0}", DateTime.Now);
 
-            PlatformID platId      = DetectOS.GetRealPlatformID();
-            string     platVer     = DetectOS.GetVersion();
+            PlatformID platId  = DetectOS.GetRealPlatformID();
+            string     platVer = DetectOS.GetVersion();
+            AssemblyInformationalVersionAttribute assemblyVersion =
+                Attribute.GetCustomAttribute(typeof(DumpLog).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
+                    AssemblyInformationalVersionAttribute;
 
             logSw.WriteLine("################# System information #################");
             logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
                             Environment.Is64BitOperatingSystem ? 64 : 32);
-            if(DetectOS.IsMono) 
-                logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
-            else logSw.WriteLine(".NET Framework {0}", Environment.Version);
+            if(DetectOS.IsMono) logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
+            else logSw.WriteLine(".NET Framework {0}",      Environment.Version);
 
             logSw.WriteLine();
 
             logSw.WriteLine("################# Program information ################");
-            logSw.WriteLine("DiscImageChef {0} running in {1}-bit", Version.GetVersion(),
-                            Environment.Is64BitProcess ? 64 : 32);
+            logSw.WriteLine("DiscImageChef {0}",  assemblyVersion?.InformationalVersion);
+            logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
             #if DEBUG
             logSw.WriteLine("DEBUG version");
             #endif

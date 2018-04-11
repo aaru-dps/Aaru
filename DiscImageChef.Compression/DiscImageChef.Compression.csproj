@@ -13,12 +13,17 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.0.99.1628</Version>
+    <Version>4.0.99.1629</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
     <Title>The Disc Image Chef</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -229,6 +234,9 @@
     <Content Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.

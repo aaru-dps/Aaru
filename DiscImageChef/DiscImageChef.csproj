@@ -12,12 +12,17 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.0.99.1628</Version>
+    <Version>4.0.99.1629</Version>
     <Company>Claunia.com</Company>
-    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Copyright>Copyright © {copyright:2011} Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
     <Title>The Disc Image Chef</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -265,5 +270,6 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
   </ItemGroup>
 </Project>

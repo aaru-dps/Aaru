@@ -11,12 +11,17 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.0.99.1628</Version>
+    <Version>4.0.99.1631</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
     <Title>DiscImageChef.Tests.Devices</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -102,6 +107,9 @@
     <Folder Include="SCSI\" />
     <Folder Include="ATA\" />
     <Folder Include="SecureDigital\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
