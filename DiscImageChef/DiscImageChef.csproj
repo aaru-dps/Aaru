@@ -38,20 +38,8 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Claunia.Encoding, Version=1.4.6570.38892, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Claunia.Encoding.1.4.0\lib\portable40-net40+sl5+win8+wp8\Claunia.Encoding.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
-      <HintPath>..\packages\SharpCompress.0.19.2\lib\net35\SharpCompress.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="CommandLine">
-      <HintPath>..\packages\CommandLineParser.2.1.1-beta\lib\net40\CommandLine.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -270,5 +258,10 @@
   <ItemGroup>
     <Content Include="..\.github\ISSUE_TEMPLATE.md" />
     <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Claunia.Encoding" Version="1.6.1" />
+    <PackageReference Include="CommandLineParser" Version="2.2.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 </Project>

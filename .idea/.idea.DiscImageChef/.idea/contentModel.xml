@@ -758,6 +758,7 @@
         <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.Server" t="IncludeRecursive">
+        <e p=".directory" t="Include" />
         <e p="App_Start" t="Include">
           <e p="Ata.cs" t="Include" />
           <e p="ScsiEvpd.cs" t="Include" />
@@ -769,6 +770,7 @@
           <e p="TestedMedia.cs" t="Include" />
           <e p="WebApiConfig.cs" t="Include" />
         </e>
+        <e p="ChangeLog" t="Include" />
         <e p="Changelog.aspx" t="Include" />
         <e p="Controllers" t="Include">
           <e p="UploadReportController.cs" t="Include" />
@@ -817,6 +819,7 @@
         <e p="usb.ids" t="Include" />
       </e>
       <e p="DiscImageChef.Settings" t="IncludeRecursive">
+        <e p=".DiscImageChef.Settings.csproj.kate-swp" t="Include" />
         <e p="ChangeLog" t="Include" />
         <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
         <e p="Properties" t="Include">

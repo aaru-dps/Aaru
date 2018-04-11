@@ -34,27 +34,17 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Claunia.Encoding, Version=1.4.6570.38892, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Claunia.Encoding.1.4.0\lib\portable40-net40+sl5+win8+wp8\Claunia.Encoding.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
-      <HintPath>..\packages\SharpCompress.0.19.2\lib\net35\SharpCompress.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="plist-cil">
-      <HintPath>..\packages\plist-cil.1.16.0\lib\net40\plist-cil.dll</HintPath>
-    </Reference>
-    <Reference Include="Claunia.RsrcFork">
-      <HintPath>..\packages\Claunia.RsrcFork.1.0.0\lib\net40\Claunia.RsrcFork.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="DotNetZip">
-      <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Claunia.Encoding" Version="1.6.1" />
+    <PackageReference Include="Claunia.RsrcFork" Version="1.0.0" />
+    <PackageReference Include="DotNetZip" Version="1.10.1" />
+    <PackageReference Include="plist-cil" Version="1.16.0" />
+    <PackageReference Include="SharpCompress" Version="0.20.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscFerret.cs" />

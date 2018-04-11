@@ -35,9 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ImageInfo.cs" />
@@ -165,6 +162,9 @@
     <Content Include="..\LICENSE">
       <Link>LICENSE</Link>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
