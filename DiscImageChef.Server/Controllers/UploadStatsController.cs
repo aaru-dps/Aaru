@@ -436,7 +436,7 @@ namespace DiscImageChef.Server.Controllers
             catch(Exception ex)
             {
 #if DEBUG
-                Console.WriteLine("{0} {1}", ex.Message, ex.InnerException);
+                System.Console.WriteLine("{0} {1}", ex.Message, ex.InnerException);
                 throw;
 #else
                 response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
