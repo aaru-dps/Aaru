@@ -67,7 +67,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.20.0" />

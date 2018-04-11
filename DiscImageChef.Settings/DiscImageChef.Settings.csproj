@@ -55,7 +55,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="plist-cil" Version="1.16.0" />

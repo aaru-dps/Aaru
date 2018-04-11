@@ -49,7 +49,6 @@
         <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Checksums" t="IncludeRecursive">
         <e p="Adler32Context.cs" t="Include" />
@@ -87,7 +86,6 @@
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Compression" t="IncludeRecursive">
         <e p="AppleRle.cs" t="Include" />
@@ -190,7 +188,6 @@
         <e p="Statistics.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Decoders" t="IncludeRecursive">
         <e p="ATA" t="Include">
@@ -489,7 +486,6 @@
         <e p="ZZZRawImage.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Filesystems" t="IncludeRecursive">
         <e p="AODOS.cs" t="Include" />
@@ -643,7 +639,6 @@
         <e p="ext2FS.cs" t="Include" />
         <e p="extFS.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Filters" t="IncludeRecursive">
         <e p="AppleDouble.cs" t="Include" />
@@ -666,7 +661,6 @@
         <e p="ZZZNoFilter.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Helpers" t="IncludeRecursive">
         <e p="ArrayFill.cs" t="Include" />
@@ -819,7 +813,6 @@
         <e p="usb.ids" t="Include" />
       </e>
       <e p="DiscImageChef.Settings" t="IncludeRecursive">
-        <e p=".DiscImageChef.Settings.csproj.kate-swp" t="Include" />
         <e p="ChangeLog" t="Include" />
         <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
         <e p="Properties" t="Include">
@@ -828,7 +821,6 @@
         <e p="Settings.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Tests" t="IncludeRecursive">
         <e p="Checksums" t="Include">
@@ -947,7 +939,6 @@
         <e p="Program.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
       </e>
       <e p="DiscImageChef.Tests.Devices" t="IncludeRecursive">
         <e p="ATA" t="Include">

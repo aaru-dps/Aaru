@@ -222,7 +222,7 @@
     <EmbeddedResource Include="CPM\cpmdefs.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

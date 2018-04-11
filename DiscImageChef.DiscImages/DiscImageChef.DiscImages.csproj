@@ -152,7 +152,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

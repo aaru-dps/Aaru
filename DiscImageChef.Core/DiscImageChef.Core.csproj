@@ -156,7 +156,7 @@
     <Folder Include="Sidecar\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\LICENSE">

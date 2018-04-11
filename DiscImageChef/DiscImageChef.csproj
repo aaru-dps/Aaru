@@ -174,7 +174,6 @@
       <Link>NEEDINFO.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="..\Changelog.md">
       <Link>Changelog.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -260,7 +259,6 @@
     <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Claunia.Encoding" Version="1.6.1" />
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
