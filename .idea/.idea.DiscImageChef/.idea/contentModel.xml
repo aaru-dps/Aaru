@@ -177,7 +177,6 @@
           </e>
         </e>
         <e p="DiscImageChef.Core.csproj" t="IncludeRecursive" />
-        <e p="DiscImageChef.Core.csproj.DotSettings" t="Include" />
         <e p="Filesystems.cs" t="Include" />
         <e p="ImageFormat.cs" t="Include" />
         <e p="ImageInfo.cs" t="Include" />
@@ -252,7 +251,6 @@
           <e p="UDI.cs" t="Include" />
         </e>
         <e p="DiscImageChef.Decoders.csproj" t="IncludeRecursive" />
-        <e p="DiscImageChef.Decoders.csproj.DotSettings" t="Include" />
         <e p="Floppy" t="Include">
           <e p="Amiga.cs" t="Include" />
           <e p="Apple2.cs" t="Include" />
@@ -413,7 +411,6 @@
           <e p="Variables.cs" t="Include" />
         </e>
         <e p="DiscImageChef.Devices.csproj" t="IncludeRecursive" />
-        <e p="DiscImageChef.Devices.csproj.DotSettings" t="Include" />
         <e p="Enums.cs" t="Include" />
         <e p="FreeBSD" t="Include">
           <e p="Command.cs" t="Include" />
@@ -801,7 +798,6 @@
         </e>
       </e>
       <e p="DiscImageChef.Server" t="IncludeRecursive">
-        <e p=".directory" t="Include" />
         <e p="App_Start" t="Include">
           <e p="Ata.cs" t="Include" />
           <e p="ScsiEvpd.cs" t="Include" />
