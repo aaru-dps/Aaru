@@ -121,6 +121,18 @@ namespace DiscImageChef.Archives
         string GetFilename(int entryNumber);
 
         /// <summary>
+        ///     Gets the entry number for a particular file path in the archive. <c>fileName</c> is
+        ///     the relative path of the file in the archive. If the file cannot be found, -1 is returned.
+        /// </summary>
+        /// <remarks>
+        ///     The path should be relative (no leading slash), using regular slashes as path separator, and be
+        ///     normalized, i.e. no "foo//bar" or "foo/../bar" path components.
+        /// </remarks>
+        /// <param name="fileName">The relative path for which to get the entry number.</param>
+        /// <returns>The number of the entry corresponding to the given path, or -1 if the path does not exist.</returns>
+        int GetEntryNumber(string fileName);
+
+        /// <summary>
         ///     Gets the attributes of a file or directory.
         /// </summary>
         /// <seealso cref="Stat(int)"/>
@@ -134,7 +146,7 @@ namespace DiscImageChef.Archives
         /// </summary>
         /// <param name="entryNumber">The entry in the archive for which to retreive the list of attributes.</param>
         /// <returns>List of extended attributes, alternate data streams and forks.</returns>
-        List<string> GetXAttr(int entryNumber);
+        List<string> GetXAttrs(int entryNumber);
 
         /// <summary>
         ///     Reads an extended attribute, alternate data stream or fork from the given file.
@@ -143,7 +155,7 @@ namespace DiscImageChef.Archives
         /// <param name="entryNumber">The entry in the archive for which to retreive the XAttr.</param>
         /// <param name="xattr">Extended attribute, alternate data stream or fork name.</param>
         /// <returns>Buffer with the XAttr data.</returns>
-        byte[] GetXattr(int entryNumber, string xattr);
+        byte[] GetXAttr(int entryNumber, string xattr);
 
         /// <summary>
         ///     Gets information about an entry in the archive.
