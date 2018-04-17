@@ -37,6 +37,45 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Archives
 {
+    [Flags]
+    public enum ArchiveSupportedFeature : uint
+    {
+        /// <summary>
+        ///     The archive supports filenames for its entries. If this flag is not set, 
+        ///     files can only be accessed by number.
+        /// </summary>
+        SupportsFilenames         = 1 << 0,
+
+        /// <summary>
+        ///     The archive supports compression. If this flag is not set, compressed and 
+        ///     uncompressed lengths are always the same.
+        /// </summary>
+        SupportsCompression       = 1 << 1,
+
+        /// <summary>
+        ///     The archive supports subdirectories. If this flag is not set, all filenames are 
+        ///     guaranteed to not contain any "/" character.
+        /// </summary>
+        SupportsSubdirectories    = 1 << 2,
+
+        /// <summary>
+        ///     The archive supports explicit entries for directories (like Zip, for example).
+        ///     If this flag is not set, directories are implicit by the relative name of the files.
+        /// </summary>
+        HasExplicitDirectories    = 1 << 3,
+        
+        /// <summary>
+        ///     The archive stores a timestamp with each entry if this flag is set.
+        /// </summary>
+        HasEntryTimestamp         = 1 << 4,
+
+        /// <summary>
+        ///     If this flag is set, individual files or the whole archive might be encrypted or
+        ///     password-protected.
+        /// </summary>
+        SupportsProtection        = 1 << 5,  // TODO: not implemented yet
+    };
+
     public interface IArchive
     {
         /// <summary>Descriptive name of the plugin</summary>
@@ -93,10 +132,14 @@ namespace DiscImageChef.Archives
         void Close();
 
         /// <summary>
-        ///     Gets length of file referenced by ths archive.
+        ///     Return a bitfield indicating the features supported by this archive type.
         /// </summary>
-        /// <returns>The length.</returns>
-        long GetLength();
+        /// <returns>The <c>ArchiveSupportedFeature</c> bitfield.</returns>
+        /// <remarks>
+        ///     This should be a constant, tied to the archive type, not to the particular
+        ///     features used by the currently-opened archive file.
+        /// </remarks>
+        ArchiveSupportedFeature GetArchiveFeatures();
 
         /// <summary>
         ///     Gets the number of entries (i.e. files) that are contained in this archive.
@@ -129,8 +172,31 @@ namespace DiscImageChef.Archives
         ///     normalized, i.e. no "foo//bar" or "foo/../bar" path components.
         /// </remarks>
         /// <param name="fileName">The relative path for which to get the entry number.</param>
+        /// <param name="caseInsensitiveMatch">If set, do a case insensitive matching and return the first file that matches.</param>
         /// <returns>The number of the entry corresponding to the given path, or -1 if the path does not exist.</returns>
-        int GetEntryNumber(string fileName);
+        int GetEntryNumber(string fileName, bool caseInsensitiveMatch);
+
+        /// <summary>
+        ///     Gets the (compressed) size of the given entry.
+        /// </summary>
+        /// <param name="entryNumber">The entry for which to get the compressed size.</param>
+        /// <returns>The compressed size of the entry, or 0 if the entry is not a regular file.</returns>
+        /// <remarks>
+        ///     The return value is equal to the return value of <c>GetUncompressedSize()</c> if the file is not compressed.
+        /// </remarks>
+        /// <seealso cref="GetUncompressedSize(int)"/>
+        long GetCompressedSize(int entryNumber);
+
+        /// <summary>
+        ///     Gets the uncompressed size of the given entry.
+        /// </summary>
+        /// <param name="entryNumber">The entry for which to get the uncompressed size.</param>
+        /// <returns>The uncompressed size of the entry, or 0 if the entry is not a regular file.</returns>
+        /// <remarks>
+        ///     The return value is equal to the return value of <c>GetCompressedSize()</c> if the file is not compressed.
+        /// </remarks>
+        /// <seealso cref="GetCompressedSize(int)"/>
+        long GetUncompressedSize(int entryNumber);
 
         /// <summary>
         ///     Gets the attributes of a file or directory.
