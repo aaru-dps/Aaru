@@ -74,6 +74,11 @@ namespace DiscImageChef.Archives
         ///     password-protected.
         /// </summary>
         SupportsProtection        = 1 << 5,  // TODO: not implemented yet
+
+        /// <summary>
+        ///     If this flag is set, the archive supports returning extended attributes (Xattrs) for each entry.
+        /// </summary>
+        SupportsXAttrs            = 1 << 6,
     };
 
     public interface IArchive
