@@ -48,6 +48,8 @@ namespace DiscImageChef
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             Settings.Settings.LoadSettings();
+            if(Settings.Settings.Current.GdprCompliance < Settings.DicSettings.GdprLevel)
+                Configure.DoConfigure(true);
             Statistics.LoadStats();
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
                 Statistics.SubmitStats();
@@ -196,7 +198,7 @@ namespace DiscImageChef
                    }).WithParsed<ConfigureOptions>(opts =>
                    {
                        PrintCopyright();
-                       Configure.DoConfigure();
+                       Configure.DoConfigure(false);
                    }).WithParsed<StatsOptions>(opts =>
                    {
                        PrintCopyright();

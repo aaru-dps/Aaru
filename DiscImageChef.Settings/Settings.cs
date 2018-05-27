@@ -46,6 +46,11 @@ namespace DiscImageChef.Settings
     public class DicSettings
     {
         /// <summary>
+        /// Level for GDPR compliance checking. Every time a new feature may share user information this level should go up, and the user asked to opt-in.
+        /// </summary>
+        public const ulong GdprLevel = 1;
+        
+        /// <summary>
         ///     If set to <c>true</c>, reports will be saved locally
         /// </summary>
         public bool SaveReportsGlobally;
@@ -57,6 +62,10 @@ namespace DiscImageChef.Settings
         ///     Statistics
         /// </summary>
         public StatsSettings Stats;
+        /// <summary>
+        /// Set of GDPR compliance, if lower than <see cref="GdprLevel"/>, ask user for compliance.
+        /// </summary>
+        public ulong GdprCompliance;
     }
 
     // TODO: Use this
@@ -283,6 +292,8 @@ namespace DiscImageChef.Settings
                             }
                             else Current.Stats = null;
 
+                            Current.GdprCompliance = parsedPreferences.TryGetValue("GdprCompliance", out obj) ? (ulong)((NSNumber)obj).ToLong() : 0;
+
                             prefsFs.Close();
                         }
                         else
@@ -319,6 +330,7 @@ namespace DiscImageChef.Settings
 
                         Current.SaveReportsGlobally = Convert.ToBoolean(key.GetValue("SaveReportsGlobally"));
                         Current.ShareReports = Convert.ToBoolean(key.GetValue("ShareReports"));
+                        Current.GdprCompliance = Convert.ToUInt64(key.GetValue("GdprCompliance"));
 
                         bool stats = Convert.ToBoolean(key.GetValue("Statistics"));
                         if(stats)
@@ -385,7 +397,8 @@ namespace DiscImageChef.Settings
                         NSDictionary root = new NSDictionary
                         {
                             {"SaveReportsGlobally", Current.SaveReportsGlobally},
-                            {"ShareReports", Current.ShareReports}
+                            {"ShareReports", Current.ShareReports},
+                            {"GdprCompliance", Current.GdprCompliance}
                         };
                         if(Current.Stats != null)
                         {
@@ -431,6 +444,7 @@ namespace DiscImageChef.Settings
                         {
                             key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
                             key.SetValue("ShareReports", Current.ShareReports);
+                            key.SetValue("GdprCompliance", Current.GdprCompliance);
 
                             if(Current.Stats != null)
                             {
@@ -498,6 +512,7 @@ namespace DiscImageChef.Settings
             {
                 SaveReportsGlobally = true,
                 ShareReports = true,
+                GdprCompliance = 0,
                 Stats = new StatsSettings
                 {
                     BenchmarkStats = true,
