@@ -745,6 +745,9 @@ namespace DiscImageChef.Metadata
                     dmns.Thickness = 25.4;
                     return dmns;
                 case CommonTypes.MediaType.CompactCassette:
+                case CommonTypes.MediaType.Dcas25:
+                case CommonTypes.MediaType.Dcas85:
+                case CommonTypes.MediaType.Dcas103:
                     dmns.Height = 63.5;
                     dmns.HeightSpecified = true;
                     dmns.Width = 128;

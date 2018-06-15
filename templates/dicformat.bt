@@ -258,6 +258,9 @@ enum <uint> MediaType
     CompactCassette = 360,
     Data8 = 361,
     MiniDV = 362,
+    Dcas25 = 363,
+    Dcas85 = 364,
+    Dcas103 = 365,
 
     CFast = 370,
     CompactFlash = 371,

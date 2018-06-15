@@ -561,6 +561,12 @@ namespace DiscImageChef.CommonTypes
         CompactCassette = 360,
         Data8 = 361,
         MiniDV = 362,
+        /// <summary>D/CAS-25: Digital data on Compact Cassette form factor, special magnetic media, 9-track</summary>
+        Dcas25 = 363,
+        /// <summary>D/CAS-85: Digital data on Compact Cassette form factor, special magnetic media, 17-track</summary>
+        Dcas85 = 364,
+        /// <summary>D/CAS-103: Digital data on Compact Cassette form factor, special magnetic media, 21-track</summary>
+        Dcas103 = 365,
         #endregion Audio media, types 360 to 369
 
         #region CompactFlash Association, types 370 to 379

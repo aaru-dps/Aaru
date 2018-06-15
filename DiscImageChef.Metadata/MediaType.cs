@@ -1453,8 +1453,20 @@ namespace DiscImageChef.Metadata
                     discSubType = "HuCard";
                     break;
                 case CommonTypes.MediaType.CompactCassette:
-                    discType = "Compact Cassette";
+                    discType    = "Compact Cassette";
                     discSubType = "Compact Cassette";
+                    break;
+                case CommonTypes.MediaType.Dcas25:
+                    discType    = "Compact Cassette";
+                    discSubType = "D/CAS-25";
+                    break;
+                case CommonTypes.MediaType.Dcas85:
+                    discType    = "Compact Cassette";
+                    discSubType = "D/CAS-85";
+                    break;
+                case CommonTypes.MediaType.Dcas103:
+                    discType    = "Compact Cassette";
+                    discSubType = "D/CAS-103";
                     break;
                 case CommonTypes.MediaType.PCCardTypeI:
                     discType = "PCMCIA Card";
