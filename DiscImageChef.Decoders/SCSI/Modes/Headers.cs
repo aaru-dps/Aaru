@@ -1495,7 +1495,7 @@ namespace DiscImageChef.Decoders.SCSI
                                 sb.AppendLine("a direct-overwrite optical");
                                 break;
                             default:
-                                sb.AppendFormat("an unknown medium type 0x{0:X2}", header.Value.MediumType)
+                                sb.AppendFormat("an unknown medium type 0x{0:X2}", (byte)header.Value.MediumType)
                                   .AppendLine();
                                 break;
                         }
@@ -1696,7 +1696,7 @@ namespace DiscImageChef.Decoders.SCSI
                             sb.AppendLine("LTO in CD-ROM emulation mode");
                             break;
                         default:
-                            sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
+                            sb.AppendFormat("Unknown medium type 0x{0:X2}", (byte)header.Value.MediumType).AppendLine();
                             break;
                     }
 
@@ -1736,7 +1736,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     density = "LTO Ultrium-5";
                                     break;
                                 default:
-                                    density = $"with unknown density code 0x{descriptor.Density:X2}";
+                                    density = $"with unknown density code 0x{(byte)descriptor.Density:X2}";
                                     break;
                             }
 
