@@ -46,10 +46,15 @@ namespace DiscImageChef.Settings
     public class DicSettings
     {
         /// <summary>
-        /// Level for GDPR compliance checking. Every time a new feature may share user information this level should go up, and the user asked to opt-in.
+        ///     Level for GDPR compliance checking. Every time a new feature may share user information this level should go up,
+        ///     and the user asked to opt-in.
         /// </summary>
         public const ulong GdprLevel = 1;
-        
+        /// <summary>
+        ///     Set of GDPR compliance, if lower than <see cref="GdprLevel" />, ask user for compliance.
+        /// </summary>
+        public ulong GdprCompliance;
+
         /// <summary>
         ///     If set to <c>true</c>, reports will be saved locally
         /// </summary>
@@ -62,10 +67,6 @@ namespace DiscImageChef.Settings
         ///     Statistics
         /// </summary>
         public StatsSettings Stats;
-        /// <summary>
-        /// Set of GDPR compliance, if lower than <see cref="GdprLevel"/>, ask user for compliance.
-        /// </summary>
-        public ulong GdprCompliance;
     }
 
     // TODO: Use this
@@ -134,6 +135,11 @@ namespace DiscImageChef.Settings
     /// </summary>
     public static class Settings
     {
+        const string XDG_DATA_HOME            = "XDG_DATA_HOME";
+        const string XDG_CONFIG_HOME          = "XDG_CONFIG_HOME";
+        const string OLD_DATA_HOME            = ".claunia.com";
+        const string XDG_DATA_HOME_RESOLVED   = ".local/share";
+        const string XDG_CONFIG_HOME_RESOLVED = ".config";
         /// <summary>
         ///     Current statistcs
         /// </summary>
@@ -155,7 +161,8 @@ namespace DiscImageChef.Settings
         public static void LoadSettings()
         {
             Current = new DicSettings();
-            PlatformID ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId     = DetectOS.GetRealPlatformID();
+            string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
             try
             {
@@ -205,12 +212,19 @@ namespace DiscImageChef.Settings
                     // Otherwise, statistics and reports will be saved in ~/.claunia.com/DiscImageChef
                     default:
                     {
-                        string appSupportPath =
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                                         ".claunia.com");
-                        if(!Directory.Exists(appSupportPath)) Directory.CreateDirectory(appSupportPath);
+                        string xdgDataPath =
+                            Path.Combine(homePath,
+                                         Environment.GetEnvironmentVariable(XDG_DATA_HOME) ?? XDG_DATA_HOME_RESOLVED);
 
-                        string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
+                        string oldDicPath = Path.Combine(homePath,    ".claunia.com", "DiscImageChef");
+                        string dicPath    = Path.Combine(xdgDataPath, "DiscImageChef");
+
+                        if(Directory.Exists(oldDicPath) && !Directory.Exists(dicPath))
+                        {
+                            Directory.Move(oldDicPath, dicPath);
+                            Directory.Delete(Path.Combine(homePath, ".claunia.com"));
+                        }
+
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
 
                         ReportsPath = Path.Combine(dicPath, "Reports");
@@ -224,7 +238,7 @@ namespace DiscImageChef.Settings
             }
             catch { ReportsPath = null; }
 
-            FileStream prefsFs = null;
+            FileStream   prefsFs = null;
             StreamReader prefsSr = null;
 
             try
@@ -292,7 +306,9 @@ namespace DiscImageChef.Settings
                             }
                             else Current.Stats = null;
 
-                            Current.GdprCompliance = parsedPreferences.TryGetValue("GdprCompliance", out obj) ? (ulong)((NSNumber)obj).ToLong() : 0;
+                            Current.GdprCompliance = parsedPreferences.TryGetValue("GdprCompliance", out obj)
+                                                         ? (ulong)((NSNumber)obj).ToLong()
+                                                         : 0;
 
                             prefsFs.Close();
                         }
@@ -329,24 +345,24 @@ namespace DiscImageChef.Settings
                         }
 
                         Current.SaveReportsGlobally = Convert.ToBoolean(key.GetValue("SaveReportsGlobally"));
-                        Current.ShareReports = Convert.ToBoolean(key.GetValue("ShareReports"));
-                        Current.GdprCompliance = Convert.ToUInt64(key.GetValue("GdprCompliance"));
+                        Current.ShareReports        = Convert.ToBoolean(key.GetValue("ShareReports"));
+                        Current.GdprCompliance      = Convert.ToUInt64(key.GetValue("GdprCompliance"));
 
                         bool stats = Convert.ToBoolean(key.GetValue("Statistics"));
                         if(stats)
                             Current.Stats = new StatsSettings
                             {
-                                ShareStats = Convert.ToBoolean(key.GetValue("ShareStats")),
-                                BenchmarkStats = Convert.ToBoolean(key.GetValue("BenchmarkStats")),
-                                CommandStats = Convert.ToBoolean(key.GetValue("CommandStats")),
-                                DeviceStats = Convert.ToBoolean(key.GetValue("DeviceStats")),
+                                ShareStats      = Convert.ToBoolean(key.GetValue("ShareStats")),
+                                BenchmarkStats  = Convert.ToBoolean(key.GetValue("BenchmarkStats")),
+                                CommandStats    = Convert.ToBoolean(key.GetValue("CommandStats")),
+                                DeviceStats     = Convert.ToBoolean(key.GetValue("DeviceStats")),
                                 FilesystemStats = Convert.ToBoolean(key.GetValue("FilesystemStats")),
-                                FilterStats = Convert.ToBoolean(key.GetValue("FilterStats")),
+                                FilterStats     = Convert.ToBoolean(key.GetValue("FilterStats")),
                                 MediaImageStats = Convert.ToBoolean(key.GetValue("MediaImageStats")),
-                                MediaScanStats = Convert.ToBoolean(key.GetValue("MediaScanStats")),
-                                PartitionStats = Convert.ToBoolean(key.GetValue("PartitionStats")),
-                                MediaStats = Convert.ToBoolean(key.GetValue("MediaStats")),
-                                VerifyStats = Convert.ToBoolean(key.GetValue("VerifyStats"))
+                                MediaScanStats  = Convert.ToBoolean(key.GetValue("MediaScanStats")),
+                                PartitionStats  = Convert.ToBoolean(key.GetValue("PartitionStats")),
+                                MediaStats      = Convert.ToBoolean(key.GetValue("MediaStats")),
+                                VerifyStats     = Convert.ToBoolean(key.GetValue("VerifyStats"))
                             };
                     }
 
@@ -354,11 +370,23 @@ namespace DiscImageChef.Settings
                     // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
                     default:
                     {
-                        string configPath =
+                        string oldConfigPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
-                        string settingsPath = Path.Combine(configPath, "DiscImageChef.xml");
+                        string oldSettingsPath = Path.Combine(oldConfigPath, "DiscImageChef.xml");
 
-                        if(!Directory.Exists(configPath))
+                        string xdgConfigPath =
+                            Path.Combine(homePath,
+                                         Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
+                                         XDG_CONFIG_HOME_RESOLVED);
+                        string settingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
+
+                        if(File.Exists(oldSettingsPath) && !File.Exists(settingsPath))
+                        {
+                            if(!Directory.Exists(xdgConfigPath)) Directory.CreateDirectory(xdgConfigPath);
+                            File.Move(oldSettingsPath, settingsPath);
+                        }
+
+                        if(!File.Exists(settingsPath))
                         {
                             SetDefaultSettings();
                             SaveSettings();
@@ -443,37 +471,37 @@ namespace DiscImageChef.Settings
                         if(key != null)
                         {
                             key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
-                            key.SetValue("ShareReports", Current.ShareReports);
-                            key.SetValue("GdprCompliance", Current.GdprCompliance);
+                            key.SetValue("ShareReports",        Current.ShareReports);
+                            key.SetValue("GdprCompliance",      Current.GdprCompliance);
 
                             if(Current.Stats != null)
                             {
-                                key.SetValue("Statistics", true);
-                                key.SetValue("ShareStats", Current.Stats.ShareStats);
-                                key.SetValue("BenchmarkStats", Current.Stats.BenchmarkStats);
-                                key.SetValue("CommandStats", Current.Stats.CommandStats);
-                                key.SetValue("DeviceStats", Current.Stats.DeviceStats);
+                                key.SetValue("Statistics",      true);
+                                key.SetValue("ShareStats",      Current.Stats.ShareStats);
+                                key.SetValue("BenchmarkStats",  Current.Stats.BenchmarkStats);
+                                key.SetValue("CommandStats",    Current.Stats.CommandStats);
+                                key.SetValue("DeviceStats",     Current.Stats.DeviceStats);
                                 key.SetValue("FilesystemStats", Current.Stats.FilesystemStats);
-                                key.SetValue("FilterStats", Current.Stats.FilterStats);
+                                key.SetValue("FilterStats",     Current.Stats.FilterStats);
                                 key.SetValue("MediaImageStats", Current.Stats.MediaImageStats);
-                                key.SetValue("MediaScanStats", Current.Stats.MediaScanStats);
-                                key.SetValue("PartitionStats", Current.Stats.PartitionStats);
-                                key.SetValue("MediaStats", Current.Stats.MediaStats);
-                                key.SetValue("VerifyStats", Current.Stats.VerifyStats);
+                                key.SetValue("MediaScanStats",  Current.Stats.MediaScanStats);
+                                key.SetValue("PartitionStats",  Current.Stats.PartitionStats);
+                                key.SetValue("MediaStats",      Current.Stats.MediaStats);
+                                key.SetValue("VerifyStats",     Current.Stats.VerifyStats);
                             }
                             else
                             {
                                 key.SetValue("Statistics", true);
-                                key.DeleteValue("ShareStats", false);
-                                key.DeleteValue("BenchmarkStats", false);
-                                key.DeleteValue("CommandStats", false);
-                                key.DeleteValue("DeviceStats", false);
+                                key.DeleteValue("ShareStats",      false);
+                                key.DeleteValue("BenchmarkStats",  false);
+                                key.DeleteValue("CommandStats",    false);
+                                key.DeleteValue("DeviceStats",     false);
                                 key.DeleteValue("FilesystemStats", false);
                                 key.DeleteValue("MediaImageStats", false);
-                                key.DeleteValue("MediaScanStats", false);
-                                key.DeleteValue("PartitionStats", false);
-                                key.DeleteValue("MediaStats", false);
-                                key.DeleteValue("VerifyStats", false);
+                                key.DeleteValue("MediaScanStats",  false);
+                                key.DeleteValue("PartitionStats",  false);
+                                key.DeleteValue("MediaStats",      false);
+                                key.DeleteValue("VerifyStats",     false);
                             }
                         }
                     }
@@ -481,13 +509,16 @@ namespace DiscImageChef.Settings
                     // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
                     default:
                     {
-                        string configPath =
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
-                        string settingsPath = Path.Combine(configPath, "DiscImageChef.xml");
+                        string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                        string xdgConfigPath =
+                            Path.Combine(homePath,
+                                         Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
+                                         XDG_CONFIG_HOME_RESOLVED);
+                        string settingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
 
-                        if(!Directory.Exists(configPath)) Directory.CreateDirectory(configPath);
+                        if(!Directory.Exists(xdgConfigPath)) Directory.CreateDirectory(xdgConfigPath);
 
-                        FileStream fs = new FileStream(settingsPath, FileMode.Create);
+                        FileStream    fs = new FileStream(settingsPath, FileMode.Create);
                         XmlSerializer xs = new XmlSerializer(Current.GetType());
                         xs.Serialize(fs, Current);
                         fs.Close();
@@ -495,12 +526,12 @@ namespace DiscImageChef.Settings
                         break;
                 }
             }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
             {
                 // ignored
             }
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
+            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
         }
 
         /// <summary>
@@ -511,21 +542,21 @@ namespace DiscImageChef.Settings
             Current = new DicSettings
             {
                 SaveReportsGlobally = true,
-                ShareReports = true,
-                GdprCompliance = 0,
+                ShareReports        = true,
+                GdprCompliance      = 0,
                 Stats = new StatsSettings
                 {
-                    BenchmarkStats = true,
-                    CommandStats = true,
-                    DeviceStats = true,
+                    BenchmarkStats  = true,
+                    CommandStats    = true,
+                    DeviceStats     = true,
                     FilesystemStats = true,
                     MediaImageStats = true,
-                    MediaScanStats = true,
-                    FilterStats = true,
-                    MediaStats = true,
-                    PartitionStats = true,
-                    ShareStats = true,
-                    VerifyStats = true
+                    MediaScanStats  = true,
+                    FilterStats     = true,
+                    MediaStats      = true,
+                    PartitionStats  = true,
+                    ShareStats      = true,
+                    VerifyStats     = true
                 }
             };
         }
