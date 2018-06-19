@@ -400,6 +400,8 @@ namespace DiscImageChef.Devices
             Error = LastError != 0;
 
             uint strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
+            if(strctLength > tmpBuffer.Length) strctLength = (uint)tmpBuffer.Length;
+
             buffer           = new byte[strctLength];
             Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 

@@ -228,9 +228,12 @@ namespace DiscImageChef.Commands
                 if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
                     scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
-                containsFloppyPage =
-                    decMode.Value.Pages.Aggregate(containsFloppyPage,
-                                                  (current, modePage) => current | (modePage.Page == 0x05));
+                if(decMode.Value.Pages != null)
+                {
+                    containsFloppyPage =
+                        decMode.Value.Pages.Aggregate(containsFloppyPage,
+                                                      (current, modePage) => current | (modePage.Page == 0x05));
+                }
             }
 
             switch(dev.ScsiType)
