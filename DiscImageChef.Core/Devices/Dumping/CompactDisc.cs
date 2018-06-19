@@ -117,6 +117,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
+            dskType = MediaType.CD;
+
             // We discarded all discs that falsify a TOC before requesting a real TOC
             // No TOC, no CD (or an empty one)
             dumpLog.WriteLine("Reading full TOC");
@@ -299,6 +301,27 @@ namespace DiscImageChef.Core.Devices.Dumping
                             dumpLog.WriteLine("Cannot read from disc, not continuing...");
                             DicConsole.ErrorWriteLine("Cannot read from disc, not continuing...");
                             return;
+                        }
+
+                        if(read6)
+                        {
+                            dumpLog.WriteLine("Drive supports READ(6)...");
+                            DicConsole.WriteLine("Drive supports READ(6)...");
+                        }
+                        if(read10)
+                        {
+                            dumpLog.WriteLine("Drive supports READ(10)...");
+                            DicConsole.WriteLine("Drive supports READ(10)...");
+                        }
+                        if(read12)
+                        {
+                            dumpLog.WriteLine("Drive supports READ(12)...");
+                            DicConsole.WriteLine("Drive supports READ(12)...");
+                        }
+                        if(read16)
+                        {
+                            dumpLog.WriteLine("Drive supports READ(16)...");
+                            DicConsole.WriteLine("Drive supports READ(16)...");
                         }
                     }
 
@@ -504,17 +527,41 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(lastSector == 0)
             {
-                if(!force)
+                sense = dev.ReadCapacity16(out readBuffer, out senseBuf, dev.Timeout, out _);
+                if(!sense)
                 {
-                    DicConsole
-                       .WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-                    dumpLog.WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-                    return;
+                    byte[] temp = new byte[8];
+
+                    Array.Copy(cmdBuf, 0, temp, 0, 8);
+                    Array.Reverse(temp);
+                    lastSector = (long)BitConverter.ToUInt64(temp, 0);
+                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                }
+                else
+                {
+                    sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out _);
+                    if(!sense)
+                    {
+                        lastSector    = (long)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                    }
                 }
 
-                DicConsole.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-                dumpLog.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-                lastSector = 360000;
+                if(lastSector <= 0)
+                {
+                    if(!force)
+                    {
+                        DicConsole
+                           .WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+                        dumpLog.WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+                        return;
+                    }
+
+                    DicConsole
+                       .WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+                    dumpLog.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+                    lastSector = 360000;
+                }
             }
 
             Track[] tracks                                                      = trackList.ToArray();
@@ -543,13 +590,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Check mode for tracks
             for(int t = 0; t < tracks.Length; t++)
             {
-                if(tracks[t].TrackType == TrackType.Audio) continue;
-
                 if(!readcd)
                 {
                     tracks[t].TrackType = TrackType.CdMode1;
                     continue;
                 }
+
+                if(tracks[t].TrackType == TrackType.Audio) continue;
 
                 dumpLog.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
                 DicConsole.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
@@ -737,7 +784,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-            bool    ret     = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, SECTOR_SIZE);
+            bool    ret     = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
@@ -878,24 +925,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, i, blockSize, 0, blocksToRead, false,
                                            dev.Timeout, out cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
                     else if(read12)
                     {
                         sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, blocksToRead, false,
                                            dev.Timeout, out cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
                     else if(read10)
                     {
                         sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, (ushort)blocksToRead,
                                            dev.Timeout, out cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
                     else if(read6)
                     {
                         sense = dev.Read6(out readBuffer, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, dev.Timeout, out cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
 
                     if(!sense && !dev.Error)
@@ -920,7 +963,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             outputPlugin.WriteSectorsLong(data, i, blocksToRead);
                             outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
                         }
-                        else outputPlugin.WriteSectorsLong(readBuffer, i, blocksToRead);
+                        else outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     }
@@ -939,7 +982,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             outputPlugin.WriteSectorsTag(new byte[subSize * skip], i, skip,
                                                          SectorTagType.CdSectorSubchannel);
                         }
-                        else outputPlugin.WriteSectorsLong(new byte[blockSize * skip], i, skip);
+                        else outputPlugin.WriteSectors(new byte[blockSize * skip], i, skip);
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
@@ -1004,24 +1047,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, badSector, blockSize, 0, blocksToRead, false,
                                            dev.Timeout, out double cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
                     else if(read12)
                     {
                         sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, blocksToRead, false,
                                            dev.Timeout, out double cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
                     else if(read10)
                     {
                         sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, (ushort)blocksToRead,
                                            dev.Timeout, out double cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
                     else if(read6)
                     {
                         sense = dev.Read6(out readBuffer, out senseBuf, (uint)badSector, blockSize, (byte)blocksToRead, dev.Timeout, out double cmdDuration);
-                        if(dev.Error || sense) blocksToRead /= 2;
                     }
 
                     if(sense || dev.Error) continue;
@@ -1041,7 +1080,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         outputPlugin.WriteSectorLong(data, badSector);
                         outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
                     }
-                    else outputPlugin.WriteSectorLong(readBuffer, badSector);
+                    else outputPlugin.WriteSector(readBuffer, badSector);
                 }
 
                 DicConsole.WriteLine();
