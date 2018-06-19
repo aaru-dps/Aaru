@@ -124,7 +124,7 @@ namespace DiscImageChef.DiscImages
                     {
                         Indexes                = new Dictionary<int, ulong> {{1, alcTrack.startLba}},
                         TrackStartSector       = alcTrack.startLba,
-                        TrackEndSector         = alcExtra.sectors - 1,
+                        TrackEndSector         = (alcTrack.startLba + alcExtra.sectors) - 1,
                         TrackPregap            = alcExtra.pregap,
                         TrackSession           = sessionNo,
                         TrackSequence          = alcTrack.point,
