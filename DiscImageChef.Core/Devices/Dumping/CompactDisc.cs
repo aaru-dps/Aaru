@@ -249,6 +249,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 supportedSubchannel = MmcSubchannel.Q16;
                 dumpLog.WriteLine("Checking if drive supports PQ subchannel reading...");
+                DicConsole.WriteLine("Checking if drive supports PQ subchannel reading...");
                 readcd = !dev.ReadCd(out readBuffer, out senseBuf, 0, SECTOR_SIZE + 16, 1, MmcSectorTypes.AllTypes,
                                      false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                      supportedSubchannel, dev.Timeout, out _);
@@ -266,6 +267,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     supportedSubchannel = MmcSubchannel.None;
                     dumpLog.WriteLine("Checking if drive supports reading without subchannel...");
+                    DicConsole.WriteLine("Checking if drive supports reading without subchannel...");
                     readcd = !dev.ReadCd(out readBuffer, out senseBuf, 0, SECTOR_SIZE, 1, MmcSectorTypes.AllTypes,
                                          false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                          supportedSubchannel, dev.Timeout, out _);
