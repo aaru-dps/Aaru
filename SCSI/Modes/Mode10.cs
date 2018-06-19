@@ -64,6 +64,8 @@ namespace DiscImageChef.Decoders.SCSI
                     header.BlockDescriptors = new BlockDescriptor[blockDescLength / 16];
                     for(int i = 0; i < header.BlockDescriptors.Length; i++)
                     {
+                        if(12 + i * 16 + 8 >= modeResponse.Length) break;
+
                         header.BlockDescriptors[i] = new BlockDescriptor {Density = DensityType.Default};
                         byte[] temp = new byte[8];
                         temp[0] = modeResponse[7 + i * 16 + 8];
@@ -86,6 +88,8 @@ namespace DiscImageChef.Decoders.SCSI
                     header.BlockDescriptors = new BlockDescriptor[blockDescLength / 8];
                     for(int i = 0; i < header.BlockDescriptors.Length; i++)
                     {
+                        if(7 + i * 8 + 8 >= modeResponse.Length) break;
+
                         header.BlockDescriptors[i] = new BlockDescriptor();
                         if(deviceType != PeripheralDeviceTypes.DirectAccess)
                             header.BlockDescriptors[i].Density = (DensityType)modeResponse[0 + i * 8 + 8];
