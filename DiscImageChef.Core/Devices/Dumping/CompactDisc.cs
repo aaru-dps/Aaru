@@ -97,6 +97,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             DateTime           start;
             DateTime           end;
             bool               readcd;
+            bool read6 = false, read10 = false, read12 = false, read16 = false;
             bool               sense         = false;
             const uint         SECTOR_SIZE   = 2352;
             FullTOC.CDFullTOC? toc           = null;
@@ -274,9 +275,31 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(!readcd)
                     {
-                        dumpLog.WriteLine("Cannot read from disc, not continuing...");
-                        DicConsole.ErrorWriteLine("Cannot read from disc, not continuing...");
-                        return;
+                        dumpLog.WriteLine("Drive does not support READ CD, trying SCSI READ commands...");
+                        DicConsole.ErrorWriteLine("Drive does not support READ CD, trying SCSI READ commands...");
+
+                        dumpLog.WriteLine("Checking if drive supports READ(6)...");
+                        DicConsole.WriteLine("Checking if drive supports READ(6)...");
+                        read6 = !dev.Read6(out readBuffer, out senseBuf, 0, 2048, 1, dev.Timeout, out _);
+                        dumpLog.WriteLine("Checking if drive supports READ(10)...");
+                        DicConsole.WriteLine("Checking if drive supports READ(10)...");
+                        read10 = !dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, 2048, 0, 1,
+                                             dev.Timeout, out _);
+                        dumpLog.WriteLine("Checking if drive supports READ(12)...");
+                        DicConsole.WriteLine("Checking if drive supports READ(12)...");
+                        read12 = !dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, 2048, 0,
+                                             1, false, dev.Timeout, out _);
+                        dumpLog.WriteLine("Checking if drive supports READ(16)...");
+                        DicConsole.WriteLine("Checking if drive supports READ(16)...");
+                        read16 = !dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, 2048, 0, 1, false,
+                                             dev.Timeout, out _);
+
+                        if(!read6 && !read10 && !read12 && !read16)
+                        {
+                            dumpLog.WriteLine("Cannot read from disc, not continuing...");
+                            DicConsole.ErrorWriteLine("Cannot read from disc, not continuing...");
+                            return;
+                        }
                     }
 
                     dumpLog.WriteLine("Drive can only read without subchannel...");
@@ -522,6 +545,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 if(tracks[t].TrackType == TrackType.Audio) continue;
 
+                if(!readcd)
+                {
+                    tracks[t].TrackType = TrackType.CdMode1;
+                    continue;
+                }
+
                 dumpLog.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
                 DicConsole.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
 
@@ -556,7 +585,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             // Check if something prevents from dumping the Lead-in
-            if(dumpLeadIn)
+            if(dumpLeadIn && readcd)
             {
                 if(dev.PlatformId == PlatformID.FreeBSD)
                 {
@@ -592,7 +621,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 throw new InvalidOperationException("Could not process resume file, not continuing...");
 
             // Try to read the Lead-in
-            if(dumpLeadIn)
+            if(dumpLeadIn && readcd)
             {
                 DicConsole.WriteLine("Trying to read Lead-In...");
                 bool         gotLeadIn         = false;
@@ -656,6 +685,29 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sense = dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, blocksToRead,
                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                        true, MmcErrorField.None, supportedSubchannel, dev.Timeout, out _);
+                    if(dev.Error || sense) blocksToRead /= 2;
+                }
+                else if(read16)
+                {
+                    sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, blockSize, 0, blocksToRead, false,
+                                       dev.Timeout, out _);
+                    if(dev.Error || sense) blocksToRead /= 2;
+                }
+                else if(read12)
+                {
+                    sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, blocksToRead, false,
+                                       dev.Timeout, out _);
+                    if(dev.Error || sense) blocksToRead /= 2;
+                }
+                else if(read10)
+                {
+                    sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, (ushort)blocksToRead,
+                                         dev.Timeout, out _);
+                    if(dev.Error || sense) blocksToRead /= 2;
+                }
+                else if(read6)
+                {
+                    sense = dev.Read6(out readBuffer, out senseBuf, 0, blockSize, (byte)blocksToRead, dev.Timeout, out _);
                     if(dev.Error || sense) blocksToRead /= 2;
                 }
 
@@ -822,6 +874,29 @@ namespace DiscImageChef.Core.Devices.Dumping
                                            true, MmcErrorField.None, supportedSubchannel, dev.Timeout, out cmdDuration);
                         totalDuration += cmdDuration;
                     }
+                    else if(read16)
+                    {
+                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, i, blockSize, 0, blocksToRead, false,
+                                           dev.Timeout, out cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
+                    }
+                    else if(read12)
+                    {
+                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, blocksToRead, false,
+                                           dev.Timeout, out cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
+                    }
+                    else if(read10)
+                    {
+                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, (ushort)blocksToRead,
+                                           dev.Timeout, out cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
+                    }
+                    else if(read6)
+                    {
+                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, dev.Timeout, out cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
+                    }
 
                     if(!sense && !dev.Error)
                     {
@@ -924,6 +999,29 @@ namespace DiscImageChef.Core.Devices.Dumping
                                            true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
                                            out double cmdDuration);
                         totalDuration += cmdDuration;
+                    }
+                    else if(read16)
+                    {
+                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, badSector, blockSize, 0, blocksToRead, false,
+                                           dev.Timeout, out double cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
+                    }
+                    else if(read12)
+                    {
+                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, blocksToRead, false,
+                                           dev.Timeout, out double cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
+                    }
+                    else if(read10)
+                    {
+                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, (ushort)blocksToRead,
+                                           dev.Timeout, out double cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
+                    }
+                    else if(read6)
+                    {
+                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)badSector, blockSize, (byte)blocksToRead, dev.Timeout, out double cmdDuration);
+                        if(dev.Error || sense) blocksToRead /= 2;
                     }
 
                     if(sense || dev.Error) continue;
