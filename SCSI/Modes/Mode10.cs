@@ -46,11 +46,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(modeResponse == null || modeResponse.Length < 8) return null;
 
-            ushort modeLength;
-            ushort blockDescLength;
-
-            modeLength = (ushort)((modeResponse[0] << 8) + modeResponse[1]);
-            blockDescLength = (ushort)((modeResponse[6] << 8) + modeResponse[7]);
+            ushort modeLength = (ushort)((modeResponse[0] << 8) + modeResponse[1]);
+            ushort blockDescLength = (ushort)((modeResponse[6] << 8) + modeResponse[7]);
 
             if(modeResponse.Length < modeLength) return null;
 

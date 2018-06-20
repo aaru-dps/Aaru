@@ -145,7 +145,6 @@ namespace DiscImageChef.Decoders.SecureDigital
 
             double unitFactor = 0;
             double multiplier = 0;
-            double result;
             string unit = "";
 
             StringBuilder sb = new StringBuilder();
@@ -248,7 +247,7 @@ namespace DiscImageChef.Decoders.SecureDigital
                     break;
             }
 
-            result = unitFactor * multiplier;
+            double result = unitFactor * multiplier;
             sb.AppendFormat("\tAsynchronous data access time is {0}{1}", result, unit).AppendLine();
 
             sb.AppendFormat("\tClock dependent part of data access is {0} clock cycles", csd.NSAC * 100).AppendLine();

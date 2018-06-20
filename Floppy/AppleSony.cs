@@ -153,8 +153,6 @@ namespace DiscImageChef.Decoders.Floppy
             if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA ||
                sector.addressField.prologue[2] != 0x96) return null;
 
-            uint ck1, ck2, ck3;
-            byte w3;
             byte[] bf1 = new byte[175];
             byte[] bf2 = new byte[175];
             byte[] bf3 = new byte[175];
@@ -162,7 +160,7 @@ namespace DiscImageChef.Decoders.Floppy
             MemoryStream ms = new MemoryStream();
 
             int j = 0;
-            w3 = 0;
+            byte w3 = 0;
             for(int i = 0; i <= 174; i++)
             {
                 byte w4 = nib_data[j++];
@@ -177,9 +175,9 @@ namespace DiscImageChef.Decoders.Floppy
             }
 
             j = 0;
-            ck1 = 0;
-            ck2 = 0;
-            ck3 = 0;
+            uint ck1 = 0;
+            uint ck2 = 0;
+            uint ck3 = 0;
             while(true)
             {
                 ck1 = (ck1 & 0xFF) << 1;

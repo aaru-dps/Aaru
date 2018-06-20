@@ -213,9 +213,8 @@ namespace DiscImageChef.Decoders.MMC
 
             if(response.Length != 512) return null;
 
-            ExtendedCSD csd;
             GCHandle handle = GCHandle.Alloc(response, GCHandleType.Pinned);
-            csd = (ExtendedCSD)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedCSD));
+            ExtendedCSD csd = (ExtendedCSD)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedCSD));
             handle.Free();
 
             return csd;
@@ -231,8 +230,9 @@ namespace DiscImageChef.Decoders.MMC
             double unit;
 
             if((csd.HPIFeatures & 0x01) == 0x01)
-                if((csd.HPIFeatures & 0x02) == 0x02) sb.AppendLine("\tDevice implements HPI using CMD12");
-                else sb.AppendLine("\tDevice implements HPI using CMD13");
+                sb.AppendLine((csd.HPIFeatures & 0x02) == 0x02
+                                  ? "\tDevice implements HPI using CMD12"
+                                  : "\tDevice implements HPI using CMD13");
 
             if((csd.BackgroundOperationsSupport & 0x01) == 0x01)
                 sb.AppendLine("\tDevice supports background operations");
@@ -574,9 +574,9 @@ namespace DiscImageChef.Decoders.MMC
             if((csd.StrobeSupport & 0x01) == 0x01)
             {
                 sb.AppendLine("\tDevice supports enhanced strobe mode");
-                if((csd.BusWidth & 0x80) == 0x80)
-                    sb.AppendLine("\tDevice uses strobe during Data Out, CRC and CMD responses");
-                else sb.AppendLine("\tDevice uses strobe during Data Out and CRC responses");
+                sb.AppendLine((csd.BusWidth & 0x80) == 0x80
+                                  ? "\tDevice uses strobe during Data Out, CRC and CMD responses"
+                                  : "\tDevice uses strobe during Data Out and CRC responses");
             }
 
             switch(csd.BusWidth & 0x0F)
