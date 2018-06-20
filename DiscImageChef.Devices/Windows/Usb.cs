@@ -58,7 +58,7 @@ namespace DiscImageChef.Devices.Windows
             // We start at the "root" of the device tree and look for all
             // devices that match the interface GUID of a Hub Controller
             IntPtr h = SetupDiGetClassDevs(ref hostGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
-            if(h.ToInt32() == INVALID_HANDLE_VALUE) return new ReadOnlyCollection<UsbController>(hostList);
+            if(h == INVALID_HANDLE_VALUE) return new ReadOnlyCollection<UsbController>(hostList);
 
             IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
             bool success;
@@ -128,7 +128,7 @@ namespace DiscImageChef.Devices.Windows
             // Use the "enumerator form" of the SetupDiGetClassDevs API
             // to generate a list of all USB devices
             IntPtr h = SetupDiGetClassDevs(0, DEV_ENUM, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
-            if(h.ToInt32() == INVALID_HANDLE_VALUE) return ans;
+            if(h == INVALID_HANDLE_VALUE) return ans;
 
             IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
@@ -184,7 +184,7 @@ namespace DiscImageChef.Devices.Windows
             // Use the "enumerator form" of the SetupDiGetClassDevs API
             // to generate a list of all USB devices
             IntPtr h = SetupDiGetClassDevs(0, DEV_ENUM, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
-            if(h.ToInt32() == INVALID_HANDLE_VALUE) return ans;
+            if(h == INVALID_HANDLE_VALUE) return ans;
 
             IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
@@ -271,7 +271,7 @@ namespace DiscImageChef.Devices.Windows
                 // Open a handle to the Host Controller
                 h = CreateFile(ControllerDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                IntPtr.Zero);
-                if(h.ToInt32() == INVALID_HANDLE_VALUE) return root;
+                if(h == INVALID_HANDLE_VALUE) return root;
 
                 UsbRootHubName hubName = new UsbRootHubName();
                 int nBytes = Marshal.SizeOf(hubName);
@@ -290,7 +290,7 @@ namespace DiscImageChef.Devices.Windows
                 // Now let's open the Hub (based upon the HubName we got above)
                 h2 = CreateFile(root.HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                 IntPtr.Zero);
-                if(h2.ToInt32() != INVALID_HANDLE_VALUE)
+                if(h2 != INVALID_HANDLE_VALUE)
                 {
                     UsbNodeInformation nodeInfo = new UsbNodeInformation {NodeType = (int)UsbHubNode.UsbHub};
                     nBytes = Marshal.SizeOf(nodeInfo);
@@ -379,7 +379,7 @@ namespace DiscImageChef.Devices.Windows
                 // Open a handle to the Hub device
                 IntPtr h = CreateFile(HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                       IntPtr.Zero);
-                if(h.ToInt32() == INVALID_HANDLE_VALUE) return new ReadOnlyCollection<UsbPort>(portList);
+                if(h == INVALID_HANDLE_VALUE) return new ReadOnlyCollection<UsbPort>(portList);
 
                 int nBytes = Marshal.SizeOf(typeof(UsbNodeConnectionInformationEx));
                 IntPtr ptrNodeConnection = Marshal.AllocHGlobal(nBytes);
@@ -482,7 +482,7 @@ namespace DiscImageChef.Devices.Windows
                 // Open a handle to the Hub device
                 IntPtr h = CreateFile(PortHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                       IntPtr.Zero);
-                if(h.ToInt32() == INVALID_HANDLE_VALUE) return device;
+                if(h == INVALID_HANDLE_VALUE) return device;
 
                 int nBytesReturned;
                 int nBytes = BUFFER_SIZE;
@@ -519,7 +519,7 @@ namespace DiscImageChef.Devices.Windows
                         // the Request structure.  Because this location is not "covered"
                         // by the structure allocation, we're forced to zero out this
                         // chunk of memory by using the StringToHGlobalAuto() hack above
-                        IntPtr ptrStringDesc = new IntPtr(ptrRequest.ToInt32() + Marshal.SizeOf(request));
+                        IntPtr ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
                         UsbStringDescriptor stringDesc =
                             (UsbStringDescriptor)Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor));
                         device.DeviceManufacturer = stringDesc.bString;
@@ -549,7 +549,7 @@ namespace DiscImageChef.Devices.Windows
                                        nBytes, out nBytesReturned, IntPtr.Zero))
                     {
                         // the location of the string descriptor is immediately after the Request structure
-                        IntPtr ptrStringDesc = new IntPtr(ptrRequest.ToInt32() + Marshal.SizeOf(request));
+                        IntPtr ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
                         UsbStringDescriptor stringDesc =
                             (UsbStringDescriptor)Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor));
                         device.DeviceProduct = stringDesc.bString;
@@ -579,7 +579,7 @@ namespace DiscImageChef.Devices.Windows
                                        nBytes, out nBytesReturned, IntPtr.Zero))
                     {
                         // the location of the string descriptor is immediately after the Request structure
-                        IntPtr ptrStringDesc = new IntPtr(ptrRequest.ToInt32() + Marshal.SizeOf(request));
+                        IntPtr ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
                         UsbStringDescriptor stringDesc =
                             (UsbStringDescriptor)Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor));
                         device.DeviceSerialNumber = stringDesc.bString;
@@ -602,7 +602,7 @@ namespace DiscImageChef.Devices.Windows
                 if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, dcrPtrRequest, nBytes,
                                    dcrPtrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
                 {
-                    IntPtr ptrStringDesc = new IntPtr(dcrPtrRequest.ToInt32() + Marshal.SizeOf(dcrRequest));
+                    IntPtr ptrStringDesc = IntPtr.Add(dcrPtrRequest, Marshal.SizeOf(dcrRequest));
                     device.BinaryDeviceDescriptors = new byte[nBytesReturned];
                     Marshal.Copy(ptrStringDesc, device.BinaryDeviceDescriptors, 0, nBytesReturned);
                 }
@@ -650,7 +650,7 @@ namespace DiscImageChef.Devices.Windows
                 // Open a handle to the Host Controller
                 h = CreateFile(PortHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                IntPtr.Zero);
-                if(h.ToInt32() == INVALID_HANDLE_VALUE) return hub;
+                if(h == INVALID_HANDLE_VALUE) return hub;
                 // Get the DevicePath for downstream hub
                 UsbNodeConnectionName nodeName = new UsbNodeConnectionName {ConnectionIndex = PortPortNumber};
                 int nBytes = Marshal.SizeOf(nodeName);
@@ -669,7 +669,7 @@ namespace DiscImageChef.Devices.Windows
                 // Now let's open the Hub (based upon the HubName we got above)
                 h2 = CreateFile(hub.HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                 IntPtr.Zero);
-                if(h2.ToInt32() != INVALID_HANDLE_VALUE)
+                if(h2 != INVALID_HANDLE_VALUE)
                 {
                     UsbNodeInformation nodeInfo = new UsbNodeInformation {NodeType = (int)UsbHubNode.UsbHub};
                     nBytes = Marshal.SizeOf(nodeInfo);
@@ -759,7 +759,7 @@ namespace DiscImageChef.Devices.Windows
         const int FILE_SHARE_READ = 0x1;
         const int FILE_SHARE_WRITE = 0x2;
         const int OPEN_EXISTING = 0x3;
-        const int INVALID_HANDLE_VALUE = -1;
+        static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
         const int IOCTL_GET_HCD_DRIVERKEY_NAME = 0x220424;
         const int IOCTL_USB_GET_ROOT_HUB_NAME = 0x220408;

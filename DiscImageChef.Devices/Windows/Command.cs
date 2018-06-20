@@ -737,7 +737,7 @@ namespace DiscImageChef.Devices.Windows
                                        commandData.deviceDataBufferSize];
             IntPtr hBuf = Marshal.AllocHGlobal(commandB.Length);
             Marshal.StructureToPtr(commandData, hBuf, true);
-            IntPtr descriptorOffset = new IntPtr(hBuf.ToInt32() + commandData.size);
+            IntPtr descriptorOffset = IntPtr.Add(hBuf, commandData.size);
             Marshal.StructureToPtr(commandDescriptor, descriptorOffset, true);
             Marshal.Copy(hBuf, commandB, 0, commandB.Length);
             Marshal.FreeHGlobal(hBuf);

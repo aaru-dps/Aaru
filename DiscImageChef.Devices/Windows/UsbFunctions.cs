@@ -209,7 +209,7 @@ namespace DiscImageChef.Devices.Windows
             // We start at the "root" of the device tree and look for all
             // devices that match the interface GUID of a disk
             IntPtr h = SetupDiGetClassDevs(ref diskGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
-            if(h.ToInt32() != INVALID_HANDLE_VALUE)
+            if(h != INVALID_HANDLE_VALUE)
             {
                 bool success;
                 int i = 0;
@@ -274,7 +274,7 @@ namespace DiscImageChef.Devices.Windows
             int ans = -1;
 
             IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
-            if(h.ToInt32() == INVALID_HANDLE_VALUE) return ans;
+            if(h == INVALID_HANDLE_VALUE) return ans;
 
             StorageDeviceNumber sdn = new StorageDeviceNumber();
             int nBytes = Marshal.SizeOf(sdn);
