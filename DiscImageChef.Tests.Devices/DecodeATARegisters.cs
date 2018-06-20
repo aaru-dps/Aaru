@@ -32,7 +32,7 @@ using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Tests.Devices
 {
-    partial class MainClass
+    static partial class MainClass
     {
         static string DecodeAtaStatus(byte status)
         {

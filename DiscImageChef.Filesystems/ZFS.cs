@@ -166,15 +166,13 @@ namespace DiscImageChef.Filesystems
 
             if(nvlist == null || nvlist.Length < 16) return false;
 
-            int offset;
             if(!xdr) return false;
 
             BigEndianBitConverter.IsLittleEndian = littleEndian;
 
-            offset = 8;
+            int offset = 8;
             while(offset < nvlist.Length)
             {
-                uint nameLength;
                 NVS_Item item = new NVS_Item();
                 int currOff = offset;
 
@@ -186,7 +184,7 @@ namespace DiscImageChef.Filesystems
                 offset += 4;
                 item.decodedSize = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
-                nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
+                uint nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
                 if(nameLength % 4 > 0) nameLength += 4 - nameLength % 4;
                 byte[] nameBytes = new byte[nameLength];

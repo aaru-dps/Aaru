@@ -82,7 +82,6 @@ namespace DiscImageChef.Filesystems
 
             if(sector + partition.Start >= partition.End) return false;
 
-            ushort magic;
             byte[] minixSbSector = imagePlugin.ReadSector(sector + partition.Start);
 
             // Optical media
@@ -93,7 +92,7 @@ namespace DiscImageChef.Filesystems
                 minixSbSector = tmp;
             }
 
-            magic = BitConverter.ToUInt16(minixSbSector, 0x010); // Here should reside magic number on Minix v1 & V2
+            ushort magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
             if(magic == MINIX_MAGIC || magic == MINIX_MAGIC2 || magic == MINIX2_MAGIC || magic == MINIX2_MAGIC2 ||
                magic == MINIX_CIGAM || magic == MINIX_CIGAM2 || magic == MINIX2_CIGAM ||
@@ -101,10 +100,8 @@ namespace DiscImageChef.Filesystems
 
             magic = BitConverter.ToUInt16(minixSbSector, 0x018); // Here should reside magic number on Minix v3
 
-            if(magic == MINIX_MAGIC || magic == MINIX2_MAGIC || magic == MINIX3_MAGIC || magic == MINIX_CIGAM ||
-               magic == MINIX2_CIGAM || magic == MINIX3_CIGAM) return true;
-
-            return false;
+            return magic == MINIX_MAGIC  || magic == MINIX2_MAGIC || magic == MINIX3_MAGIC || magic == MINIX_CIGAM ||
+                   magic == MINIX2_CIGAM || magic == MINIX3_CIGAM;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -127,7 +124,6 @@ namespace DiscImageChef.Filesystems
             bool minix3 = false;
             int filenamesize;
             string minixVersion;
-            ushort magic;
             byte[] minixSbSector = imagePlugin.ReadSector(sector + partition.Start);
 
             // Optical media
@@ -138,7 +134,7 @@ namespace DiscImageChef.Filesystems
                 minixSbSector = tmp;
             }
 
-            magic = BitConverter.ToUInt16(minixSbSector, 0x018);
+            ushort magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
             XmlFsType = new FileSystemType();
 

@@ -49,8 +49,7 @@ namespace DiscImageChef.Partitions
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
-            partitions = new List<Partition>();
-
+            partitions = null;
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
             if(sector.Length < 512) return false;
 
@@ -63,23 +62,19 @@ namespace DiscImageChef.Partitions
 
             ulong counter = 0;
 
-            foreach(Partition part in from entry in table.entries
-                                      let part = new Partition
-                                      {
-                                          Start = entry.offset,
-                                          Offset = (ulong)(entry.offset * sector.Length),
-                                          Size = entry.size,
-                                          Length = (ulong)(entry.size * sector.Length),
-                                          Type = "Rio Karma",
-                                          Sequence = counter,
-                                          Scheme = Name
-                                      }
-                                      where entry.type == ENTRY_MAGIC
-                                      select part)
-            {
-                partitions.Add(part);
-                counter++;
-            }
+            partitions = (from entry in table.entries
+                          let part = new Partition
+                          {
+                              Start    = entry.offset,
+                              Offset   = (ulong)(entry.offset * sector.Length),
+                              Size     = entry.size,
+                              Length   = (ulong)(entry.size * sector.Length),
+                              Type     = "Rio Karma",
+                              Sequence = counter++,
+                              Scheme   = Name
+                          }
+                          where entry.type == ENTRY_MAGIC
+                          select part).ToList();
 
             return true;
         }

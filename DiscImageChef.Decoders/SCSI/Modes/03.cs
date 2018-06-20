@@ -172,10 +172,9 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.SSEC) sb.AppendLine("\tDrive supports soft-sectoring format");
             if(page.HSEC) sb.AppendLine("\tDrive supports hard-sectoring format");
             if(page.RMB) sb.AppendLine("\tDrive media is removable");
-            if(page.SURF)
-                sb.AppendLine("\tSector addressing is progressively incremented in one surface before going to the next");
-            else
-                sb.AppendLine("\tSector addressing is progressively incremented in one cylinder before going to the next");
+            sb.AppendLine(page.SURF
+                              ? "\tSector addressing is progressively incremented in one surface before going to the next"
+                              : "\tSector addressing is progressively incremented in one cylinder before going to the next");
 
             return sb.ToString();
         }

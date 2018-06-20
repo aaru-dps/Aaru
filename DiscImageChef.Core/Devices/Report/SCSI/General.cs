@@ -534,7 +534,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                                 if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
                                     if(mediaTest.BlockSize == 512)
-                                        foreach(ushort testSize in new[]
+                                        foreach(int i in new[]
                                         {
                                             // Long sector sizes for floppies
                                             514,
@@ -544,6 +544,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                             600, 610, 630
                                         })
                                         {
+                                            ushort testSize = (ushort)i;
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                                    testSize, TIMEOUT, out _);
                                             if(sense || dev.Error) continue;
@@ -554,7 +555,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                             break;
                                         }
                                     else if(mediaTest.BlockSize == 1024)
-                                        foreach(ushort testSize in new[]
+                                        foreach(int i in new[]
                                         {
                                             // Long sector sizes for floppies
                                             1026,
@@ -562,8 +563,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                             1200
                                         })
                                         {
+                                            ushort testSize = (ushort)i;
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                   testSize, TIMEOUT, out _);
+                                                                   (ushort)i, TIMEOUT, out _);
                                             if(sense || dev.Error) continue;
 
                                             mediaTest.SupportsReadLong = true;
@@ -803,7 +805,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(report.SCSI.ReadCapabilities.SupportsReadLong &&
                            report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
                             if(report.SCSI.ReadCapabilities.BlockSize == 512)
-                                foreach(ushort testSize in new[]
+                                foreach(int i in new[]
                                 {
                                     // Long sector sizes for floppies
                                     514,
@@ -813,7 +815,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     600, 610, 630
                                 })
                                 {
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
+                                    ushort testSize = (ushort)i;
+                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i,
                                                            TIMEOUT, out _);
                                     if(sense || dev.Error) continue;
 
@@ -823,7 +826,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     break;
                                 }
                             else if(report.SCSI.ReadCapabilities.BlockSize == 1024)
-                                foreach(ushort testSize in new[]
+                                foreach(int i in new[]
                                 {
                                     // Long sector sizes for floppies
                                     1026,
@@ -831,7 +834,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     1200
                                 })
                                 {
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
+                                    ushort testSize = (ushort)i;
+                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i,
                                                            TIMEOUT, out _);
                                     if(sense || dev.Error) continue;
 

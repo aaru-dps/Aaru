@@ -44,7 +44,7 @@ namespace DiscImageChef.Filesystems
     {
         const uint REISER4_SUPER_OFFSET = 0x10000;
 
-        readonly byte[] Reiser4_Magic =
+        readonly byte[] reiser4_magic =
             {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
         public FileSystemType XmlFsType { get; private set; }
@@ -74,7 +74,7 @@ namespace DiscImageChef.Filesystems
             reiserSb = (Reiser4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Reiser4_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            return Reiser4_Magic.SequenceEqual(reiserSb.magic);
+            return reiser4_magic.SequenceEqual(reiserSb.magic);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -100,7 +100,7 @@ namespace DiscImageChef.Filesystems
             reiserSb = (Reiser4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Reiser4_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            if(!Reiser4_Magic.SequenceEqual(reiserSb.magic)) return;
+            if(!reiser4_magic.SequenceEqual(reiserSb.magic)) return;
 
             StringBuilder sb = new StringBuilder();
 

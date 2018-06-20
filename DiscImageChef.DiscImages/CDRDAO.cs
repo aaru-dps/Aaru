@@ -148,7 +148,7 @@ namespace DiscImageChef.DiscImages
 
         public string Format => "CDRDAO tocfile";
 
-        public List<Partition> Partitions { get; set; }
+        public List<Partition> Partitions { get; private set; }
 
         public List<Track> Tracks
         {

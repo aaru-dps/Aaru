@@ -154,7 +154,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                     byte[] sector = imagePlugin.ReadSector((ulong)i);
                     MDDF infoMddf = new MDDF();
                     byte[] pString = new byte[33];
-                    uint lisaTime;
 
                     infoMddf.fsversion = BigEndianBitConverter.ToUInt16(sector, 0x00);
                     infoMddf.volid = BigEndianBitConverter.ToUInt64(sector, 0x02);
@@ -168,7 +167,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     infoMddf.unknown2 = sector[0x4F];
                     infoMddf.machine_id = BigEndianBitConverter.ToUInt32(sector, 0x50);
                     infoMddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
-                    lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
+                    uint lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
                     infoMddf.dtvc = DateHandlers.LisaToDateTime(lisaTime);
                     lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x5C);
                     infoMddf.dtcc = DateHandlers.LisaToDateTime(lisaTime);

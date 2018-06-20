@@ -357,9 +357,7 @@ namespace DiscImageChef.Filesystems
 
         static uint AmigaBootChecksum(byte[] data)
         {
-            uint sum;
-
-            sum = 0;
+            uint sum = 0;
             for(int i = 0; i < data.Length; i += 4)
             {
                 uint psum = sum;

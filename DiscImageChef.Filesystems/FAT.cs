@@ -307,12 +307,10 @@ namespace DiscImageChef.Filesystems
             // HPFS
             if(16 + partition.Start <= partition.End)
             {
-                uint hpfsMagic1, hpfsMagic2;
-
                 byte[] hpfsSbSector =
                     imagePlugin.ReadSector(16 + partition.Start); // Seek to superblock, on logical sector 16
-                hpfsMagic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
-                hpfsMagic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
+                uint hpfsMagic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
+                uint hpfsMagic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
 
                 if(hpfsMagic1 == 0xF995E849 && hpfsMagic2 == 0xFA53E9C5) return false;
             }

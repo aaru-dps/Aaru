@@ -60,8 +60,8 @@ namespace DiscImageChef.Filesystems
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
             GCHandle handle = GCHandle.Alloc(bk0, GCHandleType.Pinned);
-            MicroDOSBlock0 block0 =
-                (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
+            MicroDosBlock0 block0 =
+                (MicroDosBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDosBlock0));
             handle.Free();
 
             return block0.label == MAGIC && block0.mklabel == MAGIC2;
@@ -78,8 +78,8 @@ namespace DiscImageChef.Filesystems
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
             GCHandle handle = GCHandle.Alloc(bk0, GCHandleType.Pinned);
-            MicroDOSBlock0 block0 =
-                (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
+            MicroDosBlock0 block0 =
+                (MicroDosBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDosBlock0));
             handle.Free();
 
             sb.AppendLine("MicroDOS filesystem");
@@ -105,7 +105,7 @@ namespace DiscImageChef.Filesystems
 
         // Followed by directory entries
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MicroDOSBlock0
+        struct MicroDosBlock0
         {
             /// <summary>BK starts booting here</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] bootCode;

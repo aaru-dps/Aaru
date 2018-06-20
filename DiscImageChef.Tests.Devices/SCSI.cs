@@ -32,7 +32,7 @@ using DiscImageChef.Tests.Devices.SCSI;
 
 namespace DiscImageChef.Tests.Devices
 {
-    partial class MainClass
+    static partial class MainClass
     {
         public static void Scsi(string devPath, Device dev)
         {

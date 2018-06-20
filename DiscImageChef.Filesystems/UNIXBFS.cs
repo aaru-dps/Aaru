@@ -53,9 +53,7 @@ namespace DiscImageChef.Filesystems
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            uint magic;
-
-            magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partition.Start), 0);
+            uint magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partition.Start), 0);
 
             return magic == BFS_MAGIC;
         }

@@ -262,8 +262,6 @@ namespace DiscImageChef.DiscImages
         public bool Identify(IFilter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();
-            ulong  headerCookie;
-            ulong  footerCookie;
 
             byte[] headerCookieBytes = new byte[8];
             byte[] footerCookieBytes = new byte[8];
@@ -276,8 +274,8 @@ namespace DiscImageChef.DiscImages
             imageStream.Read(headerCookieBytes, 0, 8);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            headerCookie                         = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
-            footerCookie                         = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
+            ulong headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
+            ulong footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
 
             return headerCookie == IMAGE_COOKIE || footerCookie == IMAGE_COOKIE;
         }

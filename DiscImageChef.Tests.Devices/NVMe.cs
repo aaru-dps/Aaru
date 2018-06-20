@@ -31,7 +31,7 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices
 {
-    partial class MainClass
+    static partial class MainClass
     {
         public static void NVMe(string devPath, Device dev)
         {

@@ -119,8 +119,6 @@ namespace DiscImageChef.Filters
         {
             byte[] mtime_b = new byte[4];
             byte[] isize_b = new byte[4];
-            uint mtime;
-            uint isize;
 
             dataStream = new MemoryStream(buffer);
             basePath = null;
@@ -131,8 +129,8 @@ namespace DiscImageChef.Filters
             dataStream.Read(isize_b, 0, 4);
             dataStream.Seek(0, SeekOrigin.Begin);
 
-            mtime = BitConverter.ToUInt32(mtime_b, 0);
-            isize = BitConverter.ToUInt32(isize_b, 0);
+            uint mtime = BitConverter.ToUInt32(mtime_b, 0);
+            uint isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
             creationTime = DateHandlers.UnixUnsignedToDateTime(mtime);
@@ -145,8 +143,6 @@ namespace DiscImageChef.Filters
         {
             byte[] mtime_b = new byte[4];
             byte[] isize_b = new byte[4];
-            uint mtime;
-            uint isize;
 
             dataStream = stream;
             basePath = null;
@@ -157,8 +153,8 @@ namespace DiscImageChef.Filters
             dataStream.Read(isize_b, 0, 4);
             dataStream.Seek(0, SeekOrigin.Begin);
 
-            mtime = BitConverter.ToUInt32(mtime_b, 0);
-            isize = BitConverter.ToUInt32(isize_b, 0);
+            uint mtime = BitConverter.ToUInt32(mtime_b, 0);
+            uint isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
             creationTime = DateHandlers.UnixUnsignedToDateTime(mtime);
@@ -171,8 +167,6 @@ namespace DiscImageChef.Filters
         {
             byte[] mtime_b = new byte[4];
             byte[] isize_b = new byte[4];
-            uint mtime;
-            uint isize;
 
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
@@ -183,8 +177,8 @@ namespace DiscImageChef.Filters
             dataStream.Read(isize_b, 0, 4);
             dataStream.Seek(0, SeekOrigin.Begin);
 
-            mtime = BitConverter.ToUInt32(mtime_b, 0);
-            isize = BitConverter.ToUInt32(isize_b, 0);
+            uint mtime = BitConverter.ToUInt32(mtime_b, 0);
+            uint isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
             FileInfo fi = new FileInfo(path);
@@ -223,10 +217,10 @@ namespace DiscImageChef.Filters
         {
             if(basePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 3);
-            if(basePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true)
-                return basePath.Substring(0, basePath.Length - 5);
 
-            return basePath;
+            return basePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? basePath.Substring(0, basePath.Length - 5)
+                       : basePath;
         }
 
         public string GetParentFolder()

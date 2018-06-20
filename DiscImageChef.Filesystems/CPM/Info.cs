@@ -172,19 +172,17 @@ namespace DiscImageChef.Filesystems.CPM
                     sector = imagePlugin.ReadSector(0 + partition.Start);
                     int amsSbOffset = 0;
 
-                    uint sig1, sig2, sig3;
-                    sig1 = BitConverter.ToUInt32(sector, 0x2B);
-                    sig2 = BitConverter.ToUInt32(sector, 0x33) & 0x00FFFFFF;
-                    sig3 = BitConverter.ToUInt32(sector, 0x7C);
+                    uint sig1 = BitConverter.ToUInt32(sector, 0x2B);
+                    uint sig2 = BitConverter.ToUInt32(sector, 0x33) & 0x00FFFFFF;
+                    uint sig3 = BitConverter.ToUInt32(sector, 0x7C);
 
                     // PCW16 extended boot record
                     if(sig1 == 0x4D2F5043 && sig2 == 0x004B5344 && sig3 == sig1) amsSbOffset = 0x80;
 
                     // Read the superblock
-                    AmstradSuperBlock amsSb;
                     IntPtr amsPtr = Marshal.AllocHGlobal(16);
                     Marshal.Copy(sector, amsSbOffset, amsPtr, 16);
-                    amsSb = (AmstradSuperBlock)Marshal.PtrToStructure(amsPtr, typeof(AmstradSuperBlock));
+                    AmstradSuperBlock amsSb = (AmstradSuperBlock)Marshal.PtrToStructure(amsPtr, typeof(AmstradSuperBlock));
                     Marshal.FreeHGlobal(amsPtr);
 
                     // Check that format byte and sidedness indicate the same number of sizes

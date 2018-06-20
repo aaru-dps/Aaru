@@ -57,10 +57,10 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512) return false;
 
-            JFS_SuperBlock jfsSb = new JFS_SuperBlock();
+            JfsSuperBlock jfsSb = new JfsSuperBlock();
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(jfsSb));
-            jfsSb = (JFS_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JFS_SuperBlock));
+            jfsSb = (JfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JfsSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
             return jfsSb.s_magic == JFS_MAGIC;
@@ -76,10 +76,10 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512) return;
 
-            JFS_SuperBlock jfsSb = new JFS_SuperBlock();
+            JfsSuperBlock jfsSb = new JfsSuperBlock();
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(jfsSb));
-            jfsSb = (JFS_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JFS_SuperBlock));
+            jfsSb = (JfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JfsSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
             sb.AppendLine("JFS filesystem");
@@ -87,31 +87,31 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} blocks of {1} bytes", jfsSb.s_size, jfsSb.s_bsize).AppendLine();
             sb.AppendFormat("{0} blocks per allocation group", jfsSb.s_agsize).AppendLine();
 
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.Unicode)) sb.AppendLine("Volume uses Unicode for directory entries");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.RemountRO)) sb.AppendLine("Volume remounts read-only on error");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.Continue)) sb.AppendLine("Volume continues on error");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.Panic)) sb.AppendLine("Volume panics on error");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.UserQuota)) sb.AppendLine("Volume has user quotas enabled");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.GroupQuota)) sb.AppendLine("Volume has group quotas enabled");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.NoJournal)) sb.AppendLine("Volume is not using any journal");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.Discard))
+            if(jfsSb.s_flags.HasFlag(JfsFlags.Unicode)) sb.AppendLine("Volume uses Unicode for directory entries");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.RemountRO)) sb.AppendLine("Volume remounts read-only on error");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.Continue)) sb.AppendLine("Volume continues on error");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.Panic)) sb.AppendLine("Volume panics on error");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.UserQuota)) sb.AppendLine("Volume has user quotas enabled");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.GroupQuota)) sb.AppendLine("Volume has group quotas enabled");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.NoJournal)) sb.AppendLine("Volume is not using any journal");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.Discard))
                 sb.AppendLine("Volume sends TRIM/UNMAP commands to underlying device");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.GroupCommit)) sb.AppendLine("Volume commits in groups of 1");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.LazyCommit)) sb.AppendLine("Volume commits lazy");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.Temporary)) sb.AppendLine("Volume does not commit to log");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.InlineLog)) sb.AppendLine("Volume has log withing itself");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.InlineMoving))
+            if(jfsSb.s_flags.HasFlag(JfsFlags.GroupCommit)) sb.AppendLine("Volume commits in groups of 1");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.LazyCommit)) sb.AppendLine("Volume commits lazy");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.Temporary)) sb.AppendLine("Volume does not commit to log");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.InlineLog)) sb.AppendLine("Volume has log withing itself");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.InlineMoving))
                 sb.AppendLine("Volume has log withing itself and is moving it out");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.BadSAIT)) sb.AppendLine("Volume has bad current secondary ait");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.Sparse)) sb.AppendLine("Volume supports sparse files");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.DASDEnabled)) sb.AppendLine("Volume has DASD limits enabled");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.DASDPrime)) sb.AppendLine("Volume primes DASD on boot");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.SwapBytes)) sb.AppendLine("Volume is in a big-endian system");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.DirIndex)) sb.AppendLine("Volume has presistent indexes");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.Linux)) sb.AppendLine("Volume supports Linux");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.DFS)) sb.AppendLine("Volume supports DCE DFS LFS");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.OS2)) sb.AppendLine("Volume supports OS/2, and is case insensitive");
-            if(jfsSb.s_flags.HasFlag(JFS_Flags.AIX)) sb.AppendLine("Volume supports AIX");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.BadSAIT)) sb.AppendLine("Volume has bad current secondary ait");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.Sparse)) sb.AppendLine("Volume supports sparse files");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.DASDEnabled)) sb.AppendLine("Volume has DASD limits enabled");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.DASDPrime)) sb.AppendLine("Volume primes DASD on boot");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.SwapBytes)) sb.AppendLine("Volume is in a big-endian system");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.DirIndex)) sb.AppendLine("Volume has presistent indexes");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.Linux)) sb.AppendLine("Volume supports Linux");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.DFS)) sb.AppendLine("Volume supports DCE DFS LFS");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.OS2)) sb.AppendLine("Volume supports OS/2, and is case insensitive");
+            if(jfsSb.s_flags.HasFlag(JfsFlags.AIX)) sb.AppendLine("Volume supports AIX");
             if(jfsSb.s_state != 0) sb.AppendLine("Volume is dirty");
             sb.AppendFormat("Volume was last updated on {0}",
                             DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec))
@@ -138,7 +138,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [Flags]
-        enum JFS_Flags : uint
+        enum JfsFlags : uint
         {
             Unicode = 0x00000001,
             RemountRO = 0x00000002,
@@ -166,7 +166,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [Flags]
-        enum JFS_State : uint
+        enum JfsState : uint
         {
             Clean = 0,
             Mounted = 1,
@@ -176,7 +176,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JFS_Extent
+        struct JfsExtent
         {
             /// <summary>
             ///     Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2" />
@@ -186,14 +186,14 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JFS_TimeStruct
+        struct JfsTimeStruct
         {
             public uint tv_sec;
             public uint tv_nsec;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JFS_SuperBlock
+        struct JfsSuperBlock
         {
             public uint s_magic;
             public uint s_version;
@@ -205,22 +205,22 @@ namespace DiscImageChef.Filesystems
             public ushort s_l1pbsize;
             public ushort pad;
             public uint s_agsize;
-            public JFS_Flags s_flags;
-            public JFS_State s_state;
+            public JfsFlags s_flags;
+            public JfsState s_state;
             public uint s_compress;
-            public JFS_Extent s_ait2;
-            public JFS_Extent s_aim2;
+            public JfsExtent s_ait2;
+            public JfsExtent s_aim2;
             public uint s_logdev;
             public uint s_logserial;
-            public JFS_Extent s_logpxd;
-            public JFS_Extent s_fsckpxd;
-            public JFS_TimeStruct s_time;
+            public JfsExtent s_logpxd;
+            public JfsExtent s_fsckpxd;
+            public JfsTimeStruct s_time;
             public uint s_fsckloglen;
             public sbyte s_fscklog;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] s_fpack;
             public ulong s_xsize;
-            public JFS_Extent s_xfsckpxd;
-            public JFS_Extent s_xlogpxd;
+            public JfsExtent s_xfsckpxd;
+            public JfsExtent s_xlogpxd;
             public Guid s_uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] s_label;
             public Guid s_loguuid;

@@ -109,8 +109,6 @@ namespace DiscImageChef.DiscImages
         bool         twiggy;
         byte[]       twiggyCache;
         byte[]       twiggyCacheTags;
-        MemoryStream twiggyDataCache;
-        MemoryStream twiggyTagCache;
 
         FileStream writingStream;
 
@@ -818,10 +816,6 @@ namespace DiscImageChef.DiscImages
                     header.FmtByte  = kSigmaFmtByteTwiggy;
                     header.Format   = kSigmaFormatTwiggy;
                     twiggy          = true;
-                    tags            = true;
-                    twiggyDataCache = new MemoryStream();
-                    twiggyTagCache  = new MemoryStream();
-
                     // TODO
                     ErrorMessage = "Twiggy write support not yet implemented";
                     return false;

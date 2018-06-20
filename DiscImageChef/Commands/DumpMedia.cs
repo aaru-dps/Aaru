@@ -63,7 +63,8 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}",         options.Debug);
             DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}",       options.Verbose);
             DicConsole.DebugWriteLine("Dump-Media command", "--device={0}",        options.DevicePath);
-            DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           options.Raw);
+            // TODO: Disabled temporarily
+            //DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           options.Raw);
             DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}", options.StopOnError);
             DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",         options.Force);
             DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}",  options.RetryPasses);
@@ -205,7 +206,7 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
+                    Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, false, /*options.Raw,*/
                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
                              options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata,
                              options.NoTrim);
@@ -213,19 +214,19 @@ namespace DiscImageChef.Commands
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
                     SecureDigital.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
-                                       options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog,
+                                       false, /*options.Raw,*/ options.Persistent, options.StopOnError, ref resume, ref dumpLog,
                                        encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar,
                                        (uint)options.Skip, options.NoMetadata, options.NoTrim);
                     break;
                 case DeviceType.NVMe:
-                    NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
+                    NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, false, /*options.Raw,*/
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
                               options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata,
                               options.NoTrim);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, options.Raw,
+                    Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force, false, /*options.Raw,*/
                               options.Persistent, options.StopOnError, ref resume, ref dumpLog, options.LeadIn,
                               encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
                               options.NoMetadata, options.NoTrim);

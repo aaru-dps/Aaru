@@ -231,9 +231,9 @@ namespace DiscImageChef.Checksums
         */
         void generate_gf()
         {
-            int i, mask;
+            int i;
 
-            mask = 1;
+            int mask = 1;
             alpha_to[mm] = 0;
             for(i = 0; i < mm; i++)
             {
@@ -372,8 +372,7 @@ namespace DiscImageChef.Checksums
             if(!initialized) throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
 
             erasPos = new int[nn - kk];
-            int degLambda, el, degOmega;
-            int i, j, r;
+            int i, j;
             int q, tmp;
             int[] recd = new int[nn];
             int[] lambda = new int[nn - kk + 1]; /* Err+Eras Locator poly */
@@ -384,7 +383,7 @@ namespace DiscImageChef.Checksums
             int[] root = new int[nn - kk];
             int[] reg = new int[nn - kk + 1];
             int[] loc = new int[nn - kk];
-            int synError, count;
+            int count;
 
             /* data[] is in polynomial form, copy and convert to index form */
             for(i = nn - 1; i >= 0; i--)
@@ -396,7 +395,7 @@ namespace DiscImageChef.Checksums
             /* first form the syndromes; i.e., evaluate recd(x) at roots of g(x)
              * namely @**(B0+i), i = 0, ... ,(NN-KK-1)
              */
-            synError = 0;
+            int synError = 0;
             for(i = 1; i <= nn - kk; i++)
             {
                 tmp = 0;
@@ -471,8 +470,8 @@ namespace DiscImageChef.Checksums
              * Begin Berlekamp-Massey algorithm to determine error+erasure
              * locator polynomial
              */
-            r = noEras;
-            el = noEras;
+            int r = noEras;
+            int el = noEras;
             while(++r <= nn - kk)
             {
                 /* r is the step number */
@@ -518,7 +517,7 @@ namespace DiscImageChef.Checksums
             }
 
             /* Convert lambda to index form and compute deg(lambda(x)) */
-            degLambda = 0;
+            int degLambda = 0;
             for(i = 0; i < nn - kk + 1; i++)
             {
                 lambda[i] = index_of[lambda[i]];
@@ -561,7 +560,7 @@ namespace DiscImageChef.Checksums
              * Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
              * x**(NN-KK)). in index form. Also find deg(omega).
              */
-            degOmega = 0;
+            int degOmega = 0;
             for(i = 0; i < nn - kk; i++)
             {
                 tmp = 0;

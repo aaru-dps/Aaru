@@ -152,9 +152,6 @@ namespace DiscImageChef.Filters
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
 
-            DateTime start = DateTime.UtcNow;
-            DateTime end = DateTime.UtcNow;
-
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
@@ -197,10 +194,10 @@ namespace DiscImageChef.Filters
         {
             if(basePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 3);
-            if(basePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true)
-                return basePath.Substring(0, basePath.Length - 5);
 
-            return basePath;
+            return basePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? basePath.Substring(0, basePath.Length - 5)
+                       : basePath;
         }
 
         public string GetParentFolder()

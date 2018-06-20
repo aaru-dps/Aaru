@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems
 {
     public class ECMA67 : IFilesystem
     {
-        readonly byte[] ECMA67_Magic = {0x56, 0x4F, 0x4C};
+        readonly byte[] ecma67_magic = {0x56, 0x4F, 0x4C};
 
         public Encoding Encoding { get; private set; }
         public string Name => "ECMA-67";
@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems
             vol = (VolumeLabel)Marshal.PtrToStructure(volPtr, typeof(VolumeLabel));
             Marshal.FreeHGlobal(volPtr);
 
-            return ECMA67_Magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
+            return ecma67_magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,

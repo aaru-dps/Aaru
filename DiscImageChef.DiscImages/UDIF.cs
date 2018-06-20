@@ -478,13 +478,13 @@ namespace DiscImageChef.DiscImages
 
             if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
-            BlockChunk currentChunk     = new BlockChunk();
+            BlockChunk readChunk     = new BlockChunk();
             bool       chunkFound       = false;
             ulong      chunkStartSector = 0;
 
             foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key))
             {
-                currentChunk     = kvp.Value;
+                readChunk     = kvp.Value;
                 chunkFound       = true;
                 chunkStartSector = kvp.Key;
             }
@@ -499,17 +499,17 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
+            if((readChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
                 if(!chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
                 {
-                    byte[] cmpBuffer = new byte[currentChunk.length];
-                    imageStream.Seek((long)currentChunk.offset, SeekOrigin.Begin);
+                    byte[] cmpBuffer = new byte[readChunk.length];
+                    imageStream.Seek((long)readChunk.offset, SeekOrigin.Begin);
                     imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
                     MemoryStream cmpMs     = new MemoryStream(cmpBuffer);
                     Stream       decStream = null;
 
-                    switch(currentChunk.type)
+                    switch(readChunk.type)
                     {
                         case CHUNK_TYPE_ADC:
                             decStream = new ADCStream(cmpMs);
@@ -523,7 +523,7 @@ namespace DiscImageChef.DiscImages
                         case CHUNK_TYPE_RLE: break;
                         default:
                             throw new
-                                ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
+                                ImageNotSupportedException($"Unsupported chunk type 0x{readChunk.type:X8} found");
                     }
 
                     #if DEBUG
@@ -532,7 +532,7 @@ namespace DiscImageChef.DiscImages
                         #endif
                         byte[] tmpBuffer;
                         int    realSize;
-                        switch(currentChunk.type)
+                        switch(readChunk.type)
                         {
                             case CHUNK_TYPE_ADC:
                             case CHUNK_TYPE_ZLIB:
@@ -572,7 +572,7 @@ namespace DiscImageChef.DiscImages
                     }
                     catch(ZlibException)
                     {
-                        DicConsole.WriteLine("zlib exception on chunk starting at sector {0}", currentChunk.sector);
+                        DicConsole.WriteLine("zlib exception on chunk starting at sector {0}", readChunk.sector);
                         throw;
                     }
                     #endif
@@ -588,7 +588,7 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            switch(currentChunk.type)
+            switch(readChunk.type)
             {
                 case CHUNK_TYPE_NOCOPY:
                 case CHUNK_TYPE_ZERO:
@@ -599,7 +599,7 @@ namespace DiscImageChef.DiscImages
                     sectorCache.Add(sectorAddress, sector);
                     return sector;
                 case CHUNK_TYPE_COPY:
-                    imageStream.Seek((long)currentChunk.offset + relOff, SeekOrigin.Begin);
+                    imageStream.Seek((long)readChunk.offset + relOff, SeekOrigin.Begin);
                     sector = new byte[SECTOR_SIZE];
                     imageStream.Read(sector, 0, sector.Length);
 
@@ -609,7 +609,7 @@ namespace DiscImageChef.DiscImages
                     return sector;
             }
 
-            throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
+            throw new ImageNotSupportedException($"Unsupported chunk type 0x{readChunk.type:X8} found");
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)

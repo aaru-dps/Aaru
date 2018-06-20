@@ -126,11 +126,11 @@ namespace DiscImageChef.DiscImages
 
         public string Format => "CloneCD";
 
-        public List<Partition> Partitions { get; set; }
+        public List<Partition> Partitions { get; private set; }
 
-        public List<Track> Tracks { get; set; }
+        public List<Track> Tracks { get; private set; }
 
-        public List<Session> Sessions { get; set; }
+        public List<Session> Sessions { get; private set; }
 
         public bool Identify(IFilter imageFilter)
         {
@@ -1605,8 +1605,7 @@ namespace DiscImageChef.DiscImages
             subStream?.Close();
 
             FullTOC.CDFullTOC? nullableToc              = null;
-            FullTOC.CDFullTOC  toc                      =
-                new FullTOC.CDFullTOC {TrackDescriptors = new FullTOC.TrackDataDescriptor[0]};
+            FullTOC.CDFullTOC  toc;
 
             // Easy, just decode the real toc
             if(fulltoc != null) nullableToc = FullTOC.Decode(fulltoc);
@@ -1641,7 +1640,6 @@ namespace DiscImageChef.DiscImages
 
                 foreach(Track track in Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
                 {
-                    FullTOC.TrackDataDescriptor trackDescriptor;
                     trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
 
                     if(trackControl == 0 && track.TrackType != TrackType.Audio) trackControl = (byte)CdFlags.DataTrack;

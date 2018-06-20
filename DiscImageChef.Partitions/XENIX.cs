@@ -51,16 +51,16 @@ namespace DiscImageChef.Partitions
         public string Name => "XENIX";
         public Guid Id => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
 
-        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 
             if(42 + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
             byte[] tblsector = imagePlugin.ReadSector(42 + sectorOffset);
 
             GCHandle handle = GCHandle.Alloc(tblsector, GCHandleType.Pinned);
-            partable xnxtbl = (partable)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(partable));
+            Partable xnxtbl = (Partable)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Partable));
             handle.Free();
 
             DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic,
@@ -74,7 +74,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
                 if(xnxtbl.p[i].p_size <= 0) continue;
 
-                Partition part = new Partition
+                CommonTypes.Partition part = new CommonTypes.Partition
                 {
                     Start =
                         (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize +
@@ -96,14 +96,14 @@ namespace DiscImageChef.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct partable
+        struct Partable
         {
             public ushort p_magic; /* magic number validity indicator */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPARTS)] public partition[] p; /*partition headers*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPARTS)] public Partition[] p; /*partition headers*/
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct partition
+        struct Partition
         {
             public int p_off; /*start 1K block no of partition*/
             public int p_size; /*# of 1K blocks in partition*/

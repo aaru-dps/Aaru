@@ -83,11 +83,11 @@ namespace DiscImageChef.DiscImages
 
         public string Format => "DiscJuggler";
 
-        public List<Partition> Partitions { get; set; }
+        public List<Partition> Partitions { get; private set; }
 
-        public List<Track> Tracks { get; set; }
+        public List<Track> Tracks { get; private set; }
 
-        public List<Session> Sessions { get; set; }
+        public List<Session> Sessions { get; private set; }
 
         public bool Identify(IFilter imageFilter)
         {

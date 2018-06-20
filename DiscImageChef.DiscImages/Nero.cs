@@ -226,12 +226,10 @@ namespace DiscImageChef.DiscImages
                 while(parsing)
                 {
                     byte[] chunkHeaderBuffer = new byte[8];
-                    uint   chunkId;
-                    uint   chunkLength;
 
                     imageStream.Read(chunkHeaderBuffer, 0, 8);
-                    chunkId     = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 0);
-                    chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
+                    uint chunkId = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 0);
+                    uint chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
 
                     DicConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", chunkId,
                                               Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(chunkId)));
@@ -705,10 +703,9 @@ namespace DiscImageChef.DiscImages
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"SINF\" chunk, parsing {0} bytes",
                                                       chunkLength);
 
-                            uint   sessionTracks;
                             byte[] tmpbuffer = new byte[4];
                             imageStream.Read(tmpbuffer, 0, 4);
-                            sessionTracks = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            uint sessionTracks = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
                             neroSessions.Add(currentsession, sessionTracks);
 
                             DicConsole.DebugWriteLine("Nero plugin", "\tSession {0} has {1} tracks", currentsession,
@@ -1534,7 +1531,7 @@ namespace DiscImageChef.DiscImages
 
         public List<Partition> Partitions { get; }
 
-        public List<Track> Tracks { get; set; }
+        public List<Track> Tracks { get; private set; }
 
         public List<Track> GetSessionTracks(Session session)
         {

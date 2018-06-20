@@ -63,13 +63,10 @@ namespace DiscImageChef.Filesystems
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            uint magic;
-            uint magicBe;
-
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            magic = BitConverter.ToUInt32(sbSector, 0x20);
-            magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
+            uint magic = BitConverter.ToUInt32(sbSector, 0x20);
+            uint magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
             if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1) return true;
 

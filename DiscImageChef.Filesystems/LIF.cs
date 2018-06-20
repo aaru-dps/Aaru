@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.SectorSize < 256) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
-            LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
+            LifSystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
             DicConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
 
             return lifSb.magic == LIF_MAGIC;
@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.SectorSize < 256) return;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
-            LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
+            LifSystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
 
             if(lifSb.magic != LIF_MAGIC) return;
 
@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LIF_SystemBlock
+        struct LifSystemBlock
         {
             public ushort magic;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] volumeLabel;

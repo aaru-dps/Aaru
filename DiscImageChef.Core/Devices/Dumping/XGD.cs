@@ -93,7 +93,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   bool                             nometadata, bool notrim)
         {
             bool       sense;
-            ulong      blocks;
             const uint BLOCK_SIZE   = 2048;
             uint       blocksToRead = 64;
             DateTime   start;
@@ -130,8 +129,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             Array.Copy(ssBuf, 4, tmpBuf, 0, ssBuf.Length - 4);
             mediaTags.Add(MediaTagType.Xbox_SecuritySector, tmpBuf);
 
-            ulong l0Video, l1Video, middleZone, gameSize, totalSize, layerBreak;
-
             // Get video partition size
             DicConsole.DebugWriteLine("Dump-media command", "Getting video partition size");
             dumpLog.WriteLine("Locking drive.");
@@ -152,7 +149,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+            ulong totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
             dumpLog.WriteLine("Reading Physical Format Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
@@ -167,8 +164,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
             DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
-            l0Video = PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1;
-            l1Video = totalSize                                 - l0Video                                       + 1;
+            ulong l0Video = PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1;
+            ulong l1Video = totalSize - l0Video + 1;
             dumpLog.WriteLine("Reading Disc Manufacturing Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.DiscManufacturingInformation, 0, 0, out _);
@@ -203,8 +200,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            gameSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) +
-                       1;
+            ulong gameSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) +
+                             1;
             DicConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors", gameSize);
 
             // Get middle zone size
@@ -239,11 +236,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
-            blocks = totalSize + 1;
-            middleZone =
-                totalSize - (PFI.Decode(readBuffer).Value.Layer0EndPSN -
-                                   PFI.Decode(readBuffer).Value.DataAreaStartPSN +
-                                   1) - gameSize + 1;
+            ulong blocks = totalSize + 1;
+            ulong middleZone = totalSize - (PFI.Decode(readBuffer).Value.Layer0EndPSN -
+                                            PFI.Decode(readBuffer).Value.DataAreaStartPSN +
+                                            1) - gameSize + 1;
 
             tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
@@ -264,7 +260,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             mediaTags.Add(MediaTagType.Xbox_DMI, tmpBuf);
 
             totalSize  = l0Video + l1Video + middleZone * 2 + gameSize;
-            layerBreak = l0Video + middleZone               + gameSize / 2;
+            ulong layerBreak = l0Video + middleZone + gameSize / 2;
 
             DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);
             DicConsole.WriteLine("Video layer 1 size: {0} sectors", l1Video);

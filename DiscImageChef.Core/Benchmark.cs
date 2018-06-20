@@ -97,7 +97,6 @@ namespace DiscImageChef.Core
             Random       rnd = new Random();
             DateTime     start;
             DateTime     end;
-            long         mem;
 
             start = DateTime.Now;
             InitProgress();
@@ -116,7 +115,7 @@ namespace DiscImageChef.Core
             results.FillSpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
 
             ms.Seek(0, SeekOrigin.Begin);
-            mem                                           = GC.GetTotalMemory(false);
+            long mem = GC.GetTotalMemory(false);
             if(mem > results.MaxMemory) results.MaxMemory = mem;
             if(mem < results.MinMemory) results.MinMemory = mem;
             start                                         = DateTime.Now;

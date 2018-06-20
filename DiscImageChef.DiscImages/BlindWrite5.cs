@@ -112,11 +112,11 @@ namespace DiscImageChef.DiscImages
 
         public string Format => "BlindWrite 5 TOC file";
 
-        public List<Partition> Partitions { get; set; }
+        public List<Partition> Partitions { get; private set; }
 
-        public List<Track> Tracks { get; set; }
+        public List<Track> Tracks { get; private set; }
 
-        public List<Session> Sessions { get; set; }
+        public List<Session> Sessions { get; private set; }
 
         public bool Identify(IFilter imageFilter)
         {
@@ -1175,12 +1175,12 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars =>
-                                                                          (long)sectorAddress >= _chars.StartLba &&
-                                                                          length              < (ulong)_chars.Sectors -
+            foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
+                                                                          (long)sectorAddress >= characteristics.StartLba &&
+                                                                          length              < (ulong)characteristics.Sectors -
                                                                           sectorAddress))
             {
-                chars = _chars;
+                chars = characteristics;
                 break;
             }
 
@@ -1294,12 +1294,12 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars =>
-                                                                          (long)sectorAddress >= _chars.StartLba &&
-                                                                          length              < (ulong)_chars.Sectors -
+            foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
+                                                                          (long)sectorAddress >= characteristics.StartLba &&
+                                                                          length              < (ulong)characteristics.Sectors -
                                                                           sectorAddress))
             {
-                chars = _chars;
+                chars = characteristics;
                 break;
             }
 
@@ -1602,12 +1602,12 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars =>
-                                                                          (long)sectorAddress >= _chars.StartLba &&
-                                                                          length              < (ulong)_chars.Sectors -
+            foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
+                                                                          (long)sectorAddress >= characteristics.StartLba &&
+                                                                          length              < (ulong)characteristics.Sectors -
                                                                           sectorAddress))
             {
-                chars = _chars;
+                chars = characteristics;
                 break;
             }
 

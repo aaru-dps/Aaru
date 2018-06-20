@@ -48,7 +48,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implements dumping SCSI and ATAPI devices
     /// </summary>
-    public class Scsi
+    public static class Scsi
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
         /// <summary>

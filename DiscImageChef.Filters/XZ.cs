@@ -199,9 +199,6 @@ namespace DiscImageChef.Filters
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
 
-            DateTime start = DateTime.UtcNow;
-            DateTime end = DateTime.UtcNow;
-
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;

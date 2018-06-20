@@ -96,7 +96,7 @@ namespace DiscImageChef.Filesystems
 
             // Blocks 0 and 1 are boot code
             byte[] rootDirectoryKeyBlock = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier);
-            bool   APMFromHDDOnCD        = false;
+            bool   apmFromHddOnCd        = false;
 
             if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
@@ -119,7 +119,7 @@ namespace DiscImageChef.Filesystems
                                                                                              ENTRIES_PER_BLOCK))
                 {
                     Array.Copy(tmp, offset, rootDirectoryKeyBlock, 0, 0x200);
-                    APMFromHDDOnCD = true;
+                    apmFromHddOnCd = true;
                     break;
                 }
             }
@@ -145,7 +145,7 @@ namespace DiscImageChef.Filesystems
             if(bitMapPointer > partition.End) return false;
 
             ushort totalBlocks             = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
-            if(APMFromHDDOnCD) totalBlocks /= 4;
+            if(apmFromHddOnCd) totalBlocks /= 4;
 
             DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
                                       partition.Start, totalBlocks <= partition.End - partition.Start + 1);
@@ -162,7 +162,7 @@ namespace DiscImageChef.Filesystems
             // Blocks 0 and 1 are boot code
             byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier);
 
-            bool APMFromHDDOnCD = false;
+            bool apmFromHddOnCd = false;
 
             if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
@@ -185,7 +185,7 @@ namespace DiscImageChef.Filesystems
                                                                                              ENTRIES_PER_BLOCK))
                 {
                     Array.Copy(tmp, offset, rootDirectoryKeyBlockBytes, 0, 0x200);
-                    APMFromHDDOnCD = true;
+                    apmFromHddOnCd = true;
                     break;
                 }
             }
@@ -243,7 +243,7 @@ namespace DiscImageChef.Filesystems
             rootDirectoryKeyBlock.header.bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x27);
             rootDirectoryKeyBlock.header.total_blocks    = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
 
-            if(APMFromHDDOnCD)
+            if(apmFromHddOnCd)
                 sbInformation.AppendLine("ProDOS uses 512 bytes/sector while devices uses 2048 bytes/sector.")
                              .AppendLine();
 
@@ -299,20 +299,21 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            XmlFsType            = new FileSystemType();
-            XmlFsType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
-            if(dateCorrect)
+            XmlFsType = new FileSystemType
             {
-                XmlFsType.CreationDate          = rootDirectoryKeyBlock.header.creation_time;
-                XmlFsType.CreationDateSpecified = true;
-            }
+                VolumeName     = rootDirectoryKeyBlock.header.volume_name,
+                Files          = rootDirectoryKeyBlock.header.file_count,
+                FilesSpecified = true,
+                Clusters       = rootDirectoryKeyBlock.header.total_blocks,
+                Type           = "ProDOS"
+            };
 
-            XmlFsType.Files          = rootDirectoryKeyBlock.header.file_count;
-            XmlFsType.FilesSpecified = true;
-            XmlFsType.Clusters       = rootDirectoryKeyBlock.header.total_blocks;
-            XmlFsType.ClusterSize    = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                             (ulong)XmlFsType.Clusters);
-            XmlFsType.Type = "ProDOS";
+            XmlFsType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                          (ulong)XmlFsType.Clusters);
+            if(!dateCorrect) return;
+
+            XmlFsType.CreationDate          = rootDirectoryKeyBlock.header.creation_time;
+            XmlFsType.CreationDateSpecified = true;
         }
 
         /// <summary>

@@ -276,7 +276,7 @@ namespace DiscImageChef.Partitions
 
                 StringBuilder sb = new StringBuilder();
 
-                Partition _partition = new Partition
+                Partition partition = new Partition
                 {
                     Sequence = sequence,
                     Type = StringHandlers.CToString(entry.type),
@@ -309,25 +309,25 @@ namespace DiscImageChef.Partitions
                         sb.AppendLine("Partition's boot code is position independent.");
                 }
 
-                _partition.Description = sb.ToString();
-                if(_partition.Start < imagePlugin.Info.Sectors && _partition.End < imagePlugin.Info.Sectors)
+                partition.Description = sb.ToString();
+                if(partition.Start < imagePlugin.Info.Sectors && partition.End < imagePlugin.Info.Sectors)
                 {
-                    partitions.Add(_partition);
+                    partitions.Add(partition);
                     sequence++;
                 }
                 // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
-                else if(_partition.Start < imagePlugin.Info.Sectors)
+                else if(partition.Start < imagePlugin.Info.Sectors)
                 {
                     DicConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
-                                              _partition.End, imagePlugin.Info.Sectors - 1);
-                    _partition.Length = imagePlugin.Info.Sectors - _partition.Start;
-                    partitions.Add(_partition);
+                                              partition.End, imagePlugin.Info.Sectors - 1);
+                    partition.Length = imagePlugin.Info.Sectors - partition.Start;
+                    partitions.Add(partition);
                     sequence++;
                 }
                 else
                     DicConsole.DebugWriteLine("AppleMap Plugin",
                                               "Not adding partition becaus start ({0}) is outside media size ({1})",
-                                              _partition.Start, imagePlugin.Info.Sectors - 1);
+                                              partition.Start, imagePlugin.Info.Sectors - 1);
             }
 
             return partitions.Count > 0;

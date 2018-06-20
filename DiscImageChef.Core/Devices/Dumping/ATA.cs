@@ -54,7 +54,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implements dumping ATA devices
     /// </summary>
-    public class Ata
+    public static class Ata
     {
         /// <summary>
         ///     Dumps an ATA device

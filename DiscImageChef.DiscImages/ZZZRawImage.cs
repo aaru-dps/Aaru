@@ -50,7 +50,7 @@ namespace DiscImageChef.DiscImages
 {
     public class ZZZRawImage : IWritableImage
     {
-        readonly byte[] CdSync =
+        readonly byte[] cdSync =
             {0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00};
         readonly (MediaTagType tag, string name)[] readWriteSidecars =
         {
@@ -213,7 +213,7 @@ namespace DiscImageChef.DiscImages
                 Stream stream   = imageFilter.GetDataForkStream();
                 stream.Position = 0;
                 stream.Read(sync, 0, 12);
-                return CdSync.SequenceEqual(sync);
+                return cdSync.SequenceEqual(sync);
             }
 
             // Check known disk sizes with sectors smaller than 512
@@ -436,7 +436,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(sync,   0, 12);
                 stream.Read(header, 0, 4);
-                if(CdSync.SequenceEqual(sync))
+                if(cdSync.SequenceEqual(sync))
                 {
                     rawCompactDisc       = true;
                     hasSubchannel        = imageInfo.ImageSize % 2448 == 0;
@@ -473,7 +473,7 @@ namespace DiscImageChef.DiscImages
                     filter.GetDataForkStream().Read(data, 0, data.Length);
                     mediaTags.Add(sidecar.tag, data);
                 }
-                catch(IOException e) { }
+                catch(IOException) { }
 
             // If there are INQUIRY and IDENTIFY tags, it's ATAPI
             if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))

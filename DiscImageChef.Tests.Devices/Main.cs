@@ -32,9 +32,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices
 {
-    partial class MainClass
+    static partial class MainClass
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
             DicConsole.WriteLineEvent += System.Console.WriteLine;
             DicConsole.WriteEvent += System.Console.Write;

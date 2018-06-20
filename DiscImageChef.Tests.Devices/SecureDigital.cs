@@ -32,7 +32,7 @@ using DiscImageChef.Tests.Devices.SecureDigital;
 
 namespace DiscImageChef.Tests.Devices
 {
-    partial class MainClass
+    static partial class MainClass
     {
         public static void SecureDigital(string devPath, Device dev)
         {

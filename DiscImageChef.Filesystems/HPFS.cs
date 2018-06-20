@@ -77,18 +77,18 @@ namespace DiscImageChef.Filesystems
 
             IntPtr bpbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(hpfsBpbSector, 0, bpbPtr, 512);
-            HPFS_BIOSParameterBlock hpfsBpb =
-                (HPFS_BIOSParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(HPFS_BIOSParameterBlock));
+            HpfsBiosParameterBlock hpfsBpb =
+                (HpfsBiosParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(HpfsBiosParameterBlock));
             Marshal.FreeHGlobal(bpbPtr);
 
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(hpfsSbSector, 0, sbPtr, 512);
-            HPFS_SuperBlock hpfsSb = (HPFS_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(HPFS_SuperBlock));
+            HpfsSuperBlock hpfsSb = (HpfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(HpfsSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
             IntPtr spPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(hpfsSpSector, 0, spPtr, 512);
-            HPFS_SpareBlock hpfsSp = (HPFS_SpareBlock)Marshal.PtrToStructure(spPtr, typeof(HPFS_SpareBlock));
+            HpfsSpareBlock hpfsSp = (HpfsSpareBlock)Marshal.PtrToStructure(spPtr, typeof(HpfsSpareBlock));
             Marshal.FreeHGlobal(spPtr);
 
             if(StringHandlers.CToString(hpfsBpb.fs_type) != "HPFS    " || hpfsSb.magic1 != 0xF995E849 ||
@@ -206,7 +206,7 @@ namespace DiscImageChef.Filesystems
         ///     BIOS Parameter Block, at sector 0
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HPFS_BIOSParameterBlock
+        struct HpfsBiosParameterBlock
         {
             /// <summary>0x000, Jump to boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -263,7 +263,7 @@ namespace DiscImageChef.Filesystems
         ///     HPFS superblock at sector 16
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HPFS_SuperBlock
+        struct HpfsSuperBlock
         {
             /// <summary>0x000, 0xF995E849</summary>
             public uint magic1;
@@ -317,7 +317,7 @@ namespace DiscImageChef.Filesystems
         ///     HPFS spareblock at sector 17
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HPFS_SpareBlock
+        struct HpfsSpareBlock
         {
             /// <summary>0x000, 0xF9911849</summary>
             public uint magic1;

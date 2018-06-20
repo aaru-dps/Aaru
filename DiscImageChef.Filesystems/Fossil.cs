@@ -56,12 +56,10 @@ namespace DiscImageChef.Filesystems
         {
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
-            FossilHeader hdr;
-
             if(partition.Start + hdrSector > imagePlugin.Info.Sectors) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            FossilHeader hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);
@@ -79,10 +77,8 @@ namespace DiscImageChef.Filesystems
 
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
-            FossilHeader hdr;
-
             byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            FossilHeader hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);

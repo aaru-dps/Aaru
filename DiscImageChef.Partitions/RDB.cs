@@ -444,11 +444,9 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved24 = 0x{0:X8}",        rdb.Reserved24);
             DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved25 = 0x{0:X8}",        rdb.Reserved25);
 
-            ulong nextBlock;
-
             // Reading BadBlock list
             List<BadBlockList> badBlockChain = new List<BadBlockList>();
-            nextBlock                        = rdb.BadblockPtr;
+            ulong nextBlock = rdb.BadblockPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block",

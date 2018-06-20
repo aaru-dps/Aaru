@@ -108,11 +108,10 @@ namespace DiscImageChef.Filesystems
 
             if(wii)
             {
-                uint offset1, offset2, offset3, offset4;
-                offset1 = BigEndianBitConverter.ToUInt32(header, 0x40004) << 2;
-                offset2 = BigEndianBitConverter.ToUInt32(header, 0x4000C) << 2;
-                offset3 = BigEndianBitConverter.ToUInt32(header, 0x40014) << 2;
-                offset4 = BigEndianBitConverter.ToUInt32(header, 0x4001C) << 2;
+                uint offset1 = BigEndianBitConverter.ToUInt32(header, 0x40004) << 2;
+                uint offset2 = BigEndianBitConverter.ToUInt32(header, 0x4000C) << 2;
+                uint offset3 = BigEndianBitConverter.ToUInt32(header, 0x40014) << 2;
+                uint offset4 = BigEndianBitConverter.ToUInt32(header, 0x4001C) << 2;
 
                 fields.FirstPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40000)];
                 fields.SecondPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40008)];

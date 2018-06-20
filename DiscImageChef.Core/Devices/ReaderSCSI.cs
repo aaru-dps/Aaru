@@ -142,7 +142,7 @@ namespace DiscImageChef.Core.Devices
 
                     if(CanReadRaw && LongBlockSize == LogicalBlockSize)
                         if(LogicalBlockSize == 512)
-                            foreach(ushort testSize in new[]
+                            foreach(int i in new[]
                             {
                                 // Long sector sizes for floppies
                                 514,
@@ -152,6 +152,7 @@ namespace DiscImageChef.Core.Devices
                                 600, 610, 630
                             })
                             {
+                                ushort testSize = (ushort)i;
                                 testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout, out _);
                                 if(!testSense && !dev.Error)
                                 {
@@ -171,7 +172,7 @@ namespace DiscImageChef.Core.Devices
                                 break;
                             }
                         else if(LogicalBlockSize == 1024)
-                            foreach(ushort testSize in new[]
+                            foreach(int i in new[]
                             {
                                 // Long sector sizes for floppies
                                 1026,
@@ -179,6 +180,7 @@ namespace DiscImageChef.Core.Devices
                                 1200
                             })
                             {
+                                ushort testSize = (ushort)i;
                                 testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout, out _);
                                 if(!testSense && !dev.Error)
                                 {

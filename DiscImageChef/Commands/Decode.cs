@@ -230,12 +230,10 @@ namespace DiscImageChef.Commands
 
             if(options.SectorTags)
             {
-                ulong length;
-
-                if(options.Length.ToLowerInvariant() == "all") length = inputFormat.Info.Sectors - 1;
+                if(options.Length.ToLowerInvariant() == "all") { }
                 else
                 {
-                    if(!ulong.TryParse(options.Length, out length))
+                    if(!ulong.TryParse(options.Length, out ulong _))
                     {
                         DicConsole.WriteLine("Value \"{0}\" is not a valid number for length.", options.Length);
                         DicConsole.WriteLine("Not decoding sectors tags");

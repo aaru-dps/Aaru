@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems
     {
         readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 
-        readonly byte[] Signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
+        readonly byte[] signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding Encoding { get; private set; }
@@ -64,7 +64,7 @@ namespace DiscImageChef.Filesystems
             VolumeBootRecord vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
             Marshal.FreeHGlobal(vbrPtr);
 
-            return Signature.SequenceEqual(vbr.signature);
+            return signature.SequenceEqual(vbr.signature);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
               .AppendLine();
             sb.AppendFormat("Volume serial number: {0:X8}", vbr.volumeSerial).AppendLine();
             sb.AppendFormat("BIOS drive is {0:X2}h", vbr.drive).AppendLine();
-            if(vbr.flags.HasFlag(VolumeFlags.SecondFATActive)) sb.AppendLine("2nd FAT is in use");
+            if(vbr.flags.HasFlag(VolumeFlags.SecondFatActive)) sb.AppendLine("2nd FAT is in use");
             if(vbr.flags.HasFlag(VolumeFlags.VolumeDirty)) sb.AppendLine("Volume is dirty");
             if(vbr.flags.HasFlag(VolumeFlags.MediaFailure)) sb.AppendLine("Underlying media presented errors");
 
@@ -148,7 +148,7 @@ namespace DiscImageChef.Filesystems
         [Flags]
         enum VolumeFlags : ushort
         {
-            SecondFATActive = 1,
+            SecondFatActive = 1,
             VolumeDirty = 2,
             MediaFailure = 4,
             ClearToZero = 8

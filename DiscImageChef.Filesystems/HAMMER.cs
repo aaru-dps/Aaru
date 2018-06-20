@@ -65,11 +65,9 @@ namespace DiscImageChef.Filesystems
 
             if(run + partition.Start >= partition.End) return false;
 
-            ulong magic;
-
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
 
-            magic = BitConverter.ToUInt64(sbSector, 0);
+            ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
@@ -88,11 +86,9 @@ namespace DiscImageChef.Filesystems
 
             if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0) run++;
 
-            ulong magic;
-
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
 
-            magic = BitConverter.ToUInt64(sbSector, 0);
+            ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
             if(magic == HAMMER_FSBUF_VOLUME)
             {

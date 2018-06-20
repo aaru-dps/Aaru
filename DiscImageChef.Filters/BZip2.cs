@@ -137,9 +137,7 @@ namespace DiscImageChef.Filters
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
             // Check it is not an UDIF
-            if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79) return false;
-
-            return true;
+            return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
         }
 
         public void Open(byte[] buffer)
@@ -168,9 +166,6 @@ namespace DiscImageChef.Filters
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath = Path.GetFullPath(path);
-
-            DateTime start = DateTime.UtcNow;
-            DateTime end = DateTime.UtcNow;
 
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
@@ -209,10 +204,10 @@ namespace DiscImageChef.Filters
         {
             if(basePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 4);
-            if(basePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true)
-                return basePath.Substring(0, basePath.Length - 6);
 
-            return basePath;
+            return basePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? basePath.Substring(0, basePath.Length - 6)
+                       : basePath;
         }
 
         public string GetParentFolder()

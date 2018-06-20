@@ -58,8 +58,9 @@ namespace DiscImageChef.Filesystems
             // Documentation says ID should be sector 0
             // I've found that OS-9/X68000 has it on sector 4
             // I've read OS-9/Apple2 has it on sector 15
-            foreach(ulong location in new[] {0, 4, 15})
+            foreach(int i in new[] {0, 4, 15})
             {
+                ulong location = (ulong)i;
                 RBF_IdSector rbfSb = new RBF_IdSector();
 
                 uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
@@ -94,8 +95,9 @@ namespace DiscImageChef.Filesystems
             RBF_IdSector    rbfSb     = new RBF_IdSector();
             RBF_NewIdSector rbf9000Sb = new RBF_NewIdSector();
 
-            foreach(ulong location in new[] {0, 4, 15})
+            foreach(int i in new[] {0, 4, 15})
             {
+                ulong location = (ulong)i;
                 uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
                 if(Marshal.SizeOf(rbfSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 

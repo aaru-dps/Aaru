@@ -87,13 +87,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   bool                       nometadata, bool notrim)
         {
             bool   sense;
-            ulong  blocks;
             byte[] tmpBuf;
             bool   compactDisc = true;
             bool   isXbox      = false;
 
             // TODO: Log not only what is it reading, but if it was read correctly or not.
-
             sense = dev.GetConfiguration(out byte[] cmdBuf, out _, 0, MmcGetConfigurationRt.Current, dev.Timeout,
                                          out _);
             if(!sense)
@@ -205,7 +203,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
-            blocks = scsiReader.GetDeviceBlocks();
+            ulong blocks = scsiReader.GetDeviceBlocks();
             dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 

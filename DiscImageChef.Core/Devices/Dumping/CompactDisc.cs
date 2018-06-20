@@ -97,7 +97,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             DateTime           start;
             DateTime           end;
             bool               readcd;
-            bool read6 = false, read10 = false, read12 = false, read16 = false;
+            bool               read6         = false, read10 = false, read12 = false, read16 = false;
             bool               sense         = false;
             const uint         SECTOR_SIZE   = 2352;
             FullTOC.CDFullTOC? toc           = null;
@@ -289,8 +289,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                              dev.Timeout, out _);
                         dumpLog.WriteLine("Checking if drive supports READ(12)...");
                         DicConsole.WriteLine("Checking if drive supports READ(12)...");
-                        read12 = !dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, 2048, 0,
-                                             1, false, dev.Timeout, out _);
+                        read12 = !dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, 2048, 0, 1,
+                                             false, dev.Timeout, out _);
                         dumpLog.WriteLine("Checking if drive supports READ(16)...");
                         DicConsole.WriteLine("Checking if drive supports READ(16)...");
                         read16 = !dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, 2048, 0, 1, false,
@@ -308,16 +308,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                             dumpLog.WriteLine("Drive supports READ(6)...");
                             DicConsole.WriteLine("Drive supports READ(6)...");
                         }
+
                         if(read10)
                         {
                             dumpLog.WriteLine("Drive supports READ(10)...");
                             DicConsole.WriteLine("Drive supports READ(10)...");
                         }
+
                         if(read12)
                         {
                             dumpLog.WriteLine("Drive supports READ(12)...");
                             DicConsole.WriteLine("Drive supports READ(12)...");
                         }
+
                         if(read16)
                         {
                             dumpLog.WriteLine("Drive supports READ(16)...");
@@ -535,15 +538,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Array.Copy(cmdBuf, 0, temp, 0, 8);
                     Array.Reverse(temp);
                     lastSector = (long)BitConverter.ToUInt64(temp, 0);
-                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                    blockSize  = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                 }
                 else
                 {
                     sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out _);
                     if(!sense)
                     {
-                        lastSector    = (long)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                        lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3];
+                        blockSize  = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                     }
                 }
 
@@ -736,25 +739,26 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else if(read16)
                 {
-                    sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, blockSize, 0, blocksToRead, false,
-                                       dev.Timeout, out _);
+                    sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, blockSize, 0,
+                                       blocksToRead, false, dev.Timeout, out _);
                     if(dev.Error || sense) blocksToRead /= 2;
                 }
                 else if(read12)
                 {
-                    sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, blocksToRead, false,
-                                       dev.Timeout, out _);
+                    sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0,
+                                       blocksToRead, false, dev.Timeout, out _);
                     if(dev.Error || sense) blocksToRead /= 2;
                 }
                 else if(read10)
                 {
-                    sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, (ushort)blocksToRead,
-                                         dev.Timeout, out _);
+                    sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0,
+                                       (ushort)blocksToRead, dev.Timeout, out _);
                     if(dev.Error || sense) blocksToRead /= 2;
                 }
                 else if(read6)
                 {
-                    sense = dev.Read6(out readBuffer, out senseBuf, 0, blockSize, (byte)blocksToRead, dev.Timeout, out _);
+                    sense = dev.Read6(out readBuffer, out senseBuf, 0, blockSize, (byte)blocksToRead, dev.Timeout,
+                                      out _);
                     if(dev.Error || sense) blocksToRead /= 2;
                 }
 
@@ -810,7 +814,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                sense = dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
+                dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
                                    true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
                                    dev.Timeout, out _);
 
@@ -871,12 +875,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sense = dev.ReadIsrc((byte)trk.TrackSequence, out string isrc, out _, out _, dev.Timeout, out _);
                 if(sense || isrc == null || isrc == "000000000000") continue;
 
-                if(outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc), trk.TrackStartSector,
-                                               SectorTagType.CdTrackIsrc))
-                {
-                    DicConsole.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
-                    dumpLog.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
-                }
+                if(!outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc), trk.TrackStartSector,
+                                                SectorTagType.CdTrackIsrc)) continue;
+
+                DicConsole.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
+                dumpLog.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
             }
 
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
@@ -922,24 +925,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                         totalDuration += cmdDuration;
                     }
                     else if(read16)
-                    {
-                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, i, blockSize, 0, blocksToRead, false,
-                                           dev.Timeout, out cmdDuration);
-                    }
+                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, i, blockSize, 0,
+                                           blocksToRead, false, dev.Timeout, out cmdDuration);
                     else if(read12)
-                    {
-                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, blocksToRead, false,
-                                           dev.Timeout, out cmdDuration);
-                    }
+                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i,
+                                           blockSize, 0, blocksToRead, false, dev.Timeout, out cmdDuration);
                     else if(read10)
-                    {
-                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, (ushort)blocksToRead,
-                                           dev.Timeout, out cmdDuration);
-                    }
+                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i,
+                                           blockSize, 0, (ushort)blocksToRead, dev.Timeout, out cmdDuration);
                     else if(read6)
-                    {
-                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, dev.Timeout, out cmdDuration);
-                    }
+                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)i, blockSize, (byte)blocksToRead,
+                                          dev.Timeout, out cmdDuration);
 
                     if(!sense && !dev.Error)
                     {
@@ -1034,34 +1030,29 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     DicConsole.Write("\rTrimming sector {0}", badSector);
 
+                    double cmdDuration = 0;
+                    
                     if(readcd)
                     {
-                        sense = true;
                         sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                            true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
-                                           out double cmdDuration);
-                        totalDuration += cmdDuration;
+                                           out cmdDuration);
                     }
                     else if(read16)
-                    {
-                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, badSector, blockSize, 0, blocksToRead, false,
-                                           dev.Timeout, out double cmdDuration);
-                    }
+                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, badSector, blockSize, 0,
+                                           blocksToRead, false, dev.Timeout, out cmdDuration);
                     else if(read12)
-                    {
-                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, blocksToRead, false,
-                                           dev.Timeout, out double cmdDuration);
-                    }
+                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector,
+                                           blockSize, 0, blocksToRead, false, dev.Timeout, out cmdDuration);
                     else if(read10)
-                    {
-                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, (ushort)blocksToRead,
-                                           dev.Timeout, out double cmdDuration);
-                    }
+                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector,
+                                           blockSize, 0, (ushort)blocksToRead, dev.Timeout, out cmdDuration);
                     else if(read6)
-                    {
-                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)badSector, blockSize, (byte)blocksToRead, dev.Timeout, out double cmdDuration);
-                    }
+                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)badSector, blockSize, (byte)blocksToRead,
+                                          dev.Timeout, out cmdDuration);
+
+                    totalDuration += cmdDuration;
 
                     if(sense || dev.Error) continue;
 
@@ -1103,24 +1094,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(persistent)
                 {
                     Modes.ModePage_01_MMC pgMmc;
-                    
+
                     sense = dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                            dev.Timeout, out _);
                     if(sense)
                     {
-                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current,
-                                                0x01, dev.Timeout, out _);
+                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                                dev.Timeout, out _);
 
                         if(!sense)
                         {
                             Modes.DecodedMode? dcMode10 =
                                 Modes.DecodeMode10(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
-                            
+
                             if(dcMode10.HasValue)
-                            {
                                 foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
-                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00) currentModePage = modePage;
-                            }
+                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
+                                        currentModePage = modePage;
                         }
                     }
                     else
@@ -1129,18 +1119,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
 
                         if(dcMode6.HasValue)
-                        {
                             foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
                                 if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
                                     currentModePage = modePage;
-                        }
                     }
 
                     if(currentModePage == null)
                     {
-                            
-                        pgMmc =
-                            new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 32, Parameter = 0x00};
+                        pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 32, Parameter = 0x00};
                         currentModePage = new Modes.ModePage
                         {
                             Page         = 0x01,
@@ -1148,9 +1134,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         };
                     }
-                    
-                    pgMmc =
-                        new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
+
+                    pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
                         Header = new Modes.ModeHeader(),
@@ -1199,7 +1184,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(readcd)
                     {
-                        sense = true;
                         sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                            true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
@@ -1278,7 +1262,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         runningPersistent = true;
                         DicConsole.WriteLine();
 
-                        tmpArray = resume.BadBlocks.ToArray();
                         foreach(ulong badSector in sectorsNotEvenPartial)
                         {
                             if(aborted)
@@ -1299,21 +1282,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 totalDuration += cmdDuration;
                             }
 
-                            if(!sense && !dev.Error)
-                            {
-                                dumpLog.WriteLine("Got partial data for sector {0} in pass {1}.", badSector, pass);
+                            if(sense || dev.Error) continue;
 
-                                if(supportedSubchannel != MmcSubchannel.None)
-                                {
-                                    byte[] data = new byte[SECTOR_SIZE];
-                                    byte[] sub  = new byte[subSize];
-                                    Array.Copy(readBuffer, 0,           data, 0, SECTOR_SIZE);
-                                    Array.Copy(readBuffer, SECTOR_SIZE, sub,  0, subSize);
-                                    outputPlugin.WriteSectorLong(data, badSector);
-                                    outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
-                                }
-                                else outputPlugin.WriteSectorLong(readBuffer, badSector);
+                            dumpLog.WriteLine("Got partial data for sector {0} in pass {1}.", badSector, pass);
+
+                            if(supportedSubchannel != MmcSubchannel.None)
+                            {
+                                byte[] data = new byte[SECTOR_SIZE];
+                                byte[] sub  = new byte[subSize];
+                                Array.Copy(readBuffer, 0,           data, 0, SECTOR_SIZE);
+                                Array.Copy(readBuffer, SECTOR_SIZE, sub,  0, subSize);
+                                outputPlugin.WriteSectorLong(data, badSector);
+                                outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
                             }
+                            else outputPlugin.WriteSectorLong(readBuffer, badSector);
                         }
                     }
                 }

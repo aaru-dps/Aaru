@@ -161,8 +161,7 @@ namespace DiscImageChef.Commands
                                     error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                                     if(error == Errno.NoError)
                                     {
-                                        List<string> rootDir = new List<string>();
-                                        error                = fs.ReadDir("/", out rootDir);
+                                        error                = fs.ReadDir("/", out List<string> rootDir);
                                         if(error == Errno.NoError)
                                             foreach(string entry in rootDir)
                                                 DicConsole.WriteLine("{0}", entry);
@@ -191,8 +190,7 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                List<string> rootDir = new List<string>();
-                                error                = fs.ReadDir("/", out rootDir);
+                                error                = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                         DicConsole.WriteLine("{0}", entry);
@@ -231,8 +229,7 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                List<string> rootDir = new List<string>();
-                                error                = fs.ReadDir("/", out rootDir);
+                                error                = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                         DicConsole.WriteLine("{0}", entry);
@@ -258,22 +255,18 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                List<string> rootDir = new List<string>();
-                                error                = fs.ReadDir("/", out rootDir);
+                                error                = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                         if(options.Long)
                                         {
-                                            FileEntryInfo stat   = new FileEntryInfo();
-                                            List<string>  xattrs = new List<string>();
-
-                                            error = fs.Stat(entry, out stat);
+                                            error = fs.Stat(entry, out FileEntryInfo stat);
                                             if(error == Errno.NoError)
                                             {
                                                 DicConsole.WriteLine("{0}\t{1}\t{2} bytes\t{3}", stat.CreationTimeUtc,
                                                                      stat.Inode, stat.Length, entry);
 
-                                                error = fs.ListXAttr(entry, out xattrs);
+                                                error = fs.ListXAttr(entry, out List<string> xattrs);
                                                 if(error != Errno.NoError) continue;
 
                                                 foreach(string xattr in xattrs)

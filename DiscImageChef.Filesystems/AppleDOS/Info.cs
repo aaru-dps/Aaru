@@ -49,8 +49,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(partition.Start > 0 || imagePlugin.Info.SectorSize != 256) return false;
 
-            int spt;
-            spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
+            int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
             vtoc = new Vtoc();

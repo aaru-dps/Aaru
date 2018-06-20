@@ -44,9 +44,9 @@ namespace DiscImageChef.Filesystems
     {
         const uint REISER_SUPER_OFFSET = 0x10000;
 
-        readonly byte[] Reiser35_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x46, 0x73, 0x00, 0x00};
-        readonly byte[] Reiser36_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x32, 0x46, 0x73, 0x00};
-        readonly byte[] ReiserJr_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x33, 0x46, 0x73, 0x00};
+        readonly byte[] reiser35_magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x46, 0x73, 0x00, 0x00};
+        readonly byte[] reiser36_magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x32, 0x46, 0x73, 0x00};
+        readonly byte[] reiserJr_magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x33, 0x46, 0x73, 0x00};
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding Encoding { get; private set; }
@@ -75,8 +75,8 @@ namespace DiscImageChef.Filesystems
             reiserSb = (Reiser_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Reiser_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            return Reiser35_Magic.SequenceEqual(reiserSb.magic) || Reiser36_Magic.SequenceEqual(reiserSb.magic) ||
-                   ReiserJr_Magic.SequenceEqual(reiserSb.magic);
+            return reiser35_magic.SequenceEqual(reiserSb.magic) || reiser36_magic.SequenceEqual(reiserSb.magic) ||
+                   reiserJr_magic.SequenceEqual(reiserSb.magic);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -102,14 +102,14 @@ namespace DiscImageChef.Filesystems
             reiserSb = (Reiser_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Reiser_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            if(!Reiser35_Magic.SequenceEqual(reiserSb.magic) && !Reiser36_Magic.SequenceEqual(reiserSb.magic) &&
-               !ReiserJr_Magic.SequenceEqual(reiserSb.magic)) return;
+            if(!reiser35_magic.SequenceEqual(reiserSb.magic) && !reiser36_magic.SequenceEqual(reiserSb.magic) &&
+               !reiserJr_magic.SequenceEqual(reiserSb.magic)) return;
 
             StringBuilder sb = new StringBuilder();
 
-            if(Reiser35_Magic.SequenceEqual(reiserSb.magic)) sb.AppendLine("Reiser 3.5 filesystem");
-            else if(Reiser36_Magic.SequenceEqual(reiserSb.magic)) sb.AppendLine("Reiser 3.6 filesystem");
-            else if(ReiserJr_Magic.SequenceEqual(reiserSb.magic)) sb.AppendLine("Reiser Jr. filesystem");
+            if(reiser35_magic.SequenceEqual(reiserSb.magic)) sb.AppendLine("Reiser 3.5 filesystem");
+            else if(reiser36_magic.SequenceEqual(reiserSb.magic)) sb.AppendLine("Reiser 3.6 filesystem");
+            else if(reiserJr_magic.SequenceEqual(reiserSb.magic)) sb.AppendLine("Reiser Jr. filesystem");
             sb.AppendFormat("Volume has {0} blocks with {1} blocks free", reiserSb.block_count, reiserSb.free_blocks)
               .AppendLine();
             sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
@@ -126,9 +126,9 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
 
             XmlFsType = new FileSystemType();
-            if(Reiser35_Magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.5 filesystem";
-            else if(Reiser36_Magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.6 filesystem";
-            else if(ReiserJr_Magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser Jr. filesystem";
+            if(reiser35_magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.5 filesystem";
+            else if(reiser36_magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.6 filesystem";
+            else if(reiserJr_magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser Jr. filesystem";
             XmlFsType.ClusterSize = reiserSb.blocksize;
             XmlFsType.Clusters = reiserSb.block_count;
             XmlFsType.FreeClusters = reiserSb.free_blocks;

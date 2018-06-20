@@ -740,19 +740,21 @@ namespace DiscImageChef.Core
         /// <summary>
         ///     Adds a new media scan to statistics
         /// </summary>
-        /// <param name="lessThan3ms">Sectors &lt;3ms</param>
-        /// <param name="lessThan10ms">Sectors &gt;3ms and &lt;10ms</param>
-        /// <param name="lessThan50ms">Sectors &gt;10ms and &lt;50ms</param>
-        /// <param name="lessThan150ms">Sectors &gt;50ms and &lt;150ms</param>
-        /// <param name="lessThan500ms">Sectors &gt;150ms and &lt;500ms</param>
-        /// <param name="moreThan500ms">Sectors &gt;500ms</param>
+        /// <param name="lessThan3Ms">Sectors &lt;3ms</param>
+        /// <param name="lessThan10Ms">Sectors &gt;3ms and &lt;10ms</param>
+        /// <param name="lessThan50Ms">Sectors &gt;10ms and &lt;50ms</param>
+        /// <param name="lessThan150Ms">Sectors &gt;50ms and &lt;150ms</param>
+        /// <param name="lessThan500Ms">Sectors &gt;150ms and &lt;500ms</param>
+        /// <param name="moreThan500Ms">Sectors &gt;500ms</param>
         /// <param name="total">Total sectors</param>
         /// <param name="error">Errored sectors</param>
         /// <param name="correct">Correct sectors</param>
-        public static void AddMediaScan(long lessThan3ms, long   lessThan10ms, long  lessThan50ms, long lessThan150ms,
-                                        long lessThan500ms, long moreThan500ms, long total, long        error,
+        public static void AddMediaScan(long lessThan3Ms, long   lessThan10Ms, long  lessThan50Ms, long lessThan150Ms,
+                                        long lessThan500Ms, long moreThan500Ms, long total, long        error,
                                         long correct)
         {
+            if(lessThan500Ms <= 0) throw new ArgumentOutOfRangeException(nameof(lessThan500Ms));
+
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaScanStats) return;
 
             if(CurrentStats.MediaScan == null)
@@ -764,22 +766,22 @@ namespace DiscImageChef.Core
             CurrentStats.MediaScan.Sectors.Correct     += correct;
             CurrentStats.MediaScan.Sectors.Error       += error;
             CurrentStats.MediaScan.Sectors.Total       += total;
-            CurrentStats.MediaScan.Times.LessThan3ms   += lessThan3ms;
-            CurrentStats.MediaScan.Times.LessThan10ms  += lessThan10ms;
-            CurrentStats.MediaScan.Times.LessThan50ms  += lessThan50ms;
-            CurrentStats.MediaScan.Times.LessThan150ms += lessThan150ms;
-            CurrentStats.MediaScan.Times.LessThan500ms += lessThan500ms;
-            CurrentStats.MediaScan.Times.MoreThan500ms += moreThan500ms;
+            CurrentStats.MediaScan.Times.LessThan3ms   += lessThan3Ms;
+            CurrentStats.MediaScan.Times.LessThan10ms  += lessThan10Ms;
+            CurrentStats.MediaScan.Times.LessThan50ms  += lessThan50Ms;
+            CurrentStats.MediaScan.Times.LessThan150ms += lessThan150Ms;
+            CurrentStats.MediaScan.Times.LessThan500ms += lessThan500Ms;
+            CurrentStats.MediaScan.Times.MoreThan500ms += moreThan500Ms;
 
             AllStats.MediaScan.Sectors.Correct     += correct;
             AllStats.MediaScan.Sectors.Error       += error;
             AllStats.MediaScan.Sectors.Total       += total;
-            AllStats.MediaScan.Times.LessThan3ms   += lessThan3ms;
-            AllStats.MediaScan.Times.LessThan10ms  += lessThan10ms;
-            AllStats.MediaScan.Times.LessThan50ms  += lessThan50ms;
-            AllStats.MediaScan.Times.LessThan150ms += lessThan150ms;
-            AllStats.MediaScan.Times.LessThan500ms += lessThan500ms;
-            AllStats.MediaScan.Times.MoreThan500ms += moreThan500ms;
+            AllStats.MediaScan.Times.LessThan3ms   += lessThan3Ms;
+            AllStats.MediaScan.Times.LessThan10ms  += lessThan10Ms;
+            AllStats.MediaScan.Times.LessThan50ms  += lessThan50Ms;
+            AllStats.MediaScan.Times.LessThan150ms += lessThan150Ms;
+            AllStats.MediaScan.Times.LessThan500ms += lessThan500Ms;
+            AllStats.MediaScan.Times.MoreThan500ms += moreThan500Ms;
         }
     }
 }

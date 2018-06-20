@@ -52,10 +52,9 @@ namespace DiscImageChef.Filesystems
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
-            FATX_Superblock fatxSb;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
-            fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
+            FATX_Superblock fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
             return fatxSb.magic == FATX_MAGIC;
         }
@@ -67,11 +66,9 @@ namespace DiscImageChef.Filesystems
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
-            FATX_Superblock fatxSb;
-
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
-            fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
+            FATX_Superblock fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
             if(fatxSb.magic != FATX_MAGIC) return;
 

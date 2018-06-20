@@ -224,7 +224,7 @@ namespace DiscImageChef.Commands
             else Settings.Settings.Current.Stats = null;
             #endregion Statistics
 
-            Settings.Settings.Current.GdprCompliance = Settings.DicSettings.GdprLevel;
+            Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
             Settings.Settings.SaveSettings();
         }
     }

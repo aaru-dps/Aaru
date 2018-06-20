@@ -51,13 +51,11 @@ namespace DiscImageChef.Filesystems
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            byte signature; // 0x29
-
             byte[] bpb = imagePlugin.ReadSector(0 + partition.Start);
 
             byte[] fsTypeB = new byte[8];
 
-            signature = bpb[0x25];
+            byte signature = bpb[0x25];
             Array.Copy(bpb, 0x35, fsTypeB, 0, 8);
             string fsType = StringHandlers.CToString(fsTypeB);
 

@@ -74,10 +74,10 @@ namespace DiscImageChef.Filesystems
             else
             {
                 sector = imagePlugin.ReadSector(357);
-                CommodoreBAM cbmBam = new CommodoreBAM();
+                CommodoreBam cbmBam = new CommodoreBam();
                 IntPtr cbmBamPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cbmBam));
                 Marshal.Copy(sector, 0, cbmBamPtr, Marshal.SizeOf(cbmBam));
-                cbmBam = (CommodoreBAM)Marshal.PtrToStructure(cbmBamPtr, typeof(CommodoreBAM));
+                cbmBam = (CommodoreBam)Marshal.PtrToStructure(cbmBamPtr, typeof(CommodoreBam));
                 Marshal.FreeHGlobal(cbmBamPtr);
 
                 if(cbmBam.dosVersion == 0x41 && (cbmBam.doubleSided == 0x00 || cbmBam.doubleSided == 0x80) &&
@@ -132,10 +132,10 @@ namespace DiscImageChef.Filesystems
             else
             {
                 sector = imagePlugin.ReadSector(357);
-                CommodoreBAM cbmBam = new CommodoreBAM();
+                CommodoreBam cbmBam = new CommodoreBam();
                 IntPtr cbmBamPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cbmBam));
                 Marshal.Copy(sector, 0, cbmBamPtr, Marshal.SizeOf(cbmBam));
-                cbmBam = (CommodoreBAM)Marshal.PtrToStructure(cbmBamPtr, typeof(CommodoreBAM));
+                cbmBam = (CommodoreBam)Marshal.PtrToStructure(cbmBamPtr, typeof(CommodoreBam));
                 Marshal.FreeHGlobal(cbmBamPtr);
 
                 sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmBam.directoryTrack,
@@ -157,7 +157,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CommodoreBAM
+        struct CommodoreBam
         {
             /// <summary>
             ///     Track where directory starts

@@ -79,8 +79,9 @@ namespace DiscImageChef.Filesystems
                 }
             }
             else
-                foreach(ulong location in new[] {0, 1, 2})
+                foreach(int i in new[] {0, 1, 2})
                 {
+                    ulong location = (ulong)i;
                     XFS_Superblock xfsSb = new XFS_Superblock();
 
                     uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.Info.SectorSize);
@@ -133,8 +134,9 @@ namespace DiscImageChef.Filesystems
                 }
             }
             else
-                foreach(ulong location in new[] {0, 1, 2})
+                foreach(int i in new[] {0, 1, 2})
                 {
+                    ulong location = (ulong)i;
                     uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.Info.SectorSize);
                     if(Marshal.SizeOf(xfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 

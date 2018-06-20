@@ -153,36 +153,27 @@ namespace DiscImageChef.Filters
 
         public bool Identify(string path)
         {
-            // Prepend data fork name with "R."
-            string ProDosAppleDouble;
-            // Prepend data fork name with '%'
-            string UNIXAppleDouble;
-            // Change file extension to ADF
-            string DOSAppleDouble;
-            // Change file extension to adf
-            string DOSAppleDoubleLower;
-            // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string NetatalkAppleDouble;
-            // Store AppleDouble header file in "resource.frk" folder with same name
-            string DAVEAppleDouble;
-            // Prepend data fork name with "._"
-            string OSXAppleDouble;
-            // Adds ".rsrc" extension
-            string UnArAppleDouble;
-
             string filename = Path.GetFileName(path);
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder = Path.GetDirectoryName(path);
 
-            ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
-            UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
-            DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
-            DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
-            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
-                                               filename ?? throw new InvalidOperationException());
-            DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
-            OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
-            UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
+            // Prepend data fork name with "R."
+            string ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
+            // Prepend data fork name with '%'
+            string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
+            // Change file extension to ADF
+            string DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
+            // Change file extension to adf
+            string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
+            // Store AppleDouble header file in ".AppleDouble" folder with same name
+            string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
+                                                      filename ?? throw new InvalidOperationException());
+            // Store AppleDouble header file in "resource.frk" folder with same name
+            string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
+            // Prepend data fork name with "._"
+            string OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
+            // Adds ".rsrc" extension
+            string UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(ProDosAppleDouble))
@@ -322,36 +313,27 @@ namespace DiscImageChef.Filters
 
         public void Open(string path)
         {
-            // Prepend data fork name with "R."
-            string ProDosAppleDouble;
-            // Prepend data fork name with '%'
-            string UNIXAppleDouble;
-            // Change file extension to ADF
-            string DOSAppleDouble;
-            // Change file extension to adf
-            string DOSAppleDoubleLower;
-            // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string NetatalkAppleDouble;
-            // Store AppleDouble header file in "resource.frk" folder with same name
-            string DAVEAppleDouble;
-            // Prepend data fork name with "._"
-            string OSXAppleDouble;
-            // Adds ".rsrc" extension
-            string UnArAppleDouble;
-
             string filename = Path.GetFileName(path);
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder = Path.GetDirectoryName(path);
 
-            ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
-            UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
-            DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
-            DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
-            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
-                                               filename ?? throw new InvalidOperationException());
-            DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
-            OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
-            UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
+            // Prepend data fork name with "R."
+            string ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
+            // Prepend data fork name with '%'
+            string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
+            // Change file extension to ADF
+            string DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
+            // Change file extension to adf
+            string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
+            // Store AppleDouble header file in ".AppleDouble" folder with same name
+            string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
+                                                      filename ?? throw new InvalidOperationException());
+            // Store AppleDouble header file in "resource.frk" folder with same name
+            string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
+            // Prepend data fork name with "._"
+            string OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
+            // Adds ".rsrc" extension
+            string UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(ProDosAppleDouble))

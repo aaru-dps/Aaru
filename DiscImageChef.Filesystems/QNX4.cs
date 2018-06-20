@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems
 {
     public class QNX4 : IFilesystem
     {
-        readonly byte[] QNX4_RootDir_Fname =
+        readonly byte[] qnx4_rootDir_fname =
             {0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
         public FileSystemType XmlFsType { get; private set; }
@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems
             Marshal.FreeHGlobal(sbPtr);
 
             // Check root directory name
-            if(!QNX4_RootDir_Fname.SequenceEqual(qnxSb.rootDir.di_fname)) return false;
+            if(!qnx4_rootDir_fname.SequenceEqual(qnxSb.rootDir.di_fname)) return false;
 
             // Check sizes are multiple of blocks
             if(qnxSb.rootDir.di_size % 512 != 0 || qnxSb.inode.di_size % 512 != 0 || qnxSb.boot.di_size % 512 != 0 ||

@@ -65,13 +65,11 @@ namespace DiscImageChef.Filesystems
 
             if(sector + partition.Start >= partition.End) return false;
 
-            uint magic;
-
             byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-            magic = BitConverter.ToUInt32(sbSector, 0x20);
+            uint magic = BitConverter.ToUInt32(sbSector, 0x20);
 
             return magic == AFS_MAGIC1;
         }

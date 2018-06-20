@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
             byte[] mdbSector = null;
             ushort drSigWord;
 
-            bool APMFromHDDOnCD = false;
+            bool apmFromHddOnCd = false;
 
             if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
@@ -127,11 +127,11 @@ namespace DiscImageChef.Filesystems
                     mdbSector = new byte[512];
                     if(offset >= 0x400) Array.Copy(tmpSector, offset - 0x400, bbSector, 0, 1024);
                     Array.Copy(tmpSector, offset, mdbSector, 0, 512);
-                    APMFromHDDOnCD = true;
+                    apmFromHddOnCd = true;
                     break;
                 }
 
-                if(!APMFromHDDOnCD) return;
+                if(!apmFromHddOnCd) return;
             }
             else
             {
@@ -142,146 +142,146 @@ namespace DiscImageChef.Filesystems
                 else return;
             }
 
-            HFS_MasterDirectoryBlock MDB =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_MasterDirectoryBlock>(mdbSector);
-            HFS_BootBlock BB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_BootBlock>(bbSector);
+            HfsMasterDirectoryBlock mdb =
+                BigEndianMarshal.ByteArrayToStructureBigEndian<HfsMasterDirectoryBlock>(mdbSector);
+            HfsBootBlock bb = BigEndianMarshal.ByteArrayToStructureBigEndian<HfsBootBlock>(bbSector);
 
             sb.AppendLine("Apple Hierarchical File System");
             sb.AppendLine();
-            if(APMFromHDDOnCD)
+            if(apmFromHddOnCd)
                 sb.AppendLine("HFS uses 512 bytes/sector while device uses 2048 bytes/sector.").AppendLine();
             sb.AppendLine("Master Directory Block:");
-            sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(MDB.drCrDate)).AppendLine();
-            sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(MDB.drLsMod)).AppendLine();
-            if(MDB.drVolBkUp > 0)
+            sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
+            sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(mdb.drLsMod)).AppendLine();
+            if(mdb.drVolBkUp > 0)
             {
-                sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(MDB.drVolBkUp)).AppendLine();
-                sb.AppendFormat("Backup sequence number: {0}", MDB.drVSeqNum).AppendLine();
+                sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(mdb.drVolBkUp)).AppendLine();
+                sb.AppendFormat("Backup sequence number: {0}", mdb.drVSeqNum).AppendLine();
             }
             else sb.AppendLine("Volume has never been backed up");
 
-            if((MDB.drAtrb & 0x80) == 0x80) sb.AppendLine("Volume is locked by hardware.");
-            sb.AppendLine((MDB.drAtrb & 0x100) == 0x100 ? "Volume was unmonted." : "Volume is mounted.");
-            if((MDB.drAtrb & 0x200) == 0x200) sb.AppendLine("Volume has spared bad blocks.");
-            if((MDB.drAtrb & 0x400) == 0x400) sb.AppendLine("Volume does not need cache.");
-            if((MDB.drAtrb & 0x800) == 0x800) sb.AppendLine("Boot volume is inconsistent.");
-            if((MDB.drAtrb & 0x1000) == 0x1000) sb.AppendLine("There are reused CNIDs.");
-            if((MDB.drAtrb & 0x2000) == 0x2000) sb.AppendLine("Volume is journaled.");
-            if((MDB.drAtrb & 0x4000) == 0x4000) sb.AppendLine("Volume is seriously inconsistent.");
-            if((MDB.drAtrb & 0x8000) == 0x8000) sb.AppendLine("Volume is locked by software.");
+            if((mdb.drAtrb & 0x80) == 0x80) sb.AppendLine("Volume is locked by hardware.");
+            sb.AppendLine((mdb.drAtrb & 0x100) == 0x100 ? "Volume was unmonted." : "Volume is mounted.");
+            if((mdb.drAtrb & 0x200) == 0x200) sb.AppendLine("Volume has spared bad blocks.");
+            if((mdb.drAtrb & 0x400) == 0x400) sb.AppendLine("Volume does not need cache.");
+            if((mdb.drAtrb & 0x800) == 0x800) sb.AppendLine("Boot volume is inconsistent.");
+            if((mdb.drAtrb & 0x1000) == 0x1000) sb.AppendLine("There are reused CNIDs.");
+            if((mdb.drAtrb & 0x2000) == 0x2000) sb.AppendLine("Volume is journaled.");
+            if((mdb.drAtrb & 0x4000) == 0x4000) sb.AppendLine("Volume is seriously inconsistent.");
+            if((mdb.drAtrb & 0x8000) == 0x8000) sb.AppendLine("Volume is locked by software.");
 
-            sb.AppendFormat("{0} files on root directory", MDB.drNmFls).AppendLine();
-            sb.AppendFormat("{0} directories on root directory", MDB.drNmRtDirs).AppendLine();
-            sb.AppendFormat("{0} files on volume", MDB.drFilCnt).AppendLine();
-            sb.AppendFormat("{0} directories on volume", MDB.drDirCnt).AppendLine();
-            sb.AppendFormat("Volume write count: {0}", MDB.drWrCnt).AppendLine();
+            sb.AppendFormat("{0} files on root directory", mdb.drNmFls).AppendLine();
+            sb.AppendFormat("{0} directories on root directory", mdb.drNmRtDirs).AppendLine();
+            sb.AppendFormat("{0} files on volume", mdb.drFilCnt).AppendLine();
+            sb.AppendFormat("{0} directories on volume", mdb.drDirCnt).AppendLine();
+            sb.AppendFormat("Volume write count: {0}", mdb.drWrCnt).AppendLine();
 
-            sb.AppendFormat("Volume bitmap starting sector (in 512-bytes): {0}", MDB.drVBMSt).AppendLine();
-            sb.AppendFormat("Next allocation block: {0}.", MDB.drAllocPtr).AppendLine();
-            sb.AppendFormat("{0} volume allocation blocks.", MDB.drNmAlBlks).AppendLine();
-            sb.AppendFormat("{0} bytes per allocation block.", MDB.drAlBlkSiz).AppendLine();
-            sb.AppendFormat("{0} bytes to allocate when extending a file.", MDB.drClpSiz).AppendLine();
-            sb.AppendFormat("{0} bytes to allocate when extending a Extents B-Tree.", MDB.drXTClpSiz).AppendLine();
-            sb.AppendFormat("{0} bytes to allocate when extending a Catalog B-Tree.", MDB.drCTClpSiz).AppendLine();
-            sb.AppendFormat("Sector of first allocation block: {0}", MDB.drAlBlSt).AppendLine();
-            sb.AppendFormat("Next unused CNID: {0}", MDB.drNxtCNID).AppendLine();
-            sb.AppendFormat("{0} unused allocation blocks.", MDB.drFreeBks).AppendLine();
+            sb.AppendFormat("Volume bitmap starting sector (in 512-bytes): {0}", mdb.drVBMSt).AppendLine();
+            sb.AppendFormat("Next allocation block: {0}.", mdb.drAllocPtr).AppendLine();
+            sb.AppendFormat("{0} volume allocation blocks.", mdb.drNmAlBlks).AppendLine();
+            sb.AppendFormat("{0} bytes per allocation block.", mdb.drAlBlkSiz).AppendLine();
+            sb.AppendFormat("{0} bytes to allocate when extending a file.", mdb.drClpSiz).AppendLine();
+            sb.AppendFormat("{0} bytes to allocate when extending a Extents B-Tree.", mdb.drXTClpSiz).AppendLine();
+            sb.AppendFormat("{0} bytes to allocate when extending a Catalog B-Tree.", mdb.drCTClpSiz).AppendLine();
+            sb.AppendFormat("Sector of first allocation block: {0}", mdb.drAlBlSt).AppendLine();
+            sb.AppendFormat("Next unused CNID: {0}", mdb.drNxtCNID).AppendLine();
+            sb.AppendFormat("{0} unused allocation blocks.", mdb.drFreeBks).AppendLine();
 
-            sb.AppendFormat("{0} bytes in the Extents B-Tree", MDB.drXTFlSize).AppendLine();
-            sb.AppendFormat("{0} bytes in the Catalog B-Tree", MDB.drCTFlSize).AppendLine();
+            sb.AppendFormat("{0} bytes in the Extents B-Tree", mdb.drXTFlSize).AppendLine();
+            sb.AppendFormat("{0} bytes in the Catalog B-Tree", mdb.drCTFlSize).AppendLine();
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(MDB.drVN, Encoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(mdb.drVN, Encoding)).AppendLine();
 
             sb.AppendLine("Finder info:");
-            sb.AppendFormat("CNID of bootable system's directory: {0}", MDB.drFndrInfo0).AppendLine();
-            sb.AppendFormat("CNID of first-run application's directory: {0}", MDB.drFndrInfo1).AppendLine();
-            sb.AppendFormat("CNID of previously opened directory: {0}", MDB.drFndrInfo2).AppendLine();
-            sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", MDB.drFndrInfo3).AppendLine();
-            sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", MDB.drFndrInfo5).AppendLine();
-            if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
-                sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", MDB.drFndrInfo6, MDB.drFndrInfo7).AppendLine();
+            sb.AppendFormat("CNID of bootable system's directory: {0}", mdb.drFndrInfo0).AppendLine();
+            sb.AppendFormat("CNID of first-run application's directory: {0}", mdb.drFndrInfo1).AppendLine();
+            sb.AppendFormat("CNID of previously opened directory: {0}", mdb.drFndrInfo2).AppendLine();
+            sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", mdb.drFndrInfo3).AppendLine();
+            sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", mdb.drFndrInfo5).AppendLine();
+            if(mdb.drFndrInfo6 != 0 && mdb.drFndrInfo7 != 0)
+                sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", mdb.drFndrInfo6, mdb.drFndrInfo7).AppendLine();
 
-            if(MDB.drEmbedSigWord == HFSP_MAGIC)
+            if(mdb.drEmbedSigWord == HFSP_MAGIC)
             {
                 sb.AppendLine("Volume wraps a HFS+ volume.");
-                sb.AppendFormat("Starting block of the HFS+ volume: {0}", MDB.xdrStABNt).AppendLine();
-                sb.AppendFormat("Allocations blocks of the HFS+ volume: {0}", MDB.xdrNumABlks).AppendLine();
+                sb.AppendFormat("Starting block of the HFS+ volume: {0}", mdb.xdrStABNt).AppendLine();
+                sb.AppendFormat("Allocations blocks of the HFS+ volume: {0}", mdb.xdrNumABlks).AppendLine();
             }
             else
             {
-                sb.AppendFormat("{0} blocks in volume cache", MDB.drVCSize).AppendLine();
-                sb.AppendFormat("{0} blocks in volume bitmap cache", MDB.drVBMCSize).AppendLine();
-                sb.AppendFormat("{0} blocks in volume common cache", MDB.drCtlCSize).AppendLine();
+                sb.AppendFormat("{0} blocks in volume cache", mdb.drVCSize).AppendLine();
+                sb.AppendFormat("{0} blocks in volume bitmap cache", mdb.drVBMCSize).AppendLine();
+                sb.AppendFormat("{0} blocks in volume common cache", mdb.drCtlCSize).AppendLine();
             }
 
-            if(BB.signature == HFSBB_MAGIC)
+            if(bb.signature == HFSBB_MAGIC)
             {
                 sb.AppendLine("Volume is bootable.");
                 sb.AppendLine();
                 sb.AppendLine("Boot Block:");
-                if((BB.boot_flags & 0x40) == 0x40) sb.AppendLine("Boot block should be executed.");
-                if((BB.boot_flags & 0x80) == 0x80) sb.AppendLine("Boot block is in new unknown format.");
+                if((bb.boot_flags & 0x40) == 0x40) sb.AppendLine("Boot block should be executed.");
+                if((bb.boot_flags & 0x80) == 0x80) sb.AppendLine("Boot block is in new unknown format.");
                 else
                 {
-                    if(BB.boot_flags > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
-                    else if(BB.boot_flags < 0) sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+                    if(bb.boot_flags > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
+                    else if(bb.boot_flags < 0) sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
-                    sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(BB.system_name, Encoding))
+                    sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.system_name, Encoding))
                       .AppendLine();
-                    sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(BB.finder_name, Encoding))
+                    sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.finder_name, Encoding))
                       .AppendLine();
-                    sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(BB.debug_name, Encoding))
+                    sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.debug_name, Encoding))
                       .AppendLine();
                     sb.AppendFormat("Disassembler filename: {0}",
-                                    StringHandlers.PascalToString(BB.disasm_name, Encoding)).AppendLine();
+                                    StringHandlers.PascalToString(bb.disasm_name, Encoding)).AppendLine();
                     sb.AppendFormat("Startup screen filename: {0}",
-                                    StringHandlers.PascalToString(BB.stupscr_name, Encoding)).AppendLine();
+                                    StringHandlers.PascalToString(bb.stupscr_name, Encoding)).AppendLine();
                     sb.AppendFormat("First program to execute at boot: {0}",
-                                    StringHandlers.PascalToString(BB.bootup_name, Encoding)).AppendLine();
-                    sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(BB.clipbrd_name, Encoding))
+                                    StringHandlers.PascalToString(bb.bootup_name, Encoding)).AppendLine();
+                    sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.clipbrd_name, Encoding))
                       .AppendLine();
-                    sb.AppendFormat("Maximum opened files: {0}", BB.max_files * 4).AppendLine();
-                    sb.AppendFormat("Event queue size: {0}", BB.queue_size).AppendLine();
-                    sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", BB.heap_128k).AppendLine();
-                    sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", BB.heap_256k).AppendLine();
-                    sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", BB.heap_512k).AppendLine();
+                    sb.AppendFormat("Maximum opened files: {0}", bb.max_files * 4).AppendLine();
+                    sb.AppendFormat("Event queue size: {0}", bb.queue_size).AppendLine();
+                    sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.heap_128k).AppendLine();
+                    sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.heap_256k).AppendLine();
+                    sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.heap_512k).AppendLine();
                 }
             }
-            else if(MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0)
+            else if(mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 || mdb.drFndrInfo5 != 0)
                 sb.AppendLine("Volume is bootable.");
             else sb.AppendLine("Volume is not bootable.");
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType();
-            if(MDB.drVolBkUp > 0)
+            if(mdb.drVolBkUp > 0)
             {
-                XmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
+                XmlFsType.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
                 XmlFsType.BackupDateSpecified = true;
             }
-            XmlFsType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 ||
-                                 MDB.drFndrInfo5 != 0;
-            XmlFsType.Clusters = MDB.drNmAlBlks;
-            XmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
-            if(MDB.drCrDate > 0)
+            XmlFsType.Bootable = bb.signature == HFSBB_MAGIC || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
+                                 mdb.drFndrInfo5 != 0;
+            XmlFsType.Clusters = mdb.drNmAlBlks;
+            XmlFsType.ClusterSize = (int)mdb.drAlBlkSiz;
+            if(mdb.drCrDate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+                XmlFsType.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
                 XmlFsType.CreationDateSpecified = true;
             }
-            XmlFsType.Dirty = (MDB.drAtrb & 0x100) != 0x100;
-            XmlFsType.Files = MDB.drFilCnt;
+            XmlFsType.Dirty = (mdb.drAtrb & 0x100) != 0x100;
+            XmlFsType.Files = mdb.drFilCnt;
             XmlFsType.FilesSpecified = true;
-            XmlFsType.FreeClusters = MDB.drFreeBks;
+            XmlFsType.FreeClusters = mdb.drFreeBks;
             XmlFsType.FreeClustersSpecified = true;
-            if(MDB.drLsMod > 0)
+            if(mdb.drLsMod > 0)
             {
-                XmlFsType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
+                XmlFsType.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
                 XmlFsType.ModificationDateSpecified = true;
             }
             XmlFsType.Type = "HFS";
-            XmlFsType.VolumeName = StringHandlers.PascalToString(MDB.drVN, Encoding);
-            if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
-                XmlFsType.VolumeSerial = $"{MDB.drFndrInfo6:X8}{MDB.drFndrInfo7:X8}";
+            XmlFsType.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
+            if(mdb.drFndrInfo6 != 0 && mdb.drFndrInfo7 != 0)
+                XmlFsType.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
         }
 
         static byte[] Read2048SectorAs512(IMediaImage imagePlugin, ulong lba)
@@ -301,7 +301,7 @@ namespace DiscImageChef.Filesystems
         ///     Master Directory Block, should be sector 2 in volume
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HFS_MasterDirectoryBlock // Should be sector 2 in volume
+        struct HfsMasterDirectoryBlock // Should be sector 2 in volume
         {
             /// <summary>0x000, Signature, 0x4244</summary>
             public ushort drSigWord;
@@ -394,7 +394,7 @@ namespace DiscImageChef.Filesystems
         ///     Should be sectors 0 and 1 in volume, followed by boot code
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HFS_BootBlock // Should be sectors 0 and 1 in volume
+        struct HfsBootBlock // Should be sectors 0 and 1 in volume
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
             public ushort signature;

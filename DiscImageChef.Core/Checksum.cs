@@ -398,8 +398,8 @@ namespace DiscImageChef.Core
             IChecksum sha384CtxData    = null;
             IChecksum sha512CtxData    = null;
             IChecksum ssctxData        = null;
-            IChecksum f16ctxData = null;
-            IChecksum f32ctxData = null;
+            IChecksum f16CtxData = null;
+            IChecksum f32CtxData = null;
 
             Thread adlerThreadData     = new Thread(UpdateHash);
             Thread crc16ThreadData     = new Thread(UpdateHash);
@@ -494,15 +494,15 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.Fletcher16))
             {
-                f16ctxData            = new Fletcher16Context();
-                HashPacket f16PktData = new HashPacket {Context = f16ctxData, Data = data};
+                f16CtxData            = new Fletcher16Context();
+                HashPacket f16PktData = new HashPacket {Context = f16CtxData, Data = data};
                 f16ThreadData.Start(f16PktData);
             }
 
             if(enabled.HasFlag(EnableChecksum.Fletcher32))
             {
-                f32ctxData            = new Fletcher32Context();
-                HashPacket f32PktData = new HashPacket {Context = f32ctxData, Data = data};
+                f32CtxData            = new Fletcher32Context();
+                HashPacket f32PktData = new HashPacket {Context = f32CtxData, Data = data};
                 f32ThreadData.Start(f32PktData);
             }
             
@@ -582,13 +582,13 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.Fletcher16))
             {
-                chk = new ChecksumType {type = ChecksumTypeType.fletcher16, Value = f16ctxData.End()};
+                chk = new ChecksumType {type = ChecksumTypeType.fletcher16, Value = f16CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Fletcher32))
             {
-                chk = new ChecksumType {type = ChecksumTypeType.fletcher32, Value = f32ctxData.End()};
+                chk = new ChecksumType {type = ChecksumTypeType.fletcher32, Value = f32CtxData.End()};
                 dataChecksums.Add(chk);
             }
 

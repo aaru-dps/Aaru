@@ -45,7 +45,7 @@ namespace DiscImageChef.Core
             bool                       quoted  = false;
             bool                       inValue = false;
             string                     name    = null;
-            string                     value   = null;
+            string                     value;
             StringBuilder              sb      = new StringBuilder();
 
             if(options == null) return parsed;

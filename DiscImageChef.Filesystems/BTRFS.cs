@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         ///     BTRFS magic "_BHRfS_M"
         /// </summary>
-        const ulong btrfsMagic = 0x4D5F53665248425F;
+        const ulong BTRFS_MAGIC = 0x4D5F53665248425F;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding Encoding { get; private set; }
@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("BTRFS Plugin", "partition.PartitionStartSector = {0}", partition.Start);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = 0x{0:X16}", btrfsSb.magic);
 
-            return btrfsSb.magic == btrfsMagic;
+            return btrfsSb.magic == BTRFS_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,

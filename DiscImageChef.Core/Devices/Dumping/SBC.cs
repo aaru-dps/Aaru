@@ -90,10 +90,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   bool                             nometadata, bool                       notrim)
         {
             bool         sense;
-            ulong        blocks;
-            uint         blockSize;
-            uint         logicalBlockSize;
-            uint         physicalBlockSize;
             byte         scsiMediumType     = 0;
             byte         scsiDensityCode    = 0;
             bool         containsFloppyPage = false;
@@ -105,15 +101,14 @@ namespace DiscImageChef.Core.Devices.Dumping
             double       maxSpeed      = double.MinValue;
             double       minSpeed      = double.MaxValue;
             byte[]       readBuffer;
-            uint         blocksToRead;
             bool         aborted = false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
             Modes.DecodedMode? decMode = null;
 
             dumpLog.WriteLine("Initializing reader.");
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
-            blocks    = scsiReader.GetDeviceBlocks();
-            blockSize = scsiReader.LogicalBlockSize;
+            ulong blocks = scsiReader.GetDeviceBlocks();
+            uint blockSize = scsiReader.LogicalBlockSize;
             if(scsiReader.FindReadCommand())
             {
                 dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", scsiReader.ErrorMessage);
@@ -136,9 +131,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            blocksToRead      = scsiReader.BlocksToRead;
-            logicalBlockSize  = blockSize;
-            physicalBlockSize = scsiReader.PhysicalBlockSize;
+            uint blocksToRead = scsiReader.BlocksToRead;
+            uint logicalBlockSize = blockSize;
+            uint physicalBlockSize = scsiReader.PhysicalBlockSize;
 
             if(blocks == 0)
             {
@@ -238,7 +233,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     DicConsole.ErrorWriteLine("Continuing dumping cooked data.");
-                    dumpRaw = false;
                 }
                 else
                 {

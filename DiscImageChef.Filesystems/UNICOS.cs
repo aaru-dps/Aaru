@@ -50,11 +50,11 @@ namespace DiscImageChef.Filesystems
 {
     public class UNICOS : IFilesystem
     {
-        const int NC1MAXPART = 64;
-        const int NC1MAXIREG = 4;
+        const int NC1_MAXPART = 64;
+        const int NC1_MAXIREG = 4;
 
-        const ulong UNICOS_Magic = 0x6e6331667331636e;
-        const ulong UNICOS_Secure = 0xcd076d1771d670cd;
+        const ulong UNICOS_MAGIC = 0x6e6331667331636e;
+        const ulong UNICOS_SECURE = 0xcd076d1771d670cd;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding Encoding { get; private set; }
@@ -76,9 +76,9 @@ namespace DiscImageChef.Filesystems
             unicosSb = BigEndianMarshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
             DicConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
-                                      UNICOS_Magic);
+                                      UNICOS_MAGIC);
 
-            return unicosSb.s_magic == UNICOS_Magic;
+            return unicosSb.s_magic == UNICOS_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -98,12 +98,12 @@ namespace DiscImageChef.Filesystems
 
             unicosSb = BigEndianMarshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
-            if(unicosSb.s_magic != UNICOS_Magic) return;
+            if(unicosSb.s_magic != UNICOS_MAGIC) return;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("UNICOS filesystem");
-            if(unicosSb.s_secure == UNICOS_Secure) sb.AppendLine("Volume is secure");
+            if(unicosSb.s_secure == UNICOS_SECURE) sb.AppendLine("Volume is secure");
             sb.AppendFormat("Volume contains {0} partitions", unicosSb.s_npart).AppendLine();
             sb.AppendFormat("{0} bytes per sector", unicosSb.s_iounit).AppendLine();
             sb.AppendLine("4096 bytes per block");
@@ -145,7 +145,7 @@ namespace DiscImageChef.Filesystems
             public long fd_name; /* Physical device name */
             public uint fd_sblk; /* Start block number */
             public uint fd_nblk; /* Number of blocks */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1MAXIREG)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1_MAXIREG)]
             public nc1ireg_sb[] fd_ireg; /* Inode regions */
         }
 
@@ -178,7 +178,7 @@ namespace DiscImageChef.Filesystems
             public long s_ifract; /* Ratio of inodes to blocks */
             public extent_t s_sfs; /* SFS only blocks */
             public long s_flag; /* Flag word */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1MAXPART)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1_MAXPART)]
             public nc1fdev_sb[] s_part; /* Partition descriptors */
             public long s_iounit; /* Physical block size */
             public long s_numiresblks; /* number of inode reservation blocks */
