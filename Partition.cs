@@ -72,9 +72,7 @@ namespace DiscImageChef.CommonTypes
 
         public override bool Equals(object obj)
         {
-            if(!(obj is Partition)) return false;
-
-            return Equals((Partition)obj);
+            return obj is Partition partition && Equals(partition);
         }
 
         public override int GetHashCode()
