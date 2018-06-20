@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.Console;
 
@@ -292,8 +293,6 @@ namespace DiscImageChef.Checksums
                                               channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
                     return false;
                 }
-
-                return true;
             }
 
             DicConsole.DebugWriteLine("CD checksums", "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
@@ -301,7 +300,7 @@ namespace DiscImageChef.Checksums
             return null;
         }
 
-        static uint ComputeEdc(uint edc, byte[] src, int size)
+        static uint ComputeEdc(uint edc, IReadOnlyList<byte> src, int size)
         {
             int pos                     = 0;
             for(; size > 0; size--) edc = (edc >> 8) ^ edcTable[(edc ^ src[pos++]) & 0xFF];
@@ -309,7 +308,7 @@ namespace DiscImageChef.Checksums
             return edc;
         }
 
-        static bool? CheckCdSectorSubChannel(byte[] subchannel)
+        static bool? CheckCdSectorSubChannel(IReadOnlyList<byte> subchannel)
         {
             bool?  status       = true;
             byte[] qSubChannel  = new byte[12];

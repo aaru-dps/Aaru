@@ -177,15 +177,13 @@ namespace DiscImageChef.Checksums
 
         void fuzzy_try_fork_blockhash()
         {
-            uint obh, nbh;
-
             if(self.Bhend >= NUM_BLOCKHASHES) return;
 
             if(self.Bhend == 0) // assert
                 throw new Exception("Assertion failed");
 
-            obh                     = self.Bhend - 1;
-            nbh                     = self.Bhend;
+            uint obh = self.Bhend - 1;
+            uint nbh = self.Bhend;
             self.Bh[nbh].H          = self.Bh[obh].H;
             self.Bh[nbh].Halfh      = self.Bh[obh].Halfh;
             self.Bh[nbh].Digest[0]  = 0;
@@ -213,13 +211,12 @@ namespace DiscImageChef.Checksums
 
         void fuzzy_engine_step(byte c)
         {
-            ulong h;
             uint  i;
             /* At each character we update the rolling hash and the normal hashes.
              * When the rolling hash hits a reset value then we emit a normal hash
              * as a element of the signature and reset the normal hash. */
             roll_hash(c);
-            h = roll_sum();
+            ulong h = roll_sum();
 
             for(i = self.Bhstart; i < self.Bhend; ++i)
             {
@@ -266,14 +263,13 @@ namespace DiscImageChef.Checksums
             StringBuilder sb = new StringBuilder();
             uint          bi = self.Bhstart;
             uint          h  = roll_sum();
-            int           i, resultOff;
             int           remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
             result               = new byte[FUZZY_MAX_RESULT];
             /* Verify that our elimination was not overeager. */
             if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < self.TotalSize))
                 throw new Exception("Assertion failed");
 
-            resultOff = 0;
+            int resultOff = 0;
 
             /* Initial blocksize guess. */
             while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < self.TotalSize)
@@ -289,7 +285,7 @@ namespace DiscImageChef.Checksums
             if(bi > 0 && self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2) throw new Exception("Assertion failed");
 
             sb.AppendFormat("{0}:", SSDEEP_BS(bi));
-            i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
+            int i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
             if(i <= 0)
                 /* Maybe snprintf has set errno here? */ throw new OverflowException("The input exceeds data types.");
             if(i >= remain) throw new Exception("Assertion failed");
