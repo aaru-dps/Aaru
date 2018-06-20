@@ -404,6 +404,24 @@ namespace DiscImageChef.DiscImages
 
             imageInfo.MediaType = AlcoholMediumTypeToMediaType(header.type);
 
+            Sessions = new List<Session>();
+            foreach(AlcoholSession alcSes in alcSessions.Values)
+            {
+                Session session = new Session();
+
+                if(!alcTracks.TryGetValue(alcSes.firstTrack, out AlcoholTrack startingTrack)) break;
+                if(!alcTracks.TryGetValue(alcSes.lastTrack,  out AlcoholTrack endingTrack)) break;
+                if(!alcTrackExtras.TryGetValue(alcSes.lastTrack, out AlcoholTrackExtra endingTrackExtra)) break;
+
+                session.StartSector     = startingTrack.startLba;
+                session.StartTrack      = alcSes.firstTrack;
+                session.SessionSequence = alcSes.sessionSequence;
+                session.EndSector       = endingTrack.startLba + endingTrackExtra.sectors - 1;
+                session.EndTrack        = alcSes.lastTrack;
+
+                Sessions.Add(session);
+            }
+
             if(isDvd)
             {
                 // TODO: Second layer
@@ -529,24 +547,6 @@ namespace DiscImageChef.DiscImages
             }
 
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", imageInfo.MediaType);
-
-            Sessions = new List<Session>();
-            foreach(AlcoholSession alcSes in alcSessions.Values)
-            {
-                Session session = new Session();
-
-                if(!alcTracks.TryGetValue(alcSes.firstTrack, out AlcoholTrack startingTrack)) break;
-                if(!alcTracks.TryGetValue(alcSes.lastTrack,  out AlcoholTrack endingTrack)) break;
-                if(!alcTrackExtras.TryGetValue(alcSes.lastTrack, out AlcoholTrackExtra endingTrackExtra)) break;
-
-                session.StartSector     = startingTrack.startLba;
-                session.StartTrack      = alcSes.firstTrack;
-                session.SessionSequence = alcSes.sessionSequence;
-                session.EndSector       = endingTrack.startLba + endingTrackExtra.sectors - 1;
-                session.EndTrack        = alcSes.lastTrack;
-
-                Sessions.Add(session);
-            }
 
             Partitions       = new List<Partition>();
             offsetmap        = new Dictionary<uint, ulong>();
