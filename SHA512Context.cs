@@ -114,8 +114,8 @@ namespace DiscImageChef.Checksums
         {
             SHA512     localSha512Provider = SHA512.Create();
             FileStream fileStream          = new FileStream(filename, FileMode.Open);
-            hash                           = localSha512Provider.ComputeHash(fileStream);
-            StringBuilder sha512Output     = new StringBuilder();
+            hash = localSha512Provider.ComputeHash(fileStream);
+            StringBuilder sha512Output = new StringBuilder();
 
             foreach(byte h in hash) sha512Output.Append(h.ToString("x2"));
 
@@ -133,7 +133,7 @@ namespace DiscImageChef.Checksums
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
             SHA512 localSha512Provider = SHA512.Create();
-            hash                       = localSha512Provider.ComputeHash(data, 0, (int)len);
+            hash = localSha512Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha512Output = new StringBuilder();
 
             foreach(byte h in hash) sha512Output.Append(h.ToString("x2"));

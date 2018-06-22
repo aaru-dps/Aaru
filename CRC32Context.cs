@@ -62,7 +62,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 uint entry = (uint)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ CRC32_ISO_POLY;
                     else
@@ -84,7 +84,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 uint entry = (uint)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
@@ -130,7 +130,7 @@ namespace DiscImageChef.Checksums
             StringBuilder crc32Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt     ^ finalSeed).Length; i++)
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^ finalSeed).Length; i++)
                 crc32Output.Append(BigEndianBitConverter.GetBytes(hashInt ^ finalSeed)[i].ToString("x2"));
 
             return crc32Output.ToString();
@@ -171,7 +171,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 uint entry = (uint)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
@@ -223,7 +223,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 uint entry = (uint)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else

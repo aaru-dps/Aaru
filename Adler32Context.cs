@@ -81,7 +81,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            uint finalSum                        = (uint)((sum2 << 16) | sum1);
+            uint finalSum = (uint)((sum2 << 16) | sum1);
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }

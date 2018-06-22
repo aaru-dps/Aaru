@@ -114,8 +114,8 @@ namespace DiscImageChef.Checksums
         {
             SHA256     localSha256Provider = SHA256.Create();
             FileStream fileStream          = new FileStream(filename, FileMode.Open);
-            hash                           = localSha256Provider.ComputeHash(fileStream);
-            StringBuilder sha256Output     = new StringBuilder();
+            hash = localSha256Provider.ComputeHash(fileStream);
+            StringBuilder sha256Output = new StringBuilder();
 
             foreach(byte h in hash) sha256Output.Append(h.ToString("x2"));
 
@@ -133,7 +133,7 @@ namespace DiscImageChef.Checksums
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
             SHA256 localSha256Provider = SHA256.Create();
-            hash                       = localSha256Provider.ComputeHash(data, 0, (int)len);
+            hash = localSha256Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha256Output = new StringBuilder();
 
             foreach(byte h in hash) sha256Output.Append(h.ToString("x2"));

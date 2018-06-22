@@ -114,8 +114,8 @@ namespace DiscImageChef.Checksums
         {
             RIPEMD160  localRipemd160Provider = RIPEMD160.Create();
             FileStream fileStream             = new FileStream(filename, FileMode.Open);
-            hash                              = localRipemd160Provider.ComputeHash(fileStream);
-            StringBuilder ripemd160Output     = new StringBuilder();
+            hash = localRipemd160Provider.ComputeHash(fileStream);
+            StringBuilder ripemd160Output = new StringBuilder();
 
             foreach(byte h in hash) ripemd160Output.Append(h.ToString("x2"));
 
@@ -133,8 +133,8 @@ namespace DiscImageChef.Checksums
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
             RIPEMD160 localRipemd160Provider = RIPEMD160.Create();
-            hash                             = localRipemd160Provider.ComputeHash(data, 0, (int)len);
-            StringBuilder ripemd160Output    = new StringBuilder();
+            hash = localRipemd160Provider.ComputeHash(data, 0, (int)len);
+            StringBuilder ripemd160Output = new StringBuilder();
 
             foreach(byte h in hash) ripemd160Output.Append(h.ToString("x2"));
 

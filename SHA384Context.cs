@@ -114,8 +114,8 @@ namespace DiscImageChef.Checksums
         {
             SHA384     localSha384Provider = SHA384.Create();
             FileStream fileStream          = new FileStream(filename, FileMode.Open);
-            hash                           = localSha384Provider.ComputeHash(fileStream);
-            StringBuilder sha384Output     = new StringBuilder();
+            hash = localSha384Provider.ComputeHash(fileStream);
+            StringBuilder sha384Output = new StringBuilder();
 
             foreach(byte h in hash) sha384Output.Append(h.ToString("x2"));
 
@@ -133,7 +133,7 @@ namespace DiscImageChef.Checksums
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
             SHA384 localSha384Provider = SHA384.Create();
-            hash                       = localSha384Provider.ComputeHash(data, 0, (int)len);
+            hash = localSha384Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha384Output = new StringBuilder();
 
             foreach(byte h in hash) sha384Output.Append(h.ToString("x2"));
