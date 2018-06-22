@@ -75,9 +75,9 @@ namespace DiscImageChef.Decoders.Bluray
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(DDSResponse, 0);
-            decoded.Reserved1 = DDSResponse[2];
-            decoded.Reserved2 = DDSResponse[3];
-            decoded.Signature = BigEndianBitConverter.ToUInt16(DDSResponse, 4);
+            decoded.Reserved1  = DDSResponse[2];
+            decoded.Reserved2  = DDSResponse[3];
+            decoded.Signature  = BigEndianBitConverter.ToUInt16(DDSResponse, 4);
             if(decoded.Signature != DDSIdentifier)
             {
                 DicConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})",
@@ -85,26 +85,26 @@ namespace DiscImageChef.Decoders.Bluray
                 return null;
             }
 
-            decoded.Format = DDSResponse[6];
-            decoded.Reserved3 = DDSResponse[7];
-            decoded.UpdateCount = BigEndianBitConverter.ToUInt32(DDSResponse, 8);
-            decoded.Reserved4 = BigEndianBitConverter.ToUInt64(DDSResponse, 12);
-            decoded.DriveAreaPSN = BigEndianBitConverter.ToUInt32(DDSResponse, 20);
-            decoded.Reserved5 = BigEndianBitConverter.ToUInt32(DDSResponse, 24);
-            decoded.DefectListPSN = BigEndianBitConverter.ToUInt32(DDSResponse, 28);
-            decoded.Reserved6 = BigEndianBitConverter.ToUInt32(DDSResponse, 32);
-            decoded.PSNofLSNZero = BigEndianBitConverter.ToUInt32(DDSResponse, 36);
-            decoded.LastUserAreaLSN = BigEndianBitConverter.ToUInt32(DDSResponse, 40);
-            decoded.ISA0 = BigEndianBitConverter.ToUInt32(DDSResponse, 44);
-            decoded.OSA = BigEndianBitConverter.ToUInt32(DDSResponse, 48);
-            decoded.ISA1 = BigEndianBitConverter.ToUInt32(DDSResponse, 52);
-            decoded.SpareAreaFullFlags = DDSResponse[56];
-            decoded.Reserved7 = DDSResponse[57];
+            decoded.Format                 = DDSResponse[6];
+            decoded.Reserved3              = DDSResponse[7];
+            decoded.UpdateCount            = BigEndianBitConverter.ToUInt32(DDSResponse, 8);
+            decoded.Reserved4              = BigEndianBitConverter.ToUInt64(DDSResponse, 12);
+            decoded.DriveAreaPSN           = BigEndianBitConverter.ToUInt32(DDSResponse, 20);
+            decoded.Reserved5              = BigEndianBitConverter.ToUInt32(DDSResponse, 24);
+            decoded.DefectListPSN          = BigEndianBitConverter.ToUInt32(DDSResponse, 28);
+            decoded.Reserved6              = BigEndianBitConverter.ToUInt32(DDSResponse, 32);
+            decoded.PSNofLSNZero           = BigEndianBitConverter.ToUInt32(DDSResponse, 36);
+            decoded.LastUserAreaLSN        = BigEndianBitConverter.ToUInt32(DDSResponse, 40);
+            decoded.ISA0                   = BigEndianBitConverter.ToUInt32(DDSResponse, 44);
+            decoded.OSA                    = BigEndianBitConverter.ToUInt32(DDSResponse, 48);
+            decoded.ISA1                   = BigEndianBitConverter.ToUInt32(DDSResponse, 52);
+            decoded.SpareAreaFullFlags     = DDSResponse[56];
+            decoded.Reserved7              = DDSResponse[57];
             decoded.DiscTypeSpecificField1 = DDSResponse[58];
-            decoded.Reserved8 = DDSResponse[59];
+            decoded.Reserved8              = DDSResponse[59];
             decoded.DiscTypeSpecificField2 = BigEndianBitConverter.ToUInt32(DDSResponse, 60);
-            decoded.Reserved9 = BigEndianBitConverter.ToUInt32(DDSResponse, 64);
-            decoded.StatusBits = new byte[32];
+            decoded.Reserved9              = BigEndianBitConverter.ToUInt32(DDSResponse, 64);
+            decoded.StatusBits             = new byte[32];
             Array.Copy(DDSResponse, 68, decoded.StatusBits, 0, 32);
             decoded.DiscTypeSpecificData = new byte[DDSResponse.Length - 100];
             Array.Copy(DDSResponse, 100, decoded.DiscTypeSpecificData, 0, DDSResponse.Length - 100);
@@ -137,7 +137,7 @@ namespace DiscImageChef.Decoders.Bluray
             sb.AppendFormat("Blu-ray DDS Disc Type Specific Data in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DiscTypeSpecificData, 80));
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
             if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
@@ -147,7 +147,7 @@ namespace DiscImageChef.Decoders.Bluray
             if(response.Reserved7 != 0) sb.AppendFormat("Reserved7 = 0x{0:X2}", response.Reserved7).AppendLine();
             if(response.Reserved8 != 0) sb.AppendFormat("Reserved8 = 0x{0:X2}", response.Reserved8).AppendLine();
             if(response.Reserved9 != 0) sb.AppendFormat("Reserved9 = 0x{0:X8}", response.Reserved9).AppendLine();
-#endif
+            #endif
 
             return sb.ToString();
         }

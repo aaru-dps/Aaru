@@ -65,9 +65,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             IBM_ModePage_24 decoded = new IBM_ModePage_24();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.ModeControl = pageResponse[2];
-            decoded.VelocitySetting = pageResponse[3];
+            decoded.PS                |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.ModeControl       =  pageResponse[2];
+            decoded.VelocitySetting   =  pageResponse[3];
             decoded.EncryptionEnabled |= (pageResponse[7] & 0x08) == 0x08;
             decoded.EncryptionCapable |= (pageResponse[7] & 0x01) == 0x01;
 
@@ -84,13 +84,13 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             IBM_ModePage_24 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("IBM Vendor-Specific Control Mode Page:");
 
             if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            sb.AppendFormat("\tVendor-specific mode control: {0}", page.ModeControl);
+            sb.AppendFormat("\tVendor-specific mode control: {0}",     page.ModeControl);
             sb.AppendFormat("\tVendor-specific velocity setting: {0}", page.VelocitySetting);
 
             if(!page.EncryptionCapable) return sb.ToString();

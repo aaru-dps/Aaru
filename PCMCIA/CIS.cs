@@ -46,8 +46,8 @@ namespace DiscImageChef.Decoders.PCMCIA
         // TODO: Handle links? Or are they removed in lower layers of the operating system drivers?
         public static Tuple[] GetTuples(byte[] data)
         {
-            List<Tuple> tuples = new List<Tuple>();
-            int position = 0;
+            List<Tuple> tuples   = new List<Tuple>();
+            int         position = 0;
 
             while(position < data.Length)
             {
@@ -84,25 +84,25 @@ namespace DiscImageChef.Decoders.PCMCIA
         {
             if((data?.Length - 2) % 6 != 0) return null;
 
-            DeviceGeometryTuple tuple = new DeviceGeometryTuple();
+            DeviceGeometryTuple  tuple      = new DeviceGeometryTuple();
             List<DeviceGeometry> geometries = new List<DeviceGeometry>();
 
             for(int position = 2; position < data.Length; position += 6)
             {
                 DeviceGeometry geometry = new DeviceGeometry
                 {
-                    CardInterface = data[position],
+                    CardInterface  = data[position],
                     EraseBlockSize = data[position + 1],
-                    ReadBlockSize = data[position + 2],
+                    ReadBlockSize  = data[position + 2],
                     WriteBlockSize = data[position + 3],
-                    Partitions = data[position + 4],
-                    Interleaving = data[position + 5]
+                    Partitions     = data[position + 4],
+                    Interleaving   = data[position + 5]
                 };
                 geometries.Add(geometry);
             }
 
-            tuple.Code = (TupleCodes)data[0];
-            tuple.Link = data[1];
+            tuple.Code       = (TupleCodes)data[0];
+            tuple.Link       = data[1];
             tuple.Geometries = geometries.ToArray();
 
             return tuple;
@@ -128,7 +128,7 @@ namespace DiscImageChef.Decoders.PCMCIA
                                 (1 << (geometry.WriteBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
                 sb.AppendFormat("\t\tPartition alignment = {0} bytes",
                                 (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1)) *
-                                (1 << (geometry.Partitions - 1))).AppendLine();
+                                (1 << (geometry.Partitions     - 1))).AppendLine();
             }
 
             return sb.ToString();
@@ -159,10 +159,10 @@ namespace DiscImageChef.Decoders.PCMCIA
 
             return new ManufacturerIdentificationTuple
             {
-                Code = (TupleCodes)data[0],
-                Link = data[1],
+                Code           = (TupleCodes)data[0],
+                Link           = data[1],
                 ManufacturerID = BitConverter.ToUInt16(data, 2),
-                CardID = BitConverter.ToUInt16(data, 4)
+                CardID         = BitConverter.ToUInt16(data, 4)
             };
         }
 
@@ -201,15 +201,15 @@ namespace DiscImageChef.Decoders.PCMCIA
 
             if(data.Length < 4) return null;
 
-            List<byte> buffer = new List<byte>();
-            List<string> strings = null;
-            bool firstString = false;
-            bool secondString = false;
+            List<byte>   buffer       = new List<byte>();
+            List<string> strings      = null;
+            bool         firstString  = false;
+            bool         secondString = false;
 
             Level1VersionTuple tuple = new Level1VersionTuple
             {
-                Code = (TupleCodes)data[0],
-                Link = data[1],
+                Code         = (TupleCodes)data[0],
+                Link         = data[1],
                 MajorVersion = data[2],
                 MinorVersion = data[3]
             };
@@ -225,8 +225,8 @@ namespace DiscImageChef.Decoders.PCMCIA
                 if(!firstString)
                 {
                     tuple.Manufacturer = StringHandlers.CToString(buffer.ToArray());
-                    buffer = new List<byte>();
-                    firstString = true;
+                    buffer             = new List<byte>();
+                    firstString        = true;
                     continue;
                 }
 
@@ -234,8 +234,8 @@ namespace DiscImageChef.Decoders.PCMCIA
                 if(!secondString)
                 {
                     tuple.Product = StringHandlers.CToString(buffer.ToArray());
-                    buffer = new List<byte>();
-                    firstString = true;
+                    buffer        = new List<byte>();
+                    firstString   = true;
                     continue;
                 }
 

@@ -48,17 +48,23 @@ namespace DiscImageChef.Decoders.Sega
         public struct IPBin
         {
             /// <summary>Must be "SEGA SEGASATURN "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] SegaHardwareID;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] SegaHardwareID;
             /// <summary>0x010, "SEGA ENTERPRISES"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] maker_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] maker_id;
             /// <summary>0x020, Product number</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] product_no;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public byte[] product_no;
             /// <summary>0x02A, Product version</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] product_version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] product_version;
             /// <summary>0x030, YYYYMMDD</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] release_date;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] release_date;
             /// <summary>0x038, "CD-"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] saturn_media;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] saturn_media;
             /// <summary>0x03B, Disc number</summary>
             public byte disc_no;
             /// <summary>// 0x03C, '/'</summary>
@@ -66,13 +72,17 @@ namespace DiscImageChef.Decoders.Sega
             /// <summary>// 0x03D, Total number of discs</summary>
             public byte disc_total_nos;
             /// <summary>0x03E, "  "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] spare_space1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] spare_space1;
             /// <summary>0x040, Region codes, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] region_codes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] region_codes;
             /// <summary>0x050, Supported peripherals, see above</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] peripherals;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] peripherals;
             /// <summary>0x060, Game name, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)] public byte[] product_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)]
+            public byte[] product_name;
         }
 
         public static IPBin? DecodeIPBin(byte[] ipbin_sector)
@@ -128,7 +138,7 @@ namespace DiscImageChef.Decoders.Sega
             IPBinInformation.AppendLine("--------------------------------");
 
             // Decoding all data
-            DateTime ipbindate;
+            DateTime    ipbindate;
             CultureInfo provider = CultureInfo.InvariantCulture;
             ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
             IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name))

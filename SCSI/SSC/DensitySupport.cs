@@ -45,32 +45,32 @@ namespace DiscImageChef.Decoders.SCSI.SSC
     {
         public struct DensitySupportHeader
         {
-            public ushort length;
-            public ushort reserved;
+            public ushort                     length;
+            public ushort                     reserved;
             public DensitySupportDescriptor[] descriptors;
         }
 
         public struct MediaTypeSupportHeader
         {
-            public ushort length;
-            public ushort reserved;
+            public ushort                       length;
+            public ushort                       reserved;
             public MediaTypeSupportDescriptor[] descriptors;
         }
 
         public struct DensitySupportDescriptor
         {
-            public byte primaryCode;
-            public byte secondaryCode;
-            public bool writable;
-            public bool duplicate;
-            public bool defaultDensity;
-            public byte reserved;
-            public bool lenvalid;
+            public byte   primaryCode;
+            public byte   secondaryCode;
+            public bool   writable;
+            public bool   duplicate;
+            public bool   defaultDensity;
+            public byte   reserved;
+            public bool   lenvalid;
             public ushort len;
-            public uint bpmm;
+            public uint   bpmm;
             public ushort width;
             public ushort tracks;
-            public uint capacity;
+            public uint   capacity;
             public string organization;
             public string name;
             public string description;
@@ -78,15 +78,15 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public struct MediaTypeSupportDescriptor
         {
-            public byte mediumType;
-            public byte reserved1;
+            public byte   mediumType;
+            public byte   reserved1;
             public ushort len;
-            public byte numberOfCodes;
+            public byte   numberOfCodes;
             public byte[] densityCodes;
             public ushort width;
             public ushort length;
-            public byte reserved2;
-            public byte reserved3;
+            public byte   reserved2;
+            public byte   reserved3;
             public string organization;
             public string name;
             public string description;
@@ -103,46 +103,52 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             if(response.Length != responseLen) return null;
 
             List<DensitySupportDescriptor> descriptors = new List<DensitySupportDescriptor>();
-            int offset = 4;
+            int                            offset      = 4;
 
             while(offset < response.Length)
             {
                 DensitySupportDescriptor descriptor = new DensitySupportDescriptor
                 {
-                    primaryCode = response[offset + 0],
-                    secondaryCode = response[offset + 1],
-                    writable = (response[offset + 2] & 0x80) == 0x80,
-                    duplicate = (response[offset + 2] & 0x40) == 0x40,
+                    primaryCode    = response[offset + 0],
+                    secondaryCode  = response[offset + 1],
+                    writable       = (response[offset + 2] & 0x80) == 0x80,
+                    duplicate      = (response[offset + 2] & 0x40) == 0x40,
                     defaultDensity = (response[offset + 2] & 0x20) == 0x20,
-                    reserved = (byte)((response[offset + 2] & 0x1E) >> 1),
-                    lenvalid = (response[offset + 2] & 0x01) == 0x01,
-                    len = (ushort)((response[offset + 3] << 8) + response[offset + 4]),
-                    bpmm = (uint)((response[offset + 5] << 16) + (response[offset + 6] << 8) + response[offset + 7]),
-                    width = (ushort)((response[offset + 8] << 8) + response[offset + 9]),
-                    tracks = (ushort)((response[offset + 10] << 8) + response[offset + 11]),
+                    reserved       = (byte)((response[offset + 2] & 0x1E) >> 1),
+                    lenvalid =
+                        (response[offset + 2] &
+                         0x01) == 0x01,
+                    len =
+                        (ushort)((response[offset + 3] << 8) + response[offset + 4]),
+                    bpmm =
+                        (uint)((response[offset + 5] << 16) + (response[offset + 6] << 8) + response[offset + 7]),
+                    width =
+                        (ushort)((response[offset + 8] << 8) + response[offset + 9]),
+                    tracks =
+                        (ushort)((response[offset + 10] << 8) + response[offset + 11]),
                     capacity = (uint)((response[offset + 12] << 24) + (response[offset + 13] << 16) +
-                                      (response[offset + 14] << 8) + response[offset + 15])
+                                      (response[offset + 14] << 8)  + response[offset + 15])
                 };
                 byte[] tmp = new byte[8];
                 Array.Copy(response, offset + 16, tmp, 0, 8);
                 descriptor.organization = StringHandlers.CToString(tmp).Trim();
-                tmp = new byte[8];
+                tmp                     = new byte[8];
                 Array.Copy(response, offset + 24, tmp, 0, 8);
                 descriptor.name = StringHandlers.CToString(tmp).Trim();
-                tmp = new byte[20];
+                tmp             = new byte[20];
                 Array.Copy(response, offset + 32, tmp, 0, 20);
                 descriptor.description = StringHandlers.CToString(tmp).Trim();
 
                 if(descriptor.lenvalid) offset += descriptor.len + 5;
-                else offset += 52;
+                else offset                    += 52;
 
                 descriptors.Add(descriptor);
             }
 
             DensitySupportHeader decoded = new DensitySupportHeader
             {
-                length = responseLen,
-                reserved = (ushort)((response[2] << 8) + response[3] + 2),
+                length      = responseLen,
+                reserved    = (ushort)((response[2] << 8) + response[3] + 2),
                 descriptors = descriptors.ToArray()
             };
 
@@ -154,7 +160,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             if(density == null) return null;
 
             DensitySupportHeader decoded = density.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder        sb      = new StringBuilder();
 
             foreach(DensitySupportDescriptor descriptor in decoded.descriptors)
             {
@@ -192,32 +198,32 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             if(response.Length != responseLen) return null;
 
             List<MediaTypeSupportDescriptor> descriptors = new List<MediaTypeSupportDescriptor>();
-            int offset = 4;
+            int                              offset      = 4;
 
             while(offset < response.Length)
             {
                 MediaTypeSupportDescriptor descriptor = new MediaTypeSupportDescriptor
                 {
                     mediumType = response[offset + 0],
-                    reserved1 = response[offset + 1],
-                    len = (ushort)((response[offset + 2] << 8) + response[offset + 3])
+                    reserved1  = response[offset + 1],
+                    len        = (ushort)((response[offset + 2] << 8) + response[offset + 3])
                 };
                 if(descriptor.len != 52) return null;
 
                 descriptor.numberOfCodes = response[offset + 4];
-                descriptor.densityCodes = new byte[9];
-                Array.Copy(response, offset + 5, descriptor.densityCodes, 0, 9);
-                descriptor.width = (ushort)((response[offset + 14] << 8) + response[offset + 15]);
-                descriptor.length = (ushort)((response[offset + 16] << 8) + response[offset + 17]);
+                descriptor.densityCodes  = new byte[9];
+                Array.Copy(response, offset                                  + 5, descriptor.densityCodes, 0, 9);
+                descriptor.width     = (ushort)((response[offset + 14] << 8) + response[offset + 15]);
+                descriptor.length    = (ushort)((response[offset + 16] << 8) + response[offset + 17]);
                 descriptor.reserved1 = response[offset + 18];
                 descriptor.reserved1 = response[offset + 19];
                 byte[] tmp = new byte[8];
                 Array.Copy(response, offset + 20, tmp, 0, 8);
                 descriptor.organization = StringHandlers.CToString(tmp).Trim();
-                tmp = new byte[8];
+                tmp                     = new byte[8];
                 Array.Copy(response, offset + 28, tmp, 0, 8);
                 descriptor.name = StringHandlers.CToString(tmp).Trim();
-                tmp = new byte[20];
+                tmp             = new byte[20];
                 Array.Copy(response, offset + 36, tmp, 0, 20);
                 descriptor.description = StringHandlers.CToString(tmp).Trim();
 
@@ -228,8 +234,8 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
             MediaTypeSupportHeader decoded = new MediaTypeSupportHeader
             {
-                length = responseLen,
-                reserved = (ushort)((response[2] << 8) + response[3] + 2),
+                length      = responseLen,
+                reserved    = (ushort)((response[2] << 8) + response[3] + 2),
                 descriptors = descriptors.ToArray()
             };
 
@@ -241,7 +247,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             if(mediumType == null) return null;
 
             MediaTypeSupportHeader decoded = mediumType.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder          sb      = new StringBuilder();
 
             foreach(MediaTypeSupportDescriptor descriptor in decoded.descriptors)
             {

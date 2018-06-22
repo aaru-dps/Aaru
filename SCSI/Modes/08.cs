@@ -150,32 +150,32 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_08 decoded = new ModePage_08();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS  |= (pageResponse[0] & 0x80) == 0x80;
             decoded.WCE |= (pageResponse[2] & 0x04) == 0x04;
-            decoded.MF |= (pageResponse[2] & 0x02) == 0x02;
+            decoded.MF  |= (pageResponse[2] & 0x02) == 0x02;
             decoded.RCD |= (pageResponse[2] & 0x01) == 0x01;
 
             decoded.DemandReadRetentionPrio = (byte)((pageResponse[3] & 0xF0) >> 4);
-            decoded.WriteRetentionPriority = (byte)(pageResponse[3] & 0x0F);
-            decoded.DisablePreFetch = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
-            decoded.MinimumPreFetch = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.MaximumPreFetch = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
-            decoded.MaximumPreFetchCeiling = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.WriteRetentionPriority  = (byte)(pageResponse[3] & 0x0F);
+            decoded.DisablePreFetch         = (ushort)((pageResponse[4]  << 8) + pageResponse[5]);
+            decoded.MinimumPreFetch         = (ushort)((pageResponse[6]  << 8) + pageResponse[7]);
+            decoded.MaximumPreFetch         = (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
+            decoded.MaximumPreFetchCeiling  = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
             if(pageResponse.Length < 20) return decoded;
 
-            decoded.IC |= (pageResponse[2] & 0x80) == 0x80;
+            decoded.IC   |= (pageResponse[2] & 0x80) == 0x80;
             decoded.ABPF |= (pageResponse[2] & 0x40) == 0x40;
-            decoded.CAP |= (pageResponse[2] & 0x20) == 0x20;
+            decoded.CAP  |= (pageResponse[2] & 0x20) == 0x20;
             decoded.Disc |= (pageResponse[2] & 0x10) == 0x10;
             decoded.Size |= (pageResponse[2] & 0x08) == 0x08;
 
-            decoded.FSW |= (pageResponse[12] & 0x80) == 0x80;
+            decoded.FSW   |= (pageResponse[12] & 0x80) == 0x80;
             decoded.LBCSS |= (pageResponse[12] & 0x40) == 0x40;
-            decoded.DRA |= (pageResponse[12] & 0x20) == 0x20;
+            decoded.DRA   |= (pageResponse[12] & 0x20) == 0x20;
 
-            decoded.CacheSegments = pageResponse[13];
-            decoded.CacheSegmentSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+            decoded.CacheSegments       = pageResponse[13];
+            decoded.CacheSegmentSize    = (ushort)((pageResponse[14] << 8)                          + pageResponse[15]);
             decoded.NonCacheSegmentSize = (uint)((pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
 
             decoded.NV_DIS |= (pageResponse[12] & 0x01) == 0x01;
@@ -192,8 +192,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_08 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_08   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Caching mode page:");
 
@@ -254,8 +254,8 @@ namespace DiscImageChef.Decoders.SCSI
                           .AppendLine();
                     if(page.MaximumPreFetchCeiling > 0)
                         sb
-                            .AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more",
-                                          page.MaximumPreFetchCeiling).AppendLine();
+                           .AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more",
+                                         page.MaximumPreFetchCeiling).AppendLine();
 
                     if(page.IC)
                         sb.AppendLine("\tDevice should use number of cache segments or cache segment size for caching");
@@ -286,8 +286,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.NonCacheSegmentSize > 0)
                 sb
-                    .AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
-                                  page.NonCacheSegmentSize).AppendLine();
+                   .AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
+                                 page.NonCacheSegmentSize).AppendLine();
 
             if(page.NV_DIS) sb.AppendLine("\tNon-Volatile cache is disabled");
 

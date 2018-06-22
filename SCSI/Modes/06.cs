@@ -70,7 +70,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_06 decoded = new ModePage_06();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS   |= (pageResponse[0] & 0x80) == 0x80;
             decoded.RUBR |= (pageResponse[2] & 0x01) == 0x01;
 
             return decoded;
@@ -85,8 +85,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_06 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_06   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI optical memory:");
 

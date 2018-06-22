@@ -102,12 +102,12 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
             decoded.audioVisualMode |= (pageResponse[2] & 0x80) == 0x80;
-            decoded.streamingMode |= (pageResponse[2] & 0x40) == 0x40;
-            decoded.Reserved1 = (byte)((pageResponse[2] & 0x3C) >> 2);
-            decoded.verifyMode = (Fujitsu_VerifyModes)(pageResponse[2] & 0x03);
+            decoded.streamingMode   |= (pageResponse[2] & 0x40) == 0x40;
+            decoded.Reserved1       =  (byte)((pageResponse[2] & 0x3C) >> 2);
+            decoded.verifyMode      =  (Fujitsu_VerifyModes)(pageResponse[2] & 0x03);
 
             decoded.Reserved2 = (byte)((pageResponse[3] & 0xE0) >> 5);
-            decoded.devType = (PeripheralDeviceTypes)(pageResponse[3] & 0x1F);
+            decoded.devType   = (PeripheralDeviceTypes)(pageResponse[3] & 0x1F);
 
             decoded.Reserved3 = new byte[4];
             Array.Copy(pageResponse, 4, decoded.Reserved3, 0, 4);
@@ -125,7 +125,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Fujitsu_ModePage_3E page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder       sb   = new StringBuilder();
 
             sb.AppendLine("Fujitsu Verify Control Page:");
 

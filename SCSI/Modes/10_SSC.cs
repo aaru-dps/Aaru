@@ -176,39 +176,39 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_10_SSC decoded = new ModePage_10_SSC();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.CAP |= (pageResponse[2] & 0x40) == 0x40;
-            decoded.CAF |= (pageResponse[2] & 0x20) == 0x20;
-            decoded.ActiveFormat = (byte)(pageResponse[2] & 0x1F);
-            decoded.ActivePartition = pageResponse[3];
-            decoded.WriteBufferFullRatio = pageResponse[4];
-            decoded.ReadBufferEmptyRatio = pageResponse[5];
-            decoded.WriteDelayTime = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.DBR |= (pageResponse[8] & 0x80) == 0x80;
-            decoded.BIS |= (pageResponse[8] & 0x40) == 0x40;
-            decoded.RSmk |= (pageResponse[8] & 0x20) == 0x20;
-            decoded.AVC |= (pageResponse[8] & 0x10) == 0x10;
-            decoded.RBO |= (pageResponse[8] & 0x02) == 0x02;
-            decoded.REW |= (pageResponse[8] & 0x01) == 0x01;
-            decoded.EEG |= (pageResponse[10] & 0x10) == 0x10;
-            decoded.SEW |= (pageResponse[10] & 0x08) == 0x08;
-            decoded.SOCF = (byte)((pageResponse[8] & 0x0C) >> 2);
+            decoded.PS                   |= (pageResponse[0]       & 0x80) == 0x80;
+            decoded.CAP                  |= (pageResponse[2]       & 0x40) == 0x40;
+            decoded.CAF                  |= (pageResponse[2]       & 0x20) == 0x20;
+            decoded.ActiveFormat         =  (byte)(pageResponse[2] & 0x1F);
+            decoded.ActivePartition      =  pageResponse[3];
+            decoded.WriteBufferFullRatio =  pageResponse[4];
+            decoded.ReadBufferEmptyRatio =  pageResponse[5];
+            decoded.WriteDelayTime       =  (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.DBR                  |= (pageResponse[8]  & 0x80) == 0x80;
+            decoded.BIS                  |= (pageResponse[8]  & 0x40) == 0x40;
+            decoded.RSmk                 |= (pageResponse[8]  & 0x20) == 0x20;
+            decoded.AVC                  |= (pageResponse[8]  & 0x10) == 0x10;
+            decoded.RBO                  |= (pageResponse[8]  & 0x02) == 0x02;
+            decoded.REW                  |= (pageResponse[8]  & 0x01) == 0x01;
+            decoded.EEG                  |= (pageResponse[10] & 0x10) == 0x10;
+            decoded.SEW                  |= (pageResponse[10] & 0x08) == 0x08;
+            decoded.SOCF                 =  (byte)((pageResponse[8] & 0x0C) >> 2);
             decoded.BufferSizeEarlyWarning =
                 (uint)((pageResponse[11] << 16) + (pageResponse[12] << 8) + pageResponse[13]);
             decoded.SelectedCompression = pageResponse[14];
 
-            decoded.SWP |= (pageResponse[10] & 0x04) == 0x04;
+            decoded.SWP    |= (pageResponse[10] & 0x04) == 0x04;
             decoded.ASOCWP |= (pageResponse[15] & 0x04) == 0x04;
             decoded.PERSWP |= (pageResponse[15] & 0x02) == 0x02;
-            decoded.PRMWP |= (pageResponse[15] & 0x01) == 0x01;
+            decoded.PRMWP  |= (pageResponse[15] & 0x01) == 0x01;
 
             decoded.BAML |= (pageResponse[10] & 0x02) == 0x02;
-            decoded.BAM |= (pageResponse[10] & 0x01) == 0x01;
+            decoded.BAM  |= (pageResponse[10] & 0x01) == 0x01;
 
             decoded.RewindOnReset = (byte)((pageResponse[15] & 0x18) >> 3);
 
-            decoded.OIR |= (pageResponse[15] & 0x20) == 0x20;
-            decoded.WTRE = (byte)((pageResponse[15] & 0xC0) >> 6);
+            decoded.OIR  |= (pageResponse[15] & 0x20) == 0x20;
+            decoded.WTRE =  (byte)((pageResponse[15] & 0xC0) >> 6);
 
             return decoded;
         }
@@ -223,7 +223,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_10_SSC page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Device configuration page:");
 
@@ -236,8 +236,8 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\tRead buffer shall have an empty ratio of {0} before more data is read from medium",
                             page.ReadBufferEmptyRatio).AppendLine();
             sb
-                .AppendFormat("\tDrive will delay {0} ms before buffered data is forcefully written to the medium even before buffer is full",
-                              page.WriteDelayTime * 100).AppendLine();
+               .AppendFormat("\tDrive will delay {0} ms before buffered data is forcefully written to the medium even before buffer is full",
+                             page.WriteDelayTime * 100).AppendLine();
             if(page.DBR)
             {
                 sb.AppendLine("\tDrive supports recovering data from buffer");
@@ -245,6 +245,7 @@ namespace DiscImageChef.Decoders.SCSI
                                   ? "\tRecovered buffer data comes in LIFO order"
                                   : "\tRecovered buffer data comes in FIFO order");
             }
+
             if(page.BIS) sb.AppendLine("\tMedium supports block IDs");
             if(page.RSmk) sb.AppendLine("\tDrive reports setmarks");
             switch(page.SOCF)

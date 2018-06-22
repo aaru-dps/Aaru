@@ -41,35 +41,35 @@ namespace DiscImageChef.Decoders.SecureDigital
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class CSD
     {
-        public byte Structure;
-        public byte TAAC;
-        public byte NSAC;
-        public byte Speed;
+        public byte   Structure;
+        public byte   TAAC;
+        public byte   NSAC;
+        public byte   Speed;
         public ushort Classes;
-        public byte ReadBlockLength;
-        public bool ReadsPartialBlocks;
-        public bool WriteMisalignment;
-        public bool ReadMisalignment;
-        public bool DSRImplemented;
-        public uint Size;
-        public byte ReadCurrentAtVddMin;
-        public byte ReadCurrentAtVddMax;
-        public byte WriteCurrentAtVddMin;
-        public byte WriteCurrentAtVddMax;
-        public byte SizeMultiplier;
-        public bool EraseBlockEnable;
-        public byte EraseSectorSize;
-        public byte WriteProtectGroupSize;
-        public bool WriteProtectGroupEnable;
-        public byte WriteSpeedFactor;
-        public byte WriteBlockLength;
-        public bool WritesPartialBlocks;
-        public bool FileFormatGroup;
-        public bool Copy;
-        public bool PermanentWriteProtect;
-        public bool TemporaryWriteProtect;
-        public byte FileFormat;
-        public byte CRC;
+        public byte   ReadBlockLength;
+        public bool   ReadsPartialBlocks;
+        public bool   WriteMisalignment;
+        public bool   ReadMisalignment;
+        public bool   DSRImplemented;
+        public uint   Size;
+        public byte   ReadCurrentAtVddMin;
+        public byte   ReadCurrentAtVddMax;
+        public byte   WriteCurrentAtVddMin;
+        public byte   WriteCurrentAtVddMax;
+        public byte   SizeMultiplier;
+        public bool   EraseBlockEnable;
+        public byte   EraseSectorSize;
+        public byte   WriteProtectGroupSize;
+        public bool   WriteProtectGroupEnable;
+        public byte   WriteSpeedFactor;
+        public byte   WriteBlockLength;
+        public bool   WritesPartialBlocks;
+        public bool   FileFormatGroup;
+        public bool   Copy;
+        public bool   PermanentWriteProtect;
+        public bool   TemporaryWriteProtect;
+        public byte   FileFormat;
+        public byte   CRC;
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -100,39 +100,40 @@ namespace DiscImageChef.Decoders.SecureDigital
 
             CSD csd = new CSD
             {
-                Structure = (byte)((response[0] & 0xC0) >> 6),
-                TAAC = response[1],
-                NSAC = response[2],
-                Speed = response[3],
-                Classes = (ushort)((response[4] << 4) + ((response[5] & 0xF0) >> 4)),
-                ReadBlockLength = (byte)(response[5] & 0x0F),
-                ReadsPartialBlocks = (response[6] & 0x80) == 0x80,
-                WriteMisalignment = (response[6] & 0x40) == 0x40,
-                ReadMisalignment = (response[6] & 0x20) == 0x20,
-                DSRImplemented = (response[6] & 0x10) == 0x10,
-                EraseBlockEnable = (response[10] & 0x40) == 0x40,
-                EraseSectorSize = (byte)(((response[10] & 0x3F) << 1) + ((response[11] & 0x80) >> 7)),
-                WriteProtectGroupSize = (byte)(response[11] & 0x7F),
-                WriteProtectGroupEnable = (response[12] & 0x80) == 0x80,
-                WriteSpeedFactor = (byte)((response[12] & 0x1C) >> 2),
-                WriteBlockLength = (byte)(((response[12] & 0x03) << 2) + ((response[13] & 0xC0) >> 6)),
-                WritesPartialBlocks = (response[13] & 0x20) == 0x20,
-                FileFormatGroup = (response[14] & 0x80) == 0x80,
-                Copy = (response[14] & 0x40) == 0x40,
-                PermanentWriteProtect = (response[14] & 0x20) == 0x20,
-                TemporaryWriteProtect = (response[14] & 0x10) == 0x10,
-                FileFormat = (byte)((response[14] & 0x0C) >> 2),
-                CRC = (byte)((response[15] & 0xFE) >> 1)
+                Structure               = (byte)((response[0] & 0xC0) >> 6),
+                TAAC                    = response[1],
+                NSAC                    = response[2],
+                Speed                   = response[3],
+                Classes                 = (ushort)((response[4] << 4) + ((response[5] & 0xF0) >> 4)),
+                ReadBlockLength         = (byte)(response[5] & 0x0F),
+                ReadsPartialBlocks      = (response[6]       & 0x80) == 0x80,
+                WriteMisalignment       = (response[6]       & 0x40) == 0x40,
+                ReadMisalignment        = (response[6]       & 0x20) == 0x20,
+                DSRImplemented          = (response[6]       & 0x10) == 0x10,
+                EraseBlockEnable        = (response[10]      & 0x40) == 0x40,
+                EraseSectorSize         = (byte)(((response[10] & 0x3F) << 1) + ((response[11] & 0x80) >> 7)),
+                WriteProtectGroupSize   = (byte)(response[11] & 0x7F),
+                WriteProtectGroupEnable = (response[12]       & 0x80) == 0x80,
+                WriteSpeedFactor        = (byte)((response[12] & 0x1C) >> 2),
+                WriteBlockLength        = (byte)(((response[12] & 0x03) << 2) + ((response[13] & 0xC0) >> 6)),
+                WritesPartialBlocks     = (response[13] & 0x20) == 0x20,
+                FileFormatGroup         = (response[14] & 0x80) == 0x80,
+                Copy                    = (response[14] & 0x40) == 0x40,
+                PermanentWriteProtect   = (response[14] & 0x20) == 0x20,
+                TemporaryWriteProtect   = (response[14] & 0x10) == 0x10,
+                FileFormat              = (byte)((response[14] & 0x0C) >> 2),
+                CRC                     = (byte)((response[15] & 0xFE) >> 1)
             };
 
             if(csd.Structure == 0)
             {
-                csd.Size = (ushort)(((response[6] & 0x03) << 10) + (response[7] << 2) + ((response[8] & 0xC0) >> 6));
-                csd.ReadCurrentAtVddMin = (byte)((response[8] & 0x38) >> 3);
-                csd.ReadCurrentAtVddMax = (byte)(response[8] & 0x07);
+                csd.Size =
+                    (ushort)(((response[6] & 0x03) << 10) + (response[7] << 2) + ((response[8] & 0xC0) >> 6));
+                csd.ReadCurrentAtVddMin  = (byte)((response[8] & 0x38) >> 3);
+                csd.ReadCurrentAtVddMax  = (byte)(response[8] & 0x07);
                 csd.WriteCurrentAtVddMin = (byte)((response[9] & 0xE0) >> 5);
                 csd.WriteCurrentAtVddMax = (byte)((response[9] & 0x1C) >> 2);
-                csd.SizeMultiplier = (byte)(((response[9] & 0x03) << 1) + ((response[10] & 0x80) >> 7));
+                csd.SizeMultiplier       = (byte)(((response[9] & 0x03) << 1) + ((response[10] & 0x80) >> 7));
             }
             else csd.Size = (uint)(((response[7] & 0x3F) << 16) + (response[8] << 8) + response[9]);
 
@@ -145,7 +146,7 @@ namespace DiscImageChef.Decoders.SecureDigital
 
             double unitFactor = 0;
             double multiplier = 0;
-            string unit = "";
+            string unit       = "";
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("SecureDigital Device Specific Data Register:");
@@ -162,35 +163,35 @@ namespace DiscImageChef.Decoders.SecureDigital
             switch(csd.TAAC & 0x07)
             {
                 case 0:
-                    unit = "ns";
+                    unit       = "ns";
                     unitFactor = 1;
                     break;
                 case 1:
-                    unit = "ns";
+                    unit       = "ns";
                     unitFactor = 10;
                     break;
                 case 2:
-                    unit = "ns";
+                    unit       = "ns";
                     unitFactor = 100;
                     break;
                 case 3:
-                    unit = "μs";
+                    unit       = "μs";
                     unitFactor = 1;
                     break;
                 case 4:
-                    unit = "μs";
+                    unit       = "μs";
                     unitFactor = 10;
                     break;
                 case 5:
-                    unit = "μs";
+                    unit       = "μs";
                     unitFactor = 100;
                     break;
                 case 6:
-                    unit = "ms";
+                    unit       = "ms";
                     unitFactor = 1;
                     break;
                 case 7:
-                    unit = "ms";
+                    unit       = "ms";
                     unitFactor = 10;
                     break;
             }
@@ -268,7 +269,7 @@ namespace DiscImageChef.Decoders.SecureDigital
                     unitFactor = 100;
                     break;
                 default:
-                    unit = "unknown";
+                    unit       = "unknown";
                     unitFactor = 0;
                     break;
             }
@@ -329,7 +330,9 @@ namespace DiscImageChef.Decoders.SecureDigital
             sb.AppendFormat("\tDevice's transfer speed: {0}{1}", result, unit).AppendLine();
 
             unit = "";
-            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1) if((csd.Classes & mask) == mask) unit += $" {cl}";
+            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1)
+                if((csd.Classes & mask) == mask)
+                    unit += $" {cl}";
 
             sb.AppendFormat("\tDevice support command classes {0}", unit).AppendLine();
             sb.AppendFormat("\tRead block length is {0} bytes", Math.Pow(2, csd.ReadBlockLength)).AppendLine();
@@ -347,7 +350,8 @@ namespace DiscImageChef.Decoders.SecureDigital
                 sb.AppendFormat("\tDevice has {0} blocks", (int)result).AppendLine();
 
                 result = (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2) * Math.Pow(2, csd.ReadBlockLength);
-                if(result > 1073741824) sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
+                if(result > 1073741824)
+                    sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
                 else if(result > 1048576) sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
                 else if(result > 1024) sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
                 else sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();

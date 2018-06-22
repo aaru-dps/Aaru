@@ -83,13 +83,13 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_01_MMC decoded = new ModePage_01_MMC();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.Parameter = pageResponse[2];
-            decoded.ReadRetryCount = pageResponse[3];
+            decoded.PS             |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.Parameter      =  pageResponse[2];
+            decoded.ReadRetryCount =  pageResponse[3];
 
             if(pageResponse.Length < 12) return decoded;
 
-            decoded.WriteRetryCount = pageResponse[8];
+            decoded.WriteRetryCount   = pageResponse[8];
             decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
             return decoded;
@@ -105,7 +105,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_01_MMC page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Read error recovery page for MultiMedia Devices:");
 
@@ -113,17 +113,18 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.ReadRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
 
-            string AllUsed = "\tAll available recovery procedures will be used.\n";
-            string CIRCRetriesUsed = "\tOnly retries and CIRC are used.\n";
-            string RetriesUsed = "\tOnly retries are used.\n";
+            string AllUsed              = "\tAll available recovery procedures will be used.\n";
+            string CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
+            string RetriesUsed          = "\tOnly retries are used.\n";
             string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
-            string RecoveredReported = "\tRecovered errors will be reported.\n";
-            string RecoveredAbort = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
-            string UnrecECCAbort = "\tUnrecovered ECC errors will return CHECK CONDITION.";
-            string UnrecCIRCAbort = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
-            string UnrecECCNotAbort = "\tUnrecovered ECC errors will not abort the transfer.";
-            string UnrecCIRCNotAbort = "\tUnrecovered CIRC errors will not abort the transfer.";
-            string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+            string RecoveredReported    = "\tRecovered errors will be reported.\n";
+            string RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
+            string UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
+            string UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
+            string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
+            string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
+            string UnrecECCAbortData =
+                "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
             string UnrecCIRCAbortData =
                 "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
@@ -209,7 +210,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             // This is from a newer version of SCSI unknown what happen for drives expecting an 8 byte page
 
-            pg[8] = page.WriteRetryCount;
+            pg[8]  = page.WriteRetryCount;
             pg[10] = (byte)((page.RecoveryTimeLimit & 0xFF00) << 8);
             pg[11] = (byte)(page.RecoveryTimeLimit & 0xFF);
 

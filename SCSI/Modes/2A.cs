@@ -162,30 +162,30 @@ namespace DiscImageChef.Decoders.SCSI
             public bool RCK;
             public bool BCK;
 
-            public bool TestWrite;
+            public bool   TestWrite;
             public ushort MaxWriteSpeed;
             public ushort CurrentWriteSpeed;
 
             public bool ReadBarcode;
 
-            public bool ReadDVDRAM;
-            public bool ReadDVDR;
-            public bool ReadDVDROM;
-            public bool WriteDVDRAM;
-            public bool WriteDVDR;
-            public bool LeadInPW;
-            public bool SCC;
+            public bool   ReadDVDRAM;
+            public bool   ReadDVDR;
+            public bool   ReadDVDROM;
+            public bool   WriteDVDRAM;
+            public bool   WriteDVDR;
+            public bool   LeadInPW;
+            public bool   SCC;
             public ushort CMRSupported;
 
-            public bool BUF;
-            public byte RotationControlSelected;
-            public ushort CurrentWriteSpeedSelected;
+            public bool                          BUF;
+            public byte                          RotationControlSelected;
+            public ushort                        CurrentWriteSpeedSelected;
             public ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
         }
 
         public struct ModePage_2A_WriteDescriptor
         {
-            public byte RotationControl;
+            public byte   RotationControl;
             public ushort WriteSpeed;
         }
 
@@ -203,81 +203,81 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
-            decoded.AudioPlay |= (pageResponse[4] & 0x01) == 0x01;
-            decoded.Mode2Form1 |= (pageResponse[4] & 0x10) == 0x10;
-            decoded.Mode2Form2 |= (pageResponse[4] & 0x20) == 0x20;
+            decoded.AudioPlay    |= (pageResponse[4] & 0x01) == 0x01;
+            decoded.Mode2Form1   |= (pageResponse[4] & 0x10) == 0x10;
+            decoded.Mode2Form2   |= (pageResponse[4] & 0x20) == 0x20;
             decoded.MultiSession |= (pageResponse[4] & 0x40) == 0x40;
 
-            decoded.CDDACommand |= (pageResponse[5] & 0x01) == 0x01;
-            decoded.AccurateCDDA |= (pageResponse[5] & 0x02) == 0x02;
-            decoded.Subchannel |= (pageResponse[5] & 0x04) == 0x04;
+            decoded.CDDACommand           |= (pageResponse[5] & 0x01) == 0x01;
+            decoded.AccurateCDDA          |= (pageResponse[5] & 0x02) == 0x02;
+            decoded.Subchannel            |= (pageResponse[5] & 0x04) == 0x04;
             decoded.DeinterlaveSubchannel |= (pageResponse[5] & 0x08) == 0x08;
-            decoded.C2Pointer |= (pageResponse[5] & 0x10) == 0x10;
-            decoded.UPC |= (pageResponse[5] & 0x20) == 0x20;
-            decoded.ISRC |= (pageResponse[5] & 0x40) == 0x40;
+            decoded.C2Pointer             |= (pageResponse[5] & 0x10) == 0x10;
+            decoded.UPC                   |= (pageResponse[5] & 0x20) == 0x20;
+            decoded.ISRC                  |= (pageResponse[5] & 0x40) == 0x40;
 
-            decoded.LoadingMechanism = (byte)((pageResponse[6] & 0xE0) >> 5);
-            decoded.Lock |= (pageResponse[6] & 0x01) == 0x01;
-            decoded.LockState |= (pageResponse[6] & 0x02) == 0x02;
-            decoded.PreventJumper |= (pageResponse[6] & 0x04) == 0x04;
-            decoded.Eject |= (pageResponse[6] & 0x08) == 0x08;
+            decoded.LoadingMechanism =  (byte)((pageResponse[6] & 0xE0) >> 5);
+            decoded.Lock             |= (pageResponse[6] & 0x01) == 0x01;
+            decoded.LockState        |= (pageResponse[6] & 0x02) == 0x02;
+            decoded.PreventJumper    |= (pageResponse[6] & 0x04) == 0x04;
+            decoded.Eject            |= (pageResponse[6] & 0x08) == 0x08;
 
             decoded.SeparateChannelVolume |= (pageResponse[7] & 0x01) == 0x01;
-            decoded.SeparateChannelMute |= (pageResponse[7] & 0x02) == 0x02;
+            decoded.SeparateChannelMute   |= (pageResponse[7] & 0x02) == 0x02;
 
-            decoded.MaximumSpeed = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
+            decoded.MaximumSpeed          = (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
             decoded.SupportedVolumeLevels = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
-            decoded.BufferSize = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
-            decoded.CurrentSpeed = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+            decoded.BufferSize            = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.CurrentSpeed          = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
 
             if(pageResponse.Length < 20) return decoded;
 
-            decoded.Method2 |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.Method2  |= (pageResponse[2] & 0x04) == 0x04;
             decoded.ReadCDRW |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.ReadCDR |= (pageResponse[2] & 0x01) == 0x01;
+            decoded.ReadCDR  |= (pageResponse[2] & 0x01) == 0x01;
 
             decoded.WriteCDRW |= (pageResponse[3] & 0x02) == 0x02;
-            decoded.WriteCDR |= (pageResponse[3] & 0x01) == 0x01;
+            decoded.WriteCDR  |= (pageResponse[3] & 0x01) == 0x01;
 
-            decoded.Composite |= (pageResponse[4] & 0x02) == 0x02;
+            decoded.Composite    |= (pageResponse[4] & 0x02) == 0x02;
             decoded.DigitalPort1 |= (pageResponse[4] & 0x04) == 0x04;
             decoded.DigitalPort2 |= (pageResponse[4] & 0x08) == 0x08;
 
             decoded.SDP |= (pageResponse[7] & 0x04) == 0x04;
             decoded.SSS |= (pageResponse[7] & 0x08) == 0x08;
 
-            decoded.Length = (byte)((pageResponse[17] & 0x30) >> 4);
-            decoded.LSBF |= (pageResponse[17] & 0x08) == 0x08;
-            decoded.RCK |= (pageResponse[17] & 0x04) == 0x04;
-            decoded.BCK |= (pageResponse[17] & 0x02) == 0x02;
+            decoded.Length =  (byte)((pageResponse[17] & 0x30) >> 4);
+            decoded.LSBF   |= (pageResponse[17] & 0x08) == 0x08;
+            decoded.RCK    |= (pageResponse[17] & 0x04) == 0x04;
+            decoded.BCK    |= (pageResponse[17] & 0x02) == 0x02;
 
             if(pageResponse.Length < 22) return decoded;
 
-            decoded.TestWrite |= (pageResponse[3] & 0x04) == 0x04;
-            decoded.MaxWriteSpeed = (ushort)((pageResponse[18] << 8) + pageResponse[19]);
-            decoded.CurrentWriteSpeed = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
+            decoded.TestWrite         |= (pageResponse[3] & 0x04) == 0x04;
+            decoded.MaxWriteSpeed     =  (ushort)((pageResponse[18] << 8) + pageResponse[19]);
+            decoded.CurrentWriteSpeed =  (ushort)((pageResponse[20] << 8) + pageResponse[21]);
 
             decoded.ReadBarcode |= (pageResponse[5] & 0x80) == 0x80;
 
             if(pageResponse.Length < 26) return decoded;
 
             decoded.ReadDVDRAM |= (pageResponse[2] & 0x20) == 0x20;
-            decoded.ReadDVDR |= (pageResponse[2] & 0x10) == 0x10;
+            decoded.ReadDVDR   |= (pageResponse[2] & 0x10) == 0x10;
             decoded.ReadDVDROM |= (pageResponse[2] & 0x08) == 0x08;
 
             decoded.WriteDVDRAM |= (pageResponse[3] & 0x20) == 0x20;
-            decoded.WriteDVDR |= (pageResponse[3] & 0x10) == 0x10;
+            decoded.WriteDVDR   |= (pageResponse[3] & 0x10) == 0x10;
 
             decoded.LeadInPW |= (pageResponse[3] & 0x20) == 0x20;
-            decoded.SCC |= (pageResponse[3] & 0x10) == 0x10;
+            decoded.SCC      |= (pageResponse[3] & 0x10) == 0x10;
 
             decoded.CMRSupported = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
             if(pageResponse.Length < 32) return decoded;
 
-            decoded.BUF |= (pageResponse[4] & 0x80) == 0x80;
-            decoded.RotationControlSelected = (byte)(pageResponse[27] & 0x03);
-            decoded.CurrentWriteSpeedSelected = (ushort)((pageResponse[28] << 8) + pageResponse[29]);
+            decoded.BUF                       |= (pageResponse[4]        & 0x80) == 0x80;
+            decoded.RotationControlSelected   =  (byte)(pageResponse[27] & 0x03);
+            decoded.CurrentWriteSpeedSelected =  (ushort)((pageResponse[28] << 8) + pageResponse[29]);
 
             ushort descriptors = (ushort)((pageResponse.Length - 32) / 4);
             decoded.WriteSpeedPerformanceDescriptors = new ModePage_2A_WriteDescriptor[descriptors];
@@ -285,7 +285,8 @@ namespace DiscImageChef.Decoders.SCSI
             for(int i = 0; i < descriptors; i++)
                 decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor
                 {
-                    RotationControl = (byte)(pageResponse[1 + 32 + i * 4] & 0x07),
+                    RotationControl =
+                        (byte)(pageResponse[1 + 32 + i * 4] & 0x07),
                     WriteSpeed = (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4])
                 };
 
@@ -301,8 +302,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_2A page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_2A   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI CD-ROM capabilities page:");
 
@@ -356,6 +357,7 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine(page.LockState
                                   ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
                                   : "\tDrive is not locked, media can be ejected and inserted");
+
             if(page.Eject) sb.AppendLine("\tDrive can eject media");
 
             if(page.SeparateChannelMute) sb.AppendLine("\tEach channel can be muted independently");

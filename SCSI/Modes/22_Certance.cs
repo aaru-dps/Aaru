@@ -73,18 +73,18 @@ namespace DiscImageChef.Decoders.SCSI
 
             Certance_ModePage_22 decoded = new Certance_ModePage_22();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.BaudRate = pageResponse[2];
-            decoded.CmdFwd = (byte)((pageResponse[3] & 0x18) >> 3);
-            decoded.StopBits |= (pageResponse[3] & 0x04) == 0x04;
-            decoded.CmdFwd = (byte)(pageResponse[3] & 0x03);
-            decoded.PortATransportType = pageResponse[4];
-            decoded.PortAPresentSelectionID = pageResponse[7];
-            decoded.NextSelectionID = pageResponse[12];
-            decoded.JumperedSelectionID = pageResponse[13];
-            decoded.TargetInitiatedBusControl = pageResponse[14];
-            decoded.PortAEnabled |= (pageResponse[15] & 0x10) == 0x10;
-            decoded.PortAEnabledOnPower |= (pageResponse[15] & 0x04) == 0x04;
+            decoded.PS                        |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.BaudRate                  =  pageResponse[2];
+            decoded.CmdFwd                    =  (byte)((pageResponse[3] & 0x18) >> 3);
+            decoded.StopBits                  |= (pageResponse[3]       & 0x04) == 0x04;
+            decoded.CmdFwd                    =  (byte)(pageResponse[3] & 0x03);
+            decoded.PortATransportType        =  pageResponse[4];
+            decoded.PortAPresentSelectionID   =  pageResponse[7];
+            decoded.NextSelectionID           =  pageResponse[12];
+            decoded.JumperedSelectionID       =  pageResponse[13];
+            decoded.TargetInitiatedBusControl =  pageResponse[14];
+            decoded.PortAEnabled              |= (pageResponse[15] & 0x10) == 0x10;
+            decoded.PortAEnabledOnPower       |= (pageResponse[15] & 0x04) == 0x04;
 
             return decoded;
         }
@@ -99,7 +99,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Certance_ModePage_22 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder        sb   = new StringBuilder();
 
             sb.AppendLine("Certance Interface Control Mode Page:");
 

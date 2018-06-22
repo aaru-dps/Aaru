@@ -150,14 +150,14 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_81 decoded = new Page_81
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                Current = (ScsiDefinitions)(pageResponse[4] & 0x7F),
-                Default = (ScsiDefinitions)(pageResponse[5] & 0x7F)
+                PageLength           = (byte)(pageResponse[3] + 4),
+                Current              = (ScsiDefinitions)(pageResponse[4] & 0x7F),
+                Default              = (ScsiDefinitions)(pageResponse[5] & 0x7F)
             };
 
-            int position = 6;
+            int                   position    = 6;
             List<ScsiDefinitions> definitions = new List<ScsiDefinitions>();
 
             while(position < pageResponse.Length)
@@ -182,11 +182,11 @@ namespace DiscImageChef.Decoders.SCSI
             switch(definition)
             {
                 case ScsiDefinitions.Current: return "";
-                case ScsiDefinitions.CCS: return "CCS";
-                case ScsiDefinitions.SCSI1: return "SCSI-1";
-                case ScsiDefinitions.SCSI2: return "SCSI-2";
-                case ScsiDefinitions.SCSI3: return "SCSI-3";
-                default: return $"Unknown definition code {(byte)definition}";
+                case ScsiDefinitions.CCS:     return "CCS";
+                case ScsiDefinitions.SCSI1:   return "SCSI-1";
+                case ScsiDefinitions.SCSI2:   return "SCSI-2";
+                case ScsiDefinitions.SCSI3:   return "SCSI-3";
+                default:                      return $"Unknown definition code {(byte)definition}";
             }
         }
 
@@ -194,8 +194,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_81 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_81       page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Implemented operating definitions:");
 
@@ -385,12 +385,12 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_83 decoded = new Page_83
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4)
+                PageLength           = (byte)(pageResponse[3] + 4)
             };
 
-            int position = 4;
+            int                           position    = 4;
             List<IdentificatonDescriptor> descriptors = new List<IdentificatonDescriptor>();
 
             while(position < pageResponse.Length)
@@ -398,11 +398,11 @@ namespace DiscImageChef.Decoders.SCSI
                 IdentificatonDescriptor descriptor = new IdentificatonDescriptor
                 {
                     ProtocolIdentifier = (ProtocolIdentifiers)((pageResponse[position] & 0xF0) >> 4),
-                    CodeSet = (IdentificationCodeSet)(pageResponse[position] & 0x0F),
-                    PIV = (pageResponse[position + 1] & 0x80) == 0x80,
-                    Association = (IdentificationAssociation)((pageResponse[position + 1] & 0x30) >> 4),
-                    Type = (IdentificationTypes)(pageResponse[position + 1] & 0x0F),
-                    Length = pageResponse[position + 3]
+                    CodeSet            = (IdentificationCodeSet)(pageResponse[position] & 0x0F),
+                    PIV                = (pageResponse[position + 1]                    & 0x80) == 0x80,
+                    Association        = (IdentificationAssociation)((pageResponse[position + 1] & 0x30) >> 4),
+                    Type               = (IdentificationTypes)(pageResponse[position + 1] & 0x0F),
+                    Length             = pageResponse[position + 3]
                 };
                 descriptor.Binary = new byte[descriptor.Length];
                 if(descriptor.Length + position + 4 >= pageResponse.Length)
@@ -439,8 +439,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_83 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_83       page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Device identification:");
 
@@ -642,69 +642,69 @@ namespace DiscImageChef.Decoders.SCSI
                             {
                                 case ProtocolIdentifiers.ADT:
                                     sb
-                                        .AppendFormat("\tProtocol (Automation/Drive Interface Transport) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (Automation/Drive Interface Transport) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.ATA:
                                     sb
-                                        .AppendFormat("\tProtocol (ATA/ATAPI) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (ATA/ATAPI) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.FibreChannel:
                                     sb
-                                        .AppendFormat("\tProtocol (Fibre Channel) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (Fibre Channel) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.Firewire:
                                     sb
-                                        .AppendFormat("\tProtocol (IEEE 1394) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (IEEE 1394) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.iSCSI:
                                     sb
-                                        .AppendFormat("\tProtocol (Internet SCSI) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (Internet SCSI) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.NoProtocol:
                                     sb
-                                        .AppendFormat("\tProtocol (unknown) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (unknown) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.PCIe:
                                     sb
-                                        .AppendFormat("\tProtocol (PCI Express) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (PCI Express) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.RDMAP:
                                     sb
-                                        .AppendFormat("\tProtocol (SCSI Remote Direct Memory Access) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (SCSI Remote Direct Memory Access) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.SAS:
                                     sb
-                                        .AppendFormat("\tProtocol (Serial Attachment SCSI) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (Serial Attachment SCSI) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.SCSI:
                                     sb
-                                        .AppendFormat("\tProtocol (Parallel SCSI) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (Parallel SCSI) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.SSA:
                                     sb
-                                        .AppendFormat("\tProtocol (SSA) specific descriptor with unknown format (hex): {0}",
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (SSA) specific descriptor with unknown format (hex): {0}",
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                                 case ProtocolIdentifiers.SCSIe:
                                     sb.AppendFormat("\tProtocol (SCSIe) specific descriptor: Routing ID is {0}",
@@ -712,15 +712,15 @@ namespace DiscImageChef.Decoders.SCSI
                                     break;
                                 case ProtocolIdentifiers.UAS:
                                     sb
-                                        .AppendFormat("\tProtocol (UAS) specific descriptor: USB address {0} interface {1}",
-                                                      descriptor.Binary[0] & 0x7F, descriptor.Binary[2]).AppendLine();
+                                       .AppendFormat("\tProtocol (UAS) specific descriptor: USB address {0} interface {1}",
+                                                     descriptor.Binary[0] & 0x7F, descriptor.Binary[2]).AppendLine();
                                     break;
                                 default:
                                     sb
-                                        .AppendFormat("\tProtocol (unknown code {0}) specific descriptor with unknown format (hex): {1}",
-                                                      (byte)descriptor.ProtocolIdentifier,
-                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
-                                        .AppendLine();
+                                       .AppendFormat("\tProtocol (unknown code {0}) specific descriptor with unknown format (hex): {1}",
+                                                     (byte)descriptor.ProtocolIdentifier,
+                                                     PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                       .AppendLine();
                                     break;
                             }
                     }
@@ -741,9 +741,9 @@ namespace DiscImageChef.Decoders.SCSI
                                 break;
                             default:
                                 sb
-                                    .AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}",
-                                                  PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                                  (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
+                                   .AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}",
+                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                                 (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
                                 break;
                         }
 
@@ -802,12 +802,12 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_84 decoded = new Page_84
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4)
+                PageLength           = (byte)(pageResponse[3] + 4)
             };
 
-            int position = 4;
+            int                      position    = 4;
             List<SoftwareIdentifier> identifiers = new List<SoftwareIdentifier>();
 
             while(position < pageResponse.Length)
@@ -832,8 +832,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_84 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_84       page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Software Interface Identifiers:");
 
@@ -859,13 +859,13 @@ namespace DiscImageChef.Decoders.SCSI
         #region EVPD Page 0x85: Management Network Addresses page
         public enum NetworkServiceTypes : byte
         {
-            Unspecified = 0,
-            StorageConf = 1,
-            Diagnostics = 2,
-            Status = 3,
-            Logging = 4,
-            CodeDownload = 5,
-            CopyService = 6,
+            Unspecified    = 0,
+            StorageConf    = 1,
+            Diagnostics    = 2,
+            Status         = 3,
+            Logging        = 4,
+            CodeDownload   = 5,
+            CopyService    = 6,
             Administrative = 7
         }
 
@@ -927,12 +927,12 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_85 decoded = new Page_85
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4)
+                PageLength           = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4)
             };
 
-            int position = 4;
+            int                     position    = 4;
             List<NetworkDescriptor> descriptors = new List<NetworkDescriptor>();
 
             while(position < pageResponse.Length)
@@ -940,8 +940,8 @@ namespace DiscImageChef.Decoders.SCSI
                 NetworkDescriptor descriptor = new NetworkDescriptor
                 {
                     Association = (IdentificationAssociation)((pageResponse[position] & 0x60) >> 5),
-                    Type = (NetworkServiceTypes)(pageResponse[position] & 0x1F),
-                    Length = (ushort)((pageResponse[position + 2] << 8) + pageResponse[position + 3])
+                    Type        = (NetworkServiceTypes)(pageResponse[position] & 0x1F),
+                    Length      = (ushort)((pageResponse[position + 2] << 8) + pageResponse[position + 3])
                 };
                 descriptor.Address = new byte[descriptor.Length];
                 Array.Copy(pageResponse, position + 4, descriptor.Address, 0, descriptor.Length);
@@ -964,8 +964,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_85 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_85       page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Management Network Addresses:");
 
@@ -1183,36 +1183,36 @@ namespace DiscImageChef.Decoders.SCSI
 
             return new Page_86
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                ActivateMicrocode = (byte)((pageResponse[4] & 0xC0) >> 6),
-                SPT = (byte)((pageResponse[4] & 0x38) >> 3),
-                GRD_CHK = (pageResponse[4] & 0x04) == 0x04,
-                APP_CHK = (pageResponse[4] & 0x02) == 0x02,
-                REF_CHK = (pageResponse[4] & 0x01) == 0x01,
-                UASK_SUP = (pageResponse[5] & 0x20) == 0x20,
-                GROUP_SUP = (pageResponse[5] & 0x10) == 0x10,
-                PRIOR_SUP = (pageResponse[5] & 0x08) == 0x08,
-                HEADSUP = (pageResponse[5] & 0x04) == 0x04,
-                ORDSUP = (pageResponse[5] & 0x02) == 0x02,
-                SIMPSUP = (pageResponse[5] & 0x01) == 0x01,
-                WU_SUP = (pageResponse[6] & 0x08) == 0x08,
-                CRD_SUP = (pageResponse[6] & 0x04) == 0x04,
-                NV_SUP = (pageResponse[6] & 0x02) == 0x02,
-                V_SUP = (pageResponse[6] & 0x01) == 0x01,
-                NO_PI_CHK = (pageResponse[7] & 0x20) == 0x20,
-                P_I_I_SUP = (pageResponse[7] & 0x10) == 0x10,
-                LUICLR = (pageResponse[7] & 0x01) == 0x01,
-                R_SUP = (pageResponse[8] & 0x10) == 0x10,
-                HSSRELEF = (pageResponse[8] & 0x02) == 0x02,
-                CBCS = (pageResponse[8] & 0x01) == 0x01,
-                Nexus = (byte)(pageResponse[9] & 0x0F),
-                ExtendedTestMinutes = (ushort)((pageResponse[10] << 8) + pageResponse[11]),
-                POA_SUP = (pageResponse[12] & 0x80) == 0x80,
-                HRA_SUP = (pageResponse[12] & 0x40) == 0x40,
-                VSA_SUP = (pageResponse[12] & 0x20) == 0x20,
-                MaximumSenseLength = pageResponse[13]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                ActivateMicrocode    = (byte)((pageResponse[4] & 0xC0) >> 6),
+                SPT                  = (byte)((pageResponse[4] & 0x38) >> 3),
+                GRD_CHK              = (pageResponse[4]       & 0x04) == 0x04,
+                APP_CHK              = (pageResponse[4]       & 0x02) == 0x02,
+                REF_CHK              = (pageResponse[4]       & 0x01) == 0x01,
+                UASK_SUP             = (pageResponse[5]       & 0x20) == 0x20,
+                GROUP_SUP            = (pageResponse[5]       & 0x10) == 0x10,
+                PRIOR_SUP            = (pageResponse[5]       & 0x08) == 0x08,
+                HEADSUP              = (pageResponse[5]       & 0x04) == 0x04,
+                ORDSUP               = (pageResponse[5]       & 0x02) == 0x02,
+                SIMPSUP              = (pageResponse[5]       & 0x01) == 0x01,
+                WU_SUP               = (pageResponse[6]       & 0x08) == 0x08,
+                CRD_SUP              = (pageResponse[6]       & 0x04) == 0x04,
+                NV_SUP               = (pageResponse[6]       & 0x02) == 0x02,
+                V_SUP                = (pageResponse[6]       & 0x01) == 0x01,
+                NO_PI_CHK            = (pageResponse[7]       & 0x20) == 0x20,
+                P_I_I_SUP            = (pageResponse[7]       & 0x10) == 0x10,
+                LUICLR               = (pageResponse[7]       & 0x01) == 0x01,
+                R_SUP                = (pageResponse[8]       & 0x10) == 0x10,
+                HSSRELEF             = (pageResponse[8]       & 0x02) == 0x02,
+                CBCS                 = (pageResponse[8]       & 0x01) == 0x01,
+                Nexus                = (byte)(pageResponse[9] & 0x0F),
+                ExtendedTestMinutes  = (ushort)((pageResponse[10] << 8) + pageResponse[11]),
+                POA_SUP              = (pageResponse[12] & 0x80) == 0x80,
+                HRA_SUP              = (pageResponse[12] & 0x40) == 0x40,
+                VSA_SUP              = (pageResponse[12] & 0x20) == 0x20,
+                MaximumSenseLength   = pageResponse[13]
             };
         }
 
@@ -1225,8 +1225,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_86 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_86       page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Extended INQUIRY Data:");
 
@@ -1364,20 +1364,20 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_89 decoded = new Page_89
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
-                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
-                VendorIdentification = new byte[8],
+                PeripheralQualifier   = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType  = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength            = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
+                VendorIdentification  = new byte[8],
                 ProductIdentification = new byte[16],
-                ProductRevisionLevel = new byte[4],
-                Signature = new byte[20],
-                IdentifyData = new byte[512]
+                ProductRevisionLevel  = new byte[4],
+                Signature             = new byte[20],
+                IdentifyData          = new byte[512]
             };
 
-            Array.Copy(pageResponse, 8, decoded.VendorIdentification, 0, 8);
+            Array.Copy(pageResponse, 8, decoded.VendorIdentification,  0, 8);
             Array.Copy(pageResponse, 8, decoded.ProductIdentification, 0, 16);
-            Array.Copy(pageResponse, 8, decoded.ProductRevisionLevel, 0, 4);
-            Array.Copy(pageResponse, 8, decoded.Signature, 0, 20);
+            Array.Copy(pageResponse, 8, decoded.ProductRevisionLevel,  0, 4);
+            Array.Copy(pageResponse, 8, decoded.Signature,             0, 20);
             decoded.CommandCode = pageResponse[56];
             Array.Copy(pageResponse, 8, decoded.IdentifyData, 0, 512);
 
@@ -1394,8 +1394,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_89 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_89       page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI to ATA Translation Layer Data:");
 
@@ -1418,6 +1418,7 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendFormat("\tDevice responded to ATA command {0:X2}h", page.CommandCode).AppendLine();
                     break;
             }
+
             switch(page.Signature[0])
             {
                 case 0x00:
@@ -1494,11 +1495,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_C0_Quantum decoded = new Page_C0_Quantum
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
-                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
+                PeripheralQualifier   = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType  = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength            = (byte)(pageResponse[3]          + 4),
                 ServoFirmwareChecksum = (ushort)((pageResponse[4] << 8) + pageResponse[5]),
-                ServoEEPROMChecksum = (ushort)((pageResponse[6] << 8) + pageResponse[7]),
+                ServoEEPROMChecksum   = (ushort)((pageResponse[6] << 8) + pageResponse[7]),
                 ReadWriteFirmwareChecksum =
                     (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
                            pageResponse[11]),
@@ -1520,7 +1521,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Page_C0_Quantum page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("Quantum Firmware Build Information page:");
 
@@ -1575,19 +1576,19 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_C0_C1_Certance decoded = new Page_C0_C1_Certance
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                Component = new byte[26],
-                Version = new byte[19],
-                Date = new byte[24],
-                Variant = new byte[23]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                Component            = new byte[26],
+                Version              = new byte[19],
+                Date                 = new byte[24],
+                Variant              = new byte[23]
             };
 
-            Array.Copy(pageResponse, 4, decoded.Component, 0, 26);
-            Array.Copy(pageResponse, 30, decoded.Version, 0, 19);
-            Array.Copy(pageResponse, 49, decoded.Date, 0, 24);
-            Array.Copy(pageResponse, 73, decoded.Variant, 0, 23);
+            Array.Copy(pageResponse, 4,  decoded.Component, 0, 26);
+            Array.Copy(pageResponse, 30, decoded.Version,   0, 19);
+            Array.Copy(pageResponse, 49, decoded.Date,      0, 24);
+            Array.Copy(pageResponse, 73, decoded.Variant,   0, 23);
 
             return decoded;
         }
@@ -1602,7 +1603,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Page_C0_C1_Certance page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder       sb   = new StringBuilder();
 
             sb.AppendLine("Certance Drive Component Revision Levels page:");
 
@@ -1654,10 +1655,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_C2_C3_C4_C5_C6_Certance decoded = new Page_C2_C3_C4_C5_C6_Certance
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                SerialNumber = new byte[12]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                SerialNumber         = new byte[12]
             };
 
             Array.Copy(pageResponse, 4, decoded.SerialNumber, 0, 12);
@@ -1675,7 +1676,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Page_C2_C3_C4_C5_C6_Certance page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder                sb   = new StringBuilder();
 
             sb.AppendLine("Certance Drive Component Serial Number page:");
 
@@ -1806,22 +1807,22 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_DF_Certance decoded = new Page_DF_Certance
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                CmdFwd = (byte)((pageResponse[5] & 0xC0) >> 5),
-                Alerts = (pageResponse[5] & 0x20) == 0x20,
-                NoRemov = (pageResponse[5] & 0x08) == 0x08,
-                UnitRsvd = (pageResponse[5] & 0x04) == 0x04,
-                Clean = (pageResponse[5] & 0x01) == 0x01,
-                Threaded = (pageResponse[6] & 0x10) == 0x10,
-                Lun1Cmd = (pageResponse[6] & 0x08) == 0x08,
-                AutoloadMode = (byte)(pageResponse[6] & 0x07),
-                CartridgeType = pageResponse[8],
-                CartridgeFormat = pageResponse[9],
-                CartridgeCapacity = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4),
-                PortATransportType = pageResponse[12],
-                PortASelectionID = pageResponse[15],
+                PageLength           = (byte)(pageResponse[3] + 4),
+                CmdFwd               = (byte)((pageResponse[5] & 0xC0) >> 5),
+                Alerts               = (pageResponse[5]       & 0x20) == 0x20,
+                NoRemov              = (pageResponse[5]       & 0x08) == 0x08,
+                UnitRsvd             = (pageResponse[5]       & 0x04) == 0x04,
+                Clean                = (pageResponse[5]       & 0x01) == 0x01,
+                Threaded             = (pageResponse[6]       & 0x10) == 0x10,
+                Lun1Cmd              = (pageResponse[6]       & 0x08) == 0x08,
+                AutoloadMode         = (byte)(pageResponse[6] & 0x07),
+                CartridgeType        = pageResponse[8],
+                CartridgeFormat      = pageResponse[9],
+                CartridgeCapacity    = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4),
+                PortATransportType   = pageResponse[12],
+                PortASelectionID     = pageResponse[15],
                 OperatingHours =
                     (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) +
                            pageResponse[23]),
@@ -1846,7 +1847,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Page_DF_Certance page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder    sb   = new StringBuilder();
 
             sb.AppendLine("Certance drive status page:");
 
@@ -1999,15 +2000,15 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_C0_IBM decoded = new Page_C0_IBM
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                CodeName = new byte[12],
-                Date = new byte[8]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                CodeName             = new byte[12],
+                Date                 = new byte[8]
             };
 
-            Array.Copy(pageResponse, 4, decoded.CodeName, 0, 12);
-            Array.Copy(pageResponse, 23, decoded.Date, 0, 8);
+            Array.Copy(pageResponse, 4,  decoded.CodeName, 0, 12);
+            Array.Copy(pageResponse, 23, decoded.Date,     0, 8);
 
             return decoded;
         }
@@ -2021,8 +2022,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_C0_IBM page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_C0_IBM   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("IBM Drive Component Revision Levels page:");
 
@@ -2070,15 +2071,15 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_C1_IBM decoded = new Page_C1_IBM
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                ManufacturingSerial = new byte[12],
-                ReportedSerial = new byte[12]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                ManufacturingSerial  = new byte[12],
+                ReportedSerial       = new byte[12]
             };
 
-            Array.Copy(pageResponse, 4, decoded.ManufacturingSerial, 0, 12);
-            Array.Copy(pageResponse, 16, decoded.ReportedSerial, 0, 12);
+            Array.Copy(pageResponse, 4,  decoded.ManufacturingSerial, 0, 12);
+            Array.Copy(pageResponse, 16, decoded.ReportedSerial,      0, 12);
 
             return decoded;
         }
@@ -2092,8 +2093,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_C1_IBM page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_C1_IBM   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("IBM Drive Serial Numbers page:");
 
@@ -2143,11 +2144,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_B0 decoded = new Page_B0
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
-                TSMC = (pageResponse[4] & 0x02) == 0x02,
-                WORM = (pageResponse[4] & 0x01) == 0x01
+                PageLength           = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
+                TSMC                 = (pageResponse[4] & 0x02) == 0x02,
+                WORM                 = (pageResponse[4] & 0x01) == 0x01
             };
 
             return decoded;
@@ -2162,8 +2163,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            Page_B0 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            Page_B0       page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Sequential-access Device Capabilities:");
 
@@ -2226,8 +2227,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.Length != page[3] + 4) return null;
 
-            byte[] element = new byte[page.Length - 4];
-            StringBuilder sb = new StringBuilder();
+            byte[]        element = new byte[page.Length - 4];
+            StringBuilder sb      = new StringBuilder();
             foreach(byte b in element) sb.AppendFormat("{0:X2}", b);
 
             return sb.ToString();
@@ -2275,23 +2276,23 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_C0_to_C5_HP decoded = new Page_C0_to_C5_HP
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                PageCode = pageResponse[1]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                PageCode             = pageResponse[1]
             };
 
             if(pageResponse[3] == 92 && pageResponse.Length >= 96)
             {
                 decoded.Component = new byte[26];
-                decoded.Version = new byte[19];
-                decoded.Date = new byte[24];
-                decoded.Variant = new byte[23];
+                decoded.Version   = new byte[19];
+                decoded.Date      = new byte[24];
+                decoded.Variant   = new byte[23];
 
-                Array.Copy(pageResponse, 4, decoded.Component, 0, 26);
-                Array.Copy(pageResponse, 30, decoded.Version, 0, 19);
-                Array.Copy(pageResponse, 49, decoded.Date, 0, 24);
-                Array.Copy(pageResponse, 73, decoded.Variant, 0, 23);
+                Array.Copy(pageResponse, 4,  decoded.Component, 0, 26);
+                Array.Copy(pageResponse, 30, decoded.Version,   0, 19);
+                Array.Copy(pageResponse, 49, decoded.Date,      0, 24);
+                Array.Copy(pageResponse, 73, decoded.Variant,   0, 23);
 
                 return decoded;
             }
@@ -2301,38 +2302,39 @@ namespace DiscImageChef.Decoders.SCSI
             List<byte> array = new List<byte>();
             const string fwRegExStr =
                 @"Firmware Rev\s+=\s+(?<fw>\d+\.\d+)\s+Build date\s+=\s+(?<date>(\w|\d|\s*.)*)\s*$";
-            const string fwcRegExStr = @"FW_CONF\s+=\s+(?<value>0x[0-9A-Fa-f]{8})\s*$";
+            const string fwcRegExStr   = @"FW_CONF\s+=\s+(?<value>0x[0-9A-Fa-f]{8})\s*$";
             const string servoRegExStr = @"Servo\s+Rev\s+=\s+(?<version>\d+\.\d+)\s*$";
-            Regex fwRegEx = new Regex(fwRegExStr);
-            Regex fwcRegEx = new Regex(fwcRegExStr);
-            Regex servoRegEx = new Regex(servoRegExStr);
+            Regex        fwRegEx       = new Regex(fwRegExStr);
+            Regex        fwcRegEx      = new Regex(fwcRegExStr);
+            Regex        servoRegEx    = new Regex(servoRegExStr);
 
             for(int pos = 5; pos < pageResponse.Length; pos++)
                 if(pageResponse[pos] == 0x00)
                 {
-                    string str = StringHandlers.CToString(array.ToArray());
-                    Match fwMatch = fwRegEx.Match(str);
-                    Match fwcMatch = fwcRegEx.Match(str);
-                    Match servoMatch = servoRegEx.Match(str);
+                    string str        = StringHandlers.CToString(array.ToArray());
+                    Match  fwMatch    = fwRegEx.Match(str);
+                    Match  fwcMatch   = fwcRegEx.Match(str);
+                    Match  servoMatch = servoRegEx.Match(str);
 
                     if(str.ToLowerInvariant().StartsWith("copyright", StringComparison.Ordinal))
                         decoded.Copyright = Encoding.ASCII.GetBytes(str);
                     else if(fwMatch.Success)
                     {
                         decoded.Component = Encoding.ASCII.GetBytes("Firmware");
-                        decoded.Version = Encoding.ASCII.GetBytes(fwMatch.Groups["fw"].Value);
-                        decoded.Date = Encoding.ASCII.GetBytes(fwMatch.Groups["date"].Value);
+                        decoded.Version   = Encoding.ASCII.GetBytes(fwMatch.Groups["fw"].Value);
+                        decoded.Date      = Encoding.ASCII.GetBytes(fwMatch.Groups["date"].Value);
                     }
                     else if(fwcMatch.Success) decoded.Variant = Encoding.ASCII.GetBytes(fwMatch.Groups["value"].Value);
                     else if(servoMatch.Success)
                     {
                         decoded.Component = Encoding.ASCII.GetBytes("Servo");
-                        decoded.Version = Encoding.ASCII.GetBytes(servoMatch.Groups["version"].Value);
+                        decoded.Version   = Encoding.ASCII.GetBytes(servoMatch.Groups["version"].Value);
                     }
 
                     array = new List<byte>();
                 }
-                else array.Add(pageResponse[pos]);
+                else
+                    array.Add(pageResponse[pos]);
 
             return decoded;
         }
@@ -2347,7 +2349,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Page_C0_to_C5_HP page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder    sb   = new StringBuilder();
 
             switch(page.PageCode)
             {
@@ -2424,18 +2426,18 @@ namespace DiscImageChef.Decoders.SCSI
 
             Page_C0_Seagate decoded = new Page_C0_Seagate
             {
-                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength = (byte)(pageResponse[3] + 4),
-                PageCode = pageResponse[1],
-                ControllerFirmware = new byte[4],
-                BootFirmware = new byte[4],
-                ServoFirmware = new byte[4]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                PageCode             = pageResponse[1],
+                ControllerFirmware   = new byte[4],
+                BootFirmware         = new byte[4],
+                ServoFirmware        = new byte[4]
             };
 
-            Array.Copy(pageResponse, 4, decoded.ControllerFirmware, 0, 4);
-            Array.Copy(pageResponse, 8, decoded.BootFirmware, 0, 4);
-            Array.Copy(pageResponse, 12, decoded.ServoFirmware, 0, 4);
+            Array.Copy(pageResponse, 4,  decoded.ControllerFirmware, 0, 4);
+            Array.Copy(pageResponse, 8,  decoded.BootFirmware,       0, 4);
+            Array.Copy(pageResponse, 12, decoded.ServoFirmware,      0, 4);
 
             return decoded;
         }
@@ -2450,7 +2452,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Page_C0_Seagate page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("Seagate Firmware Numbers page:");
 

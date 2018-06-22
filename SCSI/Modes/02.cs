@@ -112,20 +112,20 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_02 decoded = new ModePage_02();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.BufferFullRatio = pageResponse[2];
-            decoded.BufferEmptyRatio = pageResponse[3];
-            decoded.BusInactivityLimit = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
-            decoded.DisconnectTimeLimit = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.ConnectTimeLimit = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
-            decoded.MaxBurstSize = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.PS                  |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.BufferFullRatio     =  pageResponse[2];
+            decoded.BufferEmptyRatio    =  pageResponse[3];
+            decoded.BusInactivityLimit  =  (ushort)((pageResponse[4]  << 8) + pageResponse[5]);
+            decoded.DisconnectTimeLimit =  (ushort)((pageResponse[6]  << 8) + pageResponse[7]);
+            decoded.ConnectTimeLimit    =  (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
+            decoded.MaxBurstSize        =  (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
             if(pageResponse.Length >= 13)
             {
-                decoded.EMDP |= (pageResponse[12] & 0x80) == 0x80;
-                decoded.DIMM |= (pageResponse[12] & 0x08) == 0x08;
-                decoded.FairArbitration = (byte)((pageResponse[12] & 0x70) >> 4);
-                decoded.DTDC = (byte)(pageResponse[12] & 0x07);
+                decoded.EMDP            |= (pageResponse[12] & 0x80) == 0x80;
+                decoded.DIMM            |= (pageResponse[12] & 0x08) == 0x08;
+                decoded.FairArbitration =  (byte)((pageResponse[12] & 0x70) >> 4);
+                decoded.DTDC            =  (byte)(pageResponse[12] & 0x07);
             }
 
             if(pageResponse.Length >= 16) decoded.FirstBurstSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
@@ -142,8 +142,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_02 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_02   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Disconnect-Reconnect mode page:");
 
@@ -162,15 +162,15 @@ namespace DiscImageChef.Decoders.SCSI
                                 page.DisconnectTimeLimit * 100).AppendLine();
             if(page.ConnectTimeLimit > 0)
                 sb
-                    .AppendFormat("\t{0} µs allowed to use the bus before disconnecting, if granted the privilege and not restricted",
-                                  page.ConnectTimeLimit * 100).AppendLine();
+                   .AppendFormat("\t{0} µs allowed to use the bus before disconnecting, if granted the privilege and not restricted",
+                                 page.ConnectTimeLimit * 100).AppendLine();
             if(page.MaxBurstSize > 0)
                 sb.AppendFormat("\t{0} bytes maximum can be transferred before disconnecting", page.MaxBurstSize * 512)
                   .AppendLine();
             if(page.FirstBurstSize > 0)
                 sb
-                    .AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command",
-                                  page.FirstBurstSize * 512).AppendLine();
+                   .AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command",
+                                 page.FirstBurstSize * 512).AppendLine();
 
             if(page.DIMM)
                 sb.AppendLine("\tTarget shall not transfer data for a command during the same interconnect tenancy");

@@ -74,9 +74,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_07_MMC decoded = new ModePage_07_MMC();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.Parameter = pageResponse[2];
-            decoded.VerifyRetryCount = pageResponse[3];
+            decoded.PS               |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.Parameter        =  pageResponse[2];
+            decoded.VerifyRetryCount =  pageResponse[3];
 
             return decoded;
         }
@@ -91,7 +91,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_07_MMC page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Verify error recovery page for MultiMedia Devices:");
 
@@ -99,17 +99,18 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.VerifyRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
 
-            string AllUsed = "\tAll available recovery procedures will be used.\n";
-            string CIRCRetriesUsed = "\tOnly retries and CIRC are used.\n";
-            string RetriesUsed = "\tOnly retries are used.\n";
+            string AllUsed              = "\tAll available recovery procedures will be used.\n";
+            string CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
+            string RetriesUsed          = "\tOnly retries are used.\n";
             string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
-            string RecoveredReported = "\tRecovered errors will be reported.\n";
-            string RecoveredAbort = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
-            string UnrecECCAbort = "\tUnrecovered ECC errors will return CHECK CONDITION.";
-            string UnrecCIRCAbort = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
-            string UnrecECCNotAbort = "\tUnrecovered ECC errors will not abort the transfer.";
-            string UnrecCIRCNotAbort = "\tUnrecovered CIRC errors will not abort the transfer.";
-            string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+            string RecoveredReported    = "\tRecovered errors will be reported.\n";
+            string RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
+            string UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
+            string UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
+            string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
+            string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
+            string UnrecECCAbortData =
+                "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
             string UnrecCIRCAbortData =
                 "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 

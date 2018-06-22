@@ -42,25 +42,25 @@ namespace DiscImageChef.Decoders.SCSI
         public struct BlockDescriptor
         {
             public DensityType Density;
-            public ulong Blocks;
-            public uint BlockLength;
+            public ulong       Blocks;
+            public uint        BlockLength;
         }
 
         public struct ModeHeader
         {
-            public MediumTypes MediumType;
-            public bool WriteProtected;
+            public MediumTypes       MediumType;
+            public bool              WriteProtected;
             public BlockDescriptor[] BlockDescriptors;
-            public byte Speed;
-            public byte BufferedMode;
-            public bool EBC;
-            public bool DPOFUA;
+            public byte              Speed;
+            public byte              BufferedMode;
+            public bool              EBC;
+            public bool              DPOFUA;
         }
 
         public struct ModePage
         {
-            public byte Page;
-            public byte Subpage;
+            public byte   Page;
+            public byte   Subpage;
             public byte[] PageResponse;
         }
 

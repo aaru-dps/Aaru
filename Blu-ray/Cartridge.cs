@@ -77,16 +77,16 @@ namespace DiscImageChef.Decoders.Bluray
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(CSResponse, 0);
-            decoded.Reserved1 = CSResponse[2];
-            decoded.Reserved2 = CSResponse[3];
-            decoded.Cartridge = Convert.ToBoolean(CSResponse[4] & 0x80);
-            decoded.OUT = Convert.ToBoolean(CSResponse[4] & 0x40);
-            decoded.Reserved3 = (byte)((CSResponse[4] & 0x38) >> 3);
-            decoded.OUT = Convert.ToBoolean(CSResponse[4] & 0x04);
-            decoded.Reserved4 = (byte)(CSResponse[4] & 0x03);
-            decoded.Reserved5 = CSResponse[5];
-            decoded.Reserved6 = CSResponse[6];
-            decoded.Reserved7 = CSResponse[7];
+            decoded.Reserved1  = CSResponse[2];
+            decoded.Reserved2  = CSResponse[3];
+            decoded.Cartridge  = Convert.ToBoolean(CSResponse[4] & 0x80);
+            decoded.OUT        = Convert.ToBoolean(CSResponse[4] & 0x40);
+            decoded.Reserved3  = (byte)((CSResponse[4] & 0x38) >> 3);
+            decoded.OUT        = Convert.ToBoolean(CSResponse[4] & 0x04);
+            decoded.Reserved4  = (byte)(CSResponse[4] & 0x03);
+            decoded.Reserved5  = CSResponse[5];
+            decoded.Reserved6  = CSResponse[6];
+            decoded.Reserved7  = CSResponse[7];
 
             return decoded;
         }
@@ -99,7 +99,7 @@ namespace DiscImageChef.Decoders.Bluray
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
             if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
@@ -107,7 +107,7 @@ namespace DiscImageChef.Decoders.Bluray
             if(response.Reserved5 != 0) sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
             if(response.Reserved6 != 0) sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
             if(response.Reserved7 != 0) sb.AppendFormat("Reserved7 = 0x{0:X8}", response.Reserved7).AppendLine();
-#endif
+            #endif
 
             if(response.Cartridge)
             {
@@ -119,11 +119,12 @@ namespace DiscImageChef.Decoders.Bluray
             {
                 sb.AppendLine("Media is not in a cartridge");
 
-#if DEBUG
+                #if DEBUG
                 if(response.OUT) sb.AppendLine("Media has out bit marked, shouldn't");
                 if(response.CWP) sb.AppendLine("Media has write protection bit marked, shouldn't");
-#endif
+                #endif
             }
+
             return sb.ToString();
         }
 

@@ -78,10 +78,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_0D decoded = new ModePage_0D();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.InactivityTimerMultiplier = (byte)(pageResponse[3] & 0xF);
-            decoded.SecondsPerMinute = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
-            decoded.FramesPerSecond = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.PS                        |= (pageResponse[0]       & 0x80) == 0x80;
+            decoded.InactivityTimerMultiplier =  (byte)(pageResponse[3] & 0xF);
+            decoded.SecondsPerMinute          =  (ushort)((pageResponse[4] << 8) + pageResponse[5]);
+            decoded.FramesPerSecond           =  (ushort)((pageResponse[6] << 8) + pageResponse[7]);
 
             return decoded;
         }
@@ -95,8 +95,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_0D page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_0D   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI CD-ROM parameters page:");
 

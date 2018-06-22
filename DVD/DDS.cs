@@ -209,32 +209,34 @@ namespace DiscImageChef.Decoders.DVD
             if(dds.Identifier != 0x0A0A) return null;
 
             // Common to both DVD-RAM versions
-            dds.DataLength = (ushort)((response[0] << 8) + response[1]);
-            dds.Reserved1 = response[2];
-            dds.Reserved2 = response[3];
-            dds.Reserved3 = response[6];
-            dds.InProcess |= (response[7] & 0x80) == 0x80;
-            dds.UserCertification |= (response[7] & 0x02) == 0x02;
+            dds.DataLength                =  (ushort)((response[0] << 8) + response[1]);
+            dds.Reserved1                 =  response[2];
+            dds.Reserved2                 =  response[3];
+            dds.Reserved3                 =  response[6];
+            dds.InProcess                 |= (response[7] & 0x80) == 0x80;
+            dds.UserCertification         |= (response[7] & 0x02) == 0x02;
             dds.ManufacturerCertification |= (response[7] & 0x01) == 0x01;
-            dds.UpdateCount = (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
-            dds.Groups = (ushort)((response[12] << 8) + response[13]);
+            dds.UpdateCount =
+                (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
+            dds.Groups =
+                (ushort)((response[12] << 8) + response[13]);
 
             // ECMA-272
             if(dds.Groups == 24)
             {
                 dds.PartialCertification |= (response[7] & 0x40) == 0x40;
                 dds.FormattingOnlyAGroup |= (response[7] & 0x20) == 0x20;
-                dds.Reserved4 = (byte)((response[7] & 0x1C) >> 2);
-                dds.Reserved = new byte[6];
+                dds.Reserved4            =  (byte)((response[7] & 0x1C) >> 2);
+                dds.Reserved             =  new byte[6];
                 Array.Copy(response, 14, dds.Reserved, 0, 6);
                 dds.GroupCertificationFlags = new GroupCertificationFlag[24];
                 for(int i = 0; i < 24; i++)
                 {
-                    dds.GroupCertificationFlags[i].InProcess |= (response[20 + i] & 0x80) == 0x80;
+                    dds.GroupCertificationFlags[i].InProcess            |= (response[20 + i] & 0x80) == 0x80;
                     dds.GroupCertificationFlags[i].PartialCertification |= (response[20 + i] & 0x40) == 0x40;
-                    dds.GroupCertificationFlags[i].Reserved1 = (byte)((response[20 + i] & 0x3C) >> 2);
-                    dds.GroupCertificationFlags[i].UserCertification |= (response[20 + i] & 0x02) == 0x02;
-                    dds.GroupCertificationFlags[i].Reserved2 |= (response[20 + i] & 0x01) == 0x01;
+                    dds.GroupCertificationFlags[i].Reserved1            =  (byte)((response[20 + i] & 0x3C) >> 2);
+                    dds.GroupCertificationFlags[i].UserCertification    |= (response[20 + i] & 0x02) == 0x02;
+                    dds.GroupCertificationFlags[i].Reserved2            |= (response[20 + i] & 0x01) == 0x01;
                 }
             }
 
@@ -243,17 +245,17 @@ namespace DiscImageChef.Decoders.DVD
 
             {
                 dds.Reserved4 = (byte)((response[7] & 0x7C) >> 2);
-                dds.Reserved = new byte[68];
+                dds.Reserved  = new byte[68];
                 Array.Copy(response, 16, dds.Reserved, 0, 68);
-                dds.Zones = (ushort)((response[14] << 8) + response[15]);
+                dds.Zones             = (ushort)((response[14] << 8)                      + response[15]);
                 dds.SpareAreaFirstPSN = (uint)((response[85] << 16) + (response[86] << 8) + response[87]);
-                dds.SpareAreaLastPSN = (uint)((response[89] << 16) + (response[90] << 8) + response[91]);
-                dds.LSN0Location = (uint)((response[93] << 16) + (response[94] << 8) + response[95]);
-                dds.StartLSNForZone = new uint[dds.Zones];
+                dds.SpareAreaLastPSN  = (uint)((response[89] << 16) + (response[90] << 8) + response[91]);
+                dds.LSN0Location      = (uint)((response[93] << 16) + (response[94] << 8) + response[95]);
+                dds.StartLSNForZone   = new uint[dds.Zones];
 
                 for(int i = 0; i < dds.Zones; i++)
                     dds.StartLSNForZone[i] = (uint)((response[260 + i * 4 + 1] << 16) +
-                                                    (response[260 + i * 4 + 2] << 8) + response[260 + i * 4 + 3]);
+                                                    (response[260 + i * 4 + 2] << 8)  + response[260 + i * 4 + 3]);
             }
 
             return dds;
@@ -264,7 +266,7 @@ namespace DiscImageChef.Decoders.DVD
             if(dds == null) return null;
 
             DiscDefinitionStructure decoded = dds.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder           sb      = new StringBuilder();
 
             if(decoded.InProcess)
             {
@@ -290,6 +292,7 @@ namespace DiscImageChef.Decoders.DVD
                         if(decoded.GroupCertificationFlags[i].PartialCertification)
                             sb.AppendFormat("Group {0} is being certified partially", i).AppendLine();
                     }
+
                     if(decoded.GroupCertificationFlags[i].UserCertification)
                         sb.AppendFormat("Group {0} has been certified by an user", i).AppendLine();
                 }

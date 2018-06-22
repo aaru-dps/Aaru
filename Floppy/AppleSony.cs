@@ -98,7 +98,8 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     Always 0xDE, 0xAA
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] epilogue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] epilogue;
             /// <summary>
             ///     Disk format
             /// </summary>
@@ -106,7 +107,8 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     Always 0xD5, 0xAA, 0x96
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] prologue;
             /// <summary>
             ///     Encoded sector number
             /// </summary>
@@ -129,19 +131,23 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     Checksum
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] checksum;
             /// <summary>
             ///     Encoded data bytes.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 698)] public byte[] data;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 698)]
+            public byte[] data;
             /// <summary>
             ///     Always 0xDE, 0xAA
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] epilogue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] epilogue;
             /// <summary>
             ///     Always 0xD5, 0xAA, 0xAD
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] prologue;
             /// <summary>
             ///     Spare, usually <see cref="RawAddressField.sector" />
             /// </summary>
@@ -153,13 +159,13 @@ namespace DiscImageChef.Decoders.Floppy
             if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA ||
                sector.addressField.prologue[2] != 0x96) return null;
 
-            byte[] bf1 = new byte[175];
-            byte[] bf2 = new byte[175];
-            byte[] bf3 = new byte[175];
-            byte[] nib_data = sector.dataField.data;
-            MemoryStream ms = new MemoryStream();
+            byte[]       bf1      = new byte[175];
+            byte[]       bf2      = new byte[175];
+            byte[]       bf3      = new byte[175];
+            byte[]       nib_data = sector.dataField.data;
+            MemoryStream ms       = new MemoryStream();
 
-            int j = 0;
+            int  j  = 0;
             byte w3 = 0;
             for(int i = 0; i <= 174; i++)
             {
@@ -190,26 +196,29 @@ namespace DiscImageChef.Decoders.Floppy
                     ck3++;
                     ck1 &= 0xFF;
                 }
+
                 ms.WriteByte(carry);
 
-                carry = (byte)((bf2[j] ^ ck3) & 0xFF);
-                ck2 += carry;
+                carry =  (byte)((bf2[j] ^ ck3) & 0xFF);
+                ck2   += carry;
                 if(ck3 > 0xFF)
                 {
                     ck2++;
                     ck3 &= 0xFF;
                 }
+
                 ms.WriteByte(carry);
 
                 if(ms.Length == 524) break;
 
-                carry = (byte)((bf3[j] ^ ck2) & 0xFF);
-                ck1 += carry;
+                carry =  (byte)((bf3[j] ^ ck2) & 0xFF);
+                ck1   += carry;
                 if(ck2 > 0xFF)
                 {
                     ck1++;
                     ck2 &= 0xFF;
                 }
+
                 ms.WriteByte(carry);
                 j++;
             }
@@ -248,19 +257,19 @@ namespace DiscImageChef.Decoders.Floppy
                             addressField = new RawAddressField
                             {
                                 prologue = new[] {data[position], data[position + 1], data[position + 2]},
-                                track = data[position + 3],
-                                sector = data[position + 4],
-                                side = data[position + 5],
-                                format = (AppleEncodedFormat)data[position + 6],
+                                track    = data[position + 3],
+                                sector   = data[position + 4],
+                                side     = data[position + 5],
+                                format   = (AppleEncodedFormat)data[position + 6],
                                 checksum = data[position + 7],
                                 epilogue = new[] {data[position + 8], data[position + 9]}
                             }
                         };
 
                         position += 10;
-                        int syncCount = 0;
-                        bool onSync = false;
-                        MemoryStream gaps = new MemoryStream();
+                        int          syncCount = 0;
+                        bool         onSync    = false;
+                        MemoryStream gaps      = new MemoryStream();
 
                         while(data[position] == 0xFF)
                         {
@@ -281,7 +290,7 @@ namespace DiscImageChef.Decoders.Floppy
                         sector.dataField = new RawDataField
                         {
                             prologue = new[] {data[position], data[position + 1], data[position + 2]},
-                            spare = data[position + 3]
+                            spare    = data[position + 3]
                         };
                         position += 4;
 
@@ -296,18 +305,18 @@ namespace DiscImageChef.Decoders.Floppy
                             if(position + 7 > data.Length) return null;
                         }
 
-                        sector.dataField.data = gaps.ToArray();
-                        sector.dataField.checksum = new byte[4];
+                        sector.dataField.data        = gaps.ToArray();
+                        sector.dataField.checksum    = new byte[4];
                         sector.dataField.checksum[0] = data[position];
                         sector.dataField.checksum[1] = data[position + 2];
                         sector.dataField.checksum[2] = data[position + 3];
                         sector.dataField.checksum[3] = data[position + 4];
-                        sector.dataField.epilogue = new byte[2];
+                        sector.dataField.epilogue    = new byte[2];
                         sector.dataField.epilogue[0] = data[position + 5];
                         sector.dataField.epilogue[1] = data[position + 6];
 
                         position += 7;
-                        gaps = new MemoryStream();
+                        gaps     =  new MemoryStream();
                         // Read gap, if any
                         while(position < data.Length && data[position] == 0xFF)
                         {
@@ -364,13 +373,13 @@ namespace DiscImageChef.Decoders.Floppy
             raw.WriteByte(sector.addressField.side);
             raw.WriteByte((byte)sector.addressField.format);
             raw.WriteByte(sector.addressField.checksum);
-            raw.Write(sector.innerGap, 0, sector.innerGap.Length);
+            raw.Write(sector.innerGap,           0, sector.innerGap.Length);
             raw.Write(sector.dataField.prologue, 0, sector.dataField.prologue.Length);
             raw.WriteByte(sector.dataField.spare);
-            raw.Write(sector.dataField.data, 0, sector.dataField.data.Length);
+            raw.Write(sector.dataField.data,     0, sector.dataField.data.Length);
             raw.Write(sector.dataField.checksum, 0, sector.dataField.checksum.Length);
             raw.Write(sector.dataField.epilogue, 0, sector.dataField.epilogue.Length);
-            raw.Write(sector.gap, 0, sector.gap.Length);
+            raw.Write(sector.gap,                0, sector.gap.Length);
 
             return raw.ToArray();
         }
@@ -382,14 +391,14 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static RawTrack MarshalTrack(byte[] data, out int endOffset, int offset = 0)
         {
-            int position = offset;
-            bool firstSector = true;
-            bool onSync = false;
-            MemoryStream gaps = new MemoryStream();
-            int count = 0;
-            List<RawSector> sectors = new List<RawSector>();
-            byte trackNumber = 0;
-            byte sideNumber = 0;
+            int             position    = offset;
+            bool            firstSector = true;
+            bool            onSync      = false;
+            MemoryStream    gaps        = new MemoryStream();
+            int             count       = 0;
+            List<RawSector> sectors     = new List<RawSector>();
+            byte            trackNumber = 0;
+            byte            sideNumber  = 0;
             endOffset = offset;
 
             while(position < data.Length && data[position] == 0xFF)
@@ -406,14 +415,14 @@ namespace DiscImageChef.Decoders.Floppy
 
             while(position < data.Length)
             {
-                int oldPosition = position;
-                RawSector sector = MarshalSector(data, out position, position);
+                int       oldPosition = position;
+                RawSector sector      = MarshalSector(data, out position, position);
                 if(sector == null) break;
 
                 if(firstSector)
                 {
                     trackNumber = sector.addressField.track;
-                    sideNumber = sector.addressField.side;
+                    sideNumber  = sector.addressField.side;
                     firstSector = false;
                 }
 
@@ -452,8 +461,8 @@ namespace DiscImageChef.Decoders.Floppy
         public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
         {
             endOffset = offset;
-            List<RawTrack> tracks = new List<RawTrack>();
-            int position = offset;
+            List<RawTrack> tracks   = new List<RawTrack>();
+            int            position = offset;
 
             RawTrack track = MarshalTrack(data, out position, position);
             while(track != null)

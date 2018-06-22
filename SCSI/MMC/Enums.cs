@@ -38,9 +38,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum FormatLayerTypeCodes : ushort
     {
-        CDLayer = 0x0008,
-        DVDLayer = 0x0010,
-        BDLayer = 0x0040,
+        CDLayer    = 0x0008,
+        DVDLayer   = 0x0010,
+        BDLayer    = 0x0040,
         HDDVDLayer = 0x0050
     }
 
@@ -48,30 +48,30 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum SessionStatusCodes : byte
     {
-        Empty = 0x00,
-        Incomplete = 0x01,
+        Empty             = 0x00,
+        Incomplete        = 0x01,
         ReservedOrDamaged = 0x02,
-        Complete = 0x03
+        Complete          = 0x03
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum DiscStatusCodes : byte
     {
-        Empty = 0x00,
+        Empty      = 0x00,
         Incomplete = 0x01,
-        Finalized = 0x02,
-        Others = 0x03
+        Finalized  = 0x02,
+        Others     = 0x03
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum BGFormatStatusCodes : byte
     {
-        NoFormattable = 0x00,
+        NoFormattable              = 0x00,
         IncompleteBackgroundFormat = 0x01,
         BackgroundFormatInProgress = 0x02,
-        FormatComplete = 0x03
+        FormatComplete             = 0x03
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -82,8 +82,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         ///     Also valid for CD-DA, DVD and BD
         /// </summary>
         CDROM = 0x00,
-        CDi = 0x10,
-        CDROMXA = 0x20,
+        CDi       = 0x10,
+        CDROMXA   = 0x20,
         Undefined = 0xFF
     }
 }

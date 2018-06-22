@@ -64,10 +64,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_1D decoded = new ModePage_1D();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.WORMM |= (pageResponse[2] & 0x01) == 0x01;
-            decoded.WormModeLabelRestrictions = pageResponse[4];
-            decoded.WormModeFilemarkRestrictions = pageResponse[5];
+            decoded.PS                           |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.WORMM                        |= (pageResponse[2] & 0x01) == 0x01;
+            decoded.WormModeLabelRestrictions    =  pageResponse[4];
+            decoded.WormModeFilemarkRestrictions =  pageResponse[5];
 
             return decoded;
         }
@@ -81,8 +81,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_1D page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_1D   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Medium Configuration Mode Page:");
 

@@ -116,14 +116,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(FormatLayersResponse, 0);
-            decoded.Reserved1 = FormatLayersResponse[2];
-            decoded.Reserved2 = FormatLayersResponse[3];
-            decoded.NumberOfLayers = FormatLayersResponse[4];
-            decoded.Reserved3 = (byte)((FormatLayersResponse[5] & 0xC0) >> 6);
+            decoded.DataLength         = BigEndianBitConverter.ToUInt16(FormatLayersResponse, 0);
+            decoded.Reserved1          = FormatLayersResponse[2];
+            decoded.Reserved2          = FormatLayersResponse[3];
+            decoded.NumberOfLayers     = FormatLayersResponse[4];
+            decoded.Reserved3          = (byte)((FormatLayersResponse[5] & 0xC0) >> 6);
             decoded.DefaultFormatLayer = (byte)((FormatLayersResponse[5] & 0x30) >> 4);
-            decoded.Reserved4 = (byte)((FormatLayersResponse[5] & 0x0C) >> 2);
-            decoded.OnlineFormatLayer = (byte)(FormatLayersResponse[5] & 0x03);
+            decoded.Reserved4          = (byte)((FormatLayersResponse[5] & 0x0C) >> 2);
+            decoded.OnlineFormatLayer  = (byte)(FormatLayersResponse[5] & 0x03);
 
             decoded.FormatLayers = new ushort[(FormatLayersResponse.Length - 6) / 2];
 
@@ -150,28 +150,28 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                     {
                         sb.AppendFormat("Layer {0} is of type Blu-ray", i).AppendLine();
                         if(response.DefaultFormatLayer == i) sb.AppendLine("This is the default layer.");
-                        if(response.OnlineFormatLayer == i) sb.AppendLine("This is the layer actually in use.");
+                        if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
                     case (ushort)FormatLayerTypeCodes.CDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type CD", i).AppendLine();
                         if(response.DefaultFormatLayer == i) sb.AppendLine("This is the default layer.");
-                        if(response.OnlineFormatLayer == i) sb.AppendLine("This is the layer actually in use.");
+                        if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
                     case (ushort)FormatLayerTypeCodes.DVDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type DVD", i).AppendLine();
                         if(response.DefaultFormatLayer == i) sb.AppendLine("This is the default layer.");
-                        if(response.OnlineFormatLayer == i) sb.AppendLine("This is the layer actually in use.");
+                        if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
                     case (ushort)FormatLayerTypeCodes.HDDVDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type HD DVD", i).AppendLine();
                         if(response.DefaultFormatLayer == i) sb.AppendLine("This is the default layer.");
-                        if(response.OnlineFormatLayer == i) sb.AppendLine("This is the layer actually in use.");
+                        if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
                     default:
@@ -179,7 +179,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                         sb.AppendFormat("Layer {0} is of unknown type 0x{1:X4}", i, response.FormatLayers[i])
                           .AppendLine();
                         if(response.DefaultFormatLayer == i) sb.AppendLine("This is the default layer.");
-                        if(response.OnlineFormatLayer == i) sb.AppendLine("This is the layer actually in use.");
+                        if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
                 }

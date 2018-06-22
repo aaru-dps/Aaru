@@ -95,14 +95,14 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_07 decoded = new ModePage_07();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS  |= (pageResponse[0] & 0x80) == 0x80;
             decoded.EER |= (pageResponse[2] & 0x08) == 0x08;
             decoded.PER |= (pageResponse[2] & 0x04) == 0x04;
             decoded.DTE |= (pageResponse[2] & 0x02) == 0x02;
             decoded.DCR |= (pageResponse[2] & 0x01) == 0x01;
 
-            decoded.VerifyRetryCount = pageResponse[3];
-            decoded.CorrectionSpan = pageResponse[4];
+            decoded.VerifyRetryCount  = pageResponse[3];
+            decoded.CorrectionSpan    = pageResponse[4];
             decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
             return decoded;
@@ -117,8 +117,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_07 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_07   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Verify error recovery page:");
 

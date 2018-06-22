@@ -74,16 +74,16 @@ namespace DiscImageChef.Decoders.SCSI
                 case MediumTypes.Unspecified_DS:
                     return "Unspecified double sided flexible disk";
                 */
-                case MediumTypes.X3_73: return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.X3_73:    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
                 case MediumTypes.X3_73_DS: return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
-                case MediumTypes.X3_82: return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.X3_82:    return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
                 case MediumTypes.Type3Floppy:
                     return "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)";
                 case MediumTypes.HDFloppy: return "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
                 case MediumTypes.ReadOnly: return "a Read-only optical";
-                case MediumTypes.WORM: return "a Write-once Read-many optical";
+                case MediumTypes.WORM:     return "a Write-once Read-many optical";
                 case MediumTypes.Erasable: return "a Erasable optical";
-                case MediumTypes.RO_WORM: return "a combination of read-only and write-once optical";
+                case MediumTypes.RO_WORM:  return "a combination of read-only and write-once optical";
                 // These magneto-opticals were never manufactured
                 /*
                 case MediumTypes.RO_RW:
@@ -93,7 +93,7 @@ namespace DiscImageChef.Decoders.SCSI
                     return "a combination of write-once and erasable optical";
                 */
                 case MediumTypes.DOW: return "a direct-overwrite optical";
-                default: return $"Unknown medium type 0x{(byte)type:X2}";
+                default:              return $"Unknown medium type 0x{(byte)type:X2}";
             }
         }
 
@@ -1415,8 +1415,8 @@ namespace DiscImageChef.Decoders.SCSI
                                 if(descriptor.Blocks == 0)
                                     if(descriptor.BlockLength == 0)
                                         sb
-                                            .AppendFormat("\tAll remaining blocks conform to {0} and have a variable length",
-                                                          density).AppendLine();
+                                           .AppendFormat("\tAll remaining blocks conform to {0} and have a variable length",
+                                                         density).AppendLine();
                                     else
                                         sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each",
                                                         density, descriptor.BlockLength).AppendLine();

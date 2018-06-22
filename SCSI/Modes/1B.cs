@@ -86,11 +86,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_1B decoded = new ModePage_1B();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS   |= (pageResponse[0] & 0x80) == 0x80;
             decoded.SFLP |= (pageResponse[2] & 0x80) == 0x80;
             decoded.SRFP |= (pageResponse[2] & 0x40) == 0x40;
-            decoded.NCD |= (pageResponse[3] & 0x80) == 0x80;
-            decoded.SML |= (pageResponse[3] & 0x40) == 0x40;
+            decoded.NCD  |= (pageResponse[3] & 0x80) == 0x80;
+            decoded.SML  |= (pageResponse[3] & 0x40) == 0x40;
 
             decoded.TLUN = (byte)(pageResponse[3] & 0x07);
 
@@ -106,8 +106,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_1B page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_1B   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Removable Block Access Capabilities page:");
 

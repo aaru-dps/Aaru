@@ -167,31 +167,31 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_05 decoded = new ModePage_05();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.TransferRate = (ushort)((pageResponse[2] << 8) + pageResponse[3]);
-            decoded.Heads = pageResponse[4];
-            decoded.SectorsPerTrack = pageResponse[5];
-            decoded.BytesPerSector = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.Cylinders = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
-            decoded.WritePrecompCylinder = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
-            decoded.WriteReduceCylinder = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
-            decoded.DriveStepRate = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
-            decoded.DriveStepPulse = pageResponse[16];
-            decoded.HeadSettleDelay = (ushort)((pageResponse[17] << 8) + pageResponse[18]);
-            decoded.MotorOnDelay = pageResponse[19];
-            decoded.MotorOffDelay = pageResponse[20];
-            decoded.TRDY |= (pageResponse[21] & 0x80) == 0x80;
-            decoded.SSN |= (pageResponse[21] & 0x40) == 0x40;
-            decoded.MO |= (pageResponse[21] & 0x20) == 0x20;
-            decoded.SPC = (byte)(pageResponse[22] & 0x0F);
-            decoded.WriteCompensation = pageResponse[23];
-            decoded.HeadLoadDelay = pageResponse[24];
-            decoded.HeadUnloadDelay = pageResponse[25];
-            decoded.Pin34 = (byte)((pageResponse[26] & 0xF0) >> 4);
-            decoded.Pin2 = (byte)(pageResponse[26] & 0x0F);
-            decoded.Pin4 = (byte)((pageResponse[27] & 0xF0) >> 4);
-            decoded.Pin1 = (byte)(pageResponse[27] & 0x0F);
-            decoded.MediumRotationRate = (ushort)((pageResponse[28] << 8) + pageResponse[29]);
+            decoded.PS                   |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.TransferRate         =  (ushort)((pageResponse[2] << 8) + pageResponse[3]);
+            decoded.Heads                =  pageResponse[4];
+            decoded.SectorsPerTrack      =  pageResponse[5];
+            decoded.BytesPerSector       =  (ushort)((pageResponse[6]  << 8) + pageResponse[7]);
+            decoded.Cylinders            =  (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
+            decoded.WritePrecompCylinder =  (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.WriteReduceCylinder  =  (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.DriveStepRate        =  (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+            decoded.DriveStepPulse       =  pageResponse[16];
+            decoded.HeadSettleDelay      =  (ushort)((pageResponse[17] << 8) + pageResponse[18]);
+            decoded.MotorOnDelay         =  pageResponse[19];
+            decoded.MotorOffDelay        =  pageResponse[20];
+            decoded.TRDY                 |= (pageResponse[21]       & 0x80) == 0x80;
+            decoded.SSN                  |= (pageResponse[21]       & 0x40) == 0x40;
+            decoded.MO                   |= (pageResponse[21]       & 0x20) == 0x20;
+            decoded.SPC                  =  (byte)(pageResponse[22] & 0x0F);
+            decoded.WriteCompensation    =  pageResponse[23];
+            decoded.HeadLoadDelay        =  pageResponse[24];
+            decoded.HeadUnloadDelay      =  pageResponse[25];
+            decoded.Pin34                =  (byte)((pageResponse[26] & 0xF0) >> 4);
+            decoded.Pin2                 =  (byte)(pageResponse[26] & 0x0F);
+            decoded.Pin4                 =  (byte)((pageResponse[27] & 0xF0) >> 4);
+            decoded.Pin1                 =  (byte)(pageResponse[27] & 0x0F);
+            decoded.MediumRotationRate   =  (ushort)((pageResponse[28] << 8) + pageResponse[29]);
 
             return decoded;
         }
@@ -205,8 +205,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_05 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_05   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Flexible disk page:");
 
@@ -232,17 +232,17 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(!page.TRDY)
                 sb
-                    .AppendFormat("\tTarget shall wait {0} seconds before attempting to access the medium after motor on is asserted",
-                                  (double)page.MotorOnDelay * 10).AppendLine();
+                   .AppendFormat("\tTarget shall wait {0} seconds before attempting to access the medium after motor on is asserted",
+                                 (double)page.MotorOnDelay * 10).AppendLine();
             else
                 sb
-                    .AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attemps",
-                                  (double)page.MotorOnDelay * 10).AppendLine();
+                   .AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attemps",
+                                 (double)page.MotorOnDelay * 10).AppendLine();
 
             if(page.MotorOffDelay != 0xFF)
                 sb
-                    .AppendFormat("\tTarget shall wait {0} seconds before releasing the motor on signal after becoming idle",
-                                  (double)page.MotorOffDelay * 10).AppendLine();
+                   .AppendFormat("\tTarget shall wait {0} seconds before releasing the motor on signal after becoming idle",
+                                 (double)page.MotorOffDelay * 10).AppendLine();
             else sb.AppendLine("\tTarget shall never release the motor on signal");
 
             if(page.TRDY) sb.AppendLine("\tThere is a drive ready signal");

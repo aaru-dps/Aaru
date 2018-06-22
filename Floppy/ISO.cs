@@ -61,7 +61,8 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     Start of track, 32 bytes set to 0x4E
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] innerGap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] innerGap;
             /// <summary>
             ///     Track sectors
             /// </summary>
@@ -84,7 +85,8 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     22 bytes set to 0x4E, set to 0x22 on Commodore 1581
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)] public byte[] innerGap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
+            public byte[] innerGap;
             /// <summary>
             ///     Sector data block
             /// </summary>
@@ -103,11 +105,13 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     12 bytes set to 0
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] zero;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] zero;
             /// <summary>
             ///     3 bytes set to 0xA1
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] aone;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] aone;
             /// <summary>
             ///     Set to <see cref="IBMIdType.AddressMark" />
             /// </summary>
@@ -142,11 +146,13 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     12 bytes set to 0
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] zero;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] zero;
             /// <summary>
             ///     3 bytes set to 0xA1
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] aone;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] aone;
             /// <summary>
             ///     Set to <see cref="IBMIdType.DataMark" /> or to <see cref="IBMIdType.DeletedDataMark" />
             /// </summary>

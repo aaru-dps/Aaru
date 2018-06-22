@@ -144,9 +144,9 @@ namespace DiscImageChef.Decoders.CD
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(CDPMAResponse, 0);
-            decoded.Reserved1 = CDPMAResponse[2];
-            decoded.Reserved2 = CDPMAResponse[3];
+            decoded.DataLength     = BigEndianBitConverter.ToUInt16(CDPMAResponse, 0);
+            decoded.Reserved1      = CDPMAResponse[2];
+            decoded.Reserved2      = CDPMAResponse[3];
             decoded.PMADescriptors = new CDPMADescriptors[(decoded.DataLength - 2) / 11];
 
             if(decoded.DataLength + 2 != CDPMAResponse.Length)
@@ -160,18 +160,18 @@ namespace DiscImageChef.Decoders.CD
             for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
             {
                 decoded.PMADescriptors[i].Reserved = CDPMAResponse[0 + i * 11 + 4];
-                decoded.PMADescriptors[i].ADR = (byte)((CDPMAResponse[1 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.PMADescriptors[i].CONTROL = (byte)(CDPMAResponse[1 + i * 11 + 4] & 0x0F);
-                decoded.PMADescriptors[i].TNO = CDPMAResponse[2 + i * 11 + 4];
-                decoded.PMADescriptors[i].POINT = CDPMAResponse[3 + i * 11 + 4];
-                decoded.PMADescriptors[i].Min = CDPMAResponse[4 + i * 11 + 4];
-                decoded.PMADescriptors[i].Sec = CDPMAResponse[5 + i * 11 + 4];
-                decoded.PMADescriptors[i].Frame = CDPMAResponse[6 + i * 11 + 4];
-                decoded.PMADescriptors[i].HOUR = (byte)((CDPMAResponse[7 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.PMADescriptors[i].PHOUR = (byte)(CDPMAResponse[7 + i * 11 + 4] & 0x0F);
-                decoded.PMADescriptors[i].PMIN = CDPMAResponse[8 + i * 11 + 4];
-                decoded.PMADescriptors[i].PSEC = CDPMAResponse[9 + i * 11 + 4];
-                decoded.PMADescriptors[i].PFRAME = CDPMAResponse[10 + i * 11 + 4];
+                decoded.PMADescriptors[i].ADR      = (byte)((CDPMAResponse[1 + i * 11 + 4] & 0xF0) >> 4);
+                decoded.PMADescriptors[i].CONTROL  = (byte)(CDPMAResponse[1 + i * 11 + 4] & 0x0F);
+                decoded.PMADescriptors[i].TNO      = CDPMAResponse[2 + i * 11 + 4];
+                decoded.PMADescriptors[i].POINT    = CDPMAResponse[3 + i * 11 + 4];
+                decoded.PMADescriptors[i].Min      = CDPMAResponse[4 + i * 11 + 4];
+                decoded.PMADescriptors[i].Sec      = CDPMAResponse[5 + i * 11 + 4];
+                decoded.PMADescriptors[i].Frame    = CDPMAResponse[6 + i * 11 + 4];
+                decoded.PMADescriptors[i].HOUR     = (byte)((CDPMAResponse[7 + i * 11 + 4] & 0xF0) >> 4);
+                decoded.PMADescriptors[i].PHOUR    = (byte)(CDPMAResponse[7 + i * 11 + 4] & 0x0F);
+                decoded.PMADescriptors[i].PMIN     = CDPMAResponse[8 + i * 11  + 4];
+                decoded.PMADescriptors[i].PSEC     = CDPMAResponse[9 + i * 11  + 4];
+                decoded.PMADescriptors[i].PFRAME   = CDPMAResponse[10 + i * 11 + 4];
             }
 
             return decoded;
@@ -185,16 +185,16 @@ namespace DiscImageChef.Decoders.CD
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-#endif
+            #endif
 
             foreach(CDPMADescriptors descriptor in response.PMADescriptors)
             {
-#if DEBUG
+                #if DEBUG
                 if(descriptor.Reserved != 0) sb.AppendFormat("Reserved = 0x{0:X2}", descriptor.Reserved).AppendLine();
-#endif
+                #endif
 
                 switch(descriptor.ADR)
                 {
@@ -248,21 +248,21 @@ namespace DiscImageChef.Decoders.CD
                         break;
                     case 3:
                         sb.AppendFormat("Skip track assignment {0} says that tracks ", descriptor.POINT);
-                        if(descriptor.Min > 0) sb.AppendFormat("{0} ", descriptor.Min);
-                        if(descriptor.Sec > 0) sb.AppendFormat("{0} ", descriptor.Sec);
-                        if(descriptor.Frame > 0) sb.AppendFormat("{0} ", descriptor.Frame);
-                        if(descriptor.PMIN > 0) sb.AppendFormat("{0} ", descriptor.PMIN);
-                        if(descriptor.PSEC > 0) sb.AppendFormat("{0} ", descriptor.PSEC);
+                        if(descriptor.Min    > 0) sb.AppendFormat("{0} ", descriptor.Min);
+                        if(descriptor.Sec    > 0) sb.AppendFormat("{0} ", descriptor.Sec);
+                        if(descriptor.Frame  > 0) sb.AppendFormat("{0} ", descriptor.Frame);
+                        if(descriptor.PMIN   > 0) sb.AppendFormat("{0} ", descriptor.PMIN);
+                        if(descriptor.PSEC   > 0) sb.AppendFormat("{0} ", descriptor.PSEC);
                         if(descriptor.PFRAME > 0) sb.AppendFormat("{0} ", descriptor.PFRAME);
                         sb.AppendLine("should be skipped");
                         break;
                     case 4:
                         sb.AppendFormat("Unskip track assignment {0} says that tracks ", descriptor.POINT);
-                        if(descriptor.Min > 0) sb.AppendFormat("{0} ", descriptor.Min);
-                        if(descriptor.Sec > 0) sb.AppendFormat("{0} ", descriptor.Sec);
-                        if(descriptor.Frame > 0) sb.AppendFormat("{0} ", descriptor.Frame);
-                        if(descriptor.PMIN > 0) sb.AppendFormat("{0} ", descriptor.PMIN);
-                        if(descriptor.PSEC > 0) sb.AppendFormat("{0} ", descriptor.PSEC);
+                        if(descriptor.Min    > 0) sb.AppendFormat("{0} ", descriptor.Min);
+                        if(descriptor.Sec    > 0) sb.AppendFormat("{0} ", descriptor.Sec);
+                        if(descriptor.Frame  > 0) sb.AppendFormat("{0} ", descriptor.Frame);
+                        if(descriptor.PMIN   > 0) sb.AppendFormat("{0} ", descriptor.PMIN);
+                        if(descriptor.PSEC   > 0) sb.AppendFormat("{0} ", descriptor.PSEC);
                         if(descriptor.PFRAME > 0) sb.AppendFormat("{0} ", descriptor.PFRAME);
                         sb.AppendLine("should not be skipped");
                         break;

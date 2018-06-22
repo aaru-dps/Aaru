@@ -232,8 +232,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.VolumeIdentifier = new byte[AACSVIResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSVIResponse, 0);
-            decoded.Reserved1 = AACSVIResponse[2];
-            decoded.Reserved2 = AACSVIResponse[3];
+            decoded.Reserved1  = AACSVIResponse[2];
+            decoded.Reserved2  = AACSVIResponse[3];
             Array.Copy(AACSVIResponse, 4, decoded.VolumeIdentifier, 0, AACSVIResponse.Length - 4);
 
             return decoded;
@@ -247,10 +247,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-#endif
+            #endif
             sb.AppendFormat("AACS Volume Identifier in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VolumeIdentifier, 80));
 
@@ -274,8 +274,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.MediaSerialNumber = new byte[AACSMSNResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSMSNResponse, 0);
-            decoded.Reserved1 = AACSMSNResponse[2];
-            decoded.Reserved2 = AACSMSNResponse[3];
+            decoded.Reserved1  = AACSMSNResponse[2];
+            decoded.Reserved2  = AACSMSNResponse[3];
             Array.Copy(AACSMSNResponse, 4, decoded.MediaSerialNumber, 0, AACSMSNResponse.Length - 4);
 
             return decoded;
@@ -289,10 +289,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-#endif
+            #endif
             sb.AppendFormat("AACS Media Serial Number in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaSerialNumber, 80));
 
@@ -316,8 +316,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.MediaIdentifier = new byte[AACSMIResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSMIResponse, 0);
-            decoded.Reserved1 = AACSMIResponse[2];
-            decoded.Reserved2 = AACSMIResponse[3];
+            decoded.Reserved1  = AACSMIResponse[2];
+            decoded.Reserved2  = AACSMIResponse[3];
             Array.Copy(AACSMIResponse, 4, decoded.MediaIdentifier, 0, AACSMIResponse.Length - 4);
 
             return decoded;
@@ -331,10 +331,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-#endif
+            #endif
             sb.AppendFormat("AACS Media Identifier in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaIdentifier, 80));
 
@@ -358,7 +358,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.MediaKeyBlockPacks = new byte[AACSMKBResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSMKBResponse, 0);
-            decoded.Reserved = AACSMKBResponse[2];
+            decoded.Reserved   = AACSMKBResponse[2];
             decoded.TotalPacks = AACSMKBResponse[3];
             Array.Copy(AACSMKBResponse, 4, decoded.MediaKeyBlockPacks, 0, AACSMKBResponse.Length - 4);
 
@@ -373,9 +373,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved != 0) sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
-#endif
+            #endif
             sb.AppendFormat("Total number of media key blocks available to transfer {0}", response.TotalPacks)
               .AppendLine();
             sb.AppendFormat("AACS Media Key Blocks in hex follows:");
@@ -401,8 +401,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.DataKeys = new byte[AACSDKResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSDKResponse, 0);
-            decoded.Reserved1 = AACSDKResponse[2];
-            decoded.Reserved2 = AACSDKResponse[3];
+            decoded.Reserved1  = AACSDKResponse[2];
+            decoded.Reserved2  = AACSDKResponse[3];
             Array.Copy(AACSDKResponse, 4, decoded.DataKeys, 0, AACSDKResponse.Length - 4);
 
             return decoded;
@@ -416,10 +416,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-#endif
+            #endif
             sb.AppendFormat("AACS Data Keys in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DataKeys, 80));
 
@@ -440,8 +440,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSLBAExtsResponse, 0);
-            decoded.Reserved = AACSLBAExtsResponse[2];
+            decoded.DataLength    = BigEndianBitConverter.ToUInt16(AACSLBAExtsResponse, 0);
+            decoded.Reserved      = AACSLBAExtsResponse[2];
             decoded.MaxLBAExtents = AACSLBAExtsResponse[3];
 
             if((AACSLBAExtsResponse.Length - 4) % 16 != 0) return decoded;
@@ -452,7 +452,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             {
                 decoded.Extents[i].Reserved = new byte[8];
                 Array.Copy(AACSLBAExtsResponse, 0 + i * 16 + 4, decoded.Extents[i].Reserved, 0, 8);
-                decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8 + i * 16 + 4);
+                decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8 + i * 16  + 4);
                 decoded.Extents[i].LBACount = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 12 + i * 16 + 4);
             }
 

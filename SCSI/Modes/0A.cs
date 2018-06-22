@@ -177,17 +177,17 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_0A decoded = new ModePage_0A();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS   |= (pageResponse[0] & 0x80) == 0x80;
             decoded.RLEC |= (pageResponse[2] & 0x01) == 0x01;
 
             decoded.QueueAlgorithm = (byte)((pageResponse[3] & 0xF0) >> 4);
-            decoded.QErr = (byte)((pageResponse[3] & 0x06) >> 1);
+            decoded.QErr           = (byte)((pageResponse[3] & 0x06) >> 1);
 
-            decoded.DQue |= (pageResponse[3] & 0x01) == 0x01;
-            decoded.EECA |= (pageResponse[4] & 0x80) == 0x80;
-            decoded.RAENP |= (pageResponse[4] & 0x04) == 0x04;
+            decoded.DQue   |= (pageResponse[3] & 0x01) == 0x01;
+            decoded.EECA   |= (pageResponse[4] & 0x80) == 0x80;
+            decoded.RAENP  |= (pageResponse[4] & 0x04) == 0x04;
             decoded.UAAENP |= (pageResponse[4] & 0x02) == 0x02;
-            decoded.EAENP |= (pageResponse[4] & 0x01) == 0x01;
+            decoded.EAENP  |= (pageResponse[4] & 0x01) == 0x01;
 
             decoded.ReadyAENHoldOffPeriod = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
 
@@ -195,30 +195,30 @@ namespace DiscImageChef.Decoders.SCSI
 
             // SPC-1
             decoded.GLTSD |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.RAC |= (pageResponse[4] & 0x40) == 0x40;
-            decoded.SWP |= (pageResponse[4] & 0x08) == 0x08;
+            decoded.RAC   |= (pageResponse[4] & 0x40) == 0x40;
+            decoded.SWP   |= (pageResponse[4] & 0x08) == 0x08;
 
             decoded.BusyTimeoutPeriod = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
 
             // SPC-2
-            decoded.TST = (byte)((pageResponse[2] & 0xE0) >> 5);
-            decoded.TAS |= (pageResponse[4] & 0x80) == 0x80;
-            decoded.AutoloadMode = (byte)(pageResponse[5] & 0x07);
-            decoded.BusyTimeoutPeriod = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.TST               =  (byte)((pageResponse[2] & 0xE0) >> 5);
+            decoded.TAS               |= (pageResponse[4]       & 0x80) == 0x80;
+            decoded.AutoloadMode      =  (byte)(pageResponse[5] & 0x07);
+            decoded.BusyTimeoutPeriod =  (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
             // SPC-3
-            decoded.TMF_ONLY |= (pageResponse[2] & 0x10) == 0x10;
-            decoded.D_SENSE |= (pageResponse[2] & 0x04) == 0x04;
-            decoded.UA_INTLCK_CTRL = (byte)((pageResponse[4] & 0x30) >> 4);
-            decoded.TAS |= (pageResponse[5] & 0x40) == 0x40;
-            decoded.ATO |= (pageResponse[5] & 0x80) == 0x80;
+            decoded.TMF_ONLY       |= (pageResponse[2] & 0x10) == 0x10;
+            decoded.D_SENSE        |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.UA_INTLCK_CTRL =  (byte)((pageResponse[4] & 0x30) >> 4);
+            decoded.TAS            |= (pageResponse[5] & 0x40) == 0x40;
+            decoded.ATO            |= (pageResponse[5] & 0x80) == 0x80;
 
             // SPC-5
             decoded.DPICZ |= (pageResponse[2] & 0x08) == 0x08;
-            decoded.NUAR |= (pageResponse[3] & 0x08) == 0x08;
+            decoded.NUAR  |= (pageResponse[3] & 0x08) == 0x08;
             decoded.ATMPE |= (pageResponse[5] & 0x20) == 0x20;
-            decoded.RWWP |= (pageResponse[5] & 0x10) == 0x10;
-            decoded.SBLP |= (pageResponse[5] & 0x08) == 0x08;
+            decoded.RWWP  |= (pageResponse[5] & 0x10) == 0x10;
+            decoded.SBLP  |= (pageResponse[5] & 0x08) == 0x08;
 
             return decoded;
         }
@@ -232,8 +232,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_0A page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_0A   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Control mode page:");
 
@@ -412,8 +412,8 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
             decoded.IALUAE |= (pageResponse[4] & 0x01) == 0x01;
-            decoded.SCSIP |= (pageResponse[4] & 0x02) == 0x02;
-            decoded.TCMOS |= (pageResponse[4] & 0x04) == 0x04;
+            decoded.SCSIP  |= (pageResponse[4] & 0x02) == 0x02;
+            decoded.TCMOS  |= (pageResponse[4] & 0x04) == 0x04;
 
             decoded.InitialPriority = (byte)(pageResponse[5] & 0x0F);
 
@@ -430,7 +430,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_0A_S01 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Control extension page:");
 

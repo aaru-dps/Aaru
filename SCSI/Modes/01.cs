@@ -127,26 +127,26 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_01 decoded = new ModePage_01();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS   |= (pageResponse[0] & 0x80) == 0x80;
             decoded.AWRE |= (pageResponse[2] & 0x80) == 0x80;
             decoded.ARRE |= (pageResponse[2] & 0x40) == 0x40;
-            decoded.TB |= (pageResponse[2] & 0x20) == 0x20;
-            decoded.RC |= (pageResponse[2] & 0x10) == 0x10;
-            decoded.EER |= (pageResponse[2] & 0x08) == 0x08;
-            decoded.PER |= (pageResponse[2] & 0x04) == 0x04;
-            decoded.DTE |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.DCR |= (pageResponse[2] & 0x01) == 0x01;
+            decoded.TB   |= (pageResponse[2] & 0x20) == 0x20;
+            decoded.RC   |= (pageResponse[2] & 0x10) == 0x10;
+            decoded.EER  |= (pageResponse[2] & 0x08) == 0x08;
+            decoded.PER  |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.DTE  |= (pageResponse[2] & 0x02) == 0x02;
+            decoded.DCR  |= (pageResponse[2] & 0x01) == 0x01;
 
-            decoded.ReadRetryCount = pageResponse[3];
-            decoded.CorrectionSpan = pageResponse[4];
-            decoded.HeadOffsetCount = (sbyte)pageResponse[5];
+            decoded.ReadRetryCount        = pageResponse[3];
+            decoded.CorrectionSpan        = pageResponse[4];
+            decoded.HeadOffsetCount       = (sbyte)pageResponse[5];
             decoded.DataStrobeOffsetCount = (sbyte)pageResponse[6];
 
             if(pageResponse.Length < 12) return decoded;
 
-            decoded.WriteRetryCount = pageResponse[8];
-            decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
-            decoded.LBPERE |= (pageResponse[7] & 0x80) == 0x80;
+            decoded.WriteRetryCount   =  pageResponse[8];
+            decoded.RecoveryTimeLimit =  (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.LBPERE            |= (pageResponse[7] & 0x80) == 0x80;
 
             return decoded;
         }
@@ -160,8 +160,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_01 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_01   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Read-write error recovery page:");
 
@@ -197,15 +197,15 @@ namespace DiscImageChef.Decoders.SCSI
             pg[0] = 0x01;
             pg[1] = 6;
 
-            if(page.PS) pg[0] += 0x80;
+            if(page.PS) pg[0]   += 0x80;
             if(page.AWRE) pg[2] += 0x80;
             if(page.ARRE) pg[2] += 0x40;
-            if(page.TB) pg[2] += 0x20;
-            if(page.RC) pg[2] += 0x10;
-            if(page.EER) pg[2] += 0x08;
-            if(page.PER) pg[2] += 0x04;
-            if(page.DTE) pg[2] += 0x02;
-            if(page.DCR) pg[2] += 0x01;
+            if(page.TB) pg[2]   += 0x20;
+            if(page.RC) pg[2]   += 0x10;
+            if(page.EER) pg[2]  += 0x08;
+            if(page.PER) pg[2]  += 0x04;
+            if(page.DTE) pg[2]  += 0x02;
+            if(page.DCR) pg[2]  += 0x01;
 
             pg[3] = page.ReadRetryCount;
             pg[4] = page.CorrectionSpan;
