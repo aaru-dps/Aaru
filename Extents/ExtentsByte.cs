@@ -135,7 +135,7 @@ namespace Extents
         {
             byte realEnd;
             if(run) realEnd = (byte)(start + end - 1);
-            else realEnd = end;
+            else realEnd    = end;
 
             // TODO: Optimize this
             for(byte t = start; t <= realEnd; t++) Add(t);
@@ -177,7 +177,7 @@ namespace Extents
                 {
                     toRemove = extent;
                     toAddOne = new Tuple<byte, byte>(extent.Item1, (byte)(item - 1));
-                    toAddTwo = new Tuple<byte, byte>((byte)(item + 1), extent.Item2);
+                    toAddTwo = new Tuple<byte, byte>((byte)(item               + 1), extent.Item2);
                     break;
                 }
 

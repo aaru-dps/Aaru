@@ -42,20 +42,20 @@ namespace DiscImageChef
         /// <param name="compareArray1">Left array</param>
         /// <param name="compareArray2">Right array</param>
         public static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1,
-                                        byte[] compareArray2)
+                                        byte[]   compareArray2)
         {
             different = false;
-            sameSize = true;
+            sameSize  = true;
 
             long leastBytes;
             if(compareArray1.LongLength < compareArray2.LongLength)
             {
-                sameSize = false;
+                sameSize   = false;
                 leastBytes = compareArray1.LongLength;
             }
             else if(compareArray1.LongLength > compareArray2.LongLength)
             {
-                sameSize = false;
+                sameSize   = false;
                 leastBytes = compareArray2.LongLength;
             }
             else leastBytes = compareArray1.LongLength;

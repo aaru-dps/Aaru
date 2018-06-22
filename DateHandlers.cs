@@ -39,7 +39,7 @@ namespace DiscImageChef
     public static class DateHandlers
     {
         static readonly DateTime LisaEpoch = new DateTime(1901, 1, 1, 0, 0, 0);
-        static readonly DateTime MacEpoch = new DateTime(1904, 1, 1, 0, 0, 0);
+        static readonly DateTime MacEpoch  = new DateTime(1904, 1, 1, 0, 0, 0);
         static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
         /// <summary>
         ///     Day 0 of Julian Date system
@@ -138,7 +138,7 @@ namespace DiscImageChef
         /// <returns>.NET DateTime</returns>
         public static DateTime Iso9660ToDateTime(byte[] vdDateTime)
         {
-            byte[] twocharvalue = new byte[2];
+            byte[] twocharvalue  = new byte[2];
             byte[] fourcharvalue = new byte[4];
 
             fourcharvalue[0] = vdDateTime[0];
@@ -228,8 +228,8 @@ namespace DiscImageChef
         /// <returns>.NET DateTime</returns>
         public static DateTime UcsdPascalToDateTime(short dateRecord)
         {
-            int year = ((dateRecord & 0xFE00) >> 9) + 1900;
-            int day = (dateRecord & 0x01F0) >> 4;
+            int year  = ((dateRecord & 0xFE00) >> 9) + 1900;
+            int day   = (dateRecord & 0x01F0) >> 4;
             int month = dateRecord & 0x000F;
 
             DicConsole.DebugWriteLine("UCSDPascalToDateTime handler",
@@ -246,11 +246,11 @@ namespace DiscImageChef
         /// <returns>.NET DateTime</returns>
         public static DateTime DosToDateTime(ushort date, ushort time)
         {
-            int year = ((date & 0xFE00) >> 9) + 1980;
-            int month = (date & 0x1E0) >> 5;
-            int day = date & 0x1F;
-            int hour = (time & 0xF800) >> 11;
-            int minute = (time & 0x7E0) >> 5;
+            int year   = ((date & 0xFE00) >> 9) + 1980;
+            int month  = (date & 0x1E0) >> 5;
+            int day    = date & 0x1F;
+            int hour   = (time & 0xF800) >> 11;
+            int minute = (time & 0x7E0)  >> 5;
             int second = (time & 0x1F) * 2;
 
             DicConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
@@ -273,9 +273,9 @@ namespace DiscImageChef
         /// <returns>.NET DateTime</returns>
         public static DateTime CpmToDateTime(byte[] timestamp)
         {
-            ushort days = BitConverter.ToUInt16(timestamp, 0);
-            int hours = timestamp[2];
-            int minutes = timestamp[3];
+            ushort days    = BitConverter.ToUInt16(timestamp, 0);
+            int    hours   = timestamp[2];
+            int    minutes = timestamp[3];
 
             DateTime temp = AmigaEpoch.AddDays(days);
             temp = temp.AddHours(hours);
@@ -298,20 +298,23 @@ namespace DiscImageChef
         /// <param name="hundredsOfMicroseconds">Hundreds of microseconds</param>
         /// <param name="microseconds">Microseconds</param>
         /// <returns></returns>
-        public static DateTime EcmaToDateTime(ushort typeAndTimeZone, short year, byte month, byte day, byte hour,
-                                              byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds,
-                                              byte microseconds)
+        public static DateTime EcmaToDateTime(ushort typeAndTimeZone, short year, byte month, byte day,
+                                              byte   hour,
+                                              byte   minute, byte second, byte centiseconds,
+                                              byte   hundredsOfMicroseconds,
+                                              byte   microseconds)
         {
             byte specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
-            long ticks = (long)centiseconds * 100000 + (long)hundredsOfMicroseconds * 1000 + (long)microseconds * 10;
+            long ticks = (long)centiseconds         * 100000 + (long)hundredsOfMicroseconds * 1000 +
+                                 (long)microseconds * 10;
             if(specification == 0)
                 return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc).AddTicks(ticks);
 
             ushort preOffset = (ushort)(typeAndTimeZone & 0xFFF);
-            short offset;
+            short  offset;
 
             if((preOffset & 0x800) == 0x800) offset = (short)(preOffset | 0xF000);
-            else offset = (short)(preOffset & 0x7FF);
+            else offset                             = (short)(preOffset & 0x7FF);
 
             if(offset == -2047)
                 return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
@@ -319,7 +322,7 @@ namespace DiscImageChef
             if(offset < -1440 || offset > 1440) offset = 0;
 
             return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0))
-                .AddTicks(ticks).DateTime;
+                  .AddTicks(ticks).DateTime;
         }
 
         /// <summary>
@@ -347,7 +350,7 @@ namespace DiscImageChef
             {
                 os9Date = date.Length == 5
                               ? new DateTime(1900 + date[0], date[1], date[2], date[3], date[4], 0)
-                              : new DateTime(1900 + date[0], date[1], date[2], 0, 0, 0);
+                              : new DateTime(1900 + date[0], date[1], date[2], 0,       0,       0);
             }
             catch(ArgumentOutOfRangeException) { os9Date = new DateTime(1900, 0, 0, 0, 0, 0); }
 
@@ -380,15 +383,15 @@ namespace DiscImageChef
         {
             try
             {
-                int iyear = (year >> 4) * 10 + (year & 0xF);
-                int imonth = (month >> 4) * 10 + (month & 0xF);
-                int iday = (day >> 4) * 10 + (day & 0xF);
+                int iyear   = (year   >> 4) * 10 + (year   & 0xF);
+                int imonth  = (month  >> 4) * 10 + (month  & 0xF);
+                int iday    = (day    >> 4) * 10 + (day    & 0xF);
                 int iminute = (minute >> 4) * 10 + (minute & 0xF);
-                int ihour = (hour >> 4) * 10 + (hour & 0xF);
+                int ihour   = (hour   >> 4) * 10 + (hour   & 0xF);
                 int isecond = (second >> 4) * 10 + (second & 0xF);
 
                 if(iyear >= 70) iyear += 1900;
-                else iyear += 2000;
+                else iyear            += 2000;
 
                 return new DateTime(iyear, imonth, iday, ihour, iminute, isecond);
             }

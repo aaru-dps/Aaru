@@ -57,7 +57,7 @@ namespace DiscImageChef
         {
             StringBuilder sb = new StringBuilder();
 
-            int counter = 0;
+            int counter    = 0;
             int subcounter = 0;
             for(long i = 0; i < array.LongLength; i++)
             {
@@ -84,7 +84,7 @@ namespace DiscImageChef
 
                 if(counter == width - 1)
                 {
-                    counter = 0;
+                    counter    = 0;
                     subcounter = 0;
                 }
                 else counter++;
