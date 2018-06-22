@@ -66,9 +66,9 @@ namespace DiscImageChef.Core.Devices.Report
             report.USB = new usbType
             {
                 Manufacturer = dev.UsbManufacturerString,
-                Product = dev.UsbProductString,
-                ProductID = dev.UsbProductId,
-                VendorID = dev.UsbVendorId
+                Product      = dev.UsbProductString,
+                ProductID    = dev.UsbProductId,
+                VendorID     = dev.UsbVendorId
             };
 
             pressedKey = new ConsoleKeyInfo();
@@ -80,7 +80,7 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-            removable = report.USB.RemovableMedia;
+            removable                 = report.USB.RemovableMedia;
             if(debug) report.USB.Descriptors = dev.UsbDescriptors;
         }
     }

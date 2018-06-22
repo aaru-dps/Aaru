@@ -42,14 +42,14 @@ namespace DiscImageChef.Decoders.MMC
     [SuppressMessage("ReSharper", "UnassignedField.Global")]
     public class CID
     {
-        public byte Manufacturer;
-        public byte DeviceType;
-        public byte ApplicationID;
+        public byte   Manufacturer;
+        public byte   DeviceType;
+        public byte   ApplicationID;
         public string ProductName;
-        public byte ProductRevision;
-        public uint ProductSerialNumber;
-        public byte ManufacturingDate;
-        public byte CRC;
+        public byte   ProductRevision;
+        public uint   ProductSerialNumber;
+        public byte   ManufacturingDate;
+        public byte   CRC;
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -81,12 +81,12 @@ namespace DiscImageChef.Decoders.MMC
 
             CID cid = new CID
             {
-                Manufacturer = response[0],
-                DeviceType = (byte)(response[1] & 0x03),
-                ProductRevision = response[9],
+                Manufacturer        = response[0],
+                DeviceType          = (byte)(response[1] & 0x03),
+                ProductRevision     = response[9],
                 ProductSerialNumber = BitConverter.ToUInt32(response, 10),
-                ManufacturingDate = response[14],
-                CRC = (byte)((response[15] & 0xFE) >> 1)
+                ManufacturingDate   = response[14],
+                CRC                 = (byte)((response[15] & 0xFE) >> 1)
             };
             byte[] tmp = new byte[6];
             Array.Copy(response, 3, tmp, 0, 6);

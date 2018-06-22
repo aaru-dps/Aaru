@@ -106,15 +106,16 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[40];
             stream.Read(hdr, 0, 40);
 
-            header        = new SaveDskFHeader();
+            header = new SaveDskFHeader();
             IntPtr hdrPtr = Marshal.AllocHGlobal(40);
             Marshal.Copy(hdr, 0, hdrPtr, 40);
             header = (SaveDskFHeader)Marshal.PtrToStructure(hdrPtr, typeof(SaveDskFHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
-            return (header.magic        == SDF_MAGIC || header.magic           == SDF_MAGIC_COMPRESSED ||
-                    header.magic        == SDF_MAGIC_OLD) && header.fatCopies  <= 2 && header.padding == 0 &&
-                   header.commentOffset < stream.Length   && header.dataOffset < stream.Length;
+            return (header.magic == SDF_MAGIC || header.magic == SDF_MAGIC_COMPRESSED ||
+                    header.magic == SDF_MAGIC_OLD) && header.fatCopies <= 2            && header.padding == 0 &&
+                   header.commentOffset                                < stream.Length &&
+                   header.dataOffset                                   < stream.Length;
         }
 
         public bool Open(IFilter imageFilter)
@@ -125,7 +126,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[40];
 
             stream.Read(hdr, 0, 40);
-            header        = new SaveDskFHeader();
+            header = new SaveDskFHeader();
             IntPtr hdrPtr = Marshal.AllocHGlobal(40);
             Marshal.Copy(hdr, 0, hdrPtr, 40);
             header = (SaveDskFHeader)Marshal.PtrToStructure(hdrPtr, typeof(SaveDskFHeader));
@@ -164,7 +165,7 @@ namespace DiscImageChef.DiscImages
             int b;
             do
             {
-                b                        =  stream.ReadByte();
+                b = stream.ReadByte();
                 if(b >= 0) calculatedChk += (uint)b;
             }
             while(b >= 0);
@@ -180,9 +181,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.Sectors              = (ulong)(header.sectorsPerTrack * header.heads * header.cylinders);
             imageInfo.SectorSize           = header.sectorSize;
 
-            imageInfo.MediaType =
-                Geometry.GetMediaType((header.cylinders, (byte)header.heads, header.sectorsPerTrack, header.sectorSize,
-                                      MediaEncoding.MFM, false));
+            imageInfo.MediaType = Geometry.GetMediaType((header.cylinders, (byte)header.heads, header.sectorsPerTrack,
+                                                            header.sectorSize, MediaEncoding.MFM, false));
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
@@ -217,8 +217,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -228,8 +228,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -348,7 +348,7 @@ namespace DiscImageChef.DiscImages
                 MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dsk"};
 
         public bool   IsWriting    { get; private set; }
@@ -447,7 +447,7 @@ namespace DiscImageChef.DiscImages
                 writingStream.Seek(header.commentOffset, SeekOrigin.Begin);
                 writingStream.Write(commentsBytes, 0,
                                     commentsBytes.Length >= 512 - header.commentOffset
-                                        ? 512                   - header.commentOffset
+                                        ? 512 - header.commentOffset
                                         : commentsBytes.Length);
             }
 
@@ -466,7 +466,7 @@ namespace DiscImageChef.DiscImages
             int b;
             do
             {
-                b                          =  writingStream.ReadByte();
+                b = writingStream.ReadByte();
                 if(b >= 0) header.checksum += (uint)b;
             }
             while(b >= 0);

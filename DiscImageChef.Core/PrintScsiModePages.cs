@@ -3,7 +3,7 @@ using DiscImageChef.Decoders.SCSI;
 
 namespace DiscImageChef.Core
 {
-    public class PrintScsiModePages
+    public static class PrintScsiModePages
     {
         public static void Print(Modes.DecodedMode decMode, PeripheralDeviceTypes devType, byte[] vendorId)
         {
@@ -31,7 +31,7 @@ namespace DiscImageChef.Core
                     }
                     case 0x01:
                     {
-                        if(page.Subpage                  == 0)
+                        if(page.Subpage == 0)
                             DicConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                      ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
                                                      : Modes.PrettifyModePage_01(page.PageResponse));
@@ -76,7 +76,7 @@ namespace DiscImageChef.Core
                     }
                     case 0x07:
                     {
-                        if(page.Subpage                  == 0)
+                        if(page.Subpage == 0)
                             DicConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                      ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
                                                      : Modes.PrettifyModePage_07(page.PageResponse));
@@ -96,8 +96,7 @@ namespace DiscImageChef.Core
                         if(page.Subpage      == 0) DicConsole.WriteLine(Modes.PrettifyModePage_0A(page.PageResponse));
                         else if(page.Subpage == 1)
                             DicConsole.WriteLine(Modes.PrettifyModePage_0A_S01(page.PageResponse));
-                        else
-                            goto default;
+                        else goto default;
 
                         break;
                     }
@@ -131,7 +130,7 @@ namespace DiscImageChef.Core
                     }
                     case 0x10:
                     {
-                        if(page.Subpage                  == 0)
+                        if(page.Subpage == 0)
                             DicConsole.WriteLine(devType == PeripheralDeviceTypes.SequentialAccess
                                                      ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
                                                      : Modes.PrettifyModePage_10(page.PageResponse));
@@ -160,8 +159,7 @@ namespace DiscImageChef.Core
                         if(page.Subpage      == 0) DicConsole.WriteLine(Modes.PrettifyModePage_1A(page.PageResponse));
                         else if(page.Subpage == 1)
                             DicConsole.WriteLine(Modes.PrettifyModePage_1A_S01(page.PageResponse));
-                        else
-                            goto default;
+                        else goto default;
 
                         break;
                     }
@@ -174,14 +172,13 @@ namespace DiscImageChef.Core
                     }
                     case 0x1C:
                     {
-                        if(page.Subpage                  == 0)
+                        if(page.Subpage == 0)
                             DicConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                      ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
                                                      : Modes.PrettifyModePage_1C(page.PageResponse));
                         else if(page.Subpage == 1)
                             DicConsole.WriteLine(Modes.PrettifyModePage_1C_S01(page.PageResponse));
-                        else
-                            goto default;
+                        else goto default;
 
                         break;
                     }
@@ -261,8 +258,7 @@ namespace DiscImageChef.Core
                             DicConsole.WriteLine(Modes.PrettifyIBMModePage_3D(page.PageResponse));
                         else if(StringHandlers.CToString(vendorId).Trim() == "HP")
                             DicConsole.WriteLine(Modes.PrettifyHPModePage_3D(page.PageResponse));
-                        else
-                            goto default;
+                        else goto default;
 
                         break;
                     }
@@ -272,8 +268,7 @@ namespace DiscImageChef.Core
                             DicConsole.WriteLine(Modes.PrettifyFujitsuModePage_3E(page.PageResponse));
                         else if(StringHandlers.CToString(vendorId).Trim() == "HP")
                             DicConsole.WriteLine(Modes.PrettifyHPModePage_3E(page.PageResponse));
-                        else
-                            goto default;
+                        else goto default;
 
                         break;
                     }

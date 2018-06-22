@@ -58,7 +58,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         public Guid           Id        => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
 
         static Dictionary<string, string> GetDefaultOptions()
         {

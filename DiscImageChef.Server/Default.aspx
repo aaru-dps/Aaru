@@ -36,10 +36,13 @@
 <html>
 <meta charset="UTF-8">
 <head runat="server">
-    <link href="dos.css" rel="stylesheet" type="text/css"/>
+    <link href="dos.css"
+          rel="stylesheet"
+          type="text/css" />
     <title>DiscImageChef</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
+    <script async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -50,11 +53,18 @@
         gtag('config', 'UA-111466173-1');
     </script>
 </head>
-<body id="body" runat="server">
+<body id="body"
+      runat="server">
 <h1 align="center">
-    Welcome to <i>
-        <a href="http://github.com/claunia/discimagechef" target="_blank">DiscImageChef</a>
-    </i> Server version <asp:Label id="lblVersion" runat="server"/>
+    Welcome to
+    <i>
+        <a href="http://github.com/claunia/discimagechef"
+           target="_blank">
+            DiscImageChef
+        </a>
+    </i> Server version
+    <asp:Label id="lblVersion"
+               runat="server" />
 </h1>
 </body>
 </html>

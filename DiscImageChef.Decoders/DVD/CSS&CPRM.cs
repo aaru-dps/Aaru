@@ -126,13 +126,13 @@ namespace DiscImageChef.Decoders.DVD
 
             return new LeadInCopyright
             {
-                DataLength = (ushort)((response[0] << 8) + response[1]),
-                Reserved1 = response[2],
-                Reserved2 = response[3],
-                CopyrightType = (CopyrightType)response[4],
+                DataLength        = (ushort)((response[0] << 8) + response[1]),
+                Reserved1         = response[2],
+                Reserved2         = response[3],
+                CopyrightType     = (CopyrightType)response[4],
                 RegionInformation = response[5],
-                Reserved3 = response[6],
-                Reserved4 = response[7]
+                Reserved3         = response[6],
+                Reserved4         = response[7]
             };
         }
 
@@ -141,7 +141,7 @@ namespace DiscImageChef.Decoders.DVD
             if(cmi == null) return null;
 
             LeadInCopyright decoded = cmi.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb      = new StringBuilder();
 
             switch(decoded.CopyrightType)
             {
@@ -164,7 +164,7 @@ namespace DiscImageChef.Decoders.DVD
 
             if(decoded.CopyrightType == 0) return sb.ToString();
 
-            if(decoded.RegionInformation == 0xFF) sb.AppendLine("Disc cannot be played in any region at all.");
+            if(decoded.RegionInformation      == 0xFF) sb.AppendLine("Disc cannot be played in any region at all.");
             else if(decoded.RegionInformation == 0x00) sb.AppendLine("Disc can be played in any region.");
             else
             {

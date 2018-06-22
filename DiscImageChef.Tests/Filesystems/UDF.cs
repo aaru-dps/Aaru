@@ -105,8 +105,8 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
                 Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                IFilesystem fs        = new UDF();
-                Partition   wholePart = new Partition
+                IFilesystem fs = new UDF();
+                Partition wholePart = new Partition
                 {
                     Name   = "Whole device",
                     Length = image.Info.Sectors,
@@ -161,8 +161,8 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
                 Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                IFilesystem fs        = new UDF();
-                Partition   wholePart = new Partition
+                IFilesystem fs = new UDF();
+                Partition wholePart = new Partition
                 {
                     Name   = "Whole device",
                     Length = image.Info.Sectors,

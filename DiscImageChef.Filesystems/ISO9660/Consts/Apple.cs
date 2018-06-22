@@ -34,23 +34,23 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const ushort APPLE_MAGIC = 0x4141; // "AA"
+        const ushort APPLE_MAGIC     = 0x4141; // "AA"
         const ushort APPLE_MAGIC_OLD = 0x4241; // "BA"
 
         enum AppleId : byte
         {
             ProDOS = 1,
-            HFS = 2
+            HFS    = 2
         }
 
         enum AppleOldId : byte
         {
-            ProDOS = 1,
-            TypeCreator = 2,
-            TypeCreatorBundle = 3,
-            TypeCreatorIcon = 4,
+            ProDOS                = 1,
+            TypeCreator           = 2,
+            TypeCreatorBundle     = 3,
+            TypeCreatorIcon       = 4,
             TypeCreatorIconBundle = 5,
-            HFS = 6
+            HFS                   = 6
         }
     }
 }

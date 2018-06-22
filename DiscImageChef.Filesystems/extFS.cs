@@ -50,21 +50,21 @@ namespace DiscImageChef.Filesystems
         const ushort EXT_MAGIC = 0x137D;
 
         public FileSystemType XmlFsType { get; private set; }
-        public string Name => "Linux extended Filesystem";
-        public Guid Id => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
-        public Encoding Encoding { get; private set; }
+        public string         Name      => "Linux extended Filesystem";
+        public Guid           Id        => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+        public Encoding       Encoding  { get; private set; }
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
             ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
-            uint sbOff = SB_POS % imagePlugin.Info.SectorSize;
+            uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return false;
 
             byte[] sbSector = imagePlugin.ReadSector(sbSectorOff + partition.Start);
-            byte[] sb = new byte[512];
+            byte[] sb       = new byte[512];
             Array.Copy(sbSector, sbOff, sb, 0, 512);
 
             ushort magic = BitConverter.ToUInt16(sb, 0x038);
@@ -73,9 +73,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -83,45 +83,46 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.SectorSize < 512) return;
 
             ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
-            uint sbOff = SB_POS % imagePlugin.Info.SectorSize;
+            uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return;
 
-            byte[] sblock = imagePlugin.ReadSector(sbSectorOff + partition.Start);
+            byte[] sblock   = imagePlugin.ReadSector(sbSectorOff + partition.Start);
             byte[] sbSector = new byte[512];
             Array.Copy(sblock, sbOff, sbSector, 0, 512);
 
             extFSSuperBlock extSb = new extFSSuperBlock
             {
-                inodes = BitConverter.ToUInt32(sbSector, 0x000),
-                zones = BitConverter.ToUInt32(sbSector, 0x004),
-                firstfreeblk = BitConverter.ToUInt32(sbSector, 0x008),
-                freecountblk = BitConverter.ToUInt32(sbSector, 0x00C),
-                firstfreeind = BitConverter.ToUInt32(sbSector, 0x010),
-                freecountind = BitConverter.ToUInt32(sbSector, 0x014),
+                inodes        = BitConverter.ToUInt32(sbSector, 0x000),
+                zones         = BitConverter.ToUInt32(sbSector, 0x004),
+                firstfreeblk  = BitConverter.ToUInt32(sbSector, 0x008),
+                freecountblk  = BitConverter.ToUInt32(sbSector, 0x00C),
+                firstfreeind  = BitConverter.ToUInt32(sbSector, 0x010),
+                freecountind  = BitConverter.ToUInt32(sbSector, 0x014),
                 firstdatazone = BitConverter.ToUInt32(sbSector, 0x018),
-                logzonesize = BitConverter.ToUInt32(sbSector, 0x01C),
-                maxsize = BitConverter.ToUInt32(sbSector, 0x020)
+                logzonesize   = BitConverter.ToUInt32(sbSector, 0x01C),
+                maxsize       = BitConverter.ToUInt32(sbSector, 0x020)
             };
 
             sb.AppendLine("ext filesystem");
-            sb.AppendFormat("{0} zones on volume", extSb.zones);
+            sb.AppendFormat("{0} zones on volume",         extSb.zones);
             sb.AppendFormat("{0} free blocks ({1} bytes)", extSb.freecountblk, extSb.freecountblk * 1024);
             sb.AppendFormat("{0} inodes on volume, {1} free ({2}%)", extSb.inodes, extSb.freecountind,
                             extSb.freecountind * 100 / extSb.inodes);
             sb.AppendFormat("First free inode is {0}", extSb.firstfreeind);
             sb.AppendFormat("First free block is {0}", extSb.firstfreeblk);
-            sb.AppendFormat("First data zone is {0}", extSb.firstdatazone);
-            sb.AppendFormat("Log zone size: {0}", extSb.logzonesize);
-            sb.AppendFormat("Max zone size: {0}", extSb.maxsize);
+            sb.AppendFormat("First data zone is {0}",  extSb.firstdatazone);
+            sb.AppendFormat("Log zone size: {0}",      extSb.logzonesize);
+            sb.AppendFormat("Max zone size: {0}",      extSb.maxsize);
 
             XmlFsType = new FileSystemType
             {
-                Type = "ext",
-                FreeClusters = extSb.freecountblk,
+                Type                  = "ext",
+                FreeClusters          = extSb.freecountblk,
                 FreeClustersSpecified = true,
-                ClusterSize = 1024,
-                Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024)
+                ClusterSize           = 1024,
+                Clusters =
+                    (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024)
             };
 
             information = sb.ToString();

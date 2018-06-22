@@ -168,7 +168,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
                 default:
                     scsiOneValue
-                        .Add($"Device claims to comply with unknown SCSI ANSI standard value 0x{inquiry.ANSIVersion:X2})");
+                       .Add($"Device claims to comply with unknown SCSI ANSI standard value 0x{inquiry.ANSIVersion:X2})");
                     break;
             }
 
@@ -182,7 +182,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
                 default:
                     scsiOneValue
-                        .Add($"Device claims to comply with unknown SCSI ECMA standard value 0x{inquiry.ECMAVersion:X2})");
+                       .Add($"Device claims to comply with unknown SCSI ECMA standard value 0x{inquiry.ECMAVersion:X2})");
                     break;
             }
 
@@ -196,7 +196,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
                 default:
                     scsiOneValue
-                        .Add($"Device claims to comply with unknown SCSI ISO/IEC standard value 0x{inquiry.ISOVersion:X2})");
+                       .Add($"Device claims to comply with unknown SCSI ISO/IEC standard value 0x{inquiry.ISOVersion:X2})");
                     break;
             }
 
@@ -401,11 +401,11 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x01DD:
                         scsiOneValue
-                            .Add("Device complies with SES T10/1212 revision 08b w/ Amendment ANSI INCITS.305/AM1-2000");
+                           .Add("Device complies with SES T10/1212 revision 08b w/ Amendment ANSI INCITS.305/AM1-2000");
                         break;
                     case 0x01DE:
                         scsiOneValue
-                            .Add("Device complies with SES ANSI INCITS 305-1998 w/ Amendment ANSI INCITS.305/AM1-2000");
+                           .Add("Device complies with SES ANSI INCITS 305-1998 w/ Amendment ANSI INCITS.305/AM1-2000");
                         break;
                     case 0x01E0:
                         scsiOneValue.Add("Device complies with SCC-2 (no version claimed)");
@@ -742,7 +742,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x04E7:
                         scsiOneValue
-                            .Add("Device complies with MMC-6 ANSI INCITS 468-2010 + MMC-6/AM1 ANSI INCITS 468-2010/AM 1");
+                           .Add("Device complies with MMC-6 ANSI INCITS 468-2010 + MMC-6/AM1 ANSI INCITS 468-2010/AM 1");
                         break;
                     case 0x0500:
                         scsiOneValue.Add("Device complies with ADC-3 (no version claimed)");
@@ -1031,7 +1031,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x0ABC:
                         scsiOneValue
-                            .Add("Device complies with SPI ANSI INCITS 253-1995 with SPI Amnd ANSI INCITS 253/AM1-1998");
+                           .Add("Device complies with SPI ANSI INCITS 253-1995 with SPI Amnd ANSI INCITS 253/AM1-1998");
                         break;
                     case 0x0AC0:
                         scsiOneValue.Add("Device complies with Fast-20 (no version claimed)");
@@ -1173,7 +1173,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x0C4F:
                         scsiOneValue
-                            .Add("Device complies with SAS-2.1 ANSI INCITS 478-2011 w/ Amnd 1 ANSI INCITS 478/AM1-2014");
+                           .Add("Device complies with SAS-2.1 ANSI INCITS 478-2011 w/ Amnd 1 ANSI INCITS 478/AM1-2014");
                         break;
                     case 0x0C52:
                         scsiOneValue.Add("Device complies with SAS-2.1 ISO/IEC 14776-153");
@@ -1201,7 +1201,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x0D3C:
                         scsiOneValue
-                            .Add("Device complies with FC-PH ANSI INCITS 230-1994 with Amnd 1 ANSI INCITS 230/AM1-1996");
+                           .Add("Device complies with FC-PH ANSI INCITS 230-1994 with Amnd 1 ANSI INCITS 230/AM1-1996");
                         break;
                     case 0x0D40:
                         scsiOneValue.Add("Device complies with FC-AL (no version claimed)");
@@ -1274,7 +1274,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x0E03:
                         scsiOneValue
-                            .Add("Device complies with FC-FS-2 ANSI INCITS 242-2007 with AM1 ANSI INCITS 242/AM1-2007");
+                           .Add("Device complies with FC-FS-2 ANSI INCITS 242-2007 with AM1 ANSI INCITS 242/AM1-2007");
                         break;
                     case 0x0E20:
                         scsiOneValue.Add("Device complies with FC-LS (no version claimed)");
@@ -1332,7 +1332,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x0EA6:
                         scsiOneValue
-                            .Add("Device complies with FC 10GFC ANSI INCITS 364-2003 with AM1 ANSI INCITS 364/AM1-2007");
+                           .Add("Device complies with FC 10GFC ANSI INCITS 364-2003 with AM1 ANSI INCITS 364/AM1-2007");
                         break;
                     case 0x0EC0:
                         scsiOneValue.Add("Device complies with FC-SP-2 (no version claimed)");
@@ -1513,22 +1513,22 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x1621:
                         scsiOneValue
-                            .Add("Device complies with ATA/ATAPI-8 ATA8-APT Parallel Transport (no version claimed)");
+                           .Add("Device complies with ATA/ATAPI-8 ATA8-APT Parallel Transport (no version claimed)");
                         break;
                     case 0x1622:
                         scsiOneValue
-                            .Add("Device complies with ATA/ATAPI-8 ATA8-AST Serial Transport (no version claimed)");
+                           .Add("Device complies with ATA/ATAPI-8 ATA8-AST Serial Transport (no version claimed)");
                         break;
                     case 0x1623:
                         scsiOneValue
-                            .Add("Device complies with ATA/ATAPI-8 ATA8-ACS ATA/ATAPI Command Set (no version claimed)");
+                           .Add("Device complies with ATA/ATAPI-8 ATA8-ACS ATA/ATAPI Command Set (no version claimed)");
                         break;
                     case 0x1628:
                         scsiOneValue.Add("Device complies with ATA/ATAPI-8 ATA8-AAM ANSI INCITS 451-2008");
                         break;
                     case 0x162A:
                         scsiOneValue
-                            .Add("Device complies with ATA/ATAPI-8 ATA8-ACS ANSI INCITS 452-2009 w/ Amendment 1");
+                           .Add("Device complies with ATA/ATAPI-8 ATA8-ACS ANSI INCITS 452-2009 w/ Amendment 1");
                         break;
                     case 0x1728:
                         scsiOneValue.Add("Device complies with Universal Serial Bus Specification, Revision 1.1");
@@ -1538,7 +1538,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     case 0x1730:
                         scsiOneValue
-                            .Add("Device complies with USB Mass Storage Class Bulk-Only Transport, Revision 1.0");
+                           .Add("Device complies with USB Mass Storage Class Bulk-Only Transport, Revision 1.0");
                         break;
                     case 0x1740:
                         scsiOneValue.Add("Device complies with UAS (no version claimed)");

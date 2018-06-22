@@ -233,7 +233,7 @@ namespace DiscImageChef.DiscImages
 
             // Block chunks and headers
             List<byte[]> blkxList = new List<byte[]>();
-            chunks                = new Dictionary<ulong, BlockChunk>();
+            chunks = new Dictionary<ulong, BlockChunk>();
 
             bool fakeBlockChunks = false;
 
@@ -330,9 +330,9 @@ namespace DiscImageChef.DiscImages
                 string dev     = null;
                 string pre     = null;
 
-                string major = $"{version.MajorVersion}";
-                string minor = $".{version.MinorVersion / 10}";
-                if(version.MinorVersion                 % 10 > 0) release = $".{version.MinorVersion % 10}";
+                string major                              = $"{version.MajorVersion}";
+                string minor                              = $".{version.MinorVersion / 10}";
+                if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                 switch(version.DevStage)
                 {
                     case Version.DevelopmentStage.Alpha:
@@ -355,8 +355,7 @@ namespace DiscImageChef.DiscImages
                 imageInfo.Comments           = version.VersionMessage;
 
                 if(version.MajorVersion      == 3) imageInfo.Application = "ShrinkWrap™";
-                else if(version.MajorVersion == 6)
-                    imageInfo.Application = "DiskCopy";
+                else if(version.MajorVersion == 6) imageInfo.Application = "DiskCopy";
             }
             else imageInfo.Application = "DiskCopy";
 
@@ -478,13 +477,13 @@ namespace DiscImageChef.DiscImages
 
             if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
-            BlockChunk readChunk     = new BlockChunk();
+            BlockChunk readChunk        = new BlockChunk();
             bool       chunkFound       = false;
             ulong      chunkStartSector = 0;
 
             foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key))
             {
-                readChunk     = kvp.Value;
+                readChunk        = kvp.Value;
                 chunkFound       = true;
                 chunkStartSector = kvp.Key;
             }
@@ -522,8 +521,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         case CHUNK_TYPE_RLE: break;
                         default:
-                            throw new
-                                ImageNotSupportedException($"Unsupported chunk type 0x{readChunk.type:X8} found");
+                            throw new ImageNotSupportedException($"Unsupported chunk type 0x{readChunk.type:X8} found");
                     }
 
                     #if DEBUG
@@ -552,8 +550,8 @@ namespace DiscImageChef.DiscImages
                                 currentChunkCacheSize += (uint)realSize;
                                 break;
                             case CHUNK_TYPE_RLE:
-                                tmpBuffer    = new byte[buffersize];
-                                realSize     = 0;
+                                tmpBuffer = new byte[buffersize];
+                                realSize  = 0;
                                 AppleRle rle = new AppleRle(cmpMs);
                                 for(int i = 0; i < buffersize; i++)
                                 {
@@ -707,8 +705,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -717,8 +715,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -733,7 +731,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
@@ -940,7 +938,7 @@ namespace DiscImageChef.DiscImages
             };
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            MemoryStream chunkMs                 = new MemoryStream();
+            MemoryStream chunkMs = new MemoryStream();
             chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.signature),    0, 4);
             chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.version),      0, 4);
             chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.sectorStart),  0, 8);
@@ -1110,17 +1108,17 @@ namespace DiscImageChef.DiscImages
             public uint  dataForkChk;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
             public byte[] reserved1;
-            public ulong  plistOff;
-            public ulong  plistLen;
+            public ulong plistOff;
+            public ulong plistLen;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 120)]
             public byte[] reserved2;
-            public uint   masterChkType;
-            public uint   masterChkLen;
-            public uint   masterChk;
+            public uint masterChkType;
+            public uint masterChkLen;
+            public uint masterChk;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
             public byte[] reserved3;
-            public uint   imageVariant;
-            public ulong  sectorCount;
+            public uint  imageVariant;
+            public ulong sectorCount;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
             public byte[] reserved4;
         }
@@ -1146,7 +1144,7 @@ namespace DiscImageChef.DiscImages
             public uint  checksum;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
             public byte[] reservedChk;
-            public uint   chunks;
+            public uint chunks;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

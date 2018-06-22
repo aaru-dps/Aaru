@@ -59,8 +59,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             BigEndianBitConverter.IsLittleEndian =
                 multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
 
-            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock,                 0x00);
-            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock,                 0x02);
+            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00);
+            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02);
             volEntry.EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
             volEntry.VolumeName = new byte[8];
             Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
@@ -103,10 +103,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding    encoding)
         {
-            Encoding                    = encoding ?? new Apple2();
+            Encoding = encoding ?? new Apple2();
             StringBuilder sbInformation = new StringBuilder();
-            information                 = "";
-            multiplier                  = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
+            information = "";
+            multiplier  = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             if(imagePlugin.Info.Sectors < 3) return;
 
@@ -119,8 +119,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             BigEndianBitConverter.IsLittleEndian =
                 multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
 
-            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock,                 0x00);
-            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock,                 0x02);
+            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00);
+            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02);
             volEntry.EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
             volEntry.VolumeName = new byte[8];
             Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
@@ -154,7 +154,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(volEntry.VolumeName, Encoding))
                          .AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", volEntry.Blocks).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} files",  volEntry.Files).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} files", volEntry.Files).AppendLine();
             sbInformation
                .AppendFormat("Volume last booted at {0}", DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot))
                .AppendLine();

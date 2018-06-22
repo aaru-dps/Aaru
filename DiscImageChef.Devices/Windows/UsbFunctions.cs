@@ -47,10 +47,10 @@ namespace DiscImageChef.Devices.Windows
     /// </summary>
     static partial class Usb
     {
-        const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-        internal const string GuidDevinterfaceDisk = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GuidDevinterfaceCdrom = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GuidDevinterfaceFloppy = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+        const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
+        internal const string GuidDevinterfaceDisk            = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceCdrom           = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceFloppy          = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
 
         /// <summary>
         ///     Get a list of all connected devices
@@ -73,8 +73,12 @@ namespace DiscImageChef.Devices.Windows
         static void ListHub(UsbHub hub, ICollection<UsbDevice> devList)
         {
             foreach(UsbPort port in hub.GetPorts())
-                if(port.IsHub) ListHub(port.GetHub(), devList);
-                else { if(port.IsDeviceConnected) devList.Add(port.GetDevice()); }
+                if(port.IsHub)
+                    ListHub(port.GetHub(), devList);
+                else
+                {
+                    if(port.IsDeviceConnected) devList.Add(port.GetDevice());
+                }
         }
 
         /// <summary>
@@ -104,7 +108,8 @@ namespace DiscImageChef.Devices.Windows
         static void SearchHubDriverKeyName(UsbHub hub, ref UsbDevice foundDevice, string driverKeyName)
         {
             foreach(UsbPort port in hub.GetPorts())
-                if(port.IsHub) SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
+                if(port.IsHub)
+                    SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
                 else
                 {
                     if(!port.IsDeviceConnected) continue;
@@ -144,7 +149,8 @@ namespace DiscImageChef.Devices.Windows
         static void SearchHubInstanceId(UsbHub hub, ref UsbDevice foundDevice, string instanceId)
         {
             foreach(UsbPort port in hub.GetPorts())
-                if(port.IsHub) SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
+                if(port.IsHub)
+                    SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
                 else
                 {
                     if(!port.IsDeviceConnected) continue;
@@ -202,7 +208,7 @@ namespace DiscImageChef.Devices.Windows
         static UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
         {
             UsbDevice foundDevice = null;
-            string instanceId = "";
+            string    instanceId  = "";
 
             Guid diskGuid = new Guid(deviceGuid);
 
@@ -212,7 +218,7 @@ namespace DiscImageChef.Devices.Windows
             if(h != INVALID_HANDLE_VALUE)
             {
                 bool success;
-                int i = 0;
+                int  i = 0;
                 do
                 {
                     // create a Device Interface Data structure
@@ -232,8 +238,8 @@ namespace DiscImageChef.Devices.Windows
                             new SpDeviceInterfaceDetailData {cbSize = 4 + Marshal.SystemDefaultCharSize}; // trust me :)
 
                         // now we can get some more detailed information
-                        int nRequiredSize = 0;
-                        const int N_BYTES = BUFFER_SIZE;
+                        int       nRequiredSize = 0;
+                        const int N_BYTES       = BUFFER_SIZE;
                         if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, N_BYTES, ref nRequiredSize, ref da))
                             if(GetDeviceNumber(didd.DevicePath) == devNum)
                             {
@@ -251,6 +257,7 @@ namespace DiscImageChef.Devices.Windows
                                 //break;
                             }
                     }
+
                     i++;
                 }
                 while(success);
@@ -276,9 +283,9 @@ namespace DiscImageChef.Devices.Windows
             IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
             if(h == INVALID_HANDLE_VALUE) return ans;
 
-            StorageDeviceNumber sdn = new StorageDeviceNumber();
-            int nBytes = Marshal.SizeOf(sdn);
-            IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
+            StorageDeviceNumber sdn    = new StorageDeviceNumber();
+            int                 nBytes = Marshal.SizeOf(sdn);
+            IntPtr              ptrSdn = Marshal.AllocHGlobal(nBytes);
 
             if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out _, IntPtr.Zero))
             {
@@ -287,6 +294,7 @@ namespace DiscImageChef.Devices.Windows
                 // STORAGE_DEVICE_NUMBER into a single number
                 ans = (sdn.DeviceType << 8) + sdn.DeviceNumber;
             }
+
             Marshal.FreeHGlobal(ptrSdn);
             CloseHandle(h);
             return ans;

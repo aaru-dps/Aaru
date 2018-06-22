@@ -78,7 +78,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             for(int i = 2; i < pageResponse.Length; i += 2)
             {
-                decoded.PartitionSizes[(i - 2) / 2] = (ushort)(pageResponse[i] << 8);
+                decoded.PartitionSizes[(i - 2) / 2] =  (ushort)(pageResponse[i] << 8);
                 decoded.PartitionSizes[(i - 2) / 2] += pageResponse[i + 1];
             }
 
@@ -95,7 +95,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_12_13_14 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder     sb   = new StringBuilder();
 
             sb.AppendLine("SCSI medium partition page (extra):");
 

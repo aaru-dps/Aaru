@@ -149,7 +149,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            ulong totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+            ulong totalSize =
+                (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
             dumpLog.WriteLine("Reading Physical Format Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
@@ -164,7 +165,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
             DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
-            ulong l0Video = PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1;
+            ulong l0Video = PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN +
+                            1;
             ulong l1Video = totalSize - l0Video + 1;
             dumpLog.WriteLine("Reading Disc Manufacturing Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -200,8 +202,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            ulong gameSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) +
-                             1;
+            ulong gameSize =
+                (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) + 1;
             DicConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors", gameSize);
 
             // Get middle zone size
@@ -237,9 +239,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
             ulong blocks = totalSize + 1;
-            ulong middleZone = totalSize - (PFI.Decode(readBuffer).Value.Layer0EndPSN -
-                                            PFI.Decode(readBuffer).Value.DataAreaStartPSN +
-                                            1) - gameSize + 1;
+            ulong middleZone =
+                totalSize - (PFI.Decode(readBuffer).Value.Layer0EndPSN -
+                                   PFI.Decode(readBuffer).Value.DataAreaStartPSN +
+                                   1) - gameSize + 1;
 
             tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
@@ -259,7 +262,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.Xbox_DMI, tmpBuf);
 
-            totalSize  = l0Video + l1Video + middleZone * 2 + gameSize;
+            totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
             ulong layerBreak = l0Video + middleZone + gameSize / 2;
 
             DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);
@@ -705,24 +708,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(persistent)
                 {
                     Modes.ModePage_01_MMC pgMmc;
-                    
+
                     sense = dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                            dev.Timeout, out _);
                     if(sense)
                     {
-                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current,
-                                                0x01, dev.Timeout, out _);
+                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                                dev.Timeout, out _);
 
                         if(!sense)
                         {
                             Modes.DecodedMode? dcMode10 =
                                 Modes.DecodeMode10(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
-                            
+
                             if(dcMode10.HasValue)
-                            {
                                 foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
-                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00) currentModePage = modePage;
-                            }
+                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
+                                        currentModePage = modePage;
                         }
                     }
                     else
@@ -731,18 +733,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
 
                         if(dcMode6.HasValue)
-                        {
                             foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
                                 if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
                                     currentModePage = modePage;
-                        }
                     }
 
                     if(currentModePage == null)
                     {
-                            
-                        pgMmc =
-                            new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 0x20, Parameter = 0x00};
+                        pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 0x20, Parameter = 0x00};
                         currentModePage = new Modes.ModePage
                         {
                             Page         = 0x01,
@@ -750,9 +748,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         };
                     }
-                    
-                    pgMmc =
-                        new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
+
+                    pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
                         Header = new Modes.ModeHeader(),
@@ -782,7 +779,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else runningPersistent = true;
                 }
-                
+
                 repeatRetry:
                 ulong[] tmpArray = resume.BadBlocks.ToArray();
                 foreach(ulong badSector in tmpArray)

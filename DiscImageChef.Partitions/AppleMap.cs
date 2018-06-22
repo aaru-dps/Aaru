@@ -54,14 +54,16 @@ namespace DiscImageChef.Partitions
         const uint HFS_MAGIC_OLD = 0x54465331;
 
         public string Name => "Apple Partition Map";
-        public Guid Id => new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
+        public Guid   Id   => new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             uint sectorSize;
 
             if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448) sectorSize = 2048;
-            else sectorSize = imagePlugin.Info.SectorSize;
+            else
+                sectorSize =
+                    imagePlugin.Info.SectorSize;
 
             partitions = new List<Partition>();
 
@@ -75,7 +77,7 @@ namespace DiscImageChef.Partitions
             {
                 byte[] tmp = new byte[512];
                 Array.Copy(ddmSector, 0, tmp, 0, 256);
-                ddmSector = tmp;
+                ddmSector  = tmp;
                 maxDrivers = 29;
             }
             else if(sectorSize < 256) return false;
@@ -83,11 +85,11 @@ namespace DiscImageChef.Partitions
             AppleDriverDescriptorMap ddm =
                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
 
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}", ddm.sbSig);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}",  ddm.sbSig);
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlocks = {0}", ddm.sbBlocks);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevType = {0}", ddm.sbDevType);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevId = {0}", ddm.sbDevId);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlocks = {0}",    ddm.sbBlocks);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevType = {0}",   ddm.sbDevType);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevId = {0}",     ddm.sbDevId);
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbData = 0x{0:X8}", ddm.sbData);
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDrvrCount = {0}", ddm.sbDrvrCount);
 
@@ -113,12 +115,12 @@ namespace DiscImageChef.Partitions
 
                         Partition part = new Partition
                         {
-                            Size = (ulong)(ddm.sbMap[i].ddSize * 512),
-                            Length = (ulong)(ddm.sbMap[i].ddSize * 512 / sectorSize),
+                            Size     = (ulong)(ddm.sbMap[i].ddSize       * 512),
+                            Length   = (ulong)(ddm.sbMap[i].ddSize * 512 / sectorSize),
                             Sequence = sequence,
-                            Offset = ddm.sbMap[i].ddBlock * sectorSize,
-                            Start = ddm.sbMap[i].ddBlock + sectorOffset,
-                            Type = "Apple_Driver"
+                            Offset   = ddm.sbMap[i].ddBlock * sectorSize,
+                            Start    = ddm.sbMap[i].ddBlock + sectorOffset,
+                            Type     = "Apple_Driver"
                         };
 
                         if(ddm.sbMap[i].ddSize * 512 % sectorSize > 0) part.Length++;
@@ -158,13 +160,13 @@ namespace DiscImageChef.Partitions
 
                     Partition part = new Partition
                     {
-                        Size = oldEntry.pdStart * ddm.sbBlockSize,
-                        Length = oldEntry.pdStart * ddm.sbBlockSize / sectorSize,
+                        Size     = oldEntry.pdStart                   * ddm.sbBlockSize,
+                        Length   = oldEntry.pdStart * ddm.sbBlockSize / sectorSize,
                         Sequence = sequence,
-                        Offset = oldEntry.pdSize * ddm.sbBlockSize,
-                        Start = oldEntry.pdSize * ddm.sbBlockSize / sectorSize,
-                        Scheme = Name,
-                        Type = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
+                        Offset   = oldEntry.pdSize                   * ddm.sbBlockSize,
+                        Start    = oldEntry.pdSize * ddm.sbBlockSize / sectorSize,
+                        Scheme   = Name,
+                        Type     = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
                     };
 
                     partitions.Add(part);
@@ -176,10 +178,10 @@ namespace DiscImageChef.Partitions
             }
 
             AppleMapPartitionEntry entry;
-            uint entrySize;
-            uint entryCount;
-            uint sectorsToRead;
-            uint skipDdm;
+            uint                   entrySize;
+            uint                   entryCount;
+            uint                   sectorsToRead;
+            uint                   skipDdm;
 
             // If sector is bigger than 512
             if(sectorSize > 512)
@@ -191,9 +193,9 @@ namespace DiscImageChef.Partitions
                 if(entry.signature == APM_MAGIC)
                 {
                     DicConsole.DebugWriteLine("AppleMap Plugin", "Found misaligned entry.");
-                    entrySize = 512;
-                    entryCount = entry.entries;
-                    skipDdm = 512;
+                    entrySize     = 512;
+                    entryCount    = entry.entries;
+                    skipDdm       = 512;
                     sectorsToRead = (entryCount + 1) * 512 / sectorSize + 1;
                 }
                 else
@@ -202,9 +204,9 @@ namespace DiscImageChef.Partitions
                     if(entry.signature == APM_MAGIC)
                     {
                         DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
-                        entrySize = sectorSize;
-                        entryCount = entry.entries;
-                        skipDdm = sectorSize;
+                        entrySize     = sectorSize;
+                        entryCount    = entry.entries;
+                        skipDdm       = sectorSize;
                         sectorsToRead = entryCount + 2;
                     }
                     else return partitions.Count > 0;
@@ -216,18 +218,18 @@ namespace DiscImageChef.Partitions
                 if(entry.signature == APM_MAGIC)
                 {
                     DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
-                    entrySize = sectorSize;
-                    entryCount = entry.entries;
-                    skipDdm = sectorSize;
+                    entrySize     = sectorSize;
+                    entryCount    = entry.entries;
+                    skipDdm       = sectorSize;
                     sectorsToRead = entryCount + 2;
                 }
                 else return partitions.Count > 0;
             }
 
             byte[] entries = imagePlugin.ReadSectors(sectorOffset, sectorsToRead);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}", entrySize);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}", entryCount);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skipDdm);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}",      entrySize);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}",     entryCount);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}",        skipDdm);
             DicConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectorsToRead);
 
             byte[] copy = new byte[entries.Length - skipDdm];
@@ -243,9 +245,9 @@ namespace DiscImageChef.Partitions
 
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}", i, entry.entries);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}", i, entry.start);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}", i, entry.sectors);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}",        i, entry.entries);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}",          i, entry.start);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}",        i, entry.sectors);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].name = \"{1}\"", i,
                                           StringHandlers.CToString(entry.name));
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].type = \"{1}\"", i,
@@ -253,7 +255,8 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i,
                                           entry.first_data_block);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i, (AppleMapFlags)entry.flags);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i,
+                                          (AppleMapFlags)entry.flags);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i,
                                           entry.first_boot_block);
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
@@ -279,13 +282,13 @@ namespace DiscImageChef.Partitions
                 Partition partition = new Partition
                 {
                     Sequence = sequence,
-                    Type = StringHandlers.CToString(entry.type),
-                    Name = StringHandlers.CToString(entry.name),
-                    Offset = entry.start * entrySize,
-                    Size = entry.sectors * entrySize,
-                    Start = entry.start * entrySize / sectorSize + sectorOffset,
-                    Length = entry.sectors * entrySize / sectorSize,
-                    Scheme = Name
+                    Type     = StringHandlers.CToString(entry.type),
+                    Name     = StringHandlers.CToString(entry.name),
+                    Offset   = entry.start   * entrySize,
+                    Size     = entry.sectors * entrySize,
+                    Start    = entry.start * entrySize / sectorSize + sectorOffset,
+                    Length   = entry.sectors           * entrySize / sectorSize,
+                    Scheme   = Name
                 };
                 sb.AppendLine("Partition flags:");
                 if(flags.HasFlag(AppleMapFlags.Valid)) sb.AppendLine("Partition is valid.");
@@ -351,7 +354,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Number of entries of the driver descriptor</summary>
             public ushort sbDrvrCount;
             /// <summary>Entries of the driver descriptor</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 61)] public AppleDriverEntry[] sbMap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 61)]
+            public AppleDriverEntry[] sbMap;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -371,7 +375,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Signature <see cref="APM_MAGIC_OLD" /></summary>
             public ushort pdSig;
             /// <summary>Entries of the driver descriptor</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)] public AppleMapOldPartitionEntry[] pdMap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
+            public AppleMapOldPartitionEntry[] pdMap;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -428,9 +433,11 @@ namespace DiscImageChef.Partitions
             /// <summary>Number of sectos of the partition</summary>
             public uint sectors;
             /// <summary>Partition name, 32 bytes, null-padded</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] name;
             /// <summary>Partition type. 32 bytes, null-padded</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] type;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] type;
             /// <summary>First sector of the data area</summary>
             public uint first_data_block;
             /// <summary>Number of sectors of the data area</summary>
@@ -452,9 +459,11 @@ namespace DiscImageChef.Partitions
             /// <summary>Boot code checksum</summary>
             public uint checksum;
             /// <summary>Processor type, 16 bytes, null-padded</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] processor;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] processor;
             /// <summary>Boot arguments</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public uint[] boot_arguments;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public uint[] boot_arguments;
         }
     }
 }

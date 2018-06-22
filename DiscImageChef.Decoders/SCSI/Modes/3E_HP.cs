@@ -63,9 +63,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             HP_ModePage_3E decoded = new HP_ModePage_3E();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS      |= (pageResponse[0] & 0x80) == 0x80;
             decoded.NonAuto |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.CDmode |= (pageResponse[2] & 0x01) == 0x01;
+            decoded.CDmode  |= (pageResponse[2] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -80,7 +80,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             HP_ModePage_3E page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder  sb   = new StringBuilder();
 
             sb.AppendLine("HP CD-ROM Emulation/Disaster Recovery Mode Page:");
 

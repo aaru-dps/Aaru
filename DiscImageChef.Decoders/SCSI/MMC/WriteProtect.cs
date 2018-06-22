@@ -125,16 +125,16 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(WPSResponse, 0);
-            decoded.Reserved1 = WPSResponse[2];
-            decoded.Reserved2 = WPSResponse[3];
-            decoded.Reserved3 = (byte)((WPSResponse[4] & 0xF0) >> 4);
-            decoded.MSWI = Convert.ToBoolean(WPSResponse[4] & 0x08);
-            decoded.CWP = Convert.ToBoolean(WPSResponse[4] & 0x04);
-            decoded.PWP = Convert.ToBoolean(WPSResponse[4] & 0x02);
-            decoded.SWPP = Convert.ToBoolean(WPSResponse[4] & 0x01);
-            decoded.Reserved4 = WPSResponse[5];
-            decoded.Reserved5 = WPSResponse[6];
-            decoded.Reserved6 = WPSResponse[7];
+            decoded.Reserved1  = WPSResponse[2];
+            decoded.Reserved2  = WPSResponse[3];
+            decoded.Reserved3  = (byte)((WPSResponse[4] & 0xF0) >> 4);
+            decoded.MSWI       = Convert.ToBoolean(WPSResponse[4] & 0x08);
+            decoded.CWP        = Convert.ToBoolean(WPSResponse[4] & 0x04);
+            decoded.PWP        = Convert.ToBoolean(WPSResponse[4] & 0x02);
+            decoded.SWPP       = Convert.ToBoolean(WPSResponse[4] & 0x01);
+            decoded.Reserved4  = WPSResponse[5];
+            decoded.Reserved5  = WPSResponse[6];
+            decoded.Reserved6  = WPSResponse[7];
 
             return decoded;
         }
@@ -152,14 +152,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(response.PWP) sb.AppendLine("Media surface sets write protection");
             if(response.SWPP) sb.AppendLine("Software write protection is set until power down");
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
             if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
             if(response.Reserved4 != 0) sb.AppendFormat("Reserved4 = 0x{0:X2}", response.Reserved4).AppendLine();
             if(response.Reserved5 != 0) sb.AppendFormat("Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
             if(response.Reserved6 != 0) sb.AppendFormat("Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
-#endif
+            #endif
 
             return sb.ToString();
         }

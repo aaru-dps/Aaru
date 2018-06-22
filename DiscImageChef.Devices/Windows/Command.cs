@@ -58,13 +58,14 @@ namespace DiscImageChef.Devices.Windows
         ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
         ///     sense
         /// </param>
-        internal static int SendScsiCommand(SafeFileHandle fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
-                                            uint timeout, ScsiIoctlDirection direction, out double duration,
-                                            out bool sense)
+        internal static int SendScsiCommand(SafeFileHandle fd, byte[] cdb, ref byte[] buffer,
+                                            out byte[]     senseBuffer,
+                                            uint           timeout, ScsiIoctlDirection direction, out double duration,
+                                            out bool       sense)
         {
             senseBuffer = null;
-            duration = 0;
-            sense = false;
+            duration    = 0;
+            sense       = false;
 
             if(buffer == null) return -1;
 
@@ -73,21 +74,21 @@ namespace DiscImageChef.Devices.Windows
                 SenseBuf = new byte[32],
                 sptd = new ScsiPassThroughDirect
                 {
-                    Cdb = new byte[16],
-                    CdbLength = (byte)cdb.Length,
-                    SenseInfoLength = 32,
-                    DataIn = direction,
+                    Cdb                = new byte[16],
+                    CdbLength          = (byte)cdb.Length,
+                    SenseInfoLength    = 32,
+                    DataIn             = direction,
                     DataTransferLength = (uint)buffer.Length,
-                    TimeOutValue = timeout,
-                    DataBuffer = Marshal.AllocHGlobal(buffer.Length)
+                    TimeOutValue       = timeout,
+                    DataBuffer         = Marshal.AllocHGlobal(buffer.Length)
                 }
             };
-            sptdSb.sptd.Length = (ushort)Marshal.SizeOf(sptdSb.sptd);
+            sptdSb.sptd.Length          = (ushort)Marshal.SizeOf(sptdSb.sptd);
             sptdSb.sptd.SenseInfoOffset = (uint)Marshal.SizeOf(sptdSb.sptd);
             Array.Copy(cdb, sptdSb.sptd.Cdb, cdb.Length);
 
-            uint k = 0;
-            int error = 0;
+            uint k     = 0;
+            int  error = 0;
 
             Marshal.Copy(buffer, 0, sptdSb.sptd.DataBuffer, buffer.Length);
 
@@ -125,12 +126,13 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersChs registers,
-                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendAtaCommand(SafeFileHandle           fd,             AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol     protocol,
+                                           ref byte[]               buffer,         uint            timeout,
+                                           out double               duration,       out bool        sense)
         {
-            duration = 0;
-            sense = false;
+            duration       = 0;
+            sense          = false;
             errorRegisters = new AtaErrorRegistersChs();
 
             if(buffer == null) return -1;
@@ -141,19 +143,19 @@ namespace DiscImageChef.Devices.Windows
             {
                 aptd = new AtaPassThroughDirect
                 {
-                    TimeOutValue = timeout,
-                    DataBuffer = (IntPtr)offsetForBuffer,
-                    Length = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                    TimeOutValue       = timeout,
+                    DataBuffer         = (IntPtr)offsetForBuffer,
+                    Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
                     DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile = new AtaTaskFile(),
+                    PreviousTaskFile   = new AtaTaskFile(),
                     CurrentTaskFile = new AtaTaskFile
                     {
-                        Command = registers.Command,
+                        Command      = registers.Command,
                         CylinderHigh = registers.CylinderHigh,
-                        CylinderLow = registers.CylinderLow,
-                        DeviceHead = registers.DeviceHead,
-                        Features = registers.Feature,
-                        SectorCount = registers.SectorCount,
+                        CylinderLow  = registers.CylinderLow,
+                        DeviceHead   = registers.DeviceHead,
+                        Features     = registers.Feature,
+                        SectorCount  = registers.SectorCount,
                         SectorNumber = registers.Sector
                     }
                 },
@@ -187,8 +189,8 @@ namespace DiscImageChef.Devices.Windows
             // Unknown if needed
             aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
-            uint k = 0;
-            int error = 0;
+            uint k     = 0;
+            int  error = 0;
 
             Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
 
@@ -205,12 +207,12 @@ namespace DiscImageChef.Devices.Windows
             duration = (end - start).TotalMilliseconds;
 
             errorRegisters.CylinderHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.CylinderLow = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.Sector = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.SectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.Status = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.CylinderLow  = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead   = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error        = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.Sector       = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount  = aptdBuf.aptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status       = aptdBuf.aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
@@ -229,12 +231,13 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba28 registers,
-                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendAtaCommand(SafeFileHandle             fd,             AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol       protocol,
+                                           ref byte[]                 buffer,         uint              timeout,
+                                           out double                 duration,       out bool          sense)
         {
-            duration = 0;
-            sense = false;
+            duration       = 0;
+            sense          = false;
             errorRegisters = new AtaErrorRegistersLba28();
 
             if(buffer == null) return -1;
@@ -245,19 +248,19 @@ namespace DiscImageChef.Devices.Windows
             {
                 aptd = new AtaPassThroughDirect
                 {
-                    TimeOutValue = timeout,
-                    DataBuffer = (IntPtr)offsetForBuffer,
-                    Length = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                    TimeOutValue       = timeout,
+                    DataBuffer         = (IntPtr)offsetForBuffer,
+                    Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
                     DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile = new AtaTaskFile(),
+                    PreviousTaskFile   = new AtaTaskFile(),
                     CurrentTaskFile = new AtaTaskFile
                     {
-                        Command = registers.Command,
+                        Command      = registers.Command,
                         CylinderHigh = registers.LbaHigh,
-                        CylinderLow = registers.LbaMid,
-                        DeviceHead = registers.DeviceHead,
-                        Features = registers.Feature,
-                        SectorCount = registers.SectorCount,
+                        CylinderLow  = registers.LbaMid,
+                        DeviceHead   = registers.DeviceHead,
+                        Features     = registers.Feature,
+                        SectorCount  = registers.SectorCount,
                         SectorNumber = registers.LbaLow
                     }
                 },
@@ -291,8 +294,8 @@ namespace DiscImageChef.Devices.Windows
             // Unknown if needed
             aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
-            uint k = 0;
-            int error = 0;
+            uint k     = 0;
+            int  error = 0;
 
             Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
 
@@ -308,13 +311,13 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.LbaHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.LbaMid = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.LbaLow = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.LbaHigh     = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.LbaMid      = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead  = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error       = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.LbaLow      = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
             errorRegisters.SectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.Status = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.Status      = aptdBuf.aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
@@ -333,12 +336,13 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba48 registers,
-                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendAtaCommand(SafeFileHandle             fd,             AtaRegistersLba48 registers,
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol       protocol,
+                                           ref byte[]                 buffer,         uint              timeout,
+                                           out double                 duration,       out bool          sense)
         {
-            duration = 0;
-            sense = false;
+            duration       = 0;
+            sense          = false;
             errorRegisters = new AtaErrorRegistersLba48();
 
             if(buffer == null) return -1;
@@ -349,28 +353,28 @@ namespace DiscImageChef.Devices.Windows
             {
                 aptd = new AtaPassThroughDirect
                 {
-                    TimeOutValue = timeout,
-                    DataBuffer = (IntPtr)offsetForBuffer,
-                    Length = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                    TimeOutValue       = timeout,
+                    DataBuffer         = (IntPtr)offsetForBuffer,
+                    Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
                     DataTransferLength = (uint)buffer.Length,
                     PreviousTaskFile =
                         new AtaTaskFile
                         {
-                            CylinderHigh = (byte)((registers.LbaHigh & 0xFF00) >> 8),
-                            CylinderLow = (byte)((registers.LbaMid & 0xFF00) >> 8),
-                            Features = (byte)((registers.Feature & 0xFF00) >> 8),
-                            SectorCount = (byte)((registers.SectorCount & 0xFF00) >> 8),
-                            SectorNumber = (byte)((registers.LbaLow & 0xFF00) >> 8)
+                            CylinderHigh = (byte)((registers.LbaHigh     & 0xFF00) >> 8),
+                            CylinderLow  = (byte)((registers.LbaMid      & 0xFF00) >> 8),
+                            Features     = (byte)((registers.Feature     & 0xFF00) >> 8),
+                            SectorCount  = (byte)((registers.SectorCount & 0xFF00) >> 8),
+                            SectorNumber = (byte)((registers.LbaLow      & 0xFF00) >> 8)
                         },
                     CurrentTaskFile = new AtaTaskFile
                     {
-                        Command = registers.Command,
+                        Command      = registers.Command,
                         CylinderHigh = (byte)(registers.LbaHigh & 0xFF),
-                        CylinderLow = (byte)(registers.LbaMid & 0xFF),
-                        DeviceHead = registers.DeviceHead,
-                        Features = (byte)(registers.Feature & 0xFF),
-                        SectorCount = (byte)(registers.SectorCount & 0xFF),
-                        SectorNumber = (byte)(registers.LbaLow & 0xFF)
+                        CylinderLow  = (byte)(registers.LbaMid  & 0xFF),
+                        DeviceHead   = registers.DeviceHead,
+                        Features     = (byte)(registers.Feature     & 0xFF),
+                        SectorCount  = (byte)(registers.SectorCount & 0xFF),
+                        SectorNumber = (byte)(registers.LbaLow      & 0xFF)
                     }
                 },
                 dataBuffer = new byte[64 * 512]
@@ -403,8 +407,8 @@ namespace DiscImageChef.Devices.Windows
             // Unknown if needed
             aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
-            uint k = 0;
-            int error = 0;
+            uint k     = 0;
+            int  error = 0;
 
             Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
 
@@ -429,8 +433,8 @@ namespace DiscImageChef.Devices.Windows
             errorRegisters.LbaHigh = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderHigh << 8) +
                                               aptdBuf.aptd.CurrentTaskFile.CylinderHigh);
             errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.Status = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.Error      = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.Status     = aptdBuf.aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
@@ -449,12 +453,13 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersChs registers,
-                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendIdeCommand(SafeFileHandle           fd,             AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol     protocol,
+                                           ref byte[]               buffer,         uint            timeout,
+                                           out double               duration,       out bool        sense)
         {
-            duration = 0;
-            sense = false;
+            duration       = 0;
+            sense          = false;
             errorRegisters = new AtaErrorRegistersChs();
 
             if(buffer == null || buffer.Length > 512) return -1;
@@ -463,20 +468,20 @@ namespace DiscImageChef.Devices.Windows
             {
                 CurrentTaskFile = new AtaTaskFile
                 {
-                    Command = registers.Command,
+                    Command      = registers.Command,
                     CylinderHigh = registers.CylinderHigh,
-                    CylinderLow = registers.CylinderLow,
-                    DeviceHead = registers.DeviceHead,
-                    Features = registers.Feature,
-                    SectorCount = registers.SectorCount,
+                    CylinderLow  = registers.CylinderLow,
+                    DeviceHead   = registers.DeviceHead,
+                    Features     = registers.Feature,
+                    SectorCount  = registers.SectorCount,
                     SectorNumber = registers.Sector
                 },
                 DataBufferSize = 512,
-                DataBuffer = new byte[512]
+                DataBuffer     = new byte[512]
             };
 
-            uint k = 0;
-            int error = 0;
+            uint k     = 0;
+            int  error = 0;
 
             Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
 
@@ -494,12 +499,12 @@ namespace DiscImageChef.Devices.Windows
             duration = (end - start).TotalMilliseconds;
 
             errorRegisters.CylinderHigh = iptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.CylinderLow = iptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.DeviceHead = iptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error = iptd.CurrentTaskFile.Error;
-            errorRegisters.Sector = iptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.SectorCount = iptd.CurrentTaskFile.SectorCount;
-            errorRegisters.Status = iptd.CurrentTaskFile.Status;
+            errorRegisters.CylinderLow  = iptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead   = iptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error        = iptd.CurrentTaskFile.Error;
+            errorRegisters.Sector       = iptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount  = iptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status       = iptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
@@ -518,12 +523,13 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersLba28 registers,
-                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendIdeCommand(SafeFileHandle             fd,             AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol       protocol,
+                                           ref byte[]                 buffer,         uint              timeout,
+                                           out double                 duration,       out bool          sense)
         {
-            duration = 0;
-            sense = false;
+            duration       = 0;
+            sense          = false;
             errorRegisters = new AtaErrorRegistersLba28();
 
             if(buffer == null) return -1;
@@ -532,20 +538,20 @@ namespace DiscImageChef.Devices.Windows
             {
                 CurrentTaskFile = new AtaTaskFile
                 {
-                    Command = registers.Command,
+                    Command      = registers.Command,
                     CylinderHigh = registers.LbaHigh,
-                    CylinderLow = registers.LbaMid,
-                    DeviceHead = registers.DeviceHead,
-                    Features = registers.Feature,
-                    SectorCount = registers.SectorCount,
+                    CylinderLow  = registers.LbaMid,
+                    DeviceHead   = registers.DeviceHead,
+                    Features     = registers.Feature,
+                    SectorCount  = registers.SectorCount,
                     SectorNumber = registers.LbaLow
                 },
                 DataBufferSize = 512,
-                DataBuffer = new byte[512]
+                DataBuffer     = new byte[512]
             };
 
-            uint k = 0;
-            int error = 0;
+            uint k     = 0;
+            int  error = 0;
 
             Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
 
@@ -562,13 +568,13 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.LbaHigh = iptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.LbaMid = iptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.DeviceHead = iptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error = iptd.CurrentTaskFile.Error;
-            errorRegisters.LbaLow = iptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.LbaHigh     = iptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.LbaMid      = iptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead  = iptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error       = iptd.CurrentTaskFile.Error;
+            errorRegisters.LbaLow      = iptd.CurrentTaskFile.SectorNumber;
             errorRegisters.SectorCount = iptd.CurrentTaskFile.SectorCount;
-            errorRegisters.Status = iptd.CurrentTaskFile.Status;
+            errorRegisters.Status      = iptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
@@ -583,7 +589,7 @@ namespace DiscImageChef.Devices.Windows
         static uint GetDeviceNumber(SafeFileHandle deviceHandle)
         {
             StorageDeviceNumber sdn = new StorageDeviceNumber {deviceNumber = -1};
-            uint k = 0;
+            uint                k   = 0;
             if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IoctlStorageGetDeviceNumber,
                                                       IntPtr.Zero, 0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k,
                                                       IntPtr.Zero)) return uint.MaxValue;
@@ -609,7 +615,7 @@ namespace DiscImageChef.Devices.Windows
 
             if(hDevInfo.IsInvalid) return null;
 
-            uint index = 0;
+            uint                index = 0;
             DeviceInterfaceData spdid = new DeviceInterfaceData();
             spdid.cbSize = Marshal.SizeOf(spdid);
 
@@ -700,19 +706,22 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="argument">Command argument</param>
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
-        internal static int SendMmcCommand(SafeFileHandle fd, MmcCommands command, bool write, bool isApplication,
-                                           MmcFlags flags, uint argument, uint blockSize, uint blocks,
-                                           ref byte[] buffer, out uint[] response, out double duration, out bool sense,
-                                           uint timeout = 0)
+        internal static int SendMmcCommand(SafeFileHandle fd, MmcCommands command, bool write,
+                                           bool           isApplication,
+                                           MmcFlags       flags, uint argument, uint blockSize,
+                                           uint           blocks,
+                                           ref byte[]     buffer, out uint[] response, out double duration,
+                                           out bool       sense,
+                                           uint           timeout = 0)
         {
-            SffdiskDeviceCommandData commandData = new SffdiskDeviceCommandData();
-            SdCmdDescriptor commandDescriptor = new SdCmdDescriptor();
-            commandData.size = (ushort)Marshal.SizeOf(commandData);
-            commandData.command = SffdiskDcmd.DeviceCommand;
-            commandData.protocolArgumentSize = (ushort)Marshal.SizeOf(commandDescriptor);
-            commandData.deviceDataBufferSize = blockSize * blocks;
-            commandDescriptor.commandCode = (byte)command;
-            commandDescriptor.cmdClass = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
+            SffdiskDeviceCommandData commandData       = new SffdiskDeviceCommandData();
+            SdCmdDescriptor          commandDescriptor = new SdCmdDescriptor();
+            commandData.size                    = (ushort)Marshal.SizeOf(commandData);
+            commandData.command                 = SffdiskDcmd.DeviceCommand;
+            commandData.protocolArgumentSize    = (ushort)Marshal.SizeOf(commandDescriptor);
+            commandData.deviceDataBufferSize    = blockSize * blocks;
+            commandDescriptor.commandCode       = (byte)command;
+            commandDescriptor.cmdClass          = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
             commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
             commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc)
                                                  ? SdTransferType.SingleBlock
@@ -742,7 +751,7 @@ namespace DiscImageChef.Devices.Windows
             Marshal.Copy(hBuf, commandB, 0, commandB.Length);
             Marshal.FreeHGlobal(hBuf);
 
-            int error = 0;
+            int      error = 0;
             DateTime start = DateTime.Now;
             sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB, (uint)commandB.Length,
                                             commandB, (uint)commandB.Length, out _, IntPtr.Zero);

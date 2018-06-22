@@ -54,14 +54,14 @@ namespace DiscImageChef.Filesystems.ISO9660
         [Flags]
         enum CdiAttributes : ushort
         {
-            OwnerRead = 1 << 0,
+            OwnerRead    = 1 << 0,
             OwnerExecute = 1 << 2,
-            GroupRead = 1 << 4,
+            GroupRead    = 1 << 4,
             GroupExecute = 1 << 6,
-            OtherRead = 1 << 8,
+            OtherRead    = 1 << 8,
             OtherExecute = 1 << 10,
             DigitalAudio = 1 << 14,
-            Directory = 1 << 15
+            Directory    = 1 << 15
         }
     }
 }

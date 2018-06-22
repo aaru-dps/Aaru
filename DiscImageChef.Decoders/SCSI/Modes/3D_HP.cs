@@ -62,8 +62,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             HP_ModePage_3D decoded = new HP_ModePage_3D();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.ResetBehaviour = (byte)(pageResponse[2] & 0x03);
+            decoded.PS             |= (pageResponse[0]       & 0x80) == 0x80;
+            decoded.ResetBehaviour =  (byte)(pageResponse[2] & 0x03);
 
             return decoded;
         }
@@ -78,7 +78,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             HP_ModePage_3D page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder  sb   = new StringBuilder();
 
             sb.AppendLine("HP Extended Reset Mode Page:");
 

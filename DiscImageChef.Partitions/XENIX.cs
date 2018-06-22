@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
 
@@ -42,16 +41,17 @@ namespace DiscImageChef.Partitions
     // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
     public class XENIX : IPartition
     {
-        const ushort PAMAGIC = 0x1234;
-        const int MAXPARTS = 16;
-        const uint XENIX_BSIZE = 1024;
+        const ushort PAMAGIC     = 0x1234;
+        const int    MAXPARTS    = 16;
+        const uint   XENIX_BSIZE = 1024;
         // Can't find this in any documentation but everything is aligned to this offset (in sectors)
         const uint XENIX_OFFSET = 977;
 
         public string Name => "XENIX";
-        public Guid Id => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
+        public Guid   Id   => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
 
-        public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
+                                   ulong       sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();
 
@@ -70,7 +70,7 @@ namespace DiscImageChef.Partitions
 
             for(int i = 0; i < MAXPARTS; i++)
             {
-                DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}", i, xnxtbl.p[i].p_off);
+                DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}",  i, xnxtbl.p[i].p_off);
                 DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
                 if(xnxtbl.p[i].p_size <= 0) continue;
 
@@ -83,10 +83,10 @@ namespace DiscImageChef.Partitions
                     Offset =
                         (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
                         imagePlugin.Info.SectorSize * sectorOffset,
-                    Size = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
+                    Size     = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
                     Sequence = (ulong)i,
-                    Type = "XENIX",
-                    Scheme = Name
+                    Type     = "XENIX",
+                    Scheme   = Name
                 };
 
                 if(part.End < imagePlugin.Info.Sectors) partitions.Add(part);
@@ -99,13 +99,14 @@ namespace DiscImageChef.Partitions
         struct Partable
         {
             public ushort p_magic; /* magic number validity indicator */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPARTS)] public Partition[] p; /*partition headers*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPARTS)]
+            public Partition[] p; /*partition headers*/
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Partition
         {
-            public int p_off; /*start 1K block no of partition*/
+            public int p_off;  /*start 1K block no of partition*/
             public int p_size; /*# of 1K blocks in partition*/
         }
     }

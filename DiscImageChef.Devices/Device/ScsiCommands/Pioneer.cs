@@ -48,21 +48,21 @@ namespace DiscImageChef.Devices
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                                    uint transferLength, PioneerSubchannel subchannel, uint timeout,
+        public bool PioneerReadCdDa(out byte[] buffer,         out byte[]        senseBuffer, uint lba, uint blockSize,
+                                    uint       transferLength, PioneerSubchannel subchannel,  uint timeout,
                                     out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.ReadCdDa;
-            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
-            cdb[5] = (byte)(lba & 0xFF);
-            cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
-            cdb[9] = (byte)(transferLength & 0xFF);
+            cdb[0]  = (byte)ScsiCommands.ReadCdDa;
+            cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3]  = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4]  = (byte)((lba & 0xFF00)     >> 8);
+            cdb[5]  = (byte)(lba & 0xFF);
+            cdb[7]  = (byte)((transferLength & 0xFF0000) >> 16);
+            cdb[8]  = (byte)((transferLength & 0xFF00)   >> 8);
+            cdb[9]  = (byte)(transferLength & 0xFF);
             cdb[10] = (byte)subchannel;
 
             buffer = new byte[blockSize * transferLength];
@@ -88,19 +88,21 @@ namespace DiscImageChef.Devices
         /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf,
-                                       uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
+        public bool PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf,
+                                       uint       endMsf,
+                                       uint       blockSize, PioneerSubchannel subchannel, uint timeout,
+                                       out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.ReadCdDaMsf;
-            cdb[3] = (byte)((startMsf & 0xFF0000) >> 16);
-            cdb[4] = (byte)((startMsf & 0xFF00) >> 8);
-            cdb[5] = (byte)(startMsf & 0xFF);
-            cdb[7] = (byte)((endMsf & 0xFF0000) >> 16);
-            cdb[8] = (byte)((endMsf & 0xFF00) >> 8);
-            cdb[9] = (byte)(endMsf & 0xFF);
+            cdb[0]  = (byte)ScsiCommands.ReadCdDaMsf;
+            cdb[3]  = (byte)((startMsf & 0xFF0000) >> 16);
+            cdb[4]  = (byte)((startMsf & 0xFF00)   >> 8);
+            cdb[5]  = (byte)(startMsf & 0xFF);
+            cdb[7]  = (byte)((endMsf & 0xFF0000) >> 16);
+            cdb[8]  = (byte)((endMsf & 0xFF00)   >> 8);
+            cdb[9]  = (byte)(endMsf & 0xFF);
             cdb[10] = (byte)subchannel;
 
             uint transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
@@ -130,19 +132,20 @@ namespace DiscImageChef.Devices
         /// <param name="wholeSector">If set to <c>true</c>, returns all 2352 bytes of sector data.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
-                                    bool errorFlags, bool wholeSector, uint timeout, out double duration)
+        public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba,
+                                    uint       transferLength,
+                                    bool       errorFlags, bool wholeSector, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.ReadCdXa;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((lba & 0xFF00)     >> 8);
             cdb[5] = (byte)(lba & 0xFF);
             cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[8] = (byte)((transferLength & 0xFF00)   >> 8);
             cdb[9] = (byte)(transferLength & 0xFF);
 
             if(errorFlags)

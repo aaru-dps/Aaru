@@ -51,7 +51,7 @@ namespace DiscImageChef.DiscImages
         readonly byte[] headerId = {0x44, 0x49, 0x46, 0x43, 0x20, 0x48, 0x45, 0x41, 0x44, 0x45, 0x52, 0x20, 0x20};
         byte[]          comment;
         /// <summary>Disk image file</summary>
-        IFilter   dimImageFilter;
+        IFilter dimImageFilter;
         DiskType  dskType;
         byte[]    hdrId;
         ImageInfo imageInfo;
@@ -150,7 +150,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 8 * 1024) == 77) imageInfo.MediaType = MediaType.SHARP_525;
-                    imageInfo.SectorSize                                    = 1024;
+                    imageInfo.SectorSize = 1024;
                     break;
                 // 9 spt, 1024 bps
                 case DiskType.Hs2:
@@ -161,7 +161,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80) imageInfo.MediaType = MediaType.SHARP_525_9;
-                    imageInfo.SectorSize                                   = 512;
+                    imageInfo.SectorSize = 512;
                     break;
                 // 15 spt, 512 bps
                 case DiskType.Hc2:
@@ -172,7 +172,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 15 * 512) == 80) imageInfo.MediaType = MediaType.DOS_525_HD;
-                    imageInfo.SectorSize                                    = 512;
+                    imageInfo.SectorSize = 512;
                     break;
                 // 9 spt, 1024 bps
                 case DiskType.Hde2:
@@ -183,7 +183,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80) imageInfo.MediaType = MediaType.SHARP_35_9;
-                    imageInfo.SectorSize                                   = 512;
+                    imageInfo.SectorSize = 512;
                     break;
                 // 18 spt, 512 bps
                 case DiskType.Hq2:
@@ -194,19 +194,19 @@ namespace DiscImageChef.DiscImages
                     }
 
                     if(diskSize / (2 * 18 * 512) == 80) imageInfo.MediaType = MediaType.DOS_35_HD;
-                    imageInfo.SectorSize                                    = 512;
+                    imageInfo.SectorSize = 512;
                     break;
                 // 26 spt, 256 bps
                 case DiskType.N88:
                     if(diskSize % (2 * 26 * 256) == 0)
                     {
                         if(diskSize % (2 * 26 * 256) == 77) imageInfo.MediaType = MediaType.NEC_8_DD;
-                        imageInfo.SectorSize                                    = 256;
+                        imageInfo.SectorSize = 256;
                     }
                     else if(diskSize % (2 * 26 * 128) == 0)
                     {
                         if(diskSize % (2 * 26 * 128) == 77) imageInfo.MediaType = MediaType.NEC_8_SD;
-                        imageInfo.SectorSize                                    = 256;
+                        imageInfo.SectorSize = 256;
                     }
                     else
                     {
@@ -369,8 +369,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -379,8 +379,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

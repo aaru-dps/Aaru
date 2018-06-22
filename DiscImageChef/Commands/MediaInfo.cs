@@ -229,11 +229,9 @@ namespace DiscImageChef.Commands
                     scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
                 if(decMode.Value.Pages != null)
-                {
                     containsFloppyPage =
                         decMode.Value.Pages.Aggregate(containsFloppyPage,
                                                       (current, modePage) => current | (modePage.Page == 0x05));
-                }
             }
 
             switch(dev.ScsiType)
@@ -1316,7 +1314,8 @@ namespace DiscImageChef.Commands
                                 return;
                             }
 
-                            ulong totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                            ulong totalSize =
+                                (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
                             sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
                             if(sense)
@@ -1347,8 +1346,8 @@ namespace DiscImageChef.Commands
                                 return;
                             }
 
-                            ulong gameSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) +
-                                             1;
+                            ulong gameSize =
+                                (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) + 1;
                             DicConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors",
                                                       gameSize);
 
@@ -1379,11 +1378,12 @@ namespace DiscImageChef.Commands
 
                             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors",
                                                       totalSize);
-                            ulong middleZone = totalSize -
-                                               (PFI.Decode(cmdBuf).Value.Layer0EndPSN -
-                                                PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) - gameSize + 1;
+                            ulong middleZone =
+                                totalSize -
+                                (PFI.Decode(cmdBuf).Value.Layer0EndPSN -
+                                 PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) - gameSize + 1;
 
-                            totalSize  = l0Video + l1Video + middleZone * 2 + gameSize;
+                            totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
                             ulong layerBreak = l0Video + middleZone + gameSize / 2;
 
                             DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);

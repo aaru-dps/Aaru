@@ -118,20 +118,20 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_0E decoded = new ModePage_0E();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.Immed |= (pageResponse[2] & 0x04) == 0x04;
-            decoded.SOTC |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.APRVal |= (pageResponse[5] & 0x80) == 0x80;
-            decoded.LBAFormat = (byte)(pageResponse[5] & 0x0F);
-            decoded.BlocksPerSecondOfAudio = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.OutputPort0ChannelSelection = (byte)(pageResponse[8] & 0x0F);
-            decoded.OutputPort0Volume = pageResponse[9];
-            decoded.OutputPort1ChannelSelection = (byte)(pageResponse[10] & 0x0F);
-            decoded.OutputPort1Volume = pageResponse[11];
-            decoded.OutputPort2ChannelSelection = (byte)(pageResponse[12] & 0x0F);
-            decoded.OutputPort2Volume = pageResponse[13];
-            decoded.OutputPort3ChannelSelection = (byte)(pageResponse[14] & 0x0F);
-            decoded.OutputPort3Volume = pageResponse[15];
+            decoded.PS                          |= (pageResponse[0]       & 0x80) == 0x80;
+            decoded.Immed                       |= (pageResponse[2]       & 0x04) == 0x04;
+            decoded.SOTC                        |= (pageResponse[2]       & 0x02) == 0x02;
+            decoded.APRVal                      |= (pageResponse[5]       & 0x80) == 0x80;
+            decoded.LBAFormat                   =  (byte)(pageResponse[5] & 0x0F);
+            decoded.BlocksPerSecondOfAudio      =  (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.OutputPort0ChannelSelection =  (byte)(pageResponse[8] & 0x0F);
+            decoded.OutputPort0Volume           =  pageResponse[9];
+            decoded.OutputPort1ChannelSelection =  (byte)(pageResponse[10] & 0x0F);
+            decoded.OutputPort1Volume           =  pageResponse[11];
+            decoded.OutputPort2ChannelSelection =  (byte)(pageResponse[12] & 0x0F);
+            decoded.OutputPort2Volume           =  pageResponse[13];
+            decoded.OutputPort3ChannelSelection =  (byte)(pageResponse[14] & 0x0F);
+            decoded.OutputPort3Volume           =  pageResponse[15];
 
             return decoded;
         }
@@ -145,8 +145,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_0E page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_0E   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI CD-ROM audio control parameters page:");
 
@@ -160,7 +160,7 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 double blocks;
                 if(page.LBAFormat == 8) blocks = page.BlocksPerSecondOfAudio * (1 / 256);
-                else blocks = page.BlocksPerSecondOfAudio;
+                else blocks                    = page.BlocksPerSecondOfAudio;
 
                 sb.AppendFormat("\tThere are {0} blocks per each second of audio", blocks).AppendLine();
             }

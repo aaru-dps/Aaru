@@ -94,7 +94,7 @@ namespace DiscImageChef.Tests.Images
                     else
                     {
                         sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                        doneSectors += image.Info.Sectors                                       - doneSectors;
+                        doneSectors += image.Info.Sectors - doneSectors;
                     }
 
                     ctx.Update(sector);

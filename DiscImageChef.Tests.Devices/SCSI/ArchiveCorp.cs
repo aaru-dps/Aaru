@@ -75,9 +75,9 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void RequestBlockAddress(string devPath, Device dev)
         {
-            uint lba = 0;
+            uint   lba = 0;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -128,11 +128,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending REQUEST BLOCK ADDRESS to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -200,10 +200,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void SeekBlock(string devPath, Device dev)
         {
-            bool immediate = false;
-            uint lba = 0;
+            bool   immediate = false;
+            uint   lba       = 0;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -212,7 +212,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for SEEK BLOCK command:");
                 DicConsole.WriteLine("Immediate?: {0}", immediate);
-                DicConsole.WriteLine("LBA: {0}", lba);
+                DicConsole.WriteLine("LBA: {0}",        lba);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -265,9 +265,9 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEEK BLOCK to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("SEEK BLOCK decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));

@@ -135,7 +135,7 @@ namespace Extents
         {
             ulong realEnd;
             if(run) realEnd = start + end - 1;
-            else realEnd = end;
+            else realEnd    = end;
 
             // TODO: Optimize this
             for(ulong t = start; t <= realEnd; t++) Add(t);
@@ -177,7 +177,7 @@ namespace Extents
                 {
                     toRemove = extent;
                     toAddOne = new Tuple<ulong, ulong>(extent.Item1, item - 1);
-                    toAddTwo = new Tuple<ulong, ulong>(item + 1, extent.Item2);
+                    toAddTwo = new Tuple<ulong, ulong>(item               + 1, extent.Item2);
                     break;
                 }
 

@@ -44,29 +44,29 @@ namespace DiscImageChef.Filters
     public class MacBinary : IFilter
     {
         const uint MACBINARY_MAGIC = 0x6D42494E;
-        string basePath;
-        byte[] bytes;
-        DateTime creationTime;
+        string     basePath;
+        byte[]     bytes;
+        DateTime   creationTime;
 
-        long dataForkOff;
-        string filename;
+        long            dataForkOff;
+        string          filename;
         MacBinaryHeader header;
-        bool isBytes, isStream, isPath, opened;
-        DateTime lastWriteTime;
-        long rsrcForkOff;
-        Stream stream;
+        bool            isBytes, isStream, isPath, opened;
+        DateTime        lastWriteTime;
+        long            rsrcForkOff;
+        Stream          stream;
 
         public string Name => "MacBinary";
-        public Guid Id => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
+        public Guid   Id   => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
 
         public void Close()
         {
             bytes = null;
             stream?.Close();
-            isBytes = false;
+            isBytes  = false;
             isStream = false;
-            isPath = false;
-            opened = false;
+            isPath   = false;
+            opened   = false;
         }
 
         public string GetBasePath()
@@ -88,7 +88,7 @@ namespace DiscImageChef.Filters
         {
             if(header.dataLength == 0) return null;
 
-            if(isBytes) return new OffsetStream(bytes, dataForkOff, dataForkOff + header.dataLength - 1);
+            if(isBytes) return new OffsetStream(bytes,   dataForkOff, dataForkOff + header.dataLength - 1);
             if(isStream) return new OffsetStream(stream, dataForkOff, dataForkOff + header.dataLength - 1);
             if(isPath)
                 return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, dataForkOff,
@@ -131,7 +131,7 @@ namespace DiscImageChef.Filters
         {
             if(header.resourceLength == 0) return null;
 
-            if(isBytes) return new OffsetStream(bytes, rsrcForkOff, rsrcForkOff + header.resourceLength - 1);
+            if(isBytes) return new OffsetStream(bytes,   rsrcForkOff, rsrcForkOff + header.resourceLength - 1);
             if(isStream) return new OffsetStream(stream, rsrcForkOff, rsrcForkOff + header.resourceLength - 1);
             if(isPath)
                 return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, rsrcForkOff,
@@ -153,8 +153,9 @@ namespace DiscImageChef.Filters
             Array.Copy(buffer, 0, hdr_b, 0, 128);
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
-            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0 &&
-                   header.filename[0] < 64 && header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0 &&
+            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0  &&
+                   header.filename[0]                                < 64 && header.zero1       == 0 &&
+                   header.zero2                                      == 0 && header.reserved    == 0 &&
                    (header.dataLength > 0 || header.resourceLength > 0);
         }
 
@@ -167,8 +168,9 @@ namespace DiscImageChef.Filters
             stream.Read(hdr_b, 0, 128);
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
-            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0 &&
-                   header.filename[0] < 64 && header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0 &&
+            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0  &&
+                   header.filename[0]                                < 64 && header.zero1       == 0 &&
+                   header.zero2                                      == 0 && header.reserved    == 0 &&
                    (header.dataLength > 0 || header.resourceLength > 0);
         }
 
@@ -182,8 +184,9 @@ namespace DiscImageChef.Filters
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             fstream.Close();
-            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0 &&
-                   header.filename[0] < 64 && header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0 &&
+            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0  &&
+                   header.filename[0]                                < 64 && header.zero1       == 0 &&
+                   header.zero2                                      == 0 && header.reserved    == 0 &&
                    (header.dataLength > 0 || header.resourceLength > 0);
         }
 
@@ -203,20 +206,20 @@ namespace DiscImageChef.Filters
 
             uint blocks = 1;
             blocks += (uint)(header.secondaryHeaderLength / 128);
-            if(header.secondaryHeaderLength % 128 > 0) blocks++;
-            dataForkOff = blocks * 128;
-            blocks += header.dataLength / 128;
-            if(header.dataLength % 128 > 0) blocks++;
-            rsrcForkOff = blocks * 128;
+            if(header.secondaryHeaderLength  % 128 > 0) blocks++;
+            dataForkOff =  blocks            * 128;
+            blocks      += header.dataLength / 128;
+            if(header.dataLength             % 128 > 0) blocks++;
+            rsrcForkOff = blocks             * 128;
 
-            filename = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
-            creationTime = DateHandlers.MacToDateTime(header.creationTime);
+            filename      = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
+            creationTime  = DateHandlers.MacToDateTime(header.creationTime);
             lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
 
             ms.Close();
-            opened = true;
+            opened  = true;
             isBytes = true;
-            bytes = buffer;
+            bytes   = buffer;
         }
 
         public void Open(Stream stream)
@@ -229,19 +232,19 @@ namespace DiscImageChef.Filters
 
             uint blocks = 1;
             blocks += (uint)(header.secondaryHeaderLength / 128);
-            if(header.secondaryHeaderLength % 128 > 0) blocks++;
-            dataForkOff = blocks * 128;
-            blocks += header.dataLength / 128;
-            if(header.dataLength % 128 > 0) blocks++;
-            rsrcForkOff = blocks * 128;
+            if(header.secondaryHeaderLength  % 128 > 0) blocks++;
+            dataForkOff =  blocks            * 128;
+            blocks      += header.dataLength / 128;
+            if(header.dataLength             % 128 > 0) blocks++;
+            rsrcForkOff = blocks             * 128;
 
-            filename = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
-            creationTime = DateHandlers.MacToDateTime(header.creationTime);
+            filename      = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
+            creationTime  = DateHandlers.MacToDateTime(header.creationTime);
             lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
 
             stream.Seek(0, SeekOrigin.Begin);
-            opened = true;
-            isStream = true;
+            opened      = true;
+            isStream    = true;
             this.stream = stream;
         }
 
@@ -256,19 +259,19 @@ namespace DiscImageChef.Filters
 
             uint blocks = 1;
             blocks += (uint)(header.secondaryHeaderLength / 128);
-            if(header.secondaryHeaderLength % 128 > 0) blocks++;
-            dataForkOff = blocks * 128;
-            blocks += header.dataLength / 128;
-            if(header.dataLength % 128 > 0) blocks++;
-            rsrcForkOff = blocks * 128;
+            if(header.secondaryHeaderLength  % 128 > 0) blocks++;
+            dataForkOff =  blocks            * 128;
+            blocks      += header.dataLength / 128;
+            if(header.dataLength             % 128 > 0) blocks++;
+            rsrcForkOff = blocks             * 128;
 
-            filename = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
-            creationTime = DateHandlers.MacToDateTime(header.creationTime);
+            filename      = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
+            creationTime  = DateHandlers.MacToDateTime(header.creationTime);
             lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
 
             fs.Close();
-            opened = true;
-            isPath = true;
+            opened   = true;
+            isPath   = true;
             basePath = path;
         }
 
@@ -282,7 +285,8 @@ namespace DiscImageChef.Filters
             /// <summary>
             ///     0x01, Str63 Pascal filename
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] filename;
             /// <summary>
             ///     0x41, File type
             /// </summary>

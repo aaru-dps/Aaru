@@ -42,12 +42,12 @@ namespace DiscImageChef.Filesystems
     public class JFS : IFilesystem
     {
         const uint JFS_BOOT_BLOCKS_SIZE = 0x8000;
-        const uint JFS_MAGIC = 0x3153464A;
+        const uint JFS_MAGIC            = 0x3153464A;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "JFS Plugin";
-        public Guid Id => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "JFS Plugin";
+        public Guid           Id        => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -58,7 +58,7 @@ namespace DiscImageChef.Filesystems
             if(sector.Length < 512) return false;
 
             JfsSuperBlock jfsSb = new JfsSuperBlock();
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
+            IntPtr        sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(jfsSb));
             jfsSb = (JfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JfsSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
@@ -67,17 +67,17 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            StringBuilder sb = new StringBuilder();
-            uint bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
-            byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
+            StringBuilder sb          = new StringBuilder();
+            uint          bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
+            byte[]        sector      = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512) return;
 
             JfsSuperBlock jfsSb = new JfsSuperBlock();
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
+            IntPtr        sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(jfsSb));
             jfsSb = (JfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JfsSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
@@ -123,13 +123,14 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "JFS filesystem",
-                Clusters = (long)jfsSb.s_size,
-                ClusterSize = (int)jfsSb.s_bsize,
-                Bootable = true,
-                VolumeName = Encoding.GetString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label),
+                Type         = "JFS filesystem",
+                Clusters     = (long)jfsSb.s_size,
+                ClusterSize  = (int)jfsSb.s_bsize,
+                Bootable     = true,
+                VolumeName   = Encoding.GetString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label),
                 VolumeSerial = $"{jfsSb.s_uuid}",
-                ModificationDate = DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
+                ModificationDate =
+                    DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
                 ModificationDateSpecified = true
             };
             if(jfsSb.s_state != 0) XmlFsType.Dirty = true;
@@ -140,38 +141,38 @@ namespace DiscImageChef.Filesystems
         [Flags]
         enum JfsFlags : uint
         {
-            Unicode = 0x00000001,
-            RemountRO = 0x00000002,
-            Continue = 0x00000004,
-            Panic = 0x00000008,
-            UserQuota = 0x00000010,
-            GroupQuota = 0x00000020,
-            NoJournal = 0x00000040,
-            Discard = 0x00000080,
-            GroupCommit = 0x00000100,
-            LazyCommit = 0x00000200,
-            Temporary = 0x00000400,
-            InlineLog = 0x00000800,
+            Unicode      = 0x00000001,
+            RemountRO    = 0x00000002,
+            Continue     = 0x00000004,
+            Panic        = 0x00000008,
+            UserQuota    = 0x00000010,
+            GroupQuota   = 0x00000020,
+            NoJournal    = 0x00000040,
+            Discard      = 0x00000080,
+            GroupCommit  = 0x00000100,
+            LazyCommit   = 0x00000200,
+            Temporary    = 0x00000400,
+            InlineLog    = 0x00000800,
             InlineMoving = 0x00001000,
-            BadSAIT = 0x00010000,
-            Sparse = 0x00020000,
-            DASDEnabled = 0x00040000,
-            DASDPrime = 0x00080000,
-            SwapBytes = 0x00100000,
-            DirIndex = 0x00200000,
-            Linux = 0x10000000,
-            DFS = 0x20000000,
-            OS2 = 0x40000000,
-            AIX = 0x80000000
+            BadSAIT      = 0x00010000,
+            Sparse       = 0x00020000,
+            DASDEnabled  = 0x00040000,
+            DASDPrime    = 0x00080000,
+            SwapBytes    = 0x00100000,
+            DirIndex     = 0x00200000,
+            Linux        = 0x10000000,
+            DFS          = 0x20000000,
+            OS2          = 0x40000000,
+            AIX          = 0x80000000
         }
 
         [Flags]
         enum JfsState : uint
         {
-            Clean = 0,
-            Mounted = 1,
-            Dirty = 2,
-            Logredo = 4,
+            Clean    = 0,
+            Mounted  = 1,
+            Dirty    = 2,
+            Logredo  = 4,
             Extendfs = 8
         }
 
@@ -195,34 +196,36 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct JfsSuperBlock
         {
-            public uint s_magic;
-            public uint s_version;
-            public ulong s_size;
-            public uint s_bsize;
-            public ushort s_l2bsize;
-            public ushort s_l2bfactor;
-            public uint s_pbsize;
-            public ushort s_l1pbsize;
-            public ushort pad;
-            public uint s_agsize;
-            public JfsFlags s_flags;
-            public JfsState s_state;
-            public uint s_compress;
-            public JfsExtent s_ait2;
-            public JfsExtent s_aim2;
-            public uint s_logdev;
-            public uint s_logserial;
-            public JfsExtent s_logpxd;
-            public JfsExtent s_fsckpxd;
+            public uint          s_magic;
+            public uint          s_version;
+            public ulong         s_size;
+            public uint          s_bsize;
+            public ushort        s_l2bsize;
+            public ushort        s_l2bfactor;
+            public uint          s_pbsize;
+            public ushort        s_l1pbsize;
+            public ushort        pad;
+            public uint          s_agsize;
+            public JfsFlags      s_flags;
+            public JfsState      s_state;
+            public uint          s_compress;
+            public JfsExtent     s_ait2;
+            public JfsExtent     s_aim2;
+            public uint          s_logdev;
+            public uint          s_logserial;
+            public JfsExtent     s_logpxd;
+            public JfsExtent     s_fsckpxd;
             public JfsTimeStruct s_time;
-            public uint s_fsckloglen;
-            public sbyte s_fscklog;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] s_fpack;
-            public ulong s_xsize;
+            public uint          s_fsckloglen;
+            public sbyte         s_fscklog;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] s_fpack;
+            public ulong     s_xsize;
             public JfsExtent s_xfsckpxd;
             public JfsExtent s_xlogpxd;
-            public Guid s_uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] s_label;
+            public Guid      s_uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] s_label;
             public Guid s_loguuid;
         }
     }

@@ -57,7 +57,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         ///     A file that occupies between 257 and 32768 blocks
         /// </summary>
-        const byte TREE_FILE_TYPE           = 0x03;
+        const byte TREE_FILE_TYPE = 0x03;
         const byte PASCAL_AREA_TYPE         = 0x04;
         const byte SUBDIRECTORY_TYPE        = 0x0D;
         const byte SUBDIRECTORY_HEADER_TYPE = 0x0E;
@@ -149,13 +149,13 @@ namespace DiscImageChef.Filesystems
 
             DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
                                       partition.Start, totalBlocks <= partition.End - partition.Start + 1);
-            return totalBlocks                                     <= partition.End - partition.Start + 1;
+            return totalBlocks <= partition.End - partition.Start + 1;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding    encoding)
         {
-            Encoding                    = encoding ?? new Apple2c();
+            Encoding = encoding ?? new Apple2c();
             StringBuilder sbInformation = new StringBuilder();
             uint          multiplier    = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
@@ -198,10 +198,9 @@ namespace DiscImageChef.Filesystems
             };
 
             rootDirectoryKeyBlock.header.storage_type =
-                (byte)((rootDirectoryKeyBlockBytes[0x04] & STORAGE_TYPE_MASK) >>
-                       4);
+                (byte)((rootDirectoryKeyBlockBytes[0x04] & STORAGE_TYPE_MASK) >> 4);
             rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & NAME_LENGTH_MASK);
-            byte[] temporal                          = new byte[rootDirectoryKeyBlock.header.name_length];
+            byte[] temporal = new byte[rootDirectoryKeyBlock.header.name_length];
             Array.Copy(rootDirectoryKeyBlockBytes, 0x05, temporal, 0, rootDirectoryKeyBlock.header.name_length);
             rootDirectoryKeyBlock.header.volume_name = Encoding.GetString(temporal);
             rootDirectoryKeyBlock.header.reserved    = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
@@ -212,13 +211,13 @@ namespace DiscImageChef.Filesystems
             bool dateCorrect;
             try
             {
-                uint tempTimestamp   = (uint)((tempTimestampLeft          << 16) + tempTimestampRight);
-                int  year            = (int)((tempTimestamp & YEAR_MASK)  >> 25);
-                int  month           = (int)((tempTimestamp & MONTH_MASK) >> 21);
-                int  day             = (int)((tempTimestamp & DAY_MASK)   >> 16);
-                int  hour            = (int)((tempTimestamp & HOUR_MASK)  >> 8);
-                int  minute          = (int)(tempTimestamp  & MINUTE_MASK);
-                year                 += 1900;
+                uint tempTimestamp = (uint)((tempTimestampLeft << 16) + tempTimestampRight);
+                int  year          = (int)((tempTimestamp & YEAR_MASK)  >> 25);
+                int  month         = (int)((tempTimestamp & MONTH_MASK) >> 21);
+                int  day           = (int)((tempTimestamp & DAY_MASK)   >> 16);
+                int  hour          = (int)((tempTimestamp & HOUR_MASK)  >> 8);
+                int  minute        = (int)(tempTimestamp & MINUTE_MASK);
+                year += 1900;
                 if(year < 1940) year += 100;
 
                 DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}",  tempTimestampLeft);
@@ -277,8 +276,7 @@ namespace DiscImageChef.Filesystems
                .AppendLine();
             sbInformation.AppendFormat("{0} files in root directory", rootDirectoryKeyBlock.header.file_count)
                          .AppendLine();
-            sbInformation.AppendFormat("{0} blocks in volume", rootDirectoryKeyBlock.header.total_blocks)
-                         .AppendLine();
+            sbInformation.AppendFormat("{0} blocks in volume", rootDirectoryKeyBlock.header.total_blocks).AppendLine();
             sbInformation.AppendFormat("Bitmap starts at block {0}", rootDirectoryKeyBlock.header.bit_map_pointer)
                          .AppendLine();
 

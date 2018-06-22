@@ -51,10 +51,10 @@ namespace DiscImageChef.DiscImages
 
         const uint PARALLELS_EMPTY = 0x00000001;
 
-        const    uint   MAX_CACHE_SIZE       = 16777216;
-        const    uint   MAX_CACHED_SECTORS   = MAX_CACHE_SIZE / 512;
-        const    uint   DEFAULT_CLUSTER_SIZE = 1048576;
-        readonly byte[] parallelsExtMagic    =
+        const uint MAX_CACHE_SIZE       = 16777216;
+        const uint MAX_CACHED_SECTORS   = MAX_CACHE_SIZE / 512;
+        const uint DEFAULT_CLUSTER_SIZE = 1048576;
+        readonly byte[] parallelsExtMagic =
             {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x46, 0x72, 0x65, 0x53, 0x70, 0x61, 0x63, 0x45, 0x78, 0x74};
         readonly byte[] parallelsMagic =
             {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65};
@@ -123,7 +123,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr             = new ParallelsHeader();
+            pHdr = new ParallelsHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
@@ -141,7 +141,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr             = new ParallelsHeader();
+            pHdr = new ParallelsHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
@@ -164,13 +164,13 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", extended);
 
             DicConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
-            bat         = new uint[pHdr.bat_entries];
+            bat = new uint[pHdr.bat_entries];
             byte[] batB = new byte[pHdr.bat_entries * 4];
             stream.Read(batB, 0, batB.Length);
             for(int i = 0; i < bat.Length; i++) bat[i] = BitConverter.ToUInt32(batB, i * 4);
 
-            clusterBytes                     = pHdr.cluster_size * 512;
-            if(pHdr.data_off > 0) dataOffset = pHdr.data_off     * 512;
+            clusterBytes = pHdr.cluster_size * 512;
+            if(pHdr.data_off > 0) dataOffset = pHdr.data_off * 512;
             else
                 dataOffset =
                     (stream.Position / clusterBytes + stream.Position % clusterBytes) * clusterBytes;
@@ -326,8 +326,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -336,8 +336,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -352,7 +352,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
@@ -397,12 +397,10 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            uint batEntries = (uint)(sectors * sectorSize /
-                                     DEFAULT_CLUSTER_SIZE);
-            if(sectors * sectorSize %
-               DEFAULT_CLUSTER_SIZE > 0) batEntries++;
+            uint batEntries = (uint)(sectors * sectorSize / DEFAULT_CLUSTER_SIZE);
+            if(sectors * sectorSize % DEFAULT_CLUSTER_SIZE > 0) batEntries++;
             uint headerSectors = (uint)Marshal.SizeOf(typeof(ParallelsHeader)) + batEntries * 4;
-            if((uint)Marshal.SizeOf(typeof(ParallelsHeader))                   + batEntries % 4 > 0) headerSectors++;
+            if((uint)Marshal.SizeOf(typeof(ParallelsHeader)) + batEntries % 4 > 0) headerSectors++;
 
             pHdr = new ParallelsHeader
             {

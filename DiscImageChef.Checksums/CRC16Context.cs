@@ -62,7 +62,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 ushort entry = (ushort)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (ushort)((entry >> 1) ^ CRC16_IBM_POLY);
                     else
@@ -84,7 +84,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 ushort entry = (ushort)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (ushort)((entry >> 1) ^ polynomial);
                     else
@@ -130,7 +130,7 @@ namespace DiscImageChef.Checksums
             StringBuilder crc16Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes((ushort)(hashInt     ^ finalSeed)).Length; i++)
+            for(int i = 0; i < BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed)).Length; i++)
                 crc16Output.Append(BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed))[i].ToString("x2"));
 
             return crc16Output.ToString();
@@ -171,7 +171,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 ushort entry = (ushort)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (ushort)((entry >> 1) ^ polynomial);
                     else
@@ -224,7 +224,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < 256; i++)
             {
                 ushort entry = (ushort)i;
-                for(int j = 0; j   < 8; j++)
+                for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (ushort)((entry >> 1) ^ polynomial);
                     else

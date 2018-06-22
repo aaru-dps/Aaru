@@ -49,22 +49,22 @@ namespace DiscImageChef.Devices
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool PlextorReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                                    uint transferLength, PlextorSubchannel subchannel, uint timeout,
+        public bool PlextorReadCdDa(out byte[] buffer,         out byte[]        senseBuffer, uint lba, uint blockSize,
+                                    uint       transferLength, PlextorSubchannel subchannel,  uint timeout,
                                     out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.ReadCdDa;
-            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
-            cdb[5] = (byte)(lba & 0xFF);
-            cdb[6] = (byte)((transferLength & 0xFF000000) >> 24);
-            cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
-            cdb[9] = (byte)(transferLength & 0xFF);
+            cdb[0]  = (byte)ScsiCommands.ReadCdDa;
+            cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3]  = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4]  = (byte)((lba & 0xFF00)     >> 8);
+            cdb[5]  = (byte)(lba & 0xFF);
+            cdb[6]  = (byte)((transferLength & 0xFF000000) >> 24);
+            cdb[7]  = (byte)((transferLength & 0xFF0000)   >> 16);
+            cdb[8]  = (byte)((transferLength & 0xFF00)     >> 8);
+            cdb[9]  = (byte)(transferLength & 0xFF);
             cdb[10] = (byte)subchannel;
 
             buffer = new byte[blockSize * transferLength];
@@ -88,8 +88,8 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool PlextorReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
-                                      uint timeout, out double duration)
+        public bool PlextorReadRawDvd(out byte[] buffer,  out byte[] senseBuffer, uint lba, uint transferLength,
+                                      uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
@@ -98,10 +98,10 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.ReadBuffer;
             cdb[1] = 0x02;
             cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[4] = (byte)((lba & 0xFF00)   >> 8);
             cdb[5] = (byte)(lba & 0xFF);
             cdb[3] = (byte)((buffer.Length & 0xFF0000) >> 16);
-            cdb[4] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[4] = (byte)((buffer.Length & 0xFF00)   >> 8);
             cdb[5] = (byte)(buffer.Length & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -123,7 +123,7 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool PlextorReadEepromCdr(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[256];
+            buffer      = new byte[256];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
@@ -149,7 +149,7 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool PlextorReadEeprom(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[512];
+            buffer      = new byte[512];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
@@ -175,10 +175,10 @@ namespace DiscImageChef.Devices
         /// <param name="blockSize">How many bytes are in the EEPROM block</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool PlextorReadEepromBlock(out byte[] buffer, out byte[] senseBuffer, byte block, ushort blockSize,
-                                           uint timeout, out double duration)
+        public bool PlextorReadEepromBlock(out byte[] buffer,  out byte[] senseBuffer, byte block, ushort blockSize,
+                                           uint       timeout, out double duration)
         {
-            buffer = new byte[blockSize];
+            buffer      = new byte[blockSize];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
@@ -208,15 +208,15 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool PlextorGetSpeeds(out byte[] senseBuffer, out ushort selected, out ushort max, out ushort last,
-                                     uint timeout, out double duration)
+                                     uint       timeout,     out double duration)
         {
             byte[] buf = new byte[10];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
             selected = 0;
-            max = 0;
-            last = 0;
+            max      = 0;
+            last     = 0;
 
             cdb[0] = (byte)ScsiCommands.PlextorPoweRec;
             cdb[9] = (byte)buf.Length;
@@ -230,9 +230,9 @@ namespace DiscImageChef.Devices
             if(sense || Error) return sense;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            selected = BigEndianBitConverter.ToUInt16(buf, 4);
-            max = BigEndianBitConverter.ToUInt16(buf, 6);
-            last = BigEndianBitConverter.ToUInt16(buf, 8);
+            selected                             = BigEndianBitConverter.ToUInt16(buf, 4);
+            max                                  = BigEndianBitConverter.ToUInt16(buf, 6);
+            last                                 = BigEndianBitConverter.ToUInt16(buf, 8);
 
             return false;
         }
@@ -254,7 +254,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
 
             enabled = false;
-            speed = 0;
+            speed   = 0;
 
             cdb[0] = (byte)ScsiCommands.PlextorExtend2;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
@@ -269,8 +269,8 @@ namespace DiscImageChef.Devices
             if(sense || Error) return sense;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            enabled = buf[2] != 0;
-            speed = BigEndianBitConverter.ToUInt16(buf, 4);
+            enabled                              = buf[2] != 0;
+            speed                                = BigEndianBitConverter.ToUInt16(buf, 4);
 
             return false;
         }
@@ -285,14 +285,14 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool PlextorGetSilentMode(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.PlextorExtend;
-            cdb[1] = (byte)PlextorSubCommands.GetMode;
-            cdb[2] = (byte)PlextorSubCommands.Silent;
-            cdb[3] = 4;
+            cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+            cdb[1]  = (byte)PlextorSubCommands.GetMode;
+            cdb[2]  = (byte)PlextorSubCommands.Silent;
+            cdb[3]  = 4;
             cdb[10] = (byte)buffer.Length;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -314,13 +314,13 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool PlextorGetGigaRec(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.PlextorExtend;
-            cdb[1] = (byte)PlextorSubCommands.GetMode;
-            cdb[2] = (byte)PlextorSubCommands.GigaRec;
+            cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+            cdb[1]  = (byte)PlextorSubCommands.GetMode;
+            cdb[2]  = (byte)PlextorSubCommands.GigaRec;
             cdb[10] = (byte)buffer.Length;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -344,17 +344,17 @@ namespace DiscImageChef.Devices
         public bool PlextorGetVariRec(out byte[] buffer, out byte[] senseBuffer, bool dvd, uint timeout,
                                       out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.PlextorExtend;
-            cdb[1] = (byte)PlextorSubCommands.GetMode;
-            cdb[2] = (byte)PlextorSubCommands.VariRec;
+            cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+            cdb[1]  = (byte)PlextorSubCommands.GetMode;
+            cdb[2]  = (byte)PlextorSubCommands.VariRec;
             cdb[10] = (byte)buffer.Length;
 
             if(dvd) cdb[3] = 0x12;
-            else cdb[3] = 0x02;
+            else cdb[3]    = 0x02;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
@@ -375,12 +375,12 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool PlextorGetSecuRec(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.PlextorExtend;
-            cdb[2] = (byte)PlextorSubCommands.SecuRec;
+            cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+            cdb[2]  = (byte)PlextorSubCommands.SecuRec;
             cdb[10] = (byte)buffer.Length;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -402,13 +402,13 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool PlextorGetSpeedRead(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.PlextorExtend;
-            cdb[1] = (byte)PlextorSubCommands.GetMode;
-            cdb[2] = (byte)PlextorSubCommands.SpeedRead;
+            cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+            cdb[1]  = (byte)PlextorSubCommands.GetMode;
+            cdb[2]  = (byte)PlextorSubCommands.SpeedRead;
             cdb[10] = (byte)buffer.Length;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -430,7 +430,7 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool PlextorGetHiding(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
@@ -460,7 +460,7 @@ namespace DiscImageChef.Devices
         public bool PlextorGetBitsetting(out byte[] buffer, out byte[] senseBuffer, bool dualLayer, uint timeout,
                                          out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
@@ -470,7 +470,7 @@ namespace DiscImageChef.Devices
             cdb[9] = (byte)buffer.Length;
 
             if(dualLayer) cdb[3] = (byte)PlextorSubCommands.BitSetRdl;
-            else cdb[3] = (byte)PlextorSubCommands.BitSetR;
+            else cdb[3]          = (byte)PlextorSubCommands.BitSetR;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
@@ -492,13 +492,13 @@ namespace DiscImageChef.Devices
         public bool PlextorGetTestWriteDvdPlus(out byte[] buffer, out byte[] senseBuffer, uint timeout,
                                                out double duration)
         {
-            buffer = new byte[8];
+            buffer      = new byte[8];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
-            cdb[0] = (byte)ScsiCommands.PlextorExtend;
-            cdb[1] = (byte)PlextorSubCommands.GetMode;
-            cdb[2] = (byte)PlextorSubCommands.TestWriteDvdPlus;
+            cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+            cdb[1]  = (byte)PlextorSubCommands.GetMode;
+            cdb[2]  = (byte)PlextorSubCommands.TestWriteDvdPlus;
             cdb[10] = (byte)buffer.Length;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,

@@ -182,7 +182,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf(vhdxId)];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf(vhdxId));
-            vhdxId       = new VhdxIdentifier();
+            vhdxId = new VhdxIdentifier();
             IntPtr idPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vhdxId));
             Marshal.Copy(vhdxIdB, 0, idPtr, Marshal.SizeOf(vhdxId));
             vhdxId = (VhdxIdentifier)Marshal.PtrToStructure(idPtr, typeof(VhdxIdentifier));
@@ -200,7 +200,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf(vhdxId)];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf(vhdxId));
-            vhdxId       = new VhdxIdentifier();
+            vhdxId = new VhdxIdentifier();
             IntPtr idPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vhdxId));
             Marshal.Copy(vhdxIdB, 0, idPtr, Marshal.SizeOf(vhdxId));
             vhdxId = (VhdxIdentifier)Marshal.PtrToStructure(idPtr, typeof(VhdxIdentifier));
@@ -213,7 +213,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(64 * 1024, SeekOrigin.Begin);
             byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
             stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
-            vHdr             = new VhdxHeader();
+            vHdr = new VhdxHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
             Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
             vHdr = (VhdxHeader)Marshal.PtrToStructure(headerPtr, typeof(VhdxHeader));
@@ -236,7 +236,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(192 * 1024, SeekOrigin.Begin);
             byte[] vRegTableB = new byte[Marshal.SizeOf(vRegHdr)];
             stream.Read(vRegTableB, 0, Marshal.SizeOf(vRegHdr));
-            vRegHdr           = new VhdxRegionTableHeader();
+            vRegHdr = new VhdxRegionTableHeader();
             IntPtr vRegTabPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vRegHdr));
             Marshal.Copy(vRegTableB, 0, vRegTabPtr, Marshal.SizeOf(vRegHdr));
             vRegHdr = (VhdxRegionTableHeader)Marshal.PtrToStructure(vRegTabPtr, typeof(VhdxRegionTableHeader));
@@ -262,13 +262,14 @@ namespace DiscImageChef.DiscImages
             {
                 byte[] vRegB = new byte[Marshal.SizeOf(vRegs[i])];
                 stream.Read(vRegB, 0, Marshal.SizeOf(vRegs[i]));
-                vRegs[i]       = new VhdxRegionTableEntry();
+                vRegs[i] = new VhdxRegionTableEntry();
                 IntPtr vRegPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vRegs[i]));
                 Marshal.Copy(vRegB, 0, vRegPtr, Marshal.SizeOf(vRegs[i]));
                 vRegs[i] = (VhdxRegionTableEntry)Marshal.PtrToStructure(vRegPtr, typeof(VhdxRegionTableEntry));
                 Marshal.FreeHGlobal(vRegPtr);
 
-                if(vRegs[i].guid      == batGuid) batOffset = (long)vRegs[i].offset;
+                if(vRegs[i].guid == batGuid)
+                    batOffset = (long)vRegs[i].offset;
                 else if(vRegs[i].guid == metadataGuid)
                     metadataOffset = (long)vRegs[i].offset;
                 else if((vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
@@ -285,7 +286,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(metadataOffset, SeekOrigin.Begin);
             byte[] metTableB = new byte[Marshal.SizeOf(vMetHdr)];
             stream.Read(metTableB, 0, Marshal.SizeOf(vMetHdr));
-            vMetHdr            = new VhdxMetadataTableHeader();
+            vMetHdr = new VhdxMetadataTableHeader();
             IntPtr metTablePtr = Marshal.AllocHGlobal(Marshal.SizeOf(vMetHdr));
             Marshal.Copy(metTableB, 0, metTablePtr, Marshal.SizeOf(vMetHdr));
             vMetHdr = (VhdxMetadataTableHeader)Marshal.PtrToStructure(metTablePtr, typeof(VhdxMetadataTableHeader));
@@ -296,13 +297,14 @@ namespace DiscImageChef.DiscImages
             {
                 byte[] vMetB = new byte[Marshal.SizeOf(vMets[i])];
                 stream.Read(vMetB, 0, Marshal.SizeOf(vMets[i]));
-                vMets[i]       = new VhdxMetadataTableEntry();
+                vMets[i] = new VhdxMetadataTableEntry();
                 IntPtr vMetPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vMets[i]));
                 Marshal.Copy(vMetB, 0, vMetPtr, Marshal.SizeOf(vMets[i]));
                 vMets[i] = (VhdxMetadataTableEntry)Marshal.PtrToStructure(vMetPtr, typeof(VhdxMetadataTableEntry));
                 Marshal.FreeHGlobal(vMetPtr);
 
-                if(vMets[i].itemId      == fileParametersGuid) fileParamsOff = vMets[i].offset;
+                if(vMets[i].itemId == fileParametersGuid)
+                    fileParamsOff = vMets[i].offset;
                 else if(vMets[i].itemId == virtualDiskSizeGuid)
                     vdSizeOff = vMets[i].offset;
                 else if(vMets[i].itemId == page83DataGuid)
@@ -373,7 +375,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(parentOff + metadataOffset, SeekOrigin.Begin);
                 byte[] vParHdrB = new byte[Marshal.SizeOf(vMetHdr)];
                 stream.Read(vParHdrB, 0, Marshal.SizeOf(vMetHdr));
-                vParHdr           = new VhdxParentLocatorHeader();
+                vParHdr = new VhdxParentLocatorHeader();
                 IntPtr vParHdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vMetHdr));
                 Marshal.Copy(vParHdrB, 0, vParHdrPtr, Marshal.SizeOf(vMetHdr));
                 vParHdr = (VhdxParentLocatorHeader)Marshal.PtrToStructure(vParHdrPtr, typeof(VhdxParentLocatorHeader));
@@ -388,7 +390,7 @@ namespace DiscImageChef.DiscImages
                 {
                     byte[] vParB = new byte[Marshal.SizeOf(vPars[i])];
                     stream.Read(vParB, 0, Marshal.SizeOf(vPars[i]));
-                    vPars[i]       = new VhdxParentLocatorEntry();
+                    vPars[i] = new VhdxParentLocatorEntry();
                     IntPtr vParPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vPars[i]));
                     Marshal.Copy(vParB, 0, vParPtr, Marshal.SizeOf(vPars[i]));
                     vPars[i] = (VhdxParentLocatorEntry)Marshal.PtrToStructure(vParPtr, typeof(VhdxParentLocatorEntry));
@@ -401,7 +403,7 @@ namespace DiscImageChef.DiscImages
             if((vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT &&
                vParHdr.locatorType                        == parentTypeVhdxGuid)
             {
-                parentImage      = new Vhdx();
+                parentImage = new Vhdx();
                 bool parentWorks = false;
 
                 foreach(VhdxParentLocatorEntry parentEntry in vPars)
@@ -478,14 +480,14 @@ namespace DiscImageChef.DiscImages
             }
 
             chunkRatio = (long)(Math.Pow(2, 23) * logicalSectorSize / vFileParms.blockSize);
-            dataBlocks = virtualDiskSize        / vFileParms.blockSize;
-            if(virtualDiskSize                  % vFileParms.blockSize > 0) dataBlocks++;
+            dataBlocks = virtualDiskSize / vFileParms.blockSize;
+            if(virtualDiskSize           % vFileParms.blockSize > 0) dataBlocks++;
 
             long batEntries;
             if(hasParent)
             {
                 long sectorBitmapBlocks = (long)dataBlocks / chunkRatio;
-                if(dataBlocks                              % (ulong)chunkRatio > 0) sectorBitmapBlocks++;
+                if(dataBlocks % (ulong)chunkRatio > 0) sectorBitmapBlocks++;
                 sectorBitmapPointers = new ulong[sectorBitmapBlocks];
 
                 batEntries = sectorBitmapBlocks * (chunkRatio - 1);
@@ -494,15 +496,15 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
 
-            long readChunks      = 0;
+            long readChunks = 0;
             blockAllocationTable = new ulong[dataBlocks];
-            byte[] batB          = new byte[batEntries * 8];
+            byte[] batB = new byte[batEntries * 8];
             stream.Seek(batOffset, SeekOrigin.Begin);
             stream.Read(batB, 0, batB.Length);
 
             ulong skipSize = 0;
             for(ulong i = 0; i < dataBlocks; i++)
-                if(readChunks  == chunkRatio)
+                if(readChunks == chunkRatio)
                 {
                     if(hasParent)
                         sectorBitmapPointers[skipSize / 8] = BitConverter.ToUInt64(batB, (int)(i * 8 + skipSize));
@@ -721,8 +723,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -731,8 +733,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -935,7 +937,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Type of parent virtual disk
             /// </summary>
-            public Guid   locatorType;
+            public Guid locatorType;
             public ushort reserved;
             /// <summary>
             ///     How many KVPs are in this parent locator

@@ -44,9 +44,9 @@ namespace DiscImageChef.Filesystems
     {
         readonly byte[] ecma67_magic = {0x56, 0x4F, 0x4C};
 
-        public Encoding Encoding { get; private set; }
-        public string Name => "ECMA-67";
-        public Guid Id => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "ECMA-67";
+        public Guid           Id        => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
         public FileSystemType XmlFsType { get; private set; }
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -59,8 +59,8 @@ namespace DiscImageChef.Filesystems
 
             if(sector.Length != 128) return false;
 
-            VolumeLabel vol = new VolumeLabel();
-            IntPtr volPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vol));
+            VolumeLabel vol    = new VolumeLabel();
+            IntPtr      volPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vol));
             Marshal.Copy(sector, 0, volPtr, Marshal.SizeOf(vol));
             vol = (VolumeLabel)Marshal.PtrToStructure(volPtr, typeof(VolumeLabel));
             Marshal.FreeHGlobal(volPtr);
@@ -69,15 +69,15 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] sector = imagePlugin.ReadSector(6);
 
             StringBuilder sbInformation = new StringBuilder();
 
-            VolumeLabel vol = new VolumeLabel();
-            IntPtr volPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vol));
+            VolumeLabel vol    = new VolumeLabel();
+            IntPtr      volPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vol));
             Marshal.Copy(sector, 0, volPtr, Marshal.SizeOf(vol));
             vol = (VolumeLabel)Marshal.PtrToStructure(volPtr, typeof(VolumeLabel));
             Marshal.FreeHGlobal(volPtr);
@@ -89,10 +89,10 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "ECMA-67",
+                Type        = "ECMA-67",
                 ClusterSize = 256,
-                Clusters = (long)(partition.End - partition.Start + 1),
-                VolumeName = Encoding.ASCII.GetString(vol.volumeIdentifier)
+                Clusters    = (long)(partition.End - partition.Start + 1),
+                VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)
             };
 
             information = sbInformation.ToString();
@@ -101,20 +101,28 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VolumeLabel
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] labelIdentifier;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] labelIdentifier;
             public byte labelNumber;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] volumeIdentifier;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] volumeIdentifier;
             public byte volumeAccessibility;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)] public byte[] reserved1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] owner;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
+            public byte[] reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+            public byte[] owner;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+            public byte[] reserved2;
             public byte surface;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] reserved3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] reserved3;
             public byte recordLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] reserved4;
             public byte fileLabelAllocation;
             public byte labelStandardVersion;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] reserved5;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
+            public byte[] reserved5;
         }
     }
 }

@@ -111,7 +111,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            nhdhdr          = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
+            nhdhdr = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
             handle.Free();
 
             if(!nhdhdr.szFileID.SequenceEqual(signature)) return false;
@@ -145,7 +145,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            nhdhdr          = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
+            nhdhdr = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
             handle.Free();
 
             imageInfo.MediaType = MediaType.GENERIC_HDD;
@@ -266,8 +266,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -276,8 +276,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -539,14 +539,14 @@ namespace DiscImageChef.DiscImages
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
             public byte[] szFileID;
-            public byte   reserved1;
+            public byte reserved1;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
             public byte[] szComment;
-            public int    dwHeadSize;
-            public int    dwCylinder;
-            public short  wHead;
-            public short  wSect;
-            public short  wSectLen;
+            public int   dwHeadSize;
+            public int   dwCylinder;
+            public short wHead;
+            public short wSect;
+            public short wSectLen;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public byte[] reserved2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)]

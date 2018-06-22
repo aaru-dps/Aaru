@@ -48,9 +48,9 @@ namespace DiscImageChef.Filesystems
         const uint SQUASH_CIGAM = 0x68737173;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Squash filesystem";
-        public Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Squash filesystem";
+        public Guid           Id        => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -64,14 +64,14 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
-            uint magic = BitConverter.ToUInt32(sector, 0x00);
+            uint   magic  = BitConverter.ToUInt32(sector, 0x00);
 
-            SquashSuperBlock sqSb = new SquashSuperBlock();
-            bool littleEndian = true;
+            SquashSuperBlock sqSb         = new SquashSuperBlock();
+            bool             littleEndian = true;
 
             switch(magic)
             {
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems
                     Marshal.FreeHGlobal(sqSbPtr);
                     break;
                 case SQUASH_CIGAM:
-                    sqSb = BigEndianMarshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
+                    sqSb         = BigEndianMarshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
                     littleEndian = false;
                     break;
             }
@@ -127,15 +127,15 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Squash file system",
-                CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
+                Type                  = "Squash file system",
+                CreationDate          = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
                 CreationDateSpecified = true,
                 Clusters =
                     (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size),
-                ClusterSize = (int)sqSb.block_size,
-                Files = sqSb.inodes,
-                FilesSpecified = true,
-                FreeClusters = 0,
+                ClusterSize           = (int)sqSb.block_size,
+                Files                 = sqSb.inodes,
+                FilesSpecified        = true,
+                FreeClusters          = 0,
                 FreeClustersSpecified = true
             };
         }
@@ -144,34 +144,34 @@ namespace DiscImageChef.Filesystems
         {
             Zlib = 1,
             Lzma = 2,
-            Lzo = 3,
-            Xz = 4,
-            Lz4 = 5,
+            Lzo  = 3,
+            Xz   = 4,
+            Lz4  = 5,
             Zstd = 6
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SquashSuperBlock
         {
-            public uint magic;
-            public uint inodes;
-            public uint mkfs_time;
-            public uint block_size;
-            public uint fragments;
+            public uint   magic;
+            public uint   inodes;
+            public uint   mkfs_time;
+            public uint   block_size;
+            public uint   fragments;
             public ushort compression;
             public ushort block_log;
             public ushort flags;
             public ushort no_ids;
             public ushort s_major;
             public ushort s_minor;
-            public ulong root_inode;
-            public ulong bytes_used;
-            public ulong id_table_start;
-            public ulong xattr_id_table_start;
-            public ulong inode_table_start;
-            public ulong directory_table_start;
-            public ulong fragment_table_start;
-            public ulong lookup_table_start;
+            public ulong  root_inode;
+            public ulong  bytes_used;
+            public ulong  id_table_start;
+            public ulong  xattr_id_table_start;
+            public ulong  inode_table_start;
+            public ulong  directory_table_start;
+            public ulong  fragment_table_start;
+            public ulong  lookup_table_start;
         }
     }
 }

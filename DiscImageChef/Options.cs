@@ -268,9 +268,9 @@ namespace DiscImageChef
         public string DevicePath { get; set; }
 
         // TODO: Disabled temporarily
-/*        [Option('r', "raw", Default = false,
-            HelpText                = "Dump sectors with tags included. For optical media, dump scrambled sectors")]
-        public bool Raw { get; set; }*/
+        /*        [Option('r', "raw", Default = false,
+                    HelpText                = "Dump sectors with tags included. For optical media, dump scrambled sectors")]
+                public bool Raw { get; set; }*/
 
         [Option('s', "stop-on-error", Default = false, HelpText = "Stop media dump on first error.")]
         public bool StopOnError { get; set; }

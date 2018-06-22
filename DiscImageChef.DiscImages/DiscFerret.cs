@@ -51,7 +51,7 @@ namespace DiscImageChef.DiscImages
         ///     "DFE2"
         /// </summary>
         const uint DFI_MAGIC2 = 0x32454644;
-        ImageInfo  imageInfo;
+        ImageInfo imageInfo;
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<int, long> TrackLengths;
         public SortedDictionary<int, long> TrackOffsets;
@@ -117,8 +117,8 @@ namespace DiscImageChef.DiscImages
 
             if(magic != DFI_MAGIC && magic != DFI_MAGIC2) return false;
 
-            TrackOffsets        = new SortedDictionary<int, long>();
-            TrackLengths        = new SortedDictionary<int, long>();
+            TrackOffsets = new SortedDictionary<int, long>();
+            TrackLengths = new SortedDictionary<int, long>();
             int    t            = -1;
             ushort lastCylinder = 0, lastHead = 0;
             long   offset       = 0;
@@ -224,8 +224,8 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -270,8 +270,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

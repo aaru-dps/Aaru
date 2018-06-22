@@ -43,8 +43,8 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class Tuple
     {
         public TupleCodes Code;
-        public byte Link;
-        public byte[] Data;
+        public byte       Link;
+        public byte[]     Data;
     }
 
     /// <summary>

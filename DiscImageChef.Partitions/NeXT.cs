@@ -56,17 +56,19 @@ namespace DiscImageChef.Partitions
         const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
         public string Name => "NeXT Disklabel";
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid   Id   => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
-            bool magicFound = false;
+            bool   magicFound = false;
             byte[] labelSector;
 
             uint sectorSize;
 
             if(imagePlugin.Info.SectorSize == 2352 || imagePlugin.Info.SectorSize == 2448) sectorSize = 2048;
-            else sectorSize = imagePlugin.Info.SectorSize;
+            else
+                sectorSize =
+                    imagePlugin.Info.SectorSize;
 
             partitions = new List<Partition>();
 
@@ -80,7 +82,7 @@ namespace DiscImageChef.Partitions
                 uint magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
                 if(magic != NEXT_MAGIC1 && magic != NEXT_MAGIC2 && magic != NEXT_MAGIC3) continue;
 
-                magicFound = true;
+                magicFound    = true;
                 labelPosition = i + sectorOffset;
                 break;
             }
@@ -92,34 +94,34 @@ namespace DiscImageChef.Partitions
 
             labelSector = imagePlugin.ReadSectors(labelPosition, sectorsToRead);
 
-            NeXTLabel label = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTLabel>(labelSector);
-            byte[] disktabB = new byte[498];
+            NeXTLabel label    = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTLabel>(labelSector);
+            byte[]    disktabB = new byte[498];
             Array.Copy(labelSector, 44, disktabB, 0, 498);
-            label.dl_dt = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktabB);
+            label.dl_dt              = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktabB);
             label.dl_dt.d_partitions = new NeXTEntry[8];
 
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_version = 0x{0:X8}", label.dl_version);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_label_blkno = {0}", label.dl_label_blkno);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_size = {0}", label.dl_size);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_label_blkno = {0}",  label.dl_label_blkno);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_size = {0}",         label.dl_size);
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_label = \"{0}\"",
                                       StringHandlers.CToString(label.dl_label));
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_flags = {0}", label.dl_flags);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_flags = {0}",    label.dl_flags);
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_tag = 0x{0:X8}", label.dl_tag);
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_name = \"{0}\"",
                                       StringHandlers.CToString(label.dl_dt.d_name));
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_type = \"{0}\"",
                                       StringHandlers.CToString(label.dl_dt.d_type));
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_secsize = {0}", label.dl_dt.d_secsize);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ntracks = {0}", label.dl_dt.d_ntracks);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_nsectors = {0}", label.dl_dt.d_nsectors);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_secsize = {0}",    label.dl_dt.d_secsize);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ntracks = {0}",    label.dl_dt.d_ntracks);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_nsectors = {0}",   label.dl_dt.d_nsectors);
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ncylinders = {0}", label.dl_dt.d_ncylinders);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rpm = {0}", label.dl_dt.d_rpm);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_front = {0}", label.dl_dt.d_front);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_back = {0}", label.dl_dt.d_back);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ngroups = {0}", label.dl_dt.d_ngroups);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_size = {0}", label.dl_dt.d_ag_size);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_alts = {0}", label.dl_dt.d_ag_alts);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_off = {0}", label.dl_dt.d_ag_off);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rpm = {0}",        label.dl_dt.d_rpm);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_front = {0}",      label.dl_dt.d_front);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_back = {0}",       label.dl_dt.d_back);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ngroups = {0}",    label.dl_dt.d_ngroups);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_size = {0}",    label.dl_dt.d_ag_size);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_alts = {0}",    label.dl_dt.d_ag_alts);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_off = {0}",     label.dl_dt.d_ag_off);
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[0] = {0}",
                                       label.dl_dt.d_boot0_blkno[0]);
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[1] = {0}",
@@ -129,7 +131,7 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_hostname = \"{0}\"",
                                       StringHandlers.CToString(label.dl_dt.d_hostname));
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rootpartition = {0}", label.dl_dt.d_rootpartition);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rwpartition = {0}", label.dl_dt.d_rwpartition);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rwpartition = {0}",   label.dl_dt.d_rwpartition);
 
             for(int i = 0; i < 8; i++)
             {
@@ -161,7 +163,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_type = \"{1}\"", i,
                                           StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type));
 
-                if(label.dl_dt.d_partitions[i].p_size <= 0 || label.dl_dt.d_partitions[i].p_base < 0 ||
+                if(label.dl_dt.d_partitions[i].p_size  <= 0 || label.dl_dt.d_partitions[i].p_base < 0 ||
                    label.dl_dt.d_partitions[i].p_bsize < 0) continue;
 
                 StringBuilder sb = new StringBuilder();
@@ -171,10 +173,10 @@ namespace DiscImageChef.Partitions
                     Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
                     Offset =
                         (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
-                    Type = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
+                    Type     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
                     Sequence = (ulong)i,
-                    Name = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
-                    Length = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sectorSize),
+                    Name     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
+                    Length   = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sectorSize),
                     Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize /
                                     sectorSize),
                     Scheme = Name
@@ -184,14 +186,14 @@ namespace DiscImageChef.Partitions
                 {
                     DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
                     part.Length = imagePlugin.Info.Sectors - part.Start;
-                    part.Size = part.Length * sectorSize;
+                    part.Size   = part.Length * sectorSize;
                     DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
                                               part.Length);
                 }
 
                 sb.AppendFormat("{0} bytes per block", label.dl_dt.d_partitions[i].p_bsize).AppendLine();
                 sb.AppendFormat("{0} bytes per fragment", label.dl_dt.d_partitions[i].p_fsize).AppendLine();
-                if(label.dl_dt.d_partitions[i].p_opt == 's') sb.AppendLine("Space optimized");
+                if(label.dl_dt.d_partitions[i].p_opt      == 's') sb.AppendLine("Space optimized");
                 else if(label.dl_dt.d_partitions[i].p_opt == 't') sb.AppendLine("Time optimized");
                 else sb.AppendFormat("Unknown optimization {0:X2}", label.dl_dt.d_partitions[i].p_opt).AppendLine();
                 sb.AppendFormat("{0} cylinders per group", label.dl_dt.d_partitions[i].p_cpg).AppendLine();
@@ -223,7 +225,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Device size in blocks</summary>
             public int dl_size;
             /// <summary>Device name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] dl_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] dl_label;
             /// <summary>Device flags</summary>
             public uint dl_flags;
             /// <summary>Device tag</summary>
@@ -247,7 +250,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Device size in blocks</summary>
             public int dl_size;
             /// <summary>Device name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] dl_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] dl_label;
             /// <summary>Device flags</summary>
             public uint dl_flags;
             /// <summary>Device tag</summary>
@@ -255,7 +259,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Device info and partitions</summary>
             public NeXTDiskTab dl_dt;
             /// <summary>Bad sector table</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1670)] public int[] dl_bad;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1670)]
+            public int[] dl_bad;
             /// <summary>Checksum</summary>
             public ushort dl_checksum;
         }
@@ -267,9 +272,11 @@ namespace DiscImageChef.Partitions
         struct NeXTDiskTab
         {
             /// <summary>Drive name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] d_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] d_name;
             /// <summary>Drive type</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] d_type;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] d_type;
             /// <summary>Sector size</summary>
             public int d_secsize;
             /// <summary>tracks/cylinder</summary>
@@ -293,17 +300,21 @@ namespace DiscImageChef.Partitions
             /// <summary>sector offset to first alternate</summary>
             public short d_ag_off;
             /// <summary>"blk 0" boot locations</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public int[] d_boot0_blkno;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public int[] d_boot0_blkno;
             /// <summary>default bootfile</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] d_bootfile;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] d_bootfile;
             /// <summary>host name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] d_hostname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] d_hostname;
             /// <summary>root partition</summary>
             public byte d_rootpartition;
             /// <summary>r/w partition</summary>
             public byte d_rwpartition;
             /// <summary>partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public NeXTEntry[] d_partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public NeXTEntry[] d_partitions;
         }
 
         /// <summary>
@@ -331,11 +342,13 @@ namespace DiscImageChef.Partitions
             /// <summary>Should newfs be run on first start?</summary>
             public byte p_newfs;
             /// <summary>Mount point or empty if mount where you want</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] p_mountpt;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] p_mountpt;
             /// <summary>Should automount</summary>
             public byte p_automnt;
             /// <summary>Filesystem type, always "4.3BSD"?</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] p_type;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] p_type;
         }
     }
 }

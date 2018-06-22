@@ -133,7 +133,7 @@ namespace DiscImageChef.DiscImages
             byte[] trackBytes = new byte[tracks];
             stream.Read(trackBytes, 0, tracks);
 
-            for(int i = 0; i     < tracks; i++)
+            for(int i = 0; i < tracks; i++)
                 if(trackBytes[i] != (byte)TrackType.Copied && trackBytes[i] != (byte)TrackType.Omitted &&
                    trackBytes[i] != (byte)TrackType.OmittedAlternate)
                     return false;
@@ -325,8 +325,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -336,8 +336,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -451,7 +451,7 @@ namespace DiscImageChef.DiscImages
                 MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dcf"};
 
         public bool   IsWriting    { get; private set; }

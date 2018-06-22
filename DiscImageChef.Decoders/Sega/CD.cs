@@ -49,9 +49,11 @@ namespace DiscImageChef.Decoders.Sega
         public struct IPBin
         {
             /// <summary>Must be "SEGADISCSYSTEM  " or "SEGADATADISC    " or "SEGAOS          "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] SegaHardwareID;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] SegaHardwareID;
             /// <summary>0x010, Varies</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] volume_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] volume_name;
             /// <summary>0x01B, 0x00</summary>
             public byte spare_space1;
             /// <summary>0x01C, Volume version in BCD. &lt;100 = Prerelease.</summary>
@@ -59,7 +61,8 @@ namespace DiscImageChef.Decoders.Sega
             /// <summary>0x01E, Bit 0 = 1 => CD-ROM. Rest should be 0.</summary>
             public ushort volume_type;
             /// <summary>0x020, Unknown, varies!</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] system_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] system_name;
             /// <summary>0x02B, 0x00</summary>
             public byte spare_space2;
             /// <summary>0x02C, Should be 1</summary>
@@ -83,33 +86,46 @@ namespace DiscImageChef.Decoders.Sega
             /// <summary>0x04C, System program work RAM size in bytes</summary>
             public uint sp_work_ram_size;
             /// <summary>0x050, MMDDYYYY</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] release_date;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] release_date;
             /// <summary>0x058, Seems to be all 0x20s</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public byte[] unknown1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
+            public byte[] unknown1;
             /// <summary>0x05F, 0x00 ?</summary>
             public byte spare_space4;
             /// <summary>0x060, System Reserved Area</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 160)] public byte[] system_reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 160)]
+            public byte[] system_reserved;
             /// <summary>0x100, Hardware ID</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] hardware_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] hardware_id;
             /// <summary>0x113 or 0x110, "SEGA" or "T-xx"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] developer_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public byte[] developer_code;
             /// <summary>0x118, Another release date, this with month in letters?</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] release_date2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] release_date2;
             /// <summary>0x120, Domestic version of the game title</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] domestic_title;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
+            public byte[] domestic_title;
             /// <summary>0x150, Overseas version of the game title</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] overseas_title;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
+            public byte[] overseas_title;
             /// <summary>0x180, Official product code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] product_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
+            public byte[] product_code;
             /// <summary>0x190, Supported peripherals, see above</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] peripherals;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] peripherals;
             /// <summary>0x1A0, 0x20</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] spare_space6;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] spare_space6;
             /// <summary>0x1B0, Inside here should be modem information, but I need to get a modem-enabled game</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] spare_space7;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] spare_space7;
             /// <summary>0x1F0, Region codes, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] region_codes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] region_codes;
         }
 
         public static IPBin? DecodeIPBin(byte[] ipbin_sector)
@@ -129,15 +145,15 @@ namespace DiscImageChef.Decoders.Sega
                                       Encoding.ASCII.GetString(ipbin.system_name));
             DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_version = \"{0:X}\"",
                                       ipbin.volume_version);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_type = 0x{0:X8}", ipbin.volume_type);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_type = 0x{0:X8}",    ipbin.volume_type);
             DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_version = 0x{0:X8}", ipbin.system_version);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_loadsize = {0}", ipbin.ip_loadsize);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_address = 0x{0:X8}",     ipbin.ip_address);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_loadsize = {0}",         ipbin.ip_loadsize);
             DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
                                       ipbin.ip_entry_address);
             DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_work_ram_size = {0}", ipbin.ip_work_ram_size);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_loadsize = {0}", ipbin.sp_loadsize);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_address = 0x{0:X8}",  ipbin.sp_address);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_loadsize = {0}",      ipbin.sp_loadsize);
             DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
                                       ipbin.sp_entry_address);
             DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_work_ram_size = {0}", ipbin.sp_work_ram_size);
@@ -178,8 +194,8 @@ namespace DiscImageChef.Decoders.Sega
             IPBinInformation.AppendLine("--------------------------------");
 
             // Decoding all data
-            DateTime ipbindate = DateTime.MinValue;
-            CultureInfo provider = CultureInfo.InvariantCulture;
+            DateTime    ipbindate = DateTime.MinValue;
+            CultureInfo provider  = CultureInfo.InvariantCulture;
             try { ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "MMddyyyy", provider); }
             catch
             {
@@ -188,12 +204,12 @@ namespace DiscImageChef.Decoders.Sega
                     ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date2), "yyyy.MMM",
                                                     provider);
                 }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
                 {
                     // ignored
                 }
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
             /*

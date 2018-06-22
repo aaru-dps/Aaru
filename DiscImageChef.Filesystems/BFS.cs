@@ -55,9 +55,9 @@ namespace DiscImageChef.Filesystems
         const uint BEFS_DIRTY = 0x44495254;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Be Filesystem";
-        public Guid Id => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Be Filesystem";
+        public Guid           Id        => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -65,14 +65,14 @@ namespace DiscImageChef.Filesystems
 
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            uint magic = BitConverter.ToUInt32(sbSector, 0x20);
+            uint magic   = BitConverter.ToUInt32(sbSector, 0x20);
             uint magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
             if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1) return true;
 
             if(sbSector.Length >= 0x400)
             {
-                magic = BitConverter.ToUInt32(sbSector, 0x220);
+                magic   = BitConverter.ToUInt32(sbSector, 0x220);
                 magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x220);
             }
 
@@ -80,16 +80,16 @@ namespace DiscImageChef.Filesystems
 
             sbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            magic = BitConverter.ToUInt32(sbSector, 0x20);
+            magic   = BitConverter.ToUInt32(sbSector, 0x20);
             magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
             return magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -105,7 +105,7 @@ namespace DiscImageChef.Filesystems
                 littleEndian = besb.magic1 == BEFS_CIGAM1;
             else
             {
-                sbSector = imagePlugin.ReadSector(1 + partition.Start);
+                sbSector    = imagePlugin.ReadSector(1 + partition.Start);
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
                 if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
@@ -118,7 +118,7 @@ namespace DiscImageChef.Filesystems
                     if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                     {
                         littleEndian = besb.magic1 == BEFS_CIGAM1;
-                        sbSector = new byte[0x200];
+                        sbSector     = new byte[0x200];
                         Array.Copy(temp, 0x200, sbSector, 0, 0x200);
                     }
                     else return;
@@ -136,8 +136,10 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
 
-            if(besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN || besb.magic2 != BEFS_MAGIC2 ||
-               besb.magic3 != BEFS_MAGIC3 || besb.root_dir_len != 1 || besb.indices_len != 1 ||
+            if(besb.magic1                != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN ||
+               besb.magic2                != BEFS_MAGIC2 ||
+               besb.magic3                != BEFS_MAGIC3 || besb.root_dir_len != 1 ||
+               besb.indices_len           != 1           ||
                1 << (int)besb.block_shift != besb.block_size)
             {
                 sb.AppendLine("Superblock seems corrupt, following information may be incorrect");
@@ -181,25 +183,25 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end)
               .AppendLine();
             sb
-                .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len,
-                              besb.root_dir_len * besb.block_size).AppendLine();
+               .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                             besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len,
+                             besb.root_dir_len * besb.block_size).AppendLine();
             sb
-                .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size)
-                .AppendLine();
+               .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                             besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size)
+               .AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Clusters = besb.num_blocks,
-                ClusterSize = (int)besb.block_size,
-                Dirty = besb.flags == BEFS_DIRTY,
-                FreeClusters = besb.num_blocks - besb.used_blocks,
+                Clusters              = besb.num_blocks,
+                ClusterSize           = (int)besb.block_size,
+                Dirty                 = besb.flags == BEFS_DIRTY,
+                FreeClusters          = besb.num_blocks - besb.used_blocks,
                 FreeClustersSpecified = true,
-                Type = "BeFS",
-                VolumeName = StringHandlers.CToString(besb.name, Encoding)
+                Type                  = "BeFS",
+                VolumeName            = StringHandlers.CToString(besb.name, Encoding)
             };
         }
 
@@ -210,7 +212,8 @@ namespace DiscImageChef.Filesystems
         struct BeSuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] name;
             /// <summary>0x020, "BFS1", 0x42465331</summary>
             public uint magic1;
             /// <summary>0x024, "BIGE", 0x42494745</summary>

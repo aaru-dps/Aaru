@@ -42,10 +42,10 @@ namespace DiscImageChef.Partitions
     public class RioKarma : IPartition
     {
         const ushort KARMA_MAGIC = 0xAB56;
-        const byte ENTRY_MAGIC = 0x4D;
+        const byte   ENTRY_MAGIC = 0x4D;
 
         public string Name => "Rio Karma partitioning";
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid   Id   => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -82,9 +82,12 @@ namespace DiscImageChef.Partitions
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RioKarmaTable
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 270)] public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public RioKarmaEntry[] entries;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 208)] public byte[] padding;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 270)]
+            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public RioKarmaEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 208)]
+            public byte[] padding;
             public ushort magic;
         }
 
@@ -93,7 +96,8 @@ namespace DiscImageChef.Partitions
         {
             public uint reserved;
             public byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] reserved2;
             public uint offset;
             public uint size;
         }

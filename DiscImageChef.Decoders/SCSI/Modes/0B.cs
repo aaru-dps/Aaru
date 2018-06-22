@@ -70,11 +70,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_0B decoded = new ModePage_0B();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.MediumType1 = (MediumTypes)pageResponse[4];
-            decoded.MediumType2 = (MediumTypes)pageResponse[5];
-            decoded.MediumType3 = (MediumTypes)pageResponse[6];
-            decoded.MediumType4 = (MediumTypes)pageResponse[7];
+            decoded.PS          |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.MediumType1 =  (MediumTypes)pageResponse[4];
+            decoded.MediumType2 =  (MediumTypes)pageResponse[5];
+            decoded.MediumType3 =  (MediumTypes)pageResponse[6];
+            decoded.MediumType4 =  (MediumTypes)pageResponse[7];
 
             return decoded;
         }
@@ -88,8 +88,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_0B page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_0B   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Medium types supported page:");
 

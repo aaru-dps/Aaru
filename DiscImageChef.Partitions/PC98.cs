@@ -44,7 +44,7 @@ namespace DiscImageChef.Partitions
     public class PC98 : IPartition
     {
         public string Name => "NEC PC-9800 partition table";
-        public Guid Id => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
+        public Guid   Id   => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -53,12 +53,12 @@ namespace DiscImageChef.Partitions
             if(sectorOffset != 0) return false;
 
             byte[] bootSector = imagePlugin.ReadSector(0);
-            byte[] sector = imagePlugin.ReadSector(1);
+            byte[] sector     = imagePlugin.ReadSector(1);
             if(bootSector[bootSector.Length - 2] != 0x55 || bootSector[bootSector.Length - 1] != 0xAA) return false;
 
             // Prevent false positives with some FAT BPBs
             if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == "FAT") return false;
-            
+
             IntPtr tablePtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(sector, 0, tablePtr, 256);
             PC98Table table = (PC98Table)Marshal.PtrToStructure(tablePtr, typeof(PC98Table));
@@ -68,25 +68,26 @@ namespace DiscImageChef.Partitions
 
             foreach(PC98Partition entry in table.entries)
             {
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}", entry.dp_mid);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}", entry.dp_sid);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}", entry.dp_dum1);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}", entry.dp_dum2);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}", entry.dp_ipl_sct);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}",      entry.dp_mid);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}",      entry.dp_sid);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}",     entry.dp_dum1);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}",     entry.dp_dum2);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}",  entry.dp_ipl_sct);
                 DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}", entry.dp_ipl_cyl);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}", entry.dp_ssect);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}", entry.dp_shd);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}", entry.dp_scyl);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}", entry.dp_esect);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}", entry.dp_ehd);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}", entry.dp_ecyl);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}",  entry.dp_ipl_cyl);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}",    entry.dp_ssect);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}",      entry.dp_shd);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}",     entry.dp_scyl);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}",    entry.dp_esect);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}",      entry.dp_ehd);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}",     entry.dp_ecyl);
                 DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"",
                                           StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
-                if(entry.dp_scyl == entry.dp_ecyl || entry.dp_ecyl <= 0 || entry.dp_scyl > imagePlugin.Info.Cylinders ||
-                   entry.dp_ecyl > imagePlugin.Info.Cylinders || entry.dp_shd > imagePlugin.Info.Heads ||
-                   entry.dp_ehd > imagePlugin.Info.Heads || entry.dp_ssect > imagePlugin.Info.SectorsPerTrack ||
+                if(entry.dp_scyl  == entry.dp_ecyl             || entry.dp_ecyl <= 0 ||
+                   entry.dp_scyl  > imagePlugin.Info.Cylinders ||
+                   entry.dp_ecyl  > imagePlugin.Info.Cylinders || entry.dp_shd   > imagePlugin.Info.Heads           ||
+                   entry.dp_ehd   > imagePlugin.Info.Heads     || entry.dp_ssect > imagePlugin.Info.SectorsPerTrack ||
                    entry.dp_esect > imagePlugin.Info.SectorsPerTrack) continue;
 
                 Partition part = new Partition
@@ -94,26 +95,27 @@ namespace DiscImageChef.Partitions
                     Start =
                         CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.Info.Heads,
                                   imagePlugin.Info.SectorsPerTrack),
-                    Type = DecodePC98Sid(entry.dp_sid),
-                    Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
+                    Type     = DecodePC98Sid(entry.dp_sid),
+                    Name     = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                     Sequence = counter,
-                    Scheme = Name
+                    Scheme   = Name
                 };
                 part.Offset = part.Start * imagePlugin.Info.SectorSize;
                 part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1), imagePlugin.Info.Heads,
                                         imagePlugin.Info.SectorsPerTrack) - part.Start;
                 part.Size = part.Length * imagePlugin.Info.SectorSize;
 
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}", part.Name);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}",    part.Start);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}",     part.Type);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}",     part.Name);
                 DicConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}", part.Offset);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}",   part.Offset);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}",   part.Length);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}",     part.Size);
 
                 if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
-                   part.Start >= imagePlugin.Info.Sectors || part.End > imagePlugin.Info.Sectors) continue;
+                   part.Start >= imagePlugin.Info.Sectors                         ||
+                   part.End   > imagePlugin.Info.Sectors) continue;
 
                 partitions.Add(part);
                 counter++;
@@ -138,14 +140,15 @@ namespace DiscImageChef.Partitions
                 case 0x44: return "FreeBSD";
                 case 0x61: return "FAT32";
                 case 0x62: return "Linux";
-                default: return "Unknown";
+                default:   return "Unknown";
             }
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PC98Table
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public PC98Partition[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public PC98Partition[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -159,18 +162,19 @@ namespace DiscImageChef.Partitions
             ///     Some ID, if 0x80 bit is set, it is active
             /// </summary>
             public byte dp_sid;
-            public byte dp_dum1;
-            public byte dp_dum2;
-            public byte dp_ipl_sct;
-            public byte dp_ipl_head;
+            public byte   dp_dum1;
+            public byte   dp_dum2;
+            public byte   dp_ipl_sct;
+            public byte   dp_ipl_head;
             public ushort dp_ipl_cyl;
-            public byte dp_ssect;
-            public byte dp_shd;
+            public byte   dp_ssect;
+            public byte   dp_shd;
             public ushort dp_scyl;
-            public byte dp_esect;
-            public byte dp_ehd;
+            public byte   dp_esect;
+            public byte   dp_ehd;
             public ushort dp_ecyl;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] dp_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] dp_name;
         }
     }
 }

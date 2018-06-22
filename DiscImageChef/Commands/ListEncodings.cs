@@ -42,18 +42,17 @@ namespace DiscImageChef.Commands
         internal static void DoList()
         {
             List<CommonEncodingInfo> encodings = Encoding
-                .GetEncodings()
-                .Select(info => new CommonEncodingInfo
-                {
-                    Name = info.Name,
-                    DisplayName = info.GetEncoding().EncodingName
-                }).ToList();
+                                                .GetEncodings().Select(info => new CommonEncodingInfo
+                                                 {
+                                                     Name        = info.Name,
+                                                     DisplayName = info.GetEncoding().EncodingName
+                                                 }).ToList();
             encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
                                       .Select(info => new CommonEncodingInfo
-                                      {
-                                          Name = info.Name,
-                                          DisplayName = info.DisplayName
-                                      }));
+                                       {
+                                           Name        = info.Name,
+                                           DisplayName = info.DisplayName
+                                       }));
 
             DicConsole.WriteLine("{0,-16} {1,-8}", "Name", "Description");
 

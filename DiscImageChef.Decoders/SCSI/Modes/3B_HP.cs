@@ -48,7 +48,7 @@ namespace DiscImageChef.Decoders.SCSI
             ///     Parameters can be saved
             /// </summary>
             public bool PS;
-            public byte MSN;
+            public byte   MSN;
             public byte[] SerialNumber;
         }
 
@@ -64,9 +64,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             HP_ModePage_3B decoded = new HP_ModePage_3B();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.MSN = (byte)(pageResponse[2] & 0x03);
-            decoded.SerialNumber = new byte[10];
+            decoded.PS           |= (pageResponse[0]       & 0x80) == 0x80;
+            decoded.MSN          =  (byte)(pageResponse[2] & 0x03);
+            decoded.SerialNumber =  new byte[10];
             Array.Copy(pageResponse, 6, decoded.SerialNumber, 0, 10);
 
             return decoded;
@@ -82,7 +82,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             HP_ModePage_3B page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder  sb   = new StringBuilder();
 
             sb.AppendLine("HP Serial Number Override Mode Page:");
 

@@ -71,11 +71,11 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("USB device");
                 if(dev.UsbDescriptors != null)
                     DicConsole.WriteLine("USB descriptor is {0} bytes", dev.UsbDescriptors.Length);
-                DicConsole.WriteLine("USB Vendor ID: {0:X4}",           dev.UsbVendorId);
-                DicConsole.WriteLine("USB Product ID: {0:X4}",          dev.UsbProductId);
-                DicConsole.WriteLine("USB Manufacturer: {0}",           dev.UsbManufacturerString);
-                DicConsole.WriteLine("USB Product: {0}",                dev.UsbProductString);
-                DicConsole.WriteLine("USB Serial number: {0}",          dev.UsbSerialString);
+                DicConsole.WriteLine("USB Vendor ID: {0:X4}",  dev.UsbVendorId);
+                DicConsole.WriteLine("USB Product ID: {0:X4}", dev.UsbProductId);
+                DicConsole.WriteLine("USB Manufacturer: {0}",  dev.UsbManufacturerString);
+                DicConsole.WriteLine("USB Product: {0}",       dev.UsbProductString);
+                DicConsole.WriteLine("USB Serial number: {0}", dev.UsbSerialString);
                 DicConsole.WriteLine();
             }
 
@@ -842,7 +842,7 @@ namespace DiscImageChef.Commands
                                     case "DVDR   PX-708A":
                                     case "DVDR   PX-708A2":
                                     case "DVDR   PX-712A":
-                                        plxtDvd   = true;
+                                        plxtDvd = true;
                                         plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout,
                                                                           out _);
                                         break;

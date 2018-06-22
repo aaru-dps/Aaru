@@ -154,18 +154,18 @@ namespace DiscImageChef.DiscImages
                footer.length  != 0x0D0D) return false;
 
             // TODO: This is supposing NoFilter, shouldn't
-            tracks          = new SortedDictionary<byte, IFilter>();
-            byte   step     = 1;
-            byte   heads    = 2;
-            bool   topHead  = false;
+            tracks = new SortedDictionary<byte, IFilter>();
+            byte step    = 1;
+            byte heads   = 2;
+            bool topHead = false;
             string basename = Path.Combine(imageFilter.GetParentFolder(),
                                            imageFilter.GetFilename()
                                                       .Substring(0, imageFilter.GetFilename().Length - 8));
 
             for(byte t = 0; t < 166; t += step)
             {
-                int    cylinder  = t               / heads;
-                int    head      = topHead ? 1 : t % heads;
+                int cylinder = t / heads;
+                int head     = topHead ? 1 : t % heads;
                 string trackfile = Directory.Exists(basename)
                                        ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
                                        : $"{basename}{cylinder:D2}.{head:D1}.raw";
@@ -360,8 +360,8 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -415,8 +415,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

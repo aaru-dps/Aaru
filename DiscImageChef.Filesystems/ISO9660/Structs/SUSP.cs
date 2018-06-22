@@ -40,52 +40,52 @@ namespace DiscImageChef.Filesystems.ISO9660
         struct ContinuationArea
         {
             public ushort signature;
-            public byte length;
-            public byte version;
-            public uint block;
-            public uint block_be;
-            public uint offset;
-            public uint offset_be;
-            public uint ca_length;
-            public uint ca_length_be;
+            public byte   length;
+            public byte   version;
+            public uint   block;
+            public uint   block_be;
+            public uint   offset;
+            public uint   offset_be;
+            public uint   ca_length;
+            public uint   ca_length_be;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PaddingArea
         {
             public ushort signature;
-            public byte length;
-            public byte version;
+            public byte   length;
+            public byte   version;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct IndicatorArea
         {
             public ushort signature;
-            public byte length;
-            public byte version;
+            public byte   length;
+            public byte   version;
             public ushort magic;
-            public byte skipped;
+            public byte   skipped;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TerminatorArea
         {
             public ushort signature;
-            public byte length;
-            public byte version;
+            public byte   length;
+            public byte   version;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ReferenceArea
         {
             public ushort signature;
-            public byte length;
-            public byte version;
-            public byte id_len;
-            public byte des_len;
-            public byte src_len;
-            public byte ext_ver;
+            public byte   length;
+            public byte   version;
+            public byte   id_len;
+            public byte   des_len;
+            public byte   src_len;
+            public byte   ext_ver;
             // Follows extension identifier for id_len bytes
             // Follows extension descriptor for des_len bytes
             // Follows extension source for src_len bytes
@@ -95,9 +95,9 @@ namespace DiscImageChef.Filesystems.ISO9660
         struct SelectorArea
         {
             public ushort signature;
-            public byte length;
-            public byte version;
-            public byte sequence;
+            public byte   length;
+            public byte   version;
+            public byte   sequence;
         }
     }
 }

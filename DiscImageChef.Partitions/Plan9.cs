@@ -46,7 +46,7 @@ namespace DiscImageChef.Partitions
     public class Plan9 : IPartition
     {
         public string Name => "Plan9 partition table";
-        public Guid Id => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+        public Guid   Id   => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -65,13 +65,13 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Length = end - start + 1,
-                    Offset = (start + sectorOffset) * imagePlugin.Info.SectorSize,
-                    Scheme = Name,
+                    Length   = end - start + 1,
+                    Offset   = (start + sectorOffset) * imagePlugin.Info.SectorSize,
+                    Scheme   = Name,
                     Sequence = (ulong)partitions.Count,
-                    Size = (end - start + 1) * imagePlugin.Info.SectorSize,
-                    Start = start + sectorOffset,
-                    Type = tokens[1]
+                    Size     = (end - start + 1) * imagePlugin.Info.SectorSize,
+                    Start    = start + sectorOffset,
+                    Type     = tokens[1]
                 };
 
                 partitions.Add(part);

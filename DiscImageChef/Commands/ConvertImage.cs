@@ -94,7 +94,7 @@ namespace DiscImageChef.Commands
                     try
                     {
                         StreamReader sr = new StreamReader(options.CicmXml);
-                        sidecar         = (CICMMetadataType)xs.Deserialize(sr);
+                        sidecar = (CICMMetadataType)xs.Deserialize(sr);
                         sr.Close();
                     }
                     catch
@@ -114,7 +114,7 @@ namespace DiscImageChef.Commands
                     try
                     {
                         StreamReader sr = new StreamReader(options.ResumeFile);
-                        resume          = (Resume)xs.Deserialize(sr);
+                        resume = (Resume)xs.Deserialize(sr);
                         sr.Close();
                     }
                     catch
@@ -271,7 +271,7 @@ namespace DiscImageChef.Commands
                 DriveManufacturer     = options.DriveManufacturer     ?? inputFormat.Info.DriveManufacturer,
                 DriveModel            = options.DriveModel            ?? inputFormat.Info.DriveModel,
                 DriveSerialNumber     = options.DriveSerialNumber     ?? inputFormat.Info.DriveSerialNumber,
-                LastMediaSequence     =
+                LastMediaSequence =
                     options.LastMediaSequence != 0 ? options.LastMediaSequence : inputFormat.Info.LastMediaSequence,
                 MediaBarcode      = options.MediaBarcode      ?? inputFormat.Info.MediaBarcode,
                 MediaManufacturer = options.MediaManufacturer ?? inputFormat.Info.MediaManufacturer,
@@ -296,7 +296,7 @@ namespace DiscImageChef.Commands
 
             List<Track> tracks;
 
-            try { tracks              = inputFormat.Tracks; }
+            try { tracks = inputFormat.Tracks; }
             catch(Exception) { tracks = null; }
 
             CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;
@@ -312,9 +312,8 @@ namespace DiscImageChef.Commands
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
-                if(options.Force && !outputFormat.SupportedMediaTags.Contains(mediaTag))
-                    continue;
-                
+                if(options.Force && !outputFormat.SupportedMediaTags.Contains(mediaTag)) continue;
+
                 DicConsole.WriteLine("Converting media tag {0}", mediaTag);
                 byte[] tag = inputFormat.ReadDiskTag(mediaTag);
                 if(outputFormat.WriteMediaTag(tag, mediaTag)) continue;
@@ -416,8 +415,7 @@ namespace DiscImageChef.Commands
                             continue;
                     }
 
-                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag))
-                        continue;
+                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
 
                     doneSectors = 0;
                     while(doneSectors < inputFormat.Info.Sectors)
@@ -468,7 +466,7 @@ namespace DiscImageChef.Commands
             {
                 foreach(Track track in tracks)
                 {
-                    doneSectors        = 0;
+                    doneSectors = 0;
                     ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
 
                     while(doneSectors < trackSectors)
@@ -482,8 +480,8 @@ namespace DiscImageChef.Commands
                                 (uint)(trackSectors - doneSectors);
 
                         DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
-                                         doneSectors  + track.TrackStartSector,
-                                         doneSectors  + sectorsToDo + track.TrackStartSector,
+                                         doneSectors               + track.TrackStartSector,
+                                         doneSectors + sectorsToDo + track.TrackStartSector,
                                          (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
                                          track.TrackSequence);
 
@@ -496,8 +494,7 @@ namespace DiscImageChef.Commands
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector,
-                                                                     sectorsToDo);
+                                sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector, sectorsToDo);
                                 result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
                                                                        sectorsToDo);
                             }
@@ -510,8 +507,7 @@ namespace DiscImageChef.Commands
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector,
-                                                                 sectorsToDo);
+                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
                                 result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector,
                                                                    sectorsToDo);
                             }
@@ -553,13 +549,12 @@ namespace DiscImageChef.Commands
                             // This tags are inline in long sector
                             continue;
                     }
-                    
-                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag))
-                        continue;
+
+                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
 
                     foreach(Track track in tracks)
                     {
-                        doneSectors         = 0;
+                        doneSectors = 0;
                         ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
                         byte[] sector;
                         bool   result;
@@ -595,8 +590,8 @@ namespace DiscImageChef.Commands
                                     (uint)(trackSectors - doneSectors);
 
                             DicConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                             doneSectors  + track.TrackStartSector,
-                                             doneSectors  + sectorsToDo + track.TrackStartSector,
+                                             doneSectors               + track.TrackStartSector,
+                                             doneSectors + sectorsToDo + track.TrackStartSector,
                                              (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
                                              track.TrackSequence, tag);
 
@@ -650,8 +645,7 @@ namespace DiscImageChef.Commands
             if(resume != null || dumpHardware != null)
             {
                 if(resume            != null) ret = outputFormat.SetDumpHardware(resume.Tries);
-                else if(dumpHardware != null)
-                    ret = outputFormat.SetDumpHardware(dumpHardware);
+                else if(dumpHardware != null) ret = outputFormat.SetDumpHardware(dumpHardware);
                 if(ret) DicConsole.WriteLine("Written dump hardware list to output image.");
             }
 
@@ -659,8 +653,7 @@ namespace DiscImageChef.Commands
             if(sidecar != null || cicmMetadata != null)
             {
                 if(sidecar           != null) ret = outputFormat.SetCicmMetadata(sidecar);
-                else if(cicmMetadata != null)
-                    ret = outputFormat.SetCicmMetadata(cicmMetadata);
+                else if(cicmMetadata != null) ret = outputFormat.SetCicmMetadata(cicmMetadata);
                 if(ret) DicConsole.WriteLine("Written CICM XML metadata to output image.");
             }
 

@@ -61,8 +61,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void OpticalDisc(IMediaImage        image, Guid                        filterId, string imagePath,
-                                FileInfo           fi, PluginBase                     plugins,
+        static void OpticalDisc(IMediaImage        image,        Guid                 filterId, string imagePath,
+                                FileInfo           fi,           PluginBase           plugins,
                                 List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.OpticalDisc = new[]
@@ -70,7 +70,7 @@ namespace DiscImageChef.Core
                 new OpticalDiscType
                 {
                     Checksums = imgChecksums.ToArray(),
-                    Image     = new ImageType
+                    Image = new ImageType
                     {
                         format          = image.Format,
                         offset          = 0,
@@ -228,7 +228,7 @@ namespace DiscImageChef.Core
                                         break;
                                 }
 
-                                if(dskType == MediaType.DVDR  && pfi.Value.PartVersion == 6) dskType = MediaType.DVDRDL;
+                                if(dskType == MediaType.DVDR && pfi.Value.PartVersion == 6) dskType = MediaType.DVDRDL;
                                 if(dskType == MediaType.DVDRW && pfi.Value.PartVersion == 3)
                                     dskType = MediaType.DVDRWDL;
                                 if(dskType == MediaType.GOD && pfi.Value.DiscSize == DVDSize.OneTwenty)
@@ -294,11 +294,11 @@ namespace DiscImageChef.Core
                         {
                             new XboxSecuritySectorsType
                             {
-                                RequestNumber   = 0,
-                                RequestVersion  = 1,
+                                RequestNumber  = 0,
+                                RequestVersion = 1,
                                 SecuritySectors = new DumpType
                                 {
-                                    Image     = Path.GetFileName(imagePath),
+                                    Image = Path.GetFileName(imagePath),
                                     Checksums =
                                         Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_SecuritySector))
                                                 .ToArray(),
@@ -332,7 +332,7 @@ namespace DiscImageChef.Core
 
             try
             {
-                List<Session> sessions          = image.Sessions;
+                List<Session> sessions = image.Sessions;
                 sidecar.OpticalDisc[0].Sessions = sessions?.Count ?? 1;
             }
             catch { sidecar.OpticalDisc[0].Sessions = 1; }
@@ -350,7 +350,7 @@ namespace DiscImageChef.Core
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
 
             InitProgress();
-            
+
             UpdateStatus("Checking filesystems");
             List<Partition> partitions = Partitions.GetAll(image);
             Partitions.AddSchemesToStats(partitions);
@@ -398,10 +398,10 @@ namespace DiscImageChef.Core
                         break;
                 }
 
-                xmlTrk.Sequence                    =
+                xmlTrk.Sequence =
                     new TrackSequenceType {Session = trk.TrackSession, TrackNumber = (int)trk.TrackSequence};
-                xmlTrk.StartSector                 = (long)trk.TrackStartSector;
-                xmlTrk.EndSector                   = (long)trk.TrackEndSector;
+                xmlTrk.StartSector = (long)trk.TrackStartSector;
+                xmlTrk.EndSector   = (long)trk.TrackEndSector;
 
                 if(trk.Indexes != null && trk.Indexes.ContainsKey(0))
                     if(trk.Indexes.TryGetValue(0, out ulong idx0))
@@ -470,7 +470,7 @@ namespace DiscImageChef.Core
                                                            (uint)xmlTrk.Sequence.TrackNumber);
                             UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
-                            doneSectors += sectors                    - doneSectors;
+                            doneSectors += sectors - doneSectors;
                         }
 
                         trkChkWorker.Update(sector);
@@ -539,7 +539,7 @@ namespace DiscImageChef.Core
                                                           SectorTagType.CdSectorSubchannel);
                             UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
-                            doneSectors += sectors                    - doneSectors;
+                            doneSectors += sectors - doneSectors;
                         }
 
                         subChkWorker.Update(sector);
@@ -555,9 +555,10 @@ namespace DiscImageChef.Core
                 // For fast debugging, skip checksum
                 //skipChecksum:
 
-                List<Partition> trkPartitions =
-                    partitions.Where(p => p.Start >= trk.TrackStartSector && p.End <= trk.TrackEndSector).ToList();
-                
+                List<Partition> trkPartitions = partitions
+                                               .Where(p => p.Start >= trk.TrackStartSector &&
+                                                           p.End   <= trk.TrackEndSector).ToList();
+
                 xmlTrk.FileSystemInformation = new PartitionType[1];
                 if(trkPartitions.Count > 0)
                 {
@@ -672,7 +673,7 @@ namespace DiscImageChef.Core
             // All XGD3 all have the same number of blocks
             if(dskType == MediaType.XGD2 && sidecar.OpticalDisc[0].Track.Length == 1)
             {
-                ulong blocks = (ulong)(sidecar.OpticalDisc[0].Track[0].EndSector   -
+                ulong blocks = (ulong)(sidecar.OpticalDisc[0].Track[0].EndSector -
                                        sidecar.OpticalDisc[0].Track[0].StartSector + 1);
                 if(blocks == 25063   || // Locked (or non compatible drive)
                    blocks == 4229664 || // Xtreme unlock
@@ -699,7 +700,7 @@ namespace DiscImageChef.Core
                         Model        = image.Info.DriveModel,
                         Firmware     = image.Info.DriveFirmwareRevision,
                         Serial       = image.Info.DriveSerialNumber,
-                        Software     = new SoftwareType
+                        Software = new SoftwareType
                         {
                             Name    = image.Info.Application,
                             Version = image.Info.ApplicationVersion

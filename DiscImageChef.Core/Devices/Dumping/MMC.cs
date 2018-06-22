@@ -203,7 +203,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
-            ulong blocks = scsiReader.GetDeviceBlocks();
+            ulong  blocks     = scsiReader.GetDeviceBlocks();
             dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 

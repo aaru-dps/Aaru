@@ -82,9 +82,9 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending PARK to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("PARK decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
@@ -137,9 +137,9 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending UNPARK to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("UNPARK decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));

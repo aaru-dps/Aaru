@@ -64,20 +64,20 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool Read6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
-                          uint timeout, out double duration)
+        public bool Read6(out byte[] buffer,  out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
+                          uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
 
             cdb[0] = (byte)ScsiCommands.Read6;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = transferLength;
 
-            if(transferLength == 0) buffer = new byte[256 * blockSize];
-            else buffer = new byte[transferLength * blockSize];
+            if(transferLength == 0) buffer = new byte[256            * blockSize];
+            else buffer                    = new byte[transferLength * blockSize];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
@@ -111,23 +111,25 @@ namespace DiscImageChef.Devices
         /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
-        public bool Read10(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv,
-                           bool relAddr, uint lba, uint blockSize, byte groupNumber, ushort transferLength,
-                           uint timeout, out double duration)
+        public bool Read10(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua,
+                           bool       fuaNv,
+                           bool       relAddr, uint lba, uint blockSize, byte groupNumber,
+                           ushort     transferLength,
+                           uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.Read10;
             cdb[1] = (byte)((rdprotect & 0x07) << 5);
-            if(dpo) cdb[1] += 0x10;
-            if(fua) cdb[1] += 0x08;
-            if(fuaNv) cdb[1] += 0x02;
+            if(dpo) cdb[1]     += 0x10;
+            if(fua) cdb[1]     += 0x08;
+            if(fuaNv) cdb[1]   += 0x02;
             if(relAddr) cdb[1] += 0x01;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
-            cdb[5] = (byte)(lba & 0xFF);
+            cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((lba & 0xFF00)     >> 8);
+            cdb[5] = (byte)(lba         & 0xFF);
             cdb[6] = (byte)(groupNumber & 0x1F);
             cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLength & 0xFF);
@@ -167,28 +169,30 @@ namespace DiscImageChef.Devices
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="streaming">If set to <c>true</c> the stream playback operation should be used (MMC only).</param>
         /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
-        public bool Read12(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv,
-                           bool relAddr, uint lba, uint blockSize, byte groupNumber, uint transferLength,
-                           bool streaming, uint timeout, out double duration)
+        public bool Read12(out byte[] buffer,  out byte[] senseBuffer, byte rdprotect, bool dpo,
+                           bool       fua,     bool       fuaNv,
+                           bool       relAddr, uint       lba, uint blockSize, byte groupNumber,
+                           uint       transferLength,
+                           bool       streaming, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.Read12;
             cdb[1] = (byte)((rdprotect & 0x07) << 5);
-            if(dpo) cdb[1] += 0x10;
-            if(fua) cdb[1] += 0x08;
-            if(fuaNv) cdb[1] += 0x02;
+            if(dpo) cdb[1]     += 0x10;
+            if(fua) cdb[1]     += 0x08;
+            if(fuaNv) cdb[1]   += 0x02;
             if(relAddr) cdb[1] += 0x01;
-            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
-            cdb[5] = (byte)(lba & 0xFF);
-            cdb[6] = (byte)((transferLength & 0xFF000000) >> 24);
-            cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
-            cdb[9] = (byte)(transferLength & 0xFF);
-            cdb[10] = (byte)(groupNumber & 0x1F);
+            cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3]  = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4]  = (byte)((lba & 0xFF00)     >> 8);
+            cdb[5]  = (byte)(lba & 0xFF);
+            cdb[6]  = (byte)((transferLength & 0xFF000000) >> 24);
+            cdb[7]  = (byte)((transferLength & 0xFF0000)   >> 16);
+            cdb[8]  = (byte)((transferLength & 0xFF00)     >> 8);
+            cdb[9]  = (byte)(transferLength & 0xFF);
+            cdb[10] = (byte)(groupNumber    & 0x1F);
             if(streaming) cdb[10] += 0x80;
 
             buffer = new byte[transferLength * blockSize];
@@ -225,32 +229,34 @@ namespace DiscImageChef.Devices
         /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="streaming">If set to <c>true</c> the stream playback operation should be used (MMC only).</param>
-        public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv,
-                           ulong lba, uint blockSize, byte groupNumber, uint transferLength, bool streaming,
-                           uint timeout, out double duration)
+        public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua,
+                           bool       fuaNv,
+                           ulong      lba, uint blockSize, byte groupNumber, uint transferLength,
+                           bool       streaming,
+                           uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[16];
+            byte[] cdb      = new byte[16];
             byte[] lbaBytes = BitConverter.GetBytes(lba);
 
             cdb[0] = (byte)ScsiCommands.Read16;
             cdb[1] = (byte)((rdprotect & 0x07) << 5);
-            if(dpo) cdb[1] += 0x10;
-            if(fua) cdb[1] += 0x08;
+            if(dpo) cdb[1]   += 0x10;
+            if(fua) cdb[1]   += 0x08;
             if(fuaNv) cdb[1] += 0x02;
-            cdb[2] = lbaBytes[7];
-            cdb[3] = lbaBytes[6];
-            cdb[4] = lbaBytes[5];
-            cdb[5] = lbaBytes[4];
-            cdb[6] = lbaBytes[3];
-            cdb[7] = lbaBytes[2];
-            cdb[8] = lbaBytes[1];
-            cdb[9] = lbaBytes[0];
+            cdb[2]  = lbaBytes[7];
+            cdb[3]  = lbaBytes[6];
+            cdb[4]  = lbaBytes[5];
+            cdb[5]  = lbaBytes[4];
+            cdb[6]  = lbaBytes[3];
+            cdb[7]  = lbaBytes[2];
+            cdb[8]  = lbaBytes[1];
+            cdb[9]  = lbaBytes[0];
             cdb[10] = (byte)((transferLength & 0xFF000000) >> 24);
-            cdb[11] = (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[12] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[11] = (byte)((transferLength & 0xFF0000)   >> 16);
+            cdb[12] = (byte)((transferLength & 0xFF00)     >> 8);
             cdb[13] = (byte)(transferLength & 0xFF);
-            cdb[14] = (byte)(groupNumber & 0x1F);
+            cdb[14] = (byte)(groupNumber    & 0x1F);
             if(streaming) cdb[14] += 0x80;
 
             buffer = new byte[transferLength * blockSize];
@@ -279,8 +285,9 @@ namespace DiscImageChef.Devices
         ///     How many bytes to read. If the number is not exactly the drive's size, the command will
         ///     fail and incidate a delta of the size in SENSE.
         /// </param>
-        public bool ReadLong10(out byte[] buffer, out byte[] senseBuffer, bool correct, bool relAddr, uint lba,
-                               ushort transferBytes, uint timeout, out double duration)
+        public bool ReadLong10(out byte[] buffer, out byte[] senseBuffer, bool correct, bool relAddr,
+                               uint       lba,
+                               ushort     transferBytes, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
@@ -289,8 +296,8 @@ namespace DiscImageChef.Devices
             if(correct) cdb[1] += 0x02;
             if(relAddr) cdb[1] += 0x01;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((lba & 0xFF00)     >> 8);
             cdb[5] = (byte)(lba & 0xFF);
             cdb[7] = (byte)((transferBytes & 0xFF00) >> 8);
             cdb[8] = (byte)(transferBytes & 0xFF);
@@ -320,23 +327,23 @@ namespace DiscImageChef.Devices
         ///     How many bytes to read. If the number is not exactly the drive's size, the command will
         ///     fail and incidate a delta of the size in SENSE.
         /// </param>
-        public bool ReadLong16(out byte[] buffer, out byte[] senseBuffer, bool correct, ulong lba, uint transferBytes,
-                               uint timeout, out double duration)
+        public bool ReadLong16(out byte[] buffer,  out byte[] senseBuffer, bool correct, ulong lba, uint transferBytes,
+                               uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[16];
+            byte[] cdb      = new byte[16];
             byte[] lbaBytes = BitConverter.GetBytes(lba);
 
-            cdb[0] = (byte)ScsiCommands.ServiceActionIn;
-            cdb[1] = (byte)ScsiServiceActions.ReadLong16;
-            cdb[2] = lbaBytes[7];
-            cdb[3] = lbaBytes[6];
-            cdb[4] = lbaBytes[5];
-            cdb[5] = lbaBytes[4];
-            cdb[6] = lbaBytes[3];
-            cdb[7] = lbaBytes[2];
-            cdb[8] = lbaBytes[1];
-            cdb[9] = lbaBytes[0];
+            cdb[0]  = (byte)ScsiCommands.ServiceActionIn;
+            cdb[1]  = (byte)ScsiServiceActions.ReadLong16;
+            cdb[2]  = lbaBytes[7];
+            cdb[3]  = lbaBytes[6];
+            cdb[4]  = lbaBytes[5];
+            cdb[5]  = lbaBytes[4];
+            cdb[6]  = lbaBytes[3];
+            cdb[7]  = lbaBytes[2];
+            cdb[8]  = lbaBytes[1];
+            cdb[9]  = lbaBytes[0];
             cdb[12] = (byte)((transferBytes & 0xFF00) >> 8);
             cdb[13] = (byte)(transferBytes & 0xFF);
             if(correct) cdb[14] += 0x01;
@@ -362,12 +369,12 @@ namespace DiscImageChef.Devices
         public bool Seek6(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[6];
+            byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
             cdb[0] = (byte)ScsiCommands.Seek6;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
@@ -389,13 +396,13 @@ namespace DiscImageChef.Devices
         public bool Seek10(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[10];
+            byte[] cdb    = new byte[10];
             byte[] buffer = new byte[0];
 
             cdb[0] = (byte)ScsiCommands.Seek10;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((lba & 0xFF00)     >> 8);
             cdb[5] = (byte)(lba & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,

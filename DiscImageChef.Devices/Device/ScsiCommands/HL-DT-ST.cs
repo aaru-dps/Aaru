@@ -46,22 +46,22 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
-                                     uint timeout, out double duration)
+        public bool HlDtStReadRawDvd(out byte[] buffer,  out byte[] senseBuffer, uint lba, uint transferLength,
+                                     uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
             buffer = new byte[2064 * transferLength];
 
-            cdb[0] = (byte)ScsiCommands.HlDtStVendor;
-            cdb[1] = 0x48;
-            cdb[2] = 0x49;
-            cdb[3] = 0x54;
-            cdb[4] = 0x01;
-            cdb[6] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[7] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[8] = (byte)((lba & 0xFF00) >> 8);
-            cdb[9] = (byte)(lba & 0xFF);
+            cdb[0]  = (byte)ScsiCommands.HlDtStVendor;
+            cdb[1]  = 0x48;
+            cdb[2]  = 0x49;
+            cdb[3]  = 0x54;
+            cdb[4]  = 0x01;
+            cdb[6]  = (byte)((lba & 0xFF000000) >> 24);
+            cdb[7]  = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[8]  = (byte)((lba & 0xFF00)     >> 8);
+            cdb[9]  = (byte)(lba & 0xFF);
             cdb[10] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[11] = (byte)(buffer.Length & 0xFF);
 

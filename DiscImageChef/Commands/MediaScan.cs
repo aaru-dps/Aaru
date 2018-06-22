@@ -41,11 +41,11 @@ namespace DiscImageChef.Commands
     {
         internal static void DoMediaScan(MediaScanOptions options)
         {
-            DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Media-Scan command", "--device={0}", options.DevicePath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}",    options.Debug);
+            DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}",  options.Verbose);
+            DicConsole.DebugWriteLine("Media-Scan command", "--device={0}",   options.DevicePath);
             DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", options.MhddLogPath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", options.IbgLogPath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}",  options.IbgLogPath);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
                char.IsLetter(options.DevicePath[0]))
@@ -84,26 +84,27 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
                                  results.ProcessingTime);
-            DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.", results.AvgSpeed);
+            DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",       results.AvgSpeed);
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
             DicConsole.WriteLine("Summary:");
-            DicConsole.WriteLine("{0} sectors took less than 3 ms.", results.A);
-            DicConsole.WriteLine("{0} sectors took less than 10 ms but more than 3 ms.", results.B);
-            DicConsole.WriteLine("{0} sectors took less than 50 ms but more than 10 ms.", results.C);
-            DicConsole.WriteLine("{0} sectors took less than 150 ms but more than 50 ms.", results.D);
+            DicConsole.WriteLine("{0} sectors took less than 3 ms.",                        results.A);
+            DicConsole.WriteLine("{0} sectors took less than 10 ms but more than 3 ms.",    results.B);
+            DicConsole.WriteLine("{0} sectors took less than 50 ms but more than 10 ms.",   results.C);
+            DicConsole.WriteLine("{0} sectors took less than 150 ms but more than 50 ms.",  results.D);
             DicConsole.WriteLine("{0} sectors took less than 500 ms but more than 150 ms.", results.E);
-            DicConsole.WriteLine("{0} sectors took more than 500 ms.", results.F);
-            DicConsole.WriteLine("{0} sectors could not be read.", results.UnreadableSectors.Count);
+            DicConsole.WriteLine("{0} sectors took more than 500 ms.",                      results.F);
+            DicConsole.WriteLine("{0} sectors could not be read.",
+                                 results.UnreadableSectors.Count);
             if(results.UnreadableSectors.Count > 0)
                 foreach(ulong bad in results.UnreadableSectors)
                     DicConsole.WriteLine("Sector {0} could not be read", bad);
 
             DicConsole.WriteLine();
 
-#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+            #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
             if(results.SeekTotal != 0 || results.SeekMin != double.MaxValue || results.SeekMax != double.MinValue)
-#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
 

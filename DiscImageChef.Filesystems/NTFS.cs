@@ -86,7 +86,7 @@ namespace DiscImageChef.Filesystems
             NtfsBootBlock ntfsBb = (NtfsBootBlock)Marshal.PtrToStructure(bpbPtr, typeof(NtfsBootBlock));
             Marshal.FreeHGlobal(bpbPtr);
 
-            sb.AppendFormat("{0} bytes per sector",                ntfsBb.bps).AppendLine();
+            sb.AppendFormat("{0} bytes per sector", ntfsBb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfsBb.spc, ntfsBb.spc * ntfsBb.bps).AppendLine();
             //          sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
             //          sb.AppendFormat("{0} FATs", ntfs_bb.fats_no).AppendLine();
@@ -94,8 +94,8 @@ namespace DiscImageChef.Filesystems
             //          sb.AppendFormat("{0} sectors on volume (small)", ntfs_bb.sml_sectors).AppendLine();
             sb.AppendFormat("Media descriptor: 0x{0:X2}", ntfsBb.media).AppendLine();
             //          sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
-            sb.AppendFormat("{0} sectors per track",                ntfsBb.sptrk).AppendLine();
-            sb.AppendFormat("{0} heads",                            ntfsBb.heads).AppendLine();
+            sb.AppendFormat("{0} sectors per track", ntfsBb.sptrk).AppendLine();
+            sb.AppendFormat("{0} heads", ntfsBb.heads).AppendLine();
             sb.AppendFormat("{0} hidden sectors before filesystem", ntfsBb.hsectors).AppendLine();
             //          sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
             sb.AppendFormat("BIOS drive number: 0x{0:X2}", ntfsBb.drive_no).AppendLine();
@@ -103,7 +103,7 @@ namespace DiscImageChef.Filesystems
             //          sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfsBb.sectors, ntfsBb.sectors * ntfsBb.bps)
               .AppendLine();
-            sb.AppendFormat("Cluster where $MFT starts: {0}",     ntfsBb.mft_lsn).AppendLine();
+            sb.AppendFormat("Cluster where $MFT starts: {0}", ntfsBb.mft_lsn).AppendLine();
             sb.AppendFormat("Cluster where $MFTMirr starts: {0}", ntfsBb.mftmirror_lsn).AppendLine();
 
             if(ntfsBb.mft_rc_clusters > 0)
@@ -123,7 +123,7 @@ namespace DiscImageChef.Filesystems
             if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 && ntfsBb.signature2 == 0xAA55)
             {
                 XmlFsType.Bootable = true;
-                string bootChk     = Sha1Context.Data(ntfsBb.boot_code, out _);
+                string bootChk = Sha1Context.Data(ntfsBb.boot_code, out _);
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }

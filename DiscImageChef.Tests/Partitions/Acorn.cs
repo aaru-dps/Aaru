@@ -49,46 +49,46 @@ namespace DiscImageChef.Tests.Partitions
                 new Partition
                 {
                     Description = null,
-                    Size = 31457280,
-                    Name = null,
-                    Type = "GEM",
-                    Offset = 512,
-                    Length = 61440,
-                    Sequence = 0,
-                    Start = 1
+                    Size        = 31457280,
+                    Name        = null,
+                    Type        = "GEM",
+                    Offset      = 512,
+                    Length      = 61440,
+                    Sequence    = 0,
+                    Start       = 1
                 },
                 new Partition
                 {
                     Description = null,
-                    Size = 41943040,
-                    Name = null,
-                    Type = "BGM",
-                    Offset = 31457792,
-                    Length = 81920,
-                    Sequence = 1,
-                    Start = 61441
+                    Size        = 41943040,
+                    Name        = null,
+                    Type        = "BGM",
+                    Offset      = 31457792,
+                    Length      = 81920,
+                    Sequence    = 1,
+                    Start       = 61441
                 },
                 new Partition
                 {
                     Description = null,
-                    Size = 56402432,
-                    Name = null,
-                    Type = "LNX",
-                    Offset = 73400832,
-                    Length = 110161,
-                    Sequence = 2,
-                    Start = 143361
+                    Size        = 56402432,
+                    Name        = null,
+                    Type        = "LNX",
+                    Offset      = 73400832,
+                    Length      = 110161,
+                    Sequence    = 2,
+                    Start       = 143361
                 },
                 new Partition
                 {
                     Description = null,
-                    Size = 43212800,
-                    Name = null,
-                    Type = "MAC",
-                    Offset = 129803264,
-                    Length = 84400,
-                    Sequence = 3,
-                    Start = 253522
+                    Size        = 43212800,
+                    Name        = null,
+                    Type        = "MAC",
+                    Offset      = 129803264,
+                    Length      = 84400,
+                    Sequence    = 3,
+                    Start       = 253522
                 }
             }
         };
@@ -98,8 +98,8 @@ namespace DiscImageChef.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "acorn", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "partitions", "acorn", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
@@ -109,13 +109,13 @@ namespace DiscImageChef.Tests.Partitions
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Offset, partitions[j].Offset, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Size,     partitions[j].Size,     testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Name,     partitions[j].Name,     testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type,     partitions[j].Type,     testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Offset,   partitions[j].Offset,   testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length,   partitions[j].Length,   testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start,    partitions[j].Start,    testfiles[i]);
                 }
             }
         }

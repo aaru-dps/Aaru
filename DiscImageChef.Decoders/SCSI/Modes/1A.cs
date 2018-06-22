@@ -118,7 +118,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
             decoded.Standby |= (pageResponse[3] & 0x01) == 0x01;
-            decoded.Idle |= (pageResponse[3] & 0x02) == 0x02;
+            decoded.Idle    |= (pageResponse[3] & 0x02) == 0x02;
 
             decoded.IdleTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
                                        pageResponse[7]);
@@ -127,19 +127,19 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse.Length < 40) return decoded;
 
-            decoded.PM_BG_Precedence = (byte)((pageResponse[2] & 0xC0) >> 6);
-            decoded.Standby_Y |= (pageResponse[2] & 0x01) == 0x01;
-            decoded.Idle_B |= (pageResponse[3] & 0x04) == 0x04;
-            decoded.Idle_C |= (pageResponse[3] & 0x08) == 0x08;
+            decoded.PM_BG_Precedence =  (byte)((pageResponse[2] & 0xC0) >> 6);
+            decoded.Standby_Y        |= (pageResponse[2] & 0x01) == 0x01;
+            decoded.Idle_B           |= (pageResponse[3] & 0x04) == 0x04;
+            decoded.Idle_C           |= (pageResponse[3] & 0x08) == 0x08;
 
             decoded.IdleTimer_B = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) +
                                          pageResponse[15]);
             decoded.IdleTimer_C = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
                                          pageResponse[19]);
             decoded.StandbyTimer_Y = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) +
-                                            (pageResponse[22] << 8) + pageResponse[23]);
+                                            (pageResponse[22] << 8)  + pageResponse[23]);
 
-            decoded.CCF_Idle = (byte)((pageResponse[39] & 0xC0) >> 6);
+            decoded.CCF_Idle    = (byte)((pageResponse[39] & 0xC0) >> 6);
             decoded.CCF_Standby = (byte)((pageResponse[39] & 0x30) >> 4);
             decoded.CCF_Stopped = (byte)((pageResponse[39] & 0x0C) >> 2);
 
@@ -155,8 +155,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_1A page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_1A   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Power condition page:");
 
@@ -171,7 +171,7 @@ namespace DiscImageChef.Decoders.SCSI
             }
             else sb.AppendLine("\tDrive will not enter standy mode");
 
-            if(page.Idle && page.IdleTimer > 0 || page.Idle_B && page.IdleTimer_B > 0 ||
+            if(page.Idle   && page.IdleTimer   > 0 || page.Idle_B && page.IdleTimer_B > 0 ||
                page.Idle_C && page.IdleTimer_C > 0)
             {
                 if(page.Idle && page.IdleTimer > 0)
@@ -235,9 +235,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_1A_S01 decoded = new ModePage_1A_S01();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.ActiveLevel = (byte)(pageResponse[6] & 0x03);
-            decoded.PowerConsumptionIdentifier = pageResponse[7];
+            decoded.PS                         |= (pageResponse[0]       & 0x80) == 0x80;
+            decoded.ActiveLevel                =  (byte)(pageResponse[6] & 0x03);
+            decoded.PowerConsumptionIdentifier =  pageResponse[7];
 
             return decoded;
         }
@@ -252,7 +252,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_1A_S01 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Power Consumption page:");
 

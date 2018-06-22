@@ -42,23 +42,23 @@ namespace DiscImageChef.Filters
     /// </summary>
     public class LZip : IFilter
     {
-        string basePath;
+        string   basePath;
         DateTime creationTime;
-        Stream dataStream;
-        long decompressedSize;
-        Stream innerStream;
+        Stream   dataStream;
+        long     decompressedSize;
+        Stream   innerStream;
         DateTime lastWriteTime;
-        bool opened;
+        bool     opened;
 
         public string Name => "LZip";
-        public Guid Id => new Guid("09D715E9-20C0-48B1-A8D9-D8897CEC57C9");
+        public Guid   Id   => new Guid("09D715E9-20C0-48B1-A8D9-D8897CEC57C9");
 
         public void Close()
         {
             dataStream?.Close();
             dataStream = null;
-            basePath = null;
-            opened = false;
+            basePath   = null;
+            opened     = false;
         }
 
         public string GetBasePath()
@@ -109,7 +109,7 @@ namespace DiscImageChef.Filters
             if(!File.Exists(path)) return false;
 
             FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[] buffer = new byte[5];
+            byte[]     buffer = new byte[5];
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 5);
@@ -121,10 +121,10 @@ namespace DiscImageChef.Filters
 
         public void Open(byte[] buffer)
         {
-            dataStream = new MemoryStream(buffer);
-            basePath = null;
-            creationTime = DateTime.UtcNow;
-            lastWriteTime = creationTime;
+            dataStream       = new MemoryStream(buffer);
+            basePath         = null;
+            creationTime     = DateTime.UtcNow;
+            lastWriteTime    = creationTime;
             decompressedSize = BitConverter.ToInt64(buffer, buffer.Length - 16);
             innerStream =
                 new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress, false);
@@ -133,9 +133,9 @@ namespace DiscImageChef.Filters
 
         public void Open(Stream stream)
         {
-            dataStream = stream;
-            basePath = null;
-            creationTime = DateTime.UtcNow;
+            dataStream    = stream;
+            basePath      = null;
+            creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
             byte[] tmp = new byte[8];
             dataStream.Seek(-16, SeekOrigin.End);
@@ -150,10 +150,10 @@ namespace DiscImageChef.Filters
         public void Open(string path)
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            basePath = Path.GetFullPath(path);
+            basePath   = Path.GetFullPath(path);
 
             FileInfo fi = new FileInfo(path);
-            creationTime = fi.CreationTimeUtc;
+            creationTime  = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
             byte[] tmp = new byte[8];
             dataStream.Seek(-16, SeekOrigin.End);

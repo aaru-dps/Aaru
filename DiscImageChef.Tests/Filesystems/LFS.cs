@@ -52,6 +52,7 @@ namespace DiscImageChef.Tests.Filesystems
         public void Test()
         {
             throw new NotImplementedException("LFS filesystem is not yet implemented");
+
             /*
             for(int i = 0; i < testfiles.Length; i++)
             {

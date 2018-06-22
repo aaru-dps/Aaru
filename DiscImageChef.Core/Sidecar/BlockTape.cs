@@ -52,19 +52,25 @@ namespace DiscImageChef.Core
                 {
                     new BlockMediaType
                     {
-                        Image = new ImageType {format = "Directory", offsetSpecified = false, Value = folderName},
-                        Sequence = new SequenceType {MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1},
+                        Image = new ImageType
+ {
+                            format          = "Directory",
+                            offsetSpecified = false,
+                            Value           = folderName
+                        },
+                        Sequence =
+                            new SequenceType {MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1},
                         PhysicalBlockSize = blockSize,
-                        LogicalBlockSize = blockSize,
+                        LogicalBlockSize  = blockSize,
                         TapeInformation = new[]
                         {
                             new TapePartitionType
                             {
                                 Image = new ImageType
                                 {
-                                    format = "Directory",
+                                    format          = "Directory",
                                     offsetSpecified = false,
-                                    Value = folderName
+                                    Value           = folderName
                                 }
                             }
                         }
@@ -72,32 +78,32 @@ namespace DiscImageChef.Core
                 }
             };
 
-            long currentBlock = 0;
-            long totalSize = 0;
-            Checksum tapeWorker = new Checksum();
-            List<TapeFileType> tapeFiles = new List<TapeFileType>();
+            long               currentBlock = 0;
+            long               totalSize    = 0;
+            Checksum           tapeWorker   = new Checksum();
+            List<TapeFileType> tapeFiles    = new List<TapeFileType>();
 
             for(int i = 0; i < files.Count; i++)
             {
-                FileStream fs = new FileStream(files[i], FileMode.Open, FileAccess.Read);
-                Checksum fileWorker = new Checksum();
+                FileStream fs         = new FileStream(files[i], FileMode.Open, FileAccess.Read);
+                Checksum   fileWorker = new Checksum();
                 TapeFileType tapeFile = new TapeFileType
                 {
                     Image = new ImageType
                     {
                         format = "Raw disk image (sector by sector copy)",
                         offset = 0,
-                        Value = Path.GetFileName(files[i])
+                        Value  = Path.GetFileName(files[i])
                     },
-                    Size = fs.Length,
-                    BlockSize = blockSize,
+                    Size       = fs.Length,
+                    BlockSize  = blockSize,
                     StartBlock = currentBlock,
-                    Sequence = i
+                    Sequence   = i
                 };
 
                 const uint SECTORS_TO_READ = 512;
-                long sectors = fs.Length / blockSize;
-                long doneSectors = 0;
+                long       sectors         = fs.Length / blockSize;
+                long       doneSectors     = 0;
 
                 InitProgress2();
                 while(doneSectors < sectors)
@@ -125,51 +131,51 @@ namespace DiscImageChef.Core
                     tapeWorker.Update(sector);
                 }
 
-                tapeFile.EndBlock = tapeFile.StartBlock + sectors - 1;
-                currentBlock += sectors;
-                totalSize += fs.Length;
-                tapeFile.Checksums = fileWorker.End().ToArray();
+                tapeFile.EndBlock  =  tapeFile.StartBlock + sectors - 1;
+                currentBlock       += sectors;
+                totalSize          += fs.Length;
+                tapeFile.Checksums =  fileWorker.End().ToArray();
                 tapeFiles.Add(tapeFile);
 
                 EndProgress2();
             }
 
-            sidecar.BlockMedia[0].Checksums = tapeWorker.End().ToArray();
-            sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
-            sidecar.BlockMedia[0].Size = totalSize;
-            sidecar.BlockMedia[0].LogicalBlocks = currentBlock;
-            sidecar.BlockMedia[0].TapeInformation[0].EndBlock = currentBlock - 1;
-            sidecar.BlockMedia[0].TapeInformation[0].Size = totalSize;
+            sidecar.BlockMedia[0].Checksums                    = tapeWorker.End().ToArray();
+            sidecar.BlockMedia[0].ContentChecksums             = sidecar.BlockMedia[0].Checksums;
+            sidecar.BlockMedia[0].Size                         = totalSize;
+            sidecar.BlockMedia[0].LogicalBlocks                = currentBlock;
+            sidecar.BlockMedia[0].TapeInformation[0].EndBlock  = currentBlock - 1;
+            sidecar.BlockMedia[0].TapeInformation[0].Size      = totalSize;
             sidecar.BlockMedia[0].TapeInformation[0].Checksums = sidecar.BlockMedia[0].Checksums;
-            sidecar.BlockMedia[0].TapeInformation[0].File = tapeFiles.ToArray();
+            sidecar.BlockMedia[0].TapeInformation[0].File      = tapeFiles.ToArray();
 
             // This is purely for convenience, as typically these kind of data represents QIC tapes
             if(blockSize == 512)
             {
                 sidecar.BlockMedia[0].DiskType = "Quarter-inch cartridge";
 
-                if(totalSize <= 20 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-11";
-                else if(totalSize <= 40 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-40";
-                else if(totalSize <= 60 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-24";
-                else if(totalSize <= 80 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-80";
-                else if(totalSize <= 120 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-120";
-                else if(totalSize <= 150 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-150";
-                else if(totalSize <= 320 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-320";
-                else if(totalSize <= 340 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
-                else if(totalSize <= 525 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-525";
-                else if(totalSize <= 670 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
-                else if(totalSize <= 1200 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
-                else if(totalSize <= 1350 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
+                if(totalSize      <= 20         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-11";
+                else if(totalSize <= 40         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-40";
+                else if(totalSize <= 60         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-24";
+                else if(totalSize <= 80         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-80";
+                else if(totalSize <= 120        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-120";
+                else if(totalSize <= 150        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-150";
+                else if(totalSize <= 320        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-320";
+                else if(totalSize <= 340        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
+                else if(totalSize <= 525        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-525";
+                else if(totalSize <= 670        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
+                else if(totalSize <= 1200       * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
+                else if(totalSize <= 1350       * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
                 else if(totalSize <= (long)4000 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
                 else
                 {
-                    sidecar.BlockMedia[0].DiskType = "Unknown tape";
+                    sidecar.BlockMedia[0].DiskType    = "Unknown tape";
                     sidecar.BlockMedia[0].DiskSubType = "Unknown tape";
                 }
             }
             else
             {
-                sidecar.BlockMedia[0].DiskType = "Unknown tape";
+                sidecar.BlockMedia[0].DiskType    = "Unknown tape";
                 sidecar.BlockMedia[0].DiskSubType = "Unknown tape";
             }
 

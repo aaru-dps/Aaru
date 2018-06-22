@@ -144,22 +144,22 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
-            decoded.MaxAdditionalPartitions = pageResponse[2];
-            decoded.AdditionalPartitionsDefined = pageResponse[3];
-            decoded.FDP |= (pageResponse[4] & 0x80) == 0x80;
-            decoded.SDP |= (pageResponse[4] & 0x40) == 0x40;
-            decoded.IDP |= (pageResponse[4] & 0x20) == 0x20;
-            decoded.PSUM = (PartitionSizeUnitOfMeasures)((pageResponse[4] & 0x18) >> 3);
-            decoded.POFM |= (pageResponse[4] & 0x04) == 0x04;
-            decoded.CLEAR |= (pageResponse[4] & 0x02) == 0x02;
-            decoded.ADDP |= (pageResponse[4] & 0x01) == 0x01;
-            decoded.PartitionUnits = (byte)(pageResponse[6] & 0x0F);
-            decoded.MediumFormatRecognition = (MediumFormatRecognitionValues)pageResponse[5];
-            decoded.PartitionSizes = new ushort[(pageResponse.Length - 8) / 2];
+            decoded.MaxAdditionalPartitions     =  pageResponse[2];
+            decoded.AdditionalPartitionsDefined =  pageResponse[3];
+            decoded.FDP                         |= (pageResponse[4] & 0x80) == 0x80;
+            decoded.SDP                         |= (pageResponse[4] & 0x40) == 0x40;
+            decoded.IDP                         |= (pageResponse[4] & 0x20) == 0x20;
+            decoded.PSUM                        =  (PartitionSizeUnitOfMeasures)((pageResponse[4] & 0x18) >> 3);
+            decoded.POFM                        |= (pageResponse[4]       & 0x04) == 0x04;
+            decoded.CLEAR                       |= (pageResponse[4]       & 0x02) == 0x02;
+            decoded.ADDP                        |= (pageResponse[4]       & 0x01) == 0x01;
+            decoded.PartitionUnits              =  (byte)(pageResponse[6] & 0x0F);
+            decoded.MediumFormatRecognition     =  (MediumFormatRecognitionValues)pageResponse[5];
+            decoded.PartitionSizes              =  new ushort[(pageResponse.Length - 8) / 2];
 
             for(int i = 8; i < pageResponse.Length; i += 2)
             {
-                decoded.PartitionSizes[(i - 8) / 2] = (ushort)(pageResponse[i] << 8);
+                decoded.PartitionSizes[(i - 8) / 2] =  (ushort)(pageResponse[i] << 8);
                 decoded.PartitionSizes[(i - 8) / 2] += pageResponse[i + 1];
             }
 
@@ -175,8 +175,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_11 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_11   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI medium partition page:");
 
@@ -251,7 +251,8 @@ namespace DiscImageChef.Decoders.SCSI
                 if(page.PartitionSizes[i] == 0)
                     if(page.PartitionSizes.Length == 1)
                         sb.AppendLine("\tDevice recognizes one single partition spanning whole medium");
-                    else sb.AppendFormat("\tPartition {0} runs for rest of medium", i).AppendLine();
+                    else
+                        sb.AppendFormat("\tPartition {0} runs for rest of medium", i).AppendLine();
                 else
                     sb.AppendFormat("\tPartition {0} is {1} {2} long", i, page.PartitionSizes[i], measure).AppendLine();
 

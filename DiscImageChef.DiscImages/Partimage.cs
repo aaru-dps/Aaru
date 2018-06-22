@@ -74,9 +74,9 @@ namespace DiscImageChef.DiscImages
         const string MAGIC_BEGIN_EXT009      = "MAGIC-BEGIN-EXT009"; // reserved for future use
         const string MAGIC_BEGIN_VOLUME      = "PaRtImAgE-VoLuMe";
 
-        const    uint   MAX_CACHE_SIZE     = 16777216;
-        const    uint   MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-        readonly byte[] partimageMagic     =
+        const uint MAX_CACHE_SIZE     = 16777216;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+        readonly byte[] partimageMagic =
         {
             0x50, 0x61, 0x52, 0x74, 0x49, 0x6D, 0x41, 0x67, 0x45, 0x2D, 0x56, 0x6F, 0x4C, 0x75, 0x4D, 0x65, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -145,7 +145,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader    = new PartimageHeader();
+            cVolumeHeader = new PartimageHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
             cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
@@ -163,7 +163,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
             stream.Read(hdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader    = new PartimageHeader();
+            cVolumeHeader = new PartimageHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
             Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
             cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
@@ -356,9 +356,9 @@ namespace DiscImageChef.DiscImages
                     ImageNotSupportedException("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
 
             DicConsole.DebugWriteLine("Partimage plugin", "Filling extents");
-            DateTime start    = DateTime.Now;
-            extents           = new ExtentsULong();
-            extentsOff        = new Dictionary<ulong, ulong>();
+            DateTime start = DateTime.Now;
+            extents    = new ExtentsULong();
+            extentsOff = new Dictionary<ulong, ulong>();
             bool  current     = (bitmap[0] & (1 << (0 % 8))) != 0;
             ulong blockOff    = 0;
             ulong extentStart = 0;
@@ -400,7 +400,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.MediaType            = MediaType.GENERIC_HDD;
             imageInfo.Version              = StringHandlers.CToString(cMainHeader.szVersion);
             imageInfo.Comments             = StringHandlers.CToString(cMainHeader.szPartDescription);
-            imageInfo.ImageSize            =
+            imageInfo.ImageSize =
                 (ulong)(stream.Length - (dataOff + Marshal.SizeOf(typeof(CMainTail)) + MAGIC_BEGIN_TAIL.Length));
             imageStream = stream;
 
@@ -456,7 +456,7 @@ namespace DiscImageChef.DiscImages
             MemoryStream ms = new MemoryStream();
 
             bool allEmpty = true;
-            for(uint i = 0; i                                                    < length; i++)
+            for(uint i = 0; i < length; i++)
                 if((bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) != 0)
                 {
                     allEmpty = false;
@@ -549,8 +549,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -559,8 +559,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -709,7 +709,7 @@ namespace DiscImageChef.DiscImages
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MBR_SIZE_WHOLE)]
             public byte[] cData;
-            public uint   dwDataCRC;
+            public uint dwDataCRC;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)]
             public byte[] szDevice; // ex: "hda"
 
@@ -729,9 +729,9 @@ namespace DiscImageChef.DiscImages
         struct CCheck
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            byte[]       cMagic; // must be 'C','H','K'
-            public uint  dwCRC;  // CRC of the CHECK_FREQUENCY blocks
-            public ulong qwPos;  // number of the last block written
+            byte[] cMagic;      // must be 'C','H','K'
+            public uint  dwCRC; // CRC of the CHECK_FREQUENCY blocks
+            public ulong qwPos; // number of the last block written
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

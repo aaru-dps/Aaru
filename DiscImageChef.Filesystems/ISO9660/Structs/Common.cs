@@ -38,21 +38,21 @@ namespace DiscImageChef.Filesystems.ISO9660
     {
         struct DecodedVolumeDescriptor
         {
-            public string SystemIdentifier;
-            public string VolumeIdentifier;
-            public string VolumeSetIdentifier;
-            public string PublisherIdentifier;
-            public string DataPreparerIdentifier;
-            public string ApplicationIdentifier;
+            public string   SystemIdentifier;
+            public string   VolumeIdentifier;
+            public string   VolumeSetIdentifier;
+            public string   PublisherIdentifier;
+            public string   DataPreparerIdentifier;
+            public string   ApplicationIdentifier;
             public DateTime CreationTime;
-            public bool HasModificationTime;
+            public bool     HasModificationTime;
             public DateTime ModificationTime;
-            public bool HasExpirationTime;
+            public bool     HasExpirationTime;
             public DateTime ExpirationTime;
-            public bool HasEffectiveTime;
+            public bool     HasEffectiveTime;
             public DateTime EffectiveTime;
-            public ushort BlockSize;
-            public uint Blocks;
+            public ushort   BlockSize;
+            public uint     Blocks;
         }
     }
 }

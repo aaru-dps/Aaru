@@ -56,8 +56,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
         {
             if(report == null) return;
 
-            bool sense;
-            const uint TIMEOUT = 5;
+            bool           sense;
+            const uint     TIMEOUT = 5;
             ConsoleKeyInfo pressedKey;
 
             report.SCSI.SequentialDevice = new sscType();
@@ -71,17 +71,19 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     if(decBl.Value.granularity > 0)
                     {
                         report.SCSI.SequentialDevice.BlockSizeGranularitySpecified = true;
-                        report.SCSI.SequentialDevice.BlockSizeGranularity = decBl.Value.granularity;
+                        report.SCSI.SequentialDevice.BlockSizeGranularity          = decBl.Value.granularity;
                     }
+
                     if(decBl.Value.maxBlockLen > 0)
                     {
                         report.SCSI.SequentialDevice.MaxBlockLengthSpecified = true;
-                        report.SCSI.SequentialDevice.MaxBlockLength = decBl.Value.maxBlockLen;
+                        report.SCSI.SequentialDevice.MaxBlockLength          = decBl.Value.maxBlockLen;
                     }
+
                     if(decBl.Value.minBlockLen > 0)
                     {
                         report.SCSI.SequentialDevice.MinBlockLengthSpecified = true;
-                        report.SCSI.SequentialDevice.MinBlockLength = decBl.Value.minBlockLen;
+                        report.SCSI.SequentialDevice.MinBlockLength          = decBl.Value.minBlockLen;
                     }
                 }
             }
@@ -98,7 +100,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                     {
                         report.SCSI.SequentialDevice.SupportedDensities[i].BitsPerMm = dsh.Value.descriptors[i].bpmm;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Capacity = dsh.Value.descriptors[i].capacity;
+                        report.SCSI.SequentialDevice.SupportedDensities[i].Capacity =
+                            dsh.Value.descriptors[i].capacity;
                         report.SCSI.SequentialDevice.SupportedDensities[i].DefaultDensity =
                             dsh.Value.descriptors[i].defaultDensity;
                         report.SCSI.SequentialDevice.SupportedDensities[i].Description =
@@ -112,8 +115,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             dsh.Value.descriptors[i].primaryCode;
                         report.SCSI.SequentialDevice.SupportedDensities[i].SecondaryCode =
                             dsh.Value.descriptors[i].secondaryCode;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Tracks = dsh.Value.descriptors[i].tracks;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Width = dsh.Value.descriptors[i].width;
+                        report.SCSI.SequentialDevice.SupportedDensities[i].Tracks   = dsh.Value.descriptors[i].tracks;
+                        report.SCSI.SequentialDevice.SupportedDensities[i].Width    = dsh.Value.descriptors[i].width;
                         report.SCSI.SequentialDevice.SupportedDensities[i].Writable = dsh.Value.descriptors[i].writable;
                     }
                 }
@@ -228,7 +231,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense10 = true;
-                        decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
+                        decMode                         = Modes.DecodeMode10(buffer, dev.ScsiType);
                         if(debug) seqTest.ModeSense10Data = buffer;
                     }
 
@@ -237,18 +240,18 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense6 = true;
-                        if(!decMode.HasValue) decMode = Modes.DecodeMode6(buffer, dev.ScsiType);
+                        if(!decMode.HasValue) decMode    = Modes.DecodeMode6(buffer, dev.ScsiType);
                         if(debug) seqTest.ModeSense6Data = buffer;
                     }
 
                     if(decMode.HasValue)
                     {
-                        seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
+                        seqTest.MediumType          = (byte)decMode.Value.Header.MediumType;
                         seqTest.MediumTypeSpecified = true;
-                        if(decMode.Value.Header.BlockDescriptors != null &&
+                        if(decMode.Value.Header.BlockDescriptors        != null &&
                            decMode.Value.Header.BlockDescriptors.Length > 0)
                         {
-                            seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                            seqTest.Density          = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                             seqTest.DensitySpecified = true;
                         }
                     }
@@ -264,18 +267,18 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         seqTest.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
                         for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                         {
-                            seqTest.SupportedDensities[i].BitsPerMm = dsh.Value.descriptors[i].bpmm;
-                            seqTest.SupportedDensities[i].Capacity = dsh.Value.descriptors[i].capacity;
+                            seqTest.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
+                            seqTest.SupportedDensities[i].Capacity       = dsh.Value.descriptors[i].capacity;
                             seqTest.SupportedDensities[i].DefaultDensity = dsh.Value.descriptors[i].defaultDensity;
-                            seqTest.SupportedDensities[i].Description = dsh.Value.descriptors[i].description;
-                            seqTest.SupportedDensities[i].Duplicate = dsh.Value.descriptors[i].duplicate;
-                            seqTest.SupportedDensities[i].Name = dsh.Value.descriptors[i].name;
-                            seqTest.SupportedDensities[i].Organization = dsh.Value.descriptors[i].organization;
-                            seqTest.SupportedDensities[i].PrimaryCode = dsh.Value.descriptors[i].primaryCode;
-                            seqTest.SupportedDensities[i].SecondaryCode = dsh.Value.descriptors[i].secondaryCode;
-                            seqTest.SupportedDensities[i].Tracks = dsh.Value.descriptors[i].tracks;
-                            seqTest.SupportedDensities[i].Width = dsh.Value.descriptors[i].width;
-                            seqTest.SupportedDensities[i].Writable = dsh.Value.descriptors[i].writable;
+                            seqTest.SupportedDensities[i].Description    = dsh.Value.descriptors[i].description;
+                            seqTest.SupportedDensities[i].Duplicate      = dsh.Value.descriptors[i].duplicate;
+                            seqTest.SupportedDensities[i].Name           = dsh.Value.descriptors[i].name;
+                            seqTest.SupportedDensities[i].Organization   = dsh.Value.descriptors[i].organization;
+                            seqTest.SupportedDensities[i].PrimaryCode    = dsh.Value.descriptors[i].primaryCode;
+                            seqTest.SupportedDensities[i].SecondaryCode  = dsh.Value.descriptors[i].secondaryCode;
+                            seqTest.SupportedDensities[i].Tracks         = dsh.Value.descriptors[i].tracks;
+                            seqTest.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
+                            seqTest.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
                         }
                     }
                 }
@@ -290,12 +293,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         seqTest.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
                         for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                         {
-                            seqTest.SupportedMediaTypes[i].Description = mtsh.Value.descriptors[i].description;
-                            seqTest.SupportedMediaTypes[i].Length = mtsh.Value.descriptors[i].length;
-                            seqTest.SupportedMediaTypes[i].MediumType = mtsh.Value.descriptors[i].mediumType;
-                            seqTest.SupportedMediaTypes[i].Name = mtsh.Value.descriptors[i].name;
+                            seqTest.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
+                            seqTest.SupportedMediaTypes[i].Length       = mtsh.Value.descriptors[i].length;
+                            seqTest.SupportedMediaTypes[i].MediumType   = mtsh.Value.descriptors[i].mediumType;
+                            seqTest.SupportedMediaTypes[i].Name         = mtsh.Value.descriptors[i].name;
                             seqTest.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
-                            seqTest.SupportedMediaTypes[i].Width = mtsh.Value.descriptors[i].width;
+                            seqTest.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
                             if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
                             seqTest.SupportedMediaTypes[i].DensityCodes =

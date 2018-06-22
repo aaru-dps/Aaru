@@ -58,8 +58,10 @@ namespace DiscImageChef.Devices
         ///     sense
         /// </param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
-                                            uint timeout, ScsiDirection direction, out double duration, out bool sense)
+        internal static int SendScsiCommand(object     fd, byte[] cdb, ref byte[] buffer,
+                                            out byte[] senseBuffer,
+                                            uint       timeout, ScsiDirection direction, out double duration,
+                                            out bool   sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
@@ -84,9 +86,10 @@ namespace DiscImageChef.Devices
         ///     sense
         /// </param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendScsiCommand(PlatformID ptId, object fd, byte[] cdb, ref byte[] buffer,
-                                            out byte[] senseBuffer, uint timeout, ScsiDirection direction,
-                                            out double duration, out bool sense)
+        internal static int SendScsiCommand(PlatformID ptId, object fd, byte[] cdb,
+                                            ref byte[] buffer,
+                                            out byte[] senseBuffer, uint     timeout, ScsiDirection direction,
+                                            out double duration,    out bool sense)
         {
             switch(ptId)
             {
@@ -181,14 +184,17 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(object fd, AtaRegistersChs registers,
-                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                           bool transferBlocks, out double duration, out bool sense)
+        internal static int SendAtaCommand(object                   fd,               AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters,   AtaProtocol     protocol,
+                                           AtaTransferRegister      transferRegister, ref byte[]      buffer,
+                                           uint                     timeout,
+                                           bool                     transferBlocks, out double duration,
+                                           out bool                 sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister,
+                                  ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
@@ -208,10 +214,13 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersChs registers,
-                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                           bool transferBlocks, out double duration, out bool sense)
+        internal static int SendAtaCommand(PlatformID               ptId, object fd,
+                                           AtaRegistersChs          registers,
+                                           out AtaErrorRegistersChs errorRegisters,   AtaProtocol protocol,
+                                           AtaTransferRegister      transferRegister, ref byte[]  buffer,
+                                           uint                     timeout,
+                                           bool                     transferBlocks, out double duration,
+                                           out bool                 sense)
         {
             switch(ptId)
             {
@@ -223,6 +232,7 @@ namespace DiscImageChef.Devices
                        Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                         return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
+
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
                     if(Environment.OSVersion.Version.Major <= 4)
                         throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
@@ -260,14 +270,17 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(object fd, AtaRegistersLba28 registers,
-                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                           bool transferBlocks, out double duration, out bool sense)
+        internal static int SendAtaCommand(object                     fd,               AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters,   AtaProtocol       protocol,
+                                           AtaTransferRegister        transferRegister, ref byte[]        buffer,
+                                           uint                       timeout,
+                                           bool                       transferBlocks, out double duration,
+                                           out bool                   sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister,
+                                  ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
@@ -287,10 +300,13 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba28 registers,
-                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                           bool transferBlocks, out double duration, out bool sense)
+        internal static int SendAtaCommand(PlatformID                 ptId, object fd,
+                                           AtaRegistersLba28          registers,
+                                           out AtaErrorRegistersLba28 errorRegisters,   AtaProtocol protocol,
+                                           AtaTransferRegister        transferRegister, ref byte[]  buffer,
+                                           uint                       timeout,
+                                           bool                       transferBlocks, out double duration,
+                                           out bool                   sense)
         {
             switch(ptId)
             {
@@ -302,6 +318,7 @@ namespace DiscImageChef.Devices
                        Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                         return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
+
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
                     if(Environment.OSVersion.Version.Major <= 4)
                         throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
@@ -339,14 +356,17 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(object fd, AtaRegistersLba48 registers,
-                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                           bool transferBlocks, out double duration, out bool sense)
+        internal static int SendAtaCommand(object                     fd,               AtaRegistersLba48 registers,
+                                           out AtaErrorRegistersLba48 errorRegisters,   AtaProtocol       protocol,
+                                           AtaTransferRegister        transferRegister, ref byte[]        buffer,
+                                           uint                       timeout,
+                                           bool                       transferBlocks, out double duration,
+                                           out bool                   sense)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister,
+                                  ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
@@ -366,10 +386,13 @@ namespace DiscImageChef.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba48 registers,
-                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                           bool transferBlocks, out double duration, out bool sense)
+        internal static int SendAtaCommand(PlatformID                 ptId, object fd,
+                                           AtaRegistersLba48          registers,
+                                           out AtaErrorRegistersLba48 errorRegisters,   AtaProtocol protocol,
+                                           AtaTransferRegister        transferRegister, ref byte[]  buffer,
+                                           uint                       timeout,
+                                           bool                       transferBlocks, out double duration,
+                                           out bool                   sense)
         {
             switch(ptId)
             {
@@ -412,14 +435,18 @@ namespace DiscImageChef.Devices
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication,
-                                           MmcFlags flags, uint argument, uint blockSize, uint blocks,
-                                           ref byte[] buffer, out uint[] response, out double duration, out bool sense,
-                                           uint timeout = 0)
+        internal static int SendMmcCommand(object     fd, MmcCommands command, bool write,
+                                           bool       isApplication,
+                                           MmcFlags   flags, uint argument, uint blockSize,
+                                           uint       blocks,
+                                           ref byte[] buffer, out uint[] response, out double duration,
+                                           out bool   sense,
+                                           uint       timeout = 0)
         {
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendMmcCommand(ptId, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks,
+            return SendMmcCommand(ptId,       (int)fd, command, write, isApplication, flags, argument,
+                                  blockSize,  blocks,
                                   ref buffer, out response, out duration, out sense, timeout);
         }
 
@@ -442,10 +469,13 @@ namespace DiscImageChef.Devices
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendMmcCommand(PlatformID ptId, object fd, MmcCommands command, bool write,
-                                           bool isApplication, MmcFlags flags, uint argument, uint blockSize,
-                                           uint blocks, ref byte[] buffer, out uint[] response, out double duration,
-                                           out bool sense, uint timeout = 0)
+        internal static int SendMmcCommand(PlatformID ptId, object fd, MmcCommands command,
+                                           bool       write,
+                                           bool       isApplication, MmcFlags flags, uint argument,
+                                           uint       blockSize,
+                                           uint       blocks, ref byte[] buffer, out uint[] response,
+                                           out double duration,
+                                           out bool   sense, uint timeout = 0)
         {
             switch(ptId)
             {

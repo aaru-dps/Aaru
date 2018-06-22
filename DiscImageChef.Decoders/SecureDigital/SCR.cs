@@ -42,16 +42,16 @@ namespace DiscImageChef.Decoders.SecureDigital
     [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public class SCR
     {
-        public byte Structure;
-        public byte Spec;
-        public bool DataStatusAfterErase;
-        public byte Security;
-        public byte BusWidth;
-        public bool Spec3;
-        public byte ExtendedSecurity;
-        public bool Spec4;
-        public byte SpecX;
-        public byte CommandSupport;
+        public byte   Structure;
+        public byte   Spec;
+        public bool   DataStatusAfterErase;
+        public byte   Security;
+        public byte   BusWidth;
+        public bool   Spec3;
+        public byte   ExtendedSecurity;
+        public bool   Spec4;
+        public byte   SpecX;
+        public byte   CommandSupport;
         public byte[] ManufacturerReserved;
     }
 
@@ -79,16 +79,16 @@ namespace DiscImageChef.Decoders.SecureDigital
 
             SCR scr = new SCR
             {
-                Structure = (byte)((response[0] & 0xF0) >> 4),
-                Spec = (byte)(response[0] & 0x0F),
-                DataStatusAfterErase = (response[1] & 0x80) == 0x80,
-                Security = (byte)((response[1] & 0x70) >> 4),
-                BusWidth = (byte)(response[1] & 0x0F),
-                Spec3 = (response[2] & 0x80) == 0x80,
-                ExtendedSecurity = (byte)((response[2] & 0x78) >> 3),
-                Spec4 = (response[2] & 0x04) == 0x04,
-                SpecX = (byte)(((response[2] & 0x03) << 2) + ((response[3] & 0xC0) >> 6)),
-                CommandSupport = (byte)(response[3] & 0x0F),
+                Structure            = (byte)((response[0] & 0xF0) >> 4),
+                Spec                 = (byte)(response[0] & 0x0F),
+                DataStatusAfterErase = (response[1]       & 0x80) == 0x80,
+                Security             = (byte)((response[1] & 0x70) >> 4),
+                BusWidth             = (byte)(response[1] & 0x0F),
+                Spec3                = (response[2]       & 0x80) == 0x80,
+                ExtendedSecurity     = (byte)((response[2] & 0x78) >> 3),
+                Spec4                = (response[2] & 0x04) == 0x04,
+                SpecX                = (byte)(((response[2] & 0x03) << 2) + ((response[3] & 0xC0) >> 6)),
+                CommandSupport       = (byte)(response[3] & 0x0F),
                 ManufacturerReserved = new byte[4]
             };
             Array.Copy(response, 4, scr.ManufacturerReserved, 0, 4);
@@ -119,8 +119,8 @@ namespace DiscImageChef.Decoders.SecureDigital
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 5.xx");
             else
                 sb
-                    .AppendFormat("\tDevice follows SecureDigital Physical Layer Specification with unknown version {0}.{1}.{2}.{3}",
-                                  scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
+                   .AppendFormat("\tDevice follows SecureDigital Physical Layer Specification with unknown version {0}.{1}.{2}.{3}",
+                                 scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
             switch(scr.Security)
             {
                 case 0:

@@ -63,7 +63,7 @@ namespace DiscImageChef.Core
                 DicConsole.WriteLine("Was created with {0} version {1}", imageFormat.Info.Application,
                                      imageFormat.Info.ApplicationVersion);
             else if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
-                DicConsole.WriteLine("Was created with {0}",                imageFormat.Info.Application);
+                DicConsole.WriteLine("Was created with {0}", imageFormat.Info.Application);
             DicConsole.WriteLine("Image without headers is {0} bytes long", imageFormat.Info.ImageSize);
             DicConsole.WriteLine("Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2} bytes)",
                                  imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
@@ -214,7 +214,7 @@ namespace DiscImageChef.Core
                     Array.Copy(toc, 0, tmp, 2, toc.Length);
                     tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(toc.Length & 0xFF);
-                    toc = tmp;
+                    toc    = tmp;
                 }
 
                 DicConsole.WriteLine("CompactDisc Table of Contents contained in image:");
@@ -233,8 +233,8 @@ namespace DiscImageChef.Core
                     byte[] tmp = new byte[pma.Length + 2];
                     Array.Copy(pma, 0, tmp, 2, pma.Length);
                     tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
-                    tmp[1] = (byte)(pma.Length  & 0xFF);
-                    pma = tmp;
+                    tmp[1] = (byte)(pma.Length & 0xFF);
+                    pma    = tmp;
                 }
 
                 DicConsole.WriteLine("CompactDisc Power Management Area contained in image:");
@@ -253,10 +253,10 @@ namespace DiscImageChef.Core
                     byte[] tmp = new byte[atip.Length + 4];
                     Array.Copy(atip, 0, tmp, 4, atip.Length);
                     tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
-                    tmp[1] = (byte)((atip.Length & 0xFF0000) >> 16);
-                    tmp[2] = (byte)((atip.Length & 0xFF00) >> 8);
-                    tmp[3] = (byte)(atip.Length  & 0xFF);
-                    atip = tmp;
+                    tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
+                    tmp[2] = (byte)((atip.Length & 0xFF00)     >> 8);
+                    tmp[3] = (byte)(atip.Length & 0xFF);
+                    atip   = tmp;
                 }
 
                 DicConsole.WriteLine("CompactDisc Absolute Time In Pregroove (ATIP) contained in image:");
@@ -277,7 +277,7 @@ namespace DiscImageChef.Core
                     tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
                     tmp[2] = (byte)((cdtext.Length & 0xFF00)     >> 8);
-                    tmp[3] = (byte)(cdtext.Length  & 0xFF);
+                    tmp[3] = (byte)(cdtext.Length & 0xFF);
                     cdtext = tmp;
                 }
 
@@ -547,10 +547,13 @@ namespace DiscImageChef.Core
                 if(imageFormat.Sessions != null && imageFormat.Sessions.Count > 0)
                 {
                     DicConsole.WriteLine("Image sessions:");
-                    DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", "Session", "First track", "Last track", "Start", "End");
+                    DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", "Session", "First track", "Last track",
+                                         "Start", "End");
                     DicConsole.WriteLine("=========================================================");
                     foreach(Session session in imageFormat.Sessions)
-                        DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", session.SessionSequence, session.StartTrack, session.EndTrack, session.StartSector, session.EndSector);
+                        DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", session.SessionSequence,
+                                             session.StartTrack, session.EndTrack, session.StartSector,
+                                             session.EndSector);
                     DicConsole.WriteLine();
                 }
             }
@@ -564,10 +567,15 @@ namespace DiscImageChef.Core
                 if(imageFormat.Tracks != null && imageFormat.Tracks.Count > 0)
                 {
                     DicConsole.WriteLine("Image tracks:");
-                    DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", "Track", "Type", "Bps", "Raw bps", "Subchannel", "Pregap", "Start", "End");
-                    DicConsole.WriteLine("=================================================================================");
+                    DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", "Track", "Type", "Bps",
+                                         "Raw bps", "Subchannel", "Pregap", "Start", "End");
+                    DicConsole
+                       .WriteLine("=================================================================================");
                     foreach(Track track in imageFormat.Tracks)
-                        DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", track.TrackSequence, track.TrackType, track.TrackBytesPerSector, track.TrackRawBytesPerSector, track.TrackSubchannelType, track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
+                        DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}",
+                                             track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
+                                             track.TrackRawBytesPerSector, track.TrackSubchannelType, track.TrackPregap,
+                                             track.TrackStartSector, track.TrackEndSector);
                     DicConsole.WriteLine();
                 }
             }
@@ -596,10 +604,9 @@ namespace DiscImageChef.Core
 
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
-                if(dump.Manufacturer?.Length > manufacturerLen)
-                    manufacturerLen                                 = dump.Manufacturer.Length;
-                if(dump.Model?.Length         > modelLen) modelLen   = dump.Model.Length;
-                if(dump.Serial?.Length        > serialLen) serialLen = dump.Serial.Length;
+                if(dump.Manufacturer?.Length > manufacturerLen) manufacturerLen = dump.Manufacturer.Length;
+                if(dump.Model?.Length        > modelLen) modelLen               = dump.Model.Length;
+                if(dump.Serial?.Length       > serialLen) serialLen             = dump.Serial.Length;
                 if(dump.Software?.Name?.Length > softwareLen)
                     softwareLen = dump.Software.Name.Length;
                 if(dump.Software?.Version?.Length > versionLen)
@@ -625,7 +632,7 @@ namespace DiscImageChef.Core
             char[] separator = new char[manufacturerLen + modelLen + serialLen + softwareLen + versionLen + osLen +
                                         sectorLen       + sectorLen];
             for(int i = 0; i < separator.Length; i++) separator[i] = '=';
-            string format                                          =
+            string format =
                 $"{{0,-{manufacturerLen}}}{{1,-{modelLen}}}{{2,-{serialLen}}}{{3,-{softwareLen}}}{{4,-{versionLen}}}{{5,-{osLen}}}{{6,-{sectorLen}}}{{7,-{sectorLen}}}";
 
             DicConsole.WriteLine("Dump hardware information:");

@@ -72,15 +72,15 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void ReadAttribute(string devPath, Device dev)
         {
-            ushort element = 0;
-            byte elementType = 0;
-            byte volume = 0;
-            byte partition = 0;
-            ushort firstAttribute = 0;
-            bool cache = false;
-            ScsiAttributeAction action = ScsiAttributeAction.Values;
-            string strDev;
-            int item;
+            ushort              element        = 0;
+            byte                elementType    = 0;
+            byte                volume         = 0;
+            byte                partition      = 0;
+            ushort              firstAttribute = 0;
+            bool                cache          = false;
+            ScsiAttributeAction action         = ScsiAttributeAction.Values;
+            string              strDev;
+            int                 item;
 
             parameters:
             while(true)
@@ -88,13 +88,13 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ ATTRIBUTE command:");
-                DicConsole.WriteLine("Action: {0}", action);
-                DicConsole.WriteLine("Element: {0}", element);
-                DicConsole.WriteLine("Element type: {0}", elementType);
-                DicConsole.WriteLine("Volume: {0}", volume);
-                DicConsole.WriteLine("Partition: {0}", partition);
+                DicConsole.WriteLine("Action: {0}",          action);
+                DicConsole.WriteLine("Element: {0}",         element);
+                DicConsole.WriteLine("Element type: {0}",    elementType);
+                DicConsole.WriteLine("Volume: {0}",          volume);
+                DicConsole.WriteLine("Partition: {0}",       partition);
                 DicConsole.WriteLine("First attribute: {0}", firstAttribute);
-                DicConsole.WriteLine("Use cache?: {0}", cache);
+                DicConsole.WriteLine("Use cache?: {0}",      cache);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -202,11 +202,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ ATTRIBUTE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");

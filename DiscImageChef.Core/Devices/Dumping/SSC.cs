@@ -58,9 +58,9 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPrefix">Prefix for output data files</param>
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
-        internal static void Dump(Device dev, string outputPrefix, string devicePath, ref Resume  resume,
-                                  ref                                                     DumpLog dumpLog,
-                                  CICMMetadataType                                                preSidecar)
+        internal static void Dump(Device      dev, string outputPrefix, string devicePath,
+                                  ref Resume  resume,
+                                  ref DumpLog dumpLog, CICMMetadataType preSidecar)
         {
             FixedSense?      fxSense;
             bool             aborted;
@@ -107,13 +107,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     fxSense = Sense.DecodeFixed(senseBuf, out strSense);
                 }
                 while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
-                      (fxSense.Value.ASCQ                   == 0x1A || fxSense.Value.ASCQ != 0x04));
+                      (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ != 0x04));
 
                 dev.RequestSense(out senseBuf, dev.Timeout, out duration);
                 fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
                 // And yet, did not rewind!
-                if(fxSense.HasValue           &&
+                if(fxSense.HasValue &&
                    (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
                 {
                     DicConsole.WriteLine();
@@ -138,7 +138,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // Anyway, <=SCSI-1 tapes do not support partitions
                 fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
-                if(fxSense.HasValue && (fxSense.Value.ASC      == 0x20 && fxSense.Value.ASCQ != 0x00 ||
+                if(fxSense.HasValue && (fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ != 0x00 ||
                                         fxSense.Value.ASC      != 0x20 &&
                                         fxSense.Value.SenseKey != SenseKeys.IllegalRequest))
                 {
@@ -180,7 +180,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         fxSense = Sense.DecodeFixed(senseBuf, out strSense);
                     }
                     while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
-                          (fxSense.Value.ASCQ                   == 0x1A || fxSense.Value.ASCQ == 0x19));
+                          (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
 
                     // And yet, did not rewind!
                     if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 ||
@@ -220,8 +220,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            sidecar.BlockMedia       = new BlockMediaType[1];
-            sidecar.BlockMedia[0]    = new BlockMediaType {SCSI = new SCSIType()};
+            sidecar.BlockMedia    = new BlockMediaType[1];
+            sidecar.BlockMedia[0] = new BlockMediaType {SCSI = new SCSIType()};
             byte scsiMediumTypeTape  = 0;
             byte scsiDensityCodeTape = 0;
 
@@ -237,7 +237,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(!sense && !dev.Error)
                 if(Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
                 {
-                    decMode                                = Modes.DecodeMode10(cmdBuf, dev.ScsiType);
+                    decMode = Modes.DecodeMode10(cmdBuf, dev.ScsiType);
                     sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                     {
                         Image     = outputPrefix + ".modesense10.bin",
@@ -258,7 +258,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(!sense && !dev.Error)
                 if(Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
                 {
-                    decMode                              = Modes.DecodeMode6(cmdBuf, dev.ScsiType);
+                    decMode = Modes.DecodeMode6(cmdBuf, dev.ScsiType);
                     sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                     {
                         Image     = outputPrefix + ".modesense.bin",
@@ -274,7 +274,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 scsiMediumTypeTape = (byte)decMode.Value.Header.MediumType;
                 if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
                     scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                blockSize               = decMode.Value.Header.BlockDescriptors[0].BlockLength;
+                blockSize = decMode.Value.Header.BlockDescriptors[0].BlockLength;
                 dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
             }
             else blockSize = 1;
@@ -328,8 +328,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         fixedLen    = true;
                         transferLen = 1;
-                        sense       = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize,
-                                                dev.Timeout, out duration);
+                        sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize,
+                                          dev.Timeout, out duration);
                         if(sense)
                         {
                             DicConsole.WriteLine();
@@ -382,9 +382,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine();
             DataFile dumpFile = new DataFile(outputPrefix + ".bin");
             Checksum dataChk  = new Checksum();
-            start             = DateTime.UtcNow;
-            MhddLog mhddLog   = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
-            IbgLog  ibgLog    = new IbgLog(outputPrefix  + ".ibg", 0x0008);
+            start = DateTime.UtcNow;
+            MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
+            IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
 
             TapeFileType currentTapeFile = new TapeFileType
             {
@@ -399,7 +399,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 StartBlock = (long)currentBlock,
                 BlockSize  = blockSize
             };
-            Checksum          fileChk              = new Checksum();
+            Checksum fileChk = new Checksum();
             TapePartitionType currentTapePartition = new TapePartitionType
             {
                 Image = new ImageType
@@ -454,9 +454,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                             StartBlock = (long)currentBlock,
                             BlockSize  = blockSize
                         };
-                        currentFileSize      = 0;
-                        fileChk              = new Checksum();
-                        files                = new List<TapeFileType>();
+                        currentFileSize = 0;
+                        fileChk         = new Checksum();
+                        files           = new List<TapeFileType>();
                         currentTapePartition = new TapePartitionType
                         {
                             Image = new ImageType
@@ -524,37 +524,33 @@ namespace DiscImageChef.Core.Devices.Dumping
                         continue;
                     }
 
-                    if(fxSense.Value.SenseKey == SenseKeys.BlankCheck)
+                    switch(fxSense.Value.SenseKey)
                     {
-                        if(currentBlock == 0)
-                        {
+                        case SenseKeys.BlankCheck when currentBlock == 0:
                             DicConsole.WriteLine();
                             DicConsole.ErrorWriteLine("Cannot dump a blank tape...");
                             dumpFile.Close();
                             dumpLog.WriteLine("Cannot dump a blank tape...");
                             return;
-                        }
-
                         // For sure this is an end-of-tape/partition
-                        if(fxSense.Value.ASC   == 0x00 &&
-                           (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05 || fxSense.Value.EOM))
-                        {
+                        case SenseKeys.BlankCheck when fxSense.Value.ASC == 0x00 &&
+                                                       (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05 ||
+                                                        fxSense.Value.EOM):
                             // TODO: Detect end of partition
                             endOfMedia = true;
                             dumpLog.WriteLine("Found end-of-tape/partition...");
                             continue;
-                        }
-
-                        DicConsole.WriteLine();
-                        DicConsole.WriteLine("Blank block found, end of tape?");
-                        endOfMedia = true;
-                        dumpLog.WriteLine("Blank block found, end of tape?...");
-                        continue;
+                        case SenseKeys.BlankCheck:
+                            DicConsole.WriteLine();
+                            DicConsole.WriteLine("Blank block found, end of tape?");
+                            endOfMedia = true;
+                            dumpLog.WriteLine("Blank block found, end of tape?...");
+                            continue;
                     }
 
                     if((fxSense.Value.SenseKey == SenseKeys.NoSense ||
                         fxSense.Value.SenseKey == SenseKeys.RecoveredError) &&
-                       (fxSense.Value.ASCQ     == 0x02 || fxSense.Value.ASCQ == 0x05 || fxSense.Value.EOM))
+                       (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05 || fxSense.Value.EOM))
                     {
                         // TODO: Detect end of partition
                         endOfMedia = true;
@@ -564,7 +560,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if((fxSense.Value.SenseKey == SenseKeys.NoSense ||
                         fxSense.Value.SenseKey == SenseKeys.RecoveredError) &&
-                       (fxSense.Value.ASCQ     == 0x01 || fxSense.Value.Filemark))
+                       (fxSense.Value.ASCQ == 0x01 || fxSense.Value.Filemark))
                     {
                         currentTapeFile.Checksums = fileChk.End().ToArray();
                         currentTapeFile.EndBlock  = (long)(currentBlock - 1);
@@ -614,7 +610,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 partitionChk.Update(cmdBuf);
                 DateTime chkEnd      = DateTime.UtcNow;
                 double   chkDuration = (chkEnd - chkStart).TotalMilliseconds;
-                totalChkDuration     += chkDuration;
+                totalChkDuration += chkDuration;
 
                 if(currentBlock % 10 == 0)
                 {
@@ -633,10 +629,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.UtcNow;
             mhddLog.Close();
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize                                                        * (double)(blocks + 1) /
-                         1024                                                             / (totalDuration       / 1000), devicePath);
-            dumpLog.WriteLine("Dump finished in {0} seconds.",
-                              (end - start).TotalSeconds);
+                         blockSize * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
+                         devicePath);
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
@@ -660,13 +655,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 format = "Raw disk image (sector by sector copy)",
                 Value  = outputPrefix + ".bin"
             };
-            sidecar.BlockMedia[0].LogicalBlocks                     = (long)blocks;
-            sidecar.BlockMedia[0].Size                              = (long)currentSize;
-            sidecar.BlockMedia[0].DumpHardwareArray                 = new DumpHardwareType[1];
-            sidecar.BlockMedia[0].DumpHardwareArray[0]              =
-                new DumpHardwareType {Extents                       = new ExtentType[1]};
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0]   =
-                new ExtentType {Start                               = 0, End = blocks - 1};
+            sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
+            sidecar.BlockMedia[0].Size              = (long)currentSize;
+            sidecar.BlockMedia[0].DumpHardwareArray = new DumpHardwareType[1];
+            sidecar.BlockMedia[0].DumpHardwareArray[0] =
+                new DumpHardwareType {Extents = new ExtentType[1]};
+            sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0] =
+                new ExtentType {Start = 0, End = blocks - 1};
             sidecar.BlockMedia[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Model        = dev.Model;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Revision     = dev.Revision;

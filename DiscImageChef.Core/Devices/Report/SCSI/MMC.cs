@@ -59,7 +59,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
         {
             if(report == null) return;
 
-            bool sense;
+            bool       sense;
             const uint TIMEOUT = 5;
 
             List<string> mediaTypes = new List<string>();
@@ -70,41 +70,49 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 report.SCSI.MultiMediaDevice.ModeSense2A = new mmcModeType();
                 if(cdromMode.Value.BufferSize != 0)
                 {
-                    report.SCSI.MultiMediaDevice.ModeSense2A.BufferSize = cdromMode.Value.BufferSize;
+                    report.SCSI.MultiMediaDevice.ModeSense2A.BufferSize          = cdromMode.Value.BufferSize;
                     report.SCSI.MultiMediaDevice.ModeSense2A.BufferSizeSpecified = true;
                 }
+
                 if(cdromMode.Value.CurrentSpeed != 0)
                 {
-                    report.SCSI.MultiMediaDevice.ModeSense2A.CurrentSpeed = cdromMode.Value.CurrentSpeed;
+                    report.SCSI.MultiMediaDevice.ModeSense2A.CurrentSpeed          = cdromMode.Value.CurrentSpeed;
                     report.SCSI.MultiMediaDevice.ModeSense2A.CurrentSpeedSpecified = true;
                 }
+
                 if(cdromMode.Value.CurrentWriteSpeed != 0)
                 {
-                    report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeed = cdromMode.Value.CurrentWriteSpeed;
+                    report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeed =
+                        cdromMode.Value.CurrentWriteSpeed;
                     report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeedSpecified = true;
                 }
+
                 if(cdromMode.Value.CurrentWriteSpeedSelected != 0)
                 {
                     report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeedSelected =
                         cdromMode.Value.CurrentWriteSpeedSelected;
                     report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeedSelectedSpecified = true;
                 }
+
                 if(cdromMode.Value.MaximumSpeed != 0)
                 {
-                    report.SCSI.MultiMediaDevice.ModeSense2A.MaximumSpeed = cdromMode.Value.MaximumSpeed;
+                    report.SCSI.MultiMediaDevice.ModeSense2A.MaximumSpeed          = cdromMode.Value.MaximumSpeed;
                     report.SCSI.MultiMediaDevice.ModeSense2A.MaximumSpeedSpecified = true;
                 }
+
                 if(cdromMode.Value.MaxWriteSpeed != 0)
                 {
-                    report.SCSI.MultiMediaDevice.ModeSense2A.MaximumWriteSpeed = cdromMode.Value.MaxWriteSpeed;
+                    report.SCSI.MultiMediaDevice.ModeSense2A.MaximumWriteSpeed          = cdromMode.Value.MaxWriteSpeed;
                     report.SCSI.MultiMediaDevice.ModeSense2A.MaximumWriteSpeedSpecified = true;
                 }
+
                 if(cdromMode.Value.RotationControlSelected != 0)
                 {
                     report.SCSI.MultiMediaDevice.ModeSense2A.RotationControlSelected =
                         cdromMode.Value.RotationControlSelected;
                     report.SCSI.MultiMediaDevice.ModeSense2A.RotationControlSelectedSpecified = true;
                 }
+
                 if(cdromMode.Value.SupportedVolumeLevels != 0)
                 {
                     report.SCSI.MultiMediaDevice.ModeSense2A.SupportedVolumeLevels =
@@ -112,49 +120,49 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     report.SCSI.MultiMediaDevice.ModeSense2A.SupportedVolumeLevelsSpecified = true;
                 }
 
-                report.SCSI.MultiMediaDevice.ModeSense2A.AccurateCDDA = cdromMode.Value.AccurateCDDA;
-                report.SCSI.MultiMediaDevice.ModeSense2A.BCK = cdromMode.Value.BCK;
+                report.SCSI.MultiMediaDevice.ModeSense2A.AccurateCDDA             = cdromMode.Value.AccurateCDDA;
+                report.SCSI.MultiMediaDevice.ModeSense2A.BCK                      = cdromMode.Value.BCK;
                 report.SCSI.MultiMediaDevice.ModeSense2A.BufferUnderRunProtection = cdromMode.Value.BUF;
-                report.SCSI.MultiMediaDevice.ModeSense2A.CanEject = cdromMode.Value.Eject;
-                report.SCSI.MultiMediaDevice.ModeSense2A.CanLockMedia = cdromMode.Value.Lock;
-                report.SCSI.MultiMediaDevice.ModeSense2A.CDDACommand = cdromMode.Value.CDDACommand;
-                report.SCSI.MultiMediaDevice.ModeSense2A.CompositeAudioVideo = cdromMode.Value.Composite;
-                report.SCSI.MultiMediaDevice.ModeSense2A.CSSandCPPMSupported = cdromMode.Value.CMRSupported == 1;
+                report.SCSI.MultiMediaDevice.ModeSense2A.CanEject                 = cdromMode.Value.Eject;
+                report.SCSI.MultiMediaDevice.ModeSense2A.CanLockMedia             = cdromMode.Value.Lock;
+                report.SCSI.MultiMediaDevice.ModeSense2A.CDDACommand              = cdromMode.Value.CDDACommand;
+                report.SCSI.MultiMediaDevice.ModeSense2A.CompositeAudioVideo      = cdromMode.Value.Composite;
+                report.SCSI.MultiMediaDevice.ModeSense2A.CSSandCPPMSupported      = cdromMode.Value.CMRSupported == 1;
                 report.SCSI.MultiMediaDevice.ModeSense2A.DeterministicSlotChanger = cdromMode.Value.SDP;
-                report.SCSI.MultiMediaDevice.ModeSense2A.DigitalPort1 = cdromMode.Value.DigitalPort1;
-                report.SCSI.MultiMediaDevice.ModeSense2A.DigitalPort2 = cdromMode.Value.DigitalPort2;
-                report.SCSI.MultiMediaDevice.ModeSense2A.LeadInPW = cdromMode.Value.LeadInPW;
-                report.SCSI.MultiMediaDevice.ModeSense2A.LoadingMechanismType = cdromMode.Value.LoadingMechanism;
-                report.SCSI.MultiMediaDevice.ModeSense2A.LockStatus = cdromMode.Value.LockState;
-                report.SCSI.MultiMediaDevice.ModeSense2A.LSBF = cdromMode.Value.LSBF;
-                report.SCSI.MultiMediaDevice.ModeSense2A.PlaysAudio = cdromMode.Value.AudioPlay;
-                report.SCSI.MultiMediaDevice.ModeSense2A.PreventJumperStatus = cdromMode.Value.PreventJumper;
-                report.SCSI.MultiMediaDevice.ModeSense2A.RCK = cdromMode.Value.RCK;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsBarcode = cdromMode.Value.ReadBarcode;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsBothSides = cdromMode.Value.SCC;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsCDR = cdromMode.Value.ReadCDR;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsCDRW = cdromMode.Value.ReadCDRW;
+                report.SCSI.MultiMediaDevice.ModeSense2A.DigitalPort1             = cdromMode.Value.DigitalPort1;
+                report.SCSI.MultiMediaDevice.ModeSense2A.DigitalPort2             = cdromMode.Value.DigitalPort2;
+                report.SCSI.MultiMediaDevice.ModeSense2A.LeadInPW                 = cdromMode.Value.LeadInPW;
+                report.SCSI.MultiMediaDevice.ModeSense2A.LoadingMechanismType     = cdromMode.Value.LoadingMechanism;
+                report.SCSI.MultiMediaDevice.ModeSense2A.LockStatus               = cdromMode.Value.LockState;
+                report.SCSI.MultiMediaDevice.ModeSense2A.LSBF                     = cdromMode.Value.LSBF;
+                report.SCSI.MultiMediaDevice.ModeSense2A.PlaysAudio               = cdromMode.Value.AudioPlay;
+                report.SCSI.MultiMediaDevice.ModeSense2A.PreventJumperStatus      = cdromMode.Value.PreventJumper;
+                report.SCSI.MultiMediaDevice.ModeSense2A.RCK                      = cdromMode.Value.RCK;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsBarcode             = cdromMode.Value.ReadBarcode;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsBothSides           = cdromMode.Value.SCC;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsCDR                 = cdromMode.Value.ReadCDR;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsCDRW                = cdromMode.Value.ReadCDRW;
                 report.SCSI.MultiMediaDevice.ModeSense2A.ReadsDeinterlavedSubchannel =
                     cdromMode.Value.DeinterlaveSubchannel;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsDVDR = cdromMode.Value.ReadDVDR;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsDVDRAM = cdromMode.Value.ReadDVDRAM;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsDVDROM = cdromMode.Value.ReadDVDROM;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsISRC = cdromMode.Value.ISRC;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsMode2Form2 = cdromMode.Value.Mode2Form2;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsMode2Form1 = cdromMode.Value.Mode2Form1;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsPacketCDR = cdromMode.Value.Method2;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsSubchannel = cdromMode.Value.Subchannel;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsUPC = cdromMode.Value.UPC;
-                report.SCSI.MultiMediaDevice.ModeSense2A.ReturnsC2Pointers = cdromMode.Value.C2Pointer;
-                report.SCSI.MultiMediaDevice.ModeSense2A.SeparateChannelMute = cdromMode.Value.SeparateChannelMute;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsDVDR             = cdromMode.Value.ReadDVDR;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsDVDRAM           = cdromMode.Value.ReadDVDRAM;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsDVDROM           = cdromMode.Value.ReadDVDROM;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsISRC             = cdromMode.Value.ISRC;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsMode2Form2       = cdromMode.Value.Mode2Form2;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsMode2Form1       = cdromMode.Value.Mode2Form1;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsPacketCDR        = cdromMode.Value.Method2;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsSubchannel       = cdromMode.Value.Subchannel;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReadsUPC              = cdromMode.Value.UPC;
+                report.SCSI.MultiMediaDevice.ModeSense2A.ReturnsC2Pointers     = cdromMode.Value.C2Pointer;
+                report.SCSI.MultiMediaDevice.ModeSense2A.SeparateChannelMute   = cdromMode.Value.SeparateChannelMute;
                 report.SCSI.MultiMediaDevice.ModeSense2A.SeparateChannelVolume = cdromMode.Value.SeparateChannelVolume;
-                report.SCSI.MultiMediaDevice.ModeSense2A.SSS = cdromMode.Value.SSS;
-                report.SCSI.MultiMediaDevice.ModeSense2A.SupportsMultiSession = cdromMode.Value.MultiSession;
-                report.SCSI.MultiMediaDevice.ModeSense2A.TestWrite = cdromMode.Value.TestWrite;
-                report.SCSI.MultiMediaDevice.ModeSense2A.WritesCDR = cdromMode.Value.WriteCDR;
-                report.SCSI.MultiMediaDevice.ModeSense2A.WritesCDRW = cdromMode.Value.WriteCDRW;
-                report.SCSI.MultiMediaDevice.ModeSense2A.WritesDVDR = cdromMode.Value.WriteDVDR;
-                report.SCSI.MultiMediaDevice.ModeSense2A.WritesDVDRAM = cdromMode.Value.WriteDVDRAM;
+                report.SCSI.MultiMediaDevice.ModeSense2A.SSS                   = cdromMode.Value.SSS;
+                report.SCSI.MultiMediaDevice.ModeSense2A.SupportsMultiSession  = cdromMode.Value.MultiSession;
+                report.SCSI.MultiMediaDevice.ModeSense2A.TestWrite             = cdromMode.Value.TestWrite;
+                report.SCSI.MultiMediaDevice.ModeSense2A.WritesCDR             = cdromMode.Value.WriteCDR;
+                report.SCSI.MultiMediaDevice.ModeSense2A.WritesCDRW            = cdromMode.Value.WriteCDRW;
+                report.SCSI.MultiMediaDevice.ModeSense2A.WritesDVDR            = cdromMode.Value.WriteDVDR;
+                report.SCSI.MultiMediaDevice.ModeSense2A.WritesDVDRAM          = cdromMode.Value.WriteDVDRAM;
                 report.SCSI.MultiMediaDevice.ModeSense2A.WriteSpeedPerformanceDescriptors =
                     cdromMode.Value.WriteSpeedPerformanceDescriptors;
 
@@ -196,6 +204,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandard =
                                             PhysicalInterfaces.Unspecified;
                                     }
+
                                     report.SCSI.MultiMediaDevice.Features.SupportsDeviceBusyEvent = ftr0001.Value.DBE;
                                 }
                             }
@@ -208,11 +217,16 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     report.SCSI.MultiMediaDevice.Features.LoadingMechanismType =
                                         ftr0003.Value.LoadingMechanismType;
                                     report.SCSI.MultiMediaDevice.Features.LoadingMechanismTypeSpecified = true;
-                                    report.SCSI.MultiMediaDevice.Features.CanLoad = ftr0003.Value.Load;
-                                    report.SCSI.MultiMediaDevice.Features.CanEject = ftr0003.Value.Eject;
-                                    report.SCSI.MultiMediaDevice.Features.PreventJumper = ftr0003.Value.PreventJumper;
-                                    report.SCSI.MultiMediaDevice.Features.DBML = ftr0003.Value.DBML;
-                                    report.SCSI.MultiMediaDevice.Features.Locked = ftr0003.Value.Lock;
+                                    report.SCSI.MultiMediaDevice.Features.CanLoad =
+                                        ftr0003.Value.Load;
+                                    report.SCSI.MultiMediaDevice.Features.CanEject =
+                                        ftr0003.Value.Eject;
+                                    report.SCSI.MultiMediaDevice.Features.PreventJumper =
+                                        ftr0003.Value.PreventJumper;
+                                    report.SCSI.MultiMediaDevice.Features.DBML =
+                                        ftr0003.Value.DBML;
+                                    report.SCSI.MultiMediaDevice.Features.Locked =
+                                        ftr0003.Value.Lock;
                                 }
                             }
                                 break;
@@ -223,8 +237,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 {
                                     report.SCSI.MultiMediaDevice.Features.SupportsWriteProtectPAC = ftr0004.Value.DWP;
                                     report.SCSI.MultiMediaDevice.Features.SupportsWriteInhibitDCB = ftr0004.Value.WDCB;
-                                    report.SCSI.MultiMediaDevice.Features.SupportsPWP = ftr0004.Value.SPWP;
-                                    report.SCSI.MultiMediaDevice.Features.SupportsSWPP = ftr0004.Value.SSWPP;
+                                    report.SCSI.MultiMediaDevice.Features.SupportsPWP             = ftr0004.Value.SPWP;
+                                    report.SCSI.MultiMediaDevice.Features.SupportsSWPP            = ftr0004.Value.SSWPP;
                                 }
                             }
                                 break;
@@ -239,12 +253,14 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                             ftr0010.Value.LogicalBlockSize;
                                         report.SCSI.MultiMediaDevice.Features.LogicalBlockSizeSpecified = true;
                                     }
+
                                     if(ftr0010.Value.Blocking > 0)
                                     {
                                         report.SCSI.MultiMediaDevice.Features.BlocksPerReadableUnit =
                                             ftr0010.Value.Blocking;
                                         report.SCSI.MultiMediaDevice.Features.BlocksPerReadableUnitSpecified = true;
                                     }
+
                                     report.SCSI.MultiMediaDevice.Features.ErrorRecoveryPage = ftr0010.Value.PP;
                                 }
                             }
@@ -258,8 +274,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_001E? ftr001E = Features.Decode_001E(desc.Data);
                                 if(ftr001E.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.SupportsDAP = ftr001E.Value.DAP;
-                                    report.SCSI.MultiMediaDevice.Features.SupportsC2 = ftr001E.Value.C2;
+                                    report.SCSI.MultiMediaDevice.Features.SupportsDAP         = ftr001E.Value.DAP;
+                                    report.SCSI.MultiMediaDevice.Features.SupportsC2          = ftr001E.Value.C2;
                                     report.SCSI.MultiMediaDevice.Features.CanReadLeadInCDText = ftr001E.Value.CDText;
                                 }
                             }
@@ -270,9 +286,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_001F? ftr001F = Features.Decode_001F(desc.Data);
                                 if(ftr001F.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.DVDMultiRead = ftr001F.Value.MULTI110;
+                                    report.SCSI.MultiMediaDevice.Features.DVDMultiRead     = ftr001F.Value.MULTI110;
                                     report.SCSI.MultiMediaDevice.Features.CanReadAllDualRW = ftr001F.Value.DualRW;
-                                    report.SCSI.MultiMediaDevice.Features.CanReadAllDualR = ftr001F.Value.DualR;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadAllDualR  = ftr001F.Value.DualR;
                                 }
                             }
                                 break;
@@ -288,10 +304,10 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     report.SCSI.MultiMediaDevice.Features.CanFormatBDREWithoutSpare =
                                         ftr0023.Value.RENoSA;
                                     report.SCSI.MultiMediaDevice.Features.CanExpandBDRESpareArea = ftr0023.Value.Expand;
-                                    report.SCSI.MultiMediaDevice.Features.CanFormatQCert = ftr0023.Value.QCert;
-                                    report.SCSI.MultiMediaDevice.Features.CanFormatCert = ftr0023.Value.Cert;
-                                    report.SCSI.MultiMediaDevice.Features.CanFormatFRF = ftr0023.Value.FRF;
-                                    report.SCSI.MultiMediaDevice.Features.CanFormatRRM = ftr0023.Value.RRM;
+                                    report.SCSI.MultiMediaDevice.Features.CanFormatQCert         = ftr0023.Value.QCert;
+                                    report.SCSI.MultiMediaDevice.Features.CanFormatCert          = ftr0023.Value.Cert;
+                                    report.SCSI.MultiMediaDevice.Features.CanFormatFRF           = ftr0023.Value.FRF;
+                                    report.SCSI.MultiMediaDevice.Features.CanFormatRRM           = ftr0023.Value.RRM;
                                 }
                             }
                                 break;
@@ -307,9 +323,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_0028? ftr0028 = Features.Decode_0028(desc.Data);
                                 if(ftr0028.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW = ftr0028.Value.DVDPRead;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW  = ftr0028.Value.DVDPRead;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusMRW = ftr0028.Value.DVDPWrite;
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteCDMRW = ftr0028.Value.Write;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteCDMRW      = ftr0028.Value.Write;
                                 }
                             }
                                 break;
@@ -340,7 +356,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         ftr002D.Value.RWRaw;
                                     report.SCSI.MultiMediaDevice.Features.CanWritePackedSubchannelInTAO =
                                         ftr002D.Value.RWPack;
-                                    report.SCSI.MultiMediaDevice.Features.CanTestWriteInTAO = ftr002D.Value.TestWrite;
+                                    report.SCSI.MultiMediaDevice.Features.CanTestWriteInTAO =
+                                        ftr002D.Value.TestWrite;
                                     report.SCSI.MultiMediaDevice.Features.CanOverwriteTAOTrack = ftr002D.Value.CDRW;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteRWSubchannelInTAO =
                                         ftr002D.Value.RWSubchannel;
@@ -354,10 +371,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 if(ftr002E.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInSAO = ftr002E.Value.BUF;
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteRawMultiSession = ftr002E.Value.RAWMS;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteRawMultiSession =
+                                        ftr002E.Value.RAWMS;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteRaw = ftr002E.Value.RAW;
-                                    report.SCSI.MultiMediaDevice.Features.CanTestWriteInSAO = ftr002E.Value.TestWrite;
-                                    report.SCSI.MultiMediaDevice.Features.CanOverwriteSAOTrack = ftr002E.Value.CDRW;
+                                    report.SCSI.MultiMediaDevice.Features.CanTestWriteInSAO =
+                                        ftr002E.Value.TestWrite;
+                                    report.SCSI.MultiMediaDevice.Features.CanOverwriteSAOTrack =
+                                        ftr002E.Value.CDRW;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteRWSubchannelInSAO = ftr002E.Value.RW;
                                 }
                             }
@@ -369,8 +389,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 if(ftr002F.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInDVD = ftr002F.Value.BUF;
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteDVDRDL = ftr002F.Value.RDL;
-                                    report.SCSI.MultiMediaDevice.Features.CanTestWriteDVD = ftr002F.Value.TestWrite;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteDVDRDL          = ftr002F.Value.RDL;
+                                    report.SCSI.MultiMediaDevice.Features.CanTestWriteDVD =
+                                        ftr002F.Value.TestWrite;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteDVDRW = ftr002F.Value.DVDRW;
                                 }
                             }
@@ -417,13 +438,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_0040? ftr0040 = Features.Decode_0040(desc.Data);
                                 if(ftr0040.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.CanReadBluBCA = ftr0040.Value.BCA;
-                                    report.SCSI.MultiMediaDevice.Features.CanReadBDRE2 = ftr0040.Value.RE2;
-                                    report.SCSI.MultiMediaDevice.Features.CanReadBDRE1 = ftr0040.Value.RE1;
-                                    report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE = ftr0040.Value.OldRE;
-                                    report.SCSI.MultiMediaDevice.Features.CanReadBDR = ftr0040.Value.R;
-                                    report.SCSI.MultiMediaDevice.Features.CanReadOldBDR = ftr0040.Value.OldR;
-                                    report.SCSI.MultiMediaDevice.Features.CanReadBDROM = ftr0040.Value.ROM;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadBluBCA   = ftr0040.Value.BCA;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadBDRE2    = ftr0040.Value.RE2;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadBDRE1    = ftr0040.Value.RE1;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE  = ftr0040.Value.OldRE;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadBDR      = ftr0040.Value.R;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadOldBDR   = ftr0040.Value.OldR;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadBDROM    = ftr0040.Value.ROM;
                                     report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM = ftr0040.Value.OldROM;
                                 }
                             }
@@ -434,11 +455,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_0041? ftr0041 = Features.Decode_0041(desc.Data);
                                 if(ftr0041.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteBDRE2 = ftr0041.Value.RE2;
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteBDRE1 = ftr0041.Value.RE1;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteBDRE2   = ftr0041.Value.RE2;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteBDRE1   = ftr0041.Value.RE1;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteOldBDRE = ftr0041.Value.OldRE;
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteBDR = ftr0041.Value.R;
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteOldBDR = ftr0041.Value.OldR;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteBDR     = ftr0041.Value.R;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteOldBDR  = ftr0041.Value.OldR;
                                 }
                             }
                                 break;
@@ -448,7 +469,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_0050? ftr0050 = Features.Decode_0050(desc.Data);
                                 if(ftr0050.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR = ftr0050.Value.HDDVDR;
+                                    report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR   = ftr0050.Value.HDDVDR;
                                     report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM = ftr0050.Value.HDDVDRAM;
                                 }
                             }
@@ -459,7 +480,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_0051? ftr0051 = Features.Decode_0051(desc.Data);
                                 if(ftr0051.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.CanWriteHDDVDR = ftr0051.Value.HDDVDR;
+                                    report.SCSI.MultiMediaDevice.Features.CanWriteHDDVDR   = ftr0051.Value.HDDVDR;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteHDDVDRAM = ftr0051.Value.HDDVDRAM;
                                 }
                             }
@@ -491,13 +512,14 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 Feature_0103? ftr0103 = Features.Decode_0103(desc.Data);
                                 if(ftr0103.HasValue)
                                 {
-                                    report.SCSI.MultiMediaDevice.Features.CanAudioScan = ftr0103.Value.Scan;
+                                    report.SCSI.MultiMediaDevice.Features.CanAudioScan            = ftr0103.Value.Scan;
                                     report.SCSI.MultiMediaDevice.Features.CanMuteSeparateChannels = ftr0103.Value.SCM;
-                                    report.SCSI.MultiMediaDevice.Features.SupportsSeparateVolume = ftr0103.Value.SV;
+                                    report.SCSI.MultiMediaDevice.Features.SupportsSeparateVolume  = ftr0103.Value.SV;
                                     if(ftr0103.Value.VolumeLevels > 0)
                                     {
                                         report.SCSI.MultiMediaDevice.Features.VolumeLevelsSpecified = true;
-                                        report.SCSI.MultiMediaDevice.Features.VolumeLevels = ftr0103.Value.VolumeLevels;
+                                        report.SCSI.MultiMediaDevice.Features.VolumeLevels =
+                                            ftr0103.Value.VolumeLevels;
                                     }
                                 }
                             }
@@ -513,7 +535,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     if(ftr0106.Value.CSSVersion > 0)
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CSSVersionSpecified = true;
-                                        report.SCSI.MultiMediaDevice.Features.CSSVersion = ftr0106.Value.CSSVersion;
+                                        report.SCSI.MultiMediaDevice.Features.CSSVersion =
+                                            ftr0106.Value.CSSVersion;
                                     }
                             }
                                 break;
@@ -531,7 +554,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     if(ftr010B.Value.CPRMVersion > 0)
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CPRMVersionSpecified = true;
-                                        report.SCSI.MultiMediaDevice.Features.CPRMVersion = ftr010B.Value.CPRMVersion;
+                                        report.SCSI.MultiMediaDevice.Features.CPRMVersion =
+                                            ftr010B.Value.CPRMVersion;
                                     }
                             }
                                 break;
@@ -546,23 +570,23 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     temp[2] = (byte)((ftr010C.Value.Year & 0xFF00) >> 8);
                                     temp[3] = (byte)(ftr010C.Value.Year & 0xFF);
                                     string syear = Encoding.ASCII.GetString(temp);
-                                    temp = new byte[2];
+                                    temp    = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Month & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Month & 0xFF);
                                     string smonth = Encoding.ASCII.GetString(temp);
-                                    temp = new byte[2];
+                                    temp    = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Day & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Day & 0xFF);
                                     string sday = Encoding.ASCII.GetString(temp);
-                                    temp = new byte[2];
+                                    temp    = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Hour & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Hour & 0xFF);
                                     string shour = Encoding.ASCII.GetString(temp);
-                                    temp = new byte[2];
+                                    temp    = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Minute & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Minute & 0xFF);
                                     string sminute = Encoding.ASCII.GetString(temp);
-                                    temp = new byte[2];
+                                    temp    = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Second & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Second & 0xFF);
                                     string ssecond = Encoding.ASCII.GetString(temp);
@@ -576,12 +600,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                                         report.SCSI.MultiMediaDevice.Features.FirmwareDateSpecified = true;
                                     }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                     catch
                                     {
                                         // ignored
                                     }
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 }
                             }
                                 break;
@@ -596,7 +620,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     report.SCSI.MultiMediaDevice.Features.CanReadCPRM_MKB = ftr010D.Value.RMC;
                                     report.SCSI.MultiMediaDevice.Features.CanWriteBusEncryptedBlocks =
                                         ftr010D.Value.WBE;
-                                    report.SCSI.MultiMediaDevice.Features.SupportsBusEncryption = ftr010D.Value.BEC;
+                                    report.SCSI.MultiMediaDevice.Features.SupportsBusEncryption   = ftr010D.Value.BEC;
                                     report.SCSI.MultiMediaDevice.Features.CanGenerateBindingNonce = ftr010D.Value.BNG;
 
                                     if(ftr010D.Value.BindNonceBlocks > 0)
@@ -609,13 +633,14 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     if(ftr010D.Value.AGIDs > 0)
                                     {
                                         report.SCSI.MultiMediaDevice.Features.AGIDsSpecified = true;
-                                        report.SCSI.MultiMediaDevice.Features.AGIDs = ftr010D.Value.AGIDs;
+                                        report.SCSI.MultiMediaDevice.Features.AGIDs          = ftr010D.Value.AGIDs;
                                     }
 
                                     if(ftr010D.Value.AACSVersion > 0)
                                     {
                                         report.SCSI.MultiMediaDevice.Features.AACSVersionSpecified = true;
-                                        report.SCSI.MultiMediaDevice.Features.AACSVersion = ftr010D.Value.AACSVersion;
+                                        report.SCSI.MultiMediaDevice.Features.AACSVersion =
+                                            ftr010D.Value.AACSVersion;
                                     }
                                 }
                             }
@@ -635,12 +660,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         }
                 }
 
-                if(report.SCSI.MultiMediaDevice.Features.CanReadBD ||
-                   report.SCSI.MultiMediaDevice.Features.CanReadBDR ||
-                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE1 ||
-                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE2 ||
-                   report.SCSI.MultiMediaDevice.Features.CanReadBDROM ||
-                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDR ||
+                if(report.SCSI.MultiMediaDevice.Features.CanReadBD      ||
+                   report.SCSI.MultiMediaDevice.Features.CanReadBDR     ||
+                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE1   ||
+                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE2   ||
+                   report.SCSI.MultiMediaDevice.Features.CanReadBDROM   ||
+                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDR  ||
                    report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
                    report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
                 {
@@ -660,7 +685,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
 
                 if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
-                    if(!mediaTypes.Contains("CD-MRW")) mediaTypes.Add("CD-MRW");
+                    if(!mediaTypes.Contains("CD-MRW"))
+                        mediaTypes.Add("CD-MRW");
 
                 if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
                 {
@@ -669,11 +695,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     if(!mediaTypes.Contains("DDCD-RW")) mediaTypes.Add("DDCD-RW");
                 }
 
-                if(report.SCSI.MultiMediaDevice.Features.CanReadDVD ||
-                   report.SCSI.MultiMediaDevice.Features.DVDMultiRead ||
-                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR ||
+                if(report.SCSI.MultiMediaDevice.Features.CanReadDVD        ||
+                   report.SCSI.MultiMediaDevice.Features.DVDMultiRead      ||
+                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR   ||
                    report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL ||
-                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW ||
+                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW  ||
                    report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
                 {
                     if(!mediaTypes.Contains("DVD-ROM")) mediaTypes.Add("DVD-ROM");
@@ -686,7 +712,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
 
                 if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
-                    if(!mediaTypes.Contains("DVD+MRW")) mediaTypes.Add("DVD+MRW");
+                    if(!mediaTypes.Contains("DVD+MRW"))
+                        mediaTypes.Add("DVD+MRW");
 
                 if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
                    report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
@@ -697,15 +724,16 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
 
                 if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM)
-                    if(!mediaTypes.Contains("HD DVD-RAM")) mediaTypes.Add("HD DVD-RAM");
+                    if(!mediaTypes.Contains("HD DVD-RAM"))
+                        mediaTypes.Add("HD DVD-RAM");
             }
 
             bool tryPlextor = false, tryHldtst = false, tryPioneer = false, tryNec = false;
 
             tryPlextor |= dev.Manufacturer.ToLowerInvariant() == "plextor";
-            tryHldtst |= dev.Manufacturer.ToLowerInvariant() == "hl-dt-st";
+            tryHldtst  |= dev.Manufacturer.ToLowerInvariant() == "hl-dt-st";
             tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
-            tryNec |= dev.Manufacturer.ToLowerInvariant() == "nec";
+            tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
 
             // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
             // Also don't get confident, some drives didn't know CD-RW but are able to read them
@@ -796,7 +824,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                     if(mediaTest.MediaIsRecognized)
                     {
-                        mediaTest.SupportsReadCapacitySpecified = true;
+                        mediaTest.SupportsReadCapacitySpecified   = true;
                         mediaTest.SupportsReadCapacity16Specified = true;
 
                         DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
@@ -808,7 +836,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) + 1;
                             mediaTest.BlockSize =
                                 (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
-                            mediaTest.BlocksSpecified = true;
+                            mediaTest.BlocksSpecified    = true;
                             mediaTest.BlockSizeSpecified = true;
                         }
 
@@ -823,7 +851,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             mediaTest.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
                             mediaTest.BlockSize =
                                 (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
-                            mediaTest.BlocksSpecified = true;
+                            mediaTest.BlocksSpecified    = true;
                             mediaTest.BlockSizeSpecified = true;
                         }
 
@@ -835,34 +863,35 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense10 = true;
-                            decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
+                            decMode                         = Modes.DecodeMode10(buffer, dev.ScsiType);
                             if(debug) mediaTest.ModeSense10Data = buffer;
                         }
+
                         DicConsole.WriteLine("Querying SCSI MODE SENSE...");
                         sense = dev.ModeSense(out buffer, out senseBuffer, TIMEOUT, out _);
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense6 = true;
-                            if(!decMode.HasValue) decMode = Modes.DecodeMode6(buffer, dev.ScsiType);
+                            if(!decMode.HasValue) decMode      = Modes.DecodeMode6(buffer, dev.ScsiType);
                             if(debug) mediaTest.ModeSense6Data = buffer;
                         }
 
                         if(decMode.HasValue)
                         {
-                            mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
+                            mediaTest.MediumType          = (byte)decMode.Value.Header.MediumType;
                             mediaTest.MediumTypeSpecified = true;
-                            if(decMode.Value.Header.BlockDescriptors != null &&
+                            if(decMode.Value.Header.BlockDescriptors        != null &&
                                decMode.Value.Header.BlockDescriptors.Length > 0)
                             {
-                                mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                                mediaTest.Density          = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                                 mediaTest.DensitySpecified = true;
                             }
                         }
 
-                        if(mediaType.StartsWith("CD-", StringComparison.Ordinal) ||
+                        if(mediaType.StartsWith("CD-",   StringComparison.Ordinal) ||
                            mediaType.StartsWith("DDCD-", StringComparison.Ordinal) || mediaType == "Audio CD")
                         {
-                            mediaTest.CanReadTOCSpecified = true;
+                            mediaTest.CanReadTOCSpecified     = true;
                             mediaTest.CanReadFullTOCSpecified = true;
                             DicConsole.WriteLine("Querying CD TOC...");
                             mediaTest.CanReadTOC =
@@ -882,11 +911,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                  mediaType + ".bin", "read results", buffer);
                         }
 
-                        if(mediaType.StartsWith("CD-R", StringComparison.Ordinal) ||
+                        if(mediaType.StartsWith("CD-R",   StringComparison.Ordinal) ||
                            mediaType.StartsWith("DDCD-R", StringComparison.Ordinal))
                         {
                             mediaTest.CanReadATIPSpecified = true;
-                            mediaTest.CanReadPMASpecified = true;
+                            mediaTest.CanReadPMASpecified  = true;
                             DicConsole.WriteLine("Querying CD ATIP...");
                             mediaTest.CanReadATIP = !dev.ReadAtip(out buffer, out senseBuffer, TIMEOUT, out _);
                             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadATIP);
@@ -903,7 +932,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                  mediaType + ".bin", "read results", buffer);
                         }
 
-                        if(mediaType.StartsWith("DVD-", StringComparison.Ordinal) ||
+                        if(mediaType.StartsWith("DVD-",    StringComparison.Ordinal) ||
                            mediaType.StartsWith("HD DVD-", StringComparison.Ordinal))
                         {
                             mediaTest.CanReadPFISpecified = true;
@@ -984,7 +1013,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 break;
                             case "DVD-RAM":
                             case "HD DVD-RAM":
-                                mediaTest.CanReadDDSSpecified = true;
+                                mediaTest.CanReadDDSSpecified                  = true;
                                 mediaTest.CanReadSpareAreaInformationSpecified = true;
                                 mediaTest.CanReadDDS =
                                     !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd,
@@ -1009,7 +1038,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                         if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) && mediaType != "BD-ROM")
                         {
-                            mediaTest.CanReadDDSSpecified = true;
+                            mediaTest.CanReadDDSSpecified                  = true;
                             mediaTest.CanReadSpareAreaInformationSpecified = true;
                             DicConsole.WriteLine("Querying BD DDS...");
                             mediaTest.CanReadDDS =
@@ -1049,7 +1078,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                         if(mediaType == "DVD-R" || mediaType == "DVD-RW" || mediaType == "HD DVD-R")
                         {
-                            mediaTest.CanReadMediaIDSpecified = true;
+                            mediaTest.CanReadMediaIDSpecified       = true;
                             mediaTest.CanReadRecordablePFISpecified = true;
                             DicConsole.WriteLine("Querying DVD Media ID...");
                             mediaTest.CanReadMediaID =
@@ -1075,7 +1104,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal) || mediaType == "DVD+MRW")
                         {
                             mediaTest.CanReadADIPSpecified = true;
-                            mediaTest.CanReadDCBSpecified = true;
+                            mediaTest.CanReadDCBSpecified  = true;
                             DicConsole.WriteLine("Querying DVD ADIP...");
                             mediaTest.CanReadADIP =
                                 !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -1128,7 +1157,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(mediaType.StartsWith("BD-R", StringComparison.Ordinal))
                         {
                             mediaTest.CanReadDiscInformationSpecified = true;
-                            mediaTest.CanReadPACSpecified = true;
+                            mediaTest.CanReadPACSpecified             = true;
                             DicConsole.WriteLine("Querying BD Disc Information...");
                             mediaTest.CanReadDiscInformation =
                                 !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Bd, 0, 0,
@@ -1149,7 +1178,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                  mediaType + ".bin", "read results", buffer);
                         }
 
-                        mediaTest.SupportsReadSpecified = true;
+                        mediaTest.SupportsReadSpecified   = true;
                         mediaTest.SupportsRead10Specified = true;
                         mediaTest.SupportsRead12Specified = true;
                         mediaTest.SupportsRead16Specified = true;
@@ -1193,7 +1222,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                 {
                                     DicConsole
-                                        .Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                       .Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                     pressedKey = System.Console.ReadKey();
                                     DicConsole.WriteLine();
                                 }
@@ -1201,22 +1230,22 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 tryPlextor |= pressedKey.Key == ConsoleKey.Y;
                             }
 
-                        if(mediaType.StartsWith("CD-", StringComparison.Ordinal) ||
+                        if(mediaType.StartsWith("CD-",   StringComparison.Ordinal) ||
                            mediaType.StartsWith("DDCD-", StringComparison.Ordinal) || mediaType == "Audio CD")
                         {
-                            mediaTest.CanReadC2PointersSpecified = true;
-                            mediaTest.CanReadCorrectedSubchannelSpecified = true;
+                            mediaTest.CanReadC2PointersSpecified                = true;
+                            mediaTest.CanReadCorrectedSubchannelSpecified       = true;
                             mediaTest.CanReadCorrectedSubchannelWithC2Specified = true;
-                            mediaTest.CanReadLeadInSpecified = true;
-                            mediaTest.CanReadLeadOutSpecified = true;
-                            mediaTest.CanReadPQSubchannelSpecified = true;
-                            mediaTest.CanReadPQSubchannelWithC2Specified = true;
-                            mediaTest.CanReadRWSubchannelSpecified = true;
-                            mediaTest.CanReadRWSubchannelWithC2Specified = true;
-                            mediaTest.SupportsReadCdMsfSpecified = true;
-                            mediaTest.SupportsReadCdSpecified = true;
-                            mediaTest.SupportsReadCdMsfRawSpecified = true;
-                            mediaTest.SupportsReadCdRawSpecified = true;
+                            mediaTest.CanReadLeadInSpecified                    = true;
+                            mediaTest.CanReadLeadOutSpecified                   = true;
+                            mediaTest.CanReadPQSubchannelSpecified              = true;
+                            mediaTest.CanReadPQSubchannelWithC2Specified        = true;
+                            mediaTest.CanReadRWSubchannelSpecified              = true;
+                            mediaTest.CanReadRWSubchannelWithC2Specified        = true;
+                            mediaTest.SupportsReadCdMsfSpecified                = true;
+                            mediaTest.SupportsReadCdSpecified                   = true;
+                            mediaTest.SupportsReadCdMsfRawSpecified             = true;
+                            mediaTest.SupportsReadCdRawSpecified                = true;
 
                             if(mediaType == "Audio CD")
                             {
@@ -1687,7 +1716,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                     {
                                         DicConsole
-                                            .Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                           .Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                         pressedKey = System.Console.ReadKey();
                                         DicConsole.WriteLine();
                                     }
@@ -1701,7 +1730,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                     {
                                         DicConsole
-                                            .Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                           .Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                         pressedKey = System.Console.ReadKey();
                                         DicConsole.WriteLine();
                                     }
@@ -1727,7 +1756,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                             if(tryPioneer)
                             {
-                                mediaTest.SupportsPioneerReadCDDASpecified = true;
+                                mediaTest.SupportsPioneerReadCDDASpecified    = true;
                                 mediaTest.SupportsPioneerReadCDDAMSFSpecified = true;
                                 DicConsole.WriteLine("Trying Pioneer READ CD-DA...");
                                 mediaTest.SupportsPioneerReadCDDA =
@@ -1773,12 +1802,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                             if(decSense.HasValue)
                                 if(decSense.Value.SenseKey == SenseKeys.IllegalRequest && decSense.Value.ASC == 0x24 &&
-                                   decSense.Value.ASCQ == 0x00)
+                                   decSense.Value.ASCQ     == 0x00)
                                 {
                                     mediaTest.SupportsReadLong = true;
                                     if(decSense.Value.InformationValid && decSense.Value.ILI)
                                     {
-                                        mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                                        mediaTest.LongBlockSize =
+                                            0xFFFF - (decSense.Value.Information & 0xFFFF);
                                         mediaTest.LongBlockSizeSpecified = true;
                                     }
                                 }
@@ -1791,7 +1821,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                 {
                                     DicConsole
-                                        .Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                       .Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                     pressedKey = System.Console.ReadKey();
                                     DicConsole.WriteLine();
                                 }
@@ -1805,8 +1835,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 37856, TIMEOUT, out _);
                             if(!sense && !dev.Error)
                             {
-                                mediaTest.SupportsReadLong = true;
-                                mediaTest.LongBlockSize = 37856;
+                                mediaTest.SupportsReadLong       = true;
+                                mediaTest.LongBlockSize          = 37856;
                                 mediaTest.LongBlockSizeSpecified = true;
                             }
                         }
@@ -1847,7 +1877,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                             {
                                 DicConsole
-                                    .Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                   .Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
                                 pressedKey = System.Console.ReadKey();
                                 DicConsole.WriteLine();
                             }
@@ -1868,7 +1898,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                             bingo.Write(buffer, 0, buffer.Length);
                                             bingo.Close();
                                         }
-                                        mediaTest.LongBlockSize = i;
+
+                                        mediaTest.LongBlockSize          = i;
                                         mediaTest.LongBlockSizeSpecified = true;
                                         break;
                                     }

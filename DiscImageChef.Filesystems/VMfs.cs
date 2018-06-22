@@ -48,9 +48,9 @@ namespace DiscImageChef.Filesystems
         const uint VMFS_BASE = 0x00100000;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "VMware filesystem";
-        public Guid Id => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "VMware filesystem";
+        public Guid           Id        => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -68,14 +68,14 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
-            ulong vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
-            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
+            ulong  vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
+            byte[] sector       = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
-            VolumeInfo volInfo = new VolumeInfo();
-            IntPtr volInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(volInfo));
+            VolumeInfo volInfo    = new VolumeInfo();
+            IntPtr     volInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(volInfo));
             Marshal.Copy(sector, 0, volInfoPtr, Marshal.SizeOf(volInfo));
             volInfo = (VolumeInfo)Marshal.PtrToStructure(volInfoPtr, typeof(VolumeInfo));
             Marshal.FreeHGlobal(volInfoPtr);
@@ -84,9 +84,9 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine("VMware file system");
 
-            uint ctimeSecs = (uint)(volInfo.ctime / 1000000);
+            uint ctimeSecs     = (uint)(volInfo.ctime / 1000000);
             uint ctimeNanoSecs = (uint)(volInfo.ctime % 1000000);
-            uint mtimeSecs = (uint)(volInfo.mtime / 1000000);
+            uint mtimeSecs     = (uint)(volInfo.mtime / 1000000);
             uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
             sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
@@ -95,8 +95,8 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
             sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
             sbInformation
-                .AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs))
-                .AppendLine();
+               .AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs))
+               .AppendLine();
             sbInformation.AppendFormat("Volume last modified on {0}",
                                        DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
 
@@ -104,14 +104,14 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "VMware file system",
-                CreationDate = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
-                CreationDateSpecified = true,
-                ModificationDate = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
+                Type                      = "VMware file system",
+                CreationDate              = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
+                CreationDateSpecified     = true,
+                ModificationDate          = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
                 ModificationDateSpecified = true,
-                Clusters = volInfo.size * 256 / imagePlugin.Info.SectorSize,
-                ClusterSize = (int)imagePlugin.Info.SectorSize,
-                VolumeSerial = volInfo.uuid.ToString()
+                Clusters                  = volInfo.size * 256 / imagePlugin.Info.SectorSize,
+                ClusterSize               = (int)imagePlugin.Info.SectorSize,
+                VolumeSerial              = volInfo.uuid.ToString()
             };
         }
 
@@ -127,14 +127,19 @@ namespace DiscImageChef.Filesystems
         {
             public uint magic;
             public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] unknown1;
             public byte lun;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)] public byte[] name;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 49)] public byte[] unknown3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] unknown2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
+            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 49)]
+            public byte[] unknown3;
             public uint size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)] public byte[] unknown4;
-            public Guid uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)]
+            public byte[] unknown4;
+            public Guid  uuid;
             public ulong ctime;
             public ulong mtime;
         }

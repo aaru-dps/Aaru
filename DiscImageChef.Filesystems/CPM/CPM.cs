@@ -60,7 +60,7 @@ namespace DiscImageChef.Filesystems.CPM
         ///     Stores all known CP/M disk definitions
         /// </summary>
         CpmDefinitions definitions;
-        IMediaImage    device;
+        IMediaImage device;
         /// <summary>
         ///     Cached directory listing
         /// </summary>
@@ -84,7 +84,7 @@ namespace DiscImageChef.Filesystems.CPM
         /// <summary>
         ///     Timestamp in volume label for update
         /// </summary>
-        byte[]    labelUpdateDate;
+        byte[] labelUpdateDate;
         bool      mounted;
         Partition partition;
         /// <summary>
@@ -118,7 +118,7 @@ namespace DiscImageChef.Filesystems.CPM
         public Guid           Id        => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
 
         static Dictionary<string, string> GetDefaultOptions()
         {

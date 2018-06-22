@@ -69,7 +69,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x07")
                     {
                         part = j;

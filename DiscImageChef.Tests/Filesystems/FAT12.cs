@@ -1719,8 +1719,8 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
                 Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                IFilesystem fs        = new FAT();
-                Partition   wholePart = new Partition
+                IFilesystem fs = new FAT();
+                Partition wholePart = new Partition
                 {
                     Name   = "Whole device",
                     Length = image.Info.Sectors,
@@ -1772,7 +1772,7 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "DOS_FAT_12")
                     {
                         part = j;
@@ -1826,7 +1826,7 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Microsoft Basic data")
                     {
                         part = j;

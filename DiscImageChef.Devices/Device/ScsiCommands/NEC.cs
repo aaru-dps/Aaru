@@ -54,8 +54,8 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.NecReadCdDa;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((lba & 0xFF00)     >> 8);
             cdb[5] = (byte)(lba & 0xFF);
             cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLength & 0xFF);

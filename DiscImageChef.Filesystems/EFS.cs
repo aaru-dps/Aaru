@@ -43,13 +43,13 @@ namespace DiscImageChef.Filesystems
 {
     public class EFS : IFilesystem
     {
-        const uint EFS_MAGIC = 0x00072959;
+        const uint EFS_MAGIC     = 0x00072959;
         const uint EFS_MAGIC_NEW = 0x0007295A;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Extent File System Plugin";
-        public Guid Id => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Extent File System Plugin";
+        public Guid           Id        => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -99,9 +99,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -160,7 +160,7 @@ namespace DiscImageChef.Filesystems
             if(efsSb.sb_replsb > 0)
                 sb.AppendFormat("Replacement superblock resides at block {0}", efsSb.sb_replsb).AppendLine();
             if(efsSb.sb_lastinode > 0) sb.AppendFormat("Last inode allocated: {0}", efsSb.sb_lastinode).AppendLine();
-            if(efsSb.sb_dirty > 0) sb.AppendLine("Volume is dirty");
+            if(efsSb.sb_dirty     > 0) sb.AppendLine("Volume is dirty");
             sb.AppendFormat("Checksum: 0x{0:X8}", efsSb.sb_checksum).AppendLine();
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(efsSb.sb_fname, Encoding)).AppendLine();
             sb.AppendFormat("Volume pack: {0}", StringHandlers.CToString(efsSb.sb_fpack, Encoding)).AppendLine();
@@ -169,15 +169,15 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Extent File System",
-                ClusterSize = 512,
-                Clusters = efsSb.sb_size,
-                FreeClusters = efsSb.sb_tfree,
+                Type                  = "Extent File System",
+                ClusterSize           = 512,
+                Clusters              = efsSb.sb_size,
+                FreeClusters          = efsSb.sb_tfree,
                 FreeClustersSpecified = true,
-                Dirty = efsSb.sb_dirty > 0,
-                VolumeName = StringHandlers.CToString(efsSb.sb_fname, Encoding),
-                VolumeSerial = $"{efsSb.sb_checksum:X8}",
-                CreationDate = DateHandlers.UnixToDateTime(efsSb.sb_time),
+                Dirty                 = efsSb.sb_dirty > 0,
+                VolumeName            = StringHandlers.CToString(efsSb.sb_fname, Encoding),
+                VolumeSerial          = $"{efsSb.sb_checksum:X8}",
+                CreationDate          = DateHandlers.UnixToDateTime(efsSb.sb_time),
                 CreationDateSpecified = true
             };
         }
@@ -209,9 +209,11 @@ namespace DiscImageChef.Filesystems
             /* 28:  magic [0] */
             public uint sb_magic;
             /* 32:  name of filesystem */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] sb_fname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] sb_fname;
             /* 38:  name of filesystem pack */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] sb_fpack;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] sb_fpack;
             /* 44:  bitmap size (in bytes) */
             public int sb_bmsize;
             /* 48:  total free data blocks */
@@ -225,7 +227,8 @@ namespace DiscImageChef.Filesystems
             /* 64:  last allocated inode */
             public int sb_lastinode;
             /* 68:  unused */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] sb_spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+            public byte[] sb_spare;
             /* 88:  checksum (all above) */
             public uint sb_checksum;
         }

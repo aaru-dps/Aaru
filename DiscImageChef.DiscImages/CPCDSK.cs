@@ -73,7 +73,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     Identifier for track information, "Track-Info\r\n"
         /// </summary>
-        readonly byte[]           trackId = {0x54, 0x72, 0x61, 0x63, 0x6B, 0x2D, 0x49, 0x6E, 0x66, 0x6F};
+        readonly byte[] trackId = {0x54, 0x72, 0x61, 0x63, 0x6B, 0x2D, 0x49, 0x6E, 0x66, 0x6F};
         Dictionary<ulong, byte[]> addressMarks;
 
         bool                      extended;
@@ -169,8 +169,8 @@ namespace DiscImageChef.DiscImages
                                       StringHandlers.CToString(header.magic2));
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.creator = \"{0}\"",
                                       StringHandlers.CToString(header.creator));
-            DicConsole.DebugWriteLine("CPCDSK plugin",               "header.tracks = {0}",    header.tracks);
-            DicConsole.DebugWriteLine("CPCDSK plugin",               "header.sides = {0}",     header.sides);
+            DicConsole.DebugWriteLine("CPCDSK plugin", "header.tracks = {0}", header.tracks);
+            DicConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}",  header.sides);
             if(!extended) DicConsole.DebugWriteLine("CPCDSK plugin", "header.tracksize = {0}", header.tracksize);
             else
                 for(int i = 0; i < header.tracks; i++)
@@ -180,9 +180,9 @@ namespace DiscImageChef.DiscImages
                                                   header.tracksizeTable[i * header.sides + j] * 256);
                 }
 
-            ulong currentSector     = 0;
-            sectors                 = new Dictionary<ulong, byte[]>();
-            addressMarks            = new Dictionary<ulong, byte[]>();
+            ulong currentSector = 0;
+            sectors      = new Dictionary<ulong, byte[]>();
+            addressMarks = new Dictionary<ulong, byte[]>();
             ulong readtracks        = 0;
             bool  allTracksSameSize = true;
             ulong sectorsPerTrack   = 0;
@@ -230,7 +230,7 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].side = {0}",  trackInfo.side,  i, j);
                     DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
 
-                    if(trackInfo.sectors   != sectorsPerTrack)
+                    if(trackInfo.sectors != sectorsPerTrack)
                         if(sectorsPerTrack == 0)
                             sectorsPerTrack = trackInfo.sectors;
                         else
@@ -257,7 +257,7 @@ namespace DiscImageChef.DiscImages
                                                   trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
                         int sectLen = extended
-                                          ? trackInfo.sectorsInfo[k                 - 1].len
+                                          ? trackInfo.sectorsInfo[k - 1].len
                                           : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
 
                         byte[] sector = new byte[sectLen];
@@ -279,14 +279,14 @@ namespace DiscImageChef.DiscImages
                         thisTrackSectors[(trackInfo.sectorsInfo[k - 1].id & 0x3F) - 1] = sector;
 
                         byte[] amForCrc = new byte[8];
-                        amForCrc[0]     = 0xA1;
-                        amForCrc[1]     = 0xA1;
-                        amForCrc[2]     = 0xA1;
-                        amForCrc[3]     = (byte)IBMIdType.AddressMark;
-                        amForCrc[4]     = trackInfo.sectorsInfo[k       - 1].track;
-                        amForCrc[5]     = trackInfo.sectorsInfo[k       - 1].side;
-                        amForCrc[6]     = trackInfo.sectorsInfo[k       - 1].id;
-                        amForCrc[7]     = (byte)trackInfo.sectorsInfo[k - 1].size;
+                        amForCrc[0] = 0xA1;
+                        amForCrc[1] = 0xA1;
+                        amForCrc[2] = 0xA1;
+                        amForCrc[3] = (byte)IBMIdType.AddressMark;
+                        amForCrc[4] = trackInfo.sectorsInfo[k - 1].track;
+                        amForCrc[5] = trackInfo.sectorsInfo[k - 1].side;
+                        amForCrc[6] = trackInfo.sectorsInfo[k - 1].id;
+                        amForCrc[7] = (byte)trackInfo.sectorsInfo[k - 1].size;
 
                         Crc16Context.Data(amForCrc, 8, out byte[] amCrc);
 
@@ -309,8 +309,7 @@ namespace DiscImageChef.DiscImages
                     stream.Seek(trackPos, SeekOrigin.Begin);
                     if(extended)
                     {
-                        stream.Seek(header.tracksizeTable[i * header.sides + j] * 256,
-                                    SeekOrigin.Current);
+                        stream.Seek(header.tracksizeTable[i * header.sides + j] * 256, SeekOrigin.Current);
                         imageInfo.ImageSize += (ulong)(header.tracksizeTable[i * header.sides + j] * 256) - 256;
                     }
                     else
@@ -480,8 +479,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -490,8 +489,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

@@ -61,7 +61,7 @@ namespace DiscImageChef.Devices
         /// <param name="startingFeatureNumber">Feature number where the feature list should start from</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool GetConfiguration(out byte[] buffer, out  byte[] senseBuffer, ushort startingFeatureNumber,
+        public bool GetConfiguration(out byte[] buffer,  out byte[] senseBuffer, ushort startingFeatureNumber,
                                      uint       timeout, out double duration)
         {
             return GetConfiguration(out buffer, out senseBuffer, startingFeatureNumber, MmcGetConfigurationRt.All,
@@ -78,19 +78,20 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="startingFeatureNumber">Starting Feature number.</param>
         /// <param name="rt">Return type, <see cref="MmcGetConfigurationRt" />.</param>
-        public bool GetConfiguration(out byte[]            buffer, out byte[] senseBuffer, ushort startingFeatureNumber,
-                                     MmcGetConfigurationRt rt, uint           timeout, out double duration)
+        public bool GetConfiguration(out byte[]            buffer, out byte[] senseBuffer,
+                                     ushort                startingFeatureNumber,
+                                     MmcGetConfigurationRt rt, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb  = new byte[10];
-            buffer      = new byte[8];
+            byte[] cdb = new byte[10];
+            buffer = new byte[8];
 
             cdb[0] = (byte)ScsiCommands.GetConfiguration;
-            cdb[1] = (byte)((byte)rt               & 0x03);
+            cdb[1] = (byte)((byte)rt & 0x03);
             cdb[2] = (byte)((startingFeatureNumber & 0xFF00) >> 8);
-            cdb[3] = (byte)(startingFeatureNumber  & 0xFF);
-            cdb[7] = (byte)((buffer.Length         & 0xFF00) >> 8);
-            cdb[8] = (byte)(buffer.Length          & 0xFF);
+            cdb[3] = (byte)(startingFeatureNumber & 0xFF);
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
             cdb[9] = 0;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -100,10 +101,10 @@ namespace DiscImageChef.Devices
             if(sense) return true;
 
             ushort confLength = (ushort)((buffer[2] << 8) + buffer[3] + 4);
-            buffer            = new byte[confLength];
-            cdb[7]            = (byte)((buffer.Length & 0xFF00) >> 8);
-            cdb[8]            = (byte)(buffer.Length  & 0xFF);
-            senseBuffer       = new byte[32];
+            buffer      = new byte[confLength];
+            cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8]      = (byte)(buffer.Length & 0xFF);
+            senseBuffer = new byte[32];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -127,26 +128,26 @@ namespace DiscImageChef.Devices
         /// <param name="format">Which disc structure are we requesting</param>
         /// <param name="agid">AGID used in medium copy protection</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, MmcDiscStructureMediaType mediaType,
-                                      uint       address, byte      layerNumber, MmcDiscStructureFormat    format,
+        public bool ReadDiscStructure(out byte[] buffer,  out byte[] senseBuffer, MmcDiscStructureMediaType mediaType,
+                                      uint       address, byte       layerNumber, MmcDiscStructureFormat    format,
                                       byte       agid,
                                       uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb  = new byte[12];
-            buffer      = new byte[8];
+            byte[] cdb = new byte[12];
+            buffer = new byte[8];
 
             cdb[0]  = (byte)ScsiCommands.ReadDiscStructure;
             cdb[1]  = (byte)((byte)mediaType & 0x0F);
-            cdb[2]  = (byte)((address        & 0xFF000000) >> 24);
-            cdb[3]  = (byte)((address        & 0xFF0000)   >> 16);
-            cdb[4]  = (byte)((address        & 0xFF00)     >> 8);
-            cdb[5]  = (byte)(address         & 0xFF);
+            cdb[2]  = (byte)((address & 0xFF000000) >> 24);
+            cdb[3]  = (byte)((address & 0xFF0000)   >> 16);
+            cdb[4]  = (byte)((address & 0xFF00)     >> 8);
+            cdb[5]  = (byte)(address & 0xFF);
             cdb[6]  = layerNumber;
             cdb[7]  = (byte)format;
             cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
-            cdb[9]  = (byte)(buffer.Length  & 0xFF);
-            cdb[10] = (byte)((agid          & 0x03) << 6);
+            cdb[9]  = (byte)(buffer.Length & 0xFF);
+            cdb[10] = (byte)((agid & 0x03) << 6);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
@@ -155,10 +156,9 @@ namespace DiscImageChef.Devices
             if(sense) return true;
 
             ushort strctLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
-            
+
             // WORKAROUND: Some drives return incorrect length information. As these structures are fixed length just apply known length.
             if(mediaType == MmcDiscStructureMediaType.Bd)
-            {
                 switch(format)
                 {
                     case MmcDiscStructureFormat.DiscInformation:
@@ -180,12 +180,10 @@ namespace DiscImageChef.Devices
                         buffer = new byte[strctLength];
                         break;
                 }
-            }
-            else
-                buffer             = new byte[strctLength];
-            cdb[8]             = (byte)((buffer.Length & 0xFF00) >> 8);
-            cdb[9]             = (byte)(buffer.Length  & 0xFF);
-            senseBuffer        = new byte[32];
+            else buffer = new byte[strctLength];
+            cdb[8]      = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[9]      = (byte)(buffer.Length & 0xFF);
+            senseBuffer = new byte[32];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -319,27 +317,27 @@ namespace DiscImageChef.Devices
         /// <param name="trackSessionNumber">Track/Session number</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadTocPmaAtip(out byte[] buffer, out byte[]       senseBuffer, bool   msf, byte format,
-                                   byte       trackSessionNumber, uint timeout, out double duration)
+        public bool ReadTocPmaAtip(out byte[] buffer,             out byte[] senseBuffer, bool       msf, byte format,
+                                   byte       trackSessionNumber, uint       timeout,     out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb  = new byte[10];
+            byte[] cdb = new byte[10];
 
             byte[] tmpBuffer = (format & 0x0F) == 5 ? new byte[32768] : new byte[1024];
 
-            cdb[0]         = (byte)ScsiCommands.ReadTocPmaAtip;
+            cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
             if(msf) cdb[1] = 0x02;
-            cdb[2]         = (byte)(format & 0x0F);
-            cdb[6]         = trackSessionNumber;
-            cdb[7]         = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
-            cdb[8]         = (byte)(tmpBuffer.Length  & 0xFF);
+            cdb[2] = (byte)(format & 0x0F);
+            cdb[6] = trackSessionNumber;
+            cdb[7] = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
             Error = LastError != 0;
 
             uint strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
-            buffer           = new byte[strctLength];
+            buffer = new byte[strctLength];
 
             if(buffer.Length <= tmpBuffer.Length)
             {
@@ -386,23 +384,23 @@ namespace DiscImageChef.Devices
                                         MmcDiscInformationDataTypes dataType,
                                         uint                        timeout, out double duration)
         {
-            senseBuffer      = new byte[32];
+            senseBuffer = new byte[32];
             byte[] cdb       = new byte[10];
             byte[] tmpBuffer = new byte[804];
 
             cdb[0] = (byte)ScsiCommands.ReadDiscInformation;
             cdb[1] = (byte)dataType;
             cdb[7] = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
-            cdb[8] = (byte)(tmpBuffer.Length  & 0xFF);
+            cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
             Error = LastError != 0;
 
-            uint strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
+            uint strctLength                               = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
             if(strctLength > tmpBuffer.Length) strctLength = (uint)tmpBuffer.Length;
 
-            buffer           = new byte[strctLength];
+            buffer = new byte[strctLength];
             Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
             DicConsole.DebugWriteLine("SCSI Device", "READ DISC INFORMATION took {0} ms.", duration);
@@ -430,32 +428,34 @@ namespace DiscImageChef.Devices
         /// <param name="edcEcc">If set to <c>true</c> we request the EDC/ECC fields for data sectors.</param>
         /// <param name="c2Error">C2 error options.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool ReadCd(out byte[]     buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                           uint           transferLength,
-                           MmcSectorTypes expectedSectorType, bool dap, bool           relAddr, bool         sync,
-                           MmcHeaderCodes headerCodes, bool        userData, bool      edcEcc, MmcErrorField c2Error,
-                           MmcSubchannel  subchannel, uint         timeout, out double duration)
+        public bool ReadCd(out byte[]     buffer,             out byte[] senseBuffer, uint lba,
+                           uint           blockSize,          uint       transferLength,
+                           MmcSectorTypes expectedSectorType, bool       dap, bool relAddr,
+                           bool           sync,
+                           MmcHeaderCodes headerCodes, bool userData, bool edcEcc,
+                           MmcErrorField  c2Error,
+                           MmcSubchannel  subchannel, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb  = new byte[12];
+            byte[] cdb = new byte[12];
 
-            cdb[0]              =  (byte)ScsiCommands.ReadCd;
-            cdb[1]              =  (byte)((byte)expectedSectorType << 2);
-            if(dap) cdb[1]      += 0x02;
-            if(relAddr) cdb[1]  += 0x01;
-            cdb[2]              =  (byte)((lba            & 0xFF000000) >> 24);
-            cdb[3]              =  (byte)((lba            & 0xFF0000)   >> 16);
-            cdb[4]              =  (byte)((lba            & 0xFF00)     >> 8);
-            cdb[5]              =  (byte)(lba             & 0xFF);
-            cdb[6]              =  (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[7]              =  (byte)((transferLength & 0xFF00)   >> 8);
-            cdb[8]              =  (byte)(transferLength  & 0xFF);
-            cdb[9]              =  (byte)((byte)c2Error     << 1);
-            cdb[9]              += (byte)((byte)headerCodes << 5);
+            cdb[0] = (byte)ScsiCommands.ReadCd;
+            cdb[1] = (byte)((byte)expectedSectorType << 2);
+            if(dap) cdb[1]     += 0x02;
+            if(relAddr) cdb[1] += 0x01;
+            cdb[2] =  (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] =  (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4] =  (byte)((lba & 0xFF00)     >> 8);
+            cdb[5] =  (byte)(lba & 0xFF);
+            cdb[6] =  (byte)((transferLength & 0xFF0000) >> 16);
+            cdb[7] =  (byte)((transferLength & 0xFF00)   >> 8);
+            cdb[8] =  (byte)(transferLength & 0xFF);
+            cdb[9] =  (byte)((byte)c2Error     << 1);
+            cdb[9] += (byte)((byte)headerCodes << 5);
             if(sync) cdb[9]     += 0x80;
             if(userData) cdb[9] += 0x10;
             if(edcEcc) cdb[9]   += 0x08;
-            cdb[10]             =  (byte)subchannel;
+            cdb[10] = (byte)subchannel;
 
             buffer = new byte[blockSize * transferLength];
 
@@ -487,32 +487,32 @@ namespace DiscImageChef.Devices
         /// <param name="edcEcc">If set to <c>true</c> we request the EDC/ECC fields for data sectors.</param>
         /// <param name="c2Error">C2 error options.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool ReadCdMsf(out byte[]     buffer, out byte[]       senseBuffer, uint startMsf,
-                              uint           endMsf, uint             blockSize,
-                              MmcSectorTypes expectedSectorType, bool dap, bool sync,
+        public bool ReadCdMsf(out byte[]     buffer,             out byte[] senseBuffer, uint startMsf,
+                              uint           endMsf,             uint       blockSize,
+                              MmcSectorTypes expectedSectorType, bool       dap, bool sync,
                               MmcHeaderCodes headerCodes,
-                              bool           userData, bool   edcEcc, MmcErrorField c2Error,
+                              bool           userData,   bool edcEcc, MmcErrorField c2Error,
                               MmcSubchannel  subchannel, uint timeout,
                               out double     duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb  = new byte[12];
+            byte[] cdb = new byte[12];
 
-            cdb[0]              =  (byte)ScsiCommands.ReadCdMsf;
-            cdb[1]              =  (byte)((byte)expectedSectorType << 2);
-            if(dap) cdb[1]      += 0x02;
-            cdb[3]              =  (byte)((startMsf & 0xFF0000) >> 16);
-            cdb[4]              =  (byte)((startMsf & 0xFF00)   >> 8);
-            cdb[5]              =  (byte)(startMsf  & 0xFF);
-            cdb[6]              =  (byte)((endMsf   & 0xFF0000) >> 16);
-            cdb[7]              =  (byte)((endMsf   & 0xFF00)   >> 8);
-            cdb[8]              =  (byte)(endMsf    & 0xFF);
-            cdb[9]              =  (byte)((byte)c2Error     << 1);
-            cdb[9]              += (byte)((byte)headerCodes << 5);
+            cdb[0] = (byte)ScsiCommands.ReadCdMsf;
+            cdb[1] = (byte)((byte)expectedSectorType << 2);
+            if(dap) cdb[1] += 0x02;
+            cdb[3] =  (byte)((startMsf & 0xFF0000) >> 16);
+            cdb[4] =  (byte)((startMsf & 0xFF00)   >> 8);
+            cdb[5] =  (byte)(startMsf & 0xFF);
+            cdb[6] =  (byte)((endMsf & 0xFF0000) >> 16);
+            cdb[7] =  (byte)((endMsf & 0xFF00)   >> 8);
+            cdb[8] =  (byte)(endMsf & 0xFF);
+            cdb[9] =  (byte)((byte)c2Error     << 1);
+            cdb[9] += (byte)((byte)headerCodes << 5);
             if(sync) cdb[9]     += 0x80;
             if(userData) cdb[9] += 0x10;
             if(edcEcc) cdb[9]   += 0x08;
-            cdb[10]             =  (byte)subchannel;
+            cdb[10] = (byte)subchannel;
 
             uint transferLength = (uint)((cdb[6] - cdb[3]) * 60 * 75 + (cdb[7] - cdb[4]) * 75 + (cdb[8] - cdb[5]));
 
@@ -540,11 +540,11 @@ namespace DiscImageChef.Devices
         public bool PreventAllowMediumRemoval(out byte[] senseBuffer, bool persistent, bool prevent, uint timeout,
                                               out double duration)
         {
-            senseBuffer   = new byte[32];
+            senseBuffer = new byte[32];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
-            cdb[0]                =  (byte)ScsiCommands.PreventAllowMediumRemoval;
+            cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
             if(prevent) cdb[4]    += 0x01;
             if(persistent) cdb[4] += 0x02;
 
@@ -577,15 +577,15 @@ namespace DiscImageChef.Devices
             return StartStopUnit(out senseBuffer, false, 0, 0, false, false, false, timeout, out duration);
         }
 
-        public bool StartStopUnit(out byte[] senseBuffer, bool       immediate, byte formatLayer, byte powerConditions,
-                                  bool       changeFormatLayer, bool loadEject, bool start, uint       timeout,
+        public bool StartStopUnit(out byte[] senseBuffer,       bool immediate, byte formatLayer, byte powerConditions,
+                                  bool       changeFormatLayer, bool loadEject, bool start,       uint timeout,
                                   out double duration)
         {
-            senseBuffer   = new byte[32];
+            senseBuffer = new byte[32];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
-            cdb[0]               =  (byte)ScsiCommands.StartStopUnit;
+            cdb[0] = (byte)ScsiCommands.StartStopUnit;
             if(immediate) cdb[1] += 0x01;
             if(changeFormatLayer)
             {
@@ -613,15 +613,15 @@ namespace DiscImageChef.Devices
                             out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb  = new byte[10];
-            mcn         = null;
+            byte[] cdb = new byte[10];
+            mcn = null;
 
             cdb[0] = (byte)ScsiCommands.ReadSubChannel;
             cdb[1] = 0;
             cdb[2] = 0x40;
             cdb[3] = 0x02;
             cdb[7] = (23 & 0xFF00) >> 8;
-            cdb[8] = 23  & 0xFF;
+            cdb[8] = 23 & 0xFF;
 
             buffer = new byte[23];
 
@@ -636,12 +636,13 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadIsrc(byte trackNumber, out string isrc, out byte[] buffer, out byte[] senseBuffer, uint timeout,
-                             out                   double duration)
+        public bool ReadIsrc(byte       trackNumber, out string isrc, out byte[] buffer, out byte[] senseBuffer,
+                             uint       timeout,
+                             out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb  = new byte[10];
-            isrc        = null;
+            byte[] cdb = new byte[10];
+            isrc = null;
 
             cdb[0] = (byte)ScsiCommands.ReadSubChannel;
             cdb[1] = 0;
@@ -649,7 +650,7 @@ namespace DiscImageChef.Devices
             cdb[3] = 0x03;
             cdb[6] = trackNumber;
             cdb[7] = (23 & 0xFF00) >> 8;
-            cdb[8] = 23  & 0xFF;
+            cdb[8] = 23 & 0xFF;
 
             buffer = new byte[23];
 

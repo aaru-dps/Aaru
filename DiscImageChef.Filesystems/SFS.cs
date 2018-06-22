@@ -47,9 +47,9 @@ namespace DiscImageChef.Filesystems
         const uint SFS2_MAGIC = 0x53465302;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "SmartFileSystem";
-        public Guid Id => new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "SmartFileSystem";
+        public Guid           Id        => new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -65,11 +65,11 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-            byte[] rootBlockSector = imagePlugin.ReadSector(partition.Start);
-            RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
+            byte[]    rootBlockSector = imagePlugin.ReadSector(partition.Start);
+            RootBlock rootBlock       = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
             StringBuilder sbInformation = new StringBuilder();
 
@@ -79,8 +79,8 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte,
                                        rootBlock.lastbyte).AppendLine();
             sbInformation
-                .AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize)
-                .AppendLine();
+               .AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize)
+               .AppendLine();
             sbInformation.AppendFormat("Volume created on {0}",
                                        DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8))
                          .AppendLine();
@@ -100,11 +100,11 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                CreationDate = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
+                CreationDate          = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
                 CreationDateSpecified = true,
-                Clusters = rootBlock.totalblocks,
-                ClusterSize = (int)rootBlock.blocksize,
-                Type = "SmartFileSystem"
+                Clusters              = rootBlock.totalblocks,
+                ClusterSize           = (int)rootBlock.blocksize,
+                Type                  = "SmartFileSystem"
             };
         }
 
@@ -118,28 +118,32 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RootBlock
         {
-            public uint blockId;
-            public uint blockChecksum;
-            public uint blockSelfPointer;
-            public ushort version;
-            public ushort sequence;
-            public uint datecreated;
+            public uint     blockId;
+            public uint     blockChecksum;
+            public uint     blockSelfPointer;
+            public ushort   version;
+            public ushort   sequence;
+            public uint     datecreated;
             public SFSFlags bits;
-            public byte padding1;
-            public ushort padding2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved1;
+            public byte     padding1;
+            public ushort   padding2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public uint[] reserved1;
             public ulong firstbyte;
             public ulong lastbyte;
-            public uint totalblocks;
-            public uint blocksize;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] reserved3;
+            public uint  totalblocks;
+            public uint  blocksize;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public uint[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public uint[] reserved3;
             public uint bitmapbase;
             public uint adminspacecontainer;
             public uint rootobjectcontainer;
             public uint extentbnoderoot;
             public uint objectnoderoot;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] reserved4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public uint[] reserved4;
         }
     }
 }

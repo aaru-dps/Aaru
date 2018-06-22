@@ -42,18 +42,18 @@ namespace DiscImageChef.Filesystems
     public class APFS : IFilesystem
     {
         const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
-        const uint APFS_VOLUME_MAGIC = 0x42535041; // "APSB"
+        const uint APFS_VOLUME_MAGIC    = 0x42535041; // "APSB"
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Apple File System";
-        public Guid Id => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Apple File System";
+        public Guid           Id        => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
+            byte[]                  sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
             try
@@ -69,16 +69,16 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = Encoding.UTF8;
             StringBuilder sbInformation = new StringBuilder();
-            XmlFsType = new FileSystemType();
+            XmlFsType   = new FileSystemType();
             information = "";
 
             if(partition.Start >= partition.End) return;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
+            byte[]                  sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
             try
@@ -102,10 +102,10 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Bootable = false,
-                Clusters = (long)nxSb.containerBlocks,
+                Bootable    = false,
+                Clusters    = (long)nxSb.containerBlocks,
                 ClusterSize = (int)nxSb.blockSize,
-                Type = "Apple File System"
+                Type        = "Apple File System"
             };
         }
 
@@ -116,8 +116,8 @@ namespace DiscImageChef.Filesystems
             public ulong unknown2;
             public ulong unknown3; // Varies by 1 between copies of the superblock
             public ulong unknown4;
-            public uint magic;
-            public uint blockSize;
+            public uint  magic;
+            public uint  blockSize;
             public ulong containerBlocks;
         }
     }

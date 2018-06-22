@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             xattrs = new List<string>();
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+            if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) { }
             else
@@ -88,7 +88,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             string filename = pathElements[0].ToUpperInvariant();
             if(filename.Length > 30) return Errno.NameTooLong;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+            if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
                 return Errno.NoSuchExtendedAttribute;
@@ -99,7 +99,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             {
                 if(!fileTypeCache.TryGetValue(filename, out byte type)) return Errno.InvalidArgument;
 
-                buf = new byte[1];
+                buf    = new byte[1];
                 buf[0] = type;
                 return Errno.NoError;
             }

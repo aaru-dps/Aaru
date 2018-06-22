@@ -46,15 +46,15 @@ namespace DiscImageChef.Commands
     {
         internal static void DoAnalyze(AnalyzeOptions options)
         {
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",       options.Debug);
+            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}",     options.Verbose);
+            DicConsole.DebugWriteLine("Analyze command", "--input={0}",       options.InputFile);
             DicConsole.DebugWriteLine("Analyze command", "--filesystems={0}", options.SearchForFilesystems);
-            DicConsole.DebugWriteLine("Analyze command", "--partitions={0}", options.SearchForPartitions);
-            DicConsole.DebugWriteLine("Analyze command", "--encoding={0}", options.EncodingName);
+            DicConsole.DebugWriteLine("Analyze command", "--partitions={0}",  options.SearchForPartitions);
+            DicConsole.DebugWriteLine("Analyze command", "--encoding={0}",    options.EncodingName);
 
             FiltersList filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -124,8 +124,8 @@ namespace DiscImageChef.Commands
                 }
 
                 List<string> idPlugins;
-                IFilesystem plugin;
-                string information;
+                IFilesystem  plugin;
+                string       information;
                 if(options.SearchForPartitions)
                 {
                     List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
@@ -149,7 +149,7 @@ namespace DiscImageChef.Commands
                         for(int i = 0; i < partitions.Count; i++)
                         {
                             DicConsole.WriteLine();
-                            DicConsole.WriteLine("Partition {0}:", partitions[i].Sequence);
+                            DicConsole.WriteLine("Partition {0}:",      partitions[i].Sequence);
                             DicConsole.WriteLine("Partition name: {0}", partitions[i].Name);
                             DicConsole.WriteLine("Partition type: {0}", partitions[i].Type);
                             DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].Start,
@@ -165,7 +165,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Identifying filesystem on partition");
 
                             Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
-                            if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                            if(idPlugins.Count      == 0) DicConsole.WriteLine("Filesystem not identified");
                             else if(idPlugins.Count > 1)
                             {
                                 DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
@@ -197,13 +197,13 @@ namespace DiscImageChef.Commands
                 {
                     Partition wholePart = new Partition
                     {
-                        Name = "Whole device",
+                        Name   = "Whole device",
                         Length = imageFormat.Info.Sectors,
-                        Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
+                        Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                     };
 
                     Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
-                    if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                    if(idPlugins.Count      == 0) DicConsole.WriteLine("Filesystem not identified");
                     else if(idPlugins.Count > 1)
                     {
                         DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");

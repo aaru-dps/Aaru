@@ -71,9 +71,9 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void CheckMediaCardType(string devPath, Device dev)
         {
-            byte feature = 0;
+            byte   feature = 0;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -125,7 +125,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending CHECK MEDIA CARD TYPE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
+            DicConsole.WriteLine("Sense is {0}.",        sense);
             DicConsole.WriteLine("CHECK MEDIA CARD TYPE status registers:");
             DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();

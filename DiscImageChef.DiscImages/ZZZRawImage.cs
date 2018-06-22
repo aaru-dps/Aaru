@@ -50,8 +50,7 @@ namespace DiscImageChef.DiscImages
 {
     public class ZZZRawImage : IWritableImage
     {
-        readonly byte[] cdSync =
-            {0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00};
+        readonly byte[] cdSync = {0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00};
         readonly (MediaTagType tag, string name)[] readWriteSidecars =
         {
             (MediaTagType.ATA_IDENTIFY, ".identify.bin"), (MediaTagType.BD_DI, ".di.bin"),
@@ -142,11 +141,11 @@ namespace DiscImageChef.DiscImages
                     TrackRawBytesPerSector = rawCompactDisc ? 2352 : (int)imageInfo.SectorSize,
                     TrackSequence          = 1,
                     TrackStartSector       = 0,
-                    TrackSubchannelType    =
+                    TrackSubchannelType =
                         hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
                     TrackType = rawCompactDisc
-                                                 ? (mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1)
-                                                 : TrackType.Data,
+                                    ? (mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1)
+                                    : TrackType.Data,
                     TrackSession = 1
                 };
                 List<Track> lst = new List<Track> {trk};
@@ -182,7 +181,7 @@ namespace DiscImageChef.DiscImages
                     throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
                 List<Partition> parts = new List<Partition>();
-                Partition       part  = new Partition
+                Partition part = new Partition
                 {
                     Start    = 0,
                     Length   = imageInfo.Sectors,
@@ -209,8 +208,8 @@ namespace DiscImageChef.DiscImages
             if(imageFilter.GetDataForkLength() % 2352 == 0 && imageFilter.GetDataForkLength() <= 846720000 ||
                imageFilter.GetDataForkLength() % 2448 == 0 && imageFilter.GetDataForkLength() <= 881280000)
             {
-                byte[] sync     = new byte[12];
-                Stream stream   = imageFilter.GetDataForkStream();
+                byte[] sync   = new byte[12];
+                Stream stream = imageFilter.GetDataForkStream();
                 stream.Position = 0;
                 stream.Read(sync, 0, 12);
                 return cdSync.SequenceEqual(sync);
@@ -242,7 +241,7 @@ namespace DiscImageChef.DiscImages
                 case 1222400:
                 case 1304320:
                 case 1255168: return true;
-                default:      return false;
+                default: return false;
             }
         }
 
@@ -261,12 +260,10 @@ namespace DiscImageChef.DiscImages
                     imageInfo.SectorSize = 256;
                     break;
                 default:
-                    if((extension                           == ".adf" || extension                       == ".adl" ||
-                        extension                           == ".ssd" || extension                       == ".dsd") &&
-                       (imageFilter.GetDataForkLength()     == 163840 || imageFilter.GetDataForkLength() == 327680 ||
-                        imageFilter.GetDataForkLength()     == 655360)) imageInfo.SectorSize = 256;
-                    else if((extension                      == ".adf" || extension == ".adl") &&
-                            imageFilter.GetDataForkLength() == 819200)
+                    if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
+                       (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 ||
+                        imageFilter.GetDataForkLength() == 655360)) imageInfo.SectorSize = 256;
+                    else if((extension == ".adf" || extension == ".adl") && imageFilter.GetDataForkLength() == 819200)
                         imageInfo.SectorSize = 1024;
                     else
                         switch(imageFilter.GetDataForkLength())
@@ -448,7 +445,7 @@ namespace DiscImageChef.DiscImages
             }
 
             // Sharp X68000 SASI hard disks
-            if(extension                     == ".hdf")
+            if(extension == ".hdf")
                 if(imageInfo.ImageSize % 256 == 0)
                 {
                     imageInfo.SectorSize = 256;
@@ -458,7 +455,7 @@ namespace DiscImageChef.DiscImages
 
             // Search for known tags
             string basename = imageFilter.GetBasePath();
-            basename        = basename.Substring(0, basename.Length - extension.Length);
+            basename = basename.Substring(0, basename.Length - extension.Length);
 
             mediaTags = new Dictionary<MediaTagType, byte[]>();
             foreach((MediaTagType tag, string name) sidecar in readWriteSidecars)
@@ -1005,8 +1002,8 @@ namespace DiscImageChef.DiscImages
                             Modes.ModePage_04? mode04 = Modes.DecodeModePage_04(page.PageResponse);
                             if(!mode04.HasValue) continue;
 
-                            imageInfo.Cylinders       = mode04.Value.Cylinders;
-                            imageInfo.Heads           = mode04.Value.Heads;
+                            imageInfo.Cylinders = mode04.Value.Cylinders;
+                            imageInfo.Heads     = mode04.Value.Heads;
                             imageInfo.SectorsPerTrack =
                                 (uint)(imageInfo.Sectors / (mode04.Value.Cylinders * mode04.Value.Heads));
                         }
@@ -1026,8 +1023,7 @@ namespace DiscImageChef.DiscImages
                 {
                     imageInfo.DriveManufacturer =
                         VendorString.Prettify(StringHandlers.CToString(scsiInq.Value.VendorIdentification).Trim());
-                    imageInfo.DriveModel =
-                        StringHandlers.CToString(scsiInq.Value.ProductIdentification).Trim();
+                    imageInfo.DriveModel = StringHandlers.CToString(scsiInq.Value.ProductIdentification).Trim();
                     imageInfo.DriveFirmwareRevision =
                         StringHandlers.CToString(scsiInq.Value.ProductRevisionLevel).Trim();
                     imageInfo.MediaType = MediaTypeFromScsi.Get((byte)devType, imageInfo.DriveManufacturer,
@@ -1035,7 +1031,7 @@ namespace DiscImageChef.DiscImages
                                                                 imageInfo.Sectors, imageInfo.SectorSize);
                 }
 
-                if(imageInfo.MediaType            == MediaType.Unknown)
+                if(imageInfo.MediaType == MediaType.Unknown)
                     imageInfo.MediaType = devType == PeripheralDeviceTypes.OpticalDevice
                                               ? MediaType.UnknownMO
                                               : MediaType.GENERIC_HDD;
@@ -1115,7 +1111,7 @@ namespace DiscImageChef.DiscImages
                 try
                 {
                     StreamReader sr = new StreamReader(basename + "cicm.xml");
-                    CicmMetadata    = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                    CicmMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
                     sr.Close();
                 }
                 catch
@@ -1196,9 +1192,7 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[sectorSize * length];
 
             BinaryReader br = new BinaryReader(stream);
-            br.BaseStream
-              .Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
@@ -1228,8 +1222,8 @@ namespace DiscImageChef.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             if(!rawCompactDisc)
             {
@@ -1244,8 +1238,8 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1268,8 +1262,8 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             if(!rawCompactDisc)
             {
@@ -1284,8 +1278,8 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1505,9 +1499,7 @@ namespace DiscImageChef.DiscImages
 
             Stream       stream = rawImageFilter.GetDataForkStream();
             BinaryReader br     = new BinaryReader(stream);
-            br.BaseStream
-              .Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
@@ -1593,7 +1585,7 @@ namespace DiscImageChef.DiscImages
             readWriteSidecars.Concat(writeOnlySidecars).OrderBy(t => t.tag).Select(t => t.tag).ToArray();
 
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes
+        public IEnumerable<MediaType> SupportedMediaTypes
         {
             get
             {
@@ -1874,7 +1866,7 @@ namespace DiscImageChef.DiscImages
                 case 737280: return MediaType.DOS_35_DS_DD_9;
                 case 819200:
                     if(imageInfo.SectorSize == 256) return MediaType.CBM_35_DD;
-                    if((extension           == ".adf" || extension == ".adl") && imageInfo.SectorSize == 1024)
+                    if((extension == ".adf" || extension == ".adl") && imageInfo.SectorSize == 1024)
                         return MediaType.ACORN_35_DS_DD;
                     if(extension == ".st") return MediaType.ATARI_35_DS_DD;
 

@@ -188,7 +188,7 @@ namespace DiscImageChef.DiscImages
             try
             {
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-                cueStream      = new StreamReader(imageFilter.GetDataForkStream());
+                cueStream = new StreamReader(imageFilter.GetDataForkStream());
                 int lineNumber = 0;
 
                 Regex ccdIdRegex     = new Regex(CCD_IDENTIFIER);
@@ -233,8 +233,8 @@ namespace DiscImageChef.DiscImages
                 int                               maxSession   = int.MinValue;
                 FullTOC.TrackDataDescriptor       currentEntry = new FullTOC.TrackDataDescriptor();
                 List<FullTOC.TrackDataDescriptor> entries      = new List<FullTOC.TrackDataDescriptor>();
-                scrambled                                      = false;
-                catalog                                        = null;
+                scrambled = false;
+                catalog   = null;
 
                 while(cueStream.Peek() >= 0)
                 {
@@ -371,8 +371,7 @@ namespace DiscImageChef.DiscImages
                             if(entSessMatch.Success)
                             {
                                 DicConsole.DebugWriteLine("CloneCD plugin", "Found Session at line {0}", lineNumber);
-                                currentEntry.SessionNumber =
-                                    Convert.ToByte(entSessMatch.Groups["value"].Value, 10);
+                                currentEntry.SessionNumber = Convert.ToByte(entSessMatch.Groups["value"].Value, 10);
                                 if(currentEntry.SessionNumber < minSession) minSession = currentEntry.SessionNumber;
                                 if(currentEntry.SessionNumber > maxSession) maxSession = currentEntry.SessionNumber;
                             }
@@ -418,7 +417,7 @@ namespace DiscImageChef.DiscImages
                                 DicConsole.DebugWriteLine("CloneCD plugin", "Found Zero at line {0}", lineNumber);
                                 currentEntry.Zero  = Convert.ToByte(entZeroMatch.Groups["value"].Value, 10);
                                 currentEntry.HOUR  = (byte)((currentEntry.Zero & 0xF0) >> 4);
-                                currentEntry.PHOUR = (byte)(currentEntry.Zero  & 0x0F);
+                                currentEntry.PHOUR = (byte)(currentEntry.Zero & 0x0F);
                             }
                             else if(entPMinMatch.Success)
                             {
@@ -450,7 +449,7 @@ namespace DiscImageChef.DiscImages
                 toc.LastCompleteSession  = (byte)maxSession;
                 toc.FirstCompleteSession = (byte)minSession;
                 toc.DataLength           = (ushort)(entries.Count * 11 + 2);
-                MemoryStream tocMs       = new MemoryStream();
+                MemoryStream tocMs = new MemoryStream();
                 tocMs.Write(BigEndianBitConverter.GetBytes(toc.DataLength), 0, 2);
                 tocMs.WriteByte(toc.FirstCompleteSession);
                 tocMs.WriteByte(toc.LastCompleteSession);
@@ -478,7 +477,7 @@ namespace DiscImageChef.DiscImages
                 string subFile  = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".sub";
 
                 FiltersList filtersList = new FiltersList();
-                dataFilter              = filtersList.GetFilter(dataFile);
+                dataFilter = filtersList.GetFilter(dataFile);
 
                 if(dataFilter == null) throw new Exception("Cannot open data file");
 
@@ -488,12 +487,12 @@ namespace DiscImageChef.DiscImages
                 int   curSessionNo        = 0;
                 Track currentTrack        = new Track();
                 bool  firstTrackInSession = true;
-                Tracks                    = new List<Track>();
-                ulong leadOutStart        = 0;
+                Tracks = new List<Track>();
+                ulong leadOutStart = 0;
 
-                dataStream                      = dataFilter.GetDataForkStream();
+                dataStream = dataFilter.GetDataForkStream();
                 if(subFilter != null) subStream = subFilter.GetDataForkStream();
-                trackFlags                      = new Dictionary<byte, byte>();
+                trackFlags = new Dictionary<byte, byte>();
 
                 foreach(FullTOC.TrackDataDescriptor descriptor in entries)
                 {
@@ -543,7 +542,7 @@ namespace DiscImageChef.DiscImages
                                             TrackFilter            = dataFilter,
                                             TrackRawBytesPerSector = 2352,
                                             TrackSequence          = descriptor.POINT,
-                                            TrackStartSector       =
+                                            TrackStartSector =
                                                 GetLba(descriptor.PHOUR, descriptor.PMIN, descriptor.PSEC,
                                                        descriptor.PFRAME),
                                             TrackSession = descriptor.SessionNumber
@@ -740,7 +739,7 @@ namespace DiscImageChef.DiscImages
 
                 imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
-                Sessions               = new List<Session>();
+                Sessions = new List<Session>();
                 Session currentSession = new Session
                 {
                     EndTrack        = uint.MinValue,
@@ -780,9 +779,8 @@ namespace DiscImageChef.DiscImages
                     Partition partition = new Partition
                     {
                         Description = track.TrackDescription,
-                        Size        =
-                            (track.TrackEndSector - track.TrackStartSector + 1) *
-                            (ulong)track.TrackRawBytesPerSector,
+                        Size =
+                            (track.TrackEndSector - track.TrackStartSector + 1) * (ulong)track.TrackRawBytesPerSector,
                         Length   = track.TrackEndSector - track.TrackStartSector + 1,
                         Sequence = track.TrackSequence,
                         Offset   = track.TrackFileOffset,
@@ -827,15 +825,11 @@ namespace DiscImageChef.DiscImages
                 // TODO: Check format
                 cdtext = cdtMs.ToArray();
 
-                if(!data           && !firstdata) imageInfo.MediaType = MediaType.CDDA;
-                else if(firstaudio && data && Sessions.Count > 1 && mode2)
-                    imageInfo.MediaType = MediaType.CDPLUS;
-                else if(firstdata && audio || mode2)
-                    imageInfo.MediaType = MediaType.CDROMXA;
-                else if(!audio)
-                    imageInfo.MediaType = MediaType.CDROM;
-                else
-                    imageInfo.MediaType = MediaType.CD;
+                if(!data                                         && !firstdata) imageInfo.MediaType = MediaType.CDDA;
+                else if(firstaudio && data && Sessions.Count > 1 && mode2) imageInfo.MediaType      = MediaType.CDPLUS;
+                else if(firstdata && audio || mode2) imageInfo.MediaType                            = MediaType.CDROMXA;
+                else if(!audio) imageInfo.MediaType                                                 = MediaType.CDROM;
+                else imageInfo.MediaType                                                            = MediaType.CD;
 
                 imageInfo.Application          = "CloneCD";
                 imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
@@ -1033,7 +1027,7 @@ namespace DiscImageChef.DiscImages
                                ? new[] {flags}
                                : new byte[1];
                 case SectorTagType.CdSectorSubchannel:
-                    buffer = new byte[96                                                 * length];
+                    buffer = new byte[96 * length];
                     subStream.Seek((long)(dicTrack.TrackSubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
                     subStream.Read(buffer, 0, buffer.Length);
                     return buffer;
@@ -1254,8 +1248,8 @@ namespace DiscImageChef.DiscImages
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
                                                      where sectorAddress >= kvp.Value
                                                      from track in Tracks
-                                                     where track.TrackSequence              == kvp.Key
-                                                     where sectorAddress        - kvp.Value <
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress                                 - kvp.Value <
                                                            track.TrackEndSector - track.TrackStartSector + 1
                                                      select kvp)
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
@@ -1312,14 +1306,14 @@ namespace DiscImageChef.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1342,14 +1336,14 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1380,7 +1374,7 @@ namespace DiscImageChef.DiscImages
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
 
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.CD_MCN, MediaTagType.CD_FullTOC};
+        public IEnumerable<MediaTagType> SupportedMediaTags => new[] {MediaTagType.CD_MCN, MediaTagType.CD_FullTOC};
         public IEnumerable<SectorTagType> SupportedSectorTags =>
             new[]
             {
@@ -1419,8 +1413,8 @@ namespace DiscImageChef.DiscImages
             {
                 writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
                 descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
-                dataStream       = new FileStream(writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
-                                                  FileShare.None);
+                dataStream = new FileStream(writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                            FileShare.None);
             }
             catch(IOException e)
             {
@@ -1581,7 +1575,7 @@ namespace DiscImageChef.DiscImages
                 newTrack.TrackSubchannelOffset = currentSubchannelOffset;
 
                 currentDataOffset += (ulong)newTrack.TrackRawBytesPerSector *
-                                     (newTrack.TrackEndSector                        - newTrack.TrackStartSector + 1);
+                                     (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
                 currentSubchannelOffset += subchannelSize * (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
 
                 Tracks.Add(newTrack);
@@ -1604,7 +1598,7 @@ namespace DiscImageChef.DiscImages
             subStream?.Flush();
             subStream?.Close();
 
-            FullTOC.CDFullTOC? nullableToc              = null;
+            FullTOC.CDFullTOC? nullableToc = null;
             FullTOC.CDFullTOC  toc;
 
             // Easy, just decode the real toc
@@ -1613,10 +1607,10 @@ namespace DiscImageChef.DiscImages
             // Not easy, create a toc from scratch
             if(nullableToc == null)
             {
-                toc                                                = new FullTOC.CDFullTOC();
-                Dictionary<byte, byte> sessionEndingTrack          = new Dictionary<byte, byte>();
-                toc.FirstCompleteSession                           = byte.MaxValue;
-                toc.LastCompleteSession                            = byte.MinValue;
+                toc = new FullTOC.CDFullTOC();
+                Dictionary<byte, byte> sessionEndingTrack = new Dictionary<byte, byte>();
+                toc.FirstCompleteSession = byte.MaxValue;
+                toc.LastCompleteSession  = byte.MinValue;
                 List<FullTOC.TrackDataDescriptor> trackDescriptors = new List<FullTOC.TrackDataDescriptor>();
                 byte                              currentTrack     = 0;
 
@@ -1764,12 +1758,10 @@ namespace DiscImageChef.DiscImages
 
             for(int i = 0; i < toc.TrackDescriptors.Length; i++)
             {
-                long alba =
-                    MsfToLba((toc.TrackDescriptors[i].HOUR, toc.TrackDescriptors[i].Min, toc.TrackDescriptors[i].Sec,
-                             toc.TrackDescriptors[i].Frame));
-                long plba =
-                    MsfToLba((toc.TrackDescriptors[i].PHOUR, toc.TrackDescriptors[i].PMIN, toc.TrackDescriptors[i].PSEC,
-                             toc.TrackDescriptors[i].PFRAME));
+                long alba = MsfToLba((toc.TrackDescriptors[i].HOUR, toc.TrackDescriptors[i].Min,
+                                         toc.TrackDescriptors[i].Sec, toc.TrackDescriptors[i].Frame));
+                long plba = MsfToLba((toc.TrackDescriptors[i].PHOUR, toc.TrackDescriptors[i].PMIN,
+                                         toc.TrackDescriptors[i].PSEC, toc.TrackDescriptors[i].PFRAME));
 
                 descriptorStream.WriteLine("[Entry {0}]",      i);
                 descriptorStream.WriteLine("Session={0}",      toc.TrackDescriptors[i].SessionNumber);
@@ -1966,7 +1958,8 @@ namespace DiscImageChef.DiscImages
         static (byte hour, byte minute, byte second, byte frame) LbaToMsf(ulong sector)
         {
             return ((byte)((sector + 150) / 75 / 60 / 60), (byte)((sector + 150) / 75 / 60 % 60),
-                (byte)((sector     + 150) / 75 % 60), (byte)((sector      + 150) % 75));
+                       (byte)((sector + 150)                                          / 75 % 60),
+                       (byte)((sector + 150)                                               % 75));
         }
     }
 }

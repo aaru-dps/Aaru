@@ -154,7 +154,7 @@ namespace DiscImageChef.DiscImages
                         return false;
                 }
 
-                gdiStream       = new StreamReader(imageFilter.GetDataForkStream());
+                gdiStream = new StreamReader(imageFilter.GetDataForkStream());
                 int lineNumber  = 0;
                 int tracksFound = 0;
                 int tracks      = 0;
@@ -200,7 +200,7 @@ namespace DiscImageChef.DiscImages
             try
             {
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-                gdiStream        = new StreamReader(imageFilter.GetDataForkStream());
+                gdiStream = new StreamReader(imageFilter.GetDataForkStream());
                 int  lineNumber  = 0;
                 bool highDensity = false;
 
@@ -212,7 +212,7 @@ namespace DiscImageChef.DiscImages
                 // Initialize disc
                 discimage = new GdiDisc {Sessions = new List<Session>(), Tracks = new List<GdiTrack>()};
 
-                ulong currentStart       = 0;
+                ulong currentStart = 0;
                 offsetmap                = new Dictionary<uint, ulong>();
                 densitySeparationSectors = 0;
 
@@ -240,8 +240,8 @@ namespace DiscImageChef.DiscImages
                                                   trackMatch.Groups["filename"].Value,
                                                   trackMatch.Groups["offset"].Value, lineNumber);
 
-                        FiltersList filtersList  = new FiltersList();
-                        GdiTrack    currentTrack = new GdiTrack
+                        FiltersList filtersList = new FiltersList();
+                        GdiTrack currentTrack = new GdiTrack
                         {
                             Bps         = ushort.Parse(trackMatch.Groups["type"].Value),
                             Flags       = byte.Parse(trackMatch.Groups["flags"].Value),
@@ -256,7 +256,7 @@ namespace DiscImageChef.DiscImages
                         currentTrack.Trackfile = currentTrack.Trackfilter.GetFilename();
 
                         if(currentTrack.StartSector - currentStart > 0)
-                            if(currentTrack.StartSector            == 45000)
+                            if(currentTrack.StartSector == 45000)
                             {
                                 highDensity = true;
                                 offsetmap.Add(0, currentStart);
@@ -288,21 +288,20 @@ namespace DiscImageChef.DiscImages
 
                 Session[] sessions = new Session[2];
                 for(int s = 0; s < sessions.Length; s++)
-                    if(s         == 0)
+                    if(s == 0)
                     {
                         sessions[s].SessionSequence = 1;
 
                         foreach(GdiTrack trk in discimage.Tracks.Where(trk => !trk.HighDensity))
                         {
-                            if(sessions[s].StartTrack      == 0) sessions[s].StartTrack = trk.Sequence;
-                            else if(sessions[s].StartTrack > trk.Sequence)
-                                sessions[s].StartTrack = trk.Sequence;
+                            if(sessions[s].StartTrack      == 0) sessions[s].StartTrack           = trk.Sequence;
+                            else if(sessions[s].StartTrack > trk.Sequence) sessions[s].StartTrack = trk.Sequence;
 
                             if(sessions[s].EndTrack < trk.Sequence) sessions[s].EndTrack = trk.Sequence;
 
                             if(sessions[s].StartSector > trk.StartSector) sessions[s].StartSector = trk.StartSector;
 
-                            if(sessions[s].EndSector < trk.Sectors  + trk.StartSector - 1)
+                            if(sessions[s].EndSector < trk.Sectors                    + trk.StartSector - 1)
                                 sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                         }
                     }
@@ -312,15 +311,14 @@ namespace DiscImageChef.DiscImages
 
                         foreach(GdiTrack trk in discimage.Tracks.Where(trk => trk.HighDensity))
                         {
-                            if(sessions[s].StartTrack      == 0) sessions[s].StartTrack = trk.Sequence;
-                            else if(sessions[s].StartTrack > trk.Sequence)
-                                sessions[s].StartTrack = trk.Sequence;
+                            if(sessions[s].StartTrack      == 0) sessions[s].StartTrack           = trk.Sequence;
+                            else if(sessions[s].StartTrack > trk.Sequence) sessions[s].StartTrack = trk.Sequence;
 
                             if(sessions[s].EndTrack < trk.Sequence) sessions[s].EndTrack = trk.Sequence;
 
                             if(sessions[s].StartSector > trk.StartSector) sessions[s].StartSector = trk.StartSector;
 
-                            if(sessions[s].EndSector < trk.Sectors  + trk.StartSector - 1)
+                            if(sessions[s].EndSector < trk.Sectors                    + trk.StartSector - 1)
                                 sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                         }
                     }
@@ -371,7 +369,7 @@ namespace DiscImageChef.DiscImages
 
                 DicConsole.DebugWriteLine("GDI plugin", "Building offset map");
 
-                Partitions       = new List<Partition>();
+                Partitions = new List<Partition>();
                 ulong byteOffset = 0;
 
                 for(int i = 0; i < discimage.Tracks.Count; i++)
@@ -475,8 +473,7 @@ namespace DiscImageChef.DiscImages
 
             offsetmap.TryGetValue(0, out ulong transitionStart);
             if(sectorAddress >= transitionStart && sectorAddress < densitySeparationSectors + transitionStart)
-                return ReadSectors(sectorAddress                                            - transitionStart, length,
-                                   0);
+                return ReadSectors(sectorAddress - transitionStart, length, 0);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -493,8 +490,7 @@ namespace DiscImageChef.DiscImages
 
             offsetmap.TryGetValue(0, out ulong transitionStart);
             if(sectorAddress >= transitionStart && sectorAddress < densitySeparationSectors + transitionStart)
-                return ReadSectorsTag(sectorAddress                                         - transitionStart, length,
-                                      0,                                                                       tag);
+                return ReadSectorsTag(sectorAddress - transitionStart, length, 0, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -582,7 +578,7 @@ namespace DiscImageChef.DiscImages
 
             if(remainingSectors == 0) return buffer;
 
-            imageStream     = dicTrack.Trackfilter.GetDataForkStream();
+            imageStream = dicTrack.Trackfilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
               .Seek(dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip) + dicTrack.Pregap * dicTrack.Bps),
@@ -738,7 +734,7 @@ namespace DiscImageChef.DiscImages
 
             if(remainingSectors == 0) return buffer;
 
-            imageStream     = dicTrack.Trackfilter.GetDataForkStream();
+            imageStream = dicTrack.Trackfilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
               .Seek(dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip) + dicTrack.Pregap * dicTrack.Bps),
@@ -862,7 +858,7 @@ namespace DiscImageChef.DiscImages
 
             if(remainingSectors == 0) return buffer;
 
-            imageStream     = dicTrack.Trackfilter.GetDataForkStream();
+            imageStream = dicTrack.Trackfilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
               .Seek(dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip) + dicTrack.Pregap * dicTrack.Bps),
@@ -944,14 +940,14 @@ namespace DiscImageChef.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -974,14 +970,14 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {

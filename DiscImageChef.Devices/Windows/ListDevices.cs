@@ -50,8 +50,8 @@ namespace DiscImageChef.Devices.Windows
         /// <returns>Decoded string</returns>
         static string HexStringToString(string hex)
         {
-            StringBuilder result = new StringBuilder();
-            const string HEXTABLE = "0123456789abcdef";
+            StringBuilder result   = new StringBuilder();
+            const string  HEXTABLE = "0123456789abcdef";
 
             for(int i = 0; i < hex.Length / 2; i++)
                 result.Append((char)(16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
@@ -77,20 +77,20 @@ namespace DiscImageChef.Devices.Windows
                 deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_TapeDrive");
-                objCol = mgmtObjSearcher.Get();
+                objCol          = mgmtObjSearcher.Get();
 
                 deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_CDROMDrive");
-                objCol = mgmtObjSearcher.Get();
+                objCol          = mgmtObjSearcher.Get();
 
                 deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["Drive"]);
             }
             catch(Exception)
             {
-#if DEBUG
+                #if DEBUG
                 throw;
-#else
+                #else
                 return null;
 #endif
             }
@@ -108,8 +108,8 @@ namespace DiscImageChef.Devices.Windows
 
                 StoragePropertyQuery query = new StoragePropertyQuery
                 {
-                    PropertyId = StoragePropertyId.Device,
-                    QueryType = StorageQueryType.Standard,
+                    PropertyId           = StoragePropertyId.Device,
+                    QueryType            = StorageQueryType.Standard,
                     AdditionalParameters = new byte[1]
                 };
 
@@ -117,10 +117,10 @@ namespace DiscImageChef.Devices.Windows
                 //descriptor.RawDeviceProperties = new byte[16384];
 
                 IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-                byte[] descriptorB = new byte[1000];
+                byte[] descriptorB   = new byte[1000];
 
                 uint returned = 0;
-                int error = 0;
+                int  error    = 0;
 
                 bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty,
                                                                     ref query, (uint)Marshal.SizeOf(query),
@@ -134,18 +134,18 @@ namespace DiscImageChef.Devices.Windows
 
                 StorageDeviceDescriptor descriptor = new StorageDeviceDescriptor
                 {
-                    Version = BitConverter.ToUInt32(descriptorB, 0),
-                    Size = BitConverter.ToUInt32(descriptorB, 4),
-                    DeviceType = descriptorB[8],
-                    DeviceTypeModifier = descriptorB[9],
-                    RemovableMedia = BitConverter.ToBoolean(descriptorB, 10),
-                    CommandQueueing = BitConverter.ToBoolean(descriptorB, 11),
-                    VendorIdOffset = BitConverter.ToInt32(descriptorB, 12),
-                    ProductIdOffset = BitConverter.ToInt32(descriptorB, 16),
+                    Version               = BitConverter.ToUInt32(descriptorB, 0),
+                    Size                  = BitConverter.ToUInt32(descriptorB, 4),
+                    DeviceType            = descriptorB[8],
+                    DeviceTypeModifier    = descriptorB[9],
+                    RemovableMedia        = BitConverter.ToBoolean(descriptorB, 10),
+                    CommandQueueing       = BitConverter.ToBoolean(descriptorB, 11),
+                    VendorIdOffset        = BitConverter.ToInt32(descriptorB, 12),
+                    ProductIdOffset       = BitConverter.ToInt32(descriptorB, 16),
                     ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20),
-                    SerialNumberOffset = BitConverter.ToInt32(descriptorB, 24),
-                    BusType = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
-                    RawPropertiesLength = BitConverter.ToUInt32(descriptorB, 32)
+                    SerialNumberOffset    = BitConverter.ToInt32(descriptorB, 24),
+                    BusType               = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
+                    RawPropertiesLength   = BitConverter.ToUInt32(descriptorB, 32)
                 };
 
                 DeviceInfo info = new DeviceInfo {Path = physId, Bus = descriptor.BusType.ToString()};
@@ -173,7 +173,7 @@ namespace DiscImageChef.Devices.Windows
                     if(pieces.Length > 1)
                     {
                         info.Vendor = pieces[0];
-                        info.Model = info.Model.Substring(pieces[0].Length + 1);
+                        info.Model  = info.Model.Substring(pieces[0].Length + 1);
                     }
                 }
 

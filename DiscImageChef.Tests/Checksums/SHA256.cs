@@ -56,9 +56,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha256EmptyData()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -69,9 +69,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha256EmptyInstance()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -91,9 +91,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha256RandomData()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -104,9 +104,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Sha256RandomInstance()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();

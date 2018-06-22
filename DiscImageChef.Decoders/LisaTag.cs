@@ -149,7 +149,7 @@ namespace DiscImageChef.Decoders
                 tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
                 Array.Copy(tmp, 0, tagBytes, 6, 2);
                 if(ValidChk) tagBytes[6] += 0x80;
-                tmp                      =  BigEndianBitConverter.GetBytes(AbsPage);
+                tmp = BigEndianBitConverter.GetBytes(AbsPage);
                 Array.Copy(tmp, 1, tagBytes, 8, 3);
                 tagBytes[11] = Checksum;
                 tmp          = BigEndianBitConverter.GetBytes(RelPage);
@@ -276,7 +276,7 @@ namespace DiscImageChef.Decoders
                 tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
                 Array.Copy(tmp, 0, tagBytes, 6, 2);
                 if(ValidChk) tagBytes[6] += 0x80;
-                tmp                      =  BigEndianBitConverter.GetBytes(AbsPage);
+                tmp = BigEndianBitConverter.GetBytes(AbsPage);
                 Array.Copy(tmp, 1, tagBytes, 8, 3);
                 tagBytes[11] = Checksum;
                 tmp          = BigEndianBitConverter.GetBytes(RelPage);
@@ -399,10 +399,10 @@ namespace DiscImageChef.Decoders
 
             snTag.Version   = BigEndianBitConverter.ToUInt16(tag, 0);
             snTag.Kind      = (byte)((tag[2] & 0xC0) >> 6);
-            snTag.Reserved  = (byte)(tag[2]  & 0x3F);
+            snTag.Reserved  = (byte)(tag[2] & 0x3F);
             snTag.Volume    = tag[3];
             snTag.FileId    = BigEndianBitConverter.ToInt16(tag, 4);
-            snTag.RelPage   = BigEndianBitConverter.ToUInt16(tag,          6);
+            snTag.RelPage   = BigEndianBitConverter.ToUInt16(tag, 6);
             snTag.NextBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 8)  & 0x7FF);
             snTag.PrevBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 10) & 0x7FF);
 
@@ -424,7 +424,7 @@ namespace DiscImageChef.Decoders
 
             phTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
             phTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
-            phTag.Reserved  =  (byte)(tag[2]  & 0x3F);
+            phTag.Reserved  =  (byte)(tag[2] & 0x3F);
             phTag.Volume    =  tag[3];
             phTag.FileId    =  BigEndianBitConverter.ToInt16(tag, 4);
             phTag.ValidChk  |= (tag[6]                                         & 0x80) == 0x80;
@@ -469,7 +469,7 @@ namespace DiscImageChef.Decoders
 
             pmTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
             pmTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
-            pmTag.Reserved  =  (byte)(tag[2]  & 0x3F);
+            pmTag.Reserved  =  (byte)(tag[2] & 0x3F);
             pmTag.Volume    =  tag[3];
             pmTag.FileId    =  BigEndianBitConverter.ToInt16(tag, 4);
             pmTag.ValidChk  |= (tag[6]                                         & 0x80) == 0x80;

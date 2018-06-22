@@ -59,9 +59,9 @@ namespace DiscImageChef.Commands
                                          option.description);
                 DicConsole.WriteLine();
             }
-            
+
             DicConsole.WriteLine();
-            
+
             DicConsole.WriteLine("Read/Write media images options:");
             foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
             {

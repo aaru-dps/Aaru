@@ -114,8 +114,8 @@ namespace DiscImageChef.Checksums
         {
             SHA1       localSha1Provider = SHA1.Create();
             FileStream fileStream        = new FileStream(filename, FileMode.Open);
-            hash                         = localSha1Provider.ComputeHash(fileStream);
-            StringBuilder sha1Output     = new StringBuilder();
+            hash = localSha1Provider.ComputeHash(fileStream);
+            StringBuilder sha1Output = new StringBuilder();
 
             foreach(byte h in hash) sha1Output.Append(h.ToString("x2"));
 
@@ -132,8 +132,8 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            SHA1 localSha1Provider   = SHA1.Create();
-            hash                     = localSha1Provider.ComputeHash(data, 0, (int)len);
+            SHA1 localSha1Provider = SHA1.Create();
+            hash = localSha1Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha1Output = new StringBuilder();
 
             foreach(byte h in hash) sha1Output.Append(h.ToString("x2"));

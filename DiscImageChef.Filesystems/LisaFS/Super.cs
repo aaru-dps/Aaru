@@ -92,8 +92,8 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     devTagSize = device.ReadSectorTag(i, SectorTagType.AppleSectorTag).Length;
 
-                    byte[] sector  = device.ReadSector(i);
-                    mddf           = new MDDF();
+                    byte[] sector = device.ReadSector(i);
+                    mddf = new MDDF();
                     byte[] pString = new byte[33];
 
                     mddf.fsversion = BigEndianBitConverter.ToUInt16(sector, 0x00);
@@ -104,11 +104,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                     mddf.unknown1 = sector[0x2D];
                     Array.Copy(sector, 0x2E, pString, 0, 33);
                     // Prevent garbage
-                    mddf.password =
-                        pString[0] <= 32 ? StringHandlers.PascalToString(pString, Encoding) : "";
-                    mddf.unknown2                     = sector[0x4F];
-                    mddf.machine_id                   = BigEndianBitConverter.ToUInt32(sector, 0x50);
-                    mddf.master_copy_id               = BigEndianBitConverter.ToUInt32(sector, 0x54);
+                    mddf.password       = pString[0] <= 32 ? StringHandlers.PascalToString(pString, Encoding) : "";
+                    mddf.unknown2       = sector[0x4F];
+                    mddf.machine_id     = BigEndianBitConverter.ToUInt32(sector, 0x50);
+                    mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
                     uint lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
                     mddf.dtvc                         = DateHandlers.LisaToDateTime(lisaTime);
                     lisaTime                          = BigEndianBitConverter.ToUInt32(sector, 0x5C);
@@ -177,13 +176,13 @@ namespace DiscImageChef.Filesystems.LisaFS
                     mddf.vol_left_mounted             = sector[0x138];
 
                     // Check that the MDDF is correct
-                    if(mddf.mddf_block   != i - volumePrefix   ||
-                       mddf.vol_size     > device.Info.Sectors ||
+                    if(mddf.mddf_block != i - volumePrefix   ||
+                       mddf.vol_size   > device.Info.Sectors ||
                        mddf.vol_size - 1 !=
                        mddf.volsize_minus_one ||
-                       mddf.vol_size                     - i - 1 !=
+                       mddf.vol_size - i                 - 1 !=
                        mddf.volsize_minus_mddf_minus_one - volumePrefix ||
-                       mddf.datasize                    >
+                       mddf.datasize >
                        mddf.blocksize || mddf.blocksize < device.Info.SectorSize ||
                        mddf.datasize                    != device.Info.SectorSize)
                     {
@@ -215,7 +214,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     //catalogCache = new Dictionary<short, List<CatalogEntry>>();
                     fileSizeCache = new Dictionary<short, int>();
 
-                    mounted                     = true;
+                    mounted = true;
                     if(options == null) options = GetDefaultOptions();
                     if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
 

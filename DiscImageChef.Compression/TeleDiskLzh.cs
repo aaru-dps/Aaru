@@ -161,7 +161,7 @@ namespace DiscImageChef.Compression
             buf = new byte[len];
             int count; // was an unsigned long, seems unnecessary
             for(count = 0; count < len;)
-                if(tdctl.Bufcnt  == 0)
+                if(tdctl.Bufcnt == 0)
                 {
                     if((c = DecodeChar()) < 0) return count; // fatal error
 
@@ -178,7 +178,7 @@ namespace DiscImageChef.Compression
                         if((pos = DecodePosition()) < 0) return count; // fatal error
 
                         tdctl.Bufpos = (ushort)((tdctl.R - pos - 1) & (N - 1));
-                        tdctl.Bufcnt = (ushort)(c        - 255 + THRESHOLD);
+                        tdctl.Bufcnt = (ushort)(c - 255 + THRESHOLD);
                         tdctl.Bufndx = 0;
                     }
                 }
@@ -259,9 +259,9 @@ namespace DiscImageChef.Compression
 
             for(i = 0; i < N_CHAR; i++)
             {
-                freq[i] = 1;
-                son[i]  = (short)(i + T);
-                prnt[i              + T] = (short)i;
+                freq[i]     = 1;
+                son[i]      = (short)(i + T);
+                prnt[i + T] = (short)i;
             }
 
             i = 0;
@@ -287,7 +287,7 @@ namespace DiscImageChef.Compression
 
             /* halven cumulative freq for leaf nodes */
             short j = 0;
-            for(i = 0; i  < T; i++)
+            for(i = 0; i < T; i++)
                 if(son[i] >= T)
                 {
                     freq[j] = (ushort)((freq[i] + 1) / 2);
@@ -298,9 +298,9 @@ namespace DiscImageChef.Compression
             /* make a tree : first, connect children nodes */
             for(i = 0, j = N_CHAR; j < T; i += 2, j++)
             {
-                k        = (short)(i                  + 1);
+                k = (short)(i + 1);
                 ushort f = freq[j] = (ushort)(freq[i] + freq[k]);
-                for(k = (short)(j                     - 1); f < freq[k]; k--) { }
+                for(k = (short)(j - 1); f < freq[k]; k--) { }
 
                 k++;
                 ushort l = (ushort)((j - k) * 2);
@@ -312,7 +312,7 @@ namespace DiscImageChef.Compression
             }
 
             /* connect parent nodes */
-            for(i = 0; i        < T; i++)
+            for(i = 0; i < T; i++)
                 if((k = son[i]) >= T)
                     prnt[k] = i;
                 else
@@ -339,16 +339,16 @@ namespace DiscImageChef.Compression
                 freq[c] = freq[l];
                 freq[l] = (ushort)k;
 
-                int i                 = son[c];
-                prnt[i]               = (short)l;
+                int i = son[c];
+                prnt[i] = (short)l;
                 if(i < T) prnt[i + 1] = (short)l;
 
-                int j  = son[l];
+                int j = son[l];
                 son[l] = (short)i;
 
-                prnt[j]               = (short)c;
+                prnt[j] = (short)c;
                 if(j < T) prnt[j + 1] = (short)c;
-                son[c]                = (short)j;
+                son[c] = (short)j;
 
                 c = l;
             }
@@ -380,7 +380,7 @@ namespace DiscImageChef.Compression
 
         short DecodePosition()
         {
-            short  bit;
+            short bit;
 
             /* decode upper 6 bits from given table */
             if((bit = (short)GetByte()) < 0) return -1;

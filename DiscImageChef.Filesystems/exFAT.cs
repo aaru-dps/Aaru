@@ -48,9 +48,9 @@ namespace DiscImageChef.Filesystems
         readonly byte[] signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Microsoft Extended File Allocation Table";
-        public Guid Id => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Microsoft Extended File Allocation Table";
+        public Guid           Id        => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -68,29 +68,29 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
             XmlFsType = new FileSystemType();
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
-            IntPtr vbrPtr = Marshal.AllocHGlobal(512);
+            IntPtr vbrPtr    = Marshal.AllocHGlobal(512);
             Marshal.Copy(vbrSector, 0, vbrPtr, 512);
             VolumeBootRecord vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
             Marshal.FreeHGlobal(vbrPtr);
 
             byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
-            IntPtr parametersPtr = Marshal.AllocHGlobal(512);
+            IntPtr parametersPtr    = Marshal.AllocHGlobal(512);
             Marshal.Copy(parametersSector, 0, parametersPtr, 512);
             OemParameterTable parametersTable =
                 (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
             Marshal.FreeHGlobal(parametersPtr);
 
             byte[] chkSector = imagePlugin.ReadSector(11 + partition.Start);
-            IntPtr chkPtr = Marshal.AllocHGlobal(512);
+            IntPtr chkPtr    = Marshal.AllocHGlobal(512);
             Marshal.Copy(chkSector, 0, chkPtr, 512);
             ChecksumSector chksector = (ChecksumSector)Marshal.PtrToStructure(chkPtr, typeof(ChecksumSector));
             Marshal.FreeHGlobal(chkPtr);
@@ -131,15 +131,16 @@ namespace DiscImageChef.Filesystems
                 }
                 else if(parameter.OemParameterType != Guid.Empty)
                     sb.AppendFormat("Found unknown parameter type {0}", parameter.OemParameterType).AppendLine();
+
                 count++;
             }
 
             sb.AppendFormat("Checksum 0x{0:X8}", chksector.checksum[0]).AppendLine();
 
-            XmlFsType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
-            XmlFsType.Clusters = vbr.clusterHeapLength;
-            XmlFsType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
-            XmlFsType.Type = "exFAT";
+            XmlFsType.ClusterSize  = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
+            XmlFsType.Clusters     = vbr.clusterHeapLength;
+            XmlFsType.Dirty        = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
+            XmlFsType.Type         = "exFAT";
             XmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
             information = sb.ToString();
@@ -149,34 +150,39 @@ namespace DiscImageChef.Filesystems
         enum VolumeFlags : ushort
         {
             SecondFatActive = 1,
-            VolumeDirty = 2,
-            MediaFailure = 4,
-            ClearToZero = 8
+            VolumeDirty     = 2,
+            MediaFailure    = 4,
+            ClearToZero     = 8
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VolumeBootRecord
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)] public byte[] zero;
-            public ulong offset;
-            public ulong sectors;
-            public uint fatOffset;
-            public uint fatLength;
-            public uint clusterHeapOffset;
-            public uint clusterHeapLength;
-            public uint rootDirectoryCluster;
-            public uint volumeSerial;
-            public ushort revision;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] jump;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
+            public byte[] zero;
+            public ulong       offset;
+            public ulong       sectors;
+            public uint        fatOffset;
+            public uint        fatLength;
+            public uint        clusterHeapOffset;
+            public uint        clusterHeapLength;
+            public uint        rootDirectoryCluster;
+            public uint        volumeSerial;
+            public ushort      revision;
             public VolumeFlags flags;
-            public byte sectorShift;
-            public byte clusterShift;
-            public byte fats;
-            public byte drive;
-            public byte heapUsage;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)] public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)] public byte[] bootCode;
+            public byte        sectorShift;
+            public byte        clusterShift;
+            public byte        fats;
+            public byte        drive;
+            public byte        heapUsage;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
+            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
+            public byte[] bootCode;
             public ushort bootSignature;
         }
 
@@ -191,20 +197,24 @@ namespace DiscImageChef.Filesystems
             public uint programTime;
             public uint readCycleTime;
             public uint writeCycleTime;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OemParameterTable
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public OemParameter[] parameters;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] padding;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public OemParameter[] parameters;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] padding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ChecksumSector
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public uint[] checksum;
         }
     }
 }

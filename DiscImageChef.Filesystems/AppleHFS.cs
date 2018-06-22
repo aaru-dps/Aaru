@@ -57,9 +57,9 @@ namespace DiscImageChef.Filesystems
         const ushort HFSBB_MAGIC = 0x4C4B;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Apple Hierarchical File System";
-        public Guid Id => new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Apple Hierarchical File System";
+        public Guid           Id        => new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -100,14 +100,14 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("macintosh");
+            Encoding    = encoding ?? Encoding.GetEncoding("macintosh");
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
-            byte[] bbSector = null;
+            byte[] bbSector  = null;
             byte[] mdbSector = null;
             ushort drSigWord;
 
@@ -123,7 +123,7 @@ namespace DiscImageChef.Filesystems
                     drSigWord = BigEndianBitConverter.ToUInt16(tmpSector, offset);
                     if(drSigWord != HFS_MAGIC) continue;
 
-                    bbSector = new byte[1024];
+                    bbSector  = new byte[1024];
                     mdbSector = new byte[512];
                     if(offset >= 0x400) Array.Copy(tmpSector, offset - 0x400, bbSector, 0, 1024);
                     Array.Copy(tmpSector, offset, mdbSector, 0, 512);
@@ -162,9 +162,9 @@ namespace DiscImageChef.Filesystems
 
             if((mdb.drAtrb & 0x80) == 0x80) sb.AppendLine("Volume is locked by hardware.");
             sb.AppendLine((mdb.drAtrb & 0x100) == 0x100 ? "Volume was unmonted." : "Volume is mounted.");
-            if((mdb.drAtrb & 0x200) == 0x200) sb.AppendLine("Volume has spared bad blocks.");
-            if((mdb.drAtrb & 0x400) == 0x400) sb.AppendLine("Volume does not need cache.");
-            if((mdb.drAtrb & 0x800) == 0x800) sb.AppendLine("Boot volume is inconsistent.");
+            if((mdb.drAtrb & 0x200)  == 0x200) sb.AppendLine("Volume has spared bad blocks.");
+            if((mdb.drAtrb & 0x400)  == 0x400) sb.AppendLine("Volume does not need cache.");
+            if((mdb.drAtrb & 0x800)  == 0x800) sb.AppendLine("Boot volume is inconsistent.");
             if((mdb.drAtrb & 0x1000) == 0x1000) sb.AppendLine("There are reused CNIDs.");
             if((mdb.drAtrb & 0x2000) == 0x2000) sb.AppendLine("Volume is journaled.");
             if((mdb.drAtrb & 0x4000) == 0x4000) sb.AppendLine("Volume is seriously inconsistent.");
@@ -223,7 +223,7 @@ namespace DiscImageChef.Filesystems
                 if((bb.boot_flags & 0x80) == 0x80) sb.AppendLine("Boot block is in new unknown format.");
                 else
                 {
-                    if(bb.boot_flags > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
+                    if(bb.boot_flags      > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
                     else if(bb.boot_flags < 0) sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
                     sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.system_name, Encoding))
@@ -256,29 +256,32 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType();
             if(mdb.drVolBkUp > 0)
             {
-                XmlFsType.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
+                XmlFsType.BackupDate          = DateHandlers.MacToDateTime(mdb.drVolBkUp);
                 XmlFsType.BackupDateSpecified = true;
             }
-            XmlFsType.Bootable = bb.signature == HFSBB_MAGIC || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
+
+            XmlFsType.Bootable = bb.signature    == HFSBB_MAGIC || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
                                  mdb.drFndrInfo5 != 0;
-            XmlFsType.Clusters = mdb.drNmAlBlks;
+            XmlFsType.Clusters    = mdb.drNmAlBlks;
             XmlFsType.ClusterSize = (int)mdb.drAlBlkSiz;
             if(mdb.drCrDate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
+                XmlFsType.CreationDate          = DateHandlers.MacToDateTime(mdb.drCrDate);
                 XmlFsType.CreationDateSpecified = true;
             }
-            XmlFsType.Dirty = (mdb.drAtrb & 0x100) != 0x100;
-            XmlFsType.Files = mdb.drFilCnt;
-            XmlFsType.FilesSpecified = true;
-            XmlFsType.FreeClusters = mdb.drFreeBks;
+
+            XmlFsType.Dirty                 = (mdb.drAtrb & 0x100) != 0x100;
+            XmlFsType.Files                 = mdb.drFilCnt;
+            XmlFsType.FilesSpecified        = true;
+            XmlFsType.FreeClusters          = mdb.drFreeBks;
             XmlFsType.FreeClustersSpecified = true;
             if(mdb.drLsMod > 0)
             {
-                XmlFsType.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
+                XmlFsType.ModificationDate          = DateHandlers.MacToDateTime(mdb.drLsMod);
                 XmlFsType.ModificationDateSpecified = true;
             }
-            XmlFsType.Type = "HFS";
+
+            XmlFsType.Type       = "HFS";
             XmlFsType.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
             if(mdb.drFndrInfo6 != 0 && mdb.drFndrInfo7 != 0)
                 XmlFsType.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
@@ -286,8 +289,8 @@ namespace DiscImageChef.Filesystems
 
         static byte[] Read2048SectorAs512(IMediaImage imagePlugin, ulong lba)
         {
-            ulong lba2K = lba / 4;
-            int remainder = (int)(lba % 4);
+            ulong lba2K     = lba / 4;
+            int   remainder = (int)(lba % 4);
 
             byte[] buffer = imagePlugin.ReadSector(lba2K);
             byte[] sector = new byte[512];
@@ -330,7 +333,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x022, Free allocation blocks</summary>
             public ushort drFreeBks;
             /// <summary>0x024, Volume name (28 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)] public byte[] drVN;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
+            public byte[] drVN;
             /// <summary>0x040, Volume last backup time</summary>
             public uint drVolBkUp;
             /// <summary>0x044, Volume backup sequence number</summary>
@@ -405,19 +409,26 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x006, Boot block flags</summary>
             public short boot_flags;
             /// <summary>0x00A, System file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] system_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] system_name;
             /// <summary>0x01A, Finder file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] finder_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] finder_name;
             /// <summary>0x02A, Debugger file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] debug_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] debug_name;
             /// <summary>0x03A, Disassembler file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] disasm_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] disasm_name;
             /// <summary>0x04A, Startup screen file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] stupscr_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] stupscr_name;
             /// <summary>0x05A, First program to execute on boot (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] bootup_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] bootup_name;
             /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] clipbrd_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] clipbrd_name;
             /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
             public ushort max_files;
             /// <summary>0x07C, Event queue size</summary>

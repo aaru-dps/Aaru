@@ -37,10 +37,13 @@
 <html>
 <meta charset="UTF-8">
 <head runat="server">
-    <link href="dos.css" rel="stylesheet" type="text/css"/>
+    <link href="dos.css"
+          rel="stylesheet"
+          type="text/css" />
     <title>DiscImageChef's TODO</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
+    <script async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -51,13 +54,16 @@
         gtag('config', 'UA-111466173-1');
     </script>
 </head>
-<body id="body" runat="server">
+<body id="body"
+      runat="server">
 <p>
-    <a href="Default.aspx">Return to main page.</a><br/>
+    <a href="Default.aspx">Return to main page.</a><br />
     DiscImageChef list of things to be donated:
 </p>
 <div>
-    <velyo:MarkdownContent ID="todo" Path="~/docs/DONATING.md" runat="server"/>
+    <velyo:MarkdownContent ID="todo"
+                           Path="~/docs/DONATING.md"
+                           runat="server" />
 </div>
 </body>
 </html>

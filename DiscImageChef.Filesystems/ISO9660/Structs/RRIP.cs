@@ -39,39 +39,39 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PosixAttributes
         {
-            public ushort signature;
-            public byte length;
-            public byte version;
+            public ushort    signature;
+            public byte      length;
+            public byte      version;
             public PosixMode st_mode;
             public PosixMode st_mode_be;
-            public uint st_nlink;
-            public uint st_nlink_be;
-            public uint st_uid;
-            public uint st_uid_be;
-            public uint st_gid;
-            public uint st_gid_be;
-            public uint st_ino;
-            public uint st_ino_be;
+            public uint      st_nlink;
+            public uint      st_nlink_be;
+            public uint      st_uid;
+            public uint      st_uid_be;
+            public uint      st_gid;
+            public uint      st_gid_be;
+            public uint      st_ino;
+            public uint      st_ino_be;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PosixDeviceNumber
         {
             public ushort signature;
-            public byte length;
-            public byte version;
-            public uint dev_t_high;
-            public uint dev_t_high_be;
-            public uint dev_t_low;
-            public uint dev_t_low_be;
+            public byte   length;
+            public byte   version;
+            public uint   dev_t_high;
+            public uint   dev_t_high_be;
+            public uint   dev_t_low;
+            public uint   dev_t_low_be;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SymbolicLink
         {
-            public ushort signature;
-            public byte length;
-            public byte version;
+            public ushort       signature;
+            public byte         length;
+            public byte         version;
             public SymlinkFlags flags;
             // Followed by SymbolicLinkComponent (link to /bar/foo uses at least two of these structs)
         }
@@ -80,16 +80,16 @@ namespace DiscImageChef.Filesystems.ISO9660
         struct SymbolicLinkComponent
         {
             public SymlinkComponentFlags flags;
-            public byte length;
+            public byte                  length;
             // Followed by component content
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AlternateName
         {
-            public ushort signature;
-            public byte length;
-            public byte version;
+            public ushort             signature;
+            public byte               length;
+            public byte               version;
             public AlternateNameFlags flags;
             // Folowed by name, can be divided in pieces
         }
@@ -98,36 +98,36 @@ namespace DiscImageChef.Filesystems.ISO9660
         struct ChildLink
         {
             public ushort signature;
-            public byte length;
-            public byte version;
-            public uint child_dir_lba;
-            public uint child_dir_lba_be;
+            public byte   length;
+            public byte   version;
+            public uint   child_dir_lba;
+            public uint   child_dir_lba_be;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ParentLink
         {
             public ushort signature;
-            public byte length;
-            public byte version;
-            public uint parent_dir_lba;
-            public uint parent_dir_lba_be;
+            public byte   length;
+            public byte   version;
+            public uint   parent_dir_lba;
+            public uint   parent_dir_lba_be;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RelocatedDirectory
         {
             public ushort signature;
-            public byte length;
-            public byte version;
+            public byte   length;
+            public byte   version;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Timestamps
         {
-            public ushort signature;
-            public byte length;
-            public byte version;
+            public ushort         signature;
+            public byte           length;
+            public byte           version;
             public TimestampFlags flags;
             // If flags indicate long format, timestamps are 17 bytes, if not, 7 bytes
             // Followed by creation time if present
@@ -143,13 +143,13 @@ namespace DiscImageChef.Filesystems.ISO9660
         struct SparseFile
         {
             public ushort signature;
-            public byte length;
-            public byte version;
-            public uint virtual_size_high;
-            public uint virtual_size_high_be;
-            public uint virtual_size_low;
-            public uint virtual_size_low_be;
-            public byte table_depth;
+            public byte   length;
+            public byte   version;
+            public uint   virtual_size_high;
+            public uint   virtual_size_high_be;
+            public uint   virtual_size_low;
+            public uint   virtual_size_low_be;
+            public byte   table_depth;
         }
     }
 }

@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(fileBlock > entry.flPyLen / volMDB.drAlBlkSiz) return Errno.InvalidArgument;
 
             uint nextBlock = entry.flStBlk;
-            long relBlock = 0;
+            long relBlock  = 0;
 
             while(true)
             {
@@ -89,16 +89,16 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             MFS_FinderFlags fdFlags = (MFS_FinderFlags)BigEndianBitConverter.ToUInt16(entry.flUsrWds, 0x08);
 
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsAlias)) attributes |= FileAttributes.Alias;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kHasBundle)) attributes |= FileAttributes.Bundle;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsAlias)) attributes       |= FileAttributes.Alias;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kHasBundle)) attributes     |= FileAttributes.Bundle;
             if(fdFlags.HasFlag(MFS_FinderFlags.kHasBeenInited)) attributes |= FileAttributes.HasBeenInited;
             if(fdFlags.HasFlag(MFS_FinderFlags.kHasCustomIcon)) attributes |= FileAttributes.HasCustomIcon;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kHasNoINITs)) attributes |= FileAttributes.HasNoINITs;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsInvisible)) attributes |= FileAttributes.Hidden;
-            if(entry.flFlags.HasFlag(MFS_FileFlags.Locked)) attributes |= FileAttributes.Immutable;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsOnDesk)) attributes |= FileAttributes.IsOnDesk;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsShared)) attributes |= FileAttributes.Shared;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsStationery)) attributes |= FileAttributes.Stationery;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kHasNoINITs)) attributes    |= FileAttributes.HasNoINITs;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsInvisible)) attributes   |= FileAttributes.Hidden;
+            if(entry.flFlags.HasFlag(MFS_FileFlags.Locked)) attributes     |= FileAttributes.Immutable;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsOnDesk)) attributes      |= FileAttributes.IsOnDesk;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsShared)) attributes      |= FileAttributes.Shared;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsStationery)) attributes  |= FileAttributes.Stationery;
 
             if(!attributes.HasFlag(FileAttributes.Alias) && !attributes.HasFlag(FileAttributes.Bundle) &&
                !attributes.HasFlag(FileAttributes.Stationery)) attributes |= FileAttributes.File;
@@ -113,15 +113,18 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!mounted) return Errno.AccessDenied;
 
             byte[] file;
-            Errno error = Errno.NoError;
+            Errno  error = Errno.NoError;
 
             if(debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = directoryBlocks;
-            else if(debug && string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && bootBlocks != null
-            ) file = bootBlocks;
+            else if(debug && string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
+                    bootBlocks                                                                != null)
+                file = bootBlocks;
             else if(debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
-                file = blockMapBytes;
+                file                                                                                    = blockMapBytes;
             else if(debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0) file = mdbBlocks;
-            else error = ReadFile(path, out file, false, false);
+            else
+                error =
+                    ReadFile(path, out file, false, false);
 
             if(error != Errno.NoError) return error;
 
@@ -151,20 +154,20 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
+                   string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
+                   string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
                 {
                     stat = new FileEntryInfo
                     {
-                        BlockSize = device.Info.SectorSize,
-                        DeviceNo = 0,
-                        GID = 0,
-                        Inode = 0,
-                        Links = 1,
-                        Mode = 0x124,
-                        UID = 0,
+                        BlockSize  = device.Info.SectorSize,
+                        DeviceNo   = 0,
+                        GID        = 0,
+                        Inode      = 0,
+                        Links      = 1,
+                        Mode       = 0x124,
+                        UID        = 0,
                         Attributes = FileAttributes.System
                     };
 
@@ -202,18 +205,18 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             stat = new FileEntryInfo
             {
-                Attributes = attr,
-                Blocks = entry.flLgLen / volMDB.drAlBlkSiz,
-                BlockSize = volMDB.drAlBlkSiz,
-                CreationTime = DateHandlers.MacToDateTime(entry.flCrDat),
-                DeviceNo = 0,
-                GID = 0,
-                Inode = entry.flFlNum,
+                Attributes    = attr,
+                Blocks        = entry.flLgLen / volMDB.drAlBlkSiz,
+                BlockSize     = volMDB.drAlBlkSiz,
+                CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
+                DeviceNo      = 0,
+                GID           = 0,
+                Inode         = entry.flFlNum,
                 LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
-                Length = entry.flPyLen,
-                Links = 1,
-                Mode = 0x124,
-                UID = 0
+                Length        = entry.flPyLen,
+                Links         = 1,
+                Mode          = 0x124,
+                UID           = 0
             };
 
             return Errno.NoError;
@@ -291,7 +294,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             else
             {
                 if(resourceFork)
-                    if(ms.Length < entry.flRLgLen) buf = ms.ToArray();
+                    if(ms.Length < entry.flRLgLen)
+                        buf = ms.ToArray();
                     else
                     {
                         buf = new byte[entry.flRLgLen];

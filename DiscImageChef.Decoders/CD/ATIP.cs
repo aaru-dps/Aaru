@@ -238,32 +238,32 @@ namespace DiscImageChef.Decoders.CD
                 return null;
             }
 
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(CDATIPResponse, 0);
-            decoded.Reserved1 = CDATIPResponse[2];
-            decoded.Reserved2 = CDATIPResponse[3];
-            decoded.ITWP = (byte)((CDATIPResponse[4] & 0xF0) >> 4);
-            decoded.DDCD = Convert.ToBoolean(CDATIPResponse[4] & 0x08);
+            decoded.DataLength     = BigEndianBitConverter.ToUInt16(CDATIPResponse, 0);
+            decoded.Reserved1      = CDATIPResponse[2];
+            decoded.Reserved2      = CDATIPResponse[3];
+            decoded.ITWP           = (byte)((CDATIPResponse[4] & 0xF0) >> 4);
+            decoded.DDCD           = Convert.ToBoolean(CDATIPResponse[4] & 0x08);
             decoded.ReferenceSpeed = (byte)(CDATIPResponse[4] & 0x07);
-            decoded.AlwaysZero = Convert.ToBoolean(CDATIPResponse[5] & 0x80);
-            decoded.URU = Convert.ToBoolean(CDATIPResponse[5] & 0x40);
-            decoded.Reserved3 = (byte)(CDATIPResponse[5] & 0x3F);
+            decoded.AlwaysZero     = Convert.ToBoolean(CDATIPResponse[5] & 0x80);
+            decoded.URU            = Convert.ToBoolean(CDATIPResponse[5] & 0x40);
+            decoded.Reserved3      = (byte)(CDATIPResponse[5] & 0x3F);
 
-            decoded.AlwaysOne = Convert.ToBoolean(CDATIPResponse[6] & 0x80);
-            decoded.DiscType = Convert.ToBoolean(CDATIPResponse[6] & 0x40);
+            decoded.AlwaysOne   = Convert.ToBoolean(CDATIPResponse[6] & 0x80);
+            decoded.DiscType    = Convert.ToBoolean(CDATIPResponse[6] & 0x40);
             decoded.DiscSubType = (byte)((CDATIPResponse[6] & 0x38) >> 3);
-            decoded.A1Valid = Convert.ToBoolean(CDATIPResponse[6] & 0x04);
-            decoded.A2Valid = Convert.ToBoolean(CDATIPResponse[6] & 0x02);
-            decoded.A3Valid = Convert.ToBoolean(CDATIPResponse[6] & 0x01);
+            decoded.A1Valid     = Convert.ToBoolean(CDATIPResponse[6] & 0x04);
+            decoded.A2Valid     = Convert.ToBoolean(CDATIPResponse[6] & 0x02);
+            decoded.A3Valid     = Convert.ToBoolean(CDATIPResponse[6] & 0x01);
 
-            decoded.Reserved4 = CDATIPResponse[7];
-            decoded.LeadInStartMin = CDATIPResponse[8];
-            decoded.LeadInStartSec = CDATIPResponse[9];
-            decoded.LeadInStartFrame = CDATIPResponse[10];
-            decoded.Reserved5 = CDATIPResponse[11];
-            decoded.LeadOutStartMin = CDATIPResponse[12];
-            decoded.LeadOutStartSec = CDATIPResponse[13];
+            decoded.Reserved4         = CDATIPResponse[7];
+            decoded.LeadInStartMin    = CDATIPResponse[8];
+            decoded.LeadInStartSec    = CDATIPResponse[9];
+            decoded.LeadInStartFrame  = CDATIPResponse[10];
+            decoded.Reserved5         = CDATIPResponse[11];
+            decoded.LeadOutStartMin   = CDATIPResponse[12];
+            decoded.LeadOutStartSec   = CDATIPResponse[13];
             decoded.LeadOutStartFrame = CDATIPResponse[14];
-            decoded.Reserved6 = CDATIPResponse[15];
+            decoded.Reserved6         = CDATIPResponse[15];
 
             decoded.A1Values = new byte[3];
             decoded.A2Values = new byte[3];
@@ -356,6 +356,7 @@ namespace DiscImageChef.Decoders.CD
                             sb.AppendFormat("Unknown CD-RW disc subtype: {0}", response.DiscSubType).AppendLine();
                             break;
                     }
+
                     switch(response.ReferenceSpeed)
                     {
                         case 1:
@@ -430,7 +431,7 @@ namespace DiscImageChef.Decoders.CD
             if(response.LeadInStartMin != 97) return sb.ToString();
 
             int type = response.LeadInStartFrame % 10;
-            int frm = response.LeadInStartFrame - type;
+            int frm  = response.LeadInStartFrame - type;
 
             if(response.DiscType) sb.AppendLine("Disc uses phase change");
             else

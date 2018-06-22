@@ -43,14 +43,14 @@ namespace DiscImageChef.Filesystems
     public class Fossil : IFilesystem
     {
         const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
-        const uint FOSSIL_SB_MAGIC = 0x2340A3B1;
+        const uint FOSSIL_SB_MAGIC  = 0x2340A3B1;
         // Fossil header starts at 128KiB
         const ulong HEADER_POS = 128 * 1024;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Fossil Filesystem Plugin";
-        public Guid Id => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Fossil Filesystem Plugin";
+        public Guid           Id        => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -58,8 +58,8 @@ namespace DiscImageChef.Filesystems
 
             if(partition.Start + hdrSector > imagePlugin.Info.Sectors) return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            FossilHeader hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
+            FossilHeader hdr    = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);
@@ -68,17 +68,17 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             // Technically everything on Plan 9 from Bell Labs is in UTF-8
-            Encoding = Encoding.UTF8;
+            Encoding    = Encoding.UTF8;
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            FossilHeader hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
+            FossilHeader hdr    = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);
@@ -97,9 +97,9 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Fossil filesystem",
+                Type        = "Fossil filesystem",
                 ClusterSize = hdr.blockSize,
-                Clusters = hdr.end
+                Clusters    = hdr.end
             };
 
             if(sbLocation <= partition.End)
@@ -197,11 +197,13 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Venti score of last successful archive
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] last;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+            public byte[] last;
             /// <summary>
             ///     name of file system(just a comment)
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public byte[] name;
         }
     }
 }

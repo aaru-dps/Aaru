@@ -54,7 +54,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             };
 
             if(jolietvd.creation_date[0] < 0x31 || jolietvd.creation_date[0] > 0x39)
-                decodedVD.CreationTime = DateTime.MinValue;
+                decodedVD.CreationTime  = DateTime.MinValue;
             else decodedVD.CreationTime = DateHandlers.Iso9660ToDateTime(jolietvd.creation_date);
 
             if(jolietvd.modification_date[0] < 0x31 || jolietvd.modification_date[0] > 0x39)
@@ -62,7 +62,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             else
             {
                 decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DateHandlers.Iso9660ToDateTime(jolietvd.modification_date);
+                decodedVD.ModificationTime    = DateHandlers.Iso9660ToDateTime(jolietvd.modification_date);
             }
 
             if(jolietvd.expiration_date[0] < 0x31 || jolietvd.expiration_date[0] > 0x39)
@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             else
             {
                 decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DateHandlers.Iso9660ToDateTime(jolietvd.expiration_date);
+                decodedVD.ExpirationTime    = DateHandlers.Iso9660ToDateTime(jolietvd.expiration_date);
             }
 
             if(jolietvd.effective_date[0] < 0x31 || jolietvd.effective_date[0] > 0x39)
@@ -78,10 +78,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             else
             {
                 decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DateHandlers.Iso9660ToDateTime(jolietvd.effective_date);
+                decodedVD.EffectiveTime    = DateHandlers.Iso9660ToDateTime(jolietvd.effective_date);
             }
 
-            decodedVD.Blocks = jolietvd.volume_space_size;
+            decodedVD.Blocks    = jolietvd.volume_space_size;
             decodedVD.BlockSize = jolietvd.logical_block_size;
 
             return decodedVD;

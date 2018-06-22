@@ -69,15 +69,15 @@ namespace DiscImageChef.Decoders.SCSI
 
             Certance_ModePage_21 decoded = new Certance_ModePage_21();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.OperatingSystemsSupport = pageResponse[2];
-            decoded.FirmwareTestControl2 = pageResponse[3];
-            decoded.ExtendedPOSTMode = pageResponse[4];
-            decoded.InquiryStringControl = pageResponse[5];
-            decoded.FirmwareTestControl = pageResponse[6];
-            decoded.DataCompressionControl = pageResponse[7];
-            decoded.HostUnloadOverride |= (pageResponse[8] & 0x80) == 0x80;
-            decoded.AutoUnloadMode = (byte)(pageResponse[8] & 0x7F);
+            decoded.PS                      |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.OperatingSystemsSupport =  pageResponse[2];
+            decoded.FirmwareTestControl2    =  pageResponse[3];
+            decoded.ExtendedPOSTMode        =  pageResponse[4];
+            decoded.InquiryStringControl    =  pageResponse[5];
+            decoded.FirmwareTestControl     =  pageResponse[6];
+            decoded.DataCompressionControl  =  pageResponse[7];
+            decoded.HostUnloadOverride      |= (pageResponse[8]       & 0x80) == 0x80;
+            decoded.AutoUnloadMode          =  (byte)(pageResponse[8] & 0x7F);
 
             return decoded;
         }
@@ -92,7 +92,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             Certance_ModePage_21 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder        sb   = new StringBuilder();
 
             sb.AppendLine("Certance Drive Capabilities Control Mode Page:");
 

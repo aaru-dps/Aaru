@@ -499,7 +499,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     public struct Profile
     {
         public ProfileNumber Number;
-        public bool Current;
+        public bool          Current;
     }
 
     /// <summary>
@@ -2357,11 +2357,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0000 decoded = new Feature_0000();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            int offset = 4;
+            int           offset       = 4;
             List<Profile> listProfiles = new List<Profile>();
             while(offset < feature.Length)
             {
@@ -2390,9 +2390,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0001 decoded = new Feature_0001();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.PhysicalInterfaceStandard =
                 (PhysicalInterfaces)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
@@ -2418,9 +2418,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0002 decoded = new Feature_0002();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.Async |= (feature[4] & 0x01) == 0x01;
 
@@ -2443,14 +2443,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0003 decoded = new Feature_0003();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.LoadingMechanismType = (byte)((feature[4] & 0xE0) >> 5);
-            decoded.Eject |= (feature[4] & 0x08) == 0x08;
-            decoded.PreventJumper |= (feature[4] & 0x04) == 0x04;
-            decoded.Lock |= (feature[4] & 0x01) == 0x01;
+            decoded.LoadingMechanismType =  (byte)((feature[4] & 0xE0) >> 5);
+            decoded.Eject                |= (feature[4] & 0x08) == 0x08;
+            decoded.PreventJumper        |= (feature[4] & 0x04) == 0x04;
+            decoded.Lock                 |= (feature[4] & 0x01) == 0x01;
 
             if(decoded.Version < 2) return decoded;
 
@@ -2474,11 +2474,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0004 decoded = new Feature_0004();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.SPWP |= (feature[4] & 0x02) == 0x02;
+            decoded.SPWP  |= (feature[4] & 0x02) == 0x02;
             decoded.SSWPP |= (feature[4] & 0x01) == 0x01;
 
             if(decoded.Version >= 1) decoded.WDCB |= (feature[4] & 0x04) == 0x04;
@@ -2502,12 +2502,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0010 decoded = new Feature_0010();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.LogicalBlockSize = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
-            decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
+            decoded.LogicalBlockSize =
+                (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.Blocking =
+                (ushort)((feature[8] << 8) + feature[9]);
             decoded.PP |= (feature[10] & 0x01) == 0x01;
 
             return decoded;
@@ -2527,9 +2529,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_001D decoded = new Feature_001D();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -2548,13 +2550,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_001E decoded = new Feature_001E();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version >= 1)
             {
-                decoded.C2 |= (feature[4] & 0x02) == 0x02;
+                decoded.C2     |= (feature[4] & 0x02) == 0x02;
                 decoded.CDText |= (feature[4] & 0x01) == 0x01;
             }
 
@@ -2577,14 +2579,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_001F decoded = new Feature_001F();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version >= 2 && feature.Length >= 8)
             {
                 decoded.MULTI110 |= (feature[4] & 0x01) == 0x01;
-                decoded.DualR |= (feature[6] & 0x01) == 0x01;
+                decoded.DualR    |= (feature[6] & 0x01) == 0x01;
             }
 
             // TODO: Check this
@@ -2607,17 +2609,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0020 decoded = new Feature_0020();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version < 1) return decoded;
 
             decoded.LastLBA = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
             decoded.LogicalBlockSize =
                 (uint)((feature[8] << 24) + (feature[9] << 16) + (feature[10] << 8) + feature[11]);
-            decoded.Blocking = (ushort)((feature[12] << 8) + feature[13]);
-            decoded.PP |= (feature[14] & 0x01) == 0x01;
+            decoded.Blocking =  (ushort)((feature[12] << 8) + feature[13]);
+            decoded.PP       |= (feature[14] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2636,15 +2638,15 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0021 decoded = new Feature_0021();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version >= 1)
             {
-                decoded.DataTypeSupported = (ushort)((feature[4] << 8) + feature[5]);
-                decoded.BUF |= (feature[6] & 0x01) == 0x01;
-                decoded.LinkSizes = new byte[feature[7]];
+                decoded.DataTypeSupported =  (ushort)((feature[4] << 8) + feature[5]);
+                decoded.BUF               |= (feature[6] & 0x01) == 0x01;
+                decoded.LinkSizes         =  new byte[feature[7]];
                 if(feature.Length > feature[7] + 8) Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
             }
 
@@ -2670,9 +2672,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0022 decoded = new Feature_0022();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -2691,17 +2693,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0023 decoded = new Feature_0023();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version >= 1 && feature.Length >= 12)
             {
                 decoded.RENoSA |= (feature[4] & 0x08) == 0x08;
                 decoded.Expand |= (feature[4] & 0x04) == 0x04;
-                decoded.QCert |= (feature[4] & 0x02) == 0x02;
-                decoded.Cert |= (feature[4] & 0x01) == 0x01;
-                decoded.RRM |= (feature[8] & 0x01) == 0x01;
+                decoded.QCert  |= (feature[4] & 0x02) == 0x02;
+                decoded.Cert   |= (feature[4] & 0x01) == 0x01;
+                decoded.RRM    |= (feature[8] & 0x01) == 0x01;
             }
 
             if(decoded.Version >= 2 && feature.Length >= 12) decoded.FRF |= (feature[4] & 0x80) == 0x80;
@@ -2723,9 +2725,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0024 decoded = new Feature_0024();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version >= 1 && feature.Length >= 8) decoded.SSA |= (feature[4] & 0x80) == 0x80;
 
@@ -2746,12 +2748,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0025 decoded = new Feature_0025();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.LogicalBlockSize = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
-            decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
+            decoded.LogicalBlockSize =
+                (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.Blocking =
+                (ushort)((feature[8] << 8) + feature[9]);
             decoded.PP |= (feature[10] & 0x01) == 0x01;
 
             return decoded;
@@ -2771,9 +2775,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0026 decoded = new Feature_0026();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -2792,9 +2796,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0027 decoded = new Feature_0027();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -2813,16 +2817,16 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0028 decoded = new Feature_0028();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.Write |= (feature[4] & 0x01) == 0x01;
 
             if(decoded.Version < 1) return decoded;
 
             decoded.DVDPWrite |= (feature[4] & 0x04) == 0x04;
-            decoded.DVDPRead |= (feature[4] & 0x02) == 0x02;
+            decoded.DVDPRead  |= (feature[4] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -2841,13 +2845,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0029 decoded = new Feature_0029();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.DRTDM |= (feature[4] & 0x01) == 0x01;
-            decoded.DBICacheZones = feature[5];
-            decoded.Entries = (ushort)((feature[6] << 8) + feature[7]);
+            decoded.DRTDM         |= (feature[4] & 0x01) == 0x01;
+            decoded.DBICacheZones =  feature[5];
+            decoded.Entries       =  (ushort)((feature[6] << 8) + feature[7]);
 
             return decoded;
         }
@@ -2866,11 +2870,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_002A decoded = new Feature_002A();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.Write |= (feature[4] & 0x01) == 0x01;
+            decoded.Write     |= (feature[4] & 0x01) == 0x01;
             decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
 
             if(decoded.Version >= 1) decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
@@ -2892,9 +2896,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_002B decoded = new Feature_002B();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.Write |= (feature[4] & 0x01) == 0x01;
 
@@ -2915,14 +2919,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_002C decoded = new Feature_002C();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.DSDG |= (feature[4] & 0x08) == 0x08;
-            decoded.DSDR |= (feature[4] & 0x04) == 0x04;
+            decoded.DSDG         |= (feature[4] & 0x08) == 0x08;
+            decoded.DSDR         |= (feature[4] & 0x04) == 0x04;
             decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
-            decoded.Blank |= (feature[4] & 0x01) == 0x01;
+            decoded.Blank        |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2941,19 +2945,19 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_002D decoded = new Feature_002D();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
-            decoded.CDRW |= (feature[4] & 0x02) == 0x02;
-            decoded.RWSubchannel |= (feature[4] & 0x01) == 0x01;
-            decoded.DataTypeSupported = (ushort)((feature[6] << 8) + feature[7]);
+            decoded.TestWrite         |= (feature[4] & 0x04) == 0x04;
+            decoded.CDRW              |= (feature[4] & 0x02) == 0x02;
+            decoded.RWSubchannel      |= (feature[4] & 0x01) == 0x01;
+            decoded.DataTypeSupported =  (ushort)((feature[6] << 8) + feature[7]);
 
             if(decoded.Version < 2) return decoded;
 
-            decoded.BUF |= (feature[4] & 0x40) == 0x40;
-            decoded.RWRaw |= (feature[4] & 0x10) == 0x10;
+            decoded.BUF    |= (feature[4] & 0x40) == 0x40;
+            decoded.RWRaw  |= (feature[4] & 0x10) == 0x10;
             decoded.RWPack |= (feature[4] & 0x08) == 0x08;
 
             return decoded;
@@ -2973,17 +2977,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_002E decoded = new Feature_002E();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.SAO |= (feature[4] & 0x20) == 0x20;
-            decoded.RAWMS |= (feature[4] & 0x10) == 0x10;
-            decoded.RAW |= (feature[4] & 0x08) == 0x08;
-            decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
-            decoded.CDRW |= (feature[4] & 0x02) == 0x02;
-            decoded.RW |= (feature[4] & 0x01) == 0x01;
-            decoded.MaxCueSheet = (uint)((feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.SAO         |= (feature[4] & 0x20) == 0x20;
+            decoded.RAWMS       |= (feature[4] & 0x10) == 0x10;
+            decoded.RAW         |= (feature[4] & 0x08) == 0x08;
+            decoded.TestWrite   |= (feature[4] & 0x04) == 0x04;
+            decoded.CDRW        |= (feature[4] & 0x02) == 0x02;
+            decoded.RW          |= (feature[4] & 0x01) == 0x01;
+            decoded.MaxCueSheet =  (uint)((feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
             if(decoded.Version >= 1) decoded.BUF |= (feature[4] & 0x40) == 0x40;
 
@@ -3004,11 +3008,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_002F decoded = new Feature_002F();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.BUF |= (feature[4] & 0x40) == 0x40;
+            decoded.BUF       |= (feature[4] & 0x40) == 0x40;
             decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
 
             if(decoded.Version >= 1) decoded.DVDRW |= (feature[4] & 0x02) == 0x02;
@@ -3032,9 +3036,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0030 decoded = new Feature_0030();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3053,9 +3057,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0031 decoded = new Feature_0031();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
 
@@ -3076,12 +3080,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0032 decoded = new Feature_0032();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
-            decoded.Blank |= (feature[4] & 0x01) == 0x01;
+            decoded.Blank        |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3100,9 +3104,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0033 decoded = new Feature_0033();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(feature[7] <= 0 || feature.Length <= feature[7] + 8) return decoded;
 
@@ -3126,9 +3130,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0035 decoded = new Feature_0035();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3147,9 +3151,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0037 decoded = new Feature_0037();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.SubtypeSupport = feature[5];
 
@@ -3170,9 +3174,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0038 decoded = new Feature_0038();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3191,13 +3195,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_003A decoded = new Feature_003A();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.Write |= (feature[4] & 0x01) == 0x01;
+            decoded.Write      |= (feature[4] & 0x01) == 0x01;
             decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
-            decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
+            decoded.CloseOnly  |= (feature[5] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3216,9 +3220,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_003B decoded = new Feature_003B();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.Write |= (feature[4] & 0x01) == 0x01;
 
@@ -3239,20 +3243,20 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0040 decoded = new Feature_0040();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.OldRE |= (feature[9] & 0x01) == 0x01;
-            decoded.OldR |= (feature[17] & 0x01) == 0x01;
+            decoded.OldRE  |= (feature[9]  & 0x01) == 0x01;
+            decoded.OldR   |= (feature[17] & 0x01) == 0x01;
             decoded.OldROM |= (feature[25] & 0x01) == 0x01;
 
             if(decoded.Version < 1) return decoded;
 
-            decoded.BCA |= (feature[4] & 0x01) == 0x01;
-            decoded.RE2 |= (feature[9] & 0x04) == 0x04;
-            decoded.RE1 |= (feature[9] & 0x02) == 0x02;
-            decoded.R |= (feature[17] & 0x02) == 0x02;
+            decoded.BCA |= (feature[4]  & 0x01) == 0x01;
+            decoded.RE2 |= (feature[9]  & 0x04) == 0x04;
+            decoded.RE1 |= (feature[9]  & 0x02) == 0x02;
+            decoded.R   |= (feature[17] & 0x02) == 0x02;
             decoded.ROM |= (feature[25] & 0x02) == 0x02;
 
             return decoded;
@@ -3272,19 +3276,19 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0041 decoded = new Feature_0041();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.SVNR |= (feature[4] & 0x01) == 0x01;
-            decoded.OldRE |= (feature[9] & 0x01) == 0x01;
-            decoded.OldR |= (feature[17] & 0x01) == 0x01;
+            decoded.SVNR  |= (feature[4]  & 0x01) == 0x01;
+            decoded.OldRE |= (feature[9]  & 0x01) == 0x01;
+            decoded.OldR  |= (feature[17] & 0x01) == 0x01;
 
             if(decoded.Version < 1) return decoded;
 
-            decoded.RE2 |= (feature[9] & 0x04) == 0x04;
-            decoded.RE1 |= (feature[9] & 0x02) == 0x02;
-            decoded.R |= (feature[17] & 0x02) == 0x02;
+            decoded.RE2 |= (feature[9]  & 0x04) == 0x04;
+            decoded.RE1 |= (feature[9]  & 0x02) == 0x02;
+            decoded.R   |= (feature[17] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -3303,9 +3307,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0042 decoded = new Feature_0042();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3324,11 +3328,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0050 decoded = new Feature_0050();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
+            decoded.HDDVDR   |= (feature[4] & 0x01) == 0x01;
             decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
 
             return decoded;
@@ -3348,11 +3352,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0051 decoded = new Feature_0051();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
+            decoded.HDDVDR   |= (feature[4] & 0x01) == 0x01;
             decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
 
             return decoded;
@@ -3372,9 +3376,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0080 decoded = new Feature_0080();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.RI |= (feature[4] & 0x01) == 0x01;
 
@@ -3395,9 +3399,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0100 decoded = new Feature_0100();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3416,9 +3420,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0101 decoded = new Feature_0101();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.PP |= (feature[4] & 0x01) == 0x01;
 
@@ -3439,13 +3443,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0102 decoded = new Feature_0102();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.SCC |= (feature[4] & 0x10) == 0x10;
-            decoded.SDP |= (feature[4] & 0x04) == 0x04;
-            decoded.HighestSlotNumber = (byte)(feature[7] & 0x1F);
+            decoded.SCC               |= (feature[4]       & 0x10) == 0x10;
+            decoded.SDP               |= (feature[4]       & 0x04) == 0x04;
+            decoded.HighestSlotNumber =  (byte)(feature[7] & 0x1F);
 
             return decoded;
         }
@@ -3464,14 +3468,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0103 decoded = new Feature_0103();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.Scan |= (feature[4] & 0x04) == 0x04;
-            decoded.SCM |= (feature[4] & 0x02) == 0x02;
-            decoded.SV |= (feature[4] & 0x01) == 0x01;
-            decoded.VolumeLevels = (ushort)((feature[6] << 8) + feature[7]);
+            decoded.Scan         |= (feature[4] & 0x04) == 0x04;
+            decoded.SCM          |= (feature[4] & 0x02) == 0x02;
+            decoded.SV           |= (feature[4] & 0x01) == 0x01;
+            decoded.VolumeLevels =  (ushort)((feature[6] << 8) + feature[7]);
 
             return decoded;
         }
@@ -3490,9 +3494,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0104 decoded = new Feature_0104();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version >= 1 && feature.Length >= 8) decoded.M5 |= (feature[4] & 0x01) == 0x01;
 
@@ -3513,14 +3517,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0105 decoded = new Feature_0105();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version < 1 || feature.Length < 8) return decoded;
 
-            decoded.Group3 |= (feature[4] & 0x01) == 0x01;
-            decoded.UnitLength = (ushort)((feature[6] << 8) + feature[7]);
+            decoded.Group3     |= (feature[4] & 0x01) == 0x01;
+            decoded.UnitLength =  (ushort)((feature[6] << 8) + feature[7]);
 
             return decoded;
         }
@@ -3539,9 +3543,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0106 decoded = new Feature_0106();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.CSSVersion = feature[7];
 
@@ -3562,22 +3566,22 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0107 decoded = new Feature_0107();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             if(decoded.Version >= 3 && feature.Length >= 8)
             {
                 decoded.RBCB |= (feature[4] & 0x10) == 0x10;
-                decoded.SCS |= (feature[4] & 0x08) == 0x08;
+                decoded.SCS  |= (feature[4] & 0x08) == 0x08;
                 decoded.MP2A |= (feature[4] & 0x04) == 0x04;
                 decoded.WSPD |= (feature[4] & 0x02) == 0x02;
-                decoded.SW |= (feature[4] & 0x01) == 0x01;
+                decoded.SW   |= (feature[4] & 0x01) == 0x01;
             }
 
             if(decoded.Version < 5 || feature.Length < 8) return decoded;
 
-            decoded.SMP |= (feature[4] & 0x20) == 0x20;
+            decoded.SMP  |= (feature[4] & 0x20) == 0x20;
             decoded.RBCB |= (feature[4] & 0x10) == 0x10;
 
             return decoded;
@@ -3597,9 +3601,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0108 decoded = new Feature_0108();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             byte[] serial = new byte[feature.Length];
             Array.Copy(feature, 4, serial, 0, feature.Length - 4);
@@ -3622,9 +3626,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0109 decoded = new Feature_0109();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3643,14 +3647,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_010A decoded = new Feature_010A();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.DCBs = new uint[feature[3] / 4];
             for(int i = 0; i < decoded.DCBs.Length; i++)
                 decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) +
-                                         (feature[2 + 4 + i * 4] << 8) + feature[3 + 4 + i * 4]);
+                                         (feature[2 + 4 + i * 4] << 8)  + feature[3 + 4 + i * 4]);
 
             return decoded;
         }
@@ -3669,9 +3673,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_010B decoded = new Feature_010B();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.CPRMVersion = feature[7];
 
@@ -3692,17 +3696,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_010C decoded = new Feature_010C();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.Century = (ushort)((feature[4] << 8) + feature[5]);
-            decoded.Year = (ushort)((feature[6] << 8) + feature[7]);
-            decoded.Month = (ushort)((feature[8] << 8) + feature[9]);
-            decoded.Day = (ushort)((feature[10] << 8) + feature[11]);
-            decoded.Hour = (ushort)((feature[12] << 8) + feature[13]);
-            decoded.Minute = (ushort)((feature[14] << 8) + feature[15]);
-            decoded.Second = (ushort)((feature[16] << 8) + feature[17]);
+            decoded.Century = (ushort)((feature[4]  << 8) + feature[5]);
+            decoded.Year    = (ushort)((feature[6]  << 8) + feature[7]);
+            decoded.Month   = (ushort)((feature[8]  << 8) + feature[9]);
+            decoded.Day     = (ushort)((feature[10] << 8) + feature[11]);
+            decoded.Hour    = (ushort)((feature[12] << 8) + feature[13]);
+            decoded.Minute  = (ushort)((feature[14] << 8) + feature[15]);
+            decoded.Second  = (ushort)((feature[16] << 8) + feature[17]);
 
             return decoded;
         }
@@ -3721,14 +3725,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_010D decoded = new Feature_010D();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.BNG |= (feature[4] & 0x01) == 0x01;
-            decoded.BindNonceBlocks = feature[5];
-            decoded.AGIDs = (byte)(feature[6] & 0x0F);
-            decoded.AACSVersion = feature[7];
+            decoded.BNG             |= (feature[4] & 0x01) == 0x01;
+            decoded.BindNonceBlocks =  feature[5];
+            decoded.AGIDs           =  (byte)(feature[6] & 0x0F);
+            decoded.AACSVersion     =  feature[7];
 
             if(decoded.Version < 2) return decoded;
 
@@ -3754,9 +3758,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_010E decoded = new Feature_010E();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             decoded.MaxScrambleExtent = feature[4];
 
@@ -3777,9 +3781,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0110 decoded = new Feature_0110();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3798,9 +3802,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0113 decoded = new Feature_0113();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
             return decoded;
         }
@@ -3819,14 +3823,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             Feature_0142 decoded = new Feature_0142();
 
-            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Current    |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
-            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+            decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-            decoded.PSAU |= (feature[4] & 0x80) == 0x80;
-            decoded.LOSPB |= (feature[4] & 0x40) == 0x40;
-            decoded.ME |= (feature[4] & 0x01) == 0x01;
-            decoded.Profiles = new ushort[feature[5]];
+            decoded.PSAU     |= (feature[4] & 0x80) == 0x80;
+            decoded.LOSPB    |= (feature[4] & 0x40) == 0x40;
+            decoded.ME       |= (feature[4] & 0x01) == 0x01;
+            decoded.Profiles =  new ushort[feature[5]];
             if(feature[5] * 2 + 6 != feature.Length) return decoded;
 
             for(int i = 0; i < feature[5]; i++)
@@ -3839,8 +3843,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0000 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0000  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Supported Profiles:");
             if(ftr.Profiles == null) return sb.ToString();
@@ -3982,8 +3986,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0001 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0001  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Core Feature:");
             sb.Append("\tDrive uses ");
@@ -4036,8 +4040,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0002 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0002  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Morphing:");
 
@@ -4054,8 +4058,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0003 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0003  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Removable Medium:");
 
@@ -4095,8 +4099,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0004 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0004  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Write Protect:");
 
@@ -4112,8 +4116,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0010 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0010  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC Random Readable");
             if(ftr.Current) sb.Append(" (current)");
@@ -4139,8 +4143,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_001E ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_001E  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC CD Read");
             if(ftr.Current) sb.Append(" (current)");
@@ -4157,8 +4161,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_001F ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_001F  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC DVD Read");
             if(ftr.Current) sb.Append(" (current)");
@@ -4176,8 +4180,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0020 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0020  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC Random Writable:");
             if(ftr.Current) sb.Append(" (current)");
@@ -4197,8 +4201,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0021 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0021  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Incremental Streaming Writable:");
 
@@ -4240,8 +4244,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0023 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0023  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Formattable:");
             sb.AppendLine("\tDrive can format media into logical blocks");
@@ -4260,8 +4264,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0024 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0024  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Hardware Defect Management:");
             sb.AppendLine("\tDrive shall be able to provide a defect-free contiguous address space");
@@ -4274,8 +4278,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0025 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0025  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC Write Once");
             if(ftr.Current) sb.Append(" (current)");
@@ -4301,8 +4305,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0027 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0027  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("Drive can write High-Speed CD-RW");
             if(ftr.Current) sb.AppendLine(" (current)");
@@ -4315,12 +4319,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0028 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0028  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.Write && ftr.DVDPRead && ftr.DVDPWrite) sb.Append("Drive can read and write CD-MRW and DVD+MRW");
-            else if(ftr.DVDPRead && ftr.DVDPWrite) sb.Append("Drive can read and write DVD+MRW");
-            else if(ftr.Write && ftr.DVDPRead) sb.Append("Drive and read DVD+MRW and read and write CD-MRW");
+            else if(ftr.DVDPRead         && ftr.DVDPWrite) sb.Append("Drive can read and write DVD+MRW");
+            else if(ftr.Write            && ftr.DVDPRead) sb.Append("Drive and read DVD+MRW and read and write CD-MRW");
             else if(ftr.Write) sb.Append("Drive can read and write CD-MRW");
             else if(ftr.DVDPRead) sb.Append("Drive can read CD-MRW and DVD+MRW");
             else sb.Append("Drive can read CD-MRW");
@@ -4335,8 +4339,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0029 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0029  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Enhanced Defect Reporting Feature:");
 
@@ -4353,8 +4357,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_002A ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_002A  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.Write)
             {
@@ -4380,8 +4384,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_002B ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_002B  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.Write)
             {
@@ -4403,8 +4407,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_002C ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_002C  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC Rigid Restricted Overwrite");
             sb.AppendLine(ftr.Current ? " (current):" : ":");
@@ -4422,8 +4426,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_002D ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_002D  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive can write CDs in Track at Once Mode:");
 
@@ -4466,10 +4470,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_002E ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_002E  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
-            if(ftr.SAO && !ftr.RAW) sb.AppendLine("Drive can write CDs in Session at Once Mode:");
+            if(ftr.SAO       && !ftr.RAW) sb.AppendLine("Drive can write CDs in Session at Once Mode:");
             else if(!ftr.SAO && ftr.RAW) sb.AppendLine("Drive can write CDs in raw Mode:");
             else sb.AppendLine("Drive can write CDs in Session at Once and in Raw Modes:");
 
@@ -4492,8 +4496,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_002F ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_002F  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.DVDRW && ftr.RDL) sb.AppendLine("Drive supports writing DVD-R, DVD-RW and DVD-R DL");
             else if(ftr.RDL) sb.AppendLine("Drive supports writing DVD-R and DVD-R DL");
@@ -4515,8 +4519,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0031 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0031  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive supports writing DDCD-R");
 
@@ -4529,8 +4533,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0032 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0032  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive supports writing DDCD-RW");
 
@@ -4544,8 +4548,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0033 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0033  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Layer Jump Recording:");
 
@@ -4566,8 +4570,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0037 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0037  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive can write CD-RW");
             if(ftr.SubtypeSupport <= 0) return sb.ToString();
@@ -4595,8 +4599,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_003A ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_003A  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.Write)
             {
@@ -4622,8 +4626,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_003B ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_003B  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.Write)
             {
@@ -4645,8 +4649,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0040 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0040  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC BD Read");
             sb.AppendLine(ftr.Current ? " (current):" : ":");
@@ -4668,8 +4672,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0041 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0041  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("MMC BD Write");
             sb.AppendLine(ftr.Current ? " (current):" : ":");
@@ -4696,8 +4700,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0050 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0050  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.HDDVDR && ftr.HDDVDRAM) sb.Append("Drive can read HD DVD-ROM, HD DVD-RW, HD DVD-R and HD DVD-RAM");
             else if(ftr.HDDVDR) sb.Append("Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-R");
@@ -4714,8 +4718,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0051 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0051  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.HDDVDR && ftr.HDDVDRAM) sb.Append("Drive can write HD DVD-RW, HD DVD-R and HD DVD-RAM");
             else if(ftr.HDDVDR) sb.Append("Drive can write HD DVD-RW and HD DVD-R");
@@ -4732,8 +4736,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0080 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0080  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("Drive is able to access Hybrid discs");
             if(ftr.Current) sb.AppendLine(" (current)");
@@ -4754,8 +4758,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0101 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0101  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive supports S.M.A.R.T.");
             if(ftr.PP) sb.AppendLine("\tDrive supports the Informational Exceptions Control mode page 1Ch");
@@ -4767,8 +4771,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0102 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0102  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Embedded Changer:");
 
@@ -4784,8 +4788,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0103 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0103  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive has an analogue audio output");
 
@@ -4802,8 +4806,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0104 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0104  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive supports Microcode Upgrade");
             if(ftr.M5)
@@ -4816,8 +4820,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0105 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0105  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive supports Timeout & Protect mode page 1Dh");
 
@@ -4834,8 +4838,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0106 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0106  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendFormat("Drive supports DVD CSS/CPPM version {0}", ftr.CSSVersion);
             if(ftr.Current) sb.AppendLine(" and current disc is encrypted");
@@ -4848,8 +4852,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0107 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0107  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("MMC Real Time Streaming:");
 
@@ -4869,8 +4873,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0108 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0108  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendFormat("Drive serial number: {0}", ftr.Serial).AppendLine();
 
@@ -4886,8 +4890,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_010A ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_010A  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             if(ftr.DCBs == null) return sb.ToString();
 
@@ -4900,8 +4904,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_010B ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_010B  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendFormat("Drive supports DVD CPRM version {0}", ftr.CPRMVersion);
             if(ftr.Current) sb.AppendLine(" and current disc is or can be encrypted");
@@ -4914,8 +4918,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_010C ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_010C  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             byte[] temp = new byte[4];
             temp[0] = (byte)((ftr.Century & 0xFF00) >> 8);
@@ -4923,23 +4927,23 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             temp[2] = (byte)((ftr.Year & 0xFF00) >> 8);
             temp[3] = (byte)(ftr.Year & 0xFF);
             string syear = Encoding.ASCII.GetString(temp);
-            temp = new byte[2];
+            temp    = new byte[2];
             temp[0] = (byte)((ftr.Month & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Month & 0xFF);
             string smonth = Encoding.ASCII.GetString(temp);
-            temp = new byte[2];
+            temp    = new byte[2];
             temp[0] = (byte)((ftr.Day & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Day & 0xFF);
             string sday = Encoding.ASCII.GetString(temp);
-            temp = new byte[2];
+            temp    = new byte[2];
             temp[0] = (byte)((ftr.Hour & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Hour & 0xFF);
             string shour = Encoding.ASCII.GetString(temp);
-            temp = new byte[2];
+            temp    = new byte[2];
             temp[0] = (byte)((ftr.Minute & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Minute & 0xFF);
             string sminute = Encoding.ASCII.GetString(temp);
-            temp = new byte[2];
+            temp    = new byte[2];
             temp[0] = (byte)((ftr.Second & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Second & 0xFF);
             string ssecond = Encoding.ASCII.GetString(temp);
@@ -4951,12 +4955,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
                 sb.AppendFormat("Drive firmware is dated {0}", fwDate).AppendLine();
             }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
             {
                 // ignored
             }
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
             return sb.ToString();
         }
@@ -4965,8 +4969,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_010D ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_010D  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendFormat("Drive supports AACS version {0}", ftr.AACSVersion);
             if(ftr.Current) sb.AppendLine(" and current disc is encrypted");
@@ -4983,6 +4987,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                     sb.AppendFormat("\t{0} media blocks are required for the binding nonce", ftr.BindNonceBlocks)
                       .AppendLine();
             }
+
             if(ftr.AGIDs > 0) sb.AppendFormat("\tDrive supports {0} AGIDs concurrently", ftr.AGIDs).AppendLine();
 
             return sb.ToString();
@@ -4992,8 +4997,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_010E ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_010E  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.Append("Drive supports DVD-Download");
             if(ftr.Current) sb.AppendLine(" (current)");
@@ -5010,8 +5015,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0110 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0110  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine(ftr.Current ? "Drive and currently inserted media support VCPS" : "Drive supports VCPS");
 
@@ -5022,8 +5027,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0113 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0113  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine(ftr.Current
                               ? "Drive and currently inserted media support SecurDisc"
@@ -5036,8 +5041,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(!feature.HasValue) return null;
 
-            Feature_0142 ftr = feature.Value;
-            StringBuilder sb = new StringBuilder();
+            Feature_0142  ftr = feature.Value;
+            StringBuilder sb  = new StringBuilder();
 
             sb.AppendLine("Drive supports the Trusted Computing Group Optical Security Subsystem Class");
 
@@ -5348,10 +5353,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             SeparatedFeatures dec = new SeparatedFeatures
             {
-                DataLength = (uint)((response[0] << 24) + (response[1] << 16) + (response[2] << 8) + response[4]),
-                CurrentProfile = (ushort)((response[6] << 8) + response[7])
+                DataLength     = (uint)((response[0] << 24) + (response[1] << 16) + (response[2] << 8) + response[4]),
+                CurrentProfile = (ushort)((response[6] << 8)                                           + response[7])
             };
-            uint offset = 8;
+            uint                    offset  = 8;
             List<FeatureDescriptor> descLst = new List<FeatureDescriptor>();
 
             while(offset + 4 < response.Length)
@@ -5387,8 +5392,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         [SuppressMessage("ReSharper", "NotAccessedField.Global")]
         public struct SeparatedFeatures
         {
-            public uint DataLength;
-            public ushort CurrentProfile;
+            public uint                DataLength;
+            public ushort              CurrentProfile;
             public FeatureDescriptor[] Descriptors;
         }
     }

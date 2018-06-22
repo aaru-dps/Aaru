@@ -50,9 +50,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Md5EmptyData()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -63,9 +63,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Md5EmptyInstance()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -85,9 +85,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Md5RandomData()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -98,9 +98,9 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void Md5RandomInstance()
         {
-            byte[]     data = new byte[1048576];
-            FileStream fs   = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                             FileAccess.Read);
+            byte[] data = new byte[1048576];
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();

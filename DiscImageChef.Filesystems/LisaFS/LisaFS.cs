@@ -58,7 +58,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
 
         static Dictionary<string, string> GetDefaultOptions()
         {

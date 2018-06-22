@@ -71,27 +71,27 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new FFSPlugin();
                 Partition wholePart = new Partition
                 {
-                    Name = "Whole device",
+                    Name   = "Whole device",
                     Length = image.Info.Sectors,
-                    Size = image.Info.Sectors * image.Info.SectorSize
+                    Size   = image.Info.Sectors * image.Info.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual(type[i],         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -129,16 +129,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_apm", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_apm", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FFSPlugin();
-                int part = -1;
+                IFilesystem     fs         = new FFSPlugin();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Apple_UFS")
                     {
@@ -149,10 +149,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual(type[i],         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -223,19 +223,21 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_mbr", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_mbr", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FFSPlugin();
-                int part = -1;
+                IFilesystem     fs         = new FFSPlugin();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x63" || partitions[j].Type == "0xA8" || partitions[j].Type == "0xA5" ||
-                       partitions[j].Type == "0xA9" || partitions[j].Type == "0x82" || partitions[j].Type == "0x83" ||
+                    if(partitions[j].Type == "0x63"                    || partitions[j].Type == "0xA8" ||
+                       partitions[j].Type == "0xA5"                    ||
+                       partitions[j].Type == "0xA9"                    || partitions[j].Type == "0x82" ||
+                       partitions[j].Type == "0x83"                    ||
                        partitions[j].Type == "4.2BSD Fast File System" || partitions[j].Type == "Sun boot")
                     {
                         part = j;
@@ -245,10 +247,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual(type[i],         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -282,16 +284,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FFSPlugin();
-                int part = -1;
+                IFilesystem     fs         = new FFSPlugin();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "4.3BSD" || partitions[j].Type == "4.4BSD")
                     {
@@ -302,10 +304,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual(type[i],         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -341,16 +343,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FFSPlugin();
-                int part = -1;
+                IFilesystem     fs         = new FFSPlugin();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "4.3BSD" || partitions[j].Type == "4.4BSD")
                     {
@@ -361,10 +363,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual(type[i],         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -394,16 +396,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_rdb", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_rdb", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FFSPlugin();
-                int part = -1;
+                IFilesystem     fs         = new FFSPlugin();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "\"UNI\\2\"")
                     {
@@ -414,10 +416,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual(type[i],         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -447,16 +449,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_suni86", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_suni86", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new FFSPlugin();
-                int part = -1;
+                IFilesystem     fs         = new FFSPlugin();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Replacement sectors")
                     {
@@ -467,10 +469,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual(type[i],         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }

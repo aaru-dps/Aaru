@@ -47,7 +47,7 @@ namespace DiscImageChef.Devices
         public bool KreonDeprecatedUnlock(out byte[] senseBuffer, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[6];
+            byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
             cdb[0] = (byte)ScsiCommands.KreonCommand;
@@ -111,7 +111,7 @@ namespace DiscImageChef.Devices
         public bool KreonSetLockState(out byte[] senseBuffer, KreonLockStates state, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[6];
+            byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
             cdb[0] = (byte)ScsiCommands.KreonCommand;
@@ -141,7 +141,7 @@ namespace DiscImageChef.Devices
                                         out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[6];
+            byte[] cdb    = new byte[6];
             byte[] buffer = new byte[26];
             features = 0;
 
@@ -214,22 +214,22 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">The SS sector.</param>
         /// <param name="requestNumber">Request number.</param>
         public bool KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration,
-                                   byte requestNumber = 0x00)
+                                   byte       requestNumber = 0x00)
         {
             buffer = new byte[2048];
             byte[] cdb = new byte[12];
             senseBuffer = new byte[32];
 
-            cdb[0] = (byte)ScsiCommands.KreonSsCommand;
-            cdb[1] = 0x00;
-            cdb[2] = 0xFF;
-            cdb[3] = 0x02;
-            cdb[4] = 0xFD;
-            cdb[5] = 0xFF;
-            cdb[6] = 0xFE;
-            cdb[7] = 0x00;
-            cdb[8] = 0x08;
-            cdb[9] = 0x00;
+            cdb[0]  = (byte)ScsiCommands.KreonSsCommand;
+            cdb[1]  = 0x00;
+            cdb[2]  = 0xFF;
+            cdb[3]  = 0x02;
+            cdb[4]  = 0xFD;
+            cdb[5]  = 0xFF;
+            cdb[6]  = 0xFE;
+            cdb[7]  = 0x00;
+            cdb[8]  = 0x08;
+            cdb[9]  = 0x00;
             cdb[10] = requestNumber;
             cdb[11] = 0xC0;
 

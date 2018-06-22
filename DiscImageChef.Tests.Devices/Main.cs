@@ -36,10 +36,10 @@ namespace DiscImageChef.Tests.Devices
     {
         public static void Main()
         {
-            DicConsole.WriteLineEvent += System.Console.WriteLine;
-            DicConsole.WriteEvent += System.Console.Write;
-            DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
-            DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            DicConsole.WriteLineEvent        += System.Console.WriteLine;
+            DicConsole.WriteEvent            += System.Console.Write;
+            DicConsole.ErrorWriteLineEvent   += System.Console.Error.WriteLine;
+            DicConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
             DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             DeviceInfo[] devices = DiscImageChef.Devices.Device.ListDevices();

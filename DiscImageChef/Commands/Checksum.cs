@@ -47,27 +47,27 @@ namespace DiscImageChef.Commands
 
         internal static void DoChecksum(ChecksumOptions options)
         {
-            DicConsole.DebugWriteLine("Checksum command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Checksum command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Checksum command", "--debug={0}",            options.Debug);
+            DicConsole.DebugWriteLine("Checksum command", "--verbose={0}",          options.Verbose);
             DicConsole.DebugWriteLine("Checksum command", "--separated-tracks={0}", options.SeparatedTracks);
-            DicConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", options.WholeDisc);
-            DicConsole.DebugWriteLine("Checksum command", "--input={0}", options.InputFile);
-            DicConsole.DebugWriteLine("Checksum command", "--adler32={0}", options.DoAdler32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}", options.DoCrc16);
-            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}", options.DoCrc32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}", options.DoCrc64);
-            DicConsole.DebugWriteLine("Checksum command", "--md5={0}", options.DoMd5);
-            DicConsole.DebugWriteLine("Checksum command", "--ripemd160={0}", options.DoRipemd160);
-            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}", options.DoSha1);
-            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}", options.DoSha256);
-            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}", options.DoSha384);
-            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", options.DoSha512);
-            DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", options.DoSpamSum);
-            DicConsole.DebugWriteLine("Checksum command", "--fletcher16={0}", options.DoFletcher16);
-            DicConsole.DebugWriteLine("Checksum command", "--fletcher32={0}", options.DoFletcher32);
+            DicConsole.DebugWriteLine("Checksum command", "--whole-disc={0}",       options.WholeDisc);
+            DicConsole.DebugWriteLine("Checksum command", "--input={0}",            options.InputFile);
+            DicConsole.DebugWriteLine("Checksum command", "--adler32={0}",          options.DoAdler32);
+            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}",            options.DoCrc16);
+            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}",            options.DoCrc32);
+            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}",            options.DoCrc64);
+            DicConsole.DebugWriteLine("Checksum command", "--md5={0}",              options.DoMd5);
+            DicConsole.DebugWriteLine("Checksum command", "--ripemd160={0}",        options.DoRipemd160);
+            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}",             options.DoSha1);
+            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}",           options.DoSha256);
+            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}",           options.DoSha384);
+            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}",           options.DoSha512);
+            DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}",          options.DoSpamSum);
+            DicConsole.DebugWriteLine("Checksum command", "--fletcher16={0}",       options.DoFletcher16);
+            DicConsole.DebugWriteLine("Checksum command", "--fletcher32={0}",       options.DoFletcher32);
 
             FiltersList filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -89,17 +89,17 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddFilter(inputFilter.Name);
             EnableChecksum enabledChecksums = new EnableChecksum();
 
-            if(options.DoAdler32) enabledChecksums |= EnableChecksum.Adler32;
-            if(options.DoCrc16) enabledChecksums |= EnableChecksum.Crc16;
-            if(options.DoCrc32) enabledChecksums |= EnableChecksum.Crc32;
-            if(options.DoCrc64) enabledChecksums |= EnableChecksum.Crc64;
-            if(options.DoMd5) enabledChecksums |= EnableChecksum.Md5;
-            if(options.DoRipemd160) enabledChecksums |= EnableChecksum.Ripemd160;
-            if(options.DoSha1) enabledChecksums |= EnableChecksum.Sha1;
-            if(options.DoSha256) enabledChecksums |= EnableChecksum.Sha256;
-            if(options.DoSha384) enabledChecksums |= EnableChecksum.Sha384;
-            if(options.DoSha512) enabledChecksums |= EnableChecksum.Sha512;
-            if(options.DoSpamSum) enabledChecksums |= EnableChecksum.SpamSum;
+            if(options.DoAdler32) enabledChecksums    |= EnableChecksum.Adler32;
+            if(options.DoCrc16) enabledChecksums      |= EnableChecksum.Crc16;
+            if(options.DoCrc32) enabledChecksums      |= EnableChecksum.Crc32;
+            if(options.DoCrc64) enabledChecksums      |= EnableChecksum.Crc64;
+            if(options.DoMd5) enabledChecksums        |= EnableChecksum.Md5;
+            if(options.DoRipemd160) enabledChecksums  |= EnableChecksum.Ripemd160;
+            if(options.DoSha1) enabledChecksums       |= EnableChecksum.Sha1;
+            if(options.DoSha256) enabledChecksums     |= EnableChecksum.Sha256;
+            if(options.DoSha384) enabledChecksums     |= EnableChecksum.Sha384;
+            if(options.DoSha512) enabledChecksums     |= EnableChecksum.Sha512;
+            if(options.DoSpamSum) enabledChecksums    |= EnableChecksum.SpamSum;
             if(options.DoFletcher16) enabledChecksums |= EnableChecksum.Fletcher16;
             if(options.DoFletcher32) enabledChecksums |= EnableChecksum.Fletcher32;
 
@@ -134,7 +134,7 @@ namespace DiscImageChef.Commands
 
                         if(options.SeparatedTracks) trackChecksum = new Core.Checksum(enabledChecksums);
 
-                        ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         ulong doneSectors = 0;
                         DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 

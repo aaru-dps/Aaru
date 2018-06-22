@@ -49,7 +49,7 @@ namespace DiscImageChef.Filters
         public FiltersList()
         {
             Assembly assembly = Assembly.GetAssembly(typeof(IFilter));
-            Filters           = new SortedDictionary<string, IFilter>();
+            Filters = new SortedDictionary<string, IFilter>();
 
             foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
                 try

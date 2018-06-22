@@ -279,18 +279,18 @@ namespace DiscImageChef.Decoders.PCMCIA
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum FunctionCodes : byte
     {
-        MultiFunction = 0x00,
-        Memory = 0x01,
-        Serial = 0x02,
-        Parallel = 0x03,
-        FixedDisk = 0x04,
-        Video = 0x05,
-        Network = 0x06,
-        AIMS = 0x07,
-        SCSI = 0x08,
-        Security = 0x09,
-        Instrument = 0x0A,
+        MultiFunction   = 0x00,
+        Memory          = 0x01,
+        Serial          = 0x02,
+        Parallel        = 0x03,
+        FixedDisk       = 0x04,
+        Video           = 0x05,
+        Network         = 0x06,
+        AIMS            = 0x07,
+        SCSI            = 0x08,
+        Security        = 0x09,
+        Instrument      = 0x0A,
         HighSpeedSerial = 0x0B,
-        VendorSpecific = 0xFE
+        VendorSpecific  = 0xFE
     }
 }

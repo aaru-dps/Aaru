@@ -95,12 +95,12 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.DCE |= (pageResponse[2] & 0x80) == 0x80;
             decoded.DCC |= (pageResponse[2] & 0x40) == 0x40;
             decoded.DDE |= (pageResponse[3] & 0x80) == 0x80;
-            decoded.RED = (byte)((pageResponse[3] & 0x60) >> 5);
+            decoded.RED =  (byte)((pageResponse[3] & 0x60) >> 5);
 
             decoded.CompressionAlgo = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) +
-                                             (pageResponse[6] << 8) + pageResponse[7]);
-            decoded.DecompressionAlgo = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) +
-                                               (pageResponse[10] << 8) + pageResponse[11]);
+                                             (pageResponse[6] << 8)  + pageResponse[7]);
+            decoded.DecompressionAlgo = (uint)((pageResponse[8]  << 24) + (pageResponse[9] << 16) +
+                                               (pageResponse[10] << 8)  + pageResponse[11]);
 
             return decoded;
         }
@@ -114,8 +114,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_0F page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_0F   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Data compression page:");
 

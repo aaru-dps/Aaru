@@ -71,10 +71,12 @@ namespace DiscImageChef
                             len++;
                             break;
                         }
+
                         //                      if((i + 1) == CString.Length)
                         //                            break;
                     }
-                    else break;
+                    else
+                        break;
 
                 len++;
             }
@@ -107,7 +109,7 @@ namespace DiscImageChef
             if(PascalString == null) return null;
 
             byte length = PascalString[start];
-            int len = 0;
+            int  len    = 0;
 
             for(int i = start + 1; i < length + 1 && i < PascalString.Length; i++)
             {
@@ -166,15 +168,15 @@ namespace DiscImageChef
         public static string DecompressUnicode(byte[] dstring)
         {
             ushort unicode;
-            byte compId = dstring[0];
-            string temp = "";
+            byte   compId = dstring[0];
+            string temp   = "";
 
             if(compId != 8 && compId != 16) return null;
 
             for(int byteIndex = 1; byteIndex < dstring.Length;)
             {
                 if(compId == 16) unicode = (ushort)(dstring[byteIndex++] << 8);
-                else unicode = 0;
+                else unicode             = 0;
 
                 if(byteIndex < dstring.Length) unicode |= dstring[byteIndex++];
 

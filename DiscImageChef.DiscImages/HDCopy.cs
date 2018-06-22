@@ -84,7 +84,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     The ImageFilter we're reading from, after the file has been opened
         /// </summary>
-        IFilter   hdcpImageFilter;
+        IFilter hdcpImageFilter;
         ImageInfo imageInfo;
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace DiscImageChef.DiscImages
         public string Name => "HD-Copy disk image";
         public Guid   Id   => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
 
-        public string          Format     => "HD-Copy image";
+        public string Format => "HD-Copy image";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
@@ -147,10 +147,10 @@ namespace DiscImageChef.DiscImages
             if(stream.Length < 2 + 2 * 82) return false;
 
             byte[] header = new byte[2 + 2 * 82];
-            stream.Read(header, 0, 2   + 2 * 82);
+            stream.Read(header, 0, 2 + 2 * 82);
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
-            Marshal.Copy(header, 0, hdrPtr, 2      + 2 * 82);
+            Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
             HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
@@ -166,7 +166,7 @@ namespace DiscImageChef.DiscImages
             if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1) return false;
 
             // all other tracks must be either present (=1) or absent (=0)
-            for(int i = 0; i           < 2 * 82; i++)
+            for(int i = 0; i < 2 * 82; i++)
                 if(fheader.trackMap[i] > 1)
                     return false;
 
@@ -181,10 +181,10 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
 
             byte[] header = new byte[2 + 2 * 82];
-            stream.Read(header, 0, 2   + 2 * 82);
+            stream.Read(header, 0, 2 + 2 * 82);
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
-            Marshal.Copy(header, 0, hdrPtr, 2      + 2 * 82);
+            Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
             HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
             DicConsole.DebugWriteLine("HDCP plugin",
@@ -195,23 +195,23 @@ namespace DiscImageChef.DiscImages
             imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
             imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
             imageInfo.Heads           = 2;   // only 2-sided floppies are supported
-            imageInfo.Sectors         = 2                 * imageInfo.Cylinders * imageInfo.SectorsPerTrack;
-            imageInfo.ImageSize       = imageInfo.Sectors * imageInfo.SectorSize;
+            imageInfo.Sectors         = 2 * imageInfo.Cylinders * imageInfo.SectorsPerTrack;
+            imageInfo.ImageSize       = imageInfo.Sectors       * imageInfo.SectorSize;
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.MediaType            =
-                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, 2, (ushort)imageInfo.SectorsPerTrack, 512,
-                                      MediaEncoding.MFM, false));
+            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, 2,
+                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                            false));
 
             // the start offset of the track data
             long currentOffset = 2 + 2 * 82;
 
             // build table of track offsets
-            for(int i = 0; i           < imageInfo.Cylinders * 2; i++)
+            for(int i = 0; i < imageInfo.Cylinders * 2; i++)
                 if(fheader.trackMap[i] == 0)
                     trackOffset[i] = -1;
                 else
@@ -356,8 +356,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -366,8 +366,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -402,7 +402,7 @@ namespace DiscImageChef.DiscImages
             // decompress the data
             int sIndex = 0; // source buffer position
             int dIndex = 0; // destination buffer position
-            while(sIndex           < compressedLength)
+            while(sIndex < compressedLength)
                 if(cBuffer[sIndex] == escapeByte)
                 {
                     sIndex++; // skip over escape byte

@@ -114,8 +114,8 @@ namespace DiscImageChef.Checksums
         {
             MD5        localMd5Provider = MD5.Create();
             FileStream fileStream       = new FileStream(filename, FileMode.Open);
-            hash                        = localMd5Provider.ComputeHash(fileStream);
-            StringBuilder md5Output     = new StringBuilder();
+            hash = localMd5Provider.ComputeHash(fileStream);
+            StringBuilder md5Output = new StringBuilder();
 
             foreach(byte h in hash) md5Output.Append(h.ToString("x2"));
 
@@ -132,8 +132,8 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            MD5 localMd5Provider    = MD5.Create();
-            hash                    = localMd5Provider.ComputeHash(data, 0, (int)len);
+            MD5 localMd5Provider = MD5.Create();
+            hash = localMd5Provider.ComputeHash(data, 0, (int)len);
             StringBuilder md5Output = new StringBuilder();
 
             foreach(byte h in hash) md5Output.Append(h.ToString("x2"));

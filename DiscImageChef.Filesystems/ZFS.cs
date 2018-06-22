@@ -68,65 +68,65 @@ namespace DiscImageChef.Filesystems
 
         // These parameters define how the nvlist is stored
         const byte NVS_LITTLE_ENDIAN = 1;
-        const byte NVS_BIG_ENDIAN = 0;
-        const byte NVS_NATIVE = 0;
-        const byte NVS_XDR = 1;
+        const byte NVS_BIG_ENDIAN    = 0;
+        const byte NVS_NATIVE        = 0;
+        const byte NVS_XDR           = 1;
 
         const ulong UBERBLOCK_MAGIC = 0x00BAB10C;
 
         const uint ZFS_MAGIC = 0x58465342;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "ZFS Filesystem Plugin";
-        public Guid Id => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "ZFS Filesystem Plugin";
+        public Guid           Id        => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
             byte[] sector;
-            ulong magic;
+            ulong  magic;
 
             if(partition.Start + 31 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
-                magic = BitConverter.ToUInt64(sector, 0x1D8);
+                magic  = BitConverter.ToUInt64(sector, 0x1D8);
                 if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) return true;
             }
 
             if(partition.Start + 16 >= partition.End) return false;
 
             sector = imagePlugin.ReadSector(partition.Start + 16);
-            magic = BitConverter.ToUInt64(sector, 0x1D8);
+            magic  = BitConverter.ToUInt64(sector, 0x1D8);
             return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                            Encoding encoding)
+                                   Encoding    encoding)
         {
             // ZFS is always UTF-8
-            Encoding = Encoding.UTF8;
+            Encoding    = Encoding.UTF8;
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
             byte[] sector;
-            ulong magic;
+            ulong  magic;
 
             ulong nvlistOff = 32;
-            uint nvlistLen = 114688 / imagePlugin.Info.SectorSize;
+            uint  nvlistLen = 114688 / imagePlugin.Info.SectorSize;
 
             if(partition.Start + 31 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
-                magic = BitConverter.ToUInt64(sector, 0x1D8);
+                magic  = BitConverter.ToUInt64(sector, 0x1D8);
                 if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) nvlistOff = 32;
             }
 
             if(partition.Start + 16 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 16);
-                magic = BitConverter.ToUInt64(sector, 0x1D8);
+                magic  = BitConverter.ToUInt64(sector, 0x1D8);
                 if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) nvlistOff = 17;
             }
 
@@ -143,7 +143,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType {Type = "ZFS filesystem"};
             if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) XmlFsType.VolumeName = (string)tmpObj.value;
-            if(decodedNvList.TryGetValue("guid", out tmpObj)) XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
+            if(decodedNvList.TryGetValue("guid", out tmpObj)) XmlFsType.VolumeSerial        = $"{(ulong)tmpObj.value}";
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
                 XmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
         }
@@ -152,7 +152,7 @@ namespace DiscImageChef.Filesystems
         {
             byte[] tmp = new byte[nvlist.Length - 4];
             Array.Copy(nvlist, 4, tmp, 0, nvlist.Length - 4);
-            bool xdr = nvlist[0] == 1;
+            bool xdr          = nvlist[0] == 1;
             bool littleEndian = nvlist[1] == 1;
 
             return DecodeNvList(tmp, out decodedNvList, xdr, littleEndian);
@@ -160,7 +160,7 @@ namespace DiscImageChef.Filesystems
 
         // TODO: Decode native nvlist
         static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList, bool xdr,
-                                 bool littleEndian)
+                                 bool   littleEndian)
         {
             decodedNvList = new Dictionary<string, NVS_Item>();
 
@@ -173,28 +173,28 @@ namespace DiscImageChef.Filesystems
             int offset = 8;
             while(offset < nvlist.Length)
             {
-                NVS_Item item = new NVS_Item();
-                int currOff = offset;
+                NVS_Item item    = new NVS_Item();
+                int      currOff = offset;
 
                 item.encodedSize = BigEndianBitConverter.ToUInt32(nvlist, offset);
 
                 // Finished
                 if(item.encodedSize == 0) break;
 
-                offset += 4;
-                item.decodedSize = BigEndianBitConverter.ToUInt32(nvlist, offset);
-                offset += 4;
+                offset           += 4;
+                item.decodedSize =  BigEndianBitConverter.ToUInt32(nvlist, offset);
+                offset           += 4;
                 uint nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
                 if(nameLength % 4 > 0) nameLength += 4 - nameLength % 4;
-                byte[] nameBytes = new byte[nameLength];
+                byte[] nameBytes                  = new byte[nameLength];
                 Array.Copy(nvlist, offset, nameBytes, 0, nameLength);
-                item.name = StringHandlers.CToString(nameBytes);
-                offset += (int)nameLength;
-                item.dataType = (NVS_DataTypes)BigEndianBitConverter.ToUInt32(nvlist, offset);
-                offset += 4;
-                item.elements = BigEndianBitConverter.ToUInt32(nvlist, offset);
-                offset += 4;
+                item.name     =  StringHandlers.CToString(nameBytes);
+                offset        += (int)nameLength;
+                item.dataType =  (NVS_DataTypes)BigEndianBitConverter.ToUInt32(nvlist, offset);
+                offset        += 4;
+                item.elements =  BigEndianBitConverter.ToUInt32(nvlist, offset);
+                offset        += 4;
 
                 if(item.elements == 0)
                 {
@@ -213,8 +213,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
-                                boolArray[i] = temp > 0;
-                                offset += 4;
+                                boolArray[i] =  temp > 0;
+                                offset       += 4;
                             }
 
                             item.value = boolArray;
@@ -222,8 +222,8 @@ namespace DiscImageChef.Filesystems
                         else
                         {
                             uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
-                            item.value = temp > 0;
-                            offset += 4;
+                            item.value =  temp > 0;
+                            offset     += 4;
                         }
 
                         break;
@@ -241,9 +241,10 @@ namespace DiscImageChef.Filesystems
                         }
                         else
                         {
-                            item.value = nvlist[offset];
-                            offset += 4;
+                            item.value =  nvlist[offset];
+                            offset     += 4;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_DOUBLE:
                         if(item.elements > 1)
@@ -252,16 +253,16 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 double temp = BigEndianBitConverter.ToDouble(nvlist, offset);
-                                doubleArray[i] = temp;
-                                offset += 8;
+                                doubleArray[i] =  temp;
+                                offset         += 8;
                             }
 
                             item.value = doubleArray;
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToDouble(nvlist, offset);
-                            offset += 8;
+                            item.value =  BigEndianBitConverter.ToDouble(nvlist, offset);
+                            offset     += 8;
                         }
 
                         break;
@@ -273,8 +274,8 @@ namespace DiscImageChef.Filesystems
                             {
                                 DateTime temp =
                                     DateHandlers.UnixHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
-                                hrtimeArray[i] = temp;
-                                offset += 8;
+                                hrtimeArray[i] =  temp;
+                                offset         += 8;
                             }
 
                             item.value = hrtimeArray;
@@ -295,16 +296,16 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 short temp = BigEndianBitConverter.ToInt16(nvlist, offset);
-                                shortArray[i] = temp;
-                                offset += 4;
+                                shortArray[i] =  temp;
+                                offset        += 4;
                             }
 
                             item.value = shortArray;
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToInt16(nvlist, offset);
-                            offset += 4;
+                            item.value =  BigEndianBitConverter.ToInt16(nvlist, offset);
+                            offset     += 4;
                         }
 
                         break;
@@ -316,16 +317,16 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 int temp = BigEndianBitConverter.ToInt32(nvlist, offset);
-                                intArray[i] = temp;
-                                offset += 4;
+                                intArray[i] =  temp;
+                                offset      += 4;
                             }
 
                             item.value = intArray;
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToInt32(nvlist, offset);
-                            offset += 4;
+                            item.value =  BigEndianBitConverter.ToInt32(nvlist, offset);
+                            offset     += 4;
                         }
 
                         break;
@@ -337,16 +338,16 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 long temp = BigEndianBitConverter.ToInt64(nvlist, offset);
-                                longArray[i] = temp;
-                                offset += 8;
+                                longArray[i] =  temp;
+                                offset       += 8;
                             }
 
                             item.value = longArray;
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToInt64(nvlist, offset);
-                            offset += 8;
+                            item.value =  BigEndianBitConverter.ToInt64(nvlist, offset);
+                            offset     += 8;
                         }
 
                         break;
@@ -367,8 +368,8 @@ namespace DiscImageChef.Filesystems
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToInt64(nvlist, offset);
-                            offset += 4;
+                            item.value =  BigEndianBitConverter.ToInt64(nvlist, offset);
+                            offset     += 4;
                         }
 
                         break;
@@ -383,8 +384,8 @@ namespace DiscImageChef.Filesystems
                                 offset += 4;
                                 byte[] strBytes = new byte[strLength];
                                 Array.Copy(nvlist, offset, strBytes, 0, strLength);
-                                stringArray[i] = StringHandlers.CToString(strBytes);
-                                offset += (int)strLength;
+                                stringArray[i] =  StringHandlers.CToString(strBytes);
+                                offset         += (int)strLength;
                                 if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
                             }
 
@@ -396,8 +397,8 @@ namespace DiscImageChef.Filesystems
                             offset += 4;
                             byte[] strBytes = new byte[strLength];
                             Array.Copy(nvlist, offset, strBytes, 0, strLength);
-                            item.value = StringHandlers.CToString(strBytes);
-                            offset += (int)strLength;
+                            item.value =  StringHandlers.CToString(strBytes);
+                            offset     += (int)strLength;
                             if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
                         }
 
@@ -410,16 +411,16 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 ushort temp = BigEndianBitConverter.ToUInt16(nvlist, offset);
-                                ushortArray[i] = temp;
-                                offset += 4;
+                                ushortArray[i] =  temp;
+                                offset         += 4;
                             }
 
                             item.value = ushortArray;
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToUInt16(nvlist, offset);
-                            offset += 4;
+                            item.value =  BigEndianBitConverter.ToUInt16(nvlist, offset);
+                            offset     += 4;
                         }
 
                         break;
@@ -431,16 +432,16 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
-                                uintArray[i] = temp;
-                                offset += 4;
+                                uintArray[i] =  temp;
+                                offset       += 4;
                             }
 
                             item.value = uintArray;
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToUInt32(nvlist, offset);
-                            offset += 4;
+                            item.value =  BigEndianBitConverter.ToUInt32(nvlist, offset);
+                            offset     += 4;
                         }
 
                         break;
@@ -452,16 +453,16 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 ulong temp = BigEndianBitConverter.ToUInt64(nvlist, offset);
-                                ulongArray[i] = temp;
-                                offset += 8;
+                                ulongArray[i] =  temp;
+                                offset        += 8;
                             }
 
                             item.value = ulongArray;
                         }
                         else
                         {
-                            item.value = BigEndianBitConverter.ToUInt64(nvlist, offset);
-                            offset += 8;
+                            item.value =  BigEndianBitConverter.ToUInt64(nvlist, offset);
+                            offset     += 8;
                         }
 
                         break;
@@ -479,7 +480,7 @@ namespace DiscImageChef.Filesystems
                         byte[] unknown = new byte[item.encodedSize - (offset - currOff)];
                         Array.Copy(nvlist, offset, unknown, 0, unknown.Length);
                         item.value = unknown;
-                        offset = (int)(currOff + item.encodedSize);
+                        offset     = (int)(currOff + item.encodedSize);
                         break;
                 }
 
@@ -624,7 +625,8 @@ namespace DiscImageChef.Filesystems
 
         struct ZIO_Checksum
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public ulong[] word;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public ulong[] word;
         }
 
         /// <summary>
@@ -633,8 +635,9 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZIO_Empty
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)] public byte[] empty;
-            public ulong magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)]
+            public byte[] empty;
+            public ulong        magic;
             public ZIO_Checksum checksum;
         }
 
@@ -657,8 +660,8 @@ namespace DiscImageChef.Filesystems
         struct NVS_XDR_Header
         {
             public NVS_Method encodingAndEndian;
-            public uint version;
-            public uint flags;
+            public uint       version;
+            public uint       flags;
         }
 
         enum NVS_DataTypes : uint
@@ -727,7 +730,8 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DVA
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ulong[] word;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public ulong[] word;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -736,7 +740,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Data virtual address
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public DVA[] dataVirtualAddress;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public DVA[] dataVirtualAddress;
             /// <summary>
             ///     Block properties
             /// </summary>
@@ -763,13 +768,13 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZFS_Uberblock
         {
-            public ulong magic;
-            public ulong spaVersion;
-            public ulong lastTxg;
-            public ulong guidSum;
-            public ulong timestamp;
+            public ulong            magic;
+            public ulong            spaVersion;
+            public ulong            lastTxg;
+            public ulong            guidSum;
+            public ulong            timestamp;
             public SPA_BlockPointer mosPtr;
-            public ulong softwareVersion;
+            public ulong            softwareVersion;
         }
     }
 }

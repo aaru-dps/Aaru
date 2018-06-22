@@ -86,8 +86,9 @@ namespace DiscImageChef.Devices
             buffer = new byte[512];
             AtaRegistersChs registers = new AtaRegistersChs {Command = (byte)AtaCommands.IdentifyPacketDevice};
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 

@@ -70,8 +70,8 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
                 Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                IFilesystem fs        = new HPOFS();
-                Partition   wholePart = new Partition
+                IFilesystem fs = new HPOFS();
+                Partition wholePart = new Partition
                 {
                     Name   = "Whole device",
                     Length = image.Info.Sectors,

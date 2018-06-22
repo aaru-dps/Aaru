@@ -47,25 +47,25 @@ namespace DiscImageChef.Filesystems
         const uint AFS_MAGIC3 = 0x15B6830E;
         // Common constants
         const uint AFS_SUPERBLOCK_SIZE = 1024;
-        const uint AFS_BOOTBLOCK_SIZE = AFS_SUPERBLOCK_SIZE;
+        const uint AFS_BOOTBLOCK_SIZE  = AFS_SUPERBLOCK_SIZE;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "AtheOS Filesystem";
-        public Guid Id => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "AtheOS Filesystem";
+        public Guid           Id        => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.Info.SectorSize;
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
-            uint run = 1;
+            uint  offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
+            uint  run    = 1;
 
             if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
                 run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
             if(sector + partition.Start >= partition.End) return false;
 
-            byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
+            byte[] tmp      = imagePlugin.ReadSectors(sector + partition.Start, run);
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
@@ -75,21 +75,21 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.Info.SectorSize;
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
-            uint run = 1;
+            uint  offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
+            uint  run    = 1;
 
             if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
                 run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
-            byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
+            byte[] tmp      = imagePlugin.ReadSectors(sector + partition.Start, run);
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
@@ -118,17 +118,17 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afsSb.log_start,
                             afsSb.log_size, afsSb.log_valid_blocks).AppendLine();
             sb
-                .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
-                              afsSb.root_dir_len * afsSb.block_size).AppendLine();
+               .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                             afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
+                             afsSb.root_dir_len * afsSb.block_size).AppendLine();
             sb
-                .AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
-                              afsSb.deleted_len * afsSb.block_size).AppendLine();
+               .AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                             afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
+                             afsSb.deleted_len * afsSb.block_size).AppendLine();
             sb
-                .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
-                              afsSb.indices_len * afsSb.block_size).AppendLine();
+               .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                             afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
+                             afsSb.indices_len * afsSb.block_size).AppendLine();
             sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afsSb.boot_size,
                             afsSb.boot_size * afsSb.block_size).AppendLine();
 
@@ -136,13 +136,13 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters = afsSb.num_blocks,
-                ClusterSize = (int)afsSb.block_size,
-                Dirty = false,
-                FreeClusters = afsSb.num_blocks - afsSb.used_blocks,
+                Clusters              = afsSb.num_blocks,
+                ClusterSize           = (int)afsSb.block_size,
+                Dirty                 = false,
+                FreeClusters          = afsSb.num_blocks - afsSb.used_blocks,
                 FreeClustersSpecified = true,
-                Type = "AtheOS filesystem",
-                VolumeName = StringHandlers.CToString(afsSb.name, Encoding)
+                Type                  = "AtheOS filesystem",
+                VolumeName            = StringHandlers.CToString(afsSb.name, Encoding)
             };
         }
 
@@ -153,7 +153,8 @@ namespace DiscImageChef.Filesystems
         struct AtheosSuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] name;
             /// <summary>0x020, "AFS1", 0x41465331</summary>
             public uint magic1;
             /// <summary>0x024, "BIGE", 0x42494745</summary>

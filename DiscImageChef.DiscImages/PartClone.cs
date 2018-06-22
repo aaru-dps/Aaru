@@ -50,7 +50,7 @@ namespace DiscImageChef.DiscImages
         const    uint   MAX_CACHE_SIZE     = 16777216;
         const    uint   MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
         readonly byte[] biTmAgIc           = {0x42, 0x69, 0x54, 0x6D, 0x41, 0x67, 0x49, 0x63};
-        readonly byte[] partCloneMagic     =
+        readonly byte[] partCloneMagic =
             {0x70, 0x61, 0x72, 0x74, 0x63, 0x6C, 0x6F, 0x6E, 0x65, 0x2D, 0x69, 0x6D, 0x61, 0x67, 0x65};
         // The used block "bitmap" uses one byte per block
         // TODO: Convert on-image bytemap to on-memory bitmap
@@ -116,7 +116,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr             = new PartCloneHeader();
+            pHdr = new PartCloneHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (PartCloneHeader)Marshal.PtrToStructure(headerPtr, typeof(PartCloneHeader));
@@ -141,7 +141,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr             = new PartCloneHeader();
+            pHdr = new PartCloneHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
             Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (PartCloneHeader)Marshal.PtrToStructure(headerPtr, typeof(PartCloneHeader));
@@ -173,9 +173,9 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", dataOff);
 
             DicConsole.DebugWriteLine("PartClone plugin", "Filling extents");
-            DateTime start    = DateTime.Now;
-            extents           = new ExtentsULong();
-            extentsOff        = new Dictionary<ulong, ulong>();
+            DateTime start = DateTime.Now;
+            extents    = new ExtentsULong();
+            extentsOff = new Dictionary<ulong, ulong>();
             bool  current     = byteMap[0] > 0;
             ulong blockOff    = 0;
             ulong extentStart = 0;
@@ -256,7 +256,7 @@ namespace DiscImageChef.DiscImages
             MemoryStream ms = new MemoryStream();
 
             bool allEmpty = true;
-            for(uint i = 0; i                 < length; i++)
+            for(uint i = 0; i < length; i++)
                 if(byteMap[sectorAddress + i] != 0)
                 {
                     allEmpty = false;
@@ -349,8 +349,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -359,8 +359,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

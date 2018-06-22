@@ -165,9 +165,9 @@ namespace DiscImageChef.Partitions
                             if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                             byte[] partType = new byte[3];
-                            partType[0]     = (byte)((type & 0xFF0000) >> 16);
-                            partType[1]     = (byte)((type & 0x00FF00) >> 8);
-                            partType[2]     = (byte)(type  & 0x0000FF);
+                            partType[0] = (byte)((type & 0xFF0000) >> 16);
+                            partType[1] = (byte)((type & 0x00FF00) >> 8);
+                            partType[2] = (byte)(type & 0x0000FF);
 
                             Partition part = new Partition
                             {
@@ -226,7 +226,7 @@ namespace DiscImageChef.Partitions
                     case TypeExtended:
                         byte[]     extendedSector = imagePlugin.ReadSector(table.entries[i].start);
                         AtariTable extendedTable  = new AtariTable();
-                        extendedTable.entries     = new AtariEntry[4];
+                        extendedTable.entries = new AtariEntry[4];
 
                         for(int j = 0; j < 4; j++)
                         {
@@ -262,9 +262,9 @@ namespace DiscImageChef.Partitions
                             if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                             byte[] partType = new byte[3];
-                            partType[0]     = (byte)((extendedType & 0xFF0000) >> 16);
-                            partType[1]     = (byte)((extendedType & 0x00FF00) >> 8);
-                            partType[2]     = (byte)(extendedType  & 0x0000FF);
+                            partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
+                            partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
+                            partType[2] = (byte)(extendedType & 0x0000FF);
 
                             Partition part = new Partition
                             {
@@ -343,9 +343,9 @@ namespace DiscImageChef.Partitions
                 if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                 byte[] partType = new byte[3];
-                partType[0]     = (byte)((type & 0xFF0000) >> 16);
-                partType[1]     = (byte)((type & 0x00FF00) >> 8);
-                partType[2]     = (byte)(type  & 0x0000FF);
+                partType[0] = (byte)((type & 0xFF0000) >> 16);
+                partType[1] = (byte)((type & 0x00FF00) >> 8);
+                partType[2] = (byte)(type & 0x0000FF);
 
                 Partition part = new Partition
                 {

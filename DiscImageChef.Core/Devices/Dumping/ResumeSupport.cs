@@ -63,11 +63,10 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     If the provided resume does not correspond with the current in
         ///     progress dump
         /// </exception>
-        internal static void Process(bool   isLba, bool          removable, ulong blocks,
-                                     string manufacturer, string model,
-                                     string serial, PlatformID   platform, ref Resume           resume,
-                                     ref                                       DumpHardwareType currentTry,
-                                     ref                                       ExtentsULong     extents)
+        internal static void Process(bool                 isLba,        bool             removable, ulong blocks,
+                                     string               manufacturer, string           model,
+                                     string               serial,       PlatformID       platform, ref Resume resume,
+                                     ref DumpHardwareType currentTry,   ref ExtentsULong extents)
         {
             if(resume != null)
             {

@@ -42,28 +42,28 @@ namespace DiscImageChef.Filesystems
     // Information from the Linux kernel
     public class Xia : IFilesystem
     {
-        const uint XIAFS_SUPER_MAGIC = 0x012FD16D;
-        const uint XIAFS_ROOT_INO = 1;
-        const uint XIAFS_BAD_INO = 2;
-        const int XIAFS_MAX_LINK = 64000;
-        const int XIAFS_DIR_SIZE = 12;
-        const int XIAFS_NUM_BLOCK_POINTERS = 10;
-        const int XIAFS_NAME_LEN = 248;
+        const uint XIAFS_SUPER_MAGIC        = 0x012FD16D;
+        const uint XIAFS_ROOT_INO           = 1;
+        const uint XIAFS_BAD_INO            = 2;
+        const int  XIAFS_MAX_LINK           = 64000;
+        const int  XIAFS_DIR_SIZE           = 12;
+        const int  XIAFS_NUM_BLOCK_POINTERS = 10;
+        const int  XIAFS_NAME_LEN           = 248;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Xia filesystem";
-        public Guid Id => new Guid("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Xia filesystem";
+        public Guid           Id        => new Guid("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            int sbSizeInBytes = Marshal.SizeOf(typeof(XiaSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf(typeof(XiaSuperBlock));
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
-            if(sbSizeInSectors + partition.Start >= partition.End) return false;
+            if(sbSizeInSectors + partition.Start           >= partition.End) return false;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            IntPtr sbPtr = Marshal.AllocHGlobal(sbSizeInBytes);
+            IntPtr sbPtr    = Marshal.AllocHGlobal(sbSizeInBytes);
             Marshal.Copy(sbSector, 0, sbPtr, sbSizeInBytes);
             XiaSuperBlock supblk = (XiaSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(XiaSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
@@ -72,19 +72,19 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
-            int sbSizeInBytes = Marshal.SizeOf(typeof(XiaSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf(typeof(XiaSuperBlock));
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            IntPtr sbPtr = Marshal.AllocHGlobal(sbSizeInBytes);
+            IntPtr sbPtr    = Marshal.AllocHGlobal(sbSizeInBytes);
             Marshal.Copy(sbSector, 0, sbPtr, sbSizeInBytes);
             XiaSuperBlock supblk = (XiaSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(XiaSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
@@ -108,10 +108,10 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
-                Clusters = supblk.s_nzones,
+                Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
+                Clusters    = supblk.s_nzones,
                 ClusterSize = (int)supblk.s_zone_size,
-                Type = "Xia filesystem"
+                Type        = "Xia filesystem"
             };
 
             information = sb.ToString();
@@ -124,7 +124,8 @@ namespace DiscImageChef.Filesystems
         struct XiaSuperBlock
         {
             /// <summary>1st sector reserved for boot</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] s_boot_segment;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+            public byte[] s_boot_segment;
             /// <summary>the name says it</summary>
             public uint s_zone_size;
             /// <summary>volume size, zone aligned</summary>
@@ -165,10 +166,11 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XiaDirect
         {
-            public uint d_ino;
+            public uint   d_ino;
             public ushort d_rec_len;
-            public byte d_name_len;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NAME_LEN + 1)] public byte[] d_name;
+            public byte   d_name_len;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NAME_LEN + 1)]
+            public byte[] d_name;
         }
 
         /// <summary>
@@ -181,11 +183,12 @@ namespace DiscImageChef.Filesystems
             public ushort i_nlinks;
             public ushort i_uid;
             public ushort i_gid;
-            public uint i_size;
-            public uint i_ctime;
-            public uint i_atime;
-            public uint i_mtime;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NUM_BLOCK_POINTERS)] public uint[] i_zone;
+            public uint   i_size;
+            public uint   i_ctime;
+            public uint   i_atime;
+            public uint   i_mtime;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NUM_BLOCK_POINTERS)]
+            public uint[] i_zone;
         }
     }
 }

@@ -45,9 +45,9 @@ namespace DiscImageChef.Commands
     {
         internal static void DoDeviceReport(DeviceReportOptions options)
         {
-            DicConsole.DebugWriteLine("Device-Report command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Device-Report command", "--debug={0}",   options.Debug);
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Device-Report command", "--device={0}", options.DevicePath);
+            DicConsole.DebugWriteLine("Device-Report command", "--device={0}",  options.DevicePath);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
                char.IsLetter(options.DevicePath[0]))
@@ -63,14 +63,19 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            Metadata.DeviceReport report = new Metadata.DeviceReport();
-            bool removable = false;
-            string xmlFile;
+            Metadata.DeviceReport report    = new Metadata.DeviceReport();
+            bool                  removable = false;
+            string                xmlFile;
             if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
-                xmlFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".xml";
-            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer)) xmlFile = dev.Manufacturer + "_" + dev.Model + ".xml";
-            else if(!string.IsNullOrWhiteSpace(dev.Revision)) xmlFile = dev.Model + "_" + dev.Revision + ".xml";
-            else xmlFile = dev.Model + ".xml";
+                xmlFile =
+                    dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".xml";
+            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
+                xmlFile = dev.Manufacturer + "_" + dev.Model + ".xml";
+            else if(!string.IsNullOrWhiteSpace(dev.Revision))
+                xmlFile = dev.Model + "_" + dev.Revision + ".xml";
+            else
+                xmlFile =
+                    dev.Model + ".xml";
 
             xmlFile = xmlFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 

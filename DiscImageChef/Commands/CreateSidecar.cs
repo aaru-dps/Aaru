@@ -152,9 +152,9 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-                string[]     contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
-                List<string> files    = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0)
-                                                .ToList();
+                string[] contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
+                List<string> files = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0)
+                                             .ToList();
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
@@ -174,8 +174,7 @@ namespace DiscImageChef.Commands
 
                 Core.Statistics.AddCommand("create-sidecar");
             }
-            else
-                DicConsole.ErrorWriteLine("The specified input file cannot be found.");
+            else DicConsole.ErrorWriteLine("The specified input file cannot be found.");
         }
     }
 }

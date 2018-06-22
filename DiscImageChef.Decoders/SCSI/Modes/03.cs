@@ -119,20 +119,20 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_03 decoded = new ModePage_03();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.TracksPerZone = (ushort)((pageResponse[2] << 8) + pageResponse[3]);
-            decoded.AltSectorsPerZone = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
-            decoded.AltTracksPerZone = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.AltTracksPerLun = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
-            decoded.SectorsPerTrack = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
-            decoded.BytesPerSector = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
-            decoded.Interleave = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
-            decoded.TrackSkew = (ushort)((pageResponse[16] << 8) + pageResponse[17]);
-            decoded.CylinderSkew = (ushort)((pageResponse[18] << 8) + pageResponse[19]);
-            decoded.SSEC |= (pageResponse[20] & 0x80) == 0x80;
-            decoded.HSEC |= (pageResponse[20] & 0x40) == 0x40;
-            decoded.RMB |= (pageResponse[20] & 0x20) == 0x20;
-            decoded.SURF |= (pageResponse[20] & 0x10) == 0x10;
+            decoded.PS                |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.TracksPerZone     =  (ushort)((pageResponse[2]  << 8) + pageResponse[3]);
+            decoded.AltSectorsPerZone =  (ushort)((pageResponse[4]  << 8) + pageResponse[5]);
+            decoded.AltTracksPerZone  =  (ushort)((pageResponse[6]  << 8) + pageResponse[7]);
+            decoded.AltTracksPerLun   =  (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
+            decoded.SectorsPerTrack   =  (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.BytesPerSector    =  (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.Interleave        =  (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+            decoded.TrackSkew         =  (ushort)((pageResponse[16] << 8) + pageResponse[17]);
+            decoded.CylinderSkew      =  (ushort)((pageResponse[18] << 8) + pageResponse[19]);
+            decoded.SSEC              |= (pageResponse[20] & 0x80) == 0x80;
+            decoded.HSEC              |= (pageResponse[20] & 0x40) == 0x40;
+            decoded.RMB               |= (pageResponse[20] & 0x20) == 0x20;
+            decoded.SURF              |= (pageResponse[20] & 0x10) == 0x10;
 
             return decoded;
         }
@@ -146,16 +146,16 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_03 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_03   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Format device page:");
 
             if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb
-                .AppendFormat("\t{0} tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors",
-                              page.TracksPerZone).AppendLine();
+               .AppendFormat("\t{0} tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors",
+                             page.TracksPerZone).AppendLine();
             sb.AppendFormat("\t{0} sectors per zone that shall be reserved for defect handling", page.AltSectorsPerZone)
               .AppendLine();
             sb.AppendFormat("\t{0} tracks per zone that shall be reserved for defect handling", page.AltTracksPerZone)

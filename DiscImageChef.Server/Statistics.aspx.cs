@@ -80,7 +80,7 @@ namespace DiscImageChef.Server
                 statistics = new Stats();
 
                 XmlSerializer xs = new XmlSerializer(statistics.GetType());
-                FileStream    fs =
+                FileStream fs =
                     WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
                                 FileMode.Open, FileAccess.Read, FileShare.Read);
                 statistics = (Stats)xs.Deserialize(fs);
@@ -217,20 +217,20 @@ namespace DiscImageChef.Server
                            !string.IsNullOrWhiteSpace(device.Revision))
                         {
                             xmlFile = device.Manufacturer + "_" + device.Model + "_" + device.Revision + ".xml";
-                            url     =
+                            url =
                                 $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
                         }
                         else if(!string.IsNullOrWhiteSpace(device.Manufacturer) &&
                                 !string.IsNullOrWhiteSpace(device.Model))
                         {
                             xmlFile = device.Manufacturer + "_" + device.Model + ".xml";
-                            url     =
+                            url =
                                 $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}";
                         }
                         else if(!string.IsNullOrWhiteSpace(device.Model) && !string.IsNullOrWhiteSpace(device.Revision))
                         {
                             xmlFile = device.Model + "_" + device.Revision + ".xml";
-                            url     =
+                            url =
                                 $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
                         }
                         else

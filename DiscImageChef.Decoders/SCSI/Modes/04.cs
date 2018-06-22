@@ -102,14 +102,16 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_04 decoded = new ModePage_04();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.Cylinders = (uint)((pageResponse[2] << 16) + (pageResponse[3] << 8) + pageResponse[4]);
-            decoded.Heads = pageResponse[5];
-            decoded.WritePrecompCylinder = (uint)((pageResponse[6] << 16) + (pageResponse[7] << 8) + pageResponse[8]);
-            decoded.WriteReduceCylinder = (uint)((pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
-            decoded.DriveStepRate = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
-            decoded.LandingCylinder = (pageResponse[14] << 16) + (pageResponse[15] << 8) + pageResponse[16];
-            decoded.RPL = (byte)(pageResponse[17] & 0x03);
+            decoded.PS                   |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.Cylinders            =  (uint)((pageResponse[2] << 16) + (pageResponse[3] << 8) + pageResponse[4]);
+            decoded.Heads                =  pageResponse[5];
+            decoded.WritePrecompCylinder =  (uint)((pageResponse[6] << 16) + (pageResponse[7] << 8) + pageResponse[8]);
+            decoded.WriteReduceCylinder =
+                (uint)((pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+            decoded.DriveStepRate =
+                (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.LandingCylinder  = (pageResponse[14] << 16) + (pageResponse[15] << 8) + pageResponse[16];
+            decoded.RPL              = (byte)(pageResponse[17] & 0x03);
             decoded.RotationalOffset = pageResponse[18];
 
             if(pageResponse.Length >= 22)
@@ -127,8 +129,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_04 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_04   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Rigid disk drive geometry page:");
 

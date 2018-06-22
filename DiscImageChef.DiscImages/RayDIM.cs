@@ -158,7 +158,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.SectorSize      = 512;
 
             byte[] sectors = new byte[imageInfo.SectorsPerTrack * imageInfo.SectorSize];
-            disk           = new MemoryStream();
+            disk = new MemoryStream();
 
             for(int i = 0; i < imageInfo.SectorsPerTrack * imageInfo.SectorSize; i++)
             {
@@ -167,18 +167,18 @@ namespace DiscImageChef.DiscImages
                 disk.Write(sectors, 0, sectors.Length);
             }
 
-            imageInfo.MediaType =
-                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                      (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM, false));
+            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
+                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                            false));
 
             switch(imageInfo.MediaType)
             {
-                case MediaType.NEC_525_HD when header.diskType == RayDiskTypes.Mf2hd ||
-                                               header.diskType == RayDiskTypes.Mf2ed:
+                case MediaType.NEC_525_HD
+                    when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
                     imageInfo.MediaType = MediaType.NEC_35_HD_8;
                     break;
-                case MediaType.DOS_525_HD when header.diskType == RayDiskTypes.Mf2hd ||
-                                               header.diskType == RayDiskTypes.Mf2ed:
+                case MediaType.DOS_525_HD
+                    when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
                     imageInfo.MediaType = MediaType.NEC_35_HD_15;
                     break;
                 case MediaType.RX50 when header.diskType == RayDiskTypes.Md2dd || header.diskType == RayDiskTypes.Md2hd:
@@ -201,8 +201,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -212,8 +212,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -332,7 +332,7 @@ namespace DiscImageChef.DiscImages
                 MediaType.XDF_35, MediaType.XDF_525
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dim"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }
@@ -360,7 +360,7 @@ namespace DiscImageChef.DiscImages
 
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
-            imageInfo                                             = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 MediaType       = mediaType,
                 SectorSize      = sectorSize,
@@ -538,7 +538,7 @@ namespace DiscImageChef.DiscImages
         struct RayHdr
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
-            public byte[]       signature;
+            public byte[] signature;
             public RayDiskTypes diskType;
             public byte         cylinders;
             public byte         sectorsPerTrack;

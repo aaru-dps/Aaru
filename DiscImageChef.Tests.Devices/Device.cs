@@ -42,35 +42,35 @@ namespace DiscImageChef.Tests.Devices
 
             while(true)
             {
-                DicConsole.WriteLine("dev.PlatformID = {0}", dev.PlatformId);
-                DicConsole.WriteLine("dev.FileHandle = {0}", dev.FileHandle);
-                DicConsole.WriteLine("dev.Timeout = {0}", dev.Timeout);
-                DicConsole.WriteLine("dev.Error = {0}", dev.Error);
-                DicConsole.WriteLine("dev.LastError = {0}", dev.LastError);
-                DicConsole.WriteLine("dev.Type = {0}", dev.Type);
-                DicConsole.WriteLine("dev.Manufacturer = \"{0}\"", dev.Manufacturer);
-                DicConsole.WriteLine("dev.Model = \"{0}\"", dev.Model);
-                DicConsole.WriteLine("dev.Revision = \"{0}\"", dev.Revision);
-                DicConsole.WriteLine("dev.Serial = \"{0}\"", dev.Serial);
-                DicConsole.WriteLine("dev.SCSIType = {0}", dev.ScsiType);
-                DicConsole.WriteLine("dev.IsRemovable = {0}", dev.IsRemovable);
-                DicConsole.WriteLine("dev.IsUSB = {0}", dev.IsUsb);
-                DicConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.UsbVendorId);
+                DicConsole.WriteLine("dev.PlatformID = {0}",        dev.PlatformId);
+                DicConsole.WriteLine("dev.FileHandle = {0}",        dev.FileHandle);
+                DicConsole.WriteLine("dev.Timeout = {0}",           dev.Timeout);
+                DicConsole.WriteLine("dev.Error = {0}",             dev.Error);
+                DicConsole.WriteLine("dev.LastError = {0}",         dev.LastError);
+                DicConsole.WriteLine("dev.Type = {0}",              dev.Type);
+                DicConsole.WriteLine("dev.Manufacturer = \"{0}\"",  dev.Manufacturer);
+                DicConsole.WriteLine("dev.Model = \"{0}\"",         dev.Model);
+                DicConsole.WriteLine("dev.Revision = \"{0}\"",      dev.Revision);
+                DicConsole.WriteLine("dev.Serial = \"{0}\"",        dev.Serial);
+                DicConsole.WriteLine("dev.SCSIType = {0}",          dev.ScsiType);
+                DicConsole.WriteLine("dev.IsRemovable = {0}",       dev.IsRemovable);
+                DicConsole.WriteLine("dev.IsUSB = {0}",             dev.IsUsb);
+                DicConsole.WriteLine("dev.USBVendorID = 0x{0:X4}",  dev.UsbVendorId);
                 DicConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
                 DicConsole.WriteLine("dev.USBDescriptors.Length = {0}",
                                      dev.UsbDescriptors?.Length.ToString() ?? "null");
                 DicConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.UsbManufacturerString);
-                DicConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.UsbProductString);
-                DicConsole.WriteLine("dev.USBSerialString = \"{0}\"", dev.UsbSerialString);
-                DicConsole.WriteLine("dev.IsFireWire = {0}", dev.IsFireWire);
-                DicConsole.WriteLine("dev.FireWireGUID = {0:X16}", dev.FireWireGuid);
-                DicConsole.WriteLine("dev.FireWireModel = 0x{0:X8}", dev.FireWireModel);
-                DicConsole.WriteLine("dev.FireWireModelName = \"{0}\"", dev.FireWireModelName);
-                DicConsole.WriteLine("dev.FireWireVendor = 0x{0:X8}", dev.FireWireVendor);
-                DicConsole.WriteLine("dev.FireWireVendorName = \"{0}\"", dev.FireWireVendorName);
-                DicConsole.WriteLine("dev.IsCompactFlash = {0}", dev.IsCompactFlash);
-                DicConsole.WriteLine("dev.IsPCMCIA = {0}", dev.IsPcmcia);
-                DicConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis?.Length.ToString() ?? "null");
+                DicConsole.WriteLine("dev.USBProductString = \"{0}\"",      dev.UsbProductString);
+                DicConsole.WriteLine("dev.USBSerialString = \"{0}\"",       dev.UsbSerialString);
+                DicConsole.WriteLine("dev.IsFireWire = {0}",                dev.IsFireWire);
+                DicConsole.WriteLine("dev.FireWireGUID = {0:X16}",          dev.FireWireGuid);
+                DicConsole.WriteLine("dev.FireWireModel = 0x{0:X8}",        dev.FireWireModel);
+                DicConsole.WriteLine("dev.FireWireModelName = \"{0}\"",     dev.FireWireModelName);
+                DicConsole.WriteLine("dev.FireWireVendor = 0x{0:X8}",       dev.FireWireVendor);
+                DicConsole.WriteLine("dev.FireWireVendorName = \"{0}\"",    dev.FireWireVendorName);
+                DicConsole.WriteLine("dev.IsCompactFlash = {0}",            dev.IsCompactFlash);
+                DicConsole.WriteLine("dev.IsPCMCIA = {0}",                  dev.IsPcmcia);
+                DicConsole.WriteLine("dev.CIS.Length = {0}",                dev.Cis?.Length.ToString() ?? "null");
 
                 DicConsole.WriteLine("Press any key to continue...", devPath);
                 System.Console.ReadKey();

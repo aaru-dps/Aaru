@@ -253,7 +253,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         struct Extent
         {
-            public int start;
+            public int   start;
             public short length;
         }
 

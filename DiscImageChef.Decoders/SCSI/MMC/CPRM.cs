@@ -92,7 +92,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.MKBPackData = new byte[CPRMMKBResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(CPRMMKBResponse, 0);
-            decoded.Reserved = CPRMMKBResponse[2];
+            decoded.Reserved   = CPRMMKBResponse[2];
             decoded.TotalPacks = CPRMMKBResponse[3];
             Array.Copy(CPRMMKBResponse, 4, decoded.MKBPackData, 0, CPRMMKBResponse.Length - 4);
 
@@ -107,9 +107,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved != 0) sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
-#endif
+            #endif
             sb.AppendFormat("Total number of CPRM Media Key Blocks available to transfer: {0}", response.TotalPacks)
               .AppendLine();
             sb.AppendFormat("CPRM Media Key Blocks in hex follows:");

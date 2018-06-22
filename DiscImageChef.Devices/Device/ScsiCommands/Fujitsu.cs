@@ -38,22 +38,23 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf,
-                                   string secondHalf, uint timeout, out double duration)
+        public bool FujitsuDisplay(out byte[] senseBuffer, bool flash,   FujitsuDisplayModes mode, string firstHalf,
+                                   string     secondHalf,  uint timeout, out double          duration)
         {
             byte[] tmp;
-            byte[] firstHalfBytes = new byte[8];
+            byte[] firstHalfBytes  = new byte[8];
             byte[] secondHalfBytes = new byte[8];
-            byte[] buffer = new byte[17];
-            bool displayLen = false;
-            bool halfMsg = false;
-            byte[] cdb = new byte[10];
+            byte[] buffer          = new byte[17];
+            bool   displayLen      = false;
+            bool   halfMsg         = false;
+            byte[] cdb             = new byte[10];
 
             if(!string.IsNullOrWhiteSpace(firstHalf))
             {
                 tmp = Encoding.ASCII.GetBytes(firstHalf);
                 Array.Copy(tmp, 0, firstHalfBytes, 0, 8);
             }
+
             if(!string.IsNullOrWhiteSpace(secondHalf))
             {
                 tmp = Encoding.ASCII.GetBytes(secondHalf);
@@ -62,17 +63,18 @@ namespace DiscImageChef.Devices
 
             if(mode != FujitsuDisplayModes.Half)
                 if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
-                   !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes)) displayLen = true;
+                   !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
+                    displayLen = true;
                 else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                         ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes)) halfMsg = true;
 
             buffer[0] = (byte)((byte)mode << 5);
             if(displayLen) buffer[0] += 0x10;
-            if(flash) buffer[0] += 0x08;
-            if(halfMsg) buffer[0] += 0x04;
+            if(flash) buffer[0]      += 0x08;
+            if(halfMsg) buffer[0]    += 0x04;
             buffer[0] += 0x01; // Always ASCII
 
-            Array.Copy(firstHalfBytes, 0, buffer, 1, 8);
+            Array.Copy(firstHalfBytes,  0, buffer, 1, 8);
             Array.Copy(secondHalfBytes, 0, buffer, 9, 8);
 
             cdb[0] = (byte)ScsiCommands.FujitsuDisplay;

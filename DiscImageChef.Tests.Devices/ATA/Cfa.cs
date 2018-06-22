@@ -88,8 +88,8 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending REQUEST EXTENDED ERROR CODE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Error code is {0}.", errorCode);
+            DicConsole.WriteLine("Sense is {0}.",        sense);
+            DicConsole.WriteLine("Error code is {0}.",   errorCode);
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Decode error registers.");
@@ -133,10 +133,10 @@ namespace DiscImageChef.Tests.Devices.ATA
         static void TranslateSectorChs(string devPath, Device dev)
         {
             ushort cylinder = 0;
-            byte head = 0;
-            byte sector = 1;
+            byte   head     = 0;
+            byte   sector   = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -145,8 +145,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for TRANSLATE SECTOR command:");
                 DicConsole.WriteLine("Cylinder: {0}", cylinder);
-                DicConsole.WriteLine("Head: {0}", head);
-                DicConsole.WriteLine("Sector: {0}", sector);
+                DicConsole.WriteLine("Head: {0}",     head);
+                DicConsole.WriteLine("Sector: {0}",   sector);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -192,6 +192,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
                             head = 15;
                         }
+
                         DicConsole.Write("What sector?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out sector))
@@ -214,9 +215,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -273,9 +274,9 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void TranslateSectorLba(string devPath, Device dev)
         {
-            uint lba = 0;
+            uint   lba = 0;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -317,10 +318,11 @@ namespace DiscImageChef.Tests.Devices.ATA
                         if(lba > 0xFFFFFFF)
                         {
                             DicConsole
-                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
-                                           0xFFFFFFF);
+                               .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                          0xFFFFFFF);
                             lba = 0xFFFFFFF;
                         }
+
                         break;
                     case 2: goto start;
                 }
@@ -334,9 +336,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");

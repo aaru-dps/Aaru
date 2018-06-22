@@ -282,8 +282,8 @@ namespace DiscImageChef.Partitions
         {
             partitions                           = new List<Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            ulong rdbBlock                       = 0;
-            bool  foundRdb                       = false;
+            ulong rdbBlock = 0;
+            bool  foundRdb = false;
 
             while(rdbBlock < 16)
             {
@@ -446,13 +446,13 @@ namespace DiscImageChef.Partitions
 
             // Reading BadBlock list
             List<BadBlockList> badBlockChain = new List<BadBlockList>();
-            ulong nextBlock = rdb.BadblockPtr;
+            ulong              nextBlock     = rdb.BadblockPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block",
                                           nextBlock);
 
-                sector     = imagePlugin.ReadSector(nextBlock);
+                sector = imagePlugin.ReadSector(nextBlock);
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != BAD_BLOCK_LIST_MAGIC) break;
@@ -468,7 +468,7 @@ namespace DiscImageChef.Partitions
                     NextPtr  = BigEndianBitConverter.ToUInt32(sector, 0x10),
                     Reserved = BigEndianBitConverter.ToUInt32(sector, 0x14)
                 };
-                ulong entries         = (chainEntry.Size - 6) / 2;
+                ulong entries = (chainEntry.Size - 6) / 2;
                 chainEntry.BlockPairs = new BadBlockEntry[entries];
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.magic = 0x{0:X8}", chainEntry.Magic);
@@ -481,8 +481,7 @@ namespace DiscImageChef.Partitions
 
                 for(ulong i = 0; i < entries; i++)
                 {
-                    chainEntry.BlockPairs[i].BadBlock =
-                        BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
+                    chainEntry.BlockPairs[i].BadBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
                     chainEntry.BlockPairs[i].GoodBlock =
                         BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
 
@@ -496,13 +495,13 @@ namespace DiscImageChef.Partitions
 
             // Reading BadBlock list
             List<PartitionEntry> partitionEntries = new List<PartitionEntry>();
-            nextBlock                             = rdb.PartitionPtr;
+            nextBlock = rdb.PartitionPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block",
                                           nextBlock + sectorOffset);
 
-                sector     = imagePlugin.ReadSector(nextBlock + sectorOffset);
+                sector = imagePlugin.ReadSector(nextBlock + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != PARTITION_BLOCK_MAGIC) break;
@@ -536,7 +535,7 @@ namespace DiscImageChef.Partitions
                     Reserved15   = BigEndianBitConverter.ToUInt32(sector, 0x74),
                     Reserved16   = BigEndianBitConverter.ToUInt32(sector, 0x78),
                     Reserved17   = BigEndianBitConverter.ToUInt32(sector, 0x7C),
-                    DosEnvVec    = new DosEnvironmentVector
+                    DosEnvVec = new DosEnvironmentVector
                     {
                         Size           = BigEndianBitConverter.ToUInt32(sector, 0x80),
                         BlockSize      = BigEndianBitConverter.ToUInt32(sector, 0x84),
@@ -640,13 +639,13 @@ namespace DiscImageChef.Partitions
             // Reading BadBlock list
             List<FileSystemHeader> fshdEntries    = new List<FileSystemHeader>();
             List<LoadSegment>      segmentEntries = new List<LoadSegment>();
-            nextBlock                             = rdb.FsheaderPtr;
+            nextBlock = rdb.FsheaderPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin",
                                           "Going to block {0} in search of a FileSystemHeader block", nextBlock);
 
-                sector     = imagePlugin.ReadSector(nextBlock);
+                sector = imagePlugin.ReadSector(nextBlock);
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != FILESYSTEM_HEADER_MAGIC) break;
@@ -666,7 +665,7 @@ namespace DiscImageChef.Partitions
                     DosType    = BigEndianBitConverter.ToUInt32(sector, 0x20),
                     Version    = BigEndianBitConverter.ToUInt32(sector, 0x24),
                     PatchFlags = BigEndianBitConverter.ToUInt32(sector, 0x28),
-                    Dnode      = new DeviceNode
+                    Dnode = new DeviceNode
                     {
                         Type       = BigEndianBitConverter.ToUInt32(sector, 0x2C),
                         Task       = BigEndianBitConverter.ToUInt32(sector, 0x30),
@@ -706,7 +705,7 @@ namespace DiscImageChef.Partitions
                                           fshd.Dnode.SeglistPtr);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.global_vec = 0x{0:X8}", fshd.Dnode.GlobalVec);
 
-                nextBlock                        = fshd.Dnode.SeglistPtr;
+                nextBlock = fshd.Dnode.SeglistPtr;
                 bool        thereAreLoadSegments = false;
                 Sha1Context sha1Ctx              = new Sha1Context();
                 while(nextBlock != 0xFFFFFFFF)
@@ -714,7 +713,7 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a LoadSegment block",
                                               nextBlock);
 
-                    sector        = imagePlugin.ReadSector(nextBlock);
+                    sector = imagePlugin.ReadSector(nextBlock);
                     uint magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
                     if(magicSeg != LOAD_SEG_MAGIC) break;
@@ -722,7 +721,7 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Found LoadSegment block");
 
                     thereAreLoadSegments = true;
-                    LoadSegment loadSeg  = new LoadSegment
+                    LoadSegment loadSeg = new LoadSegment
                     {
                         Magic    = BigEndianBitConverter.ToUInt32(sector, 0x00),
                         Size     = BigEndianBitConverter.ToUInt32(sector, 0x04),
@@ -730,7 +729,7 @@ namespace DiscImageChef.Partitions
                         TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C),
                         NextPtr  = BigEndianBitConverter.ToUInt32(sector, 0x10)
                     };
-                    loadSeg.LoadData = new byte[(loadSeg.Size                   - 5) * 4];
+                    loadSeg.LoadData = new byte[(loadSeg.Size - 5) * 4];
                     Array.Copy(sector, 0x14, loadSeg.LoadData, 0, (loadSeg.Size - 5) * 4);
 
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.magic = 0x{0:X8}", loadSeg.Magic);
@@ -762,7 +761,7 @@ namespace DiscImageChef.Partitions
                 Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
                 Name        = rdbEntry.DriveName,
                 Sequence    = sequence,
-                Length      =
+                Length =
                     (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                     rdbEntry.DosEnvVec.Surfaces                                            * rdbEntry.DosEnvVec.Bpt,
                 Start =
@@ -771,9 +770,8 @@ namespace DiscImageChef.Partitions
                 Type   = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
                 Scheme = Name,
                 Offset =
-                    (rdbEntry.DosEnvVec.LowCylinder                                           *
-                     rdbEntry.DosEnvVec.Surfaces                                              * rdbEntry.DosEnvVec.Bpt +
-                     sectorOffset)                                                            * rdb.BlockSize,
+                    (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                     sectorOffset) * rdb.BlockSize,
                 Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                        rdbEntry.DosEnvVec.Surfaces                                            * rdbEntry.DosEnvVec.Bpt *
                        rdb.BlockSize
@@ -805,7 +803,7 @@ namespace DiscImageChef.Partitions
                 case TYPEID_PFS:
                 case TYPEID_PFS2:
                 case TYPEID_PFS_MUSER:
-                case TYPEID_AFS:       return "ProfessionalFileSystem";
+                case TYPEID_AFS: return "ProfessionalFileSystem";
                 case TYPEID_SFS:       return "SmartFileSystem v1";
                 case TYPEID_SFS2:      return "SmartFileSystem v2";
                 case TYPEID_JXFS:      return "JXFS";

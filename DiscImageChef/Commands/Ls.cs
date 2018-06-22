@@ -50,12 +50,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Ls command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Ls command", "--input={0}",   options.InputFile);
 
-            FiltersList                filtersList = new FiltersList();
-            IFilter                    inputFilter = filtersList.GetFilter(options.InputFile);
-            
+            FiltersList filtersList = new FiltersList();
+            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+
             Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
             DicConsole.DebugWriteLine("Ls command", "Parsed options:");
-            foreach(KeyValuePair<string,string> parsedOption in parsedOptions)
+            foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
                 DicConsole.DebugWriteLine("Ls command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
             parsedOptions.Add("debug", options.Debug.ToString());
 
@@ -161,7 +161,7 @@ namespace DiscImageChef.Commands
                                     error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                                     if(error == Errno.NoError)
                                     {
-                                        error                = fs.ReadDir("/", out List<string> rootDir);
+                                        error = fs.ReadDir("/", out List<string> rootDir);
                                         if(error == Errno.NoError)
                                             foreach(string entry in rootDir)
                                                 DicConsole.WriteLine("{0}", entry);
@@ -190,7 +190,7 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                error                = fs.ReadDir("/", out List<string> rootDir);
+                                error = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                         DicConsole.WriteLine("{0}", entry);
@@ -229,7 +229,7 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                error                = fs.ReadDir("/", out List<string> rootDir);
+                                error = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                         DicConsole.WriteLine("{0}", entry);
@@ -255,7 +255,7 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                error                = fs.ReadDir("/", out List<string> rootDir);
+                                error = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                         if(options.Long)
@@ -272,7 +272,7 @@ namespace DiscImageChef.Commands
                                                 foreach(string xattr in xattrs)
                                                 {
                                                     byte[] xattrBuf = new byte[0];
-                                                    error           = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                    error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                     if(error == Errno.NoError)
                                                         DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr,
                                                                              xattrBuf.Length);

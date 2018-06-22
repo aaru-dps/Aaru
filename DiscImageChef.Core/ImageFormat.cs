@@ -67,7 +67,7 @@ namespace DiscImageChef.Core
                         imageFormat = imageplugin;
                         break;
                     }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
                     {
                         // ignored
@@ -89,7 +89,7 @@ namespace DiscImageChef.Core
                         imageFormat = imageplugin;
                         break;
                     }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
                     {
                         // ignored

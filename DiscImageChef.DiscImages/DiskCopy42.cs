@@ -74,7 +74,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>Defined by Sigma Seven's BLU</summary>
         const byte kSigmaFmtByteTwiggy = 0x01;
         /// <summary>3.5" single side double density GCR and MFM all use same code</summary>
-        const byte kSonyFmtByte400K  = 0x02;
+        const byte kSonyFmtByte400K = 0x02;
         const byte kSonyFmtByte720K  = kSonyFmtByte400K;
         const byte kSonyFmtByte1440K = kSonyFmtByte400K;
         const byte kSonyFmtByte1680K = kSonyFmtByte400K;
@@ -92,8 +92,8 @@ namespace DiscImageChef.DiscImages
         /// <summary>Defined by LisaEm</summary>
         const byte kFmtNotStandard = 0x93;
         /// <summary>Used incorrectly by Mac OS X with certaing disk images</summary>
-        const byte   kMacOSXFmtByte = 0x00;
-        const string REGEX_DCPY     = @"(?<application>\S+)\s(?<version>\S+)\rData checksum=\$(?<checksum>\S+)$";
+        const byte kMacOSXFmtByte = 0x00;
+        const string REGEX_DCPY = @"(?<application>\S+)\s(?<version>\S+)\rData checksum=\$(?<checksum>\S+)$";
         /// <summary>Bytes per tag, should be 12</summary>
         uint bptag;
 
@@ -103,12 +103,12 @@ namespace DiscImageChef.DiscImages
         IFilter dc42ImageFilter;
         /// <summary>Header of opened image</summary>
         Dc42Header header;
-        ImageInfo  imageInfo;
+        ImageInfo imageInfo;
         /// <summary>Start of tags in disk image, after data sectors</summary>
-        uint         tagOffset;
-        bool         twiggy;
-        byte[]       twiggyCache;
-        byte[]       twiggyCacheTags;
+        uint tagOffset;
+        bool   twiggy;
+        byte[] twiggyCache;
+        byte[] twiggyCacheTags;
 
         FileStream writingStream;
 
@@ -424,14 +424,12 @@ namespace DiscImageChef.DiscImages
                         if(i >= 35 && i <= 41) sectorsToCopy = 16;
                         if(i >= 42 && i <= 45) sectorsToCopy = 15;
 
-                        Array.Copy(data, header.DataSize / 2 + copiedSectors * 512, twiggyCache,
-                                   twiggyCache.Length        - copiedSectors * 512 - sectorsToCopy * 512,
-                                   sectorsToCopy                             * 512);
-                        Array.Copy(tags, header.TagSize                      / 2 + copiedSectors * bptag,
+                        Array.Copy(data, header.DataSize / 2                + copiedSectors * 512, twiggyCache,
+                                   twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
+                        Array.Copy(tags, header.TagSize / 2 + copiedSectors * bptag,
                                    twiggyCacheTags,
-                                   twiggyCacheTags.Length - copiedSectors * bptag -
-                                   sectorsToCopy                          * bptag,
-                                   sectorsToCopy                          * bptag);
+                                   twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag,
+                                   sectorsToCopy * bptag);
 
                         copiedSectors += sectorsToCopy;
                     }
@@ -457,9 +455,9 @@ namespace DiscImageChef.DiscImages
                             string dev     = null;
                             string pre     = null;
 
-                            string major = $"{version.MajorVersion}";
-                            string minor = $".{version.MinorVersion / 10}";
-                            if(version.MinorVersion                 % 10 > 0) release = $".{version.MinorVersion % 10}";
+                            string major                              = $"{version.MajorVersion}";
+                            string minor                              = $".{version.MinorVersion / 10}";
+                            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                             switch(version.DevStage)
                             {
                                 case Version.DevelopmentStage.Alpha:
@@ -581,8 +579,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -592,8 +590,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -664,7 +662,7 @@ namespace DiscImageChef.DiscImages
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();
                 stream.Seek((long)(dataOffset + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-                stream.Read(buffer, 0, (int)(length           * imageInfo.SectorSize));
+                stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
             }
 
             return buffer;
@@ -690,7 +688,7 @@ namespace DiscImageChef.DiscImages
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();
                 stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
-                stream.Read(buffer, 0, (int)(length          * bptag));
+                stream.Read(buffer, 0, (int)(length * bptag));
             }
 
             return buffer;
@@ -781,7 +779,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new[] {SectorTagType.AppleSectorTag};
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.AppleFileWare, MediaType.AppleHD20, MediaType.AppleProfile, MediaType.AppleSonyDS,
@@ -797,7 +795,7 @@ namespace DiscImageChef.DiscImages
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint   sectorSize)
         {
-            header      = new Dc42Header();
+            header = new Dc42Header();
             bool tags   = false;
             bool macosx = false;
 
@@ -813,9 +811,9 @@ namespace DiscImageChef.DiscImages
             switch(mediaType)
             {
                 case MediaType.AppleFileWare:
-                    header.FmtByte  = kSigmaFmtByteTwiggy;
-                    header.Format   = kSigmaFormatTwiggy;
-                    twiggy          = true;
+                    header.FmtByte = kSigmaFmtByteTwiggy;
+                    header.Format  = kSigmaFormatTwiggy;
+                    twiggy         = true;
                     // TODO
                     ErrorMessage = "Twiggy write support not yet implemented";
                     return false;
@@ -909,11 +907,11 @@ namespace DiscImageChef.DiscImages
                     return false;
             }
 
-            dataOffset              = 0x54;
-            tagOffset               = header.TagSize != 0 ? 0x54 + header.DataSize : 0;
-            header.DiskName         = "-DiscImageChef converted image-";
-            header.Valid            = 1;
-            header.DataSize         = (uint)(sectors * 512);
+            dataOffset      = 0x54;
+            tagOffset       = header.TagSize != 0 ? 0x54 + header.DataSize : 0;
+            header.DiskName = "-DiscImageChef converted image-";
+            header.Valid    = 1;
+            header.DataSize = (uint)(sectors * 512);
             if(tags) header.TagSize = (uint)(sectors * 12);
 
             imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
@@ -1055,7 +1053,7 @@ namespace DiscImageChef.DiscImages
             {
                 writingStream.Seek((long)(dataOffset + (sectorAddress + i) * 512), SeekOrigin.Begin);
                 writingStream.Write(data, (int)(i                          * 524 + 0), 512);
-                writingStream.Seek((long)(tagOffset                              + (sectorAddress + i) * 12),
+                writingStream.Seek((long)(tagOffset + (sectorAddress + i) * 12),
                                    SeekOrigin.Begin);
                 writingStream.Write(data, (int)(i * 524 + 512),
                                     12);

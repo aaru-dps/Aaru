@@ -49,7 +49,7 @@ namespace DiscImageChef.DiscImages
         readonly byte[]  cpm_sign    = {0xA2, 0x55, 0xA9, 0x00, 0x9D, 0x00, 0x0D, 0xCA};
         readonly byte[]  dos_sign    = {0xA2, 0x02, 0x8E, 0x52};
         readonly ulong[] dosSkewing  = {0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15};
-        readonly byte[]  dri_string  =
+        readonly byte[] dri_string =
         {
             0x43, 0x4F, 0x50, 0x59, 0x52, 0x49, 0x47, 0x48, 0x54, 0x20, 0x28, 0x43, 0x29, 0x20, 0x31, 0x39, 0x37, 0x39,
             0x2C, 0x20, 0x44, 0x49, 0x47, 0x49, 0x54, 0x41, 0x4C, 0x20, 0x52, 0x45, 0x53, 0x45, 0x41, 0x52, 0x43, 0x48
@@ -139,7 +139,7 @@ namespace DiscImageChef.DiscImages
 
             int  spt            = 0;
             bool allTracksEqual = true;
-            for(int i = 1; i                                   < tracks.Count; i++)
+            for(int i = 1; i < tracks.Count; i++)
                 allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
             if(allTracksEqual) spt = tracks[0].sectors.Length;
@@ -172,11 +172,11 @@ namespace DiscImageChef.DiscImages
                     if(skewed && spt != 0)
                     {
                         ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
-                                                  (sector.addressField.sector[1]  & 0x55)) & 0xFF);
+                                                  (sector.addressField.sector[1] & 0x55)) & 0xFF);
                         DicConsole.DebugWriteLine("Apple NIB Plugin",
                                                   "Hardware sector {0} of track {1} goes to logical sector {2}",
                                                   sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
-                        rawSectors.Add(skewing[sectorNo]                         + (ulong)(i * spt), sector);
+                        rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
                         imageInfo.Sectors++;
                     }
                     else
@@ -206,15 +206,12 @@ namespace DiscImageChef.DiscImages
             imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           =
-                Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             if(imageInfo.Sectors      == 455) imageInfo.MediaType = MediaType.Apple32SS;
-            else if(imageInfo.Sectors == 560)
-                imageInfo.MediaType = MediaType.Apple33SS;
-            else
-                imageInfo.MediaType = MediaType.Unknown;
-            imageInfo.SectorSize    = 256;
-            imageInfo.XmlMediaType  = XmlMediaType.BlockMedia;
+            else if(imageInfo.Sectors == 560) imageInfo.MediaType = MediaType.Apple33SS;
+            else imageInfo.MediaType                              = MediaType.Unknown;
+            imageInfo.SectorSize   = 256;
+            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
             switch(imageInfo.MediaType)
             {
@@ -384,8 +381,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -394,8 +391,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

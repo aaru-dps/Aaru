@@ -165,7 +165,7 @@ namespace DiscImageChef.DiscImages
 
         public bool Identify(IFilter imageFilter)
         {
-            Header        = new ScpHeader();
+            Header = new ScpHeader();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < Marshal.SizeOf(Header)) return false;
@@ -199,7 +199,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"",
                                       StringHandlers.CToString(Header.signature));
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.version = {0}.{1}", (Header.version & 0xF0) >> 4,
-                                      Header.version                                                     & 0xF);
+                                      Header.version & 0xF);
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}",            Header.type);
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}",     Header.revolutions);
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}",           Header.start);
@@ -218,8 +218,8 @@ namespace DiscImageChef.DiscImages
             {
                 if(t >= Header.offsets.Length) break;
 
-                scpStream.Position             = Header.offsets[t];
-                TrackHeader trk                =
+                scpStream.Position = Header.offsets[t];
+                TrackHeader trk =
                     new TrackHeader {Signature = new byte[3], Entries = new TrackEntry[Header.revolutions]};
                 scpStream.Read(trk.Signature, 0, trk.Signature.Length);
                 trk.TrackNumber = (byte)scpStream.ReadByte();
@@ -299,7 +299,7 @@ namespace DiscImageChef.DiscImages
                                                   footer.modificationTime);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationVersion = {0}.{1}",
                                                   (footer.applicationVersion & 0xF0) >> 4,
-                                                  footer.applicationVersion  & 0xF);
+                                                  footer.applicationVersion & 0xF);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.hardwareVersion = {0}.{1}",
                                                   (footer.hardwareVersion & 0xF0) >> 4, footer.hardwareVersion & 0xF);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.firmwareVersion = {0}.{1}",
@@ -345,8 +345,8 @@ namespace DiscImageChef.DiscImages
                         imageInfo.ApplicationVersion =
                             $"{(footer.applicationVersion & 0xF0) >> 4}.{footer.applicationVersion & 0xF}";
                         imageInfo.DriveFirmwareRevision =
-                            $"{(footer.firmwareVersion              & 0xF0) >> 4}.{footer.firmwareVersion & 0xF}";
-                        imageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion    & 0xF}";
+                            $"{(footer.firmwareVersion & 0xF0) >> 4}.{footer.firmwareVersion & 0xF}";
+                        imageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
 
                         break;
                     }
@@ -411,8 +411,8 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -475,8 +475,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -486,7 +486,7 @@ namespace DiscImageChef.DiscImages
             if(position == 0) return null;
 
             stream.Position = position;
-            byte[] lenB     = new byte[2];
+            byte[] lenB = new byte[2];
             stream.Read(lenB, 0, 2);
             ushort len = BitConverter.ToUInt16(lenB, 0);
 
@@ -502,7 +502,7 @@ namespace DiscImageChef.DiscImages
         public struct ScpHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[]      signature;
+            public byte[] signature;
             public byte        version;
             public ScpDiskType type;
             public byte        revolutions;
@@ -520,7 +520,7 @@ namespace DiscImageChef.DiscImages
         public struct TrackHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[]       Signature;
+            public byte[] Signature;
             public byte         TrackNumber;
             public TrackEntry[] Entries;
         }

@@ -42,34 +42,34 @@ namespace DiscImageChef.Core.Devices
     partial class Reader
     {
         Device dev;
-        uint timeout;
+        uint   timeout;
 
         internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
         {
-            this.dev = dev;
+            this.dev     = dev;
             this.timeout = timeout;
             BlocksToRead = 64;
-            CanReadRaw = raw;
+            CanReadRaw   = raw;
 
             switch(dev.Type)
             {
                 case DeviceType.ATA:
                     Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
-                    if(ataIdNullable.HasValue) ataId = ataIdNullable.Value;
+                    if(ataIdNullable.HasValue) ataId       = ataIdNullable.Value;
                     break;
                 case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
             }
         }
 
-        internal string ErrorMessage { get; private set; }
-        internal ulong Blocks { get; private set; }
-        internal uint BlocksToRead { get; private set; }
-        internal uint LogicalBlockSize { get; private set; }
-        internal uint PhysicalBlockSize { get; private set; }
-        internal uint LongBlockSize { get; private set; }
-        internal bool CanReadRaw { get; private set; }
-        internal bool CanSeek => ataSeek || seek6 || seek10;
-        internal bool CanSeekLba => ataSeekLba || seek6 || seek10;
+        internal string ErrorMessage      { get; private set; }
+        internal ulong  Blocks            { get; private set; }
+        internal uint   BlocksToRead      { get; private set; }
+        internal uint   LogicalBlockSize  { get; private set; }
+        internal uint   PhysicalBlockSize { get; private set; }
+        internal uint   LongBlockSize     { get; private set; }
+        internal bool   CanReadRaw        { get; private set; }
+        internal bool   CanSeek           => ataSeek || seek6    || seek10;
+        internal bool   CanSeekLba        => ataSeekLba || seek6 || seek10;
 
         internal ulong GetDeviceBlocks()
         {
@@ -141,7 +141,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiReadBlocks(out buffer, block, count, out duration);
                 default:
-                    buffer = null;
+                    buffer   = null;
                     duration = 0d;
                     return true;
             }
@@ -153,7 +153,7 @@ namespace DiscImageChef.Core.Devices
             {
                 case DeviceType.ATA: return AtaReadChs(out buffer, cylinder, head, sector, out duration);
                 default:
-                    buffer = null;
+                    buffer   = null;
                     duration = 0d;
                     return true;
             }

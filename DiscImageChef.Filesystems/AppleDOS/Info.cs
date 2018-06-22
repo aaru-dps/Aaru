@@ -58,14 +58,14 @@ namespace DiscImageChef.Filesystems.AppleDOS
             vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
             Marshal.FreeHGlobal(vtocPtr);
 
-            return vtoc.catalogSector < spt && vtoc.maxTrackSectorPairsPerSector <= 122 &&
-                   vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector == 256;
+            return vtoc.catalogSector   < spt  && vtoc.maxTrackSectorPairsPerSector <= 122 &&
+                   vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector               == 256;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? new Apple2();
+            Encoding    = encoding ?? new Apple2();
             information = "";
             StringBuilder sb = new StringBuilder();
 
@@ -96,10 +96,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             XmlFsType = new FileSystemType
             {
-                Bootable = true,
-                Clusters = (long)imagePlugin.Info.Sectors,
+                Bootable    = true,
+                Clusters    = (long)imagePlugin.Info.Sectors,
                 ClusterSize = (int)imagePlugin.Info.SectorSize,
-                Type = "Apple DOS"
+                Type        = "Apple DOS"
             };
         }
     }

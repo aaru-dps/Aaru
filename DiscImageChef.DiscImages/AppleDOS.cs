@@ -169,8 +169,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -180,8 +180,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -269,8 +269,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
-            new[] {MediaType.Apple33SS};
+        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.Apple33SS};
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".do", ".po"};

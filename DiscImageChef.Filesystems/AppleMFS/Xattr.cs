@@ -51,10 +51,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
             xattrs = new List<string>();
 
             if(debug)
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
+                   string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
+                   string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
                 {
                     if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                         xattrs.Add("com.apple.macintosh.tags");
@@ -91,10 +91,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
+                   string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
+                   string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
                     if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                        string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                     {
@@ -126,7 +126,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
                             return Errno.NoError;
                         }
                     }
-                    else return Errno.NoSuchExtendedAttribute;
+                    else
+                        return Errno.NoSuchExtendedAttribute;
 
             Errno error;
 
@@ -134,14 +135,14 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
-            if(entry.flRLgLen > 0 &&
+            if(entry.flRLgLen                                                                     > 0 &&
                string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0)
             {
                 error = ReadFile(path, out buf, true, false);
                 return error;
             }
 
-            if(entry.flRLgLen > 0 &&
+            if(entry.flRLgLen                                                                          > 0 &&
                string.Compare(xattr, "com.apple.ResourceFork.tags", StringComparison.InvariantCulture) == 0)
             {
                 error = ReadFile(path, out buf, true, true);

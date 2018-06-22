@@ -124,7 +124,7 @@ namespace DiscImageChef.DiscImages
                     {
                         Indexes                = new Dictionary<int, ulong> {{1, alcTrack.startLba}},
                         TrackStartSector       = alcTrack.startLba,
-                        TrackEndSector         = (alcTrack.startLba + alcExtra.sectors) - 1,
+                        TrackEndSector         = alcTrack.startLba + alcExtra.sectors - 1,
                         TrackPregap            = alcExtra.pregap,
                         TrackSession           = sessionNo,
                         TrackSequence          = alcTrack.point,
@@ -181,7 +181,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 88) return false;
 
-            isDvd      = false;
+            isDvd = false;
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
             IntPtr hdrPtr = Marshal.AllocHGlobal(88);
@@ -352,7 +352,7 @@ namespace DiscImageChef.DiscImages
                 byte[] footer = new byte[16];
                 stream.Seek(footerOff, SeekOrigin.Begin);
                 stream.Read(footer, 0, 16);
-                alcFooter      = new AlcoholFooter();
+                alcFooter = new AlcoholFooter();
                 IntPtr footPtr = Marshal.AllocHGlobal(16);
                 Marshal.Copy(footer, 0, footPtr, 16);
                 alcFooter = (AlcoholFooter)Marshal.PtrToStructure(footPtr, typeof(AlcoholFooter));
@@ -494,9 +494,8 @@ namespace DiscImageChef.DiscImages
                                 break;
                         }
 
-                        if(DMI.IsXbox(dmi)) imageInfo.MediaType = MediaType.XGD;
-                        else if(DMI.IsXbox360(dmi))
-                            imageInfo.MediaType = MediaType.XGD2;
+                        if(DMI.IsXbox(dmi)) imageInfo.MediaType         = MediaType.XGD;
+                        else if(DMI.IsXbox360(dmi)) imageInfo.MediaType = MediaType.XGD2;
 
                         imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
                         imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
@@ -535,21 +534,17 @@ namespace DiscImageChef.DiscImages
                     }
                 }
 
-                if(!data           && !firstdata) imageInfo.MediaType = MediaType.CDDA;
-                else if(firstaudio && data && Sessions.Count > 1 && mode2)
-                    imageInfo.MediaType = MediaType.CDPLUS;
-                else if(firstdata && audio || mode2)
-                    imageInfo.MediaType = MediaType.CDROMXA;
-                else if(!audio)
-                    imageInfo.MediaType = MediaType.CDROM;
-                else
-                    imageInfo.MediaType = MediaType.CD;
+                if(!data                                         && !firstdata) imageInfo.MediaType = MediaType.CDDA;
+                else if(firstaudio && data && Sessions.Count > 1 && mode2) imageInfo.MediaType      = MediaType.CDPLUS;
+                else if(firstdata && audio || mode2) imageInfo.MediaType                            = MediaType.CDROMXA;
+                else if(!audio) imageInfo.MediaType                                                 = MediaType.CDROM;
+                else imageInfo.MediaType                                                            = MediaType.CD;
             }
 
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", imageInfo.MediaType);
 
-            Partitions       = new List<Partition>();
-            offsetmap        = new Dictionary<uint, ulong>();
+            Partitions = new List<Partition>();
+            offsetmap  = new Dictionary<uint, ulong>();
             ulong byteOffset = 0;
 
             foreach(AlcoholTrack trk in alcTracks.Values)
@@ -646,7 +641,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "Data filename: {0}", alcFile);
 
             FiltersList filtersList = new FiltersList();
-            alcImage                = filtersList.GetFilter(alcFile);
+            alcImage = filtersList.GetFilter(alcFile);
 
             if(alcImage == null) throw new Exception("Cannot open data file");
 
@@ -686,11 +681,11 @@ namespace DiscImageChef.DiscImages
 
                 fullToc                              = tocMs.ToArray();
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-                byte[] fullTocSize                   = BigEndianBitConverter.GetBytes((short)(fullToc.Length - 2));
-                fullToc[0]                           = fullTocSize[0];
-                fullToc[1]                           = fullTocSize[1];
-                fullToc[2]                           = firstSession;
-                fullToc[3]                           = lastSession;
+                byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)(fullToc.Length - 2));
+                fullToc[0] = fullTocSize[0];
+                fullToc[1] = fullTocSize[1];
+                fullToc[2] = firstSession;
+                fullToc[3] = lastSession;
 
                 FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(fullToc);
 
@@ -704,7 +699,7 @@ namespace DiscImageChef.DiscImages
                 imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
             }
 
-            if(imageInfo.MediaType   == MediaType.XGD2)
+            if(imageInfo.MediaType == MediaType.XGD2)
                 if(imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
                    imageInfo.Sectors == 4229664 || // Xtreme unlock
                    imageInfo.Sectors == 4246304)   // Wxripper unlock
@@ -777,7 +772,7 @@ namespace DiscImageChef.DiscImages
                         if(track.point != kvp.Key ||
                            !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
 
-                        if(sectorAddress                     - kvp.Value < extra.sectors)
+                        if(sectorAddress - kvp.Value < extra.sectors)
                             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                     }
 
@@ -793,7 +788,7 @@ namespace DiscImageChef.DiscImages
                         if(track.point != kvp.Key ||
                            !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
 
-                        if(sectorAddress                        - kvp.Value < extra.sectors)
+                        if(sectorAddress - kvp.Value < extra.sectors)
                             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                     }
 
@@ -875,7 +870,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream     = alcImage.GetDataForkStream();
+            imageStream = alcImage.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
               .Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1198,7 +1193,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream     = alcImage.GetDataForkStream();
+            imageStream = alcImage.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
               .Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1235,7 +1230,7 @@ namespace DiscImageChef.DiscImages
                         if(alcTrack.point != kvp.Key ||
                            !alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
 
-                        if(sectorAddress                         - kvp.Value < alcExtra.sectors)
+                        if(sectorAddress - kvp.Value < alcExtra.sectors)
                             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                     }
 
@@ -1278,7 +1273,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream     = alcImage.GetDataForkStream();
+            imageStream = alcImage.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
 
             br.BaseStream
@@ -1368,14 +1363,14 @@ namespace DiscImageChef.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1398,14 +1393,14 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            failingLbas   = new List<ulong>();
-            unknownLbas   = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1463,7 +1458,7 @@ namespace DiscImageChef.DiscImages
                 MediaType.NeoGeoCD, MediaType.PCFX
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".mds"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }
@@ -1482,7 +1477,7 @@ namespace DiscImageChef.DiscImages
             try
             {
                 descriptorStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-                imageStream      =
+                imageStream =
                     new
                         FileStream(Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".mdf",
                                    FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
@@ -1830,11 +1825,11 @@ namespace DiscImageChef.DiscImages
             // Alcohol sets this always, Daemon Tool expects this
             header.unknown1[0] = 2;
 
-            alcSessions             = new Dictionary<int, AlcoholSession>();
-            alcTracks               = new Dictionary<int, AlcoholTrack>();
-            alcToc                  = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
-            writingTracks           = writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).ToList();
-            alcTrackExtras          = new Dictionary<int, AlcoholTrackExtra>();
+            alcSessions    = new Dictionary<int, AlcoholSession>();
+            alcTracks      = new Dictionary<int, AlcoholTrack>();
+            alcToc         = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
+            writingTracks  = writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).ToList();
+            alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
             long currentTrackOffset = header.sessionOffset + Marshal.SizeOf(typeof(AlcoholSession)) * sessions;
 
             long currentExtraOffset = currentTrackOffset;
@@ -1843,8 +1838,7 @@ namespace DiscImageChef.DiscImages
                 currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 3;
                 currentExtraOffset +=
                     Marshal.SizeOf(typeof(AlcoholTrack)) * writingTracks.Count(t => t.TrackSession == i);
-                if(i                                                                               < sessions)
-                    currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 2;
+                if(i < sessions) currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 2;
             }
 
             long footerOffset = currentExtraOffset + Marshal.SizeOf(typeof(AlcoholTrackExtra)) * writingTracks.Count;
@@ -1869,15 +1863,15 @@ namespace DiscImageChef.DiscImages
                                     trackOffset     = 4220
                                 });
 
-                footerOffset                 =  4300;
+                footerOffset = 4300;
                 if(bca != null) footerOffset += bca.Length;
 
                 alcTracks.Add(1,
                               new AlcoholTrack
                               {
-                                  mode        = AlcoholTrackMode.DVD,
-                                  adrCtl      = 20,
-                                  point       = 1,
+                                  mode   = AlcoholTrackMode.DVD,
+                                  adrCtl = 20,
+                                  point  = 1,
                                   extraOffset =
                                       (uint)(writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector + 1),
                                   sectorSize   = 2048,
@@ -1914,7 +1908,7 @@ namespace DiscImageChef.DiscImages
                     if(firstTrackControl == 0 && firstTrack.TrackType != TrackType.Audio)
                         firstTrackControl = (byte)CdFlags.DataTrack;
                     if(lastTrackControl == 0 && lastTrack.TrackType != TrackType.Audio)
-                        lastTrackControl                                         = (byte)CdFlags.DataTrack;
+                        lastTrackControl = (byte)CdFlags.DataTrack;
                     (byte hour, byte minute, byte second, byte frame) leadinPmsf =
                         LbaToMsf(lastTrack.TrackEndSector + 1);
 
@@ -1965,17 +1959,17 @@ namespace DiscImageChef.DiscImages
 
                         thisSessionTracks.Add((int)track.TrackSequence, new AlcoholTrack
                         {
-                            mode    = TrackTypeToAlcohol(track.TrackType),
+                            mode = TrackTypeToAlcohol(track.TrackType),
                             subMode =
                                 track.TrackSubchannelType != TrackSubchannelType.None
                                     ? AlcoholSubchannelMode.Interleaved
                                     : AlcoholSubchannelMode.None,
-                            adrCtl     = (byte)((1 << 4) + trackControl),
-                            point      = (byte)track.TrackSequence,
-                            zero       = msf.hour,
-                            pmin       = msf.minute,
-                            psec       = msf.second,
-                            pframe     = msf.frame,
+                            adrCtl = (byte)((1 << 4) + trackControl),
+                            point  = (byte)track.TrackSequence,
+                            zero   = msf.hour,
+                            pmin   = msf.minute,
+                            psec   = msf.second,
+                            pframe = msf.frame,
                             sectorSize =
                                 (ushort)(track.TrackRawBytesPerSector +
                                          (track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0)),
@@ -2018,9 +2012,9 @@ namespace DiscImageChef.DiscImages
                                               {
                                                   point  = 0xB0,
                                                   adrCtl = 0x50,
-                                                  zero   =
+                                                  zero =
                                                       (byte)(((leadoutAmsf.hour & 0xF) << 4) +
-                                                             (leadoutPmsf.hour  & 0xF)),
+                                                             (leadoutPmsf.hour & 0xF)),
                                                   min      = leadoutAmsf.minute,
                                                   sec      = leadoutAmsf.second,
                                                   frame    = leadoutAmsf.frame,
@@ -2062,7 +2056,7 @@ namespace DiscImageChef.DiscImages
             // Write header
             descriptorStream.Seek(0, SeekOrigin.Begin);
             byte[] block = new byte[Marshal.SizeOf(header)];
-            blockPtr     = Marshal.AllocHGlobal(Marshal.SizeOf(header));
+            blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.StructureToPtr(header, blockPtr, true);
             Marshal.Copy(blockPtr, block, 0, block.Length);
             Marshal.FreeHGlobal(blockPtr);
@@ -2310,8 +2304,8 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Mode2F2:
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt: return 2352;
-                case AlcoholTrackMode.DVD:        return 2048;
-                default:                          return 0;
+                case AlcoholTrackMode.DVD: return 2048;
+                default:                   return 0;
             }
         }
 
@@ -2322,11 +2316,11 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Mode1:
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt: return 2048;
-                case AlcoholTrackMode.Mode2F2:    return 2324;
-                case AlcoholTrackMode.Mode2:      return 2336;
-                case AlcoholTrackMode.Audio:      return 2352;
-                case AlcoholTrackMode.DVD:        return 2048;
-                default:                          return 0;
+                case AlcoholTrackMode.Mode2F2: return 2324;
+                case AlcoholTrackMode.Mode2:   return 2336;
+                case AlcoholTrackMode.Audio:   return 2352;
+                case AlcoholTrackMode.DVD:     return 2048;
+                default:                       return 0;
             }
         }
 
@@ -2337,10 +2331,10 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Mode1: return TrackType.CdMode1;
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt: return TrackType.CdMode2Form1;
-                case AlcoholTrackMode.Mode2F2:    return TrackType.CdMode2Form2;
-                case AlcoholTrackMode.Mode2:      return TrackType.CdMode2Formless;
-                case AlcoholTrackMode.Audio:      return TrackType.Audio;
-                default:                          return TrackType.Data;
+                case AlcoholTrackMode.Mode2F2: return TrackType.CdMode2Form2;
+                case AlcoholTrackMode.Mode2:   return TrackType.CdMode2Formless;
+                case AlcoholTrackMode.Audio:   return TrackType.Audio;
+                default:                       return TrackType.Data;
             }
         }
 
@@ -2395,7 +2389,7 @@ namespace DiscImageChef.DiscImages
                 case MediaType.DVDRWDL:
                 case MediaType.DVDPRDL:
                 case MediaType.DVDPRWDL: return AlcoholMediumType.DVDR;
-                default:                 return AlcoholMediumType.DVD;
+                default: return AlcoholMediumType.DVD;
             }
         }
 
@@ -2415,7 +2409,8 @@ namespace DiscImageChef.DiscImages
         static (byte hour, byte minute, byte second, byte frame) LbaToMsf(ulong sector)
         {
             return ((byte)((sector + 150) / 75 / 60 / 60), (byte)((sector + 150) / 75 / 60 % 60),
-                (byte)((sector     + 150) / 75 % 60), (byte)((sector      + 150) % 75));
+                       (byte)((sector + 150)                                          / 75 % 60),
+                       (byte)((sector + 150)                                               % 75));
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -2424,22 +2419,22 @@ namespace DiscImageChef.DiscImages
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] signature;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[]            version;
+            public byte[] version;
             public AlcoholMediumType type;
             public ushort            sessions;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public ushort[] unknown1;
-            public ushort   bcaLength;
+            public ushort bcaLength;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public uint[] unknown2;
-            public uint   bcaOffset;
+            public uint bcaOffset;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
             public uint[] unknown3;
-            public uint   structuresOffset;
+            public uint structuresOffset;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public uint[] unknown4;
-            public uint   sessionOffset;
-            public uint   dpmOffset;
+            public uint sessionOffset;
+            public uint dpmOffset;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -2475,10 +2470,10 @@ namespace DiscImageChef.DiscImages
             public ushort                sectorSize;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
             public byte[] unknown;
-            public uint   startLba;
-            public ulong  startOffset;
-            public uint   files;
-            public uint   footerOffset;
+            public uint  startLba;
+            public ulong startOffset;
+            public uint  files;
+            public uint  footerOffset;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
             public byte[] unknown2;
         }

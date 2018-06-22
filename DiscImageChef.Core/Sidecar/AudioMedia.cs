@@ -52,7 +52,8 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void AudioMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+        static void AudioMedia(IMediaImage        image,        Guid                 filterId, string imagePath,
+                               FileInfo           fi,           PluginBase           plugins,
                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.AudioMedia = new[]
@@ -62,12 +63,12 @@ namespace DiscImageChef.Core
                     Checksums = imgChecksums.ToArray(),
                     Image = new ImageType
                     {
-                        format = image.Format,
-                        offset = 0,
+                        format          = image.Format,
+                        offset          = 0,
                         offsetSpecified = true,
-                        Value = Path.GetFileName(imagePath)
+                        Value           = Path.GetFileName(imagePath)
                     },
-                    Size = fi.Length,
+                    Size     = fi.Length,
                     Sequence = new SequenceType {MediaTitle = image.Info.MediaTitle}
                 }
             };
@@ -75,12 +76,12 @@ namespace DiscImageChef.Core
             if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
             {
                 sidecar.AudioMedia[0].Sequence.MediaSequence = image.Info.MediaSequence;
-                sidecar.AudioMedia[0].Sequence.TotalMedia = image.Info.LastMediaSequence;
+                sidecar.AudioMedia[0].Sequence.TotalMedia    = image.Info.LastMediaSequence;
             }
             else
             {
                 sidecar.AudioMedia[0].Sequence.MediaSequence = 1;
-                sidecar.AudioMedia[0].Sequence.TotalMedia = 1;
+                sidecar.AudioMedia[0].Sequence.TotalMedia    = 1;
             }
         }
     }

@@ -104,8 +104,8 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending GET NATIVE MAX ADDRESS EXT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Max LBA is {0}.", lba);
+            DicConsole.WriteLine("Sense is {0}.",        sense);
+            DicConsole.WriteLine("Max LBA is {0}.",      lba);
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Decode error registers.");
@@ -148,10 +148,10 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadDmaExt(string devPath, Device dev)
         {
-            ulong lba = 0;
+            ulong  lba   = 0;
             ushort count = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -159,7 +159,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ DMA EXT command:");
-                DicConsole.WriteLine("LBA: {0}", lba);
+                DicConsole.WriteLine("LBA: {0}",   lba);
                 DicConsole.WriteLine("Count: {0}", count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -194,10 +194,11 @@ namespace DiscImageChef.Tests.Devices.ATA
                         if(lba > 0xFFFFFFFFFFFF)
                         {
                             DicConsole
-                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
-                                           0xFFFFFFFFFFFF);
+                               .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                          0xFFFFFFFFFFFF);
                             lba = 0xFFFFFFFFFFFF;
                         }
+
                         DicConsole.Write("How many sectors?: ");
                         strDev = System.Console.ReadLine();
                         if(!ushort.TryParse(strDev, out count))
@@ -220,9 +221,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ DMA EXT to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -279,11 +280,11 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadLogExt(string devPath, Device dev)
         {
-            byte address = 0;
-            ushort page = 0;
-            ushort count = 1;
+            byte   address = 0;
+            ushort page    = 0;
+            ushort count   = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -293,7 +294,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 DicConsole.WriteLine("Parameters for READ LOG EXT command:");
                 DicConsole.WriteLine("Log address: {0}", address);
                 DicConsole.WriteLine("Page number: {0}", page);
-                DicConsole.WriteLine("Count: {0}", count);
+                DicConsole.WriteLine("Count: {0}",       count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -356,9 +357,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ LOG EXT to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -415,11 +416,11 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadLogDmaExt(string devPath, Device dev)
         {
-            byte address = 0;
-            ushort page = 0;
-            ushort count = 1;
+            byte   address = 0;
+            ushort page    = 0;
+            ushort count   = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -429,7 +430,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 DicConsole.WriteLine("Parameters for READ LOG DMA EXT command:");
                 DicConsole.WriteLine("Log address: {0}", address);
                 DicConsole.WriteLine("Page number: {0}", page);
-                DicConsole.WriteLine("Count: {0}", count);
+                DicConsole.WriteLine("Count: {0}",       count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -492,9 +493,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ LOG DMA EXT to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -551,10 +552,10 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadMultipleExt(string devPath, Device dev)
         {
-            ulong lba = 0;
+            ulong  lba   = 0;
             ushort count = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -562,7 +563,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ MULTIPLE EXT command:");
-                DicConsole.WriteLine("LBA: {0}", lba);
+                DicConsole.WriteLine("LBA: {0}",   lba);
                 DicConsole.WriteLine("Count: {0}", count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -597,10 +598,11 @@ namespace DiscImageChef.Tests.Devices.ATA
                         if(lba > 0xFFFFFFFFFFFF)
                         {
                             DicConsole
-                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
-                                           0xFFFFFFFFFFFF);
+                               .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                          0xFFFFFFFFFFFF);
                             lba = 0xFFFFFFFFFFFF;
                         }
+
                         DicConsole.Write("How many sectors?: ");
                         strDev = System.Console.ReadLine();
                         if(!ushort.TryParse(strDev, out count))
@@ -623,9 +625,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ MULTIPLE EXT to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -691,8 +693,8 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ NATIVE MAX ADDRESS EXT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Max LBA is {0}.", lba);
+            DicConsole.WriteLine("Sense is {0}.",        sense);
+            DicConsole.WriteLine("Max LBA is {0}.",      lba);
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Decode error registers.");
@@ -735,10 +737,10 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadSectorsExt(string devPath, Device dev)
         {
-            ulong lba = 0;
+            ulong  lba   = 0;
             ushort count = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -746,7 +748,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ SECTORS EXT command:");
-                DicConsole.WriteLine("LBA: {0}", lba);
+                DicConsole.WriteLine("LBA: {0}",   lba);
                 DicConsole.WriteLine("Count: {0}", count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -781,10 +783,11 @@ namespace DiscImageChef.Tests.Devices.ATA
                         if(lba > 0xFFFFFFFFFFFF)
                         {
                             DicConsole
-                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
-                                           0xFFFFFFFFFFFF);
+                               .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                          0xFFFFFFFFFFFF);
                             lba = 0xFFFFFFFFFFFF;
                         }
+
                         DicConsole.Write("How many sectors?: ");
                         strDev = System.Console.ReadLine();
                         if(!ushort.TryParse(strDev, out count))
@@ -807,9 +810,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ SECTORS EXT to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");

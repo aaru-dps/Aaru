@@ -40,6 +40,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
 using Schemas;
 using static DiscImageChef.Decoders.ATA.Identify;
+using Version = DiscImageChef.Interop.Version;
 
 namespace DiscImageChef.DiscImages
 {
@@ -269,8 +270,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -279,8 +280,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -295,7 +296,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.ATA_IDENTIFY};
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
@@ -489,7 +490,7 @@ namespace DiscImageChef.DiscImages
                     Heads           = (ushort)imageInfo.Heads,
                     SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
                     VendorWord47    = 0x80,
-                    Capabilities    =
+                    Capabilities =
                         CapabilitiesBit.DMASupport | CapabilitiesBit.IORDY | CapabilitiesBit.LBASupport,
                     ExtendedIdentify       = ExtendedIdentifyBit.Words54to58Valid,
                     CurrentCylinders       = (ushort)imageInfo.Cylinders,
@@ -505,7 +506,7 @@ namespace DiscImageChef.DiscImages
 
                 if(string.IsNullOrEmpty(imageInfo.DriveModel)) imageInfo.DriveModel = "";
 
-                if(string.IsNullOrEmpty(imageInfo.DriveFirmwareRevision)) Interop.Version.GetVersion();
+                if(string.IsNullOrEmpty(imageInfo.DriveFirmwareRevision)) Version.GetVersion();
 
                 if(string.IsNullOrEmpty(imageInfo.DriveSerialNumber))
                     imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
@@ -517,7 +518,7 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(ptr);
 
                 Array.Copy(ScrambleAtaString(imageInfo.DriveManufacturer + " " + imageInfo.DriveModel, 40), 0,
-                           ataIdBytes, 27                                                                 * 2, 40);
+                           ataIdBytes, 27 * 2, 40);
                 Array.Copy(ScrambleAtaString(imageInfo.DriveFirmwareRevision, 8),  0, ataIdBytes,      23 * 2, 8);
                 Array.Copy(ScrambleAtaString(imageInfo.DriveSerialNumber,     20), 0, ataIdBytes,      10 * 2, 20);
                 Array.Copy(ataIdBytes,                                             0, header.identify, 0,      106);
@@ -632,7 +633,7 @@ namespace DiscImageChef.DiscImages
         struct RsIdeHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-            public byte[]     magic;
+            public byte[] magic;
             public byte       revision;
             public RsIdeFlags flags;
             public ushort     dataOff;

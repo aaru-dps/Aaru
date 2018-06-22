@@ -70,7 +70,7 @@ namespace DiscImageChef.Core
         {
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
             {
-                AllStats     = new Stats();
+                AllStats = new Stats();
                 CurrentStats = new Stats
                 {
                     OperatingSystems =
@@ -87,12 +87,12 @@ namespace DiscImageChef.Core
                 };
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 StreamReader  sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
-                AllStats         = (Stats)xs.Deserialize(sr);
+                AllStats = (Stats)xs.Deserialize(sr);
                 sr.Close();
             }
             else if(Settings.Settings.Current.Stats != null)
             {
-                AllStats     = new Stats();
+                AllStats = new Stats();
                 CurrentStats = new Stats
                 {
                     OperatingSystems =
@@ -147,8 +147,7 @@ namespace DiscImageChef.Core
                     version = DetectOS.GetVersion()
                 });
             }
-            else if(CurrentStats != null)
-                AllStats.OperatingSystems = CurrentStats.OperatingSystems;
+            else if(CurrentStats != null) AllStats.OperatingSystems = CurrentStats.OperatingSystems;
 
             if(AllStats.Versions != null)
             {
@@ -167,8 +166,7 @@ namespace DiscImageChef.Core
                 count++;
                 AllStats.Versions.Add(new NameValueStats {name = Version.GetVersion(), Value = count});
             }
-            else if(CurrentStats != null)
-                AllStats.Versions = CurrentStats.Versions;
+            else if(CurrentStats != null) AllStats.Versions = CurrentStats.Versions;
 
             FileStream fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"),
                                            FileMode.Create);
@@ -223,14 +221,13 @@ namespace DiscImageChef.Core
                         xs.Deserialize(fs); // Just to test validity of stats file
                         fs.Seek(0, SeekOrigin.Begin);
 
-                        WebRequest request =
-                            WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
+                        WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
                         ((HttpWebRequest)request).UserAgent =
                             $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
                         request.Method        = "POST";
                         request.ContentLength = fs.Length;
                         request.ContentType   = "application/xml";
-                        Stream reqStream      = request.GetRequestStream();
+                        Stream reqStream = request.GetRequestStream();
                         fs.CopyTo(reqStream);
                         reqStream.Close();
                         WebResponse response = request.GetResponse();
@@ -563,11 +560,9 @@ namespace DiscImageChef.Core
             if(CurrentStats.Devices == null) CurrentStats.Devices = new List<DeviceStats>();
 
             string deviceBus;
-            if(dev.IsUsb) deviceBus = "USB";
-            else if(dev.IsFireWire)
-                deviceBus = "FireWire";
-            else
-                deviceBus = dev.Type.ToString();
+            if(dev.IsUsb) deviceBus           = "USB";
+            else if(dev.IsFireWire) deviceBus = "FireWire";
+            else deviceBus                    = dev.Type.ToString();
 
             DeviceStats old = AllStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer &&
                                                                     ds.Model        == dev.Model        &&
@@ -664,8 +659,8 @@ namespace DiscImageChef.Core
         /// <param name="sequential">Time for sequential running</param>
         /// <param name="maxMemory">Maximum used memory</param>
         /// <param name="minMemory">Minimum used memory</param>
-        public static void AddBenchmark(Dictionary<string, double> checksums, double entropy, double all,
-                                        double                     sequential, long  maxMemory, long minMemory)
+        public static void AddBenchmark(Dictionary<string, double> checksums,  double entropy,   double all,
+                                        double                     sequential, long   maxMemory, long   minMemory)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.BenchmarkStats) return;
 
@@ -708,7 +703,7 @@ namespace DiscImageChef.Core
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.VerifyStats) return;
 
             if(CurrentStats.Verify == null)
-                CurrentStats.Verify              =
+                CurrentStats.Verify =
                     new VerifyStats {MediaImages = new VerifiedItems(), Sectors = new ScannedSectors()};
 
             if(AllStats.Verify == null)
@@ -749,8 +744,8 @@ namespace DiscImageChef.Core
         /// <param name="total">Total sectors</param>
         /// <param name="error">Errored sectors</param>
         /// <param name="correct">Correct sectors</param>
-        public static void AddMediaScan(long lessThan3Ms, long   lessThan10Ms, long  lessThan50Ms, long lessThan150Ms,
-                                        long lessThan500Ms, long moreThan500Ms, long total, long        error,
+        public static void AddMediaScan(long lessThan3Ms,   long lessThan10Ms,  long lessThan50Ms, long lessThan150Ms,
+                                        long lessThan500Ms, long moreThan500Ms, long total,        long error,
                                         long correct)
         {
             if(lessThan500Ms <= 0) throw new ArgumentOutOfRangeException(nameof(lessThan500Ms));

@@ -52,9 +52,9 @@ namespace DiscImageChef.Filesystems
     public class ODS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Files-11 On-Disk Structure";
-        public Guid Id => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Files-11 On-Disk Structure";
+        public Guid           Id        => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -62,7 +62,7 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.Info.SectorSize < 512) return false;
 
-            byte[] magicB = new byte[12];
+            byte[] magicB   = new byte[12];
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
             Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
@@ -88,9 +88,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -103,8 +103,8 @@ namespace DiscImageChef.Filesystems
             handle.Free();
 
             // Optical disc
-            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc &&
-               StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
+            if(imagePlugin.Info.XmlMediaType              == XmlMediaType.OpticalDisc &&
+               StringHandlers.CToString(homeblock.format) != "DECFILE11A  "           &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
             {
                 if(hbSector.Length < 0x400) return;
@@ -113,7 +113,7 @@ namespace DiscImageChef.Filesystems
                 hbSector = new byte[0x200];
                 Array.Copy(tmp, 0x200, hbSector, 0, 0x200);
 
-                handle = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
+                handle    = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
                 homeblock = (OdsHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(OdsHomeBlock));
                 handle.Free();
 
@@ -121,7 +121,7 @@ namespace DiscImageChef.Filesystems
                    StringHandlers.CToString(homeblock.format) != "DECFILE11B  ") return;
             }
 
-            if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 ||
+            if((homeblock.struclev & 0xFF00)              != 0x0200 || (homeblock.struclev & 0xFF) != 1 ||
                StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
                 sb.AppendLine("The following information may be incorrect for this volume.");
             if(homeblock.resfiles < 5 || homeblock.devtype != 0) sb.AppendLine("This volume may be corrupted.");
@@ -148,7 +148,7 @@ namespace DiscImageChef.Filesystems
               .AppendLine();
             sb.AppendFormat("{0} maximum files on the volume", homeblock.maxfiles).AppendLine();
             sb.AppendFormat("{0} reserved files", homeblock.resfiles).AppendLine();
-            if(homeblock.rvn > 0 && homeblock.setcount > 0 &&
+            if(homeblock.rvn                                 > 0 && homeblock.setcount > 0 &&
                StringHandlers.CToString(homeblock.strucname) != "            ")
                 sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount,
                                 StringHandlers.SpacePaddedToString(homeblock.strucname, Encoding)).AppendLine();
@@ -206,20 +206,21 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "FILES-11",
-                ClusterSize = homeblock.cluster * 512,
-                Clusters = (long)partition.Size / (homeblock.cluster * 512),
-                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
+                Type         = "FILES-11",
+                ClusterSize  = homeblock.cluster    * 512,
+                Clusters     = (long)partition.Size / (homeblock.cluster * 512),
+                VolumeName   = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
                 VolumeSerial = $"{homeblock.serialnum:X8}"
             };
             if(homeblock.credate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
+                XmlFsType.CreationDate          = DateHandlers.VmsToDateTime(homeblock.credate);
                 XmlFsType.CreationDateSpecified = true;
             }
+
             if(homeblock.revdate > 0)
             {
-                XmlFsType.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
+                XmlFsType.ModificationDate          = DateHandlers.VmsToDateTime(homeblock.revdate);
                 XmlFsType.ModificationDateSpecified = true;
             }
 
@@ -290,9 +291,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x058, Last modification date</summary>
             public ulong revdate;
             /// <summary>0x060, Minimum security class, 20 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] min_class;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+            public byte[] min_class;
             /// <summary>0x074, Maximum security class, 20 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] max_class;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+            public byte[] max_class;
             /// <summary>0x088, File lookup table FID</summary>
             public ushort filetab_fid1;
             /// <summary>0x08A, File lookup table FID</summary>
@@ -306,17 +309,22 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x092, Volume copy date (??)</summary>
             public ulong copydate;
             /// <summary>0x09A, 302 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 302)] public byte[] reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 302)]
+            public byte[] reserved1;
             /// <summary>0x1C8, Physical drive serial number</summary>
             public uint serialnum;
             /// <summary>0x1CC, Name of the volume set, 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] strucname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] strucname;
             /// <summary>0x1D8, Volume label, 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] volname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] volname;
             /// <summary>0x1E4, Name of the volume owner, 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] ownername;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] ownername;
             /// <summary>0x1F0, ODS-2 defines it as "DECFILE11B", 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] format;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] format;
             /// <summary>0x1FC, Reserved</summary>
             public ushort reserved2;
             /// <summary>0x1FE, Checksum of preceding 255 words (16 bit units)</summary>

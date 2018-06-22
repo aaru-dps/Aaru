@@ -81,20 +81,21 @@ namespace DiscImageChef.Devices
         /// <param name="readLong">If set to <c>true</c> drive will return ECC bytes and disable error detection.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                                 byte transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
+        public bool SyQuestRead6(out byte[] buffer,         out byte[] senseBuffer, uint lba,      uint blockSize,
+                                 byte       transferLength, bool       inhibitDma,  bool readLong, uint timeout,
+                                 out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
-            bool sense;
+            bool   sense;
 
             cdb[0] = (byte)ScsiCommands.Read6;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = transferLength;
             if(inhibitDma) cdb[5] += 0x80;
-            if(readLong) cdb[5] += 0x40;
+            if(readLong) cdb[5]   += 0x40;
 
             if(!inhibitDma && !readLong)
                 buffer = transferLength == 0 ? new byte[256 * blockSize] : new byte[transferLength * blockSize];
@@ -161,23 +162,23 @@ namespace DiscImageChef.Devices
         /// <param name="readLong">If set to <c>true</c> drive will return ECC bytes and disable error detection.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                                  ushort transferLength, bool inhibitDma, bool readLong, uint timeout,
+        public bool SyQuestRead10(out byte[] buffer,         out byte[] senseBuffer, uint lba,      uint blockSize,
+                                  ushort     transferLength, bool       inhibitDma,  bool readLong, uint timeout,
                                   out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            bool sense;
+            bool   sense;
 
             cdb[0] = (byte)ScsiCommands.Read10;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
-            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((lba & 0xFF00)     >> 8);
             cdb[5] = (byte)(lba & 0xFF);
             cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLength & 0xFF);
             if(inhibitDma) cdb[9] += 0x80;
-            if(readLong) cdb[9] += 0x40;
+            if(readLong) cdb[9]   += 0x40;
 
             if(!inhibitDma && !readLong) buffer = new byte[transferLength * blockSize];
             else if(readLong)

@@ -89,8 +89,8 @@ namespace DiscImageChef.Interop
                 }
                 case "Darwin":
                 {
-                    IntPtr pLen = Marshal.AllocHGlobal(sizeof(int));
-                    int osxError = OSX_sysctlbyname("hw.machine", IntPtr.Zero, pLen, IntPtr.Zero, 0);
+                    IntPtr pLen     = Marshal.AllocHGlobal(sizeof(int));
+                    int    osxError = OSX_sysctlbyname("hw.machine", IntPtr.Zero, pLen, IntPtr.Zero, 0);
                     if(osxError != 0)
                     {
                         Marshal.FreeHGlobal(pLen);

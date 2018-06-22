@@ -76,7 +76,7 @@ namespace DiscImageChef.Filesystems.CPM
                         sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
                     // Skip first track (first side)
                     for(int m = 0; m < workingDefinition.side2.sectorIds.Length; m++)
-                        sectorMask[m                             + workingDefinition.side1.sectorIds.Length] =
+                        sectorMask[m + workingDefinition.side1.sectorIds.Length] =
                             workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0] +
                             workingDefinition.side1.sectorIds.Length;
                 }
@@ -88,9 +88,10 @@ namespace DiscImageChef.Filesystems.CPM
                         sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
                     // Skip first track (first side) and first track (second side)
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
-                        sectorMask[m                                 + workingDefinition.side1.sectorIds.Length] =
-                            workingDefinition.side1.sectorIds[m]     - workingDefinition.side1.sectorIds[0] +
-                            workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length;
+                        sectorMask[m + workingDefinition.side1.sectorIds.Length] =
+                            workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0] +
+                            workingDefinition.side1.sectorIds.Length                                    +
+                            workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
                     DicConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
@@ -132,7 +133,7 @@ namespace DiscImageChef.Filesystems.CPM
                 {
                     byte[] readSector =
                         device.ReadSector((ulong)((int)partition.Start + p / sectorMask.Length * sectorMask.Length +
-                                                  sectorMask[p             % sectorMask.Length]));
+                                                  sectorMask[p % sectorMask.Length]));
                     if(workingDefinition.complement)
                         for(int b = 0; b < readSector.Length; b++)
                             readSector[b] = (byte)(~readSector[b] & 0xFF);
@@ -155,7 +156,7 @@ namespace DiscImageChef.Filesystems.CPM
                 deinterleavedSectors.TryGetValue(a, out byte[] sector);
 
                 // May it happen? Just in case, CP/M blocks are smaller than physical sectors
-                if(sector.Length     > blockSize)
+                if(sector.Length > blockSize)
                     for(int i = 0; i < sector.Length / blockSize; i++)
                     {
                         byte[] tmp = new byte[blockSize];
@@ -175,14 +176,13 @@ namespace DiscImageChef.Filesystems.CPM
                     blockMs         = new MemoryStream();
                 }
                 // CP/M blocks are same size than physical sectors
-                else
-                    allocationBlocks.Add(blockNo++, sector);
+                else allocationBlocks.Add(blockNo++, sector);
             }
 
             DicConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
 
             int dirOff;
-            int dirSectors                        = (dpb.drm + 1) * 32 / workingDefinition.bytesPerSector;
+            int dirSectors = (dpb.drm + 1) * 32 / workingDefinition.bytesPerSector;
             if(workingDefinition.sofs > 0) dirOff = workingDefinition.sofs;
             else dirOff                           = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
 
@@ -198,15 +198,15 @@ namespace DiscImageChef.Filesystems.CPM
 
             if(directory == null) return Errno.InvalidArgument;
 
-            int                                               dirCnt      = 0;
-            string                                            file1       = null;
-            string                                            file2       = null;
-            string                                            file3       = null;
+            int    dirCnt = 0;
+            string file1  = null;
+            string file2  = null;
+            string file3  = null;
             Dictionary<string, Dictionary<int, List<ushort>>> fileExtents =
                 new Dictionary<string, Dictionary<int, List<ushort>>>();
-            statCache         = new Dictionary<string, FileEntryInfo>();
-            cpmStat           = new FileSystemInfo();
-            bool atime        = false;
+            statCache = new Dictionary<string, FileEntryInfo>();
+            cpmStat   = new FileSystemInfo();
+            bool atime = false;
             dirList           = new List<string>();
             labelCreationDate = null;
             labelUpdateDate   = null;
@@ -218,7 +218,7 @@ namespace DiscImageChef.Filesystems.CPM
             // For each directory entry
             for(int dOff = 0; dOff < directory.Length; dOff += 32)
                 // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
-                if((directory[dOff] & 0x7F)   < 0x10)
+                if((directory[dOff] & 0x7F) < 0x10)
                     if(allocationBlocks.Count > 256)
                     {
                         dirPtr = Marshal.AllocHGlobal(32);
@@ -227,7 +227,7 @@ namespace DiscImageChef.Filesystems.CPM
                             (DirectoryEntry16)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry16));
                         Marshal.FreeHGlobal(dirPtr);
 
-                        bool hidden = (entry.statusUser  & 0x80) == 0x80;
+                        bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
                         bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
                         //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
@@ -316,7 +316,7 @@ namespace DiscImageChef.Filesystems.CPM
                         DirectoryEntry entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));
                         Marshal.FreeHGlobal(dirPtr);
 
-                        bool hidden = (entry.statusUser  & 0x80) == 0x80;
+                        bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
                         bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
                         //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
@@ -553,8 +553,8 @@ namespace DiscImageChef.Filesystems.CPM
                                     else fInfo = new FileEntryInfo();
 
                                     byte[] ctime = new byte[4];
-                                    ctime[0]     = trdPartyDateEntry.create1[0];
-                                    ctime[1]     = trdPartyDateEntry.create1[1];
+                                    ctime[0] = trdPartyDateEntry.create1[0];
+                                    ctime[1] = trdPartyDateEntry.create1[1];
 
                                     fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access1);
                                     fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
@@ -569,8 +569,8 @@ namespace DiscImageChef.Filesystems.CPM
                                     else fInfo = new FileEntryInfo();
 
                                     byte[] ctime = new byte[4];
-                                    ctime[0]     = trdPartyDateEntry.create2[0];
-                                    ctime[1]     = trdPartyDateEntry.create2[1];
+                                    ctime[0] = trdPartyDateEntry.create2[0];
+                                    ctime[1] = trdPartyDateEntry.create2[1];
 
                                     fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access2);
                                     fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
@@ -585,8 +585,8 @@ namespace DiscImageChef.Filesystems.CPM
                                     else fInfo = new FileEntryInfo();
 
                                     byte[] ctime = new byte[4];
-                                    ctime[0]     = trdPartyDateEntry.create3[0];
-                                    ctime[1]     = trdPartyDateEntry.create3[1];
+                                    ctime[0] = trdPartyDateEntry.create3[0];
+                                    ctime[1] = trdPartyDateEntry.create3[1];
 
                                     fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access3);
                                     fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
@@ -608,7 +608,7 @@ namespace DiscImageChef.Filesystems.CPM
             // this should not be a problem
             DicConsole.DebugWriteLine("CP/M Plugin", "Reading files.");
             long usedBlocks = 0;
-            fileCache       = new Dictionary<string, byte[]>();
+            fileCache = new Dictionary<string, byte[]>();
             foreach(string filename in dirList)
             {
                 MemoryStream fileMs = new MemoryStream();

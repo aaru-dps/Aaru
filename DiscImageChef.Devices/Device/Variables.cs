@@ -39,9 +39,9 @@ namespace DiscImageChef.Devices
     {
         readonly ushort usbVendor;
         readonly ushort usbProduct;
-        readonly ulong firewireGuid;
-        readonly uint firewireModel;
-        readonly uint firewireVendor;
+        readonly ulong  firewireGuid;
+        readonly uint   firewireModel;
+        readonly uint   firewireVendor;
 
         // MMC and SecureDigital, values that need to be get with card idle, something that may
         // not be possible to do but usually is already done by the SDHCI driver.

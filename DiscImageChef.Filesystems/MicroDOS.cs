@@ -43,13 +43,13 @@ namespace DiscImageChef.Filesystems
     // Thanks to tarlabnor for translating it
     public class MicroDOS : IFilesystem
     {
-        const ushort MAGIC = 0xA72E;
+        const ushort MAGIC  = 0xA72E;
         const ushort MAGIC2 = 0x530C;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "MicroDOS file system";
-        public Guid Id => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "MicroDOS file system";
+        public Guid           Id        => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -68,9 +68,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("koi8-r");
+            Encoding    = encoding ?? Encoding.GetEncoding("koi8-r");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -91,12 +91,12 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "MicroDOS",
-                ClusterSize = 512,
-                Clusters = block0.blocks,
-                Files = block0.files,
-                FilesSpecified = true,
-                FreeClusters = block0.blocks - block0.usedBlocks,
+                Type                  = "MicroDOS",
+                ClusterSize           = 512,
+                Clusters              = block0.blocks,
+                Files                 = block0.files,
+                FilesSpecified        = true,
+                FreeClusters          = block0.blocks - block0.usedBlocks,
                 FreeClustersSpecified = true
             };
 
@@ -108,19 +108,22 @@ namespace DiscImageChef.Filesystems
         struct MicroDosBlock0
         {
             /// <summary>BK starts booting here</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] bootCode;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] bootCode;
             /// <summary>Number of files in directory</summary>
             public ushort files;
             /// <summary>Total number of blocks in files of the directory</summary>
             public ushort usedBlocks;
             /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 228)] public byte[] unknown;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 228)]
+            public byte[] unknown;
             /// <summary>Ownership label (label that shows it belongs to Micro DOS format)</summary>
             public ushort label;
             /// <summary>MK-DOS directory format label</summary>
             public ushort mklabel;
             /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)] public byte[] unknown2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
+            public byte[] unknown2;
             /// <summary>
             ///     Disk size in blocks (absolute value for the system unlike NORD, NORTON etc.) that
             ///     doesn't use two fixed values 40 or 80 tracks, but i.e. if you drive works with 76 tracks
@@ -130,7 +133,8 @@ namespace DiscImageChef.Filesystems
             /// <summary> Number of the first file's block. Value is changable</summary>
             public ushort firstUsedBlock;
             /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] unknown3;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -141,7 +145,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>Directory number (0 - root)</summary>
             public byte directory;
             /// <summary>File name 14. symbols in ASCII KOI8</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] filename;
             /// <summary>Block number</summary>
             public ushort blockNo;
             /// <summary>Length in blocks</summary>
@@ -154,11 +159,11 @@ namespace DiscImageChef.Filesystems
 
         enum FileStatus : byte
         {
-            CommonFile = 0,
-            Protected = 1,
+            CommonFile  = 0,
+            Protected   = 1,
             LogicalDisk = 2,
-            BadFile = 0x80,
-            Deleted = 0xFF
+            BadFile     = 0x80,
+            Deleted     = 0xFF
         }
     }
 }

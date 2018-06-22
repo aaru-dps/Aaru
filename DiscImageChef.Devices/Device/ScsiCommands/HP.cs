@@ -48,8 +48,9 @@ namespace DiscImageChef.Devices
         /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort blockBytes,
-                               bool pba, uint timeout, out double duration)
+        public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
+                               ushort     blockBytes,
+                               bool       pba, uint timeout, out double duration)
         {
             return HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
                               out duration);
@@ -72,8 +73,9 @@ namespace DiscImageChef.Devices
         /// </param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                               ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
+        public bool HpReadLong(out byte[] buffer,      out byte[] senseBuffer, bool relAddr, uint address,
+                               ushort     transferLen, ushort     blockBytes,  bool pba,     bool sectorCount,
+                               uint       timeout,
                                out double duration)
         {
             senseBuffer = new byte[32];
@@ -82,12 +84,12 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.ReadLong;
             if(relAddr) cdb[1] += 0x01;
             cdb[2] = (byte)((address & 0xFF000000) >> 24);
-            cdb[3] = (byte)((address & 0xFF0000) >> 16);
-            cdb[4] = (byte)((address & 0xFF00) >> 8);
+            cdb[3] = (byte)((address & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((address & 0xFF00)     >> 8);
             cdb[5] = (byte)(address & 0xFF);
             cdb[7] = (byte)((transferLen & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLen & 0xFF);
-            if(pba) cdb[9] += 0x80;
+            if(pba) cdb[9]         += 0x80;
             if(sectorCount) cdb[9] += 0x40;
 
             buffer = sectorCount ? new byte[blockBytes * transferLen] : new byte[transferLen];

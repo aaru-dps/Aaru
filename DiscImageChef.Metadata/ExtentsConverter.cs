@@ -45,7 +45,7 @@ namespace DiscImageChef.Metadata
             if(extents == null) return null;
 
             Tuple<ulong, ulong>[] tuples = extents.ToArray();
-            ExtentType[] array = new ExtentType[tuples.Length];
+            ExtentType[]          array  = new ExtentType[tuples.Length];
 
             for(ulong i = 0; i < (ulong)array.LongLength; i++)
                 array[i] = new ExtentType {Start = tuples[i].Item1, End = tuples[i].Item2};

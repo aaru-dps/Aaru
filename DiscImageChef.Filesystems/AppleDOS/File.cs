@@ -52,11 +52,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(!fileCache.ContainsKey(filename)) return Errno.NoSuchFile;
 
-            attributes = FileAttributes.Extents;
+            attributes =  FileAttributes.Extents;
             attributes |= FileAttributes.File;
             if(lockedFiles.Contains(filename)) attributes |= FileAttributes.ReadOnly;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+            if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
                 attributes |= FileAttributes.System;
@@ -75,12 +75,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
             string filename = pathElements[0].ToUpperInvariant();
             if(filename.Length > 30) return Errno.NameTooLong;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+            if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = catalogBlocks;
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                    file                                                                            = catalogBlocks;
                 else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0) file = vtocBlocks;
-                else file = bootBlocks;
+                else file                                                                           = bootBlocks;
             else
             {
                 if(!fileCache.TryGetValue(filename, out file))
@@ -121,7 +122,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             fileSizeCache.TryGetValue(filename, out int filesize);
             GetAttributes(path, out FileAttributes attrs);
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+            if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             {
@@ -141,8 +142,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             }
 
             stat.Attributes = attrs;
-            stat.BlockSize = vtoc.bytesPerSector;
-            stat.Links = 1;
+            stat.BlockSize  = vtoc.bytesPerSector;
+            stat.Links      = 1;
 
             return Errno.NoError;
         }
@@ -164,10 +165,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(!catalogCache.TryGetValue(filename, out ushort ts)) return Errno.NoSuchFile;
 
-            ulong lba = (ulong)(((ts & 0xFF00) >> 8) * sectorsPerTrack + (ts & 0xFF));
-            MemoryStream fileMs = new MemoryStream();
-            MemoryStream tsListMs = new MemoryStream();
-            ushort expectedBlock = 0;
+            ulong        lba           = (ulong)(((ts & 0xFF00) >> 8) * sectorsPerTrack + (ts & 0xFF));
+            MemoryStream fileMs        = new MemoryStream();
+            MemoryStream tsListMs      = new MemoryStream();
+            ushort       expectedBlock = 0;
 
             while(lba != 0)
             {
@@ -216,7 +217,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         Errno CacheAllFiles()
         {
-            fileCache = new Dictionary<string, byte[]>();
+            fileCache   = new Dictionary<string, byte[]>();
             extentCache = new Dictionary<string, byte[]>();
 
             foreach(Errno error in catalogCache.Keys.Select(CacheFile).Where(error => error != Errno.NoError))
@@ -226,7 +227,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(!track1UsedByFiles) tracksOnBoot++;
             if(!track2UsedByFiles) tracksOnBoot++;
 
-            bootBlocks = device.ReadSectors(0, (uint)(tracksOnBoot * sectorsPerTrack));
+            bootBlocks  =  device.ReadSectors(0, (uint)(tracksOnBoot * sectorsPerTrack));
             usedSectors += bootBlocks.Length / vtoc.bytesPerSector;
 
             return Errno.NoError;

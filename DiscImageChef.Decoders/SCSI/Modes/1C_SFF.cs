@@ -78,7 +78,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             ModePage_1C_SFF decoded = new ModePage_1C_SFF();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.PS   |= (pageResponse[0] & 0x80) == 0x80;
             decoded.DISP |= (pageResponse[2] & 0x02) == 0x02;
             decoded.SWPP |= (pageResponse[3] & 0x01) == 0x01;
 
@@ -97,7 +97,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_1C_SFF page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Timer & Protect page:");
 

@@ -180,12 +180,13 @@ namespace DiscImageChef.Core
         /// <param name="whatWriting">What is the data about?</param>
         /// <param name="overwrite">If set to <c>true</c> overwrites the file, does nothing otherwise</param>
         public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null,
-                                   bool overwrite = false)
+                                   bool   overwrite = false)
         {
             if(string.IsNullOrEmpty(filename)) return;
 
             if(File.Exists(filename))
-                if(overwrite) File.Delete(filename);
+                if(overwrite)
+                    File.Delete(filename);
                 else
                 {
                     DicConsole.ErrorWriteLine("Not overwriting file {0}", filename);

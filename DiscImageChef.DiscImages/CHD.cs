@@ -105,7 +105,7 @@ namespace DiscImageChef.DiscImages
         const int MAX_CACHE_SIZE = 16777216;
 
         /// <summary>"MComprHD"</summary>
-        readonly byte[]           chdTag = {0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44};
+        readonly byte[] chdTag = {0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44};
         uint                      bytesPerHunk;
         byte[]                    cis;
         byte[]                    expectedChecksum;
@@ -224,7 +224,7 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[4];
             stream.Read(buffer, 0, 4);
             uint length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
-            buffer      = new byte[4];
+            buffer = new byte[4];
             stream.Read(buffer, 0, 4);
             uint version = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
 
@@ -273,14 +273,14 @@ namespace DiscImageChef.DiscImages
                         stream.Read(hunkSectorBytes, 0, 512);
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
-                        GCHandle   handle     = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
+                        GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
                         HunkSector hunkSector =
                             (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
-                        if(hunkTable.Length >= i                             * 512 / 8 + 512 / 8)
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512  / 8);
+                        if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512 / 8);
                         else
                             Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, hunkTable.Length - i * 512 / 8);
                     }
@@ -346,14 +346,14 @@ namespace DiscImageChef.DiscImages
                         stream.Read(hunkSectorBytes, 0, 512);
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
-                        GCHandle   handle     = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
+                        GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
                         HunkSector hunkSector =
                             (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
-                        if(hunkTable.Length >= i                             * 512 / 8 + 512 / 8)
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512  / 8);
+                        if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512 / 8);
                         else
                             Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, hunkTable.Length - i * 512 / 8);
                     }
@@ -527,18 +527,18 @@ namespace DiscImageChef.DiscImages
                             stream.Read(hunkSectorBytes, 0, 512);
                             // This does the big-endian trick but reverses the order of elements also
                             Array.Reverse(hunkSectorBytes);
-                            GCHandle        handle     = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
+                            GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
                             HunkSectorSmall hunkSector =
                                 (HunkSectorSmall)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
                                                                         typeof(HunkSectorSmall));
                             handle.Free();
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
-                            if(hunkTableSmall.Length >= i                             * 512 / 4 + 512 / 4)
-                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, i * 512 / 4, 512  / 4);
+                            if(hunkTableSmall.Length >= i * 512 / 4 + 512 / 4)
+                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, i * 512 / 4, 512 / 4);
                             else
                                 Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, i * 512 / 4,
-                                           hunkTableSmall.Length - i                  * 512 / 4);
+                                           hunkTableSmall.Length - i * 512            / 4);
                         }
 
                         DateTime end = DateTime.UtcNow;
@@ -707,7 +707,7 @@ namespace DiscImageChef.DiscImages
                                 }
 
                                 dicTrack.Indexes          =  new Dictionary<int, ulong>();
-                                dicTrack.TrackDescription =  $"Track {i    + 1}";
+                                dicTrack.TrackDescription =  $"Track {i + 1}";
                                 dicTrack.TrackEndSector   =  currentSector + chdTrack.frames - 1;
                                 dicTrack.TrackFile        =  imageFilter.GetFilename();
                                 dicTrack.TrackFileType    =  "BINARY";
@@ -1128,21 +1128,20 @@ namespace DiscImageChef.DiscImages
                     foreach(Track dicTrack in tracks.Values)
                         imageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
                 }
-                else
-                    throw new ImageNotSupportedException("Image does not represent a known media, aborting");
+                else throw new ImageNotSupportedException("Image does not represent a known media, aborting");
             }
 
             if(isCdrom || isGdrom)
             {
-                offsetmap     = new Dictionary<ulong, uint>();
-                partitions    = new List<Partition>();
+                offsetmap  = new Dictionary<ulong, uint>();
+                partitions = new List<Partition>();
                 ulong partPos = 0;
                 foreach(Track dicTrack in tracks.Values)
                 {
                     Partition partition = new Partition
                     {
                         Description = dicTrack.TrackDescription,
-                        Size        =
+                        Size =
                             (dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1) *
                             (ulong)dicTrack.TrackRawBytesPerSector,
                         Length   = dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1,
@@ -1248,8 +1247,8 @@ namespace DiscImageChef.DiscImages
             return VerifySector(GetAbsoluteSector(sectorAddress, track));
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             unknownLbas = new List<ulong>();
             failingLbas = new List<ulong>();
@@ -1280,8 +1279,8 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             unknownLbas = new List<ulong>();
             failingLbas = new List<ulong>();
@@ -1354,7 +1353,7 @@ namespace DiscImageChef.DiscImages
                     sectorSize = (uint)track.TrackRawBytesPerSector;
                 }
 
-                ulong hunkNo = sectorAddress / sectorsPerHunk;
+                ulong hunkNo = sectorAddress              / sectorsPerHunk;
                 ulong secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
@@ -1430,7 +1429,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize];
 
-            if(track.TrackType   == TrackType.Audio && swapAudio)
+            if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1458,7 +1457,7 @@ namespace DiscImageChef.DiscImages
                 track      = GetTrack(sectorAddress);
                 sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress / sectorsPerHunk;
+                ulong hunkNo = sectorAddress              / sectorsPerHunk;
                 ulong secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
@@ -1638,7 +1637,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize];
 
-            if(track.TrackType   == TrackType.Audio && swapAudio)
+            if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1646,7 +1645,7 @@ namespace DiscImageChef.DiscImages
                 }
             else Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
-            if(track.TrackType   == TrackType.Audio && swapAudio)
+            if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1711,10 +1710,10 @@ namespace DiscImageChef.DiscImages
 
             if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-                track           = GetTrack(sectorAddress);
+                track = GetTrack(sectorAddress);
                 uint sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress / sectorsPerHunk;
+                ulong hunkNo = sectorAddress              / sectorsPerHunk;
                 ulong secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
@@ -1729,7 +1728,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[track.TrackRawBytesPerSector];
 
-            if(track.TrackType   == TrackType.Audio && swapAudio)
+            if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1871,9 +1870,9 @@ namespace DiscImageChef.DiscImages
                     {
                         DeflateStream zStream =
                             new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
-                        hunk     = new byte[sectorsPerHunk                    * imageInfo.SectorSize];
+                        hunk = new byte[sectorsPerHunk * imageInfo.SectorSize];
                         int read = zStream.Read(hunk, 0, (int)(sectorsPerHunk * imageInfo.SectorSize));
-                        if(read != sectorsPerHunk                             * imageInfo.SectorSize)
+                        if(read != sectorsPerHunk * imageInfo.SectorSize)
                             throw new
                                 IOException($"Unable to decompress hunk correctly, got {read} bytes, expected {sectorsPerHunk * imageInfo.SectorSize}");
 
@@ -1901,7 +1900,7 @@ namespace DiscImageChef.DiscImages
                                         imageStream.Read(zHunk, 0, zHunk.Length);
                                         DeflateStream zStream =
                                             new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress);
-                                        hunk     = new byte[bytesPerHunk];
+                                        hunk = new byte[bytesPerHunk];
                                         int read = zStream.Read(hunk, 0, (int)bytesPerHunk);
                                         if(read != bytesPerHunk)
                                             throw new
@@ -1930,8 +1929,7 @@ namespace DiscImageChef.DiscImages
                         case Chdv3EntryFlags.Mini:
                             hunk = new byte[bytesPerHunk];
                             byte[] mini;
-                            mini =
-                                BigEndianBitConverter.GetBytes(entry.offset);
+                            mini = BigEndianBitConverter.GetBytes(entry.offset);
                             for(int i = 0; i < bytesPerHunk; i++) hunk[i] = mini[i % 8];
 
                             break;

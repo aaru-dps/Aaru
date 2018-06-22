@@ -40,28 +40,28 @@ namespace DiscImageChef.Partitions
 {
     public class Xbox : IPartition
     {
-        const uint XboxCigam = 0x46415458;
-        const uint XboxMagic = 0x58544146;
-        const long MemoryUnitDataOff = 0x7FF000;
+        const uint XboxCigam                = 0x46415458;
+        const uint XboxMagic                = 0x58544146;
+        const long MemoryUnitDataOff        = 0x7FF000;
         const long Xbox360SecuritySectorOff = 0x2000;
-        const long Xbox360SystemCacheOff = 0x80000;
-        const long Xbox360GameCacheOff = 0x8008000;
-        const long Xbox368SysExtOff = 0x10C080000;
-        const long Xbox360SysExt2Off = 0x118EB0000;
-        const long Xbox360CompatOff = 0x120EB0000;
-        const long Xbox360DataOff = 0x130EB0000;
+        const long Xbox360SystemCacheOff    = 0x80000;
+        const long Xbox360GameCacheOff      = 0x8008000;
+        const long Xbox368SysExtOff         = 0x10C080000;
+        const long Xbox360SysExt2Off        = 0x118EB0000;
+        const long Xbox360CompatOff         = 0x120EB0000;
+        const long Xbox360DataOff           = 0x130EB0000;
 
         const long Xbox360SecuritySectorLen = 0x80000;
-        const long Xbox360SystemCacheLen = 0x80000000;
-        const long Xbox360GameCacheLen = 0xA0E30000;
-        const long Xbox368SysExtLen = 0xCE30000;
-        const long Xbox360SysExt2Len = 0x8000000;
-        const long Xbox360CompatLen = 0x10000000;
+        const long Xbox360SystemCacheLen    = 0x80000000;
+        const long Xbox360GameCacheLen      = 0xA0E30000;
+        const long Xbox368SysExtLen         = 0xCE30000;
+        const long Xbox360SysExt2Len        = 0x8000000;
+        const long Xbox360CompatLen         = 0x10000000;
 
         const uint XBOX360_DEVKIT_MAGIC = 0x00020000;
 
         public string Name => "Xbox partitioning";
-        public Guid Id => new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
+        public Guid   Id   => new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -76,29 +76,30 @@ namespace DiscImageChef.Partitions
             Xbox360DevKitPartitionTable table =
                 BigEndianMarshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
 
-            if(table.magic == XBOX360_DEVKIT_MAGIC && table.contentOff + table.contentLen <= imagePlugin.Info.Sectors &&
+            if(table.magic                             == XBOX360_DEVKIT_MAGIC     &&
+               table.contentOff   + table.contentLen   <= imagePlugin.Info.Sectors &&
                table.dashboardOff + table.dashboardLen <= imagePlugin.Info.Sectors)
             {
                 Partition contentPart = new Partition
                 {
                     Description = "Content volume",
-                    Size = (ulong)table.contentLen * imagePlugin.Info.SectorSize,
-                    Length = table.contentLen,
-                    Sequence = 1,
-                    Offset = (ulong)table.contentOff * imagePlugin.Info.SectorSize,
-                    Start = table.contentOff,
-                    Scheme = Name
+                    Size        = (ulong)table.contentLen * imagePlugin.Info.SectorSize,
+                    Length      = table.contentLen,
+                    Sequence    = 1,
+                    Offset      = (ulong)table.contentOff * imagePlugin.Info.SectorSize,
+                    Start       = table.contentOff,
+                    Scheme      = Name
                 };
 
                 Partition dashboardPart = new Partition
                 {
                     Description = "Dashboard volume",
-                    Size = (ulong)table.dashboardLen * imagePlugin.Info.SectorSize,
-                    Length = table.dashboardLen,
-                    Sequence = 2,
-                    Offset = (ulong)table.dashboardOff * imagePlugin.Info.SectorSize,
-                    Start = table.dashboardOff,
-                    Scheme = Name
+                    Size        = (ulong)table.dashboardLen * imagePlugin.Info.SectorSize,
+                    Length      = table.dashboardLen,
+                    Sequence    = 2,
+                    Offset      = (ulong)table.dashboardOff * imagePlugin.Info.SectorSize,
+                    Start       = table.dashboardOff,
+                    Scheme      = Name
                 };
 
                 partitions.Add(contentPart);
@@ -112,30 +113,30 @@ namespace DiscImageChef.Partitions
             if(imagePlugin.Info.Sectors > (ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize))
             {
                 sector = imagePlugin.ReadSector((ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize));
-                temp = BitConverter.ToUInt32(sector, 0);
+                temp   = BitConverter.ToUInt32(sector, 0);
 
                 if(temp == XboxCigam)
                 {
                     Partition sysCachePart = new Partition
                     {
                         Description = "System cache",
-                        Size = MemoryUnitDataOff,
-                        Length = (ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize),
-                        Sequence = 1,
-                        Offset = 0,
-                        Start = 0,
-                        Scheme = Name
+                        Size        = MemoryUnitDataOff,
+                        Length      = (ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize),
+                        Sequence    = 1,
+                        Offset      = 0,
+                        Start       = 0,
+                        Scheme      = Name
                     };
 
                     Partition dataPart = new Partition
                     {
                         Description = "Data volume",
-                        Size = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize - MemoryUnitDataOff,
-                        Length = imagePlugin.Info.Sectors - sysCachePart.Length,
-                        Sequence = 2,
-                        Offset = MemoryUnitDataOff,
-                        Start = sysCachePart.Length,
-                        Scheme = Name
+                        Size        = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize - MemoryUnitDataOff,
+                        Length      = imagePlugin.Info.Sectors                               - sysCachePart.Length,
+                        Sequence    = 2,
+                        Offset      = MemoryUnitDataOff,
+                        Start       = sysCachePart.Length,
+                        Scheme      = Name
                     };
 
                     partitions.Add(sysCachePart);
@@ -149,86 +150,86 @@ namespace DiscImageChef.Partitions
 
             {
                 sector = imagePlugin.ReadSector((ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize));
-                temp = BitConverter.ToUInt32(sector, 0);
+                temp   = BitConverter.ToUInt32(sector, 0);
 
                 if(temp != XboxCigam) return false;
 
                 Partition securityPart = new Partition
                 {
                     Description = "Security sectors",
-                    Size = Xbox360SecuritySectorLen,
-                    Length = (ulong)(Xbox360SecuritySectorLen / imagePlugin.Info.SectorSize),
-                    Sequence = 1,
-                    Offset = Xbox360SecuritySectorOff,
-                    Start = (ulong)(Xbox360SecuritySectorOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Size        = Xbox360SecuritySectorLen,
+                    Length      = (ulong)(Xbox360SecuritySectorLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 1,
+                    Offset      = Xbox360SecuritySectorOff,
+                    Start       = (ulong)(Xbox360SecuritySectorOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 Partition sysCachePart = new Partition
                 {
                     Description = "System cache",
-                    Size = Xbox360SystemCacheLen,
-                    Length = (ulong)(Xbox360SystemCacheLen / imagePlugin.Info.SectorSize),
-                    Sequence = 2,
-                    Offset = Xbox360SystemCacheOff,
-                    Start = (ulong)(Xbox360SystemCacheOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Size        = Xbox360SystemCacheLen,
+                    Length      = (ulong)(Xbox360SystemCacheLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 2,
+                    Offset      = Xbox360SystemCacheOff,
+                    Start       = (ulong)(Xbox360SystemCacheOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 Partition gameCachePart = new Partition
                 {
                     Description = "Game cache",
-                    Size = Xbox360GameCacheLen,
-                    Length = (ulong)(Xbox360GameCacheLen / imagePlugin.Info.SectorSize),
-                    Sequence = 3,
-                    Offset = Xbox360GameCacheOff,
-                    Start = (ulong)(Xbox360GameCacheOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Size        = Xbox360GameCacheLen,
+                    Length      = (ulong)(Xbox360GameCacheLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 3,
+                    Offset      = Xbox360GameCacheOff,
+                    Start       = (ulong)(Xbox360GameCacheOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 Partition sysExtPart = new Partition
                 {
                     Description = "System volume",
-                    Size = Xbox368SysExtLen,
-                    Length = (ulong)(Xbox368SysExtLen / imagePlugin.Info.SectorSize),
-                    Sequence = 4,
-                    Offset = Xbox368SysExtOff,
-                    Start = (ulong)(Xbox368SysExtOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Size        = Xbox368SysExtLen,
+                    Length      = (ulong)(Xbox368SysExtLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 4,
+                    Offset      = Xbox368SysExtOff,
+                    Start       = (ulong)(Xbox368SysExtOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 Partition sysExt2Part = new Partition
                 {
                     Description = "System volume 2",
-                    Size = Xbox360SysExt2Len,
-                    Length = (ulong)(Xbox360SysExt2Len / imagePlugin.Info.SectorSize),
-                    Sequence = 5,
-                    Offset = Xbox360SysExt2Off,
-                    Start = (ulong)(Xbox360SysExt2Off / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Size        = Xbox360SysExt2Len,
+                    Length      = (ulong)(Xbox360SysExt2Len / imagePlugin.Info.SectorSize),
+                    Sequence    = 5,
+                    Offset      = Xbox360SysExt2Off,
+                    Start       = (ulong)(Xbox360SysExt2Off / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 Partition xbox1Part = new Partition
                 {
                     Description = "Xbox backwards compatibility",
-                    Size = Xbox360CompatLen,
-                    Length = (ulong)(Xbox360CompatLen / imagePlugin.Info.SectorSize),
-                    Sequence = 6,
-                    Offset = Xbox360CompatOff,
-                    Start = (ulong)(Xbox360CompatOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Size        = Xbox360CompatLen,
+                    Length      = (ulong)(Xbox360CompatLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 6,
+                    Offset      = Xbox360CompatOff,
+                    Start       = (ulong)(Xbox360CompatOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 Partition dataPart = new Partition
                 {
                     Description = "Data volume",
-                    Sequence = 7,
-                    Offset = Xbox360DataOff,
-                    Start = (ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Sequence    = 7,
+                    Offset      = Xbox360DataOff,
+                    Start       = (ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
                 dataPart.Length = imagePlugin.Info.Sectors - dataPart.Start;
-                dataPart.Size = dataPart.Length * imagePlugin.Info.SectorSize;
+                dataPart.Size   = dataPart.Length * imagePlugin.Info.SectorSize;
 
                 partitions.Add(securityPart);
                 partitions.Add(sysCachePart);

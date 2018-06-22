@@ -72,8 +72,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public SpamSumContext()
         {
-            self                                                       =
-                new FuzzyState {Bh                                     = new BlockhashContext[NUM_BLOCKHASHES]};
+            self = new FuzzyState {Bh = new BlockhashContext[NUM_BLOCKHASHES]};
             for(int i = 0; i < NUM_BLOCKHASHES; i++) self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
             self.Bhstart          = 0;
@@ -211,7 +210,7 @@ namespace DiscImageChef.Checksums
 
         void fuzzy_engine_step(byte c)
         {
-            uint  i;
+            uint i;
             /* At each character we update the rolling hash and the normal hashes.
              * When the rolling hash hits a reset value then we emit a normal hash
              * as a element of the signature and reset the normal hash. */
@@ -260,11 +259,11 @@ namespace DiscImageChef.Checksums
         // CLAUNIA: Flags seems to never be used in ssdeep, so I just removed it for code simplicity
         uint FuzzyDigest(out byte[] result)
         {
-            StringBuilder sb = new StringBuilder();
-            uint          bi = self.Bhstart;
-            uint          h  = roll_sum();
+            StringBuilder sb     = new StringBuilder();
+            uint          bi     = self.Bhstart;
+            uint          h      = roll_sum();
             int           remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
-            result               = new byte[FUZZY_MAX_RESULT];
+            result = new byte[FUZZY_MAX_RESULT];
             /* Verify that our elimination was not overeager. */
             if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < self.TotalSize))
                 throw new Exception("Assertion failed");

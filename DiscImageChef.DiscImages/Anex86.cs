@@ -105,7 +105,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            fdihdr          = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
+            fdihdr = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
             handle.Free();
 
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}",   fdihdr.unknown);
@@ -134,12 +134,12 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            fdihdr          = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
+            fdihdr = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
             handle.Free();
 
-            imageInfo.MediaType =
-                Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads, (ushort)fdihdr.spt,
-                                      (uint)fdihdr.bps, MediaEncoding.MFM, false));
+            imageInfo.MediaType = Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads,
+                                                            (ushort)fdihdr.spt, (uint)fdihdr.bps, MediaEncoding.MFM,
+                                                            false));
             if(imageInfo.MediaType == MediaType.Unknown) imageInfo.MediaType = MediaType.GENERIC_HDD;
 
             DicConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", imageInfo.MediaType);
@@ -259,8 +259,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -269,8 +269,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -304,7 +304,7 @@ namespace DiscImageChef.DiscImages
                 MediaType.PCCardTypeIV
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".fdi", ".hdi"};
 
         public bool   IsWriting    { get; private set; }
@@ -437,7 +437,7 @@ namespace DiscImageChef.DiscImages
                 imageInfo.MediaType == MediaType.FlashDrive        || imageInfo.MediaType == MediaType.CompactFlash  ||
                 imageInfo.MediaType == MediaType.CompactFlashType2 || imageInfo.MediaType == MediaType.PCCardTypeI   ||
                 imageInfo.MediaType == MediaType.PCCardTypeII      || imageInfo.MediaType == MediaType.PCCardTypeIII ||
-                imageInfo.MediaType == MediaType.PCCardTypeIV) && fdihdr.cylinders        == 0)
+                imageInfo.MediaType == MediaType.PCCardTypeIV) && fdihdr.cylinders == 0)
             {
                 fdihdr.cylinders = (int)(imageInfo.Sectors / 8 / 33);
                 fdihdr.heads     = 8;

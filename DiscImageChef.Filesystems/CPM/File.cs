@@ -112,8 +112,8 @@ namespace DiscImageChef.Filesystems.CPM
                            : Errno.NoSuchFile;
 
             stat = new FileEntryInfo {Attributes = FileAttributes.Directory, BlockSize = XmlFsType.ClusterSize};
-            if(labelCreationDate != null) stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
-            if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
+            if(labelCreationDate != null) stat.CreationTime     = DateHandlers.CpmToDateTime(labelCreationDate);
+            if(labelUpdateDate   != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
             return Errno.NoError;
         }
     }

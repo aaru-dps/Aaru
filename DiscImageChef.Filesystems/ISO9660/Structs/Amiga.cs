@@ -39,9 +39,9 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AmigaEntry
         {
-            public ushort signature;
-            public byte length;
-            public byte version;
+            public ushort     signature;
+            public byte       length;
+            public byte       version;
             public AmigaFlags flags;
             // Followed by AmigaProtection if present
             // Followed by length-prefixed string for comment if present
@@ -50,9 +50,9 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AmigaProtection
         {
-            public byte User;
-            public byte Reserved;
-            public AmigaMultiuser Multiuser;
+            public byte            User;
+            public byte            Reserved;
+            public AmigaMultiuser  Multiuser;
             public AmigaAttributes Protection;
         }
     }

@@ -50,19 +50,19 @@ namespace DiscImageChef.Devices.FreeBSD
     struct AtaCmd
     {
         public CamAtaIoFlags flags;
-        public byte command;
-        public byte features;
-        public byte lba_low;
-        public byte lba_mid;
-        public byte lba_high;
-        public byte device;
-        public byte lba_low_exp;
-        public byte lba_mid_exp;
-        public byte lba_high_exp;
-        public byte features_exp;
-        public byte sector_count;
-        public byte sector_count_exp;
-        public byte control;
+        public byte          command;
+        public byte          features;
+        public byte          lba_low;
+        public byte          lba_mid;
+        public byte          lba_high;
+        public byte          device;
+        public byte          lba_low_exp;
+        public byte          lba_mid_exp;
+        public byte          lba_high_exp;
+        public byte          features_exp;
+        public byte          sector_count;
+        public byte          sector_count_exp;
+        public byte          control;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -70,17 +70,17 @@ namespace DiscImageChef.Devices.FreeBSD
     struct AtaRes
     {
         public CamAtaIoFlags flags;
-        public byte status;
-        public byte error;
-        public byte lba_low;
-        public byte lba_mid;
-        public byte lba_high;
-        public byte device;
-        public byte lba_low_exp;
-        public byte lba_mid_exp;
-        public byte lba_high_exp;
-        public byte sector_count;
-        public byte sector_count_exp;
+        public byte          status;
+        public byte          error;
+        public byte          lba_low;
+        public byte          lba_mid;
+        public byte          lba_high;
+        public byte          device;
+        public byte          lba_low_exp;
+        public byte          lba_mid_exp;
+        public byte          lba_high_exp;
+        public byte          sector_count;
+        public byte          sector_count_exp;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -89,7 +89,7 @@ namespace DiscImageChef.Devices.FreeBSD
     {
         public uint priority;
         public uint generation;
-        public int index;
+        public int  index;
     }
 
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -140,9 +140,9 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct CamqEntry
     {
-        [FieldOffset(0)] public ListEntry le;
-        [FieldOffset(0)] public SlistEntry sle;
-        [FieldOffset(0)] public TailqEntry tqe;
+        [FieldOffset(0)] public ListEntry   le;
+        [FieldOffset(0)] public SlistEntry  sle;
+        [FieldOffset(0)] public TailqEntry  tqe;
         [FieldOffset(0)] public StailqEntry stqe;
     }
 
@@ -168,34 +168,37 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct CcbHdr
     {
-        public CamPinfo pinfo;
+        public CamPinfo  pinfo;
         public CamqEntry xpt_links;
         public CamqEntry sim_links;
         public CamqEntry periph_links;
-        public uint retry_count;
-        public IntPtr cbfcnp;
+        public uint      retry_count;
+        public IntPtr    cbfcnp;
         public XptOpcode func_code;
         public CamStatus status;
-        public IntPtr path;
-        public uint path_id;
-        public uint target_id;
-        public ulong target_lun;
-        public CcbFlags flags;
-        public uint xflags;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public IntPtr[] periph_priv;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public IntPtr[] sim_priv;
+        public IntPtr    path;
+        public uint      path_id;
+        public uint      target_id;
+        public ulong     target_lun;
+        public CcbFlags  flags;
+        public uint      xflags;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public IntPtr[] periph_priv;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public IntPtr[] sim_priv;
         public CcbQosArea qos;
-        public uint timeout;
-        public Timeval softtimeout;
+        public uint       timeout;
+        public Timeval    softtimeout;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct ScsiSenseData
     {
-        const int SSD_FULL_SIZE = 252;
+        const  int  SSD_FULL_SIZE = 252;
         public byte error_code;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SSD_FULL_SIZE - 1)] public byte[] sense_buf;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SSD_FULL_SIZE - 1)]
+        public byte[] sense_buf;
     }
 
     /// <summary>
@@ -232,7 +235,8 @@ namespace DiscImageChef.Devices.FreeBSD
         ///     Area for the CDB send, or pointer to the CDB bytes to send
         /// </summary>
         const int IOCDBLEN = 16;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)]
+        public byte[] cdb_bytes;
         /// <summary>Pointer to the message buffer</summary>
         public IntPtr msg_ptr;
         /// <summary>Number of bytes for the Message</summary>
@@ -283,7 +287,8 @@ namespace DiscImageChef.Devices.FreeBSD
         ///     Area for the CDB send, or pointer to the CDB bytes to send
         /// </summary>
         const int IOCDBLEN = 16;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)]
+        public byte[] cdb_bytes;
         /// <summary>Pointer to the message buffer</summary>
         public IntPtr msg_ptr;
         /// <summary>Number of bytes for the Message</summary>
@@ -496,11 +501,12 @@ namespace DiscImageChef.Devices.FreeBSD
     {
         const int DEV_IDLEN = 16;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] periph_name;
-        public uint unit_number;
-        public path_id_t path_id;
-        public target_id_t target_id;
-        public lun_id_t target_lun;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)]
+        public byte[] periph_name;
+        public uint               unit_number;
+        public path_id_t          path_id;
+        public target_id_t        target_id;
+        public lun_id_t           target_lun;
         public PeriphPatternFlags flags;
     }
 
@@ -509,21 +515,25 @@ namespace DiscImageChef.Devices.FreeBSD
     struct DeviceIdMatchPattern
     {
         public byte id_len;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] id;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public byte[] id;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct ScsiStaticInquiryPattern
     {
-        const int SID_VENDOR_SIZE = 8;
-        const int SID_PRODUCT_SIZE = 16;
-        const int SID_REVISION_SIZE = 4;
+        const  int  SID_VENDOR_SIZE   = 8;
+        const  int  SID_PRODUCT_SIZE  = 16;
+        const  int  SID_REVISION_SIZE = 4;
         public byte type;
         public byte media_type;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_VENDOR_SIZE + 1)] public byte[] vendor;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_PRODUCT_SIZE + 1)] public byte[] product;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_REVISION_SIZE + 1)] public byte[] revision;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_VENDOR_SIZE + 1)]
+        public byte[] vendor;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_PRODUCT_SIZE + 1)]
+        public byte[] product;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_REVISION_SIZE + 1)]
+        public byte[] revision;
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -531,17 +541,17 @@ namespace DiscImageChef.Devices.FreeBSD
     struct DeviceMatchPatternData
     {
         [FieldOffset(0)] public ScsiStaticInquiryPattern inq_pat;
-        [FieldOffset(0)] public DeviceIdMatchPattern devid_pat;
+        [FieldOffset(0)] public DeviceIdMatchPattern     devid_pat;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct DeviceMatchPattern
     {
-        public uint path_id;
-        public uint target_id;
-        public uint target_lun;
-        public DevPatternFlags flags;
+        public uint                   path_id;
+        public uint                   target_id;
+        public uint                   target_lun;
+        public DevPatternFlags        flags;
         public DeviceMatchPatternData data;
     }
 
@@ -552,9 +562,10 @@ namespace DiscImageChef.Devices.FreeBSD
         const int DEV_IDLEN = 16;
 
         public path_id_t path_id;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] dev_name;
-        public uint unit_number;
-        public uint bus_id;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)]
+        public byte[] dev_name;
+        public uint     unit_number;
+        public uint     bus_id;
         BusPatternFlags flags;
     }
 
@@ -564,7 +575,7 @@ namespace DiscImageChef.Devices.FreeBSD
     {
         [FieldOffset(0)] public PeriphMatchPattern periph_pattern;
         [FieldOffset(0)] public DeviceMatchPattern device_pattern;
-        [FieldOffset(0)] public BusMatchPattern bus_pattern;
+        [FieldOffset(0)] public BusMatchPattern    bus_pattern;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -579,11 +590,12 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct PeriphMatchResult
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] periph_name;
-        public uint unit_number;
-        public path_id_t path_id;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] periph_name;
+        public uint        unit_number;
+        public path_id_t   path_id;
         public target_id_t target_id;
-        public lun_id_t target_lun;
+        public lun_id_t    target_lun;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -591,13 +603,14 @@ namespace DiscImageChef.Devices.FreeBSD
     struct MmcCid
     {
         public uint mid;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] pnm;
-        public uint psn;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public byte[] pnm;
+        public uint   psn;
         public ushort oid;
         public ushort mdt_year;
-        public byte mdt_month;
-        public byte prv;
-        public byte fwrev;
+        public byte   mdt_month;
+        public byte   prv;
+        public byte   fwrev;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -607,7 +620,8 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         ///     Card model
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)] public byte[] model;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)]
+        public byte[] model;
 
         /// <summary>
         ///     Card OCR
@@ -622,7 +636,8 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         ///     Card CID -- raw
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] card_cid;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public uint[] card_cid;
 
         /// <summary>
         ///     Card CID -- parsed
@@ -632,7 +647,8 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         ///     Card CSD -- raw
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] card_csd;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public uint[] card_csd;
 
         /// <summary>
         ///     Card RCA
@@ -651,14 +667,16 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct DeviceMatchResult
     {
-        public path_id_t path_id;
+        public path_id_t   path_id;
         public target_id_t target_id;
-        public lun_id_t target_lun;
-        public CamProto protocol;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] inq_data;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] ident_data;
+        public lun_id_t    target_lun;
+        public CamProto    protocol;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public byte[] inq_data;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+        public byte[] ident_data;
         public DevResultFlags flags;
-        public MmcParams mmc_ident_data;
+        public MmcParams      mmc_ident_data;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -666,8 +684,9 @@ namespace DiscImageChef.Devices.FreeBSD
     struct BusMatchResult
     {
         public path_id_t path_id;
-        const int DEV_IDLEN = 16;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] dev_name;
+        const  int       DEV_IDLEN = 16;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)]
+        public byte[] dev_name;
         public uint unit_number;
         public uint bus_id;
     }
@@ -678,7 +697,7 @@ namespace DiscImageChef.Devices.FreeBSD
     {
         [FieldOffset(0)] public PeriphMatchResult periph_result;
         [FieldOffset(0)] public DeviceMatchResult device_result;
-        [FieldOffset(0)] public BusMatchResult bus_result;
+        [FieldOffset(0)] public BusMatchResult    bus_result;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -686,7 +705,7 @@ namespace DiscImageChef.Devices.FreeBSD
     struct DevMatchResult
     {
         public DevMatchType type;
-        public MatchResult result;
+        public MatchResult  result;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -704,8 +723,9 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct CcbDevPosition
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public CamGenerations[] generations;
-        DevPosType position_type;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public CamGenerations[] generations;
+        DevPosType         position_type;
         public CcbDmCookie cookie;
     }
 
@@ -713,10 +733,10 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct CcbDevMatch
     {
-        public CcbHdr ccb_h;
+        public CcbHdr     ccb_h;
         CcbDevMatchStatus status;
-        public uint num_patterns;
-        public uint pattern_buf_len;
+        public uint       num_patterns;
+        public uint       pattern_buf_len;
 
         /// <summary>
         ///     dev_match_pattern*
@@ -738,17 +758,19 @@ namespace DiscImageChef.Devices.FreeBSD
     struct CamDevice
     {
         const int MAXPATHLEN = 1024;
-        const int DEV_IDLEN = 16;
-        const int SIM_IDLEN = 16;
+        const int DEV_IDLEN  = 16;
+        const int SIM_IDLEN  = 16;
         /// <summary>
         ///     Pathname of the device given by the user. This may be null if the user states the device name and unit number
         ///     separately.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPATHLEN)] public byte[] DevicePath;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPATHLEN)]
+        public byte[] DevicePath;
         /// <summary>
         ///     Device name given by the user.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN + 1)] public byte[] GivenDevName;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN + 1)]
+        public byte[] GivenDevName;
         /// <summary>
         ///     Unit number given by the user.
         /// </summary>
@@ -756,7 +778,8 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         ///     Name of the device, e.g. 'pass'
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN + 1)] public byte[] DeviceName;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN + 1)]
+        public byte[] DeviceName;
         /// <summary>
         ///     Unit number of the passthrough device associated with this particular device.
         /// </summary>
@@ -764,7 +787,8 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         ///     Controller name, e.g. 'ahc'
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SIM_IDLEN + 1)] public byte[] SimName;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SIM_IDLEN + 1)]
+        public byte[] SimName;
         /// <summary>
         ///     Controller unit number
         /// </summary>
@@ -792,11 +816,13 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         ///     SCSI Inquiry data
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] InqData;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public byte[] InqData;
         /// <summary>
         ///     device serial number
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)] public byte[] SerialNum;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
+        public byte[] SerialNum;
         /// <summary>
         ///     length of the serial number
         /// </summary>
@@ -823,19 +849,23 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct CcbGetdev
     {
-        public CcbHdr ccb_h;
+        public CcbHdr   ccb_h;
         public CamProto protocol;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] inq_data;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] ident_data;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public byte[] inq_data;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+        public byte[] ident_data;
         /// <summary>
         ///     device serial number
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)] public byte[] serial_num;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
+        public byte[] serial_num;
         public byte inq_flags;
         /// <summary>
         ///     length of the serial number
         /// </summary>
         public byte serial_num_len;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public IntPtr[] padding;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public IntPtr[] padding;
     }
 }

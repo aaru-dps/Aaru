@@ -35,6 +35,7 @@ using System.Reflection;
 using CommandLine;
 using DiscImageChef.Commands;
 using DiscImageChef.Console;
+using DiscImageChef.Settings;
 using Statistics = DiscImageChef.Core.Statistics;
 
 namespace DiscImageChef
@@ -48,8 +49,7 @@ namespace DiscImageChef
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             Settings.Settings.LoadSettings();
-            if(Settings.Settings.Current.GdprCompliance < Settings.DicSettings.GdprLevel)
-                Configure.DoConfigure(true);
+            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel) Configure.DoConfigure(true);
             Statistics.LoadStats();
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
                 Statistics.SubmitStats();

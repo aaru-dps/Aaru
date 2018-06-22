@@ -327,7 +327,7 @@ namespace DiscImageChef.Devices.Windows
 
     enum WindowsIoctl : uint
     {
-        IoctlAtaPassThrough = 0x4D02C,
+        IoctlAtaPassThrough       = 0x4D02C,
         IoctlAtaPassThroughDirect = 0x4D030,
         /// <summary>
         ///     ScsiPassThrough
@@ -341,11 +341,11 @@ namespace DiscImageChef.Devices.Windows
         ///     ScsiGetAddress
         /// </summary>
         IoctlScsiGetAddress = 0x41018,
-        IoctlStorageQueryProperty = 0x2D1400,
-        IoctlIdePassThrough = 0x4D028,
-        IoctlStorageGetDeviceNumber = 0x2D1080,
+        IoctlStorageQueryProperty       = 0x2D1400,
+        IoctlIdePassThrough             = 0x4D028,
+        IoctlStorageGetDeviceNumber     = 0x2D1080,
         IoctlSffdiskQueryDeviceProtocol = 0x71E80,
-        IoctlSffdiskDeviceCommand = 0x79E84
+        IoctlSffdiskDeviceCommand       = 0x79E84
     }
 
     [Flags]
@@ -379,51 +379,51 @@ namespace DiscImageChef.Devices.Windows
 
     enum StoragePropertyId
     {
-        Device = 0,
-        Adapter = 1,
-        Id = 2,
-        UniqueId = 3,
-        WriteCache = 4,
-        Miniport = 5,
-        AccessAlignment = 6,
-        SeekPenalty = 7,
-        Trim = 8,
+        Device           = 0,
+        Adapter          = 1,
+        Id               = 2,
+        UniqueId         = 3,
+        WriteCache       = 4,
+        Miniport         = 5,
+        AccessAlignment  = 6,
+        SeekPenalty      = 7,
+        Trim             = 8,
         WriteAggregation = 9,
-        Telemetry = 10,
-        LbProvisioning = 11,
-        Power = 12,
-        Copyoffload = 13,
-        Resiliency = 14
+        Telemetry        = 10,
+        LbProvisioning   = 11,
+        Power            = 12,
+        Copyoffload      = 13,
+        Resiliency       = 14
     }
 
     enum StorageQueryType
     {
         Standard = 0,
-        Exists = 1,
-        Mask = 2,
-        Max = 3
+        Exists   = 1,
+        Mask     = 2,
+        Max      = 3
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum StorageBusType
     {
-        Unknown = 0,
-        SCSI = 1,
-        ATAPI = 2,
-        ATA = 3,
-        FireWire = 4,
-        SSA = 5,
-        Fibre = 6,
-        USB = 7,
-        RAID = 8,
-        iSCSI = 9,
-        SAS = 0xA,
-        SATA = 0xB,
-        SecureDigital = 0xC,
-        MultiMediaCard = 0xD,
-        Virtual = 0xE,
+        Unknown           = 0,
+        SCSI              = 1,
+        ATAPI             = 2,
+        ATA               = 3,
+        FireWire          = 4,
+        SSA               = 5,
+        Fibre             = 6,
+        USB               = 7,
+        RAID              = 8,
+        iSCSI             = 9,
+        SAS               = 0xA,
+        SATA              = 0xB,
+        SecureDigital     = 0xC,
+        MultiMediaCard    = 0xD,
+        Virtual           = 0xE,
         FileBackedVirtual = 0xF,
-        NVMe = 0x11
+        NVMe              = 0x11
     }
 
     [Flags]

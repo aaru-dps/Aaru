@@ -79,9 +79,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending IDENTIFY PACKET DEVICE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",         duration);
+            DicConsole.WriteLine("Sense is {0}.",                sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");

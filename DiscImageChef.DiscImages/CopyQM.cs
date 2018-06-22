@@ -162,7 +162,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[133];
 
             stream.Read(hdr, 0, 133);
-            header        = new CopyQmHeader();
+            header = new CopyQmHeader();
             IntPtr hdrPtr = Marshal.AllocHGlobal(133);
             Marshal.Copy(hdr, 0, hdrPtr, 133);
             header = (CopyQmHeader)Marshal.PtrToStructure(hdrPtr, typeof(CopyQmHeader));
@@ -266,9 +266,9 @@ namespace DiscImageChef.DiscImages
             imageInfo.Sectors              = (ulong)sectors;
             imageInfo.SectorSize           = header.sectorSize;
 
-            imageInfo.MediaType =
-                Geometry.GetMediaType(((ushort)header.totalCylinders, (byte)header.heads, header.sectorsPerTrack,
-                                      (uint)header.sectorSize, MediaEncoding.MFM, false));
+            imageInfo.MediaType = Geometry.GetMediaType(((ushort)header.totalCylinders, (byte)header.heads,
+                                                            header.sectorsPerTrack, (uint)header.sectorSize,
+                                                            MediaEncoding.MFM, false));
 
             switch(imageInfo.MediaType)
             {
@@ -309,8 +309,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -320,8 +320,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();

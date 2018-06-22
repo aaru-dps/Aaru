@@ -121,9 +121,9 @@ namespace DiscImageChef.Decoders.CD
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(CDTOCResponse, 0);
-            decoded.FirstTrack = CDTOCResponse[2];
-            decoded.LastTrack = CDTOCResponse[3];
+            decoded.DataLength       = BigEndianBitConverter.ToUInt16(CDTOCResponse, 0);
+            decoded.FirstTrack       = CDTOCResponse[2];
+            decoded.LastTrack        = CDTOCResponse[3];
             decoded.TrackDescriptors = new CDTOCTrackDataDescriptor[(decoded.DataLength - 2) / 8];
 
             if(decoded.DataLength + 2 != CDTOCResponse.Length)
@@ -136,11 +136,11 @@ namespace DiscImageChef.Decoders.CD
 
             for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
             {
-                decoded.TrackDescriptors[i].Reserved1 = CDTOCResponse[0 + i * 8 + 4];
-                decoded.TrackDescriptors[i].ADR = (byte)((CDTOCResponse[1 + i * 8 + 4] & 0xF0) >> 4);
-                decoded.TrackDescriptors[i].CONTROL = (byte)(CDTOCResponse[1 + i * 8 + 4] & 0x0F);
+                decoded.TrackDescriptors[i].Reserved1   = CDTOCResponse[0 + i * 8 + 4];
+                decoded.TrackDescriptors[i].ADR         = (byte)((CDTOCResponse[1 + i * 8 + 4] & 0xF0) >> 4);
+                decoded.TrackDescriptors[i].CONTROL     = (byte)(CDTOCResponse[1 + i * 8 + 4] & 0x0F);
                 decoded.TrackDescriptors[i].TrackNumber = CDTOCResponse[2 + i * 8 + 4];
-                decoded.TrackDescriptors[i].Reserved2 = CDTOCResponse[3 + i * 8 + 4];
+                decoded.TrackDescriptors[i].Reserved2   = CDTOCResponse[3 + i * 8 + 4];
                 decoded.TrackDescriptors[i].TrackStartAddress =
                     BigEndianBitConverter.ToUInt32(CDTOCResponse, 4 + i * 8 + 4);
             }
@@ -220,12 +220,12 @@ namespace DiscImageChef.Decoders.CD
                                       ? "Digital copy of track is permitted"
                                       : "Digital copy of track is prohibited");
 
-#if DEBUG
+                    #if DEBUG
                     if(descriptor.Reserved1 != 0)
                         sb.AppendFormat("Reserved1 = 0x{0:X2}", descriptor.Reserved1).AppendLine();
                     if(descriptor.Reserved2 != 0)
                         sb.AppendFormat("Reserved2 = 0x{0:X2}", descriptor.Reserved2).AppendLine();
-#endif
+                    #endif
 
                     sb.AppendLine();
                 }

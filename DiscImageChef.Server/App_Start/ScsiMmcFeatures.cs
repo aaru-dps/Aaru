@@ -56,6 +56,7 @@ namespace DiscImageChef.Server.App_Start
                 if(ftr.BindingNonceBlocksSpecified)
                     mmcOneValue.Add($"{ftr.BindingNonceBlocks} media blocks are required for the binding nonce");
             }
+
             if(ftr.BlocksPerReadableUnit > 1)
                 mmcOneValue.Add($"{ftr.BlocksPerReadableUnit} logical blocks per media writable unit");
             if(ftr.BufferUnderrunFreeInDVD) mmcOneValue.Add("Drive supports zero loss linking writing DVDs");
@@ -176,9 +177,10 @@ namespace DiscImageChef.Server.App_Start
             if(ftr.CanWriteBusEncryptedBlocks) mmcOneValue.Add("Drive supports writing with bus encryption");
             if(ftr.CanWriteCDRW) mmcOneValue.Add("Drive can write CD-RW");
             if(ftr.CanWriteCDRWCAV) mmcOneValue.Add("Drive can write High-Speed CD-RW");
-            if(ftr.CanWriteCDSAO && !ftr.CanWriteRaw) mmcOneValue.Add("Drive can write CDs in Session at Once Mode:");
+            if(ftr.CanWriteCDSAO && !ftr.CanWriteRaw)
+                mmcOneValue.Add("Drive can write CDs in Session at Once Mode:");
             else if(!ftr.CanWriteCDSAO && ftr.CanWriteRaw) mmcOneValue.Add("Drive can write CDs in raw Mode:");
-            else if(ftr.CanWriteCDSAO && ftr.CanWriteRaw)
+            else if(ftr.CanWriteCDSAO  && ftr.CanWriteRaw)
                 mmcOneValue.Add("Drive can write CDs in Session at Once and in Raw Modes:");
             if(ftr.CanWriteCDTAO) mmcOneValue.Add("Drive can write CDs in Track at Once Mode:");
             if(ftr.CanWriteCSSManagedDVD) mmcOneValue.Add("Drive can write CSS managed DVDs");
@@ -211,6 +213,7 @@ namespace DiscImageChef.Server.App_Start
                 if(ftr.CanWritePackedSubchannelInTAO)
                     mmcOneValue.Add("Drive accepts Packed R-W subchannel data in Track at Once Mode");
             }
+
             if(ftr.CanWriteRWSubchannelInSAO)
                 mmcOneValue.Add("Drive can write user provided data in the R-W subchannels in Session at Once Mode");
             if(ftr.CanWriteRaw && ftr.CanWriteRawMultiSession)
@@ -225,6 +228,7 @@ namespace DiscImageChef.Server.App_Start
 
                 mmcOneValue.Add($"Drive has {ftr.ChangerSlots + 1} slots");
             }
+
             if(ftr.SupportsCSS && ftr.CSSVersionSpecified)
                 mmcOneValue.Add($"Drive supports DVD CSS/CPPM version {ftr.CSSVersion}");
             else if(ftr.SupportsCSS) mmcOneValue.Add("Drive supports DVD CSS/CPRM");

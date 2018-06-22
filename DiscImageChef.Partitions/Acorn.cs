@@ -41,17 +41,17 @@ namespace DiscImageChef.Partitions
 {
     public class Acorn : IPartition
     {
-        const ulong ADFS_SB_POS = 0xC00;
-        const uint LINUX_MAGIC = 0xDEAFA1DE;
-        const uint SWAP_MAGIC = 0xDEAFAB1E;
-        const uint RISCIX_MAGIC = 0x4A657320;
-        const uint TYPE_LINUX = 9;
-        const uint TYPE_RISCIX_MFM = 1;
-        const uint TYPE_RISCIX_SCSI = 2;
-        const uint TYPE_MASK = 15;
+        const ulong ADFS_SB_POS      = 0xC00;
+        const uint  LINUX_MAGIC      = 0xDEAFA1DE;
+        const uint  SWAP_MAGIC       = 0xDEAFAB1E;
+        const uint  RISCIX_MAGIC     = 0x4A657320;
+        const uint  TYPE_LINUX       = 9;
+        const uint  TYPE_RISCIX_MFM  = 1;
+        const uint  TYPE_RISCIX_SCSI = 2;
+        const uint  TYPE_MASK        = 15;
 
         public string Name => "Acorn FileCore partitions";
-        public Guid Id => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+        public Guid   Id   => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -63,7 +63,7 @@ namespace DiscImageChef.Partitions
             if(sectorOffset != 0) return false;
 
             if(imagePlugin.Info.SectorSize > ADFS_SB_POS) sbSector = 0;
-            else sbSector = ADFS_SB_POS / imagePlugin.Info.SectorSize;
+            else sbSector                                          = ADFS_SB_POS / imagePlugin.Info.SectorSize;
 
             byte[] sector = imagePlugin.ReadSector(sbSector);
 
@@ -74,12 +74,12 @@ namespace DiscImageChef.Partitions
             AcornBootBlock bootBlock = (AcornBootBlock)Marshal.PtrToStructure(bbPtr, typeof(AcornBootBlock));
             Marshal.FreeHGlobal(bbPtr);
 
-            int checksum = 0;
+            int checksum                            = 0;
             for(int i = 0; i < 0x1FF; i++) checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
 
-            int heads = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
-            int secCyl = bootBlock.discRecord.spt * heads;
-            int mapSector = bootBlock.startCylinder * secCyl;
+            int heads     = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
+            int secCyl    = bootBlock.discRecord.spt * heads;
+            int mapSector = bootBlock.startCylinder  * secCyl;
 
             if((ulong)mapSector >= imagePlugin.Info.Sectors) return false;
 
@@ -118,11 +118,11 @@ namespace DiscImageChef.Partitions
                     {
                         Partition part = new Partition
                         {
-                            Start = (ulong)(mapSector + entry.start),
-                            Size = entry.size,
-                            Length = (ulong)(entry.size * sector.Length),
+                            Start    = (ulong)(mapSector + entry.start),
+                            Size     = entry.size,
+                            Length   = (ulong)(entry.size * sector.Length),
                             Sequence = counter,
-                            Scheme = Name
+                            Scheme   = Name
                         };
                         part.Offset = part.Start * (ulong)sector.Length;
                         if(entry.magic != LINUX_MAGIC && entry.magic != SWAP_MAGIC) continue;
@@ -146,12 +146,12 @@ namespace DiscImageChef.Partitions
                         {
                             Partition part = new Partition
                             {
-                                Start = (ulong)(mapSector + entry.start),
-                                Size = entry.length,
-                                Length = (ulong)(entry.length * sector.Length),
-                                Name = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
+                                Start    = (ulong)(mapSector + entry.start),
+                                Size     = entry.length,
+                                Length   = (ulong)(entry.length * sector.Length),
+                                Name     = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
                                 Sequence = counter,
-                                Scheme = Name
+                                Scheme   = Name
                             };
                             part.Offset = part.Start * (ulong)sector.Length;
                             if(entry.length <= 0) continue;
@@ -170,45 +170,50 @@ namespace DiscImageChef.Partitions
         [StructLayout(LayoutKind.Sequential)]
         struct DiscRecord
         {
-            public byte log2secsize;
-            public byte spt;
-            public byte heads;
-            public byte density;
-            public byte idlen;
-            public byte log2bpmb;
-            public byte skew;
-            public byte bootoption;
-            public byte lowsector;
-            public byte nzones;
+            public byte   log2secsize;
+            public byte   spt;
+            public byte   heads;
+            public byte   density;
+            public byte   idlen;
+            public byte   log2bpmb;
+            public byte   skew;
+            public byte   bootoption;
+            public byte   lowsector;
+            public byte   nzones;
             public ushort zone_spare;
-            public uint root;
-            public uint disc_size;
+            public uint   root;
+            public uint   disc_size;
             public ushort disc_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] disc_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public byte[] disc_name;
             public uint disc_type;
             public uint disc_size_high;
             public byte flags;
             public byte nzones_high;
             public uint format_version;
             public uint root_size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AcornBootBlock
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)] public byte[] spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
+            public byte[] spare;
             public DiscRecord discRecord;
-            public byte flags;
-            public ushort startCylinder;
-            public byte checksum;
+            public byte       flags;
+            public ushort     startCylinder;
+            public byte       checksum;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LinuxTable
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)] public LinuxEntry[] entries;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] padding;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
+            public LinuxEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] padding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -224,7 +229,8 @@ namespace DiscImageChef.Partitions
         {
             public uint magic;
             public uint date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public RiscIxEntry[] partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public RiscIxEntry[] partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -233,7 +239,8 @@ namespace DiscImageChef.Partitions
             public uint start;
             public uint length;
             public uint one;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] name;
         }
     }
 }

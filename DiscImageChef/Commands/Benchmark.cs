@@ -41,9 +41,9 @@ namespace DiscImageChef.Commands
         internal static void DoBenchmark(BenchmarkOptions options)
         {
             Dictionary<string, double> checksumTimes = new Dictionary<string, double>();
-            Core.Benchmark.InitProgressEvent += Progress.InitProgress;
+            Core.Benchmark.InitProgressEvent   += Progress.InitProgress;
             Core.Benchmark.UpdateProgressEvent += Progress.UpdateProgress;
-            Core.Benchmark.EndProgressEvent += Progress.EndProgress;
+            Core.Benchmark.EndProgressEvent    += Progress.EndProgress;
 
             BenchmarkResults results = Core.Benchmark.Do(options.BufferSize * 1024 * 1024, options.BlockSize);
 

@@ -72,12 +72,12 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void Display(string devPath, Device dev)
         {
-            bool flash = false;
-            FujitsuDisplayModes mode = FujitsuDisplayModes.Ready;
-            string firstHalf = "DIC TEST";
-            string secondHalf = "TEST DIC";
-            string strDev;
-            int item;
+            bool                flash      = false;
+            FujitsuDisplayModes mode       = FujitsuDisplayModes.Ready;
+            string              firstHalf  = "DIC TEST";
+            string              secondHalf = "TEST DIC";
+            string              strDev;
+            int                 item;
 
             parameters:
             while(true)
@@ -147,9 +147,9 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending DISPLAY to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("DISPLAY decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));

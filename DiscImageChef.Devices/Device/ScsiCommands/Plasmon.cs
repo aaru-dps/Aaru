@@ -48,8 +48,8 @@ namespace DiscImageChef.Devices
         /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                                    ushort blockBytes, bool pba, uint timeout, out double duration)
+        public bool PlasmonReadLong(out byte[] buffer,     out byte[] senseBuffer, bool relAddr, uint       address,
+                                    ushort     blockBytes, bool       pba,         uint timeout, out double duration)
         {
             return HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
                               out duration);
@@ -72,12 +72,13 @@ namespace DiscImageChef.Devices
         /// </param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                                    ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
+        public bool PlasmonReadLong(out byte[] buffer,      out byte[] senseBuffer, bool relAddr, uint address,
+                                    ushort     transferLen, ushort     blockBytes,  bool pba,     bool sectorCount,
+                                    uint       timeout,
                                     out double duration)
         {
             return HpReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
-                              timeout, out duration);
+                              timeout,    out duration);
         }
 
         /// <summary>
@@ -90,16 +91,16 @@ namespace DiscImageChef.Devices
         /// <param name="pba">If set to <c>true</c> address contain a physical block address.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool PlasmonReadSectorLocation(out byte[] buffer, out byte[] senseBuffer, uint address, bool pba,
-                                              uint timeout, out double duration)
+        public bool PlasmonReadSectorLocation(out byte[] buffer,  out byte[] senseBuffer, uint address, bool pba,
+                                              uint       timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
             cdb[2] = (byte)((address & 0xFF000000) >> 24);
-            cdb[3] = (byte)((address & 0xFF0000) >> 16);
-            cdb[4] = (byte)((address & 0xFF00) >> 8);
+            cdb[3] = (byte)((address & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((address & 0xFF00)     >> 8);
             cdb[5] = (byte)(address & 0xFF);
             if(pba) cdb[9] += 0x80;
 

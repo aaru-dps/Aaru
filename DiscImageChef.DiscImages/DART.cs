@@ -269,8 +269,8 @@ namespace DiscImageChef.DiscImages
                         {
                             temp = new byte[l * 2];
                             stream.Read(temp, 0, temp.Length);
-                            AppleRle rle                                   = new AppleRle(new MemoryStream(temp));
-                            buffer                                         = new byte[BUFFER_SIZE];
+                            AppleRle rle = new AppleRle(new MemoryStream(temp));
+                            buffer = new byte[BUFFER_SIZE];
                             for(int i = 0; i < BUFFER_SIZE; i++) buffer[i] = (byte)rle.ProduceByte();
                             dataMs.Write(buffer, 0, DATA_SIZE);
                             tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
@@ -311,9 +311,9 @@ namespace DiscImageChef.DiscImages
                             string dev     = null;
                             string pre     = null;
 
-                            string major = $"{version.MajorVersion}";
-                            string minor = $".{version.MinorVersion / 10}";
-                            if(version.MinorVersion                 % 10 > 0) release = $".{version.MinorVersion % 10}";
+                            string major                              = $"{version.MajorVersion}";
+                            string minor                              = $".{version.MinorVersion / 10}";
+                            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                             switch(version.DevStage)
                             {
                                 case Version.DevelopmentStage.Alpha:
@@ -367,13 +367,13 @@ namespace DiscImageChef.DiscImages
                         if(cksmRsrc?.ContainsId(1) == true)
                         {
                             byte[] tagChk = cksmRsrc.GetResource(1);
-                            tagChecksum   = BigEndianBitConverter.ToUInt32(tagChk, 0);
+                            tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
                         }
 
                         if(cksmRsrc?.ContainsId(2) == true)
                         {
                             byte[] dataChk = cksmRsrc.GetResource(1);
-                            dataChecksum   = BigEndianBitConverter.ToUInt32(dataChk, 0);
+                            dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
                         }
                     }
                 }
@@ -491,7 +491,7 @@ namespace DiscImageChef.DiscImages
                 Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + TAG_SECTOR_SIZE),
                            imageInfo.SectorSize);
                 Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                           i       * (imageInfo.SectorSize + TAG_SECTOR_SIZE) + imageInfo.SectorSize, TAG_SECTOR_SIZE);
+                           i * (imageInfo.SectorSize + TAG_SECTOR_SIZE) + imageInfo.SectorSize, TAG_SECTOR_SIZE);
             }
 
             return buffer;
@@ -552,8 +552,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -562,8 +562,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

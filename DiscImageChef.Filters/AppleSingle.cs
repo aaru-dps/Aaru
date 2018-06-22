@@ -42,8 +42,8 @@ namespace DiscImageChef.Filters
     /// </summary>
     public class AppleSingle : IFilter
     {
-        const uint AppleSingleMagic = 0x00051600;
-        const uint AppleSingleVersion = 0x00010000;
+        const uint AppleSingleMagic    = 0x00051600;
+        const uint AppleSingleVersion  = 0x00010000;
         const uint AppleSingleVersion2 = 0x00020000;
         readonly byte[] DOSHome =
             {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
@@ -58,28 +58,28 @@ namespace DiscImageChef.Filters
             {0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] VMSHome =
             {0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-        string basePath;
-        byte[] bytes;
+        string   basePath;
+        byte[]   bytes;
         DateTime creationTime;
 
-        AppleSingleEntry dataFork;
+        AppleSingleEntry  dataFork;
         AppleSingleHeader header;
-        bool isBytes, isStream, isPath, opened;
-        DateTime lastWriteTime;
-        AppleSingleEntry rsrcFork;
-        Stream stream;
+        bool              isBytes, isStream, isPath, opened;
+        DateTime          lastWriteTime;
+        AppleSingleEntry  rsrcFork;
+        Stream            stream;
 
         public string Name => "AppleSingle";
-        public Guid Id => new Guid("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
+        public Guid   Id   => new Guid("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
 
         public void Close()
         {
             bytes = null;
             stream?.Close();
-            isBytes = false;
+            isBytes  = false;
             isStream = false;
-            isPath = false;
-            opened = false;
+            isPath   = false;
+            opened   = false;
         }
 
         public string GetBasePath()
@@ -101,7 +101,7 @@ namespace DiscImageChef.Filters
         {
             if(dataFork.length == 0) return null;
 
-            if(isBytes) return new OffsetStream(bytes, dataFork.offset, dataFork.offset + dataFork.length - 1);
+            if(isBytes) return new OffsetStream(bytes,   dataFork.offset, dataFork.offset + dataFork.length - 1);
             if(isStream) return new OffsetStream(stream, dataFork.offset, dataFork.offset + dataFork.length - 1);
             if(isPath)
                 return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, dataFork.offset,
@@ -144,7 +144,7 @@ namespace DiscImageChef.Filters
         {
             if(rsrcFork.length == 0) return null;
 
-            if(isBytes) return new OffsetStream(bytes, rsrcFork.offset, rsrcFork.offset + rsrcFork.length - 1);
+            if(isBytes) return new OffsetStream(bytes,   rsrcFork.offset, rsrcFork.offset + rsrcFork.length - 1);
             if(isStream) return new OffsetStream(stream, rsrcFork.offset, rsrcFork.offset + rsrcFork.length - 1);
             if(isPath)
                 return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, rsrcFork.offset,
@@ -219,7 +219,7 @@ namespace DiscImageChef.Filters
                 entries[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
-            creationTime = DateTime.UtcNow;
+            creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleSingleEntry entry in entries)
                 switch((AppleSingleEntryID)entry.id)
@@ -233,7 +233,7 @@ namespace DiscImageChef.Filters
                         ms.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
                             BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
-                        creationTime = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
+                        creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
                         break;
                     case AppleSingleEntryID.FileInfo:
@@ -244,21 +244,21 @@ namespace DiscImageChef.Filters
                         {
                             AppleSingleMacFileInfo macinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleUNIXFileInfo unixinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
-                            creationTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
@@ -268,6 +268,7 @@ namespace DiscImageChef.Filters
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
+
                         break;
                     case AppleSingleEntryID.ResourceFork:
                         rsrcFork = entry;
@@ -275,9 +276,9 @@ namespace DiscImageChef.Filters
                 }
 
             ms.Close();
-            opened = true;
+            opened  = true;
             isBytes = true;
-            bytes = buffer;
+            bytes   = buffer;
         }
 
         public void Open(Stream stream)
@@ -296,7 +297,7 @@ namespace DiscImageChef.Filters
                 entries[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
-            creationTime = DateTime.UtcNow;
+            creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleSingleEntry entry in entries)
                 switch((AppleSingleEntryID)entry.id)
@@ -310,7 +311,7 @@ namespace DiscImageChef.Filters
                         stream.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
                             BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
-                        creationTime = DateHandlers.MacToDateTime(dates.creationDate);
+                        creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
                         break;
                     case AppleSingleEntryID.FileInfo:
@@ -321,21 +322,21 @@ namespace DiscImageChef.Filters
                         {
                             AppleSingleMacFileInfo macinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleUNIXFileInfo unixinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
-                            creationTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
@@ -345,6 +346,7 @@ namespace DiscImageChef.Filters
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
+
                         break;
                     case AppleSingleEntryID.ResourceFork:
                         rsrcFork = entry;
@@ -352,8 +354,8 @@ namespace DiscImageChef.Filters
                 }
 
             stream.Seek(0, SeekOrigin.Begin);
-            opened = true;
-            isStream = true;
+            opened      = true;
+            isStream    = true;
             this.stream = stream;
         }
 
@@ -374,7 +376,7 @@ namespace DiscImageChef.Filters
                 entries[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
-            creationTime = DateTime.UtcNow;
+            creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleSingleEntry entry in entries)
                 switch((AppleSingleEntryID)entry.id)
@@ -388,7 +390,7 @@ namespace DiscImageChef.Filters
                         fs.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
                             BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
-                        creationTime = DateHandlers.MacToDateTime(dates.creationDate);
+                        creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
                         break;
                     case AppleSingleEntryID.FileInfo:
@@ -399,21 +401,21 @@ namespace DiscImageChef.Filters
                         {
                             AppleSingleMacFileInfo macinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleUNIXFileInfo unixinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
-                            creationTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
@@ -423,6 +425,7 @@ namespace DiscImageChef.Filters
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
+
                         break;
                     case AppleSingleEntryID.ResourceFork:
                         rsrcFork = entry;
@@ -430,29 +433,29 @@ namespace DiscImageChef.Filters
                 }
 
             fs.Close();
-            opened = true;
-            isPath = true;
+            opened   = true;
+            isPath   = true;
             basePath = path;
         }
 
         enum AppleSingleEntryID : uint
         {
-            Invalid = 0,
-            DataFork = 1,
-            ResourceFork = 2,
-            RealName = 3,
-            Comment = 4,
-            Icon = 5,
-            ColorIcon = 6,
-            FileInfo = 7,
-            FileDates = 8,
-            FinderInfo = 9,
-            MacFileInfo = 10,
+            Invalid        = 0,
+            DataFork       = 1,
+            ResourceFork   = 2,
+            RealName       = 3,
+            Comment        = 4,
+            Icon           = 5,
+            ColorIcon      = 6,
+            FileInfo       = 7,
+            FileDates      = 8,
+            FinderInfo     = 9,
+            MacFileInfo    = 10,
             ProDOSFileInfo = 11,
-            DOSFileInfo = 12,
-            ShortName = 13,
-            AFPFileInfo = 14,
-            DirectoryID = 15
+            DOSFileInfo    = 12,
+            ShortName      = 13,
+            AFPFileInfo    = 14,
+            DirectoryID    = 15
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -460,7 +463,8 @@ namespace DiscImageChef.Filters
         {
             public uint magic;
             public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] homeFilesystem;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] homeFilesystem;
             public ushort entries;
         }
 
@@ -509,12 +513,12 @@ namespace DiscImageChef.Filters
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleSingleProDOSFileInfo
         {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
+            public uint   creationDate;
+            public uint   modificationDate;
+            public uint   backupDate;
             public ushort access;
             public ushort fileType;
-            public uint auxType;
+            public uint   auxType;
         }
     }
 }

@@ -48,18 +48,18 @@ namespace DiscImageChef.Decoders.SCSI
             ///     Parameters can be saved
             /// </summary>
             public bool PS;
-            public bool LT;
-            public bool WT;
-            public bool PT;
+            public bool   LT;
+            public bool   WT;
+            public bool   PT;
             public ushort CurrentPowerOn;
-            public uint PowerOnTime;
-            public bool UTC;
-            public bool NTP;
-            public uint WorldTime;
-            public byte LibraryHours;
-            public byte LibraryMinutes;
-            public byte LibrarySeconds;
-            public uint CumulativePowerOn;
+            public uint   PowerOnTime;
+            public bool   UTC;
+            public bool   NTP;
+            public uint   WorldTime;
+            public byte   LibraryHours;
+            public byte   LibraryMinutes;
+            public byte   LibrarySeconds;
+            public uint   CumulativePowerOn;
         }
 
         public static HP_ModePage_3C? DecodeHPModePage_3C(byte[] pageResponse)
@@ -74,22 +74,22 @@ namespace DiscImageChef.Decoders.SCSI
 
             HP_ModePage_3C decoded = new HP_ModePage_3C();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.LT |= (pageResponse[2] & 0x04) == 0x04;
-            decoded.WT |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.PT |= (pageResponse[2] & 0x01) == 0x01;
-            decoded.CurrentPowerOn = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.PS             |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.LT             |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.WT             |= (pageResponse[2] & 0x02) == 0x02;
+            decoded.PT             |= (pageResponse[2] & 0x01) == 0x01;
+            decoded.CurrentPowerOn =  (ushort)((pageResponse[6] << 8) + pageResponse[7]);
             decoded.PowerOnTime = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
                                          pageResponse[11]);
             decoded.UTC |= (pageResponse[14] & 0x02) == 0x02;
             decoded.NTP |= (pageResponse[14] & 0x01) == 0x01;
             decoded.WorldTime = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
                                        pageResponse[19]);
-            decoded.LibraryHours = pageResponse[23];
+            decoded.LibraryHours   = pageResponse[23];
             decoded.LibraryMinutes = pageResponse[24];
             decoded.LibrarySeconds = pageResponse[25];
             decoded.CumulativePowerOn = (uint)((pageResponse[32] << 24) + (pageResponse[33] << 16) +
-                                               (pageResponse[34] << 8) + pageResponse[35]);
+                                               (pageResponse[34] << 8)  + pageResponse[35]);
 
             return decoded;
         }
@@ -104,7 +104,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             HP_ModePage_3C page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder  sb   = new StringBuilder();
 
             sb.AppendLine("HP Device Time Mode Page:");
 

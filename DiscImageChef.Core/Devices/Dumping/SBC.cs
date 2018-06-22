@@ -107,8 +107,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             dumpLog.WriteLine("Initializing reader.");
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
-            ulong blocks = scsiReader.GetDeviceBlocks();
-            uint blockSize = scsiReader.LogicalBlockSize;
+            ulong  blocks     = scsiReader.GetDeviceBlocks();
+            uint   blockSize  = scsiReader.LogicalBlockSize;
             if(scsiReader.FindReadCommand())
             {
                 dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", scsiReader.ErrorMessage);
@@ -131,8 +131,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            uint blocksToRead = scsiReader.BlocksToRead;
-            uint logicalBlockSize = blockSize;
+            uint blocksToRead      = scsiReader.BlocksToRead;
+            uint logicalBlockSize  = blockSize;
             uint physicalBlockSize = scsiReader.PhysicalBlockSize;
 
             if(blocks == 0)
@@ -460,45 +460,39 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(persistent)
                 {
                     Modes.ModePage_01_MMC pgMmc;
-                    Modes.ModePage_01 pg;
-                    
+                    Modes.ModePage_01     pg;
+
                     sense = dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                            dev.Timeout, out _);
                     if(sense)
                     {
-                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current,
-                                                0x01, dev.Timeout, out _);
+                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                                dev.Timeout, out _);
 
                         if(!sense)
                         {
-                            Modes.DecodedMode? dcMode10 =
-                                Modes.DecodeMode10(readBuffer, dev.ScsiType);
-                            
+                            Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(readBuffer, dev.ScsiType);
+
                             if(dcMode10.HasValue)
-                            {
                                 foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
-                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00) currentModePage = modePage;
-                            }
+                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
+                                        currentModePage = modePage;
                         }
                     }
                     else
                     {
-                        Modes.DecodedMode? dcMode6 =
-                            Modes.DecodeMode6(readBuffer, dev.ScsiType);
+                        Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, dev.ScsiType);
 
                         if(dcMode6.HasValue)
-                        {
                             foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
                                 if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
                                     currentModePage = modePage;
-                        }
                     }
 
                     if(currentModePage == null)
                     {
                         if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                         {
-
                             pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 32, Parameter = 0x00};
                             currentModePage = new Modes.ModePage
                             {
@@ -522,21 +516,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 DCR            = false,
                                 ReadRetryCount = 32
                             };
-                            
-                            currentModePage = 
-                                    new Modes.ModePage
-                                    {
-                                        Page         = 0x01,
-                                        Subpage      = 0x00,
-                                        PageResponse = Modes.EncodeModePage_01(pg)
-                                    }                            ;
+
+                            currentModePage = new Modes.ModePage
+                            {
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01(pg)
+                            };
                         }
                     }
 
                     if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        pgMmc =
-                            new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
+                        pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
                         Modes.DecodedMode md = new Modes.DecodedMode
                         {
                             Header = new Modes.ModeHeader(),

@@ -245,8 +245,8 @@ namespace DiscImageChef.DiscImages
         /// <param name="track">Track.</param>
         /// <param name="failingLbas">List of incorrect sectors</param>
         /// <param name="unknownLbas">List of uncheckable sectors</param>
-        bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                            out                                               List<ulong> unknownLbas);
+        bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                            out List<ulong> unknownLbas);
 
         /// <summary>
         ///     Verifies media image internal checksum.

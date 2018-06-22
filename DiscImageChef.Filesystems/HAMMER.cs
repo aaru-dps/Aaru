@@ -47,15 +47,15 @@ namespace DiscImageChef.Filesystems
 {
     public class HAMMER : IFilesystem
     {
-        const ulong HAMMER_FSBUF_VOLUME = 0xC8414D4DC5523031;
+        const ulong HAMMER_FSBUF_VOLUME     = 0xC8414D4DC5523031;
         const ulong HAMMER_FSBUF_VOLUME_REV = 0x313052C54D4D41C8;
-        const uint HAMMER_VOLHDR_SIZE = 1928;
-        const int HAMMER_BIGBLOCK_SIZE = 8192 * 1024;
+        const uint  HAMMER_VOLHDR_SIZE      = 1928;
+        const int   HAMMER_BIGBLOCK_SIZE    = 8192 * 1024;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "HAMMER Filesystem";
-        public Guid Id => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "HAMMER Filesystem";
+        public Guid           Id        => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -73,9 +73,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
@@ -114,11 +114,11 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
-                ClusterSize = HAMMER_BIGBLOCK_SIZE,
-                Dirty = false,
-                Type = "HAMMER",
-                VolumeName = StringHandlers.CToString(hammerSb.vol_label, Encoding),
+                Clusters     = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
+                ClusterSize  = HAMMER_BIGBLOCK_SIZE,
+                Dirty        = false,
+                Type         = "HAMMER",
+                VolumeName   = StringHandlers.CToString(hammerSb.vol_label, Encoding),
                 VolumeSerial = hammerSb.vol_fsid.ToString()
             };
 
@@ -130,11 +130,11 @@ namespace DiscImageChef.Filesystems
                                 hammerSb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
                 sb.AppendFormat("Filesystem has {0} inode used", hammerSb.vol0_stat_inodes).AppendLine();
 
-                XmlFsType.Clusters = hammerSb.vol0_stat_bigblocks;
-                XmlFsType.FreeClusters = hammerSb.vol0_stat_freebigblocks;
+                XmlFsType.Clusters              = hammerSb.vol0_stat_bigblocks;
+                XmlFsType.FreeClusters          = hammerSb.vol0_stat_freebigblocks;
                 XmlFsType.FreeClustersSpecified = true;
-                XmlFsType.Files = hammerSb.vol0_stat_inodes;
-                XmlFsType.FilesSpecified = true;
+                XmlFsType.Files                 = hammerSb.vol0_stat_inodes;
+                XmlFsType.FilesSpecified        = true;
             }
             // 0 ?
             //sb.AppendFormat("Volume header CRC: 0x{0:X8}", afs_sb.vol_crc).AppendLine();
@@ -168,7 +168,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>identify filesystem type</summary>
             public Guid vol_fstype;
             /// <summary>filesystem label</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] vol_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] vol_label;
 
             /// <summary>volume number within filesystem</summary>
             public int vol_no;
@@ -184,7 +185,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>the root volume number (must be 0)</summary>
             public uint vol_rootvol;
 
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] vol_reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public uint[] vol_reserved;
 
             /*
              * These fields are initialized and space is reserved in every
@@ -211,10 +213,12 @@ namespace DiscImageChef.Filesystems
             ///     Blockmaps for zones.  Not all zones use a blockmap.  Note that the entire root blockmap is cached in the
             ///     hammer_mount structure.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public HammerBlockMap[] vol0_blockmap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public HammerBlockMap[] vol0_blockmap;
 
             /// <summary>Array of zone-2 addresses for undo FIFO.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public hammer_off_t[] vol0_undo_array;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public hammer_off_t[] vol0_undo_array;
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -229,7 +233,7 @@ namespace DiscImageChef.Filesystems
             public hammer_off_t next_offset;
             /// <summary>zone-X offset only used by zone-3</summary>
             public hammer_off_t alloc_offset;
-            public uint reserved01;
+            public uint         reserved01;
             public hammer_crc_t entry_crc;
         }
     }

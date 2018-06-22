@@ -68,7 +68,7 @@ namespace DiscImageChef
         }
 
         internal static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2,
-                                               long maximum2)
+                                               long   maximum2)
         {
             DicConsole.Write("\r" + text + ": " + text2);
         }

@@ -41,13 +41,13 @@ namespace DiscImageChef.Decoders.SecureDigital
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class CID
     {
-        public byte Manufacturer;
+        public byte   Manufacturer;
         public string ApplicationID;
         public string ProductName;
-        public byte ProductRevision;
-        public uint ProductSerialNumber;
+        public byte   ProductRevision;
+        public uint   ProductSerialNumber;
         public ushort ManufacturingDate;
-        public byte CRC;
+        public byte   CRC;
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -79,16 +79,16 @@ namespace DiscImageChef.Decoders.SecureDigital
 
             CID cid = new CID
             {
-                Manufacturer = response[0],
-                ProductRevision = response[8],
+                Manufacturer        = response[0],
+                ProductRevision     = response[8],
                 ProductSerialNumber = BitConverter.ToUInt32(response, 9),
-                ManufacturingDate = (ushort)(((response[13] & 0x0F) << 4) + response[14]),
-                CRC = (byte)((response[15] & 0xFE) >> 1)
+                ManufacturingDate   = (ushort)(((response[13] & 0x0F) << 4) + response[14]),
+                CRC                 = (byte)((response[15] & 0xFE) >> 1)
             };
             byte[] tmp = new byte[2];
             Array.Copy(response, 1, tmp, 0, 2);
             cid.ApplicationID = StringHandlers.CToString(tmp);
-            tmp = new byte[5];
+            tmp               = new byte[5];
             Array.Copy(response, 3, tmp, 0, 5);
             cid.ProductName = StringHandlers.CToString(tmp);
 
@@ -109,7 +109,8 @@ namespace DiscImageChef.Decoders.SecureDigital
                             cid.ProductRevision & 0x0F).AppendLine();
             sb.AppendFormat("\tProduct serial number: {0}", cid.ProductSerialNumber).AppendLine();
             sb.AppendFormat("\tDevice manufactured month {0} of {1}", (cid.ManufacturingDate & 0xF00) >> 8,
-                            (cid.ManufacturingDate & 0xFF) + 2000).AppendLine();
+                            (cid.ManufacturingDate                                           & 0xFF) + 2000)
+           .AppendLine();
             sb.AppendFormat("\tCID CRC: 0x{0:X2}", cid.CRC).AppendLine();
 
             return sb.ToString();

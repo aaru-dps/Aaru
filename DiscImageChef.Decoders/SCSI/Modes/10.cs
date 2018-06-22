@@ -92,9 +92,9 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.MaxXorWrite = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
                                          pageResponse[7]);
             decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) +
-                                          (pageResponse[14] << 8) + pageResponse[15]);
+                                          (pageResponse[14] << 8)  + pageResponse[15]);
             decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) +
-                                            (pageResponse[18] << 8) + pageResponse[19]);
+                                            (pageResponse[18] << 8)  + pageResponse[19]);
             decoded.RebuildDelay = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
             return decoded;
@@ -109,8 +109,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_10 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_10   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI XOR control mode page:");
 

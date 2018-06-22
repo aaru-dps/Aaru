@@ -60,22 +60,24 @@ namespace DiscImageChef.Core.Devices.Report
 
                         if(manfid != null)
                         {
-                            report.PCMCIA.ManufacturerCode = manfid.ManufacturerID;
-                            report.PCMCIA.CardCode = manfid.CardID;
+                            report.PCMCIA.ManufacturerCode          = manfid.ManufacturerID;
+                            report.PCMCIA.CardCode                  = manfid.CardID;
                             report.PCMCIA.ManufacturerCodeSpecified = true;
-                            report.PCMCIA.CardCodeSpecified = true;
+                            report.PCMCIA.CardCodeSpecified         = true;
                         }
+
                         break;
                     case TupleCodes.CISTPL_VERS_1:
                         Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
 
                         if(vers != null)
                         {
-                            report.PCMCIA.Manufacturer = vers.Manufacturer;
-                            report.PCMCIA.ProductName = vers.Product;
-                            report.PCMCIA.Compliance = $"{vers.MajorVersion}.{vers.MinorVersion}";
+                            report.PCMCIA.Manufacturer          = vers.Manufacturer;
+                            report.PCMCIA.ProductName           = vers.Product;
+                            report.PCMCIA.Compliance            = $"{vers.MajorVersion}.{vers.MinorVersion}";
                             report.PCMCIA.AdditionalInformation = vers.AdditionalInformation;
                         }
+
                         break;
                 }
         }

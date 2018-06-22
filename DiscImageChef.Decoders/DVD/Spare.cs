@@ -97,8 +97,8 @@ namespace DiscImageChef.Decoders.DVD
             return new SpareAreaInformation
             {
                 DataLength = (ushort)((response[0] << 8) + response[1]),
-                Reserved1 = response[2],
-                Reserved2 = response[3],
+                Reserved1  = response[2],
+                Reserved2  = response[3],
                 UnusedPrimaryBlocks =
                     (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]),
                 UnusedSupplementaryBlocks =
@@ -113,7 +113,7 @@ namespace DiscImageChef.Decoders.DVD
             if(sai == null) return null;
 
             SpareAreaInformation decoded = sai.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder        sb      = new StringBuilder();
 
             sb.AppendFormat("{0} unused primary spare blocks", decoded.UnusedPrimaryBlocks).AppendLine();
             sb.AppendFormat("{0} unused supplementary spare blocks", decoded.UnusedSupplementaryBlocks).AppendLine();

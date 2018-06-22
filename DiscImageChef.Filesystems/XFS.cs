@@ -45,9 +45,9 @@ namespace DiscImageChef.Filesystems
         const uint XFS_MAGIC = 0x58465342;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "XFS Filesystem Plugin";
-        public Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "XFS Filesystem Plugin";
+        public Guid           Id        => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -81,8 +81,8 @@ namespace DiscImageChef.Filesystems
             else
                 foreach(int i in new[] {0, 1, 2})
                 {
-                    ulong location = (ulong)i;
-                    XFS_Superblock xfsSb = new XFS_Superblock();
+                    ulong          location = (ulong)i;
+                    XFS_Superblock xfsSb    = new XFS_Superblock();
 
                     uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.Info.SectorSize);
                     if(Marshal.SizeOf(xfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
@@ -102,9 +102,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -137,7 +137,7 @@ namespace DiscImageChef.Filesystems
                 foreach(int i in new[] {0, 1, 2})
                 {
                     ulong location = (ulong)i;
-                    uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.Info.SectorSize);
+                    uint  sbSize   = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.Info.SectorSize);
                     if(Marshal.SizeOf(xfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
@@ -172,78 +172,79 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "XFS filesystem",
-                ClusterSize = (int)xfsSb.blocksize,
-                Clusters = (long)xfsSb.dblocks,
-                FreeClusters = (long)xfsSb.fdblocks,
+                Type                  = "XFS filesystem",
+                ClusterSize           = (int)xfsSb.blocksize,
+                Clusters              = (long)xfsSb.dblocks,
+                FreeClusters          = (long)xfsSb.fdblocks,
                 FreeClustersSpecified = true,
-                Files = (long)(xfsSb.icount - xfsSb.ifree),
-                FilesSpecified = true,
-                Dirty = xfsSb.inprogress > 0,
-                VolumeName = StringHandlers.CToString(xfsSb.fname, Encoding),
-                VolumeSerial = xfsSb.uuid.ToString()
+                Files                 = (long)(xfsSb.icount - xfsSb.ifree),
+                FilesSpecified        = true,
+                Dirty                 = xfsSb.inprogress > 0,
+                VolumeName            = StringHandlers.CToString(xfsSb.fname, Encoding),
+                VolumeSerial          = xfsSb.uuid.ToString()
             };
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XFS_Superblock
         {
-            public uint magicnum;
-            public uint blocksize;
-            public ulong dblocks;
-            public ulong rblocks;
-            public ulong rextents;
-            public Guid uuid;
-            public ulong logstat;
-            public ulong rootino;
-            public ulong rbmino;
-            public ulong rsumino;
-            public uint rextsize;
-            public uint agblocks;
-            public uint agcount;
-            public uint rbmblocks;
-            public uint logblocks;
+            public uint   magicnum;
+            public uint   blocksize;
+            public ulong  dblocks;
+            public ulong  rblocks;
+            public ulong  rextents;
+            public Guid   uuid;
+            public ulong  logstat;
+            public ulong  rootino;
+            public ulong  rbmino;
+            public ulong  rsumino;
+            public uint   rextsize;
+            public uint   agblocks;
+            public uint   agcount;
+            public uint   rbmblocks;
+            public uint   logblocks;
             public ushort version;
             public ushort sectsize;
             public ushort inodesize;
             public ushort inopblock;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] fname;
-            public byte blocklog;
-            public byte sectlog;
-            public byte inodelog;
-            public byte inopblog;
-            public byte agblklog;
-            public byte rextslog;
-            public byte inprogress;
-            public byte imax_pct;
-            public ulong icount;
-            public ulong ifree;
-            public ulong fdblocks;
-            public ulong frextents;
-            public ulong uquotino;
-            public ulong gquotino;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] fname;
+            public byte   blocklog;
+            public byte   sectlog;
+            public byte   inodelog;
+            public byte   inopblog;
+            public byte   agblklog;
+            public byte   rextslog;
+            public byte   inprogress;
+            public byte   imax_pct;
+            public ulong  icount;
+            public ulong  ifree;
+            public ulong  fdblocks;
+            public ulong  frextents;
+            public ulong  uquotino;
+            public ulong  gquotino;
             public ushort qflags;
-            public byte flags;
-            public byte shared_vn;
-            public ulong inoalignmt;
-            public ulong unit;
-            public ulong width;
-            public byte dirblklog;
-            public byte logsectlog;
+            public byte   flags;
+            public byte   shared_vn;
+            public ulong  inoalignmt;
+            public ulong  unit;
+            public ulong  width;
+            public byte   dirblklog;
+            public byte   logsectlog;
             public ushort logsectsize;
-            public uint logsunit;
-            public uint features2;
-            public uint bad_features2;
-            public uint features_compat;
-            public uint features_ro_compat;
-            public uint features_incompat;
-            public uint features_log_incompat;
+            public uint   logsunit;
+            public uint   features2;
+            public uint   bad_features2;
+            public uint   features_compat;
+            public uint   features_ro_compat;
+            public uint   features_incompat;
+            public uint   features_log_incompat;
             // This field is little-endian while rest of superblock is big-endian
-            public uint crc;
-            public uint spino_align;
+            public uint  crc;
+            public uint  spino_align;
             public ulong pquotino;
             public ulong lsn;
-            public Guid meta_uuid;
+            public Guid  meta_uuid;
         }
     }
 }

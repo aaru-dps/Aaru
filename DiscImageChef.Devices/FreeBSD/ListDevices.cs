@@ -49,14 +49,14 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <returns>List of devices</returns>
         internal static DeviceInfo[] GetList()
         {
-            string[] passDevices = Directory.GetFiles("/dev/", "pass*", SearchOption.TopDirectoryOnly);
+            string[]         passDevices = Directory.GetFiles("/dev/", "pass*", SearchOption.TopDirectoryOnly);
             List<DeviceInfo> listDevices = new List<DeviceInfo>();
 
             foreach(string passDevice in passDevices)
             {
                 DeviceInfo deviceInfo = new DeviceInfo();
-                IntPtr dev = cam_open_device(passDevice, FileFlags.ReadWrite);
-                CamDevice camDevice = (CamDevice)Marshal.PtrToStructure(dev, typeof(CamDevice));
+                IntPtr     dev        = cam_open_device(passDevice, FileFlags.ReadWrite);
+                CamDevice  camDevice  = (CamDevice)Marshal.PtrToStructure(dev, typeof(CamDevice));
 
                 IntPtr ccbPtr = cam_getccb(dev);
 
@@ -99,7 +99,7 @@ namespace DiscImageChef.Devices.FreeBSD
                         for(int aIndex = 0; aIndex < 512; aIndex += 2)
                         {
                             atadTneid[aIndex] = cgd.ident_data[aIndex + 1];
-                            atadTneid[aIndex + 1] = cgd.ident_data[aIndex];
+                            atadTneid[aIndex                          + 1] = cgd.ident_data[aIndex];
                         }
 
                         Identify.IdentifyDevice? idt = Identify.Decode(atadTneid);
@@ -110,18 +110,19 @@ namespace DiscImageChef.Devices.FreeBSD
                             if(separated.Length == 1)
                             {
                                 deviceInfo.Vendor = "ATA";
-                                deviceInfo.Model = separated[0];
+                                deviceInfo.Model  = separated[0];
                             }
                             else
                             {
                                 deviceInfo.Vendor = separated[0];
-                                deviceInfo.Model = separated[separated.Length - 1];
+                                deviceInfo.Model  = separated[separated.Length - 1];
                             }
 
-                            deviceInfo.Serial = idt.Value.SerialNumber;
-                            deviceInfo.Bus = simName == "ahcich" ? "SATA" : "ATA";
+                            deviceInfo.Serial    = idt.Value.SerialNumber;
+                            deviceInfo.Bus       = simName == "ahcich" ? "SATA" : "ATA";
                             deviceInfo.Supported = simName != "ata";
                         }
+
                         if(cgd.protocol == CamProto.ProtoAtapi) goto case CamProto.ProtoScsi;
                         break;
                     }
@@ -130,20 +131,21 @@ namespace DiscImageChef.Devices.FreeBSD
                         Inquiry.SCSIInquiry? inq = Inquiry.Decode(cgd.inq_data);
                         if(inq.HasValue)
                         {
-                            deviceInfo.Vendor = StringHandlers.CToString(inq.Value.VendorIdentification).Trim();
-                            deviceInfo.Model = StringHandlers.CToString(inq.Value.ProductIdentification).Trim();
-                            deviceInfo.Bus = simName == "ata" || simName == "ahcich" ? "ATAPI" : "SCSI";
+                            deviceInfo.Vendor    = StringHandlers.CToString(inq.Value.VendorIdentification).Trim();
+                            deviceInfo.Model     = StringHandlers.CToString(inq.Value.ProductIdentification).Trim();
+                            deviceInfo.Bus       = simName == "ata" || simName == "ahcich" ? "ATAPI" : "SCSI";
                             deviceInfo.Supported = simName != "ata";
                         }
+
                         break;
                     }
                     case CamProto.ProtoNvme:
-                        deviceInfo.Bus = "NVMe";
+                        deviceInfo.Bus       = "NVMe";
                         deviceInfo.Supported = false;
                         break;
                     case CamProto.ProtoMmcsd:
-                        deviceInfo.Model = "Unknown card";
-                        deviceInfo.Bus = "MMC/SD";
+                        deviceInfo.Model     = "Unknown card";
+                        deviceInfo.Bus       = "MMC/SD";
                         deviceInfo.Supported = false;
                         break;
                 }

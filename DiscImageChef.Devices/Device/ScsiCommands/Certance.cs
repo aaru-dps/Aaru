@@ -70,7 +70,7 @@ namespace DiscImageChef.Devices
         public bool CertanceParkUnpark(out byte[] senseBuffer, bool park, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            byte[] cdb = new byte[6];
+            byte[] cdb    = new byte[6];
             senseBuffer = new byte[32];
 
             cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;

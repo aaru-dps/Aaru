@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             RefsVolumeHeader refsVhdr = new RefsVolumeHeader();
 
             uint sbSize = (uint)(Marshal.SizeOf(refsVhdr) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(refsVhdr)                   % imagePlugin.Info.SectorSize != 0) sbSize++;
+            if(Marshal.SizeOf(refsVhdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbSize >= partition.End) return false;
 
@@ -74,12 +74,12 @@ namespace DiscImageChef.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding    encoding)
         {
-            Encoding                  = Encoding.UTF8;
-            information               = "";
+            Encoding    = Encoding.UTF8;
+            information = "";
             RefsVolumeHeader refsVhdr = new RefsVolumeHeader();
 
             uint sbSize = (uint)(Marshal.SizeOf(refsVhdr) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(refsVhdr)                   % imagePlugin.Info.SectorSize != 0) sbSize++;
+            if(Marshal.SizeOf(refsVhdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbSize >= partition.End) return;
 

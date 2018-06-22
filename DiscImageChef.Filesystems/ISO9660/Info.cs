@@ -80,8 +80,8 @@ namespace DiscImageChef.Filesystems.ISO9660
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding    encoding)
         {
-            Encoding                  = encoding ?? Encoding.ASCII;
-            information               = "";
+            Encoding    = encoding ?? Encoding.ASCII;
+            information = "";
             StringBuilder isoMetadata = new StringBuilder();
             byte[]        vdMagic     = new byte[5]; // Volume Descriptor magic "CD001"
             byte[]        hsMagic     = new byte[5]; // Volume Descriptor magic "CDROM"
@@ -116,8 +116,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
-                byte[] vdSectorTmp = imagePlugin.ReadSector(16                       + counter + partition.Start);
-                vdSector           = new byte[vdSectorTmp.Length                     - xaOff];
+                byte[] vdSectorTmp = imagePlugin.ReadSector(16 + counter + partition.Start);
+                vdSector = new byte[vdSectorTmp.Length - xaOff];
                 Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
                 byte vdType = vdSector[0 + hsOff]; // Volume Descriptor Type, should be 1 or 2.
@@ -199,7 +199,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         Marshal.FreeHGlobal(ptr);
 
                         // Check if this is Joliet
-                        if(svd.escape_sequences[0]     == '%' && svd.escape_sequences[1] == '/')
+                        if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
                             if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
                                svd.escape_sequences[2] == 'E')
                                 jolietvd = svd;
@@ -225,10 +225,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
 
             if(highSierra) decodedVd = DecodeVolumeDescriptor(hsvd.Value);
-            else if(cdi)
-                decodedVd = DecodeVolumeDescriptor(fsvd.Value);
-            else
-                decodedVd = DecodeVolumeDescriptor(pvd.Value);
+            else if(cdi) decodedVd   = DecodeVolumeDescriptor(fsvd.Value);
+            else decodedVd           = DecodeVolumeDescriptor(pvd.Value);
 
             if(jolietvd != null) decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
@@ -282,7 +280,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 Marshal.FreeHGlobal(ptr);
 
                 int saOff = Marshal.SizeOf(record) + record.name_len;
-                saOff     += saOff % 2;
+                saOff += saOff % 2;
                 int saLen = record.length - saOff;
 
                 if(saLen > 0 && rootOff + saOff + saLen <= rootDir.Length)
@@ -320,9 +318,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 break;
                             // Not easy, contains size field
                             case APPLE_MAGIC_OLD:
-                                apple              = true;
+                                apple = true;
                                 AppleOldId appleId = (AppleOldId)sa[saOff + 2];
-                                noneFound          = false;
+                                noneFound = false;
 
                                 switch(appleId)
                                 {
@@ -366,7 +364,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                .ByteArrayToStructureBigEndian<ContinuationArea>(ce);
                                             contareas.Add(ca);
                                             break;
-                                        case SUSP_REFERENCE when saOff    + sa[saOff + 2] <= saLen:
+                                        case SUSP_REFERENCE when saOff + sa[saOff + 2] <= saLen:
                                             byte[] er = new byte[sa[saOff + 2]];
                                             Array.Copy(sa, saOff, er, 0, er.Length);
                                             refareas.Add(er);
@@ -385,9 +383,9 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                                     ziso  |= nextSignature == ZISO_MAGIC;
                                     amiga |= nextSignature == AMIGA_MAGIC;
-                                    aaip  |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD &&
-                                             sa[saOff + 3] == 1                                             &&
-                                             sa[saOff + 2] >= 9;
+                                    aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD &&
+                                            sa[saOff + 3]                                == 1              &&
+                                            sa[saOff + 2]                                >= 9;
 
                                     saOff += sa[saOff + 2];
 
@@ -429,7 +427,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                             if(caData[caOff + 3] == 1 && caData[caOff + 2] == 7) apple =  true;
                             else apple                                                 |= caData[caOff + 3] != 1;
                             break;
-                        case SUSP_REFERENCE when caOff        + caData[caOff + 2] <= ca.ca_length_be:
+                        case SUSP_REFERENCE when caOff + caData[caOff + 2] <= ca.ca_length_be:
                             byte[] er = new byte[caData[caOff + 2]];
                             Array.Copy(caData, caOff, er, 0, er.Length);
                             refareas.Add(er);
@@ -444,8 +442,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     ziso  |= nextSignature == ZISO_MAGIC;
                     amiga |= nextSignature == AMIGA_MAGIC;
-                    aaip  |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 &&
-                             caData[caOff                                                                   + 2] >= 9;
+                    aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 &&
+                            caData[caOff                                                                   + 2] >= 9;
 
                     caOff += caData[caOff + 2];
                 }
@@ -460,17 +458,17 @@ namespace DiscImageChef.Filesystems.ISO9660
                 counter = 1;
                 foreach(byte[] erb in refareas)
                 {
-                    ReferenceArea er    = BigEndianMarshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
-                    string        extId =
+                    ReferenceArea er = BigEndianMarshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
+                    string extId =
                         Encoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
                     string extDes =
                         Encoding.GetString(erb, Marshal.SizeOf(er) + er.id_len, er.des_len);
                     string extSrc =
                         Encoding.GetString(erb, Marshal.SizeOf(er) + er.id_len + er.des_len, er.src_len);
-                    suspInformation.AppendFormat("Extension: {0}",         counter).AppendLine();
+                    suspInformation.AppendFormat("Extension: {0}", counter).AppendLine();
                     suspInformation.AppendFormat("\tID: {0}, version {1}", extId, er.ext_ver).AppendLine();
-                    suspInformation.AppendFormat("\tDescription: {0}",     extDes).AppendLine();
-                    suspInformation.AppendFormat("\tSource: {0}",          extSrc).AppendLine();
+                    suspInformation.AppendFormat("\tDescription: {0}", extDes).AppendLine();
+                    suspInformation.AppendFormat("\tSource: {0}", extSrc).AppendLine();
                     counter++;
                 }
             }
@@ -482,10 +480,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             string fsFormat;
             if(highSierra) fsFormat = "High Sierra Format";
-            else if(cdi)
-                fsFormat = "CD-i";
-            else
-                fsFormat = "ISO9660";
+            else if(cdi) fsFormat   = "CD-i";
+            else fsFormat           = "ISO9660";
 
             isoMetadata.AppendFormat("{0} file system", fsFormat).AppendLine();
             if(xaExtensions) isoMetadata.AppendLine("CD-ROM XA extensions present.");
@@ -519,14 +515,13 @@ namespace DiscImageChef.Filesystems.ISO9660
             isoMetadata.AppendFormat("{0}------------------------------", cdi ? "---------------" : "").AppendLine();
             isoMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", cdi ? "FILE STRUCTURE " : "").AppendLine();
             isoMetadata.AppendFormat("{0}------------------------------", cdi ? "---------------" : "").AppendLine();
-            isoMetadata.AppendFormat("System identifier: {0}",            decodedVd.SystemIdentifier).AppendLine();
-            isoMetadata.AppendFormat("Volume identifier: {0}",            decodedVd.VolumeIdentifier).AppendLine();
-            isoMetadata.AppendFormat("Volume set identifier: {0}",        decodedVd.VolumeSetIdentifier).AppendLine();
-            isoMetadata.AppendFormat("Publisher identifier: {0}",         decodedVd.PublisherIdentifier).AppendLine();
-            isoMetadata.AppendFormat("Data preparer identifier: {0}",     decodedVd.DataPreparerIdentifier)
-                       .AppendLine();
+            isoMetadata.AppendFormat("System identifier: {0}", decodedVd.SystemIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Volume identifier: {0}", decodedVd.VolumeIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Volume set identifier: {0}", decodedVd.VolumeSetIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Publisher identifier: {0}", decodedVd.PublisherIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Data preparer identifier: {0}", decodedVd.DataPreparerIdentifier).AppendLine();
             isoMetadata.AppendFormat("Application identifier: {0}", decodedVd.ApplicationIdentifier).AppendLine();
-            isoMetadata.AppendFormat("Volume creation date: {0}",   decodedVd.CreationTime).AppendLine();
+            isoMetadata.AppendFormat("Volume creation date: {0}", decodedVd.CreationTime).AppendLine();
             if(decodedVd.HasModificationTime)
                 isoMetadata.AppendFormat("Volume modification date: {0}", decodedVd.ModificationTime).AppendLine();
             else isoMetadata.AppendFormat("Volume has not been modified.").AppendLine();
@@ -544,12 +539,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                 isoMetadata.AppendLine("-------------------------------------");
                 isoMetadata.AppendLine("JOLIET VOLUME DESCRIPTOR INFORMATION:");
                 isoMetadata.AppendLine("-------------------------------------");
-                isoMetadata.AppendFormat("System identifier: {0}",     decodedJolietVd.SystemIdentifier).AppendLine();
-                isoMetadata.AppendFormat("Volume identifier: {0}",     decodedJolietVd.VolumeIdentifier).AppendLine();
+                isoMetadata.AppendFormat("System identifier: {0}", decodedJolietVd.SystemIdentifier).AppendLine();
+                isoMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVd.VolumeIdentifier).AppendLine();
                 isoMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVd.VolumeSetIdentifier)
                            .AppendLine();
-                isoMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVd.PublisherIdentifier)
-                           .AppendLine();
+                isoMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVd.PublisherIdentifier).AppendLine();
                 isoMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVd.DataPreparerIdentifier)
                            .AppendLine();
                 isoMetadata.AppendFormat("Application identifier: {0}", decodedJolietVd.ApplicationIdentifier)
@@ -599,8 +593,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                           initialEntry.sector_count);
 
                 byte[] bootImage =
-                    initialEntry.load_rba + partition.Start + initialEntry.sector_count -
-                    1 <= partition.End
+                    initialEntry.load_rba + partition.Start + initialEntry.sector_count - 1 <= partition.End
                         ? imagePlugin.ReadSectors(initialEntry.load_rba + partition.Start, initialEntry.sector_count)
                         : null;
 
@@ -653,9 +646,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 const int SECTION_COUNTER = 2;
 
-                while(toritoOff            < vdSector.Length &&
-                      (vdSector[toritoOff] == (byte)ElToritoIndicator.Header ||
-                       vdSector[toritoOff] == (byte)ElToritoIndicator.LastHeader))
+                while(toritoOff < vdSector.Length && (vdSector[toritoOff] == (byte)ElToritoIndicator.Header ||
+                                                      vdSector[toritoOff] == (byte)ElToritoIndicator.LastHeader))
                 {
                     ptr = Marshal.AllocHGlobal(EL_TORITO_ENTRY_SIZE);
                     Marshal.Copy(vdSector, toritoOff, ptr, EL_TORITO_ENTRY_SIZE);
@@ -682,8 +674,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         if(sectionEntry.bootable == ElToritoIndicator.Bootable)
                         {
                             bootImage =
-                                sectionEntry.load_rba                               + partition.Start +
-                                sectionEntry.sector_count                           - 1 <= partition.End
+                                sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <= partition.End
                                     ? imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start,
                                                               sectionEntry.sector_count)
                                     : null;

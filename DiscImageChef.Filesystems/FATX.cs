@@ -44,9 +44,9 @@ namespace DiscImageChef.Filesystems
         const uint FATX_MAGIC = 0x58544146;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "FATX Filesystem Plugin";
-        public Guid Id => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "FATX Filesystem Plugin";
+        public Guid           Id        => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -60,9 +60,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = Encoding.UTF8;
+            Encoding    = Encoding.UTF8;
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -84,7 +84,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "FATX filesystem",
+                Type        = "FATX filesystem",
                 ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.Info.SectorSize)
             };
             XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /

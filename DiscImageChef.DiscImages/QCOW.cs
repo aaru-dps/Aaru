@@ -49,7 +49,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         ///     Magic number: 'Q', 'F', 'I', 0xFB
         /// </summary>
-        const uint  QCOW_MAGIC           = 0x514649FB;
+        const uint QCOW_MAGIC = 0x514649FB;
         const uint  QCOW_VERSION         = 1;
         const uint  QCOW_ENCRYPTION_NONE = 0;
         const uint  QCOW_ENCRYPTION_AES  = 1;
@@ -187,8 +187,8 @@ namespace DiscImageChef.DiscImages
 
             clusterSize    = 1 << qHdr.cluster_bits;
             clusterSectors = 1 << (qHdr.cluster_bits - 9);
-            l1Size         = (uint)((qHdr.size       + (ulong)(1 << shift) - 1) >> shift);
-            l2Size         = 1                                   << qHdr.l2_bits;
+            l1Size         = (uint)((qHdr.size + (ulong)(1 << shift) - 1) >> shift);
+            l2Size         = 1 << qHdr.l2_bits;
 
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSize = {0}",    clusterSize);
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSectors = {0}", clusterSectors);
@@ -206,8 +206,8 @@ namespace DiscImageChef.DiscImages
             for(long i = 0; i < l1Table.LongLength; i++)
                 l1Table[i] = BigEndianBitConverter.ToUInt64(l1TableB, (int)(i * 8));
 
-            l1Mask  = 0;
-            int c   = 0;
+            l1Mask = 0;
+            int c = 0;
             l1Shift = qHdr.l2_bits + qHdr.cluster_bits;
 
             for(int i = 0; i < 64; i++)
@@ -220,12 +220,12 @@ namespace DiscImageChef.DiscImages
                 c++;
             }
 
-            l2Mask                                       = 0;
+            l2Mask = 0;
             for(int i = 0; i < qHdr.l2_bits; i++) l2Mask = (l2Mask << 1) + 1;
 
             l2Mask <<= qHdr.cluster_bits;
 
-            sectorMask                                            = 0;
+            sectorMask = 0;
             for(int i = 0; i < qHdr.cluster_bits; i++) sectorMask = (sectorMask << 1) + 1;
 
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Mask = {0:X}",     l1Mask);
@@ -242,7 +242,7 @@ namespace DiscImageChef.DiscImages
             l2TableCache = new Dictionary<ulong, ulong[]>();
             clusterCache = new Dictionary<ulong, byte[]>();
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            imageInfo.CreationTime = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = qHdr.mtime > 0
                                                  ? DateHandlers.UnixUnsignedToDateTime(qHdr.mtime)
                                                  : imageFilter.GetLastWriteTime();
@@ -284,7 +284,7 @@ namespace DiscImageChef.DiscImages
             {
                 l2Table = new ulong[l2Size];
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
-                byte[] l2TableB = new byte[l2Size    * 8];
+                byte[] l2TableB = new byte[l2Size * 8];
                 imageStream.Read(l2TableB, 0, l2Size * 8);
                 DicConsole.DebugWriteLine("QCOW plugin", "Reading L2 table #{0}", l1Off);
                 for(long i = 0; i < l2Table.LongLength; i++)
@@ -308,10 +308,10 @@ namespace DiscImageChef.DiscImages
                     if((offset & QCOW_COMPRESSED) == QCOW_COMPRESSED)
                     {
                         ulong compSizeMask = (ulong)(1 << qHdr.cluster_bits) - 1;
-                        compSizeMask       <<= 63                            - qHdr.cluster_bits;
-                        ulong offMask      = ~compSizeMask ^ QCOW_COMPRESSED;
+                        compSizeMask <<= 63 - qHdr.cluster_bits;
+                        ulong offMask = ~compSizeMask ^ QCOW_COMPRESSED;
 
-                        ulong realOff  = offset  & offMask;
+                        ulong realOff  = offset & offMask;
                         ulong compSize = (offset & compSizeMask) >> (63 - qHdr.cluster_bits);
 
                         byte[] zCluster = new byte[compSize];
@@ -320,7 +320,7 @@ namespace DiscImageChef.DiscImages
 
                         DeflateStream zStream =
                             new DeflateStream(new MemoryStream(zCluster), CompressionMode.Decompress);
-                        cluster  = new byte[clusterSize];
+                        cluster = new byte[clusterSize];
                         int read = zStream.Read(cluster, 0, clusterSize);
 
                         if(read != clusterSize)
@@ -444,8 +444,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -454,8 +454,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -470,7 +470,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
@@ -524,16 +524,16 @@ namespace DiscImageChef.DiscImages
                 l1_table_offset = (ulong)Marshal.SizeOf(typeof(QCowHeader))
             };
 
-            int shift      = qHdr.cluster_bits + qHdr.l2_bits;
+            int shift = qHdr.cluster_bits + qHdr.l2_bits;
             clusterSize    = 1 << qHdr.cluster_bits;
             clusterSectors = 1 << (qHdr.cluster_bits - 9);
-            l1Size         = (uint)((qHdr.size       + (ulong)(1 << shift) - 1) >> shift);
-            l2Size         = 1                                   << qHdr.l2_bits;
+            l1Size         = (uint)((qHdr.size + (ulong)(1 << shift) - 1) >> shift);
+            l2Size         = 1 << qHdr.l2_bits;
 
             l1Table = new ulong[l1Size];
 
-            l1Mask  = 0;
-            int c   = 0;
+            l1Mask = 0;
+            int c = 0;
             l1Shift = qHdr.l2_bits + qHdr.cluster_bits;
 
             for(int i = 0; i < 64; i++)
@@ -546,12 +546,12 @@ namespace DiscImageChef.DiscImages
                 c++;
             }
 
-            l2Mask                                       = 0;
+            l2Mask = 0;
             for(int i = 0; i < qHdr.l2_bits; i++) l2Mask = (l2Mask << 1) + 1;
 
             l2Mask <<= qHdr.cluster_bits;
 
-            sectorMask                                            = 0;
+            sectorMask = 0;
             for(int i = 0; i < qHdr.cluster_bits; i++) sectorMask = (sectorMask << 1) + 1;
 
             byte[] empty = new byte[qHdr.l1_table_offset + l1Size * 8];
@@ -602,7 +602,7 @@ namespace DiscImageChef.DiscImages
             if(l1Table[l1Off] == 0)
             {
                 writingStream.Seek(0, SeekOrigin.End);
-                l1Table[l1Off]  = (ulong)writingStream.Position;
+                l1Table[l1Off] = (ulong)writingStream.Position;
                 byte[] l2TableB = new byte[l2Size * 8];
                 writingStream.Seek(0, SeekOrigin.End);
                 writingStream.Write(l2TableB, 0, l2TableB.Length);
@@ -622,9 +622,9 @@ namespace DiscImageChef.DiscImages
 
             if(offset == 0)
             {
-                offset         = (ulong)writingStream.Length;
+                offset = (ulong)writingStream.Length;
                 byte[] cluster = new byte[clusterSize];
-                entry          = BigEndianBitConverter.GetBytes(offset);
+                entry = BigEndianBitConverter.GetBytes(offset);
                 writingStream.Seek((long)(l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
                 writingStream.Write(entry, 0, 8);
                 writingStream.Seek(0, SeekOrigin.End);

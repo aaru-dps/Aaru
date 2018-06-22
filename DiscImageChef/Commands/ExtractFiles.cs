@@ -54,15 +54,15 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}",  options.Xattrs);
             DicConsole.DebugWriteLine("Extract-Files command", "--output={0}",  options.OutputDir);
 
-            FiltersList                filtersList = new FiltersList();
-            IFilter                    inputFilter = filtersList.GetFilter(options.InputFile);
+            FiltersList filtersList = new FiltersList();
+            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
 
             Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
             DicConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
-            foreach(KeyValuePair<string,string> parsedOption in parsedOptions)
+            foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
                 DicConsole.DebugWriteLine("Extract-Files command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
             parsedOptions.Add("debug", options.Debug.ToString());
-            
+
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
@@ -172,7 +172,7 @@ namespace DiscImageChef.Commands
                                     error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                                     if(error == Errno.NoError)
                                     {
-                                        error                = fs.ReadDir("/", out List<string> rootDir);
+                                        error = fs.ReadDir("/", out List<string> rootDir);
                                         if(error == Errno.NoError)
                                             foreach(string entry in rootDir)
                                             {
@@ -193,8 +193,7 @@ namespace DiscImageChef.Commands
                                                             foreach(string xattr in xattrs)
                                                             {
                                                                 byte[] xattrBuf = new byte[0];
-                                                                error           =
-                                                                    fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                                error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                                 if(error != Errno.NoError) continue;
 
                                                                 Directory
@@ -323,7 +322,7 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                error                = fs.ReadDir("/", out List<string> rootDir);
+                                error = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                     {
@@ -344,7 +343,7 @@ namespace DiscImageChef.Commands
                                                     foreach(string xattr in xattrs)
                                                     {
                                                         byte[] xattrBuf = new byte[0];
-                                                        error           = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                        error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                         if(error != Errno.NoError) continue;
 
                                                         Directory.CreateDirectory(Path.Combine(options.OutputDir,
@@ -479,7 +478,7 @@ namespace DiscImageChef.Commands
                             error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                             if(error == Errno.NoError)
                             {
-                                error                = fs.ReadDir("/", out List<string> rootDir);
+                                error = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
                                     {
@@ -500,7 +499,7 @@ namespace DiscImageChef.Commands
                                                     foreach(string xattr in xattrs)
                                                     {
                                                         byte[] xattrBuf = new byte[0];
-                                                        error           = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                        error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                         if(error != Errno.NoError) continue;
 
                                                         Directory.CreateDirectory(Path.Combine(options.OutputDir,
@@ -619,7 +618,7 @@ namespace DiscImageChef.Commands
                     error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
                     if(error == Errno.NoError)
                     {
-                        error                = fs.ReadDir("/", out List<string> rootDir);
+                        error = fs.ReadDir("/", out List<string> rootDir);
                         if(error == Errno.NoError)
                             foreach(string entry in rootDir)
                             {
@@ -639,7 +638,7 @@ namespace DiscImageChef.Commands
                                             foreach(string xattr in xattrs)
                                             {
                                                 byte[] xattrBuf = new byte[0];
-                                                error           = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                 if(error != Errno.NoError) continue;
 
                                                 Directory.CreateDirectory(Path.Combine(options.OutputDir,

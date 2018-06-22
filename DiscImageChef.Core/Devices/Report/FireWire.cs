@@ -65,9 +65,9 @@ namespace DiscImageChef.Core.Devices.Report
             report.FireWire = new firewireType
             {
                 Manufacturer = dev.FireWireVendorName,
-                Product = dev.FireWireModelName,
-                ProductID = dev.FireWireModel,
-                VendorID = dev.FireWireVendor
+                Product      = dev.FireWireModelName,
+                ProductID    = dev.FireWireModel,
+                VendorID     = dev.FireWireVendor
             };
 
             pressedKey = new ConsoleKeyInfo();
@@ -79,7 +79,7 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-            removable = report.FireWire.RemovableMedia;
+            removable                      = report.FireWire.RemovableMedia;
         }
     }
 }

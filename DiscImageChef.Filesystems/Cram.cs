@@ -48,9 +48,9 @@ namespace DiscImageChef.Filesystems
         const uint CRAM_CIGAM = 0x453DCD28;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Cram filesystem";
-        public Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Cram filesystem";
+        public Guid           Id        => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -64,14 +64,14 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             byte[] sector = imagePlugin.ReadSector(partition.Start);
-            uint magic = BitConverter.ToUInt32(sector, 0x00);
+            uint   magic  = BitConverter.ToUInt32(sector, 0x00);
 
-            CramSuperBlock crSb = new CramSuperBlock();
-            bool littleEndian = true;
+            CramSuperBlock crSb         = new CramSuperBlock();
+            bool           littleEndian = true;
 
             switch(magic)
             {
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems
                     Marshal.FreeHGlobal(crSbPtr);
                     break;
                 case CRAM_CIGAM:
-                    crSb = BigEndianMarshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
+                    crSb         = BigEndianMarshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
                     littleEndian = false;
                     break;
             }
@@ -101,12 +101,12 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                VolumeName = StringHandlers.CToString(crSb.name, Encoding),
-                Type = "Cram file system",
-                Clusters = crSb.blocks,
-                Files = crSb.files,
-                FilesSpecified = true,
-                FreeClusters = 0,
+                VolumeName            = StringHandlers.CToString(crSb.name, Encoding),
+                Type                  = "Cram file system",
+                Clusters              = crSb.blocks,
+                Files                 = crSb.files,
+                FilesSpecified        = true,
+                FreeClusters          = 0,
                 FreeClustersSpecified = true
             };
         }
@@ -115,9 +115,9 @@ namespace DiscImageChef.Filesystems
         {
             Zlib = 1,
             Lzma = 2,
-            Lzo = 3,
-            Xz = 4,
-            Lz4 = 5
+            Lzo  = 3,
+            Xz   = 4,
+            Lz4  = 5
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -127,12 +127,14 @@ namespace DiscImageChef.Filesystems
             public uint size;
             public uint flags;
             public uint future;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] signature;
             public uint crc;
             public uint edition;
             public uint blocks;
             public uint files;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] name;
         }
     }
 }

@@ -200,7 +200,7 @@ namespace DiscImageChef.Decoders.SCSI
         ///     If set, <see cref="SenseKeySpecific" /> is valid
         /// </summary>
         public bool SKSV;
-        public uint SenseKeySpecific;
+        public uint   SenseKeySpecific;
         public byte[] AdditionalSense;
     }
 
@@ -234,9 +234,9 @@ namespace DiscImageChef.Decoders.SCSI
     public struct AnotherProgressIndicationSenseDescriptor
     {
         public SenseKeys SenseKey;
-        public byte ASC;
-        public byte ASCQ;
-        public ushort Progress;
+        public byte      ASC;
+        public byte      ASCQ;
+        public ushort    Progress;
     }
 
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -257,10 +257,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             switch(sense[0] & 0x0F)
             {
-                case 0: return SenseType.ExtendedSenseFixedCurrent;
-                case 1: return SenseType.ExtendedSenseFixedPast;
-                case 2: return SenseType.ExtendedSenseDescriptorCurrent;
-                case 3: return SenseType.ExtendedSenseDescriptorPast;
+                case 0:  return SenseType.ExtendedSenseFixedCurrent;
+                case 1:  return SenseType.ExtendedSenseFixedPast;
+                case 2:  return SenseType.ExtendedSenseDescriptorCurrent;
+                case 3:  return SenseType.ExtendedSenseDescriptorPast;
                 default: return SenseType.Unknown;
             }
         }
@@ -271,10 +271,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             StandardSense decoded = new StandardSense();
             decoded.AddressValid |= (sense[0] & 0x80) == 0x80;
-            decoded.ErrorClass = (byte)((sense[0] & 0x70) >> 4);
-            decoded.ErrorType = (byte)(sense[0] & 0x0F);
-            decoded.Private = (byte)((sense[1] & 0x80) >> 4);
-            decoded.LBA = (uint)(((sense[1] & 0x0F) << 16) + (sense[2] << 8) + sense[3]);
+            decoded.ErrorClass   =  (byte)((sense[0] & 0x70) >> 4);
+            decoded.ErrorType    =  (byte)(sense[0] & 0x0F);
+            decoded.Private      =  (byte)((sense[1] & 0x80) >> 4);
+            decoded.LBA          =  (uint)(((sense[1] & 0x0F) << 16) + (sense[2] << 8) + sense[3]);
 
             return decoded;
         }
@@ -294,12 +294,12 @@ namespace DiscImageChef.Decoders.SCSI
             FixedSense decoded = new FixedSense
             {
                 InformationValid = (sense[0] & 0x80) == 0x80,
-                SegmentNumber = sense[1],
-                Filemark = (sense[2] & 0x80) == 0x80,
-                EOM = (sense[2] & 0x40) == 0x40,
-                ILI = (sense[2] & 0x20) == 0x20,
-                SenseKey = (SenseKeys)(sense[2] & 0x0F),
-                Information = (uint)((sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6]),
+                SegmentNumber    = sense[1],
+                Filemark         = (sense[2]            & 0x80) == 0x80,
+                EOM              = (sense[2]            & 0x40) == 0x40,
+                ILI              = (sense[2]            & 0x20) == 0x20,
+                SenseKey         = (SenseKeys)(sense[2] & 0x0F),
+                Information      = (uint)((sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6]),
                 AdditionalLength = sense[7]
             };
 
@@ -308,8 +308,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(sense.Length >= 14)
             {
-                decoded.ASC = sense[12];
-                decoded.ASCQ = sense[13];
+                decoded.ASC      = sense[12];
+                decoded.ASCQ     = sense[13];
                 senseDescription = GetSenseDescription(decoded.ASC, decoded.ASCQ);
             }
 
@@ -340,10 +340,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             DescriptorSense decoded = new DescriptorSense
             {
-                SenseKey = (SenseKeys)(sense[1] & 0x0F),
-                ASC = sense[2],
-                ASCQ = sense[3],
-                Overflow = (sense[4] & 0x80) == 0x80,
+                SenseKey    = (SenseKeys)(sense[1] & 0x0F),
+                ASC         = sense[2],
+                ASCQ        = sense[3],
+                Overflow    = (sense[4] & 0x80) == 0x80,
                 Descriptors = new Dictionary<byte, byte[]>()
             };
 
@@ -354,7 +354,7 @@ namespace DiscImageChef.Decoders.SCSI
                 if(offset + 2 < sense.Length)
                 {
                     byte descType = sense[offset];
-                    int descLen = sense[offset + 1] + 1;
+                    int  descLen  = sense[offset + 1] + 1;
 
                     byte[] desc = new byte[descLen];
                     Array.Copy(sense, offset, desc, 0, descLen);
@@ -363,7 +363,8 @@ namespace DiscImageChef.Decoders.SCSI
 
                     offset += descLen;
                 }
-                else break;
+                else
+                    break;
 
             return decoded;
         }
@@ -554,8 +555,8 @@ namespace DiscImageChef.Decoders.SCSI
             return new AnotherProgressIndicationSenseDescriptor
             {
                 SenseKey = (SenseKeys)descriptor[2],
-                ASC = descriptor[3],
-                ASCQ = descriptor[4],
+                ASC      = descriptor[3],
+                ASCQ     = descriptor[4],
                 Progress = (ushort)((descriptor[6] << 8) + descriptor[7])
             };
         }
@@ -589,13 +590,13 @@ namespace DiscImageChef.Decoders.SCSI
         {
             return new AtaErrorRegistersLba48
             {
-                Error = descriptor[3],
-                SectorCount = (ushort)((descriptor[4] << 8) + descriptor[5]),
-                LbaLow = (ushort)((descriptor[6] << 8) + descriptor[7]),
-                LbaMid = (ushort)((descriptor[8] << 8) + descriptor[9]),
-                LbaHigh = (ushort)((descriptor[10] << 8) + descriptor[11]),
-                DeviceHead = descriptor[12],
-                Status = descriptor[13]
+                Error       = descriptor[3],
+                SectorCount = (ushort)((descriptor[4]  << 8) + descriptor[5]),
+                LbaLow      = (ushort)((descriptor[6]  << 8) + descriptor[7]),
+                LbaMid      = (ushort)((descriptor[8]  << 8) + descriptor[9]),
+                LbaHigh     = (ushort)((descriptor[10] << 8) + descriptor[11]),
+                DeviceHead  = descriptor[12],
+                Status      = descriptor[13]
             };
         }
 
@@ -624,21 +625,21 @@ namespace DiscImageChef.Decoders.SCSI
             switch(key)
             {
                 case SenseKeys.AbortedCommand: return "ABORTED COMMAND";
-                case SenseKeys.BlankCheck: return "BLANK CHECK";
-                case SenseKeys.CopyAborted: return "COPY ABORTED";
-                case SenseKeys.DataProtect: return "DATA PROTECT";
-                case SenseKeys.Equal: return "EQUAL";
-                case SenseKeys.HardwareError: return "HARDWARE ERROR";
+                case SenseKeys.BlankCheck:     return "BLANK CHECK";
+                case SenseKeys.CopyAborted:    return "COPY ABORTED";
+                case SenseKeys.DataProtect:    return "DATA PROTECT";
+                case SenseKeys.Equal:          return "EQUAL";
+                case SenseKeys.HardwareError:  return "HARDWARE ERROR";
                 case SenseKeys.IllegalRequest: return "ILLEGAL REQUEST";
-                case SenseKeys.MediumError: return "MEDIUM ERROR";
-                case SenseKeys.Miscompare: return "MISCOMPARE";
-                case SenseKeys.NoSense: return "NO SENSE";
-                case SenseKeys.PrivateUse: return "PRIVATE USE";
+                case SenseKeys.MediumError:    return "MEDIUM ERROR";
+                case SenseKeys.Miscompare:     return "MISCOMPARE";
+                case SenseKeys.NoSense:        return "NO SENSE";
+                case SenseKeys.PrivateUse:     return "PRIVATE USE";
                 case SenseKeys.RecoveredError: return "RECOVERED ERROR";
-                case SenseKeys.Completed: return "COMPLETED";
-                case SenseKeys.UnitAttention: return "UNIT ATTENTION";
+                case SenseKeys.Completed:      return "COMPLETED";
+                case SenseKeys.UnitAttention:  return "UNIT ATTENTION";
                 case SenseKeys.VolumeOverflow: return "VOLUME OVERFLOW";
-                default: return "UNKNOWN";
+                default:                       return "UNKNOWN";
             }
         }
 
@@ -1460,7 +1461,7 @@ namespace DiscImageChef.Decoders.SCSI
                     switch(ASCQ)
                     {
                         case 0x00: return "RAM FAILURE";
-                        default: return $"DIAGNOSTIC FAILURE ON COMPONENT {ASCQ:X2}h";
+                        default:   return $"DIAGNOSTIC FAILURE ON COMPONENT {ASCQ:X2}h";
                     }
                 case 0x41:
                     switch(ASCQ)

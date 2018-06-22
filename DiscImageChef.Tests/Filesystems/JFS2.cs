@@ -72,7 +72,7 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new JFS();
                 int             part       = -1;
-                for(int j = 0; j          < partitions.Count; j++)
+                for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83" || partitions[j].Type == "0x07")
                     {
                         part = j;

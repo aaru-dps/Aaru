@@ -42,23 +42,23 @@ namespace DiscImageChef.Filters
     /// </summary>
     public class BZip2 : IFilter
     {
-        string basePath;
+        string   basePath;
         DateTime creationTime;
-        Stream dataStream;
-        long decompressedSize;
-        Stream innerStream;
+        Stream   dataStream;
+        long     decompressedSize;
+        Stream   innerStream;
         DateTime lastWriteTime;
-        bool opened;
+        bool     opened;
 
         public string Name => "BZip2";
-        public Guid Id => new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+        public Guid   Id   => new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
 
         public void Close()
         {
             dataStream?.Close();
             dataStream = null;
-            basePath = null;
-            opened = false;
+            basePath   = null;
+            opened     = false;
         }
 
         public string GetBasePath()
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filters
             if(!File.Exists(path)) return false;
 
             FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[] buffer = new byte[4];
+            byte[]     buffer = new byte[4];
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 4);
@@ -142,37 +142,37 @@ namespace DiscImageChef.Filters
 
         public void Open(byte[] buffer)
         {
-            dataStream = new MemoryStream(buffer);
-            basePath = null;
-            creationTime = DateTime.UtcNow;
-            lastWriteTime = creationTime;
-            innerStream = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            dataStream       = new MemoryStream(buffer);
+            basePath         = null;
+            creationTime     = DateTime.UtcNow;
+            lastWriteTime    = creationTime;
+            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
             decompressedSize = innerStream.Length;
-            opened = true;
+            opened           = true;
         }
 
         public void Open(Stream stream)
         {
-            dataStream = stream;
-            basePath = null;
-            creationTime = DateTime.UtcNow;
-            lastWriteTime = creationTime;
-            innerStream = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            dataStream       = stream;
+            basePath         = null;
+            creationTime     = DateTime.UtcNow;
+            lastWriteTime    = creationTime;
+            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
             decompressedSize = innerStream.Length;
-            opened = true;
+            opened           = true;
         }
 
         public void Open(string path)
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            basePath = Path.GetFullPath(path);
+            basePath   = Path.GetFullPath(path);
 
             FileInfo fi = new FileInfo(path);
-            creationTime = fi.CreationTimeUtc;
-            lastWriteTime = fi.LastWriteTimeUtc;
-            innerStream = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            creationTime     = fi.CreationTimeUtc;
+            lastWriteTime    = fi.LastWriteTimeUtc;
+            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
             decompressedSize = innerStream.Length;
-            opened = true;
+            opened           = true;
         }
 
         public DateTime GetCreationTime()

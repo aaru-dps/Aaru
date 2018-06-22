@@ -113,7 +113,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            d88Hdr          = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
+            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
             handle.Free();
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
@@ -160,7 +160,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            d88Hdr          = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
+            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
             handle.Free();
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
@@ -192,7 +192,7 @@ namespace DiscImageChef.DiscImages
             if(trkCounter == 0) return false;
 
             SectorHeader sechdr = new SectorHeader();
-            hdrB                = new byte[Marshal.SizeOf(sechdr)];
+            hdrB = new byte[Marshal.SizeOf(sechdr)];
             stream.Seek(d88Hdr.track_table[0], SeekOrigin.Begin);
             stream.Read(hdrB, 0, hdrB.Length);
 
@@ -213,7 +213,7 @@ namespace DiscImageChef.DiscImages
             short             spt      = sechdr.spt;
             IBMSectorSizeCode bps      = sechdr.n;
             bool              allEqual = true;
-            sectorsData                = new List<byte[]>();
+            sectorsData = new List<byte[]>();
 
             for(int i = 0; i < trkCounter; i++)
             {
@@ -517,8 +517,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -527,8 +527,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

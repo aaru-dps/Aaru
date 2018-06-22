@@ -814,9 +814,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
-                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
-                                   dev.Timeout, out _);
+                dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
+                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
+                           out _);
 
                 byte[] tmpBuf = new byte[subSize];
                 Array.Copy(readBuffer, SECTOR_SIZE, tmpBuf, 0, subSize);
@@ -1031,14 +1031,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DicConsole.Write("\rTrimming sector {0}", badSector);
 
                     double cmdDuration = 0;
-                    
+
                     if(readcd)
-                    {
                         sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                           true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
-                                           out cmdDuration);
-                    }
+                                           true, MmcErrorField.None, supportedSubchannel, dev.Timeout, out cmdDuration);
                     else if(read16)
                         sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, badSector, blockSize, 0,
                                            blocksToRead, false, dev.Timeout, out cmdDuration);

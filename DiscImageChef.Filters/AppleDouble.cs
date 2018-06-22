@@ -42,8 +42,8 @@ namespace DiscImageChef.Filters
     /// </summary>
     public class AppleDouble : IFilter
     {
-        const uint AppleDoubleMagic = 0x00051607;
-        const uint AppleDoubleVersion = 0x00010000;
+        const uint AppleDoubleMagic    = 0x00051607;
+        const uint AppleDoubleVersion  = 0x00010000;
         const uint AppleDoubleVersion2 = 0x00020000;
         readonly byte[] DOSHome =
             {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
@@ -58,18 +58,18 @@ namespace DiscImageChef.Filters
             {0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
         readonly byte[] VMXHome =
             {0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-        string basePath;
+        string   basePath;
         DateTime creationTime;
 
-        AppleDoubleEntry dataFork;
+        AppleDoubleEntry  dataFork;
         AppleDoubleHeader header;
-        string headerPath;
-        DateTime lastWriteTime;
-        bool opened;
-        AppleDoubleEntry rsrcFork;
+        string            headerPath;
+        DateTime          lastWriteTime;
+        bool              opened;
+        AppleDoubleEntry  rsrcFork;
 
         public string Name => "AppleDouble";
-        public Guid Id => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
+        public Guid   Id   => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
 
         public void Close()
         {
@@ -153,12 +153,13 @@ namespace DiscImageChef.Filters
 
         public bool Identify(string path)
         {
-            string filename = Path.GetFileName(path);
+            string filename      = Path.GetFileName(path);
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
-            string parentFolder = Path.GetDirectoryName(path);
+            string parentFolder  = Path.GetDirectoryName(path);
 
             // Prepend data fork name with "R."
-            string ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
+            string ProDosAppleDouble =
+                Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
             // Prepend data fork name with '%'
             string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             // Change file extension to ADF
@@ -166,8 +167,8 @@ namespace DiscImageChef.Filters
             // Change file extension to adf
             string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
             // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
-                                                      filename ?? throw new InvalidOperationException());
+            string NetatalkAppleDouble =
+                Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
             // Store AppleDouble header file in "resource.frk" folder with same name
             string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             // Prepend data fork name with "._"
@@ -313,12 +314,13 @@ namespace DiscImageChef.Filters
 
         public void Open(string path)
         {
-            string filename = Path.GetFileName(path);
+            string filename      = Path.GetFileName(path);
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
-            string parentFolder = Path.GetDirectoryName(path);
+            string parentFolder  = Path.GetDirectoryName(path);
 
             // Prepend data fork name with "R."
-            string ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
+            string ProDosAppleDouble =
+                Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
             // Prepend data fork name with '%'
             string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             // Change file extension to ADF
@@ -326,8 +328,8 @@ namespace DiscImageChef.Filters
             // Change file extension to adf
             string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
             // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble",
-                                                      filename ?? throw new InvalidOperationException());
+            string NetatalkAppleDouble =
+                Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
             // Store AppleDouble header file in "resource.frk" folder with same name
             string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             // Prepend data fork name with "._"
@@ -478,7 +480,7 @@ namespace DiscImageChef.Filters
                 entries[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleEntry>(entry);
             }
 
-            creationTime = DateTime.UtcNow;
+            creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleDoubleEntry entry in entries)
                 switch((AppleDoubleEntryID)entry.id)
@@ -492,7 +494,7 @@ namespace DiscImageChef.Filters
                         fs.Read(dates_b, 0, 16);
                         AppleDoubleFileDates dates =
                             BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleFileDates>(dates_b);
-                        creationTime = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
+                        creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
                         break;
                     case AppleDoubleEntryID.FileInfo:
@@ -503,21 +505,21 @@ namespace DiscImageChef.Filters
                         {
                             AppleDoubleMacFileInfo macinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleMacFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleDoubleProDOSFileInfo prodosinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleProDOSFileInfo>(finfo);
-                            creationTime = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleDoubleUNIXFileInfo unixinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleUNIXFileInfo>(finfo);
-                            creationTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
@@ -527,6 +529,7 @@ namespace DiscImageChef.Filters
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
+
                         break;
                     case AppleDoubleEntryID.ResourceFork:
                         rsrcFork = entry;
@@ -542,28 +545,28 @@ namespace DiscImageChef.Filters
             }
 
             fs.Close();
-            opened = true;
+            opened   = true;
             basePath = path;
         }
 
         enum AppleDoubleEntryID : uint
         {
-            Invalid = 0,
-            DataFork = 1,
-            ResourceFork = 2,
-            RealName = 3,
-            Comment = 4,
-            Icon = 5,
-            ColorIcon = 6,
-            FileInfo = 7,
-            FileDates = 8,
-            FinderInfo = 9,
-            MacFileInfo = 10,
+            Invalid        = 0,
+            DataFork       = 1,
+            ResourceFork   = 2,
+            RealName       = 3,
+            Comment        = 4,
+            Icon           = 5,
+            ColorIcon      = 6,
+            FileInfo       = 7,
+            FileDates      = 8,
+            FinderInfo     = 9,
+            MacFileInfo    = 10,
             ProDOSFileInfo = 11,
-            DOSFileInfo = 12,
-            ShortName = 13,
-            AFPFileInfo = 14,
-            DirectoryID = 15
+            DOSFileInfo    = 12,
+            ShortName      = 13,
+            AFPFileInfo    = 14,
+            DirectoryID    = 15
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -571,7 +574,8 @@ namespace DiscImageChef.Filters
         {
             public uint magic;
             public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] homeFilesystem;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] homeFilesystem;
             public ushort entries;
         }
 
@@ -620,12 +624,12 @@ namespace DiscImageChef.Filters
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleProDOSFileInfo
         {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
+            public uint   creationDate;
+            public uint   modificationDate;
+            public uint   backupDate;
             public ushort access;
             public ushort fileType;
-            public uint auxType;
+            public uint   auxType;
         }
     }
 }

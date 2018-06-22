@@ -73,7 +73,7 @@ namespace DiscImageChef.DiscImages
         const string REGEX_VERSION    = @"^\s*version\s*=\s*(?<version>\d+)$";
         const string REGEX_CID        = @"^\s*CID\s*=\s*(?<cid>[0123456789abcdef]{8})$";
         const string REGEX_CID_PARENT = @"^\s*parentCID\s*=\s*(?<cid>[0123456789abcdef]{8})$";
-        const string REGEX_TYPE       =
+        const string REGEX_TYPE =
             @"^\s*createType\s*=\s*\""(?<type>custom|monolithicSparse|monolithicFlat|twoGbMaxExtentSparse|twoGbMaxExtentFlat|fullDevice|partitionedDevice|vmfs|vmfsPreallocated|vmfsEagerZeroedThick|vmfsThin|vmfsSparse|vmfsRDM|vmfsRawDeviceMap|vmfsRDMP|vmfsPassthroughRawDeviceMap|vmfsRaw|streamOptimized)\""$";
         const string REGEX_EXTENT =
             @"^\s*(?<access>(RW|RDONLY|NOACCESS))\s+(?<sectors>\d+)\s+(?<type>(FLAT|SPARSE|ZERO|VMFS|VMFSSPARSE|VMFSRDM|VMFSRAW))\s+\""(?<filename>.+)\""(\s*(?<offset>\d+))?$";
@@ -93,10 +93,10 @@ namespace DiscImageChef.DiscImages
         const ushort COMPRESSION_NONE    = 0;
         const ushort COMPRESSION_DEFLATE = 1;
 
-        const    uint   MAX_CACHE_SIZE     = 16777216;
-        const    uint   SECTOR_SIZE        = 512;
-        const    uint   MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
-        readonly byte[] ddfMagicBytes      =
+        const uint MAX_CACHE_SIZE     = 16777216;
+        const uint SECTOR_SIZE        = 512;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
+        readonly byte[] ddfMagicBytes =
         {
             0x23, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x20, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x6F, 0x72, 0x46,
             0x69, 0x6C, 0x65
@@ -183,7 +183,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmEHdrB = new byte[Marshal.SizeOf(vmEHdr)];
                 stream.Read(vmEHdrB, 0, Marshal.SizeOf(vmEHdr));
-                vmEHdr           = new VMwareExtentHeader();
+                vmEHdr = new VMwareExtentHeader();
                 IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmEHdr));
                 Marshal.Copy(vmEHdrB, 0, headerPtr, Marshal.SizeOf(vmEHdr));
                 vmEHdr = (VMwareExtentHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareExtentHeader));
@@ -193,7 +193,7 @@ namespace DiscImageChef.DiscImages
                 stream.Read(ddfMagic, 0, 0x15);
 
                 vmCHdr = new VMwareCowHeader();
-                if(stream.Length                                                 <= Marshal.SizeOf(vmCHdr))
+                if(stream.Length <= Marshal.SizeOf(vmCHdr))
                     return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                            vmCHdr.magic                                          == VMWARE_COW_MAGIC;
 
@@ -219,8 +219,8 @@ namespace DiscImageChef.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            vmEHdr        = new VMwareExtentHeader();
-            vmCHdr        = new VMwareCowHeader();
+            vmEHdr = new VMwareExtentHeader();
+            vmCHdr = new VMwareCowHeader();
             bool embedded = false;
 
             if(stream.Length > Marshal.SizeOf(vmEHdr))
@@ -284,7 +284,7 @@ namespace DiscImageChef.DiscImages
                 ddfStream.Write(ddfExternal, 0, ddfExternal.Length);
             }
 
-            extents             = new Dictionary<ulong, VMwareExtent>();
+            extents = new Dictionary<ulong, VMwareExtent>();
             ulong currentSector = 0;
 
             bool matchedCyls = false, matchedHds = false, matchedSpt = false;
@@ -542,7 +542,7 @@ namespace DiscImageChef.DiscImages
 
                 grainSize = vmEHdr.grainSize;
                 grains    = (uint)(imageInfo.Sectors / vmEHdr.grainSize) + 1;
-                gdEntries = grains                   / vmEHdr.GTEsPerGT;
+                gdEntries = grains / vmEHdr.GTEsPerGT;
                 gtEsPerGt = vmEHdr.GTEsPerGT;
 
                 if((vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE)
@@ -599,11 +599,11 @@ namespace DiscImageChef.DiscImages
 
                 DicConsole.DebugWriteLine("VMware plugin", "Reading grain tables");
                 uint currentGrain = 0;
-                gTable            = new uint[grains];
+                gTable = new uint[grains];
                 foreach(uint gtOff in gd)
                 {
                     byte[] gtBytes = new byte[gtEsPerGt * 4];
-                    gdStream.Seek(gtOff                 * SECTOR_SIZE, SeekOrigin.Begin);
+                    gdStream.Seek(gtOff * SECTOR_SIZE, SeekOrigin.Begin);
                     gdStream.Read(gtBytes, 0, gtBytes.Length);
                     for(int i = 0; i < gtEsPerGt; i++)
                     {
@@ -704,7 +704,7 @@ namespace DiscImageChef.DiscImages
                     return sector;
             }
 
-            ulong index  = sectorAddress / grainSize;
+            ulong index  = sectorAddress             / grainSize;
             ulong secOff = sectorAddress % grainSize * SECTOR_SIZE;
 
             uint grainOff = gTable[index];
@@ -838,8 +838,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -848,8 +848,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -864,7 +864,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
@@ -875,7 +875,7 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 ("adapter_type", typeof(string),
-                "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX."),
+                    "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX."),
                 ("hwversion", typeof(uint), "VDMK hardware version."), ("sparse", typeof(bool), "Use sparse extents."),
                 ("split", typeof(bool), "Split data file at 2GiB.")
             };
@@ -1220,16 +1220,16 @@ namespace DiscImageChef.DiscImages
             // It stats on cylinders, above, but, don't care
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024 - 12)]
             public byte[] parentFileName;
-            public uint   parentGeneration;
-            public uint   generation;
+            public uint parentGeneration;
+            public uint generation;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
             public byte[] name;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
             public byte[] description;
-            public uint   savedGeneration;
+            public uint savedGeneration;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public                               byte[] reserved;
-            [MarshalAs(UnmanagedType.U1)] public bool   uncleanShutdown;
+            public byte[] reserved;
+            [MarshalAs(UnmanagedType.U1)] public bool uncleanShutdown;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 396)]
             public byte[] padding;
         }

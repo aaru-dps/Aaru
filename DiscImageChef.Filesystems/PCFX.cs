@@ -79,28 +79,26 @@ namespace DiscImageChef.Filesystems
 
             try
             {
-                date      = Encoding.GetString(header.date);
+                date = Encoding.GetString(header.date);
                 int year  = int.Parse(date.Substring(0, 4));
                 int month = int.Parse(date.Substring(4, 2));
                 int day   = int.Parse(date.Substring(6, 2));
-                dateTime  = new DateTime(year, month, day);
+                dateTime = new DateTime(year, month, day);
             }
             catch { date = null; }
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("PC-FX executable:");
-            sb.AppendFormat("Identifier: {0}",    StringHandlers.CToString(header.signature, Encoding)).AppendLine();
+            sb.AppendFormat("Identifier: {0}", StringHandlers.CToString(header.signature, Encoding)).AppendLine();
             sb.AppendFormat("Copyright: {0}", StringHandlers.CToString(header.copyright, Encoding)).AppendLine();
             sb.AppendFormat("Title: {0}", StringHandlers.CToString(header.title, Encoding)).AppendLine();
             sb.AppendFormat("Maker ID: {0}", StringHandlers.CToString(header.makerId, Encoding)).AppendLine();
             sb.AppendFormat("Maker name: {0}", StringHandlers.CToString(header.makerName, Encoding)).AppendLine();
             sb.AppendFormat("Volume number: {0}", header.volumeNumber).AppendLine();
-            sb.AppendFormat("Country code: {0}",  header.country).AppendLine();
-            sb.AppendFormat("Version: {0}.{1}",   header.minorVersion, header.majorVersion)
-              .AppendLine();
-            if(date != null) sb.AppendFormat("Dated {0}",       dateTime).AppendLine();
-            sb.AppendFormat("Load {0} sectors from sector {1}", header.loadCount, header.loadOffset)
-              .AppendLine();
+            sb.AppendFormat("Country code: {0}", header.country).AppendLine();
+            sb.AppendFormat("Version: {0}.{1}", header.minorVersion, header.majorVersion).AppendLine();
+            if(date != null) sb.AppendFormat("Dated {0}", dateTime).AppendLine();
+            sb.AppendFormat("Load {0} sectors from sector {1}", header.loadCount, header.loadOffset).AppendLine();
             sb.AppendFormat("Load at 0x{0:X8} and jump to 0x{1:X8}", header.loadAddress, header.entryPoint)
               .AppendLine();
 
@@ -115,7 +113,7 @@ namespace DiscImageChef.Filesystems
                 CreationDate          = dateTime,
                 CreationDateSpecified = date != null,
                 PublisherIdentifier   = StringHandlers.CToString(header.makerName, Encoding),
-                VolumeName            = StringHandlers.CToString(header.title, Encoding),
+                VolumeName            = StringHandlers.CToString(header.title,     Encoding),
                 SystemIdentifier      = "PC-FX"
             };
         }
@@ -131,10 +129,10 @@ namespace DiscImageChef.Filesystems
             public byte[] unknown;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] title;
-            public uint   loadOffset;
-            public uint   loadCount;
-            public uint   loadAddress;
-            public uint   entryPoint;
+            public uint loadOffset;
+            public uint loadCount;
+            public uint loadAddress;
+            public uint entryPoint;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public byte[] makerId;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]

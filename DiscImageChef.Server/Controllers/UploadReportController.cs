@@ -58,7 +58,7 @@ namespace DiscImageChef.Server.Controllers
             try
             {
                 DeviceReport newReport = new DeviceReport();
-                HttpRequest request = HttpContext.Current.Request;
+                HttpRequest  request   = HttpContext.Current.Request;
 
                 XmlSerializer xs = new XmlSerializer(newReport.GetType());
                 newReport = (DeviceReport)xs.Deserialize(request.InputStream);
@@ -69,7 +69,7 @@ namespace DiscImageChef.Server.Controllers
                     return response;
                 }
 
-                Random rng = new Random();
+                Random rng      = new Random();
                 string filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
                 while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
                                                "Upload", filename)))
@@ -88,9 +88,9 @@ namespace DiscImageChef.Server.Controllers
             // ReSharper disable once RedundantCatchClause
             catch
             {
-#if DEBUG
+                #if DEBUG
                 throw;
-#else
+                #else
                 response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
                 return response;
 #endif

@@ -60,8 +60,8 @@ namespace DiscImageChef.Filesystems
             // I've read OS-9/Apple2 has it on sector 15
             foreach(int i in new[] {0, 4, 15})
             {
-                ulong location = (ulong)i;
-                RBF_IdSector rbfSb = new RBF_IdSector();
+                ulong        location = (ulong)i;
+                RBF_IdSector rbfSb    = new RBF_IdSector();
 
                 uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
                 if(Marshal.SizeOf(rbfSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems
             foreach(int i in new[] {0, 4, 15})
             {
                 ulong location = (ulong)i;
-                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
+                uint  sbSize   = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
                 if(Marshal.SizeOf(rbfSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);

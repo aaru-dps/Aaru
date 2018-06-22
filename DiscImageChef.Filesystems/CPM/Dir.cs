@@ -78,30 +78,36 @@ namespace DiscImageChef.Filesystems.CPM
                     if((entry.statusUser & 0x7F) < 0x20)
                     {
                         for(int f = 0; f < 8; f++)
-                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
+                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
+                                return false;
 
                         for(int e = 0; e < 3; e++)
-                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
+                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
+                                return false;
 
                         if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename)) fileCount++;
                     }
                     else if(entry.statusUser == 0x20)
                     {
                         for(int f = 0; f < 8; f++)
-                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
+                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
+                                return false;
 
                         for(int e = 0; e < 3; e++)
-                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
+                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
+                                return false;
 
-                        label = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
+                        label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
                         labelCreationDate = new byte[4];
-                        labelUpdateDate = new byte[4];
+                        labelUpdateDate   = new byte[4];
                         Array.Copy(directory, off + 24, labelCreationDate, 0, 4);
-                        Array.Copy(directory, off + 28, labelUpdateDate, 0, 4);
+                        Array.Copy(directory, off + 28, labelUpdateDate,   0, 4);
                     }
                     else if(entry.statusUser == 0x21)
-                        if(directory[off + 1] == 0x00) thirdPartyTimestamps = true;
-                        else standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
+                        if(directory[off + 1] == 0x00)
+                            thirdPartyTimestamps = true;
+                        else
+                            standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
                 }
 
                 return fileCount > 0;

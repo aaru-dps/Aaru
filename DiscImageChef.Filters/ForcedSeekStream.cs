@@ -41,11 +41,11 @@ namespace DiscImageChef.Filters
     /// </summary>
     public class ForcedSeekStream<T> : Stream where T : Stream
     {
-        const int BUFFER_LEN = 1048576;
-        string backFile;
+        const int  BUFFER_LEN = 1048576;
+        string     backFile;
         FileStream backStream;
-        T baseStream;
-        long streamLength;
+        T          baseStream;
+        long       streamLength;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1" /> class.
@@ -55,9 +55,9 @@ namespace DiscImageChef.Filters
         public ForcedSeekStream(long length, params object[] args)
         {
             streamLength = length;
-            baseStream = (T)Activator.CreateInstance(typeof(T), args);
-            backFile = Path.GetTempFileName();
-            backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            baseStream   = (T)Activator.CreateInstance(typeof(T), args);
+            backFile     = Path.GetTempFileName();
+            backStream   = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             if(length == 0) CalculateLength();
         }
 
@@ -68,7 +68,7 @@ namespace DiscImageChef.Filters
         public ForcedSeekStream(params object[] args)
         {
             baseStream = (T)Activator.CreateInstance(typeof(T), args);
-            backFile = Path.GetTempFileName();
+            backFile   = Path.GetTempFileName();
             backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             CalculateLength();
         }
@@ -105,7 +105,7 @@ namespace DiscImageChef.Filters
             }
             while(read == BUFFER_LEN);
 
-            streamLength = backStream.Length;
+            streamLength        = backStream.Length;
             backStream.Position = 0;
         }
 
@@ -120,9 +120,9 @@ namespace DiscImageChef.Filters
             }
 
             backStream.Position = backStream.Length;
-            long toposition = position - backStream.Position;
-            int fullBufferReads = (int)(toposition / BUFFER_LEN);
-            int restToRead = (int)(toposition % BUFFER_LEN);
+            long   toposition      = position - backStream.Position;
+            int    fullBufferReads = (int)(toposition / BUFFER_LEN);
+            int    restToRead      = (int)(toposition % BUFFER_LEN);
             byte[] buffer;
 
             for(int i = 0; i < fullBufferReads; i++)

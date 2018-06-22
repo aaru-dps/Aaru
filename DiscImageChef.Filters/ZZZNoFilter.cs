@@ -40,21 +40,21 @@ namespace DiscImageChef.Filters
     /// </summary>
     public class ZZZNoFilter : IFilter
     {
-        string basePath;
+        string   basePath;
         DateTime creationTime;
-        Stream dataStream;
+        Stream   dataStream;
         DateTime lastWriteTime;
-        bool opened;
+        bool     opened;
 
         public string Name => "No filter";
-        public Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public Guid   Id   => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
 
         public void Close()
         {
             dataStream?.Close();
             dataStream = null;
-            basePath = null;
-            opened = false;
+            basePath   = null;
+            opened     = false;
         }
 
         public string GetBasePath()
@@ -100,30 +100,30 @@ namespace DiscImageChef.Filters
 
         public void Open(byte[] buffer)
         {
-            dataStream = new MemoryStream(buffer);
-            basePath = null;
-            creationTime = DateTime.UtcNow;
+            dataStream    = new MemoryStream(buffer);
+            basePath      = null;
+            creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
-            opened = true;
+            opened        = true;
         }
 
         public void Open(Stream stream)
         {
-            dataStream = stream;
-            basePath = null;
-            creationTime = DateTime.UtcNow;
+            dataStream    = stream;
+            basePath      = null;
+            creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
-            opened = true;
+            opened        = true;
         }
 
         public void Open(string path)
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            basePath = Path.GetFullPath(path);
+            basePath   = Path.GetFullPath(path);
             FileInfo fi = new FileInfo(path);
-            creationTime = fi.CreationTimeUtc;
+            creationTime  = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
-            opened = true;
+            opened        = true;
         }
 
         public DateTime GetCreationTime()

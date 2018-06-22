@@ -95,6 +95,7 @@ namespace DiscImageChef.Server.App_Start
                 mmcOneValue.Add(mode.LockStatus
                                     ? "Drive is locked, media cannot be ejected, but if empty, can be inserted"
                                     : "Drive is not locked, media can be ejected and inserted");
+
             if(mode.CanEject) mmcOneValue.Add("Drive can eject media");
 
             if(mode.SeparateChannelMute) mmcOneValue.Add("Each channel can be muted independently");
@@ -134,10 +135,10 @@ namespace DiscImageChef.Server.App_Start
             {
                 if(mode.RotationControlSelected == 0)
                     mmcOneValue
-                        .Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in CLV mode");
+                       .Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in CLV mode");
                 else if(mode.RotationControlSelected == 1)
                     mmcOneValue
-                        .Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in pure CAV mode");
+                       .Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in pure CAV mode");
             }
             else
             {
@@ -154,7 +155,7 @@ namespace DiscImageChef.Server.App_Start
                         mmcOneValue.Add($"Drive supports writing at {descriptor.WriteSpeed} Kbyte/sec. in CLV mode");
                     else if(descriptor.RotationControl == 1)
                         mmcOneValue
-                            .Add($"Drive supports writing at is {descriptor.WriteSpeed} Kbyte/sec. in pure CAV mode");
+                           .Add($"Drive supports writing at is {descriptor.WriteSpeed} Kbyte/sec. in pure CAV mode");
 
             if(mode.TestWrite) mmcOneValue.Add("Drive supports test writing");
 

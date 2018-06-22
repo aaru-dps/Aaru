@@ -49,7 +49,7 @@ namespace DiscImageChef.CommonTypes
         /// <param name="blockSize">Size in bytes of each block</param>
         /// <returns></returns>
         public static MediaType Get(byte scsiPeripheralType, string vendor, string model, byte mediumType,
-                                    byte densityCode, ulong         blocks, uint   blockSize)
+                                    byte densityCode,        ulong  blocks, uint   blockSize)
         {
             switch(scsiPeripheralType)
             {
@@ -113,7 +113,7 @@ namespace DiscImageChef.CommonTypes
                             if(blocks == 1440) return MediaType.DOS_35_DS_DD_9;
                         }
                         else if(blockSize == 1024)
-                            if(blocks     == 1232)
+                            if(blocks == 1232)
                                 return MediaType.NEC_35_HD_8;
 
                         return MediaType.Unknown;
@@ -197,7 +197,7 @@ namespace DiscImageChef.CommonTypes
                                         case 603466:
                                         case 637041: return MediaType.ECMA_184;
                                         case 936921:
-                                        case 948770:   return MediaType.ECMA_195;
+                                        case 948770: return MediaType.ECMA_195;
                                         case 1244621:  return MediaType.ECMA_238;
                                         case 14476734: return MediaType.ECMA_260;
                                         case 24445990: return MediaType.ECMA_260_Double;
@@ -212,7 +212,7 @@ namespace DiscImageChef.CommonTypes
                                         case 310352: // Found in real media
                                         case 318988:
                                         case 320332:
-                                        case 321100:  return MediaType.ECMA_239;
+                                        case 321100: return MediaType.ECMA_239;
                                         case 605846:  return MediaType.GigaMo;
                                         case 1063146: return MediaType.GigaMo2;
                                         case 1128134: return MediaType.ECMA_280;
@@ -315,7 +315,7 @@ namespace DiscImageChef.CommonTypes
                                         case 603466:
                                         case 637041: return MediaType.ECMA_184;
                                         case 936921:
-                                        case 948770:   return MediaType.ECMA_195;
+                                        case 948770: return MediaType.ECMA_195;
                                         case 1244621:  return MediaType.ECMA_238;
                                         case 14476734: return MediaType.ECMA_260;
                                         case 24445990: return MediaType.ECMA_260_Double;
@@ -329,7 +329,7 @@ namespace DiscImageChef.CommonTypes
                                         case 310352: // Found in real media
                                         case 318988:
                                         case 320332:
-                                        case 321100:  return MediaType.ECMA_239;
+                                        case 321100: return MediaType.ECMA_239;
                                         case 605846:  return MediaType.GigaMo;
                                         case 1063146: return MediaType.GigaMo2;
                                         case 1128134: return MediaType.ECMA_280;
@@ -1412,7 +1412,7 @@ namespace DiscImageChef.CommonTypes
                                 case 1298496: return MediaType.PD650;
                                 case 1644581:
                                 case 1647371: return MediaType.ECMA_195_512;
-                                default:      return MediaType.UnknownMO;
+                                default: return MediaType.UnknownMO;
                             }
                         }
                         case 1024:
@@ -1424,7 +1424,7 @@ namespace DiscImageChef.CommonTypes
                                 case 603466:
                                 case 637041: return MediaType.ECMA_184;
                                 case 936921:
-                                case 948770:   return MediaType.ECMA_195;
+                                case 948770: return MediaType.ECMA_195;
                                 case 1244621:  return MediaType.ECMA_238;
                                 case 14476734: return MediaType.ECMA_260;
                                 case 24445990: return MediaType.ECMA_260_Double;
@@ -1438,7 +1438,7 @@ namespace DiscImageChef.CommonTypes
                                 case 310352: // Found in real media
                                 case 318988:
                                 case 320332:
-                                case 321100:  return MediaType.ECMA_239;
+                                case 321100: return MediaType.ECMA_239;
                                 case 605846:  return MediaType.GigaMo;
                                 case 1063146: return MediaType.GigaMo2;
                                 case 1128134: return MediaType.ECMA_280;

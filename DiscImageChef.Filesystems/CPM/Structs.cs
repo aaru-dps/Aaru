@@ -176,7 +176,8 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Copyright string
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1F)] public byte[] copyright;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1F)]
+            public byte[] copyright;
             /// <summary>
             ///     First cylinder of disk where this volume resides
             /// </summary>
@@ -288,7 +289,8 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Label in ASCII
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] label;
             /// <summary>
             ///     Label flags. Bit 0 = label exists, bit 4 = creation timestamp, bit 5 = modification timestamp, bit 6 = access
             ///     timestamp, bit 7 = password enabled
@@ -305,15 +307,18 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Password XOR'ed with <see cref="passwordDecoder" />
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] password;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] password;
             /// <summary>
             ///     Label creation time
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] ctime;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] ctime;
             /// <summary>
             ///     Label modification time
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] mtime;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] mtime;
         }
 
         /// <summary>
@@ -329,11 +334,13 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     File 1 create/access timestamp
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] date1;
             /// <summary>
             ///     File 1 modification timestamp
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] date2;
             /// <summary>
             ///     File 1 password mode
             /// </summary>
@@ -342,11 +349,13 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     File 2 create/access timestamp
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] date3;
             /// <summary>
             ///     File 2 modification timestamp
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] date4;
             /// <summary>
             ///     File 2 password mode
             /// </summary>
@@ -355,11 +364,13 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     File 3 create/access timestamp
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date5;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] date5;
             /// <summary>
             ///     File 3 modification timestamp
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date6;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] date6;
             /// <summary>
             ///     File 3 password mode
             /// </summary>
@@ -380,11 +391,13 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Filename
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] filename;
             /// <summary>
             ///     Extension
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] extension;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] extension;
             /// <summary>
             ///     Password mode. Bit 7 = required for read, bit 6 = required for write, bit 5 = required for delete
             /// </summary>
@@ -393,12 +406,15 @@ namespace DiscImageChef.Filesystems.CPM
             ///     Password decoder byte
             /// </summary>
             public byte passwordDecoder;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] reserved;
             /// <summary>
             ///     Password XOR'ed with <see cref="passwordDecoder" />
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] password;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] password;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] reserved2;
         }
 
         /// <summary>
@@ -415,39 +431,48 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Creation year for file 1
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] create1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] create1;
             /// <summary>
             ///     Modification time for file 1
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] modify1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] modify1;
             /// <summary>
             ///     Access time for file 1
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] access1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] access1;
             /// <summary>
             ///     Creation year for file 2
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] create2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] create2;
             /// <summary>
             ///     Modification time for file 2
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] modify2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] modify2;
             /// <summary>
             ///     Access time for file 2
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] access2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] access2;
             /// <summary>
             ///     Creation year for file 3
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] create3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] create3;
             /// <summary>
             ///     Modification time for file 3
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] modify3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] modify3;
             /// <summary>
             ///     Access time for file 3
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] access3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] access3;
         }
 
         /// <summary>
@@ -463,11 +488,13 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Filename and bit 7 as flags
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] filename;
             /// <summary>
             ///     Extension and bit 7 as flags
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] extension;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] extension;
             /// <summary>
             ///     Low byte of extent number
             /// </summary>
@@ -489,7 +516,8 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Allocation blocks
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] allocations;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] allocations;
         }
 
         /// <summary>
@@ -505,11 +533,13 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Filename and bit 7 as flags
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] filename;
             /// <summary>
             ///     Extension and bit 7 as flags
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] extension;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] extension;
             /// <summary>
             ///     Low byte of extent number
             /// </summary>
@@ -531,7 +561,8 @@ namespace DiscImageChef.Filesystems.CPM
             /// <summary>
             ///     Allocation blocks
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public ushort[] allocations;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public ushort[] allocations;
         }
     }
 }

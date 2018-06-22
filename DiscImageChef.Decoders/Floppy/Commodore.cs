@@ -86,7 +86,8 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             ///     User data
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte data;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+            public byte data;
             /// <summary>
             ///     XOR of <see cref="data" />
             /// </summary>

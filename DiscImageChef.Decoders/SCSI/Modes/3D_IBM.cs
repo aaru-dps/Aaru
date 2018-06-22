@@ -62,8 +62,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             IBM_ModePage_3D decoded = new IBM_ModePage_3D();
 
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.NumberOfWraps = (ushort)((pageResponse[3] << 8) + pageResponse[4]);
+            decoded.PS            |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.NumberOfWraps =  (ushort)((pageResponse[3] << 8) + pageResponse[4]);
 
             return decoded;
         }
@@ -78,7 +78,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             IBM_ModePage_3D page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("IBM LEOT Mode Page:");
 

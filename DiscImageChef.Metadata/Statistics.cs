@@ -54,10 +54,10 @@ namespace DiscImageChef.Metadata
         [XmlArrayItem("Device", IsNullable = true)]
         public List<DeviceStats> Devices { get; set; }
         [XmlArrayItem("Media")]
-        public List<MediaStats> Medias { get; set; }
+        public List<MediaStats> Medias { get;  set; }
         public BenchmarkStats Benchmark { get; set; }
         public MediaScanStats MediaScan { get; set; }
-        public VerifyStats Verify { get; set; }
+        public VerifyStats    Verify    { get; set; }
     }
 
     public class CommandsStats
@@ -66,8 +66,8 @@ namespace DiscImageChef.Metadata
         public long Benchmark;
         public long Checksum;
         public long Compare;
-        public long CreateSidecar;
         public long ConvertImage;
+        public long CreateSidecar;
         public long Decode;
         public long DeviceInfo;
         public long DeviceReport;
@@ -93,7 +93,7 @@ namespace DiscImageChef.Metadata
 
     public class VerifyStats
     {
-        public VerifiedItems MediaImages;
+        public VerifiedItems  MediaImages;
         public ScannedSectors Sectors;
     }
 
@@ -118,39 +118,39 @@ namespace DiscImageChef.Metadata
     public class MediaScanStats
     {
         public ScannedSectors Sectors;
-        public TimeStats Times;
+        public TimeStats      Times;
     }
 
     public class ChecksumStats
     {
         [XmlAttribute] public string algorithm;
-        [XmlText] public double Value;
+        [XmlText]      public double Value;
     }
 
     public class BenchmarkStats
     {
-        public double All;
+        public                          double              All;
         [XmlElement("Checksum")] public List<ChecksumStats> Checksum;
-        public double Entropy;
-        public long MaxMemory;
-        public long MinMemory;
-        public double Sequential;
+        public                          double              Entropy;
+        public                          long                MaxMemory;
+        public                          long                MinMemory;
+        public                          double              Sequential;
     }
 
     public class MediaStats
     {
-        [XmlAttribute] public bool real;
+        [XmlAttribute] public bool   real;
         [XmlAttribute] public string type;
-        [XmlText] public long Value;
+        [XmlText]      public long   Value;
     }
 
     public class DeviceStats
     {
-        [XmlIgnore] public bool ManufacturerSpecified;
-        public string Manufacturer { get; set; }
-        public string Model { get; set; }
-        public string Revision { get; set; }
-        public string Bus { get; set; }
+        [XmlIgnore] public bool   ManufacturerSpecified;
+        public             string Manufacturer { get; set; }
+        public             string Model        { get; set; }
+        public             string Revision     { get; set; }
+        public             string Bus          { get; set; }
     }
 
     public class NameValueStats

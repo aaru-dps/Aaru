@@ -199,9 +199,9 @@ namespace DiscImageChef.Decoders.CD
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(CDTextResponse, 0);
-            decoded.Reserved1 = CDTextResponse[2];
-            decoded.Reserved2 = CDTextResponse[3];
-            decoded.DataPacks = new CDTextPack[(decoded.DataLength - 2) / 18];
+            decoded.Reserved1  = CDTextResponse[2];
+            decoded.Reserved2  = CDTextResponse[3];
+            decoded.DataPacks  = new CDTextPack[(decoded.DataLength - 2) / 18];
 
             if(decoded.DataLength == 2) return null;
 
@@ -215,13 +215,13 @@ namespace DiscImageChef.Decoders.CD
 
             for(int i = 0; i < (decoded.DataLength - 2) / 18; i++)
             {
-                decoded.DataPacks[i].HeaderID1 = CDTextResponse[0 + i * 18 + 4];
-                decoded.DataPacks[i].HeaderID2 = CDTextResponse[1 + i * 18 + 4];
-                decoded.DataPacks[i].HeaderID3 = CDTextResponse[2 + i * 18 + 4];
-                decoded.DataPacks[i].DBCC = Convert.ToBoolean(CDTextResponse[3 + i * 18 + 4] & 0x80);
-                decoded.DataPacks[i].BlockNumber = (byte)((CDTextResponse[3 + i * 18 + 4] & 0x70) >> 4);
+                decoded.DataPacks[i].HeaderID1         = CDTextResponse[0 + i * 18 + 4];
+                decoded.DataPacks[i].HeaderID2         = CDTextResponse[1 + i * 18 + 4];
+                decoded.DataPacks[i].HeaderID3         = CDTextResponse[2 + i * 18 + 4];
+                decoded.DataPacks[i].DBCC              = Convert.ToBoolean(CDTextResponse[3 + i * 18 + 4] & 0x80);
+                decoded.DataPacks[i].BlockNumber       = (byte)((CDTextResponse[3 + i * 18 + 4] & 0x70) >> 4);
                 decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + i * 18 + 4] & 0x0F);
-                decoded.DataPacks[i].TextDataField = new byte[12];
+                decoded.DataPacks[i].TextDataField     = new byte[12];
                 Array.Copy(CDTextResponse, 4 + i * 18 + 4, decoded.DataPacks[i].TextDataField, 0, 12);
                 decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + i * 18 + 4);
             }
@@ -233,13 +233,13 @@ namespace DiscImageChef.Decoders.CD
         {
             if(CDTextResponse == null) return null;
 
-            CDText response = CDTextResponse.Value;
-            StringBuilder sb = new StringBuilder();
+            CDText        response = CDTextResponse.Value;
+            StringBuilder sb       = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-#endif
+            #endif
 
             foreach(CDTextPack descriptor in response.DataPacks)
                 if((descriptor.HeaderID1 & 0x80) != 0x80)

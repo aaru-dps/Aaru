@@ -39,7 +39,7 @@ namespace DiscImageChef.Decoders.SecureDigital
             switch(sdVendorId)
             {
                 case 0xAA: return "QEMU";
-                default: return $"Unknown manufacturer ID 0x{sdVendorId:X2}";
+                default:   return $"Unknown manufacturer ID 0x{sdVendorId:X2}";
             }
         }
     }

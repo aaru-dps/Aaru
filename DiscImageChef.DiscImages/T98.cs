@@ -100,7 +100,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             for(int i = 4; i < 256; i++)
-                if(hdrB[i]   != 0)
+                if(hdrB[i] != 0)
                     return false;
 
             int cylinders = BitConverter.ToInt32(hdrB, 0);
@@ -123,7 +123,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             for(int i = 4; i < 256; i++)
-                if(hdrB[i]   != 0)
+                if(hdrB[i] != 0)
                     return false;
 
             int cylinders = BitConverter.ToInt32(hdrB, 0);
@@ -245,8 +245,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -255,8 +255,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -271,7 +271,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,

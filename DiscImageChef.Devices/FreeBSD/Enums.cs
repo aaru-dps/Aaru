@@ -269,34 +269,34 @@ namespace DiscImageChef.Devices.FreeBSD
     [Flags]
     enum PeriphPatternFlags
     {
-        PeriphMatchNone = 0x000,
-        PeriphMatchPath = 0x001,
+        PeriphMatchNone   = 0x000,
+        PeriphMatchPath   = 0x001,
         PeriphMatchTarget = 0x002,
-        PeriphMatchLun = 0x004,
-        PeriphMatchName = 0x008,
-        PeriphMatchUnit = 0x010
+        PeriphMatchLun    = 0x004,
+        PeriphMatchName   = 0x008,
+        PeriphMatchUnit   = 0x010
         //  PERIPH_MATCH_ANY = 0x01f
     }
 
     [Flags]
     enum DevPatternFlags
     {
-        DevMatchNone = 0x000,
-        DevMatchPath = 0x001,
-        DevMatchTarget = 0x002,
-        DevMatchLun = 0x004,
+        DevMatchNone    = 0x000,
+        DevMatchPath    = 0x001,
+        DevMatchTarget  = 0x002,
+        DevMatchLun     = 0x004,
         DevMatchInquiry = 0x008,
-        DevMatchDevid = 0x010
+        DevMatchDevid   = 0x010
         //  DEV_MATCH_ANY = 0x00f
     }
 
     [Flags]
     enum BusPatternFlags
     {
-        BusMatchNone = 0x000,
-        BusMatchPath = 0x001,
-        BusMatchName = 0x002,
-        BusMatchUnit = 0x004,
+        BusMatchNone  = 0x000,
+        BusMatchPath  = 0x001,
+        BusMatchName  = 0x002,
+        BusMatchUnit  = 0x004,
         BusMatchBusId = 0x008
         //  BUS_MATCH_ANY = 0x00f
     }
@@ -304,7 +304,7 @@ namespace DiscImageChef.Devices.FreeBSD
     [Flags]
     enum DevResultFlags
     {
-        DevResultNoflag = 0x00,
+        DevResultNoflag       = 0x00,
         DevResultUnconfigured = 0x01
     }
 
@@ -353,32 +353,32 @@ namespace DiscImageChef.Devices.FreeBSD
     enum MmcCardFeatures
     {
         CardFeatureMemory = 0x1,
-        CardFeatureSdhc = 0x1 << 1,
-        CardFeatureSdio = 0x1 << 2,
-        CardFeatureSd20 = 0x1 << 3,
-        CardFeatureMmc = 0x1 << 4,
-        CardFeature18V = 0x1 << 5
+        CardFeatureSdhc   = 0x1 << 1,
+        CardFeatureSdio   = 0x1 << 2,
+        CardFeatureSd20   = 0x1 << 3,
+        CardFeatureMmc    = 0x1 << 4,
+        CardFeature18V    = 0x1 << 5
     }
 
     enum CamGenerations : uint
     {
-        CamBusGeneration = 0x00,
+        CamBusGeneration    = 0x00,
         CamTargetGeneration = 0x01,
-        CamDevGeneration = 0x02,
+        CamDevGeneration    = 0x02,
         CamPeriphGeneration = 0x03
     }
 
     [Flags]
     enum DevPosType
     {
-        CamDevPosNone = 0x000,
-        CamDevPosBus = 0x001,
+        CamDevPosNone   = 0x000,
+        CamDevPosBus    = 0x001,
         CamDevPosTarget = 0x002,
         CamDevPosDevice = 0x004,
         CamDevPosPeriph = 0x008,
-        CamDevPosPdptr = 0x010,
+        CamDevPosPdptr  = 0x010,
         //  CAM_DEV_POS_TYPEMASK = 0xf00,
-        CamDevPosEdt = 0x100,
+        CamDevPosEdt  = 0x100,
         CamDevPosPdrv = 0x200
     }
 

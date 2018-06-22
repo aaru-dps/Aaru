@@ -48,146 +48,146 @@ namespace DiscImageChef.Tests.Partitions
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: Boot",
-                    Length = 34,
-                    Sequence = 0,
-                    Start = 1
+                    Name        = null,
+                    Type        = "UNIX: Boot",
+                    Length      = 34,
+                    Sequence    = 0,
+                    Start       = 1
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: Whole disk",
-                    Length = 1023119,
-                    Sequence = 1,
-                    Start = 1
+                    Name        = null,
+                    Type        = "UNIX: Whole disk",
+                    Length      = 1023119,
+                    Sequence    = 1,
+                    Start       = 1
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: Stand",
-                    Length = 253,
-                    Sequence = 2,
-                    Start = 63
+                    Name        = null,
+                    Type        = "UNIX: Stand",
+                    Length      = 253,
+                    Sequence    = 2,
+                    Start       = 63
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 3,
-                    Start = 378
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 3,
+                    Start       = 378
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 4,
-                    Start = 79002
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 4,
+                    Start       = 79002
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 5,
-                    Start = 157626
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 5,
+                    Start       = 157626
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 6,
-                    Start = 236250
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 6,
+                    Start       = 236250
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 7,
-                    Start = 314874
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 7,
+                    Start       = 314874
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 8,
-                    Start = 393498
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 8,
+                    Start       = 393498
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 9,
-                    Start = 472122
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 9,
+                    Start       = 472122
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 10,
-                    Start = 550746
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 10,
+                    Start       = 550746
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 78624,
-                    Sequence = 11,
-                    Start = 629370
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 78624,
+                    Sequence    = 11,
+                    Start       = 629370
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 76608,
-                    Sequence = 12,
-                    Start = 707994
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 76608,
+                    Sequence    = 12,
+                    Start       = 707994
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 77616,
-                    Sequence = 13,
-                    Start = 784602
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 77616,
+                    Sequence    = 13,
+                    Start       = 784602
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 75600,
-                    Sequence = 14,
-                    Start = 862218
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 75600,
+                    Sequence    = 14,
+                    Start       = 862218
                 },
                 new Partition
                 {
                     Description = null,
-                    Name = null,
-                    Type = "UNIX: /usr",
-                    Length = 84672,
-                    Sequence = 15,
-                    Start = 937818
+                    Name        = null,
+                    Type        = "UNIX: /usr",
+                    Length      = 84672,
+                    Sequence    = 15,
+                    Start       = 937818
                 }
             }
         };
@@ -197,8 +197,8 @@ namespace DiscImageChef.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "vtoc", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "partitions", "vtoc", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
@@ -210,11 +210,11 @@ namespace DiscImageChef.Tests.Partitions
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Length * 512, partitions[j].Size, testfiles[i]);
                     //                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Start * 512, partitions[j].Offset, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type,        partitions[j].Type,     testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start * 512, partitions[j].Offset,   testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length,      partitions[j].Length,   testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Sequence,    partitions[j].Sequence, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start,       partitions[j].Start,    testfiles[i]);
                 }
             }
         }

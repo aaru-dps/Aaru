@@ -123,7 +123,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
             stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
-            vHdr             = new VdiHeader();
+            vHdr = new VdiHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
             Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
             vHdr = (VdiHeader)Marshal.PtrToStructure(headerPtr, typeof(VdiHeader));
@@ -141,7 +141,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
             stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
-            vHdr             = new VdiHeader();
+            vHdr = new VdiHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
             Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
             vHdr = (VdiHeader)Marshal.PtrToStructure(headerPtr, typeof(VdiHeader));
@@ -177,7 +177,7 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
             stream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
-            ibm         = new uint[vHdr.blocks];
+            ibm = new uint[vHdr.blocks];
             byte[] ibmB = new byte[vHdr.blocks * 4];
             stream.Read(ibmB, 0, ibmB.Length);
             for(int i = 0; i < ibm.Length; i++) ibm[i] = BitConverter.ToUInt32(ibmB, i * 4);
@@ -353,8 +353,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -363,8 +363,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -379,7 +379,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
@@ -424,10 +424,10 @@ namespace DiscImageChef.DiscImages
             }
 
             uint ibmEntries = (uint)(sectors * sectorSize / DEFAULT_BLOCK_SIZE);
-            if(sectors                       * sectorSize % DEFAULT_BLOCK_SIZE > 0) ibmEntries++;
+            if(sectors * sectorSize % DEFAULT_BLOCK_SIZE > 0) ibmEntries++;
 
             uint headerSectors = 1 + ibmEntries * 4 / sectorSize;
-            if(ibmEntries                       * 4 % sectorSize != 0) headerSectors++;
+            if(ibmEntries * 4 % sectorSize != 0) headerSectors++;
             ibm                    = new uint[ibmEntries];
             currentWritingPosition = headerSectors * sectorSize;
 
@@ -669,29 +669,29 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Version
             /// </summary>
-            public ushort        majorVersion;
+            public ushort majorVersion;
             public ushort        minorVersion;
             public int           headerSize;
             public VdiImageType  imageType;
             public VdiImageFlags imageFlags;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string comments;
-            public uint   offsetBlocks;
-            public uint   offsetData;
-            public uint   cylinders;
-            public uint   heads;
-            public uint   spt;
-            public uint   sectorSize;
-            public uint   unused;
-            public ulong  size;
-            public uint   blockSize;
-            public uint   blockExtraData;
-            public uint   blocks;
-            public uint   allocatedBlocks;
-            public Guid   uuid;
-            public Guid   snapshotUuid;
-            public Guid   linkUuid;
-            public Guid   parentUuid;
+            public uint  offsetBlocks;
+            public uint  offsetData;
+            public uint  cylinders;
+            public uint  heads;
+            public uint  spt;
+            public uint  sectorSize;
+            public uint  unused;
+            public ulong size;
+            public uint  blockSize;
+            public uint  blockExtraData;
+            public uint  blocks;
+            public uint  allocatedBlocks;
+            public Guid  uuid;
+            public Guid  snapshotUuid;
+            public Guid  linkUuid;
+            public Guid  parentUuid;
         }
 
         enum VdiImageType : uint

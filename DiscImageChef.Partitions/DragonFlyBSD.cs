@@ -43,7 +43,7 @@ namespace DiscImageChef.Partitions
         const uint DISK_MAGIC64 = 0xC4464C59;
 
         public string Name => "DragonFly BSD 64-bit disklabel";
-        public Guid Id => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+        public Guid   Id   => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -70,12 +70,13 @@ namespace DiscImageChef.Partitions
                 Partition part = new Partition
                 {
                     Start = entry.p_boffset / imagePlugin.Info.SectorSize + sectorOffset,
-                    Offset = entry.p_boffset + sectorOffset * imagePlugin.Info.SectorSize,
-                    Size = entry.p_bsize,
-                    Length = entry.p_bsize / imagePlugin.Info.SectorSize,
-                    Name = entry.p_stor_uuid.ToString(),
+                    Offset = entry.p_boffset +
+                               sectorOffset * imagePlugin.Info.SectorSize,
+                    Size     = entry.p_bsize,
+                    Length   = entry.p_bsize / imagePlugin.Info.SectorSize,
+                    Name     = entry.p_stor_uuid.ToString(),
                     Sequence = counter,
-                    Scheme = Name,
+                    Scheme   = Name,
                     Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other
                                ? entry.p_type_uuid.ToString()
                                : BSD.fsTypeToString((BSD.fsType)entry.p_fstype)
@@ -95,20 +96,24 @@ namespace DiscImageChef.Partitions
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Disklabel64
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] d_reserved0;
-            public uint d_magic;
-            public uint d_crc;
-            public uint d_align;
-            public uint d_npartitions;
-            public Guid d_stor_uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+            public byte[] d_reserved0;
+            public uint  d_magic;
+            public uint  d_crc;
+            public uint  d_align;
+            public uint  d_npartitions;
+            public Guid  d_stor_uuid;
             public ulong d_total_size;
             public ulong d_bbase;
             public ulong d_pbase;
             public ulong d_pstop;
             public ulong d_abase;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] d_packname;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] d_reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public Partition64[] d_partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] d_packname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] d_reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public Partition64[] d_partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -116,15 +121,15 @@ namespace DiscImageChef.Partitions
         {
             public ulong p_boffset;
             public ulong p_bsize;
-            public byte p_fstype;
-            public byte p_unused01;
-            public byte p_unused02;
-            public byte p_unused03;
-            public uint p_unused04;
-            public uint p_unused05;
-            public uint p_unused06;
-            public Guid p_type_uuid;
-            public Guid p_stor_uuid;
+            public byte  p_fstype;
+            public byte  p_unused01;
+            public byte  p_unused02;
+            public byte  p_unused03;
+            public uint  p_unused04;
+            public uint  p_unused05;
+            public uint  p_unused06;
+            public Guid  p_type_uuid;
+            public Guid  p_stor_uuid;
         }
     }
 }

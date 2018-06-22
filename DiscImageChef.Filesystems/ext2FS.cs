@@ -87,11 +87,11 @@ namespace DiscImageChef.Filesystems
         const ushort EXT2_ERRORS_PANIC = 3;
 
         // OS codes
-        const uint EXT2_OS_LINUX = 0;
-        const uint EXT2_OS_HURD = 1;
-        const uint EXT2_OS_MASIX = 2;
+        const uint EXT2_OS_LINUX   = 0;
+        const uint EXT2_OS_HURD    = 1;
+        const uint EXT2_OS_MASIX   = 2;
         const uint EXT2_OS_FREEBSD = 3;
-        const uint EXT2_OS_LITES = 4;
+        const uint EXT2_OS_LITES   = 4;
 
         // Revision levels
         /// <summary>The good old (original) format</summary>
@@ -162,23 +162,23 @@ namespace DiscImageChef.Filesystems
         const uint EXT2_FLAGS_TEST_FILESYS = 0x00000004;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Linux extended Filesystem 2, 3 and 4";
-        public Guid Id => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Linux extended Filesystem 2, 3 and 4";
+        public Guid           Id        => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
-            uint sbOff = SB_POS % imagePlugin.Info.SectorSize;
+            uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
             if(sbSectorOff + partition.Start >= partition.End) return false;
 
-            int sbSizeInBytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf(typeof(ext2FSSuperBlock));
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
-            byte[] sb = new byte[sbSizeInBytes];
+            byte[] sb       = new byte[sbSizeInBytes];
             Array.Copy(sbSector, sbOff, sb, 0, sbSizeInBytes);
 
             ushort magic = BitConverter.ToUInt16(sb, 0x038);
@@ -187,26 +187,26 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
             bool newExt2 = false;
-            bool ext3 = false;
-            bool ext4 = false;
+            bool ext3    = false;
+            bool ext4    = false;
 
-            int sbSizeInBytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf(typeof(ext2FSSuperBlock));
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
             ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
-            uint sbOff = SB_POS % imagePlugin.Info.SectorSize;
+            uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
-            byte[] sblock = new byte[sbSizeInBytes];
+            byte[] sblock   = new byte[sbSizeInBytes];
             Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
             IntPtr sbPtr = Marshal.AllocHGlobal(sbSizeInBytes);
             Marshal.Copy(sblock, 0, sbPtr, sbSizeInBytes);
@@ -222,21 +222,22 @@ namespace DiscImageChef.Filesystems
                     XmlFsType.Type = "ext2";
                     break;
                 case EXT2_MAGIC:
-                    ext3 |= (supblk.ftr_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
-                            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER) == EXT3_FEATURE_INCOMPAT_RECOVER ||
-                            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) ==
-                            EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
+                    ext3 |=
+                        (supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
+                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER)   == EXT3_FEATURE_INCOMPAT_RECOVER   ||
+                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) ==
+                        EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
 
                     if((supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_HUGE_FILE) == EXT4_FEATURE_RO_COMPAT_HUGE_FILE ||
-                       (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM) == EXT4_FEATURE_RO_COMPAT_GDT_CSUM ||
+                       (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM)  == EXT4_FEATURE_RO_COMPAT_GDT_CSUM  ||
                        (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_DIR_NLINK) == EXT4_FEATURE_RO_COMPAT_DIR_NLINK ||
                        (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE) ==
-                       EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE ||
-                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT ||
-                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_MMP) == EXT4_FEATURE_INCOMPAT_MMP ||
-                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_FLEX_BG) == EXT4_FEATURE_INCOMPAT_FLEX_BG ||
+                       EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE                                                       ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT)    == EXT4_FEATURE_INCOMPAT_64BIT    ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_MMP)      == EXT4_FEATURE_INCOMPAT_MMP      ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_FLEX_BG)  == EXT4_FEATURE_INCOMPAT_FLEX_BG  ||
                        (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_EA_INODE) == EXT4_FEATURE_INCOMPAT_EA_INODE ||
-                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_DIRDATA) == EXT4_FEATURE_INCOMPAT_DIRDATA)
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_DIRDATA)  == EXT4_FEATURE_INCOMPAT_DIRDATA)
                     {
                         ext3 = false;
                         ext4 = true;
@@ -249,16 +250,19 @@ namespace DiscImageChef.Filesystems
                         sb.AppendLine("ext2 filesystem");
                         XmlFsType.Type = "ext2";
                     }
+
                     if(ext3)
                     {
                         sb.AppendLine("ext3 filesystem");
                         XmlFsType.Type = "ext3";
                     }
+
                     if(ext4)
                     {
                         sb.AppendLine("ext4 filesystem");
                         XmlFsType.Type = "ext4";
                     }
+
                     break;
                 default:
                     information = "Not a ext2/3/4 filesystem" + Environment.NewLine;
@@ -294,13 +298,13 @@ namespace DiscImageChef.Filesystems
             {
                 sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t),
                                 extOs).AppendLine();
-                XmlFsType.CreationDate = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
+                XmlFsType.CreationDate          = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
                 XmlFsType.CreationDateSpecified = true;
             }
             else sb.AppendFormat("Volume was created for {0}", extOs).AppendLine();
 
             byte[] tempBytes = new byte[8];
-            ulong blocks, reserved, free;
+            ulong  blocks, reserved, free;
 
             if((supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT)
             {
@@ -314,10 +318,10 @@ namespace DiscImageChef.Filesystems
                 tempBytes[5] = tempHi[1];
                 tempBytes[6] = tempHi[2];
                 tempBytes[7] = tempHi[3];
-                blocks = BitConverter.ToUInt64(tempBytes, 0);
+                blocks       = BitConverter.ToUInt64(tempBytes, 0);
 
-                tempLo = BitConverter.GetBytes(supblk.reserved_blocks);
-                tempHi = BitConverter.GetBytes(supblk.reserved_blocks_hi);
+                tempLo       = BitConverter.GetBytes(supblk.reserved_blocks);
+                tempHi       = BitConverter.GetBytes(supblk.reserved_blocks_hi);
                 tempBytes[0] = tempLo[0];
                 tempBytes[1] = tempLo[1];
                 tempBytes[2] = tempLo[2];
@@ -326,10 +330,10 @@ namespace DiscImageChef.Filesystems
                 tempBytes[5] = tempHi[1];
                 tempBytes[6] = tempHi[2];
                 tempBytes[7] = tempHi[3];
-                reserved = BitConverter.ToUInt64(tempBytes, 0);
+                reserved     = BitConverter.ToUInt64(tempBytes, 0);
 
-                tempLo = BitConverter.GetBytes(supblk.free_blocks);
-                tempHi = BitConverter.GetBytes(supblk.free_blocks_hi);
+                tempLo       = BitConverter.GetBytes(supblk.free_blocks);
+                tempHi       = BitConverter.GetBytes(supblk.free_blocks_hi);
                 tempBytes[0] = tempLo[0];
                 tempBytes[1] = tempLo[1];
                 tempBytes[2] = tempLo[2];
@@ -338,13 +342,13 @@ namespace DiscImageChef.Filesystems
                 tempBytes[5] = tempHi[1];
                 tempBytes[6] = tempHi[2];
                 tempBytes[7] = tempHi[3];
-                free = BitConverter.ToUInt64(tempBytes, 0);
+                free         = BitConverter.ToUInt64(tempBytes, 0);
             }
             else
             {
-                blocks = supblk.blocks;
+                blocks   = supblk.blocks;
                 reserved = supblk.reserved_blocks;
-                free = supblk.free_blocks;
+                free     = supblk.free_blocks;
             }
 
             if(supblk.block_size == 0) // Then it is 1024 bytes
@@ -353,7 +357,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks,
                             1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size))
               .AppendLine();
-            XmlFsType.Clusters = (long)blocks;
+            XmlFsType.Clusters    = (long)blocks;
             XmlFsType.ClusterSize = 1024 << (int)supblk.block_size;
             if(supblk.mount_t > 0 || supblk.mount_c > 0)
             {
@@ -400,7 +404,7 @@ namespace DiscImageChef.Filesystems
             {
                 sb.AppendFormat("Last written on {0}", DateHandlers.UnixUnsignedToDateTime(supblk.write_t))
                   .AppendLine();
-                XmlFsType.ModificationDate = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
+                XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
                 XmlFsType.ModificationDateSpecified = true;
             }
             else sb.AppendLine("Volume has never been written");
@@ -460,12 +464,12 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} KiB has been written on volume", supblk.kbytes_written).AppendLine();
 
             sb.AppendFormat("{0} reserved and {1} free blocks", reserved, free).AppendLine();
-            XmlFsType.FreeClusters = (long)free;
+            XmlFsType.FreeClusters          = (long)free;
             XmlFsType.FreeClustersSpecified = true;
             sb.AppendFormat("{0} inodes with {1} free inodes ({2}%)", supblk.inodes, supblk.free_inodes,
                             supblk.free_inodes * 100 / supblk.inodes).AppendLine();
             if(supblk.first_inode > 0) sb.AppendFormat("First inode is {0}", supblk.first_inode).AppendLine();
-            if(supblk.frag_size > 0) sb.AppendFormat("{0} bytes per fragment", supblk.frag_size).AppendLine();
+            if(supblk.frag_size   > 0) sb.AppendFormat("{0} bytes per fragment", supblk.frag_size).AppendLine();
             if(supblk.blocks_per_grp > 0 && supblk.flags_per_grp > 0 && supblk.inodes_per_grp > 0)
                 sb.AppendFormat("{0} blocks, {1} flags and {2} inodes per group", supblk.blocks_per_grp,
                                 supblk.flags_per_grp, supblk.inodes_per_grp).AppendLine();
@@ -490,7 +494,7 @@ namespace DiscImageChef.Filesystems
                                 supblk.hash_seed_2, supblk.hash_seed_3, supblk.hash_seed_4, supblk.hash_version)
                   .AppendLine();
 
-            if((supblk.ftr_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
+            if((supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL)   == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
                (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
             {
                 sb.AppendLine("Volume is journaled");
@@ -498,7 +502,8 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Journal UUID: {0}", supblk.journal_uuid).AppendLine();
                 sb.AppendFormat("Journal has inode {0}", supblk.journal_inode).AppendLine();
                 if((supblk.ftr_compat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV &&
-                   supblk.journal_dev > 0) sb.AppendFormat("Journal is on device {0}", supblk.journal_dev).AppendLine();
+                   supblk.journal_dev                                      > 0)
+                    sb.AppendFormat("Journal is on device {0}", supblk.journal_dev).AppendLine();
                 if(supblk.jnl_backup_type > 0)
                     sb.AppendFormat("Journal backup type: {0}", supblk.jnl_backup_type).AppendLine();
                 if(supblk.last_orphan > 0)
@@ -510,9 +515,9 @@ namespace DiscImageChef.Filesystems
             {
                 if(supblk.snapshot_id > 0)
                     sb
-                        .AppendFormat("Active snapshot has ID {0}, on inode {1}, with {2} blocks reserved, list starting on block {3}",
-                                      supblk.snapshot_id, supblk.snapshot_inum, supblk.snapshot_blocks,
-                                      supblk.snapshot_list).AppendLine();
+                       .AppendFormat("Active snapshot has ID {0}, on inode {1}, with {2} blocks reserved, list starting on block {3}",
+                                     supblk.snapshot_id, supblk.snapshot_inum, supblk.snapshot_blocks,
+                                     supblk.snapshot_list).AppendLine();
 
                 if(supblk.error_count > 0)
                 {
@@ -708,9 +713,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x068, 16 bytes, UUID</summary>
             public Guid uuid;
             /// <summary>0x078, 16 bytes, volume name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] volume_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] volume_name;
             /// <summary>0x088, 64 bytes, where last mounted</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] last_mount_dir;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] last_mount_dir;
             /// <summary>0x0C8, Usage bitmap algorithm, for compression</summary>
             public uint algo_usage_bmp;
             /// <summary>0x0CC, Block to try to preallocate</summary>
@@ -754,7 +761,8 @@ namespace DiscImageChef.Filesystems
             public uint mkfs_t;
 
             /// <summary>Backup of the journal inode</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)] public uint[] jnl_blocks;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public uint[] jnl_blocks;
 
             // Following 3 fields are valid if EXT4_FEATURE_COMPAT_64BIT is set
             /// <summary>0x14C, High 32bits of blocks no.</summary>
@@ -807,7 +815,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x19C, block involved of first error</summary>
             public ulong first_error_block;
             /// <summary>0x1A0, 32 bytes, function where the error happened</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] first_error_func;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] first_error_func;
             /// <summary>0x1B0, line number where error happened</summary>
             public uint first_error_line;
             /// <summary>0x1B4, time of most recent error</summary>
@@ -819,11 +828,13 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x1C0, block involved of last error</summary>
             public ulong last_error_block;
             /// <summary>0x1C8, 32 bytes, function where the error happened</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] last_error_func;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] last_error_func;
             // End of optional error-handling features
 
             // 0x1D8, 64 bytes, last used mount options</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] mount_options;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] mount_options;
 
             /// <summary>Inode for user quota</summary>
             public uint usr_quota_inum;
@@ -832,11 +843,14 @@ namespace DiscImageChef.Filesystems
             /// <summary>Overhead clusters in volume</summary>
             public uint overhead_clusters;
             /// <summary>Groups with sparse_super2 SBs</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] backup_bgs;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public uint[] backup_bgs;
             /// <summary>Encryption algorithms in use</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] encrypt_algos;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] encrypt_algos;
             /// <summary>Salt used for string2key algorithm</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] encrypt_pw_salt;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] encrypt_pw_salt;
             /// <summary>Inode number of lost+found</summary>
             public uint lpf_inum;
             /// <summary>Inode number for tracking project quota</summary>
@@ -844,7 +858,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>crc32c(uuid) if csum_seed is set</summary>
             public uint checksum_seed;
             /// <summary>Reserved</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 98)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 98)]
+            public byte[] reserved;
             /// <summary>crc32c(superblock)</summary>
             public uint checksum;
         }

@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems
 
             // Clear checksum on sector
             sector[4] = sector[5] = sector[6] = sector[7] = 0;
-            uint bsum = AmigaBootChecksum(sector);
+            uint bsum             = AmigaBootChecksum(sector);
 
             DicConsole.DebugWriteLine("AmigaDOS plugin", "bblk.checksum = 0x{0:X8}", bblk.checksum);
             DicConsole.DebugWriteLine("AmigaDOS plugin", "bsum = 0x{0:X8}",          bsum);
@@ -99,10 +99,11 @@ namespace DiscImageChef.Filesystems
 
             ulong[] rootPtrs =
             {
-                bRootPtr       + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
-                (partition.End - partition.Start                 + 1)                   / 2 + partition.Start - 1,
-                (partition.End - partition.Start                 + 1)                   / 2 + partition.Start,
-                (partition.End - partition.Start                 + 1)                   / 2 + partition.Start + 4
+                bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+                (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
+                (partition.End - partition.Start + 1) / 2 +
+                partition.Start,
+                (partition.End - partition.Start + 1) / 2 + partition.Start + 4
             };
 
             RootBlock rblk = new RootBlock();
@@ -123,7 +124,7 @@ namespace DiscImageChef.Filesystems
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.hashTableSize = {0}", rblk.hashTableSize);
 
                 uint blockSize       = (rblk.hashTableSize + 56) * 4;
-                uint sectorsPerBlock = (uint)(blockSize          / sector.Length);
+                uint sectorsPerBlock = (uint)(blockSize / sector.Length);
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}",       blockSize);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
@@ -137,7 +138,7 @@ namespace DiscImageChef.Filesystems
                 // Clear checksum on sector
                 rblk.checksum = BigEndianBitConverter.ToUInt32(sector, 20);
                 sector[20]    = sector[21] = sector[22] = sector[23] = 0;
-                uint rsum     = AmigaChecksum(sector);
+                uint rsum                  = AmigaChecksum(sector);
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.checksum = 0x{0:X8}", rblk.checksum);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rsum = 0x{0:X8}",          rsum);
@@ -154,8 +155,8 @@ namespace DiscImageChef.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding    encoding)
         {
-            Encoding                             = encoding ?? Encoding.GetEncoding("iso-8859-1");
-            StringBuilder sbInformation          = new StringBuilder();
+            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            StringBuilder sbInformation = new StringBuilder();
             XmlFsType                            = new FileSystemType();
             information                          = null;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -163,10 +164,10 @@ namespace DiscImageChef.Filesystems
             byte[] bootBlockSectors = imagePlugin.ReadSectors(0 + partition.Start, 2);
 
             BootBlock bootBlk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(bootBlockSectors);
-            bootBlk.bootCode  = new byte[bootBlockSectors.Length - 12];
+            bootBlk.bootCode = new byte[bootBlockSectors.Length - 12];
             Array.Copy(bootBlockSectors, 12, bootBlk.bootCode, 0, bootBlk.bootCode.Length);
             bootBlockSectors[4] = bootBlockSectors[5] = bootBlockSectors[6] = bootBlockSectors[7] = 0;
-            uint bsum           = AmigaBootChecksum(bootBlockSectors);
+            uint bsum                                 = AmigaBootChecksum(bootBlockSectors);
 
             ulong bRootPtr = 0;
 
@@ -179,10 +180,11 @@ namespace DiscImageChef.Filesystems
 
             ulong[] rootPtrs =
             {
-                bRootPtr       + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
-                (partition.End - partition.Start                 + 1)                   / 2 + partition.Start - 1,
-                (partition.End - partition.Start                 + 1)                   / 2 + partition.Start,
-                (partition.End - partition.Start                 + 1)                   / 2 + partition.Start + 4
+                bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+                (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
+                (partition.End - partition.Start + 1) / 2 +
+                partition.Start,
+                (partition.End - partition.Start + 1) / 2 + partition.Start + 4
             };
 
             RootBlock rootBlk         = new RootBlock();
@@ -206,8 +208,8 @@ namespace DiscImageChef.Filesystems
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.hashTableSize = {0}", rootBlk.hashTableSize);
 
-                blockSize            = (rootBlk.hashTableSize + 56) * 4;
-                uint sectorsPerBlock = (uint)(blockSize             / rootBlockSector.Length);
+                blockSize = (rootBlk.hashTableSize + 56) * 4;
+                uint sectorsPerBlock = (uint)(blockSize / rootBlockSector.Length);
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}",       blockSize);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
@@ -221,7 +223,7 @@ namespace DiscImageChef.Filesystems
                 // Clear checksum on sector
                 rootBlk.checksum    = BigEndianBitConverter.ToUInt32(rootBlockSector, 20);
                 rootBlockSector[20] = rootBlockSector[21] = rootBlockSector[22] = rootBlockSector[23] = 0;
-                uint rsum           = AmigaChecksum(rootBlockSector);
+                uint rsum                                 = AmigaChecksum(rootBlockSector);
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.checksum = 0x{0:X8}", rootBlk.checksum);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rsum = 0x{0:X8}",             rsum);
@@ -303,7 +305,7 @@ namespace DiscImageChef.Filesystems
             long blocks = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize);
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} blocks",          blocks).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} blocks", blocks).AppendLine();
             sbInformation.AppendFormat("Volume created on {0}",
                                        DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks))
                          .AppendLine();
@@ -319,7 +321,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType.CreationDate =
                 DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
             XmlFsType.CreationDateSpecified = true;
-            XmlFsType.ModificationDate      =
+            XmlFsType.ModificationDate =
                 DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
             XmlFsType.ModificationDateSpecified = true;
             XmlFsType.Dirty                     = rootBlk.bitmapFlag != 0xFFFFFFFF;
@@ -336,7 +338,7 @@ namespace DiscImageChef.Filesystems
             byte[] tmp = new byte[228];
             Array.Copy(block, 0,                  tmp, 0,  24);
             Array.Copy(block, block.Length - 200, tmp, 28, 200);
-            RootBlock root                       = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(tmp);
+            RootBlock root = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(tmp);
             root.hashTable                       = new uint[(block.Length - 224) / 4];
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < root.hashTable.Length; i++)

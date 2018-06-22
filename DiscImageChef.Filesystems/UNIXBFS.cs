@@ -45,9 +45,9 @@ namespace DiscImageChef.Filesystems
         const uint BFS_MAGIC = 0x1BADFACE;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "UNIX Boot filesystem";
-        public Guid Id => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "UNIX Boot filesystem";
+        public Guid           Id        => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -59,24 +59,24 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
-            byte[] bfsSbSector = imagePlugin.ReadSector(0 + partition.Start);
-            byte[] sbStrings = new byte[6];
+            StringBuilder sb          = new StringBuilder();
+            byte[]        bfsSbSector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[]        sbStrings   = new byte[6];
 
             BFSSuperBlock bfsSb = new BFSSuperBlock
             {
                 s_magic = BitConverter.ToUInt32(bfsSbSector, 0x00),
                 s_start = BitConverter.ToUInt32(bfsSbSector, 0x04),
-                s_end = BitConverter.ToUInt32(bfsSbSector, 0x08),
-                s_from = BitConverter.ToUInt32(bfsSbSector, 0x0C),
-                s_to = BitConverter.ToUInt32(bfsSbSector, 0x10),
+                s_end   = BitConverter.ToUInt32(bfsSbSector, 0x08),
+                s_from  = BitConverter.ToUInt32(bfsSbSector, 0x0C),
+                s_to    = BitConverter.ToUInt32(bfsSbSector, 0x10),
                 s_bfrom = BitConverter.ToInt32(bfsSbSector, 0x14),
-                s_bto = BitConverter.ToInt32(bfsSbSector, 0x18)
+                s_bto   = BitConverter.ToInt32(bfsSbSector, 0x18)
             };
 
             Array.Copy(bfsSbSector, 0x1C, sbStrings, 0, 6);
@@ -86,13 +86,13 @@ namespace DiscImageChef.Filesystems
 
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}", bfsSb.s_end);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}", bfsSb.s_from);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}", bfsSb.s_to);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}",   bfsSb.s_end);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}",  bfsSb.s_from);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}",    bfsSb.s_to);
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bfrom: 0x{0:X8}", bfsSb.s_bfrom);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}", bfsSb.s_bto);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}", bfsSb.s_fsname);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}", bfsSb.s_volume);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}",   bfsSb.s_bto);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}",   bfsSb.s_fsname);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}",   bfsSb.s_volume);
 
             sb.AppendLine("UNIX Boot filesystem");
             sb.AppendFormat("Volume goes from byte {0} to byte {1}, for {2} bytes", bfsSb.s_start, bfsSb.s_end,
@@ -102,10 +102,10 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "BFS",
-                VolumeName = bfsSb.s_volume,
+                Type        = "BFS",
+                VolumeName  = bfsSb.s_volume,
                 ClusterSize = (int)imagePlugin.Info.SectorSize,
-                Clusters = (long)(partition.End - partition.Start + 1)
+                Clusters    = (long)(partition.End - partition.Start + 1)
             };
 
             information = sb.ToString();

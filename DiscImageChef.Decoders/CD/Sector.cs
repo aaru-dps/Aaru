@@ -188,7 +188,7 @@ namespace DiscImageChef.Decoders.CD
 
             if(!SyncMark.SequenceEqual(sync)) return sector;
 
-            byte[] scrambled = new byte[sector.Length];
+            byte[] scrambled                           = new byte[sector.Length];
             for(int i = 0; i < 2352; i++) scrambled[i] = (byte)(sector[i] ^ ScrambleTable[i]);
 
             if(sector.Length <= 2352) return scrambled;

@@ -48,15 +48,15 @@ namespace DiscImageChef.Filesystems
             {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Reiser4 Filesystem Plugin";
-        public Guid Id => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Reiser4 Filesystem Plugin";
+        public Guid           Id        => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
-            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+            uint sbAddr            = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
@@ -78,13 +78,13 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
-            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+            uint sbAddr            = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
@@ -114,10 +114,11 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Reiser 4 filesystem",
+                Type        = "Reiser 4 filesystem",
                 ClusterSize = reiserSb.blocksize,
-                Clusters = (long)((partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize),
-                VolumeName = StringHandlers.CToString(reiserSb.label, Encoding),
+                Clusters =
+                    (long)((partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize),
+                VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding),
                 VolumeSerial = reiserSb.uuid.ToString()
             };
         }
@@ -125,11 +126,13 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Reiser4_Superblock
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] magic;
             public ushort diskformat;
             public ushort blocksize;
-            public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
+            public Guid   uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] label;
         }
     }
 }

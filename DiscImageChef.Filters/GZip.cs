@@ -41,23 +41,23 @@ namespace DiscImageChef.Filters
     /// </summary>
     public class GZip : IFilter
     {
-        string basePath;
+        string   basePath;
         DateTime creationTime;
-        Stream dataStream;
-        uint decompressedSize;
+        Stream   dataStream;
+        uint     decompressedSize;
         DateTime lastWriteTime;
-        bool opened;
-        Stream zStream;
+        bool     opened;
+        Stream   zStream;
 
         public string Name => "GZip";
-        public Guid Id => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
+        public Guid   Id   => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
 
         public void Close()
         {
             dataStream?.Close();
             dataStream = null;
-            basePath = null;
-            opened = false;
+            basePath   = null;
+            opened     = false;
         }
 
         public string GetBasePath()
@@ -106,7 +106,7 @@ namespace DiscImageChef.Filters
             if(!File.Exists(path)) return false;
 
             FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[] buffer = new byte[3];
+            byte[]     buffer = new byte[3];
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 3);
@@ -121,7 +121,7 @@ namespace DiscImageChef.Filters
             byte[] isize_b = new byte[4];
 
             dataStream = new MemoryStream(buffer);
-            basePath = null;
+            basePath   = null;
 
             dataStream.Seek(4, SeekOrigin.Begin);
             dataStream.Read(mtime_b, 0, 4);
@@ -133,9 +133,10 @@ namespace DiscImageChef.Filters
             uint isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
-            creationTime = DateHandlers.UnixUnsignedToDateTime(mtime);
-            lastWriteTime = creationTime;
-            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
+            lastWriteTime    = creationTime;
+            zStream =
+                new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
         }
 
@@ -145,7 +146,7 @@ namespace DiscImageChef.Filters
             byte[] isize_b = new byte[4];
 
             dataStream = stream;
-            basePath = null;
+            basePath   = null;
 
             dataStream.Seek(4, SeekOrigin.Begin);
             dataStream.Read(mtime_b, 0, 4);
@@ -157,9 +158,10 @@ namespace DiscImageChef.Filters
             uint isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
-            creationTime = DateHandlers.UnixUnsignedToDateTime(mtime);
-            lastWriteTime = creationTime;
-            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
+            lastWriteTime    = creationTime;
+            zStream =
+                new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
         }
 
@@ -169,7 +171,7 @@ namespace DiscImageChef.Filters
             byte[] isize_b = new byte[4];
 
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            basePath = Path.GetFullPath(path);
+            basePath   = Path.GetFullPath(path);
 
             dataStream.Seek(4, SeekOrigin.Begin);
             dataStream.Read(mtime_b, 0, 4);
@@ -182,10 +184,10 @@ namespace DiscImageChef.Filters
 
             decompressedSize = isize;
             FileInfo fi = new FileInfo(path);
-            creationTime = fi.CreationTimeUtc;
+            creationTime  = fi.CreationTimeUtc;
             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
-            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
-            opened = true;
+            zStream       = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            opened        = true;
         }
 
         public DateTime GetCreationTime()

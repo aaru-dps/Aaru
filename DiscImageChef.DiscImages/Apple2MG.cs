@@ -193,18 +193,18 @@ namespace DiscImageChef.DiscImages
             imageHeader.HeaderSize            = BitConverter.ToUInt16(header, 0x08);
             imageHeader.Version               = BitConverter.ToUInt16(header, 0x0A);
             imageHeader.ImageFormat           = (SectorOrder)BitConverter.ToUInt32(header, 0x0C);
-            imageHeader.Flags                 = BitConverter.ToUInt32(header,              0x10);
-            imageHeader.Blocks                = BitConverter.ToUInt32(header,              0x14);
-            imageHeader.DataOffset            = BitConverter.ToUInt32(header,              0x18);
-            imageHeader.DataSize              = BitConverter.ToUInt32(header,              0x1C);
-            imageHeader.CommentOffset         = BitConverter.ToUInt32(header,              0x20);
-            imageHeader.CommentSize           = BitConverter.ToUInt32(header,              0x24);
-            imageHeader.CreatorSpecificOffset = BitConverter.ToUInt32(header,              0x28);
-            imageHeader.CreatorSpecificSize   = BitConverter.ToUInt32(header,              0x2C);
-            imageHeader.Reserved1             = BitConverter.ToUInt32(header,              0x30);
-            imageHeader.Reserved2             = BitConverter.ToUInt32(header,              0x34);
-            imageHeader.Reserved3             = BitConverter.ToUInt32(header,              0x38);
-            imageHeader.Reserved4             = BitConverter.ToUInt32(header,              0x3C);
+            imageHeader.Flags                 = BitConverter.ToUInt32(header, 0x10);
+            imageHeader.Blocks                = BitConverter.ToUInt32(header, 0x14);
+            imageHeader.DataOffset            = BitConverter.ToUInt32(header, 0x18);
+            imageHeader.DataSize              = BitConverter.ToUInt32(header, 0x1C);
+            imageHeader.CommentOffset         = BitConverter.ToUInt32(header, 0x20);
+            imageHeader.CommentSize           = BitConverter.ToUInt32(header, 0x24);
+            imageHeader.CreatorSpecificOffset = BitConverter.ToUInt32(header, 0x28);
+            imageHeader.CreatorSpecificSize   = BitConverter.ToUInt32(header, 0x2C);
+            imageHeader.Reserved1             = BitConverter.ToUInt32(header, 0x30);
+            imageHeader.Reserved2             = BitConverter.ToUInt32(header, 0x34);
+            imageHeader.Reserved3             = BitConverter.ToUInt32(header, 0x38);
+            imageHeader.Reserved4             = BitConverter.ToUInt32(header, 0x3C);
 
             if(imageHeader.DataSize == 0x00800C00)
             {
@@ -262,9 +262,9 @@ namespace DiscImageChef.DiscImages
                     bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
                                  tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
                     decodedImage = new byte[imageHeader.DataSize];
-                    offsets      = imageHeader.ImageFormat == SectorOrder.Dos
-                                       ? (isDos ? deinterleave : interleave)
-                                       : (isDos ? interleave : deinterleave);
+                    offsets = imageHeader.ImageFormat == SectorOrder.Dos
+                                  ? (isDos ? deinterleave : interleave)
+                                  : (isDos ? interleave : deinterleave);
                     for(int t = 0; t < 35; t++)
                     {
                         for(int s = 0; s < 16; s++)
@@ -414,12 +414,12 @@ namespace DiscImageChef.DiscImages
 
             if(decodedImage != null)
                 Array.Copy(decodedImage, (long)(sectorAddress * imageInfo.SectorSize), buffer, 0,
-                           length                             * imageInfo.SectorSize);
+                           length * imageInfo.SectorSize);
             else
             {
                 Stream stream = a2MgImageFilter.GetDataForkStream();
                 stream.Seek((long)(imageHeader.DataOffset + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-                stream.Read(buffer, 0, (int)(length                       * imageInfo.SectorSize));
+                stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
             }
 
             return buffer;
@@ -500,8 +500,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -510,8 +510,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -526,7 +526,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.Apple32SS, MediaType.Apple33SS, MediaType.AppleSonySS, MediaType.AppleSonyDS,
@@ -543,7 +543,7 @@ namespace DiscImageChef.DiscImages
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint   sectorSize)
         {
-            if(sectorSize     != 512)
+            if(sectorSize != 512)
                 if(sectorSize != 256 || mediaType != MediaType.Apple32SS && mediaType != MediaType.Apple33SS)
                 {
                     ErrorMessage = "Unsupported sector size";
@@ -674,7 +674,7 @@ namespace DiscImageChef.DiscImages
                 Creator    = CREATOR_DIC,
                 DataOffset = 0x40,
                 DataSize   = (uint)(imageInfo.Sectors * imageInfo.SectorSize),
-                Flags      =
+                Flags =
                     (uint)(imageInfo.LastMediaSequence != 0
                                ? VALID_VOLUME_NUMBER + (imageInfo.MediaSequence & 0xFF)
                                : 0),

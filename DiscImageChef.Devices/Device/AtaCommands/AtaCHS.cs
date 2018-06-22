@@ -83,7 +83,7 @@ namespace DiscImageChef.Devices
         public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout,
                                 out double duration)
         {
-            buffer                    = new byte[512];
+            buffer = new byte[512];
             AtaRegistersChs registers = new AtaRegistersChs {Command = (byte)AtaCommands.IdentifyDevice};
 
             LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.PioIn,
@@ -106,16 +106,16 @@ namespace DiscImageChef.Devices
         }
 
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort cylinder,
-                            byte       head, byte                       sector, byte          count, uint   timeout,
+                            byte       head,   byte                     sector,          byte count, uint   timeout,
                             out double duration)
         {
-            buffer                    = count == 0 ? new byte[512 * 256] : new byte[512 * count];
+            buffer = count == 0 ? new byte[512 * 256] : new byte[512 * count];
             AtaRegistersChs registers = new AtaRegistersChs
             {
                 SectorCount  = count,
                 CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
                 CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                DeviceHead   = (byte)(head      & 0x0F),
+                DeviceHead   = (byte)(head & 0x0F),
                 Sector       = sector,
                 Command      = retry ? (byte)AtaCommands.ReadDmaRetry : (byte)AtaCommands.ReadDma
             };
@@ -130,18 +130,18 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
-                                 byte       head, byte                       sector, byte            count,
-                                 uint       timeout, out double              duration)
+        public bool ReadMultiple(out byte[] buffer,  out AtaErrorRegistersChs statusRegisters, ushort cylinder,
+                                 byte       head,    byte                     sector,          byte   count,
+                                 uint       timeout, out double               duration)
         {
-            buffer                    = count == 0 ? new byte[512 * 256] : new byte[512 * count];
+            buffer = count == 0 ? new byte[512 * 256] : new byte[512 * count];
             AtaRegistersChs registers = new AtaRegistersChs
             {
                 Command      = (byte)AtaCommands.ReadMultiple,
                 SectorCount  = count,
                 CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
                 CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                DeviceHead   = (byte)(head      & 0x0F),
+                DeviceHead   = (byte)(head & 0x0F),
                 Sector       = sector
             };
 
@@ -157,24 +157,24 @@ namespace DiscImageChef.Devices
         }
 
         public bool Read(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head,
-                         byte       sector, byte                     count, uint             timeout,
+                         byte       sector, byte                     count,           uint   timeout,
                          out double duration)
         {
             return Read(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
         }
 
         public bool Read(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort cylinder,
-                         byte       head, byte                       sector, byte          count, uint   timeout,
+                         byte       head,   byte                     sector,          byte count, uint   timeout,
                          out double duration)
         {
-            buffer                    = count == 0 ? new byte[512 * 256] : new byte[512 * count];
+            buffer = count == 0 ? new byte[512 * 256] : new byte[512 * count];
             AtaRegistersChs registers = new AtaRegistersChs
             {
                 Command      = retry ? (byte)AtaCommands.ReadRetry : (byte)AtaCommands.Read,
                 SectorCount  = count,
                 CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
                 CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                DeviceHead   = (byte)(head      & 0x0F),
+                DeviceHead   = (byte)(head & 0x0F),
                 Sector       = sector
             };
 
@@ -198,18 +198,19 @@ namespace DiscImageChef.Devices
                             out duration);
         }
 
-        public bool ReadLong(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort   cylinder,
-                             byte       head, byte                       sector, uint          blockSize, uint timeout,
-                             out double duration)
+        public bool ReadLong(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry,
+                             ushort     cylinder,
+                             byte       head,    byte       sector, uint blockSize,
+                             uint       timeout, out double duration)
         {
-            buffer                    = new byte[blockSize];
+            buffer = new byte[blockSize];
             AtaRegistersChs registers = new AtaRegistersChs
             {
                 Command      = retry ? (byte)AtaCommands.ReadLongRetry : (byte)AtaCommands.ReadLong,
                 SectorCount  = 1,
                 CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
                 CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                DeviceHead   = (byte)(head      & 0x0F),
+                DeviceHead   = (byte)(head & 0x0F),
                 Sector       = sector
             };
 
@@ -224,16 +225,16 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool Seek(out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head, byte sector,
-                         uint                     timeout, out double     duration)
+        public bool Seek(out AtaErrorRegistersChs statusRegisters, ushort     cylinder, byte head, byte sector,
+                         uint                     timeout,         out double duration)
         {
-            byte[]          buffer    = new byte[0];
+            byte[] buffer = new byte[0];
             AtaRegistersChs registers = new AtaRegistersChs
             {
                 Command      = (byte)AtaCommands.Seek,
                 CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
                 CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                DeviceHead   = (byte)(head      & 0x0F),
+                DeviceHead   = (byte)(head & 0x0F),
                 Sector       = sector
             };
 
@@ -254,16 +255,16 @@ namespace DiscImageChef.Devices
         }
 
         public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, ushort cylinder,
-                                byte                     head, byte                   sector, byte    sectorCount,
-                                uint                     timeout, out double          duration)
+                                byte                     head,            byte        sector,  byte   sectorCount,
+                                uint                     timeout,         out double  duration)
         {
-            byte[]          buffer    = new byte[0];
+            byte[] buffer = new byte[0];
             AtaRegistersChs registers = new AtaRegistersChs
             {
                 Command      = (byte)AtaCommands.SetFeatures,
                 CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
                 CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                DeviceHead   = (byte)(head      & 0x0F),
+                DeviceHead   = (byte)(head & 0x0F),
                 Sector       = sector,
                 SectorCount  = sectorCount,
                 Feature      = (byte)feature

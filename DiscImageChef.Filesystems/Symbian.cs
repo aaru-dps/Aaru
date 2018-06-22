@@ -30,8 +30,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // Information from http://www.thoukydides.webspace.virginmedia.com/software/psifs/sis.html
 // TODO: Implement support for disc images
 /*
@@ -361,3 +359,4 @@ namespace DiscImageChef.Plugins
 }
 
 */
+

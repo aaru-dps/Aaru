@@ -71,14 +71,14 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void ReadLong(string devPath, Device dev)
         {
-            bool relative = false;
-            uint address = 0;
-            ushort length = 1;
-            ushort bps = 512;
-            bool physical = false;
-            bool sectorCount = true;
+            bool   relative    = false;
+            uint   address     = 0;
+            ushort length      = 1;
+            ushort bps         = 512;
+            bool   physical    = false;
+            bool   sectorCount = true;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -87,8 +87,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ LONG command:");
                 DicConsole.WriteLine("{0} Block Address: {1}", physical ? "Physical" : "Logical", address);
-                DicConsole.WriteLine("Relative?: {0}", relative);
-                DicConsole.WriteLine("Will transfer {0} {1}", length, sectorCount ? "sectors" : "bytes");
+                DicConsole.WriteLine("Relative?: {0}",         relative);
+                DicConsole.WriteLine("Will transfer {0} {1}",  length, sectorCount ? "sectors" : "bytes");
                 if(sectorCount) DicConsole.WriteLine("Expected sector size: {0} bytes", bps);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -185,11 +185,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ LONG to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");

@@ -53,7 +53,7 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.ArchiveRequestBlockAddress;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = 3;
 
@@ -90,12 +90,12 @@ namespace DiscImageChef.Devices
                                          out double duration)
         {
             byte[] buffer = new byte[0];
-            byte[] cdb = new byte[6];
+            byte[] cdb    = new byte[6];
             senseBuffer = new byte[32];
 
             cdb[0] = (byte)ScsiCommands.ArchiveSeekBlock;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             if(immediate) cdb[1] += 0x01;
 

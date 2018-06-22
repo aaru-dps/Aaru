@@ -45,16 +45,16 @@ namespace DiscImageChef.Commands
     {
         internal static void DoDecode(DecodeOptions options)
         {
-            DicConsole.DebugWriteLine("Decode command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Decode command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Decode command", "--input={0}", options.InputFile);
-            DicConsole.DebugWriteLine("Decode command", "--start={0}", options.StartSector);
-            DicConsole.DebugWriteLine("Decode command", "--length={0}", options.Length);
-            DicConsole.DebugWriteLine("Decode command", "--disk-tags={0}", options.DiskTags);
+            DicConsole.DebugWriteLine("Decode command", "--debug={0}",       options.Debug);
+            DicConsole.DebugWriteLine("Decode command", "--verbose={0}",     options.Verbose);
+            DicConsole.DebugWriteLine("Decode command", "--input={0}",       options.InputFile);
+            DicConsole.DebugWriteLine("Decode command", "--start={0}",       options.StartSector);
+            DicConsole.DebugWriteLine("Decode command", "--length={0}",      options.Length);
+            DicConsole.DebugWriteLine("Decode command", "--disk-tags={0}",   options.DiskTags);
             DicConsole.DebugWriteLine("Decode command", "--sector-tags={0}", options.SectorTags);
 
             FiltersList filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
 
             if(inputFilter == null)
             {
@@ -91,11 +91,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("SCSI INQUIRY command response:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(Inquiry.Prettify(inquiry));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.ATA_IDENTIFY:
@@ -107,11 +108,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(Identify.Prettify(identify));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.ATAPI_IDENTIFY:
@@ -119,16 +121,17 @@ namespace DiscImageChef.Commands
                                 byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
                                 if(identify == null)
                                     DicConsole
-                                        .WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
+                                       .WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
                                 else
                                 {
                                     DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(Identify.Prettify(identify));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.CD_ATIP:
@@ -139,11 +142,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("CD ATIP:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(ATIP.Prettify(atip));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.CD_FullTOC:
@@ -154,11 +158,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("CD full TOC:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(FullTOC.Prettify(fulltoc));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.CD_PMA:
@@ -169,11 +174,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("CD PMA:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(PMA.Prettify(pma));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.CD_SessionInfo:
@@ -185,11 +191,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("CD session information:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(Session.Prettify(sessioninfo));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.CD_TEXT:
@@ -200,11 +207,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("CD-TEXT:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(CDTextOnLeadIn.Prettify(cdtext));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             case MediaTagType.CD_TOC:
@@ -215,11 +223,12 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine("CD TOC:");
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                     DicConsole.WriteLine(TOC.Prettify(toc));
                                     DicConsole
-                                        .WriteLine("================================================================================");
+                                       .WriteLine("================================================================================");
                                 }
+
                                 break;
                             }
                             default:

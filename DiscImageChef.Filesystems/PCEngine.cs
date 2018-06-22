@@ -41,16 +41,16 @@ namespace DiscImageChef.Filesystems
     public class PCEnginePlugin : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "PC Engine CD Plugin";
-        public Guid Id => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "PC Engine CD Plugin";
+        public Guid           Id        => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
             byte[] systemDescriptor = new byte[23];
-            byte[] sector = imagePlugin.ReadSector(1 + partition.Start);
+            byte[] sector           = imagePlugin.ReadSector(1 + partition.Start);
 
             Array.Copy(sector, 0x20, systemDescriptor, 0, 23);
 
@@ -58,14 +58,14 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
+            Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
             information = "";
             XmlFsType = new FileSystemType
             {
-                Type = "PC Engine filesystem",
-                Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048),
+                Type        = "PC Engine filesystem",
+                Clusters    = (long)((partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048),
                 ClusterSize = 2048
             };
         }

@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         const ushort FILEID_SRECORD = 0x0003;
         /// <summary>The root catalog</summary>
         const ushort FILEID_CATALOG = 0x0004;
-        const short FILEID_BOOT_SIGNED = -21846;
+        const short FILEID_BOOT_SIGNED   = -21846;
         const short FILEID_LOADER_SIGNED = -17477;
         /// <summary>
         ///     A file that has been erased

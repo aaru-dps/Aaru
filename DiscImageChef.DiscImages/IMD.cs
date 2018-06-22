@@ -44,10 +44,10 @@ namespace DiscImageChef.DiscImages
 {
     public class Imd : IMediaImage
     {
-        const byte   SECTOR_CYLINDER_MAP_MASK = 0x80;
-        const byte   SECTOR_HEAD_MAP_MASK     = 0x40;
-        const byte   COMMENT_END              = 0x1A;
-        const string REGEX_HEADER             =
+        const byte SECTOR_CYLINDER_MAP_MASK = 0x80;
+        const byte SECTOR_HEAD_MAP_MASK     = 0x40;
+        const byte COMMENT_END              = 0x1A;
+        const string REGEX_HEADER =
             @"IMD (?<version>\d.\d+):\s+(?<day>\d+)\/\s*(?<month>\d+)\/(?<year>\d+)\s+(?<hour>\d+):(?<minute>\d+):(?<second>\d+)\r\n";
         ImageInfo imageInfo;
 
@@ -129,15 +129,15 @@ namespace DiscImageChef.DiscImages
             sectorsData        = new List<byte[]>();
 
             byte currentCylinder = 0;
-            imageInfo.Cylinders  = 1;
-            imageInfo.Heads      = 1;
-            ulong currentLba     = 0;
+            imageInfo.Cylinders = 1;
+            imageInfo.Heads     = 1;
+            ulong currentLba = 0;
 
             TransferRate mode = TransferRate.TwoHundred;
 
             while(stream.Position + 5 < stream.Length)
             {
-                mode              = (TransferRate)stream.ReadByte();
+                mode = (TransferRate)stream.ReadByte();
                 byte     cylinder = (byte)stream.ReadByte();
                 byte     head     = (byte)stream.ReadByte();
                 byte     spt      = (byte)stream.ReadByte();
@@ -155,9 +155,9 @@ namespace DiscImageChef.DiscImages
 
                 if((head & 1) == 1) imageInfo.Heads = 2;
 
-                stream.Read(idmap,                                                                    0, idmap.Length);
+                stream.Read(idmap, 0, idmap.Length);
                 if((head & SECTOR_CYLINDER_MAP_MASK) == SECTOR_CYLINDER_MAP_MASK) stream.Read(cylmap, 0, cylmap.Length);
-                if((head & SECTOR_HEAD_MAP_MASK)     == SECTOR_HEAD_MAP_MASK)
+                if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK)
                     stream.Read(headmap, 0, headmap.Length);
                 if(n == 0xFF)
                 {
@@ -226,9 +226,9 @@ namespace DiscImageChef.DiscImages
             if(mode == TransferRate.TwoHundred || mode == TransferRate.ThreeHundred || mode == TransferRate.FiveHundred)
                 mediaEncoding = MediaEncoding.FM;
 
-            imageInfo.MediaType =
-                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                      (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize, mediaEncoding, false));
+            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
+                                                            (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
+                                                            mediaEncoding, false));
 
             switch(imageInfo.MediaType)
             {
@@ -262,8 +262,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -273,8 +273,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();

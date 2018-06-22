@@ -71,21 +71,21 @@ namespace DiscImageChef.Core.Devices.Report
                 {
                     case DeviceType.SecureDigital:
                         // Clear serial number and manufacturing date
-                        cid[9] = 0;
-                        cid[10] = 0;
-                        cid[11] = 0;
-                        cid[12] = 0;
-                        cid[13] = 0;
-                        cid[14] = 0;
+                        cid[9]                   = 0;
+                        cid[10]                  = 0;
+                        cid[11]                  = 0;
+                        cid[12]                  = 0;
+                        cid[13]                  = 0;
+                        cid[14]                  = 0;
                         report.SecureDigital.CID = cid;
                         break;
                     case DeviceType.MMC:
                         // Clear serial number and manufacturing date
-                        cid[10] = 0;
-                        cid[11] = 0;
-                        cid[12] = 0;
-                        cid[13] = 0;
-                        cid[14] = 0;
+                        cid[10]                   = 0;
+                        cid[11]                   = 0;
+                        cid[12]                   = 0;
+                        cid[13]                   = 0;
+                        cid[14]                   = 0;
                         report.MultiMediaCard.CID = cid;
                         break;
                 }
@@ -134,6 +134,7 @@ namespace DiscImageChef.Core.Devices.Report
                         report.MultiMediaCard.ExtendedCSD = ecsd;
                     }
                     else DicConsole.WriteLine("Could not read Extended CSD...");
+
                     break;
                 }
                 case DeviceType.SecureDigital:
@@ -157,6 +158,7 @@ namespace DiscImageChef.Core.Devices.Report
                         report.SecureDigital.SCR = scr;
                     }
                     else DicConsole.WriteLine("Could not read SCR...");
+
                     break;
                 }
             }

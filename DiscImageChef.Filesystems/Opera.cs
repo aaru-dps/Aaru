@@ -42,9 +42,9 @@ namespace DiscImageChef.Filesystems
     public class OperaFS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Opera Filesystem Plugin";
-        public Guid Id => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Opera Filesystem Plugin";
+        public Guid           Id        => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -64,10 +64,10 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             // TODO: Find correct default encoding
-            Encoding = Encoding.ASCII;
+            Encoding    = Encoding.ASCII;
             information = "";
             StringBuilder superBlockMetadata = new StringBuilder();
 
@@ -82,12 +82,11 @@ namespace DiscImageChef.Filesystems
             superBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
             if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, Encoding)))
                 superBlockMetadata
-                    .AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, Encoding))
-                    .AppendLine();
+                   .AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, Encoding)).AppendLine();
             if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, Encoding)))
                 superBlockMetadata
-                    .AppendFormat("Volume comment: {0}", StringHandlers.CToString(sb.volume_comment, Encoding))
-                    .AppendLine();
+                   .AppendFormat("Volume comment: {0}", StringHandlers.CToString(sb.volume_comment, Encoding))
+                   .AppendLine();
             superBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
             superBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
             if(imagePlugin.Info.SectorSize == 2336 || imagePlugin.Info.SectorSize == 2352 ||
@@ -95,20 +94,21 @@ namespace DiscImageChef.Filesystems
             {
                 if(sb.block_size != 2048)
                     superBlockMetadata
-                        .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
-                                      sb.block_size, 2048);
+                       .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
+                                     sb.block_size, 2048);
             }
             else if(imagePlugin.Info.SectorSize != sb.block_size)
                 superBlockMetadata
-                    .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
-                                  sb.block_size, imagePlugin.Info.SectorSize);
+                   .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
+                                 sb.block_size, imagePlugin.Info.SectorSize);
+
             superBlockMetadata
-                .AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count)
-                .AppendLine();
+               .AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count)
+               .AppendLine();
             if((ulong)sb.block_count > imagePlugin.Info.Sectors)
                 superBlockMetadata
-                    .AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks",
-                                  sb.block_count, imagePlugin.Info.Sectors);
+                   .AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks",
+                                 sb.block_count, imagePlugin.Info.Sectors);
             superBlockMetadata.AppendFormat("Root directory identifier: 0x{0:X8}", sb.root_dirid).AppendLine();
             superBlockMetadata.AppendFormat("Root directory block size: {0} bytes", sb.rootdir_bsize).AppendLine();
             superBlockMetadata.AppendFormat("Root directory size: {0} blocks, {1} bytes", sb.rootdir_blocks,
@@ -119,10 +119,10 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Opera",
-                VolumeName = StringHandlers.CToString(sb.volume_label, Encoding),
+                Type        = "Opera",
+                VolumeName  = StringHandlers.CToString(sb.volume_label, Encoding),
                 ClusterSize = sb.block_size,
-                Clusters = sb.block_count
+                Clusters    = sb.block_count
             };
         }
 
@@ -132,15 +132,18 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x000, Record type, must be 1</summary>
             public byte record_type;
             /// <summary>0x001, 5 bytes, "ZZZZZ"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] sync_bytes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public byte[] sync_bytes;
             /// <summary>0x006, Record version, must be 1</summary>
             public byte record_version;
             /// <summary>0x007, Volume flags</summary>
             public byte volume_flags;
             /// <summary>0x008, 32 bytes, volume comment</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] volume_comment;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] volume_comment;
             /// <summary>0x028, 32 bytes, volume label</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] volume_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] volume_label;
             /// <summary>0x048, Volume ID</summary>
             public int volume_id;
             /// <summary>0x04C, Block size in bytes</summary>

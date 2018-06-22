@@ -70,7 +70,7 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             if(drive1) cdb[1] += 0x20;
 
@@ -105,7 +105,7 @@ namespace DiscImageChef.Devices
         /// <param name="drive1">If set to <c>true</c> set the threshold from drive 1.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, bool drive1, uint timeout,
+        public bool AdaptecSetErrorThreshold(byte       threshold, out byte[] senseBuffer, bool drive1, uint timeout,
                                              out double duration)
         {
             byte[] buffer = new byte[1];

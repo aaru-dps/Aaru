@@ -75,9 +75,9 @@ namespace DiscImageChef.Decoders.Bluray
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(BCAResponse, 0);
-            decoded.Reserved1 = BCAResponse[2];
-            decoded.Reserved2 = BCAResponse[3];
-            decoded.BCA = new byte[64];
+            decoded.Reserved1  = BCAResponse[2];
+            decoded.Reserved2  = BCAResponse[3];
+            decoded.BCA        = new byte[64];
             Array.Copy(BCAResponse, 4, decoded.BCA, 0, 64);
 
             return decoded;
@@ -91,10 +91,10 @@ namespace DiscImageChef.Decoders.Bluray
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-#endif
+            #endif
 
             sb.AppendFormat("Blu-ray Burst Cutting Area in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.BCA, 80));

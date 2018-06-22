@@ -53,8 +53,8 @@ namespace DiscImageChef.Devices
         ///     <c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer" /> contains
         ///     SCSI sense
         /// </param>
-        public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
-                                   ScsiDirection direction, out double duration, out bool sense)
+        public int SendScsiCommand(byte[]        cdb,       ref byte[] buffer,   out byte[] senseBuffer, uint timeout,
+                                   ScsiDirection direction, out double duration, out bool   sense)
         {
             return Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
                                            out duration, out sense);
@@ -77,8 +77,10 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-                                  AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                                  uint timeout, bool transferBlocks, out double duration, out bool sense)
+                                  AtaProtocol     protocol,  AtaTransferRegister      transferRegister,
+                                  ref byte[]      buffer,
+                                  uint            timeout,  bool     transferBlocks,
+                                  out double      duration, out bool sense)
         {
             return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
                                           transferRegister, ref buffer, timeout, transferBlocks, out duration,
@@ -102,8 +104,10 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
-                                  AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                                  uint timeout, bool transferBlocks, out double duration, out bool sense)
+                                  AtaProtocol       protocol,  AtaTransferRegister        transferRegister,
+                                  ref byte[]        buffer,
+                                  uint              timeout,  bool     transferBlocks,
+                                  out double        duration, out bool sense)
         {
             return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
                                           transferRegister, ref buffer, timeout, transferBlocks, out duration,
@@ -127,8 +131,10 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
-                                  AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                                  uint timeout, bool transferBlocks, out double duration, out bool sense)
+                                  AtaProtocol       protocol,  AtaTransferRegister        transferRegister,
+                                  ref byte[]        buffer,
+                                  uint              timeout,  bool     transferBlocks,
+                                  out double        duration, out bool sense)
         {
             return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
                                           transferRegister, ref buffer, timeout, transferBlocks, out duration,
@@ -151,9 +157,10 @@ namespace DiscImageChef.Devices
         /// <param name="argument">Command argument</param>
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
-        public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags, uint argument,
-                                  uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
-                                  out double duration, out bool sense, uint timeout = 0)
+        public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+                                  uint        argument,
+                                  uint        blockSize, uint     blocks, ref byte[] buffer, out uint[] response,
+                                  out double  duration,  out bool sense,  uint       timeout = 0)
         {
             switch(command)
             {
@@ -163,7 +170,7 @@ namespace DiscImageChef.Devices
                     buffer = new byte[cachedCid.Length];
                     Array.Copy(cachedCid, buffer, buffer.Length);
                     response = new uint[4];
-                    sense = false;
+                    sense    = false;
                     DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
@@ -174,7 +181,7 @@ namespace DiscImageChef.Devices
                     buffer = new byte[cachedCsd.Length];
                     Array.Copy(cachedCsd, buffer, buffer.Length);
                     response = new uint[4];
-                    sense = false;
+                    sense    = false;
                     DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
@@ -185,7 +192,7 @@ namespace DiscImageChef.Devices
                     buffer = new byte[cachedScr.Length];
                     Array.Copy(cachedScr, buffer, buffer.Length);
                     response = new uint[4];
-                    sense = false;
+                    sense    = false;
                     DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
@@ -203,7 +210,7 @@ namespace DiscImageChef.Devices
                 buffer = new byte[cachedOcr.Length];
                 Array.Copy(cachedOcr, buffer, buffer.Length);
                 response = new uint[4];
-                sense = false;
+                sense    = false;
                 DateTime end = DateTime.Now;
                 duration = (end - start).TotalMilliseconds;
                 return 0;

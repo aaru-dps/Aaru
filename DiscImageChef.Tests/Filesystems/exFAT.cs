@@ -58,16 +58,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_apm", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_apm", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new exFAT();
-                int part = -1;
+                IFilesystem     fs         = new exFAT();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Windows_NTFS")
                     {
@@ -78,10 +78,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("exFAT", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual("exFAT",         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -109,16 +109,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_gpt", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_gpt", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new exFAT();
-                int part = -1;
+                IFilesystem     fs         = new exFAT();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Microsoft Basic data")
                     {
@@ -129,10 +129,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("exFAT", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual("exFAT",         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
@@ -160,16 +160,16 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_mbr", testfiles[i]);
-                IFilter filter = new LZip();
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_mbr", testfiles[i]);
+                IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem fs = new exFAT();
-                int part = -1;
+                IFilesystem     fs         = new exFAT();
+                int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x07")
                     {
@@ -180,10 +180,10 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("exFAT", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
+                Assert.AreEqual("exFAT",         fs.XmlFsType.Type,         testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }

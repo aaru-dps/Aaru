@@ -49,15 +49,15 @@ namespace DiscImageChef.Filesystems
         readonly byte[] reiserJr_magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x33, 0x46, 0x73, 0x00};
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Reiser Filesystem Plugin";
-        public Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Reiser Filesystem Plugin";
+        public Guid           Id        => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
-            uint sbAddr = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+            uint sbAddr            = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser_Superblock reiserSb = new Reiser_Superblock();
@@ -80,13 +80,13 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
-            uint sbAddr = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+            uint sbAddr            = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser_Superblock reiserSb = new Reiser_Superblock();
@@ -126,17 +126,17 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
 
             XmlFsType = new FileSystemType();
-            if(reiser35_magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.5 filesystem";
+            if(reiser35_magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type      = "Reiser 3.5 filesystem";
             else if(reiser36_magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.6 filesystem";
             else if(reiserJr_magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser Jr. filesystem";
-            XmlFsType.ClusterSize = reiserSb.blocksize;
-            XmlFsType.Clusters = reiserSb.block_count;
-            XmlFsType.FreeClusters = reiserSb.free_blocks;
+            XmlFsType.ClusterSize           = reiserSb.blocksize;
+            XmlFsType.Clusters              = reiserSb.block_count;
+            XmlFsType.FreeClusters          = reiserSb.free_blocks;
             XmlFsType.FreeClustersSpecified = true;
-            XmlFsType.Dirty = reiserSb.umount_state == 2;
+            XmlFsType.Dirty                 = reiserSb.umount_state == 2;
             if(reiserSb.version < 2) return;
 
-            XmlFsType.VolumeName = Encoding.GetString(reiserSb.label);
+            XmlFsType.VolumeName   = Encoding.GetString(reiserSb.label);
             XmlFsType.VolumeSerial = reiserSb.uuid.ToString();
         }
 
@@ -156,30 +156,33 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Reiser_Superblock
         {
-            public uint block_count;
-            public uint free_blocks;
-            public uint root_block;
+            public uint                block_count;
+            public uint                free_blocks;
+            public uint                root_block;
             public ReiserJournalParams journal;
-            public ushort blocksize;
-            public ushort oid_maxsize;
-            public ushort oid_cursize;
-            public ushort umount_state;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] magic;
+            public ushort              blocksize;
+            public ushort              oid_maxsize;
+            public ushort              oid_cursize;
+            public ushort              umount_state;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public byte[] magic;
             public ushort fs_state;
-            public uint hash_function_code;
+            public uint   hash_function_code;
             public ushort tree_height;
             public ushort bmap_nr;
             public ushort version;
             public ushort reserved_for_journal;
-            public uint inode_generation;
-            public uint flags;
-            public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
+            public uint   inode_generation;
+            public uint   flags;
+            public Guid   uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] label;
             public ushort mnt_count;
             public ushort max_mnt_count;
-            public uint last_check;
-            public uint check_interval;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)] public byte[] unused;
+            public uint   last_check;
+            public uint   check_interval;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)]
+            public byte[] unused;
         }
     }
 }

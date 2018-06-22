@@ -43,8 +43,8 @@ namespace DiscImageChef.Filters
     public class OffsetStream : Stream
     {
         readonly Stream baseStream;
-        readonly long streamEnd;
-        readonly long streamStart;
+        readonly long   streamEnd;
+        readonly long   streamStart;
 
         public OffsetStream(Stream stream, long start, long end)
         {
@@ -53,22 +53,22 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = stream;
 
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
-                            FileOptions options, long start, long end)
+        public OffsetStream(string      path,    FileMode mode,  FileAccess access, FileShare share, int bufferSize,
+                            FileOptions options, long     start, long       end)
         {
             if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode, access, share, bufferSize, options);
 
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(handle, access);
 
@@ -96,7 +96,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(handle, access, bufferSize);
 
@@ -104,21 +104,22 @@ namespace DiscImageChef.Filters
         }
 
         public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync, long start,
-                            long end)
+                            long           end)
         {
             if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(handle, access, bufferSize, isAsync);
 
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileSystemRights rights, FileShare share, int bufferSize,
+        public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
+                            int         bufferSize,
                             FileOptions options, long start, long end)
         {
             if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
@@ -126,14 +127,15 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode, rights, share, bufferSize, options);
 
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileSystemRights rights, FileShare share, int bufferSize,
+        public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
+                            int         bufferSize,
                             FileOptions options, FileSecurity fileSecurity, long start, long end)
         {
             if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
@@ -141,22 +143,22 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode, rights, share, bufferSize, options, fileSecurity);
 
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
-                            bool useAsync, long start, long end)
+        public OffsetStream(string path,     FileMode mode,  FileAccess access, FileShare share, int bufferSize,
+                            bool   useAsync, long     start, long       end)
         {
             if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode, access, share, bufferSize, useAsync);
 
@@ -164,14 +166,14 @@ namespace DiscImageChef.Filters
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, long start,
-                            long end)
+                            long   end)
         {
             if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode, access, share, bufferSize);
 
@@ -185,7 +187,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode, access, share);
 
@@ -199,7 +201,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode, access);
 
@@ -213,7 +215,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new FileStream(path, mode);
 
@@ -221,14 +223,14 @@ namespace DiscImageChef.Filters
         }
 
         public OffsetStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, long start,
-                            long end)
+                            long   end)
         {
             if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new MemoryStream(buffer, index, count, writable, publiclyVisible);
 
@@ -242,7 +244,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new MemoryStream(buffer, index, count, writable);
 
@@ -256,7 +258,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new MemoryStream(buffer, index, count);
 
@@ -270,7 +272,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new MemoryStream(buffer, writable);
 
@@ -284,7 +286,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd = end;
+            streamEnd   = end;
 
             baseStream = new MemoryStream(buffer);
 

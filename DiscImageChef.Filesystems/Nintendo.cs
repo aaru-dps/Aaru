@@ -42,9 +42,9 @@ namespace DiscImageChef.Filesystems
     public class NintendoPlugin : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Nintendo optical filesystems";
-        public Guid Id => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Nintendo optical filesystems";
+        public Guid           Id        => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -56,19 +56,19 @@ namespace DiscImageChef.Filesystems
 
             byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
 
-            uint magicGc = BigEndianBitConverter.ToUInt32(header, 0x1C);
+            uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
             return magicGc == 0xC2339F3D || magicWii == 0x5D1C9EA3;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
             StringBuilder sbInformation = new StringBuilder();
             information = "";
-            XmlFsType = new FileSystemType();
+            XmlFsType   = new FileSystemType();
 
             NintendoFields fields = new NintendoFields();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -77,33 +77,33 @@ namespace DiscImageChef.Filesystems
 
             bool wii = false;
 
-            uint magicGc = BigEndianBitConverter.ToUInt32(header, 0x1C);
+            uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
-            if(magicWii == 0x5D1C9EA3) wii = true;
+            if(magicWii     == 0x5D1C9EA3) wii = true;
             else if(magicGc != 0xC2339F3D) return;
 
-            fields.DiscType = Encoding.ASCII.GetString(header, 0, 1);
-            fields.GameCode = Encoding.ASCII.GetString(header, 1, 2);
-            fields.RegionCode = Encoding.ASCII.GetString(header, 3, 1);
-            fields.PublisherCode = Encoding.ASCII.GetString(header, 4, 2);
-            fields.DiscId = Encoding.ASCII.GetString(header, 0, 6);
-            fields.DiscNumber = header[6];
-            fields.DiscVersion = header[7];
-            fields.Streaming |= header[8] > 0;
-            fields.StreamBufferSize = header[9];
+            fields.DiscType         =  Encoding.ASCII.GetString(header, 0, 1);
+            fields.GameCode         =  Encoding.ASCII.GetString(header, 1, 2);
+            fields.RegionCode       =  Encoding.ASCII.GetString(header, 3, 1);
+            fields.PublisherCode    =  Encoding.ASCII.GetString(header, 4, 2);
+            fields.DiscId           =  Encoding.ASCII.GetString(header, 0, 6);
+            fields.DiscNumber       =  header[6];
+            fields.DiscVersion      =  header[7];
+            fields.Streaming        |= header[8] > 0;
+            fields.StreamBufferSize =  header[9];
             byte[] temp = new byte[64];
             Array.Copy(header, 0x20, temp, 0, 64);
             fields.Title = StringHandlers.CToString(temp, Encoding);
 
             if(!wii)
             {
-                fields.DebugOff = BigEndianBitConverter.ToUInt32(header, 0x0400);
+                fields.DebugOff  = BigEndianBitConverter.ToUInt32(header, 0x0400);
                 fields.DebugAddr = BigEndianBitConverter.ToUInt32(header, 0x0404);
-                fields.DolOff = BigEndianBitConverter.ToUInt32(header, 0x0420);
-                fields.FstOff = BigEndianBitConverter.ToUInt32(header, 0x0424);
-                fields.FstSize = BigEndianBitConverter.ToUInt32(header, 0x0428);
-                fields.FstMax = BigEndianBitConverter.ToUInt32(header, 0x042C);
+                fields.DolOff    = BigEndianBitConverter.ToUInt32(header, 0x0420);
+                fields.FstOff    = BigEndianBitConverter.ToUInt32(header, 0x0424);
+                fields.FstSize   = BigEndianBitConverter.ToUInt32(header, 0x0428);
+                fields.FstMax    = BigEndianBitConverter.ToUInt32(header, 0x042C);
             }
 
             if(wii)
@@ -113,9 +113,9 @@ namespace DiscImageChef.Filesystems
                 uint offset3 = BigEndianBitConverter.ToUInt32(header, 0x40014) << 2;
                 uint offset4 = BigEndianBitConverter.ToUInt32(header, 0x4001C) << 2;
 
-                fields.FirstPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40000)];
+                fields.FirstPartitions  = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40000)];
                 fields.SecondPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40008)];
-                fields.ThirdPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40010)];
+                fields.ThirdPartitions  = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40010)];
                 fields.FourthPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40018)];
 
                 for(int i = 0; i < fields.FirstPartitions.Length; i++)
@@ -154,41 +154,41 @@ namespace DiscImageChef.Filesystems
                             BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
                     }
 
-                fields.Region = header[0x4E000];
-                fields.JapanAge = header[0x4E010];
-                fields.UsaAge = header[0x4E011];
-                fields.GermanAge = header[0x4E013];
-                fields.PegiAge = header[0x4E014];
-                fields.FinlandAge = header[0x4E015];
-                fields.PortugalAge = header[0x4E016];
-                fields.UkAge = header[0x4E017];
+                fields.Region       = header[0x4E000];
+                fields.JapanAge     = header[0x4E010];
+                fields.UsaAge       = header[0x4E011];
+                fields.GermanAge    = header[0x4E013];
+                fields.PegiAge      = header[0x4E014];
+                fields.FinlandAge   = header[0x4E015];
+                fields.PortugalAge  = header[0x4E016];
+                fields.UkAge        = header[0x4E017];
                 fields.AustraliaAge = header[0x4E018];
-                fields.KoreaAge = header[0x4E019];
+                fields.KoreaAge     = header[0x4E019];
             }
             else
             {
-                fields.FirstPartitions = new NintendoPartition[0];
+                fields.FirstPartitions  = new NintendoPartition[0];
                 fields.SecondPartitions = new NintendoPartition[0];
-                fields.ThirdPartitions = new NintendoPartition[0];
+                fields.ThirdPartitions  = new NintendoPartition[0];
                 fields.FourthPartitions = new NintendoPartition[0];
             }
 
-            DicConsole.DebugWriteLine("Nintendo plugin", "discType = {0}", fields.DiscType);
-            DicConsole.DebugWriteLine("Nintendo plugin", "gameCode = {0}", fields.GameCode);
-            DicConsole.DebugWriteLine("Nintendo plugin", "regionCode = {0}", fields.RegionCode);
-            DicConsole.DebugWriteLine("Nintendo plugin", "publisherCode = {0}", fields.PublisherCode);
-            DicConsole.DebugWriteLine("Nintendo plugin", "discID = {0}", fields.DiscId);
-            DicConsole.DebugWriteLine("Nintendo plugin", "discNumber = {0}", fields.DiscNumber);
-            DicConsole.DebugWriteLine("Nintendo plugin", "discVersion = {0}", fields.DiscVersion);
-            DicConsole.DebugWriteLine("Nintendo plugin", "streaming = {0}", fields.Streaming);
+            DicConsole.DebugWriteLine("Nintendo plugin", "discType = {0}",         fields.DiscType);
+            DicConsole.DebugWriteLine("Nintendo plugin", "gameCode = {0}",         fields.GameCode);
+            DicConsole.DebugWriteLine("Nintendo plugin", "regionCode = {0}",       fields.RegionCode);
+            DicConsole.DebugWriteLine("Nintendo plugin", "publisherCode = {0}",    fields.PublisherCode);
+            DicConsole.DebugWriteLine("Nintendo plugin", "discID = {0}",           fields.DiscId);
+            DicConsole.DebugWriteLine("Nintendo plugin", "discNumber = {0}",       fields.DiscNumber);
+            DicConsole.DebugWriteLine("Nintendo plugin", "discVersion = {0}",      fields.DiscVersion);
+            DicConsole.DebugWriteLine("Nintendo plugin", "streaming = {0}",        fields.Streaming);
             DicConsole.DebugWriteLine("Nintendo plugin", "streamBufferSize = {0}", fields.StreamBufferSize);
-            DicConsole.DebugWriteLine("Nintendo plugin", "title = \"{0}\"", fields.Title);
-            DicConsole.DebugWriteLine("Nintendo plugin", "debugOff = 0x{0:X8}", fields.DebugOff);
-            DicConsole.DebugWriteLine("Nintendo plugin", "debugAddr = 0x{0:X8}", fields.DebugAddr);
-            DicConsole.DebugWriteLine("Nintendo plugin", "dolOff = 0x{0:X8}", fields.DolOff);
-            DicConsole.DebugWriteLine("Nintendo plugin", "fstOff = 0x{0:X8}", fields.FstOff);
-            DicConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}", fields.FstSize);
-            DicConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}", fields.FstMax);
+            DicConsole.DebugWriteLine("Nintendo plugin", "title = \"{0}\"",        fields.Title);
+            DicConsole.DebugWriteLine("Nintendo plugin", "debugOff = 0x{0:X8}",    fields.DebugOff);
+            DicConsole.DebugWriteLine("Nintendo plugin", "debugAddr = 0x{0:X8}",   fields.DebugAddr);
+            DicConsole.DebugWriteLine("Nintendo plugin", "dolOff = 0x{0:X8}",      fields.DolOff);
+            DicConsole.DebugWriteLine("Nintendo plugin", "fstOff = 0x{0:X8}",      fields.FstOff);
+            DicConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}",          fields.FstSize);
+            DicConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}",           fields.FstMax);
             for(int i = 0; i < fields.FirstPartitions.Length; i++)
             {
                 DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}",
@@ -196,6 +196,7 @@ namespace DiscImageChef.Filesystems
                 DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].type = {0}",
                                           fields.FirstPartitions[i].Type, i);
             }
+
             for(int i = 0; i < fields.SecondPartitions.Length; i++)
             {
                 DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}",
@@ -203,6 +204,7 @@ namespace DiscImageChef.Filesystems
                 DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].type = {0}",
                                           fields.SecondPartitions[i].Type, i);
             }
+
             for(int i = 0; i < fields.ThirdPartitions.Length; i++)
             {
                 DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}",
@@ -210,6 +212,7 @@ namespace DiscImageChef.Filesystems
                 DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].type = {0}",
                                           fields.ThirdPartitions[i].Type, i);
             }
+
             for(int i = 0; i < fields.FourthPartitions.Length; i++)
             {
                 DicConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}",
@@ -218,16 +221,16 @@ namespace DiscImageChef.Filesystems
                                           fields.FourthPartitions[i].Type, i);
             }
 
-            DicConsole.DebugWriteLine("Nintendo plugin", "region = {0}", fields.Region);
-            DicConsole.DebugWriteLine("Nintendo plugin", "japanAge = {0}", fields.JapanAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "usaAge = {0}", fields.UsaAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "germanAge = {0}", fields.GermanAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "pegiAge = {0}", fields.PegiAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "finlandAge = {0}", fields.FinlandAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "portugalAge = {0}", fields.PortugalAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "ukAge = {0}", fields.UkAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "region = {0}",       fields.Region);
+            DicConsole.DebugWriteLine("Nintendo plugin", "japanAge = {0}",     fields.JapanAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "usaAge = {0}",       fields.UsaAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "germanAge = {0}",    fields.GermanAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "pegiAge = {0}",      fields.PegiAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "finlandAge = {0}",   fields.FinlandAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "portugalAge = {0}",  fields.PortugalAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "ukAge = {0}",        fields.UkAge);
             DicConsole.DebugWriteLine("Nintendo plugin", "australiaAge = {0}", fields.AustraliaAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}", fields.KoreaAge);
+            DicConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}",     fields.KoreaAge);
 
             sbInformation.AppendLine("Nintendo optical filesystem");
             sbInformation.AppendLine(wii ? "Nintendo Wii Optical Disc" : "Nintendo GameCube Optical Disc");
@@ -286,12 +289,12 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("FST starts at {0} and has {1} bytes", fields.FstOff, fields.FstSize)
                              .AppendLine();
 
-            information = sbInformation.ToString();
-            XmlFsType.Bootable = true;
-            XmlFsType.Clusters = (long)(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048);
-            XmlFsType.ClusterSize = 2048;
-            XmlFsType.Type = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
-            XmlFsType.VolumeName = fields.Title;
+            information            = sbInformation.ToString();
+            XmlFsType.Bootable     = true;
+            XmlFsType.Clusters     = (long)(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048);
+            XmlFsType.ClusterSize  = 2048;
+            XmlFsType.Type         = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
+            XmlFsType.VolumeName   = fields.Title;
             XmlFsType.VolumeSerial = fields.DiscId;
         }
 
@@ -394,36 +397,36 @@ namespace DiscImageChef.Filesystems
 
         struct NintendoFields
         {
-            public string DiscType;
-            public string GameCode;
-            public string RegionCode;
-            public string PublisherCode;
-            public string DiscId;
-            public byte DiscNumber;
-            public byte DiscVersion;
-            public bool Streaming;
-            public byte StreamBufferSize;
-            public string Title;
-            public uint DebugOff;
-            public uint DebugAddr;
-            public uint DolOff;
-            public uint FstOff;
-            public uint FstSize;
-            public uint FstMax;
+            public string              DiscType;
+            public string              GameCode;
+            public string              RegionCode;
+            public string              PublisherCode;
+            public string              DiscId;
+            public byte                DiscNumber;
+            public byte                DiscVersion;
+            public bool                Streaming;
+            public byte                StreamBufferSize;
+            public string              Title;
+            public uint                DebugOff;
+            public uint                DebugAddr;
+            public uint                DolOff;
+            public uint                FstOff;
+            public uint                FstSize;
+            public uint                FstMax;
             public NintendoPartition[] FirstPartitions;
             public NintendoPartition[] SecondPartitions;
             public NintendoPartition[] ThirdPartitions;
             public NintendoPartition[] FourthPartitions;
-            public byte Region;
-            public byte JapanAge;
-            public byte UsaAge;
-            public byte GermanAge;
-            public byte PegiAge;
-            public byte FinlandAge;
-            public byte PortugalAge;
-            public byte UkAge;
-            public byte AustraliaAge;
-            public byte KoreaAge;
+            public byte                Region;
+            public byte                JapanAge;
+            public byte                UsaAge;
+            public byte                GermanAge;
+            public byte                PegiAge;
+            public byte                FinlandAge;
+            public byte                PortugalAge;
+            public byte                UkAge;
+            public byte                AustraliaAge;
+            public byte                KoreaAge;
         }
 
         struct NintendoPartition

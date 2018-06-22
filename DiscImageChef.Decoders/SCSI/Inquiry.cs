@@ -79,88 +79,99 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(SCSIInquiryResponse.Length >= 1)
             {
-                decoded.PeripheralQualifier = (byte)((SCSIInquiryResponse[0] & 0xE0) >> 5);
+                decoded.PeripheralQualifier  = (byte)((SCSIInquiryResponse[0] & 0xE0) >> 5);
                 decoded.PeripheralDeviceType = (byte)(SCSIInquiryResponse[0] & 0x1F);
             }
+
             if(SCSIInquiryResponse.Length >= 2)
             {
-                decoded.RMB = Convert.ToBoolean(SCSIInquiryResponse[1] & 0x80);
+                decoded.RMB                = Convert.ToBoolean(SCSIInquiryResponse[1] & 0x80);
                 decoded.DeviceTypeModifier = (byte)(SCSIInquiryResponse[1] & 0x7F);
             }
+
             if(SCSIInquiryResponse.Length >= 3)
             {
-                decoded.ISOVersion = (byte)((SCSIInquiryResponse[2] & 0xC0) >> 6);
+                decoded.ISOVersion  = (byte)((SCSIInquiryResponse[2] & 0xC0) >> 6);
                 decoded.ECMAVersion = (byte)((SCSIInquiryResponse[2] & 0x38) >> 3);
                 decoded.ANSIVersion = (byte)(SCSIInquiryResponse[2] & 0x07);
             }
+
             if(SCSIInquiryResponse.Length >= 4)
             {
-                decoded.AERC = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x80);
-                decoded.TrmTsk = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x40);
-                decoded.NormACA = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x20);
-                decoded.HiSup = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x10);
+                decoded.AERC               = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x80);
+                decoded.TrmTsk             = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x40);
+                decoded.NormACA            = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x20);
+                decoded.HiSup              = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x10);
                 decoded.ResponseDataFormat = (byte)(SCSIInquiryResponse[3] & 0x07);
             }
+
             if(SCSIInquiryResponse.Length >= 5) decoded.AdditionalLength = SCSIInquiryResponse[4];
             if(SCSIInquiryResponse.Length >= 6)
             {
-                decoded.SCCS = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x80);
-                decoded.ACC = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x40);
-                decoded.TPGS = (byte)((SCSIInquiryResponse[5] & 0x30) >> 4);
-                decoded.ThreePC = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x08);
+                decoded.SCCS      = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x80);
+                decoded.ACC       = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x40);
+                decoded.TPGS      = (byte)((SCSIInquiryResponse[5] & 0x30) >> 4);
+                decoded.ThreePC   = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x08);
                 decoded.Reserved2 = (byte)((SCSIInquiryResponse[5] & 0x06) >> 1);
-                decoded.Protect = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x01);
+                decoded.Protect   = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x01);
             }
+
             if(SCSIInquiryResponse.Length >= 7)
             {
-                decoded.BQue = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x80);
+                decoded.BQue    = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x80);
                 decoded.EncServ = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x40);
-                decoded.VS1 = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x20);
-                decoded.MultiP = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x10);
-                decoded.MChngr = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x08);
+                decoded.VS1     = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x20);
+                decoded.MultiP  = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x10);
+                decoded.MChngr  = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x08);
                 decoded.ACKREQQ = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x04);
-                decoded.Addr32 = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x02);
-                decoded.Addr16 = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x01);
+                decoded.Addr32  = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x02);
+                decoded.Addr16  = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x01);
             }
+
             if(SCSIInquiryResponse.Length >= 8)
             {
                 decoded.RelAddr = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x80);
-                decoded.WBus32 = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x40);
-                decoded.WBus16 = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x20);
-                decoded.Sync = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x10);
-                decoded.Linked = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x08);
+                decoded.WBus32  = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x40);
+                decoded.WBus16  = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x20);
+                decoded.Sync    = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x10);
+                decoded.Linked  = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x08);
                 decoded.TranDis = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x04);
-                decoded.CmdQue = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x02);
-                decoded.SftRe = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x01);
+                decoded.CmdQue  = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x02);
+                decoded.SftRe   = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x01);
             }
+
             if(SCSIInquiryResponse.Length >= 16)
             {
                 decoded.VendorIdentification = new byte[8];
                 Array.Copy(SCSIInquiryResponse, 8, decoded.VendorIdentification, 0, 8);
             }
+
             if(SCSIInquiryResponse.Length >= 32)
             {
                 decoded.ProductIdentification = new byte[16];
                 Array.Copy(SCSIInquiryResponse, 16, decoded.ProductIdentification, 0, 16);
             }
+
             if(SCSIInquiryResponse.Length >= 36)
             {
                 decoded.ProductRevisionLevel = new byte[4];
                 Array.Copy(SCSIInquiryResponse, 32, decoded.ProductRevisionLevel, 0, 4);
             }
+
             if(SCSIInquiryResponse.Length >= 44)
             {
                 // Seagate 1
-                decoded.SeagatePresent = true;
+                decoded.SeagatePresent            = true;
                 decoded.Seagate_DriveSerialNumber = new byte[8];
                 Array.Copy(SCSIInquiryResponse, 36, decoded.Seagate_DriveSerialNumber, 0, 8);
             }
+
             if(SCSIInquiryResponse.Length >= 46)
             {
                 // Kreon
                 decoded.KreonIdentifier = new byte[5];
                 Array.Copy(SCSIInquiryResponse, 36, decoded.KreonIdentifier, 0, 5);
-                decoded.KreonSpace = SCSIInquiryResponse[41];
+                decoded.KreonSpace   = SCSIInquiryResponse[41];
                 decoded.KreonVersion = new byte[5];
                 Array.Copy(SCSIInquiryResponse, 42, decoded.KreonVersion, 0, 5);
 
@@ -168,63 +179,66 @@ namespace DiscImageChef.Decoders.SCSI
                    decoded.KreonIdentifier.SequenceEqual(new byte[] {0x4B, 0x52, 0x45, 0x4F, 0x4E}))
                     decoded.KreonPresent = true;
             }
+
             if(SCSIInquiryResponse.Length >= 49)
             {
                 // HP
-                decoded.HPPresent = true;
-                decoded.HP_WORM |= (SCSIInquiryResponse[40] & 0x01) == 0x01;
-                decoded.HP_WORMVersion = (byte)((SCSIInquiryResponse[40] & 0x7F) >> 1);
-                decoded.HP_OBDR = new byte[6];
+                decoded.HPPresent      =  true;
+                decoded.HP_WORM        |= (SCSIInquiryResponse[40] & 0x01) == 0x01;
+                decoded.HP_WORMVersion =  (byte)((SCSIInquiryResponse[40] & 0x7F) >> 1);
+                decoded.HP_OBDR        =  new byte[6];
                 Array.Copy(SCSIInquiryResponse, 43, decoded.HP_OBDR, 0, 6);
             }
+
             if(SCSIInquiryResponse.Length >= 56)
             {
                 decoded.VendorSpecific = new byte[20];
                 Array.Copy(SCSIInquiryResponse, 36, decoded.VendorSpecific, 0, 20);
 
                 // Quantum
-                decoded.QuantumPresent = true;
-                decoded.Qt_ProductFamily = (byte)((SCSIInquiryResponse[36] & 0xF0) >> 4);
-                decoded.Qt_ReleasedFirmware = (byte)(SCSIInquiryResponse[36] & 0x0F);
-                decoded.Qt_FirmwareMajorVersion = SCSIInquiryResponse[37];
-                decoded.Qt_FirmwareMinorVersion = SCSIInquiryResponse[38];
-                decoded.Qt_EEPROMFormatMajorVersion = SCSIInquiryResponse[39];
-                decoded.Qt_EEPROMFormatMinorVersion = SCSIInquiryResponse[40];
-                decoded.Qt_FirmwarePersonality = SCSIInquiryResponse[41];
-                decoded.Qt_FirmwareSubPersonality = SCSIInquiryResponse[42];
-                decoded.Qt_TapeDirectoryFormatVersion = SCSIInquiryResponse[43];
-                decoded.Qt_ControllerHardwareVersion = SCSIInquiryResponse[44];
-                decoded.Qt_DriveEEPROMVersion = SCSIInquiryResponse[45];
-                decoded.Qt_DriveHardwareVersion = SCSIInquiryResponse[46];
-                decoded.Qt_MediaLoaderFirmwareVersion = SCSIInquiryResponse[47];
-                decoded.Qt_MediaLoaderHardwareVersion = SCSIInquiryResponse[48];
+                decoded.QuantumPresent                  = true;
+                decoded.Qt_ProductFamily                = (byte)((SCSIInquiryResponse[36] & 0xF0) >> 4);
+                decoded.Qt_ReleasedFirmware             = (byte)(SCSIInquiryResponse[36] & 0x0F);
+                decoded.Qt_FirmwareMajorVersion         = SCSIInquiryResponse[37];
+                decoded.Qt_FirmwareMinorVersion         = SCSIInquiryResponse[38];
+                decoded.Qt_EEPROMFormatMajorVersion     = SCSIInquiryResponse[39];
+                decoded.Qt_EEPROMFormatMinorVersion     = SCSIInquiryResponse[40];
+                decoded.Qt_FirmwarePersonality          = SCSIInquiryResponse[41];
+                decoded.Qt_FirmwareSubPersonality       = SCSIInquiryResponse[42];
+                decoded.Qt_TapeDirectoryFormatVersion   = SCSIInquiryResponse[43];
+                decoded.Qt_ControllerHardwareVersion    = SCSIInquiryResponse[44];
+                decoded.Qt_DriveEEPROMVersion           = SCSIInquiryResponse[45];
+                decoded.Qt_DriveHardwareVersion         = SCSIInquiryResponse[46];
+                decoded.Qt_MediaLoaderFirmwareVersion   = SCSIInquiryResponse[47];
+                decoded.Qt_MediaLoaderHardwareVersion   = SCSIInquiryResponse[48];
                 decoded.Qt_MediaLoaderMechanicalVersion = SCSIInquiryResponse[49];
-                decoded.Qt_MediaLoaderPresent = SCSIInquiryResponse[50] > 0;
-                decoded.Qt_LibraryPresent = SCSIInquiryResponse[51] > 0;
-                decoded.Qt_ModuleRevision = new byte[4];
+                decoded.Qt_MediaLoaderPresent           = SCSIInquiryResponse[50] > 0;
+                decoded.Qt_LibraryPresent               = SCSIInquiryResponse[51] > 0;
+                decoded.Qt_ModuleRevision               = new byte[4];
                 Array.Copy(SCSIInquiryResponse, 52, decoded.Qt_ModuleRevision, 0, 4);
 
                 // IBM
-                decoded.IBMPresent = true;
-                decoded.IBM_AutDis |= (SCSIInquiryResponse[36] & 0x01) == 0x01;
-                decoded.IBM_PerformanceLimit = SCSIInquiryResponse[37];
-                decoded.IBM_OEMSpecific = SCSIInquiryResponse[41];
+                decoded.IBMPresent           =  true;
+                decoded.IBM_AutDis           |= (SCSIInquiryResponse[36] & 0x01) == 0x01;
+                decoded.IBM_PerformanceLimit =  SCSIInquiryResponse[37];
+                decoded.IBM_OEMSpecific      =  SCSIInquiryResponse[41];
             }
 
             if(SCSIInquiryResponse.Length >= 57)
             {
                 decoded.Reserved3 = (byte)((SCSIInquiryResponse[56] & 0xF0) >> 4);
-                decoded.Clocking = (byte)((SCSIInquiryResponse[56] & 0x0C) >> 2);
-                decoded.QAS = Convert.ToBoolean(SCSIInquiryResponse[56] & 0x02);
-                decoded.IUS = Convert.ToBoolean(SCSIInquiryResponse[56] & 0x01);
+                decoded.Clocking  = (byte)((SCSIInquiryResponse[56] & 0x0C) >> 2);
+                decoded.QAS       = Convert.ToBoolean(SCSIInquiryResponse[56] & 0x02);
+                decoded.IUS       = Convert.ToBoolean(SCSIInquiryResponse[56] & 0x01);
             }
+
             if(SCSIInquiryResponse.Length >= 58) decoded.Reserved4 = SCSIInquiryResponse[57];
             if(SCSIInquiryResponse.Length >= 60)
             {
                 int descriptorsNo;
 
                 if(SCSIInquiryResponse.Length >= 74) descriptorsNo = 8;
-                else descriptorsNo = (SCSIInquiryResponse.Length - 58) / 2;
+                else descriptorsNo                                 = (SCSIInquiryResponse.Length - 58) / 2;
 
                 decoded.VersionDescriptors = new ushort[descriptorsNo];
                 for(int i = 0; i < descriptorsNo; i++)
@@ -236,26 +250,31 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.Reserved5 = new byte[SCSIInquiryResponse.Length - 74];
                 Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, SCSIInquiryResponse.Length - 74);
             }
+
             if(SCSIInquiryResponse.Length >= 96)
             {
                 decoded.Reserved5 = new byte[22];
                 Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, 22);
             }
+
             if(SCSIInquiryResponse.Length > 96)
             {
                 decoded.VendorSpecific2 = new byte[SCSIInquiryResponse.Length - 96];
                 Array.Copy(SCSIInquiryResponse, 96, decoded.VendorSpecific2, 0, SCSIInquiryResponse.Length - 96);
             }
+
             if(SCSIInquiryResponse.Length >= 144)
             {
                 // Seagate 2
-                decoded.Seagate2Present = true;
+                decoded.Seagate2Present   = true;
                 decoded.Seagate_Copyright = new byte[48];
                 Array.Copy(SCSIInquiryResponse, 96, decoded.Seagate_Copyright, 0, 48);
             }
+
             if(SCSIInquiryResponse.Length < 148) return decoded;
+
             // Seagate 2
-            decoded.Seagate3Present = true;
+            decoded.Seagate3Present         = true;
             decoded.Seagate_ServoPROMPartNo = new byte[4];
             Array.Copy(SCSIInquiryResponse, 144, decoded.Seagate_ServoPROMPartNo, 0, 4);
 
@@ -457,9 +476,9 @@ namespace DiscImageChef.Decoders.SCSI
             if(response.CmdQue) sb.AppendLine("Device supports TCQ queue");
             if(response.IUS) sb.AppendLine("Device supports information unit transfers");
             if(response.SftRe) sb.AppendLine("Device implements RESET as a soft reset");
-#if DEBUG
+            #if DEBUG
             if(response.VS1) sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
-#endif
+            #endif
 
             switch((TGPSValues)response.TPGS)
             {
@@ -2027,7 +2046,7 @@ namespace DiscImageChef.Decoders.SCSI
                                 StringHandlers.CToString(response.KreonVersion)).AppendLine();
             #endregion Kreon vendor prettifying
 
-#if DEBUG
+            #if DEBUG
             if(response.DeviceTypeModifier != 0)
                 sb.AppendFormat("Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
             if(response.Reserved2 != 0)
@@ -2068,7 +2087,7 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendLine("============================================================");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific2, 60));
             sb.AppendLine("============================================================");
-#endif
+            #endif
 
             return sb.ToString();
         }

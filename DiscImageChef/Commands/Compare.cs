@@ -51,8 +51,8 @@ namespace DiscImageChef.Commands
 
             FiltersList filtersList  = new FiltersList();
             IFilter     inputFilter1 = filtersList.GetFilter(options.InputFile1);
-            filtersList              = new FiltersList();
-            IFilter inputFilter2     = filtersList.GetFilter(options.InputFile2);
+            filtersList = new FiltersList();
+            IFilter inputFilter2 = filtersList.GetFilter(options.InputFile2);
 
             if(inputFilter1 == null)
             {
@@ -107,8 +107,8 @@ namespace DiscImageChef.Commands
             {
                 sb.AppendLine("\tDisc image 1\tDisc image 2");
                 sb.AppendLine("================================");
-                sb.AppendFormat("File\t{0}\t{1}",              options.InputFile1, options.InputFile2).AppendLine();
-                sb.AppendFormat("Disc image format\t{0}\t{1}", input1Format.Name,  input2Format.Name).AppendLine();
+                sb.AppendFormat("File\t{0}\t{1}", options.InputFile1, options.InputFile2).AppendLine();
+                sb.AppendFormat("Disc image format\t{0}\t{1}", input1Format.Name, input2Format.Name).AppendLine();
             }
             else
             {
@@ -223,25 +223,23 @@ namespace DiscImageChef.Commands
             {
                 sb.AppendFormat("Has partitions?\t{0}\t{1}", image1Info.HasPartitions, image2Info.HasPartitions)
                   .AppendLine();
-                sb.AppendFormat("Has sessions?\t{0}\t{1}", image1Info.HasSessions, image2Info.HasSessions)
-                  .AppendLine();
-                sb.AppendFormat("Image size\t{0}\t{1}",    image1Info.ImageSize,    image2Info.ImageSize).AppendLine();
-                sb.AppendFormat("Sectors\t{0}\t{1}",       image1Info.Sectors,      image2Info.Sectors).AppendLine();
-                sb.AppendFormat("Sector size\t{0}\t{1}",   image1Info.SectorSize,   image2Info.SectorSize).AppendLine();
+                sb.AppendFormat("Has sessions?\t{0}\t{1}", image1Info.HasSessions, image2Info.HasSessions).AppendLine();
+                sb.AppendFormat("Image size\t{0}\t{1}", image1Info.ImageSize, image2Info.ImageSize).AppendLine();
+                sb.AppendFormat("Sectors\t{0}\t{1}", image1Info.Sectors, image2Info.Sectors).AppendLine();
+                sb.AppendFormat("Sector size\t{0}\t{1}", image1Info.SectorSize, image2Info.SectorSize).AppendLine();
                 sb.AppendFormat("Creation time\t{0}\t{1}", image1Info.CreationTime, image2Info.CreationTime)
                   .AppendLine();
                 sb.AppendFormat("Last modification time\t{0}\t{1}", image1Info.LastModificationTime,
                                 image2Info.LastModificationTime).AppendLine();
-                sb.AppendFormat("Disk type\t{0}\t{1}", image1Info.MediaType, image2Info.MediaType)
-                  .AppendLine();
-                sb.AppendFormat("Image version\t{0}\t{1}",     image1Info.Version,     image2Info.Version).AppendLine();
+                sb.AppendFormat("Disk type\t{0}\t{1}", image1Info.MediaType, image2Info.MediaType).AppendLine();
+                sb.AppendFormat("Image version\t{0}\t{1}", image1Info.Version, image2Info.Version).AppendLine();
                 sb.AppendFormat("Image application\t{0}\t{1}", image1Info.Application, image2Info.Application)
                   .AppendLine();
                 sb.AppendFormat("Image application version\t{0}\t{1}", image1Info.ApplicationVersion,
                                 image2Info.ApplicationVersion).AppendLine();
-                sb.AppendFormat("Image creator\t{0}\t{1}",  image1Info.Creator,    image2Info.Creator).AppendLine();
-                sb.AppendFormat("Image name\t{0}\t{1}",     image1Info.MediaTitle, image2Info.MediaTitle).AppendLine();
-                sb.AppendFormat("Image comments\t{0}\t{1}", image1Info.Comments,   image2Info.Comments).AppendLine();
+                sb.AppendFormat("Image creator\t{0}\t{1}", image1Info.Creator, image2Info.Creator).AppendLine();
+                sb.AppendFormat("Image name\t{0}\t{1}", image1Info.MediaTitle, image2Info.MediaTitle).AppendLine();
+                sb.AppendFormat("Image comments\t{0}\t{1}", image1Info.Comments, image2Info.Comments).AppendLine();
                 sb.AppendFormat("Disk manufacturer\t{0}\t{1}", image1Info.MediaManufacturer,
                                 image2Info.MediaManufacturer).AppendLine();
                 sb.AppendFormat("Disk model\t{0}\t{1}", image1Info.MediaModel, image2Info.MediaModel).AppendLine();
@@ -432,8 +430,7 @@ namespace DiscImageChef.Commands
                 leastSectors = image2Info.Sectors;
                 if(!options.Verbose) sb.AppendLine("Image 1 has more sectors");
             }
-            else
-                leastSectors = image1Info.Sectors;
+            else leastSectors = image1Info.Sectors;
 
             DicConsole.WriteLine("Comparing sectors...");
 

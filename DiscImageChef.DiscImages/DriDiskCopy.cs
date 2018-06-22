@@ -53,7 +53,7 @@ namespace DiscImageChef.DiscImages
         IFilter driImageFilter;
 
         /// <summary>Footer of opened image</summary>
-        DriFooter  footer;
+        DriFooter footer;
         ImageInfo  imageInfo;
         FileStream writingStream;
 
@@ -163,7 +163,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            footer        = new DriFooter();
+            footer = new DriFooter();
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
             footer = (DriFooter)Marshal.PtrToStructure(ftrPtr, typeof(DriFooter));
@@ -197,20 +197,17 @@ namespace DiscImageChef.DiscImages
                                       imageInfo.Application, imageInfo.ApplicationVersion);
 
             // Correct some incorrect data in images of NEC 2HD disks
-            if(imageInfo.Cylinders       == 77  && imageInfo.Heads == 2 &&
-               imageInfo.SectorsPerTrack == 16  &&
-               imageInfo.SectorSize      == 512 &&
-               (footer.bpb.driveCode     == DriDriveCodes.md2hd ||
-                footer.bpb.driveCode     == DriDriveCodes.mf2hd))
+            if(imageInfo.Cylinders  == 77  && imageInfo.Heads == 2 && imageInfo.SectorsPerTrack == 16 &&
+               imageInfo.SectorSize == 512 && (footer.bpb.driveCode == DriDriveCodes.md2hd ||
+                                               footer.bpb.driveCode == DriDriveCodes.mf2hd))
             {
                 imageInfo.SectorsPerTrack = 8;
                 imageInfo.SectorSize      = 1024;
             }
 
-            imageInfo.MediaType =
-                Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                      (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize, MediaEncoding.MFM, false
-                                      ));
+            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
+                                                            (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
+                                                            MediaEncoding.MFM, false));
 
             switch(imageInfo.MediaType)
             {
@@ -245,8 +242,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -256,8 +253,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -377,7 +374,7 @@ namespace DiscImageChef.DiscImages
                 MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new(string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dsk"};
 
         public bool   IsWriting    { get; private set; }
@@ -420,7 +417,7 @@ namespace DiscImageChef.DiscImages
             footer = new DriFooter
             {
                 signature = new byte[51],
-                bpb       = new DriBpb
+                bpb = new DriBpb
                 {
                     five      = 5,
                     driveCode = DriDriveCodes.mf2ed,

@@ -34,13 +34,13 @@ namespace DiscImageChef.Core
 {
     public static partial class Sidecar
     {
-        public static event InitProgressHandler InitProgressEvent;
-        public static event UpdateProgressHandler UpdateProgressEvent;
-        public static event EndProgressHandler EndProgressEvent;
-        public static event InitProgressHandler2 InitProgressEvent2;
+        public static event InitProgressHandler    InitProgressEvent;
+        public static event UpdateProgressHandler  UpdateProgressEvent;
+        public static event EndProgressHandler     EndProgressEvent;
+        public static event InitProgressHandler2   InitProgressEvent2;
         public static event UpdateProgressHandler2 UpdateProgressEvent2;
-        public static event EndProgressHandler2 EndProgressEvent2;
-        public static event UpdateStatusHandler UpdateStatusEvent;
+        public static event EndProgressHandler2    EndProgressEvent2;
+        public static event UpdateStatusHandler    UpdateStatusEvent;
 
         public static void InitProgress()
         {

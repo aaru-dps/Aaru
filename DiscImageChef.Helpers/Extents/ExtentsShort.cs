@@ -135,7 +135,7 @@ namespace Extents
         {
             short realEnd;
             if(run) realEnd = (short)(start + end - 1);
-            else realEnd = end;
+            else realEnd    = end;
 
             // TODO: Optimize this
             for(short t = start; t <= realEnd; t++) Add(t);
@@ -177,7 +177,7 @@ namespace Extents
                 {
                     toRemove = extent;
                     toAddOne = new Tuple<short, short>(extent.Item1, (short)(item - 1));
-                    toAddTwo = new Tuple<short, short>((short)(item + 1), extent.Item2);
+                    toAddTwo = new Tuple<short, short>((short)(item               + 1), extent.Item2);
                     break;
                 }
 

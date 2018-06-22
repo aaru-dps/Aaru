@@ -53,13 +53,13 @@ namespace DiscImageChef.Filesystems
         const int NC1_MAXPART = 64;
         const int NC1_MAXIREG = 4;
 
-        const ulong UNICOS_MAGIC = 0x6e6331667331636e;
+        const ulong UNICOS_MAGIC  = 0x6e6331667331636e;
         const ulong UNICOS_SECURE = 0xcd076d1771d670cd;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "UNICOS Filesystem Plugin";
-        public Guid Id => new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "UNICOS Filesystem Plugin";
+        public Guid           Id        => new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -82,9 +82,9 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
@@ -119,11 +119,11 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "UNICOS filesystem",
-                ClusterSize = 4096,
-                Clusters = unicosSb.s_fsize,
-                VolumeName = StringHandlers.CToString(unicosSb.s_fname, Encoding),
-                ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time),
+                Type                      = "UNICOS filesystem",
+                ClusterSize               = 4096,
+                Clusters                  = unicosSb.s_fsize,
+                VolumeName                = StringHandlers.CToString(unicosSb.s_fname, Encoding),
+                ModificationDate          = DateHandlers.UnixToDateTime(unicosSb.s_time),
                 ModificationDateSpecified = true
             };
             XmlFsType.Dirty |= unicosSb.s_error > 0;
@@ -134,8 +134,8 @@ namespace DiscImageChef.Filesystems
         struct nc1ireg_sb
         {
             public ushort i_unused; /* reserved */
-            public ushort i_nblk; /* number of blocks */
-            public uint i_sblk; /* start block number */
+            public ushort i_nblk;   /* number of blocks */
+            public uint   i_sblk;   /* start block number */
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -155,33 +155,35 @@ namespace DiscImageChef.Filesystems
         struct UNICOS_Superblock
         {
             public ulong s_magic; /* magic number to indicate file system type */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] s_fname; /* file system name */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] s_fpack; /* file system pack name */
-            public dev_t s_dev; /* major/minor device, for verification */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] s_fname; /* file system name */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] s_fpack; /* file system pack name */
+            public dev_t s_dev;    /* major/minor device, for verification */
 
-            public daddr_t s_fsize; /* size in blocks of entire volume */
-            public long s_isize; /* Number of total inodes */
-            public long s_bigfile; /* number of bytes at which a file is big */
-            public long s_bigunit; /* minimum number of blocks allocated for big files */
-            public ulong s_secure; /* security: secure FS label */
-            public long s_maxlvl; /* security: maximum security level */
-            public long s_minlvl; /* security: minimum security level */
-            public long s_valcmp; /* security: valid security compartments */
-            public time_t s_time; /* last super block update */
-            public blkno_t s_dboff; /* Dynamic block number */
-            public ino_t s_root; /* root inode */
-            public long s_error; /* Type of file system error detected */
-            public blkno_t s_mapoff; /* Start map block number */
-            public long s_mapblks; /* Last map block number */
-            public long s_nscpys; /* Number of copies of s.b per partition */
-            public long s_npart; /* Number of partitions */
-            public long s_ifract; /* Ratio of inodes to blocks */
-            public extent_t s_sfs; /* SFS only blocks */
-            public long s_flag; /* Flag word */
+            public daddr_t  s_fsize;   /* size in blocks of entire volume */
+            public long     s_isize;   /* Number of total inodes */
+            public long     s_bigfile; /* number of bytes at which a file is big */
+            public long     s_bigunit; /* minimum number of blocks allocated for big files */
+            public ulong    s_secure;  /* security: secure FS label */
+            public long     s_maxlvl;  /* security: maximum security level */
+            public long     s_minlvl;  /* security: minimum security level */
+            public long     s_valcmp;  /* security: valid security compartments */
+            public time_t   s_time;    /* last super block update */
+            public blkno_t  s_dboff;   /* Dynamic block number */
+            public ino_t    s_root;    /* root inode */
+            public long     s_error;   /* Type of file system error detected */
+            public blkno_t  s_mapoff;  /* Start map block number */
+            public long     s_mapblks; /* Last map block number */
+            public long     s_nscpys;  /* Number of copies of s.b per partition */
+            public long     s_npart;   /* Number of partitions */
+            public long     s_ifract;  /* Ratio of inodes to blocks */
+            public extent_t s_sfs;     /* SFS only blocks */
+            public long     s_flag;    /* Flag word */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1_MAXPART)]
             public nc1fdev_sb[] s_part; /* Partition descriptors */
-            public long s_iounit; /* Physical block size */
-            public long s_numiresblks; /* number of inode reservation blocks */
+            public long s_iounit;       /* Physical block size */
+            public long s_numiresblks;  /* number of inode reservation blocks */
             /* per region (currently 1) */
             /* 0 = 1*(AU) words, n = (n+1)*(AU) words */
             public long s_priparts; /* bitmap of primary partitions */
@@ -191,7 +193,7 @@ namespace DiscImageChef.Filesystems
             public long s_secparts; /* bitmap of secondary partitions */
             public long s_secblock; /* block size of secondary partition(s) */
             /* 0 = 1*512 words, n = (n+1)*512 words */
-            public long s_secnblks; /* number of 512 wds blocks in secondary */
+            public long s_secnblks;  /* number of 512 wds blocks in secondary */
             public long s_sbdbparts; /* bitmap of partitions with file system data */
             /* including super blocks, dynamic block */
             /* and free block bitmaps (only primary */
@@ -200,7 +202,7 @@ namespace DiscImageChef.Filesystems
             /* (only primary partitions) */
             public long s_nudparts; /* bitmap of no-user-data partitions */
             /* (only primary partitions) */
-            public long s_nsema; /* SFS: # fs semaphores to allocate */
+            public long s_nsema;     /* SFS: # fs semaphores to allocate */
             public long s_priactive; /* bitmap of primary partitions which contain */
             /* active (up to date) dynamic blocks and */
             /* free block bitmaps. All bits set indicate */
@@ -208,7 +210,8 @@ namespace DiscImageChef.Filesystems
             /* and no kernel manipulation of active flag */
             /* is allowed. */
             public long s_sfs_arbiterid; /* SFS Arbiter ID */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 91)] public long[] s_fill; /* reserved */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 91)]
+            public long[] s_fill; /* reserved */
         }
     }
 }

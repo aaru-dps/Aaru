@@ -46,31 +46,31 @@ namespace DiscImageChef.Filesystems
         const uint LIF_MAGIC = 0x8000;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "HP Logical Interchange Format Plugin";
-        public Guid Id => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "HP Logical Interchange Format Plugin";
+        public Guid           Id        => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 256) return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
-            LifSystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
+            byte[]         sector = imagePlugin.ReadSector(partition.Start);
+            LifSystemBlock lifSb  = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
             DicConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
 
             return lifSb.magic == LIF_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
             if(imagePlugin.Info.SectorSize < 256) return;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
-            LifSystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
+            byte[]         sector = imagePlugin.ReadSector(partition.Start);
+            LifSystemBlock lifSb  = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
 
             if(lifSb.magic != LIF_MAGIC) return;
 
@@ -92,12 +92,12 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "HP Logical Interchange Format",
-                ClusterSize = 256,
-                Clusters = (long)(partition.Size / 256),
-                CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate),
+                Type                  = "HP Logical Interchange Format",
+                ClusterSize           = 256,
+                Clusters              = (long)(partition.Size / 256),
+                CreationDate          = DateHandlers.LifToDateTime(lifSb.creationDate),
                 CreationDateSpecified = true,
-                VolumeName = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
+                VolumeName            = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
             };
         }
 
@@ -105,17 +105,19 @@ namespace DiscImageChef.Filesystems
         struct LifSystemBlock
         {
             public ushort magic;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] volumeLabel;
-            public uint directoryStart;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] volumeLabel;
+            public uint   directoryStart;
             public ushort lifId;
             public ushort unused;
-            public uint directorySize;
+            public uint   directorySize;
             public ushort lifVersion;
             public ushort unused2;
-            public uint tracks;
-            public uint heads;
-            public uint sectors;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] creationDate;
+            public uint   tracks;
+            public uint   heads;
+            public uint   sectors;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] creationDate;
         }
     }
 }

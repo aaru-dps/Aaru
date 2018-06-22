@@ -49,15 +49,15 @@ namespace DiscImageChef.Partitions
         };
         readonly string[] diskTypeCodes =
             {"MF1DD 70-track", "MF1DD", "MF2DD", "Winchester 5M", "Winchester 10M", "Winchester 20M"};
-        readonly int[] lineModes = {256, 200};
-        readonly int[] lineWidths = {80, 40};
+        readonly int[]    lineModes            = {256, 200};
+        readonly int[]    lineWidths           = {80, 40};
         readonly string[] operatingSystemCodes = {"Invalid", "MS-DOS", "UCSD Pascal", "CP/M", "Concurrent CP/M"};
-        readonly string[] parityTypes = {"None", "Odd", "Even", "Mark", "Space"};
-        readonly string[] printDevices = {"Parallel", "Serial"};
-        readonly double[] stopBits = {1, 1.5, 2};
+        readonly string[] parityTypes          = {"None", "Odd", "Even", "Mark", "Space"};
+        readonly string[] printDevices         = {"Parallel", "Serial"};
+        readonly double[] stopBits             = {1, 1.5, 2};
 
         public string Name => "ACT Apricot partitions";
-        public Guid Id => new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
+        public Guid   Id   => new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -76,9 +76,9 @@ namespace DiscImageChef.Partitions
             Marshal.FreeHGlobal(lblPtr);
 
             // Not much to check but...
-            ulong deviceSectors = imagePlugin.Info.Sectors;
+            ulong deviceSectors              = imagePlugin.Info.Sectors;
             ulong deviceSizeAccordingToLabel = label.cylinders * label.heads * label.spt;
-            if(label.operatingSystem > 4 || label.bootType > 5 || label.partitionCount > 8 ||
+            if(label.operatingSystem      > 4             || label.bootType       > 5 || label.partitionCount > 8 ||
                deviceSizeAccordingToLabel > deviceSectors || label.firstDataBlock > deviceSectors) return false;
 
             DicConsole.DebugWriteLine("Apricot partitions", "label.version = \"{0}\"",
@@ -88,42 +88,42 @@ namespace DiscImageChef.Partitions
                                           ? operatingSystemCodes[label.operatingSystem]
                                           : "Unknown");
             DicConsole.DebugWriteLine("Apricot partitions", "label.writeProtected = {0}", label.writeProtected);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.copyProtected = {0}", label.copyProtected);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.copyProtected = {0}",  label.copyProtected);
             DicConsole.DebugWriteLine("Apricot partitions", "label.bootType = {0} ({1})", label.bootType,
                                       label.bootType < bootTypeCodes.Length
                                           ? bootTypeCodes[label.bootType]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.partitionCount = {0}", label.partitionCount);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.winchester = {0}", label.winchester);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.sectorSize = {0}", label.sectorSize);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spt = {0}", label.spt);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.cylinders = {0}", label.cylinders);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.heads = {0}", label.heads);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.interleave = {0}", label.interleave);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.skew = {0}", label.skew);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bootLocation = {0}", label.bootLocation);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bootSize = {0}", label.bootSize);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.partitionCount = {0}",   label.partitionCount);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.winchester = {0}",       label.winchester);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.sectorSize = {0}",       label.sectorSize);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.spt = {0}",              label.spt);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.cylinders = {0}",        label.cylinders);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.heads = {0}",            label.heads);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.interleave = {0}",       label.interleave);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.skew = {0}",             label.skew);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.bootLocation = {0}",     label.bootLocation);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.bootSize = {0}",         label.bootSize);
             DicConsole.DebugWriteLine("Apricot partitions", "label.bootAddress = 0x{0:X8}", label.bootAddress);
             DicConsole.DebugWriteLine("Apricot partitions", "label.bootOffset:label.bootSegment = {0:X4}:{1:X4}",
                                       label.bootOffset, label.bootSegment);
             DicConsole.DebugWriteLine("Apricot partitions", "label.firstDataBlock = {0}", label.firstDataBlock);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.generation = {0}", label.generation);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.copyCount = {0}", label.copyCount);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.maxCopies = {0}", label.maxCopies);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.generation = {0}",     label.generation);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.copyCount = {0}",      label.copyCount);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.maxCopies = {0}",      label.maxCopies);
             DicConsole.DebugWriteLine("Apricot partitions", "label.serialNumber = \"{0}\"",
                                       StringHandlers.CToString(label.serialNumber));
             DicConsole.DebugWriteLine("Apricot partitions", "label.partNumber = \"{0}\"",
                                       StringHandlers.CToString(label.partNumber));
             DicConsole.DebugWriteLine("Apricot partitions", "label.copyright = \"{0}\"",
                                       StringHandlers.CToString(label.copyright));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.bps = {0}", label.mainBPB.bps);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spc = {0}", label.mainBPB.spc);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.bps = {0}",      label.mainBPB.bps);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spc = {0}",      label.mainBPB.spc);
             DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.rsectors = {0}", label.mainBPB.rsectors);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.fats_no = {0}", label.mainBPB.fats_no);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.fats_no = {0}",  label.mainBPB.fats_no);
             DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.root_ent = {0}", label.mainBPB.root_ent);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.sectors = {0}", label.mainBPB.sectors);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.media = {0}", label.mainBPB.media);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spfat = {0}", label.mainBPB.spfat);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.sectors = {0}",  label.mainBPB.sectors);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.media = {0}",    label.mainBPB.media);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spfat = {0}",    label.mainBPB.spfat);
             DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.diskType = {0} ({1})",
                                       label.mainBPB.diskType,
                                       label.mainBPB.diskType < diskTypeCodes.Length
@@ -137,25 +137,25 @@ namespace DiscImageChef.Partitions
                                       StringHandlers.CToString(label.keyboardName));
             DicConsole.DebugWriteLine("Apricot partitions", "label.biosMajorVersion = {0}", label.biosMajorVersion);
             DicConsole.DebugWriteLine("Apricot partitions", "label.biosMinorVersion = {0}", label.biosMinorVersion);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.diagnosticsFlag = {0}", label.diagnosticsFlag);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.diagnosticsFlag = {0}",  label.diagnosticsFlag);
             DicConsole.DebugWriteLine("Apricot partitions", "label.prnDevice = {0} ({1})", label.prnDevice,
                                       label.prnDevice < printDevices.Length
                                           ? printDevices[label.prnDevice]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bellVolume = {0}", label.bellVolume);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.enableCache = {0}", label.enableCache);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.enableGraphics = {0}", label.enableGraphics);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.dosLength = {0}", label.dosLength);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.fontLength = {0}", label.fontLength);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardLength = {0}", label.keyboardLength);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.dosStart = {0}", label.dosStart);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.fontStart = {0}", label.fontStart);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardStart = {0}", label.keyboardStart);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardVolume = {0}", label.keyboardVolume);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeat = {0}", label.autorepeat);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeatLeadIn = {0}", label.autorepeatLeadIn);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.bellVolume = {0}",         label.bellVolume);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.enableCache = {0}",        label.enableCache);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.enableGraphics = {0}",     label.enableGraphics);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.dosLength = {0}",          label.dosLength);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.fontLength = {0}",         label.fontLength);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardLength = {0}",     label.keyboardLength);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.dosStart = {0}",           label.dosStart);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.fontStart = {0}",          label.fontStart);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardStart = {0}",      label.keyboardStart);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardVolume = {0}",     label.keyboardVolume);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeat = {0}",         label.autorepeat);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeatLeadIn = {0}",   label.autorepeatLeadIn);
             DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeatInterval = {0}", label.autorepeatInterval);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.microscreenMode = {0}", label.microscreenMode);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.microscreenMode = {0}",    label.microscreenMode);
             DicConsole.DebugWriteLine("Apricot partitions", "label.spareKeyboard is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareKeyboard));
             DicConsole.DebugWriteLine("Apricot partitions", "label.lineMode = {0} ({1} lines)", label.lineMode,
@@ -178,31 +178,31 @@ namespace DiscImageChef.Partitions
                                       label.parityType < parityTypes.Length
                                           ? parityTypes[label.parityType]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.txXonXoff = {0}", label.txXonXoff);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoff = {0}", label.rxXonXoff);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.xonCharacter = {0}", label.xonCharacter);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.xoffCharacter = {0}", label.xoffCharacter);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.txXonXoff = {0}",       label.txXonXoff);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoff = {0}",       label.rxXonXoff);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.xonCharacter = {0}",    label.xonCharacter);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.xoffCharacter = {0}",   label.xoffCharacter);
             DicConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoffBuffer = {0}", label.rxXonXoffBuffer);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.dtrDsr = {0}", label.dtrDsr);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.ctsRts = {0}", label.ctsRts);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterCr = {0}", label.nullsAfterCr);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterFF = {0}", label.nullsAfterFF);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.dtrDsr = {0}",          label.dtrDsr);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.ctsRts = {0}",          label.ctsRts);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterCr = {0}",    label.nullsAfterCr);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterFF = {0}",    label.nullsAfterFF);
             DicConsole.DebugWriteLine("Apricot partitions", "label.lfAfterCRSerial = {0}", label.lfAfterCRSerial);
             DicConsole.DebugWriteLine("Apricot partitions", "label.biosErrorReportSerial = {0}",
                                       label.biosErrorReportSerial);
             DicConsole.DebugWriteLine("Apricot partitions", "label.spareSerial is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareSerial));
             DicConsole.DebugWriteLine("Apricot partitions", "label.lfAfterCrParallel = {0}", label.lfAfterCrParallel);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.selectLine = {0}", label.selectLine);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.paperEmpty = {0}", label.paperEmpty);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.faultLine = {0}", label.faultLine);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.selectLine = {0}",        label.selectLine);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.paperEmpty = {0}",        label.paperEmpty);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.faultLine = {0}",         label.faultLine);
             DicConsole.DebugWriteLine("Apricot partitions", "label.biosErrorReportParallel = {0}",
                                       label.biosErrorReportParallel);
             DicConsole.DebugWriteLine("Apricot partitions", "label.spareParallel is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareParallel));
             DicConsole.DebugWriteLine("Apricot partitions", "label.spareWinchester is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareWinchester));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.parkingEnabled = {0}", label.parkingEnabled);
+            DicConsole.DebugWriteLine("Apricot partitions", "label.parkingEnabled = {0}",   label.parkingEnabled);
             DicConsole.DebugWriteLine("Apricot partitions", "label.formatProtection = {0}", label.formatProtection);
             DicConsole.DebugWriteLine("Apricot partitions", "label.spareRamDisk is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareRamDisk));
@@ -246,13 +246,13 @@ namespace DiscImageChef.Partitions
             {
                 Partition part = new Partition
                 {
-                    Start = label.partitions[i].startSector,
-                    Size = (ulong)(label.partitions[i].sectors * label.sectorSize),
-                    Length = label.partitions[i].sectors,
-                    Type = "ACT Apricot partition",
+                    Start    = label.partitions[i].startSector,
+                    Size     = (ulong)(label.partitions[i].sectors * label.sectorSize),
+                    Length   = label.partitions[i].sectors,
+                    Type     = "ACT Apricot partition",
                     Sequence = i,
-                    Scheme = Name,
-                    Offset = (ulong)(label.partitions[i].startSector * label.sectorSize)
+                    Scheme   = Name,
+                    Offset   = (ulong)(label.partitions[i].startSector * label.sectorSize)
                 };
                 if(part.Start < deviceSectors && part.End < deviceSectors) partitions.Add(part);
             }
@@ -265,7 +265,8 @@ namespace DiscImageChef.Partitions
         struct ApricotLabel
         {
             /// <summary>Version of format which created disk</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] version;
             /// <summary>Operating system.</summary>
             public byte operatingSystem;
             /// <summary>Software write protection.</summary>
@@ -309,17 +310,22 @@ namespace DiscImageChef.Partitions
             /// <summary>Maximum number of copies.</summary>
             public ushort maxCopies;
             /// <summary>Serial number.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] serialNumber;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] serialNumber;
             /// <summary>Part number.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] partNumber;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] partNumber;
             /// <summary>Copyright.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] copyright;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+            public byte[] copyright;
             /// <summary>BPB for whole disk.</summary>
             public ApricotParameterBlock mainBPB;
             /// <summary>Name of FONT file.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] fontName;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] fontName;
             /// <summary>Name of KEYBOARD file.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] keyboardName;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] keyboardName;
             /// <summary>Minor BIOS version.</summary>
             public byte biosMinorVersion;
             /// <summary>Major BIOS version.</summary>
@@ -357,7 +363,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Microscreen mode.</summary>
             public byte microscreenMode;
             /// <summary>Spare area for keyboard values expansion.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] spareKeyboard;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] spareKeyboard;
             /// <summary>Screen line mode.</summary>
             public byte lineMode;
             /// <summary>Screen line width.</summary>
@@ -365,7 +372,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Screen disabled?.</summary>
             [MarshalAs(UnmanagedType.U1)] public bool imageOff;
             /// <summary>Spare area for screen values expansion.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] spareScreen;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
+            public byte[] spareScreen;
             /// <summary>TX baud rate.</summary>
             public byte txBaudRate;
             /// <summary>RX baud rate.</summary>
@@ -403,7 +411,8 @@ namespace DiscImageChef.Partitions
             /// <summary>BIOS error report in serial port.</summary>
             [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportSerial;
             /// <summary>Spare area for serial port values expansion.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)] public byte[] spareSerial;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
+            public byte[] spareSerial;
             /// <summary>Send LF after CR in parallel port.</summary>
             [MarshalAs(UnmanagedType.U1)] public bool lfAfterCrParallel;
             /// <summary>Select line supported?.</summary>
@@ -415,21 +424,27 @@ namespace DiscImageChef.Partitions
             /// <summary>BIOS error report in parallel port.</summary>
             [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportParallel;
             /// <summary>Spare area for parallel port values expansion.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] spareParallel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] spareParallel;
             /// <summary>Spare area for Winchester values expansion.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] spareWinchester;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+            public byte[] spareWinchester;
             /// <summary>Parking enabled?.</summary>
             [MarshalAs(UnmanagedType.U1)] public bool parkingEnabled;
             /// <summary>Format protection?.</summary>
             [MarshalAs(UnmanagedType.U1)] public bool formatProtection;
             /// <summary>Spare area for RAM disk values expansion.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] spareRamDisk;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] spareRamDisk;
             /// <summary>List of bad blocks.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public ushort[] badBlocks;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public ushort[] badBlocks;
             /// <summary>Array of partition BPBs.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public ApricotParameterBlock[] partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public ApricotParameterBlock[] partitions;
             /// <summary>Spare area.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)] public byte[] spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
+            public byte[] spare;
             /// <summary>CP/M double side indicator?.</summary>
             public bool cpmDoubleSided;
         }

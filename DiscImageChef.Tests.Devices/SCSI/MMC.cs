@@ -102,10 +102,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void GetConfiguration(string devPath, Device dev)
         {
-            MmcGetConfigurationRt rt = MmcGetConfigurationRt.All;
-            ushort startingFeatureNumber = 0;
-            string strDev;
-            int item;
+            MmcGetConfigurationRt rt                    = MmcGetConfigurationRt.All;
+            ushort                startingFeatureNumber = 0;
+            string                strDev;
+            int                   item;
 
             parameters:
             while(true)
@@ -113,7 +113,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for GET CONFIGURATION command:");
-                DicConsole.WriteLine("RT: {0}", rt);
+                DicConsole.WriteLine("RT: {0}",             rt);
                 DicConsole.WriteLine("Feature number: {0}", startingFeatureNumber);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -171,11 +171,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending GET CONFIGURATION to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -219,7 +219,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     if(buffer != null)
                     {
                         Features.SeparatedFeatures ftr = Features.Separate(buffer);
-                        DicConsole.WriteLine("GET CONFIGURATION length is {0} bytes", ftr.DataLength);
+                        DicConsole.WriteLine("GET CONFIGURATION length is {0} bytes",        ftr.DataLength);
                         DicConsole.WriteLine("GET CONFIGURATION current profile is {0:X4}h", ftr.CurrentProfile);
                         if(ftr.Descriptors != null)
                             foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
@@ -505,10 +505,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void PreventAllowMediumRemoval(string devPath, Device dev)
         {
-            bool prevent = false;
-            bool persistent = false;
+            bool   prevent    = false;
+            bool   persistent = false;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -516,7 +516,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for PREVENT ALLOW MEDIUM REMOVAL command:");
-                DicConsole.WriteLine("Prevent removal?: {0}", prevent);
+                DicConsole.WriteLine("Prevent removal?: {0}",  prevent);
                 DicConsole.WriteLine("Persistent value?: {0}", persistent);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -570,9 +570,9 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending PREVENT ALLOW MEDIUM REMOVAL to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("PREVENT ALLOW MEDIUM REMOVAL decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
@@ -620,20 +620,20 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void ReadCd(string devPath, Device dev)
         {
-            uint address = 0;
-            uint length = 1;
+            uint           address    = 0;
+            uint           length     = 1;
             MmcSectorTypes sectorType = MmcSectorTypes.AllTypes;
-            bool dap = false;
-            bool relative = false;
-            bool sync = false;
-            MmcHeaderCodes header = MmcHeaderCodes.None;
-            bool user = true;
-            bool edc = false;
-            MmcErrorField c2 = MmcErrorField.None;
-            MmcSubchannel subchan = MmcSubchannel.None;
-            uint blockSize = 2352;
-            string strDev;
-            int item;
+            bool           dap        = false;
+            bool           relative   = false;
+            bool           sync       = false;
+            MmcHeaderCodes header     = MmcHeaderCodes.None;
+            bool           user       = true;
+            bool           edc        = false;
+            MmcErrorField  c2         = MmcErrorField.None;
+            MmcSubchannel  subchan    = MmcSubchannel.None;
+            uint           blockSize  = 2352;
+            string         strDev;
+            int            item;
 
             parameters:
             while(true)
@@ -642,17 +642,18 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ CD command:");
                 DicConsole.WriteLine("Address relative to current position?: {0}", relative);
-                DicConsole.WriteLine("{1}: {0}", address, relative ? "Address" : "LBA");
-                DicConsole.WriteLine("Will transfer {0} sectors", length);
-                DicConsole.WriteLine("Sector type: {0}", sectorType);
-                DicConsole.WriteLine("Process audio?: {0}", dap);
-                DicConsole.WriteLine("Retrieve sync bytes?: {0}", sync);
-                DicConsole.WriteLine("Header mode: {0}", header);
-                DicConsole.WriteLine("Retrieve user data?: {0}", user);
+                DicConsole.WriteLine("{1}: {0}", address,
+                                     relative ? "Address" : "LBA");
+                DicConsole.WriteLine("Will transfer {0} sectors",   length);
+                DicConsole.WriteLine("Sector type: {0}",            sectorType);
+                DicConsole.WriteLine("Process audio?: {0}",         dap);
+                DicConsole.WriteLine("Retrieve sync bytes?: {0}",   sync);
+                DicConsole.WriteLine("Header mode: {0}",            header);
+                DicConsole.WriteLine("Retrieve user data?: {0}",    user);
                 DicConsole.WriteLine("Retrieve EDC/ECC data?: {0}", edc);
-                DicConsole.WriteLine("C2 mode: {0}", c2);
-                DicConsole.WriteLine("Subchannel mode: {0}", subchan);
-                DicConsole.WriteLine("{0} bytes per sector", blockSize);
+                DicConsole.WriteLine("C2 mode: {0}",                c2);
+                DicConsole.WriteLine("Subchannel mode: {0}",        subchan);
+                DicConsole.WriteLine("{0} bytes per sector",        blockSize);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -820,11 +821,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ CD to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -892,23 +893,23 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void ReadCdMsf(string devPath, Device dev)
         {
-            byte startFrame = 0;
-            byte startSecond = 2;
-            byte startMinute = 0;
-            byte endFrame = 0;
-            byte endSecond = 0;
-            byte endMinute = 0;
-            MmcSectorTypes sectorType = MmcSectorTypes.AllTypes;
-            bool dap = false;
-            bool sync = false;
-            MmcHeaderCodes header = MmcHeaderCodes.None;
-            bool user = true;
-            bool edc = false;
-            MmcErrorField c2 = MmcErrorField.None;
-            MmcSubchannel subchan = MmcSubchannel.None;
-            uint blockSize = 2352;
-            string strDev;
-            int item;
+            byte           startFrame  = 0;
+            byte           startSecond = 2;
+            byte           startMinute = 0;
+            byte           endFrame    = 0;
+            byte           endSecond   = 0;
+            byte           endMinute   = 0;
+            MmcSectorTypes sectorType  = MmcSectorTypes.AllTypes;
+            bool           dap         = false;
+            bool           sync        = false;
+            MmcHeaderCodes header      = MmcHeaderCodes.None;
+            bool           user        = true;
+            bool           edc         = false;
+            MmcErrorField  c2          = MmcErrorField.None;
+            MmcSubchannel  subchan     = MmcSubchannel.None;
+            uint           blockSize   = 2352;
+            string         strDev;
+            int            item;
 
             parameters:
             while(true)
@@ -917,16 +918,16 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ CD MSF command:");
                 DicConsole.WriteLine("Start: {0:D2}:{1:D2}:{2:D2}", startMinute, startSecond, startFrame);
-                DicConsole.WriteLine("End: {0:D2}:{1:D2}:{2:D2}", endMinute, endSecond, endFrame);
-                DicConsole.WriteLine("Sector type: {0}", sectorType);
-                DicConsole.WriteLine("Process audio?: {0}", dap);
-                DicConsole.WriteLine("Retrieve sync bytes?: {0}", sync);
-                DicConsole.WriteLine("Header mode: {0}", header);
-                DicConsole.WriteLine("Retrieve user data?: {0}", user);
+                DicConsole.WriteLine("End: {0:D2}:{1:D2}:{2:D2}",   endMinute,   endSecond,   endFrame);
+                DicConsole.WriteLine("Sector type: {0}",            sectorType);
+                DicConsole.WriteLine("Process audio?: {0}",         dap);
+                DicConsole.WriteLine("Retrieve sync bytes?: {0}",   sync);
+                DicConsole.WriteLine("Header mode: {0}",            header);
+                DicConsole.WriteLine("Retrieve user data?: {0}",    user);
                 DicConsole.WriteLine("Retrieve EDC/ECC data?: {0}", edc);
-                DicConsole.WriteLine("C2 mode: {0}", c2);
-                DicConsole.WriteLine("Subchannel mode: {0}", subchan);
-                DicConsole.WriteLine("{0} bytes per sector", blockSize);
+                DicConsole.WriteLine("C2 mode: {0}",                c2);
+                DicConsole.WriteLine("Subchannel mode: {0}",        subchan);
+                DicConsole.WriteLine("{0} bytes per sector",        blockSize);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -1117,7 +1118,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
             start:
             uint startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
-            uint endMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
+            uint endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
             System.Console.Clear();
             bool sense = dev.ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize,
                                        sectorType, dap, sync, header, user, edc, c2, subchan, dev.Timeout,
@@ -1126,11 +1127,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ CD MSF to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1199,8 +1200,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
         static void ReadDiscInformation(string devPath, Device dev)
         {
             MmcDiscInformationDataTypes info = MmcDiscInformationDataTypes.DiscInformation;
-            string strDev;
-            int item;
+            string                      strDev;
+            int                         item;
 
             parameters:
             while(true)
@@ -1256,11 +1257,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ DISC INFORMATION to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1340,12 +1341,12 @@ namespace DiscImageChef.Tests.Devices.SCSI
         static void ReadDiscStructure(string devPath, Device dev)
         {
             MmcDiscStructureMediaType mediaType = MmcDiscStructureMediaType.Dvd;
-            MmcDiscStructureFormat format = MmcDiscStructureFormat.CapabilityList;
-            uint address = 0;
-            byte layer = 0;
-            byte agid = 0;
-            string strDev;
-            int item;
+            MmcDiscStructureFormat    format    = MmcDiscStructureFormat.CapabilityList;
+            uint                      address   = 0;
+            byte                      layer     = 0;
+            byte                      agid      = 0;
+            string                    strDev;
+            int                       item;
 
             parameters:
             while(true)
@@ -1354,10 +1355,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ DISC STRUCTURE command:");
                 DicConsole.WriteLine("Media type: {0}", mediaType);
-                DicConsole.WriteLine("Format: {0}", format);
-                DicConsole.WriteLine("Address: {0}", address);
-                DicConsole.WriteLine("Layer: {0}", layer);
-                DicConsole.WriteLine("AGID: {0}", agid);
+                DicConsole.WriteLine("Format: {0}",     format);
+                DicConsole.WriteLine("Address: {0}",    address);
+                DicConsole.WriteLine("Layer: {0}",      layer);
+                DicConsole.WriteLine("AGID: {0}",       agid);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -1497,11 +1498,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ DISC STRUCTURE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1580,11 +1581,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void ReadTocPmaAtip(string devPath, Device dev)
         {
-            bool msf = false;
-            byte format = 0;
-            byte session = 0;
+            bool   msf     = false;
+            byte   format  = 0;
+            byte   session = 0;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -1593,8 +1594,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ TOC/PMA/ATIP command:");
                 DicConsole.WriteLine("Return MSF values?: {0}", msf);
-                DicConsole.WriteLine("Format byte: {0}", format);
-                DicConsole.WriteLine("Session: {0}", session);
+                DicConsole.WriteLine("Format byte: {0}",        format);
+                DicConsole.WriteLine("Session: {0}",            session);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -1657,11 +1658,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ TOC/PMA/ATIP to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -1768,14 +1769,14 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void StartStopUnit(string devPath, Device dev)
         {
-            bool immediate = false;
-            bool changeFormatLayer = false;
-            bool loadEject = false;
-            bool start = false;
-            byte formatLayer = 0;
-            byte powerConditions = 0;
+            bool   immediate         = false;
+            bool   changeFormatLayer = false;
+            bool   loadEject         = false;
+            bool   start             = false;
+            byte   formatLayer       = 0;
+            byte   powerConditions   = 0;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -1783,12 +1784,12 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for START STOP UNIT command:");
-                DicConsole.WriteLine("Immediate?: {0}", immediate);
+                DicConsole.WriteLine("Immediate?: {0}",           immediate);
                 DicConsole.WriteLine("Change format layer?: {0}", changeFormatLayer);
-                DicConsole.WriteLine("Eject?: {0}", loadEject);
-                DicConsole.WriteLine("Start?: {0}", start);
-                DicConsole.WriteLine("Format layer: {0}", formatLayer);
-                DicConsole.WriteLine("Power conditions: {0}", powerConditions);
+                DicConsole.WriteLine("Eject?: {0}",               loadEject);
+                DicConsole.WriteLine("Start?: {0}",               start);
+                DicConsole.WriteLine("Format layer: {0}",         formatLayer);
+                DicConsole.WriteLine("Power conditions: {0}",     powerConditions);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -1881,9 +1882,9 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending START STOP UNIT to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("START STOP UNIT decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));

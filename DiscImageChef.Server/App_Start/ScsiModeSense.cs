@@ -47,8 +47,9 @@ namespace DiscImageChef.Server.App_Start
         /// <param name="deviceType">SCSI peripheral device type</param>
         /// <param name="scsiOneValue">List to put values on</param>
         /// <param name="modePages">List to put key=value pairs on</param>
-        public static void Report(modeType modeSense, string vendor, PeripheralDeviceTypes deviceType,
-                                  ref List<string> scsiOneValue, ref Dictionary<string, string> modePages)
+        public static void Report(modeType              modeSense, string vendor,
+                                  PeripheralDeviceTypes deviceType,
+                                  ref List<string>      scsiOneValue, ref Dictionary<string, string> modePages)
         {
             if(modeSense.MediumTypeSpecified) scsiOneValue.Add($"Medium type is {modeSense.MediumType:X2}h");
             if(modeSense.WriteProtected) scsiOneValue.Add("Device is write protected.");
@@ -56,8 +57,9 @@ namespace DiscImageChef.Server.App_Start
                 foreach(blockDescriptorType descriptor in modeSense.BlockDescriptors)
                     if(descriptor.BlocksSpecified && descriptor.BlockLengthSpecified)
                         scsiOneValue
-                            .Add($"Density code {descriptor.Density:X2}h has {descriptor.Blocks} blocks of {descriptor.BlockLength} bytes each");
-                    else scsiOneValue.Add($"Density code {descriptor.Density:X2}h");
+                           .Add($"Density code {descriptor.Density:X2}h has {descriptor.Blocks} blocks of {descriptor.BlockLength} bytes each");
+                    else
+                        scsiOneValue.Add($"Density code {descriptor.Density:X2}h");
 
             if(modeSense.DPOandFUA) scsiOneValue.Add("Drive supports DPO and FUA bits");
             if(modeSense.BlankCheckEnabled) scsiOneValue.Add("Blank checking during write is enabled");
@@ -89,8 +91,8 @@ namespace DiscImageChef.Server.App_Start
                             modePages.Add($"MODE page {page.page:X2}h", Modes.PrettifyModePage_00_SFF(page.value));
                         else
                             modePages
-                                .Add(page.subpage != 0 ? $"MODE page {page.page:X2}h subpage {page.subpage:X2}h" : $"MODE page {page.page:X2}h",
-                                     "Unknown vendor mode page");
+                               .Add(page.subpage != 0 ? $"MODE page {page.page:X2}h subpage {page.subpage:X2}h" : $"MODE page {page.page:X2}h",
+                                    "Unknown vendor mode page");
                         break;
                     }
                     case 0x01:
@@ -367,8 +369,10 @@ namespace DiscImageChef.Server.App_Start
 
             Dictionary<string, string> newModePages = new Dictionary<string, string>();
             foreach(KeyValuePair<string, string> kvp in modePages)
-                if(string.IsNullOrWhiteSpace(kvp.Value)) newModePages.Add(kvp.Key, "Undecoded");
-                else newModePages.Add(kvp.Key, kvp.Value.Replace("\n", "<br/>"));
+                if(string.IsNullOrWhiteSpace(kvp.Value))
+                    newModePages.Add(kvp.Key, "Undecoded");
+                else
+                    newModePages.Add(kvp.Key, kvp.Value.Replace("\n", "<br/>"));
 
             modePages = newModePages;
         }

@@ -105,7 +105,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            hdr             = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
+            hdr = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
             handle.Free();
 
             return hdr.magic.SequenceEqual(signature);
@@ -124,7 +124,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
 
             GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            hdr             = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
+            hdr = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
             handle.Free();
 
             DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
@@ -145,7 +145,7 @@ namespace DiscImageChef.DiscImages
 
             long       spt        = long.MaxValue;
             uint[][][] sectorsOff = new uint[hdr.cylinders][][];
-            sectorsData           = new byte[hdr.cylinders][][][];
+            sectorsData = new byte[hdr.cylinders][][][];
 
             imageInfo.Cylinders = hdr.cylinders;
             imageInfo.Heads     = hdr.heads;
@@ -224,7 +224,7 @@ namespace DiscImageChef.DiscImages
                     // Create empty sectors
                     else
                     {
-                        sectorsData[cyl][head]                                 = new byte[spt][];
+                        sectorsData[cyl][head] = new byte[spt][];
                         for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[imageInfo.SectorSize];
                     }
                 }
@@ -354,8 +354,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -364,8 +364,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -380,9 +380,9 @@ namespace DiscImageChef.DiscImages
 
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
-            ushort cylinder = (ushort)(lba / (imageInfo.Heads          * imageInfo.SectorsPerTrack));
-            byte   head     = (byte)(lba   / imageInfo.SectorsPerTrack % imageInfo.Heads);
-            byte   sector   = (byte)(lba   % imageInfo.SectorsPerTrack + 1);
+            ushort cylinder = (ushort)(lba                           / (imageInfo.Heads * imageInfo.SectorsPerTrack));
+            byte   head     = (byte)(lba / imageInfo.SectorsPerTrack % imageInfo.Heads);
+            byte   sector   = (byte)(lba % imageInfo.SectorsPerTrack + 1);
 
             return (cylinder, head, sector);
         }
@@ -409,7 +409,7 @@ namespace DiscImageChef.DiscImages
         struct FdiHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[]    magic;
+            public byte[] magic;
             public DiskFlags flags;
             public ushort    cylinders;
             public ushort    heads;

@@ -71,10 +71,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void ReadCdDa(string devPath, Device dev)
         {
-            uint address = 0;
-            uint length = 1;
+            uint   address = 0;
+            uint   length  = 1;
             string strDev;
-            int item;
+            int    item;
 
             parameters:
             while(true)
@@ -82,7 +82,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Parameters for READ CD-DA command:");
-                DicConsole.WriteLine("LBA: {0}", address);
+                DicConsole.WriteLine("LBA: {0}",                  address);
                 DicConsole.WriteLine("Will transfer {0} sectors", length);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -136,11 +136,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ CD-DA to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Command took {0} ms.",               duration);
+            DicConsole.WriteLine("Sense is {0}.",                      sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
+            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");

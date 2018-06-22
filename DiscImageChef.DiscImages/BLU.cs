@@ -110,7 +110,7 @@ namespace DiscImageChef.DiscImages
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);
 
-            BluHeader tmpHdr                     = new BluHeader {DeviceName = new byte[0x0D]};
+            BluHeader tmpHdr = new BluHeader {DeviceName = new byte[0x0D]};
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             Array.Copy(header, 0, tmpHdr.DeviceName, 0, 0x0D);
@@ -118,7 +118,7 @@ namespace DiscImageChef.DiscImages
             tmpHdr.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
             tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-            for(int i = 0; i            < 0xD; i++)
+            for(int i = 0; i < 0xD; i++)
                 if(tmpHdr.DeviceName[i] < 0x20)
                     return false;
 
@@ -146,7 +146,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}",   imageHeader.DeviceBlocks);
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", imageHeader.BytesPerBlock);
 
-            for(int i = 0; i                 < 0xD; i++)
+            for(int i = 0; i < 0xD; i++)
                 if(imageHeader.DeviceName[i] < 0x20)
                     return false;
 
@@ -161,7 +161,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.Sectors   = imageHeader.DeviceBlocks;
             imageInfo.ImageSize = imageHeader.DeviceBlocks * imageHeader.BytesPerBlock;
             bptag               = imageHeader.BytesPerBlock - 0x200;
-            byte[] hdrTag       = new byte[bptag];
+            byte[] hdrTag = new byte[bptag];
             Array.Copy(header, 0x200, hdrTag, 0, bptag);
 
             switch(StringHandlers.CToString(imageHeader.DeviceName))
@@ -368,8 +368,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -379,8 +379,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -400,7 +400,7 @@ namespace DiscImageChef.DiscImages
 
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new[] {SectorTagType.AppleSectorTag};
-        public IEnumerable<MediaType>     SupportedMediaTypes =>
+        public IEnumerable<MediaType> SupportedMediaTypes =>
             new[]
             {
                 MediaType.AppleProfile, MediaType.AppleWidget, MediaType.PriamDataTower, MediaType.GENERIC_HDD,
@@ -665,8 +665,8 @@ namespace DiscImageChef.DiscImages
                 if(newTag == null) newTag = new byte[longSectorSize - 512];
 
                 writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
-                writingStream.Write(data,   (int)(givenSectorSize       * i), 512);
-                writingStream.Write(newTag, 0,                                newTag.Length);
+                writingStream.Write(data,   (int)(givenSectorSize * i), 512);
+                writingStream.Write(newTag, 0,                          newTag.Length);
             }
 
             ErrorMessage = "";
@@ -688,7 +688,7 @@ namespace DiscImageChef.DiscImages
             }
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            byte[] markerTag                     = Encoding.UTF8.GetBytes("DiscImageChef " + Version.GetVersion());
+            byte[] markerTag = Encoding.UTF8.GetBytes("DiscImageChef " + Version.GetVersion());
             byte[] driveName;
             byte[] driveType      = new byte[3];
             byte[] driveBlocks    = BigEndianBitConverter.GetBytes((uint)imageInfo.Sectors);

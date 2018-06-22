@@ -77,7 +77,7 @@ namespace DiscImageChef.Core
                 position += 1048576;
             }
 
-            data = new byte[fi.Length        - position];
+            data = new byte[fi.Length - position];
             fs.Read(data, 0, (int)(fi.Length - position));
 
             UpdateProgress("Hashing image file byte {0} of {1}", position, fi.Length);

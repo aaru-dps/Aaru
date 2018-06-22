@@ -40,7 +40,7 @@ namespace DiscImageChef.Commands
     {
         internal static void DoListDevices(ListDevicesOptions options)
         {
-            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}",   options.Debug);
             DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}", options.Verbose);
 
             Devices.DeviceInfo[] devices = Device.ListDevices();

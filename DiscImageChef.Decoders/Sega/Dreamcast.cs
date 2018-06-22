@@ -48,15 +48,18 @@ namespace DiscImageChef.Decoders.Sega
         public struct IPBin
         {
             /// <summary>Must be "SEGA SEGAKATANA "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] SegaHardwareID;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] SegaHardwareID;
             /// <summary>0x010, "SEGA ENTERPRISES"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] maker_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] maker_id;
             /// <summary>0x020, CRC of product_no and product_version</summary>
             public uint dreamcast_crc;
             /// <summary>0x024, " "</summary>
             public byte spare_space1;
             /// <summary>0x025, "GD-ROM"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] dreamcast_media;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] dreamcast_media;
             /// <summary>0x02B, Disc number</summary>
             public byte disc_no;
             /// <summary>0x02C, '/'</summary>
@@ -64,29 +67,40 @@ namespace DiscImageChef.Decoders.Sega
             /// <summary>0x02D, Total number of discs</summary>
             public byte disc_total_nos;
             /// <summary>0x02E, "  "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] spare_space2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] spare_space2;
             /// <summary>0x030, Region codes, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] region_codes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] region_codes;
             /// <summary>0x038, Supported peripherals, bitwise</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public byte[] peripherals;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
+            public byte[] peripherals;
             /// <summary>0x03F, ' '</summary>
             public byte spare_space3;
             /// <summary>0x040, Product number</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] product_no;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public byte[] product_no;
             /// <summary>0x04A, Product version</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] product_version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] product_version;
             /// <summary>0x050, YYYYMMDD</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] release_date;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] release_date;
             /// <summary>0x058, "  "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] spare_space4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] spare_space4;
             /// <summary>0x060, Usually "1ST_READ.BIN" or "0WINCE.BIN  "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] boot_filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] boot_filename;
             /// <summary>0x06C, "  "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] spare_space5;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] spare_space5;
             /// <summary>0x070, Game producer, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] producer;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] producer;
             /// <summary>0x080, Game name, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] product_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public byte[] product_name;
         }
 
         public static IPBin? DecodeIPBin(byte[] ipbin_sector)
@@ -148,7 +162,7 @@ namespace DiscImageChef.Decoders.Sega
             IPBinInformation.AppendLine("--------------------------------");
 
             // Decoding all data
-            DateTime ipbindate;
+            DateTime    ipbindate;
             CultureInfo provider = CultureInfo.InvariantCulture;
             ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
             IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name))

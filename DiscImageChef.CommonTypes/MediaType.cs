@@ -58,9 +58,9 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Generic hard disk</summary>
         GENERIC_HDD = 2,
         /// <summary>Microdrive type hard disk</summary>
-        Microdrive  = 3,
+        Microdrive = 3,
         /// <summary>Zoned hard disk</summary>
-        Zone_HDD    = 4,
+        Zone_HDD = 4,
         /// <summary>USB flash drives</summary>
         FlashDrive = 5,
         #endregion Generics, types 0 to 9
@@ -194,7 +194,7 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Pioneer LaserDisc data</summary>
         LDROM = 81,
         LDROM2 = 82,
-        LVROM = 83,
+        LVROM  = 83,
         MegaLD = 84,
         #endregion LaserDisc based, types 80 to 89
 
@@ -203,7 +203,7 @@ namespace DiscImageChef.CommonTypes
         HiMD = 90,
         /// <summary>Sony MiniDisc</summary>
         MD = 91,
-        MDData = 92,
+        MDData  = 92,
         MDData2 = 93,
         #endregion MiniDisc based, types 90 to 99
 
@@ -217,7 +217,7 @@ namespace DiscImageChef.CommonTypes
         #endregion Plasmon UDO, types 100 to 109
 
         #region Sony game media, types 110 to 129
-        PlayStationMemoryCard = 110,
+        PlayStationMemoryCard  = 110,
         PlayStationMemoryCard2 = 111,
         /// <summary>Sony PlayStation game CD</summary>
         PS1CD = 112,
@@ -521,46 +521,46 @@ namespace DiscImageChef.CommonTypes
 
         #region OnStream ADR, types 310 to 319
         ADR2120 = 310,
-        ADR260 = 311,
-        ADR30 = 312,
-        ADR50 = 313,
+        ADR260  = 311,
+        ADR30   = 312,
+        ADR50   = 313,
         #endregion OnStream ADR, types 310 to 319
 
         #region Advanced Intelligent Tape, types 320 to 339
-        AIT1 = 320,
+        AIT1      = 320,
         AIT1Turbo = 321,
-        AIT2 = 322,
+        AIT2      = 322,
         AIT2Turbo = 323,
-        AIT3 = 324,
-        AIT3Ex = 325,
+        AIT3      = 324,
+        AIT3Ex    = 325,
         AIT3Turbo = 326,
-        AIT4 = 327,
-        AIT5 = 328,
+        AIT4      = 327,
+        AIT5      = 328,
         AITETurbo = 329,
-        SAIT1 = 330,
-        SAIT2 = 331,
+        SAIT1     = 330,
+        SAIT2     = 331,
         #endregion Advanced Intelligent Tape, types 320 to 339
 
         #region Iomega, types 340 to 359
-        Bernoulli = 340,
+        Bernoulli  = 340,
         Bernoulli2 = 341,
-        Ditto = 342,
-        DittoMax = 343,
-        Jaz = 344,
-        Jaz2 = 345,
-        PocketZip = 346,
-        REV120 = 347,
-        REV35 = 348,
-        REV70 = 349,
-        ZIP100 = 350,
-        ZIP250 = 351,
-        ZIP750 = 352,
+        Ditto      = 342,
+        DittoMax   = 343,
+        Jaz        = 344,
+        Jaz2       = 345,
+        PocketZip  = 346,
+        REV120     = 347,
+        REV35      = 348,
+        REV70      = 349,
+        ZIP100     = 350,
+        ZIP250     = 351,
+        ZIP750     = 352,
         #endregion Iomega, types 340 to 359
 
         #region Audio or video media, types 360 to 369
         CompactCassette = 360,
-        Data8 = 361,
-        MiniDV = 362,
+        Data8           = 361,
+        MiniDV          = 362,
         /// <summary>D/CAS-25: Digital data on Compact Cassette form factor, special magnetic media, 9-track</summary>
         Dcas25 = 363,
         /// <summary>D/CAS-85: Digital data on Compact Cassette form factor, special magnetic media, 17-track</summary>
@@ -570,96 +570,96 @@ namespace DiscImageChef.CommonTypes
         #endregion Audio media, types 360 to 369
 
         #region CompactFlash Association, types 370 to 379
-        CFast = 370,
-        CompactFlash = 371,
+        CFast             = 370,
+        CompactFlash      = 371,
         CompactFlashType2 = 372,
         #endregion CompactFlash Association, types 370 to 379
 
         #region Digital Audio Tape / Digital Data Storage, types 380 to 389
         DigitalAudioTape = 380,
-        DAT160 = 381,
-        DAT320 = 382,
-        DAT72 = 383,
-        DDS1 = 384,
-        DDS2 = 385,
-        DDS3 = 386,
-        DDS4 = 387,
+        DAT160           = 381,
+        DAT320           = 382,
+        DAT72            = 383,
+        DDS1             = 384,
+        DDS2             = 385,
+        DDS3             = 386,
+        DDS4             = 387,
         #endregion Digital Audio Tape / Digital Data Storage, types 380 to 389
 
         #region DEC, types 390 to 399
-        CompactTapeI = 390,
+        CompactTapeI  = 390,
         CompactTapeII = 391,
-        DECtapeII = 392,
-        DLTtapeIII = 393,
-        DLTtapeIIIxt = 394,
-        DLTtapeIV = 395,
-        DLTtapeS4 = 396,
-        SDLT1 = 397,
-        SDLT2 = 398,
-        VStapeI = 399,
+        DECtapeII     = 392,
+        DLTtapeIII    = 393,
+        DLTtapeIIIxt  = 394,
+        DLTtapeIV     = 395,
+        DLTtapeS4     = 396,
+        SDLT1         = 397,
+        SDLT2         = 398,
+        VStapeI       = 399,
         #endregion DEC, types 390 to 399
 
         #region Exatape, types 400 to 419
-        Exatape15m = 400,
-        Exatape22m = 401,
+        Exatape15m    = 400,
+        Exatape22m    = 401,
         Exatape22mAME = 402,
-        Exatape28m = 403,
-        Exatape40m = 404,
-        Exatape45m = 405,
-        Exatape54m = 406,
-        Exatape75m = 407,
-        Exatape76m = 408,
-        Exatape80m = 409,
-        Exatape106m = 410,
+        Exatape28m    = 403,
+        Exatape40m    = 404,
+        Exatape45m    = 405,
+        Exatape54m    = 406,
+        Exatape75m    = 407,
+        Exatape76m    = 408,
+        Exatape80m    = 409,
+        Exatape106m   = 410,
         Exatape160mXL = 411,
-        Exatape112m = 412,
-        Exatape125m = 413,
-        Exatape150m = 414,
-        Exatape170m = 415,
-        Exatape225m = 416,
+        Exatape112m   = 412,
+        Exatape125m   = 413,
+        Exatape150m   = 414,
+        Exatape170m   = 415,
+        Exatape225m   = 416,
         #endregion Exatape, types 400 to 419
 
         #region PCMCIA / ExpressCard, types 420 to 429
         ExpressCard34 = 420,
         ExpressCard54 = 421,
-        PCCardTypeI = 422,
-        PCCardTypeII = 423,
+        PCCardTypeI   = 422,
+        PCCardTypeII  = 423,
         PCCardTypeIII = 424,
-        PCCardTypeIV = 425,
+        PCCardTypeIV  = 425,
         #endregion PCMCIA / ExpressCard, types 420 to 429
 
         #region SyQuest, types 430 to 449
-        EZ135 = 430,
-        EZ230 = 431,
-        Quest = 432,
-        SparQ = 433,
-        SQ100 = 434,
-        SQ200 = 435,
-        SQ300 = 436,
-        SQ310 = 437,
-        SQ327 = 438,
-        SQ400 = 439,
-        SQ800 = 440,
+        EZ135  = 430,
+        EZ230  = 431,
+        Quest  = 432,
+        SparQ  = 433,
+        SQ100  = 434,
+        SQ200  = 435,
+        SQ300  = 436,
+        SQ310  = 437,
+        SQ327  = 438,
+        SQ400  = 439,
+        SQ800  = 440,
         SQ1500 = 441,
         SQ2000 = 442,
-        SyJet = 443,
+        SyJet  = 443,
         #endregion SyQuest, types 430 to 449
 
         #region Nintendo, types 450 to 469
-        FamicomGamePak = 450,
+        FamicomGamePak        = 450,
         GameBoyAdvanceGamePak = 451,
-        GameBoyGamePak = 452,
+        GameBoyGamePak        = 452,
         /// <summary>Nintendo GameCube Optical Disc</summary>
         GOD = 453,
-        N64DD = 454,
-        N64GamePak = 455,
-        NESGamePak = 456,
+        N64DD               = 454,
+        N64GamePak          = 455,
+        NESGamePak          = 456,
         Nintendo3DSGameCard = 457,
-        NintendoDiskCard = 458,
-        NintendoDSGameCard = 459,
+        NintendoDiskCard    = 458,
+        NintendoDSGameCard  = 459,
         NintendoDSiGameCard = 460,
-        SNESGamePak = 461,
-        SNESGamePakUS = 462,
+        SNESGamePak         = 461,
+        SNESGamePakUS       = 462,
         /// <summary>Nintendo Wii Optical Disc</summary>
         WOD = 463,
         /// <summary>Nintendo Wii U Optical Disc</summary>
@@ -668,101 +668,101 @@ namespace DiscImageChef.CommonTypes
         #endregion Nintendo, types 450 to 469
 
         #region IBM Tapes, types 470 to 479
-        IBM3470 = 470,
-        IBM3480 = 471,
-        IBM3490 = 472,
+        IBM3470  = 470,
+        IBM3480  = 471,
+        IBM3490  = 472,
         IBM3490E = 473,
-        IBM3592 = 474,
+        IBM3592  = 474,
         #endregion IBM Tapes, types 470 to 479
 
         #region LTO Ultrium, types 480 to 509
-        LTO = 480,
-        LTO2 = 481,
-        LTO3 = 482,
+        LTO      = 480,
+        LTO2     = 481,
+        LTO3     = 482,
         LTO3WORM = 483,
-        LTO4 = 484,
+        LTO4     = 484,
         LTO4WORM = 485,
-        LTO5 = 486,
+        LTO5     = 486,
         LTO5WORM = 487,
-        LTO6 = 488,
+        LTO6     = 488,
         LTO6WORM = 489,
-        LTO7 = 490,
+        LTO7     = 490,
         LTO7WORM = 491,
         #endregion LTO Ultrium, types 480 to 509
 
         #region MemoryStick, types 510 to 519
-        MemoryStick = 510,
-        MemoryStickDuo = 511,
-        MemoryStickMicro = 512,
-        MemoryStickPro = 513,
+        MemoryStick       = 510,
+        MemoryStickDuo    = 511,
+        MemoryStickMicro  = 512,
+        MemoryStickPro    = 513,
         MemoryStickProDuo = 514,
         #endregion MemoryStick, types 510 to 519
 
         #region SecureDigital, types 520 to 529
-        microSD = 520,
-        miniSD = 521,
+        microSD       = 520,
+        miniSD        = 521,
         SecureDigital = 522,
         #endregion SecureDigital, types 520 to 529
 
         #region MultiMediaCard, types 530 to 539
-        MMC = 530,
-        MMCmicro = 531,
-        RSMMC = 532,
-        MMCplus = 533,
+        MMC       = 530,
+        MMCmicro  = 531,
+        RSMMC     = 532,
+        MMCplus   = 533,
         MMCmobile = 534,
         #endregion MultiMediaCard, types 530 to 539
 
         #region SLR, types 540 to 569
-        MLR1 = 540,
-        MLR1SL = 541,
-        MLR3 = 542,
-        SLR1 = 543,
-        SLR2 = 544,
-        SLR3 = 545,
-        SLR32 = 546,
-        SLR32SL = 547,
-        SLR4 = 548,
-        SLR5 = 549,
-        SLR5SL = 550,
-        SLR6 = 551,
-        SLRtape7 = 552,
-        SLRtape7SL = 553,
-        SLRtape24 = 554,
+        MLR1        = 540,
+        MLR1SL      = 541,
+        MLR3        = 542,
+        SLR1        = 543,
+        SLR2        = 544,
+        SLR3        = 545,
+        SLR32       = 546,
+        SLR32SL     = 547,
+        SLR4        = 548,
+        SLR5        = 549,
+        SLR5SL      = 550,
+        SLR6        = 551,
+        SLRtape7    = 552,
+        SLRtape7SL  = 553,
+        SLRtape24   = 554,
         SLRtape24SL = 555,
-        SLRtape40 = 556,
-        SLRtape50 = 557,
-        SLRtape60 = 558,
-        SLRtape75 = 559,
-        SLRtape100 = 560,
-        SLRtape140 = 561,
+        SLRtape40   = 556,
+        SLRtape50   = 557,
+        SLRtape60   = 558,
+        SLRtape75   = 559,
+        SLRtape100  = 560,
+        SLRtape140  = 561,
         #endregion SLR, types 540 to 569
 
         #region QIC, types 570 to 589
-        QIC11 = 570,
-        QIC120 = 571,
+        QIC11   = 570,
+        QIC120  = 571,
         QIC1350 = 572,
-        QIC150 = 573,
-        QIC24 = 574,
+        QIC150  = 573,
+        QIC24   = 574,
         QIC3010 = 575,
         QIC3020 = 576,
         QIC3080 = 577,
         QIC3095 = 578,
-        QIC320 = 579,
-        QIC40 = 580,
-        QIC525 = 581,
-        QIC80 = 582,
+        QIC320  = 579,
+        QIC40   = 580,
+        QIC525  = 581,
+        QIC80   = 582,
         #endregion QIC, types 570 to 589
 
         #region StorageTek tapes, types 590 to 609
         STK4480 = 590,
         STK4490 = 591,
         STK9490 = 592,
-        T9840A = 593,
-        T9840B = 594,
-        T9840C = 595,
-        T9840D = 596,
-        T9940A = 597,
-        T9940B = 598,
+        T9840A  = 593,
+        T9840B  = 594,
+        T9840C  = 595,
+        T9840D  = 596,
+        T9940A  = 597,
+        T9940B  = 598,
         T10000A = 599,
         T10000B = 600,
         T10000C = 601,
@@ -770,13 +770,13 @@ namespace DiscImageChef.CommonTypes
         #endregion StorageTek tapes, types 590 to 609
 
         #region Travan, types 610 to 619
-        Travan = 610,
+        Travan    = 610,
         Travan1Ex = 611,
-        Travan3 = 612,
+        Travan3   = 612,
         Travan3Ex = 613,
-        Travan4 = 614,
-        Travan5 = 615,
-        Travan7 = 616,
+        Travan4   = 614,
+        Travan5   = 615,
+        Travan7   = 616,
         #endregion Travan, types 610 to 619
 
         #region VXA, types 620 to 629
@@ -840,43 +840,43 @@ namespace DiscImageChef.CommonTypes
 
         #region Other floppy standards, types 660 to 689
         CompactFloppy = 660,
-        DemiDiskette = 661,
+        DemiDiskette  = 661,
         /// <summary>3.5", 652 tracks, 2 sides, 512 bytes/sector, Floptical, ECMA-207, ISO 14169</summary>
         Floptical = 662,
-        HiFD = 663,
-        QuickDisk = 664,
-        UHD144 = 665,
-        VideoFloppy = 666,
-        Wafer = 667,
+        HiFD         = 663,
+        QuickDisk    = 664,
+        UHD144       = 665,
+        VideoFloppy  = 666,
+        Wafer        = 667,
         ZXMicrodrive = 668,
         #endregion Other floppy standards, types 660 to 669
 
         #region Miscellaneous, types 670 to 689
-        BeeCard = 670,
-        Borsu = 671,
-        DataStore = 672,
-        DIR = 673,
-        DST = 674,
-        DTF = 675,
-        DTF2 = 676,
+        BeeCard     = 670,
+        Borsu       = 671,
+        DataStore   = 672,
+        DIR         = 673,
+        DST         = 674,
+        DTF         = 675,
+        DTF2        = 676,
         Flextra3020 = 677,
         Flextra3225 = 678,
-        HiTC1 = 679,
-        HiTC2 = 680,
-        LT1 = 681,
-        MiniCard = 872,
-        Orb = 683,
-        Orb5 = 684,
-        SmartMedia = 685,
-        xD = 686,
-        XQD = 687,
-        DataPlay = 688,
+        HiTC1       = 679,
+        HiTC2       = 680,
+        LT1         = 681,
+        MiniCard    = 872,
+        Orb         = 683,
+        Orb5        = 684,
+        SmartMedia  = 685,
+        xD          = 686,
+        XQD         = 687,
+        DataPlay    = 688,
         #endregion Miscellaneous, types 670 to 689
 
         #region Apple Hard Disks, types 690 to 699
-        AppleProfile = 690,
-        AppleWidget = 691,
-        AppleHD20 = 692,
+        AppleProfile   = 690,
+        AppleWidget    = 691,
+        AppleHD20      = 692,
         PriamDataTower = 693,
         #endregion Apple Hard Disks, types 690 to 699
 
@@ -1022,7 +1022,7 @@ namespace DiscImageChef.CommonTypes
         LS120  = 730,
         LS240  = 731,
         FD32MB = 732,
-        RDX = 733,
+        RDX    = 733,
         /// <summary>Imation 320Gb RDX</summary>
         RDX320 = 734,
         #endregion Imation, types 730 to 739

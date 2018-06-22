@@ -245,9 +245,9 @@ namespace DiscImageChef.Filesystems
         [FieldOffset(1)] public bool IsLong;
         [FieldOffset(2)] public bool IsGuid;
 
-        [FieldOffset(3)] public uint Serial32;
+        [FieldOffset(3)] public uint  Serial32;
         [FieldOffset(3)] public ulong Serial64;
-        [FieldOffset(3)] public Guid uuid;
+        [FieldOffset(3)] public Guid  uuid;
     }
 
     /// <summary>

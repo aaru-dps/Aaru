@@ -80,12 +80,12 @@ namespace DiscImageChef.Filesystems.AppleDOS
         Errno ReadCatalog()
         {
             MemoryStream catalogMs = new MemoryStream();
-            ulong lba = (ulong)(vtoc.catalogTrack * sectorsPerTrack + vtoc.catalogSector);
+            ulong        lba       = (ulong)(vtoc.catalogTrack * sectorsPerTrack + vtoc.catalogSector);
             totalFileEntries = 0;
-            catalogCache = new Dictionary<string, ushort>();
-            fileTypeCache = new Dictionary<string, byte>();
-            fileSizeCache = new Dictionary<string, int>();
-            lockedFiles = new List<string>();
+            catalogCache     = new Dictionary<string, ushort>();
+            fileTypeCache    = new Dictionary<string, byte>();
+            fileSizeCache    = new Dictionary<string, int>();
+            lockedFiles      = new List<string>();
 
             if(lba == 0 || lba > device.Info.Sectors) return Errno.InvalidArgument;
 
@@ -108,7 +108,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                     track2UsedByFiles |= entry.extentTrack == 2;
 
                     byte[] filenameB = new byte[30];
-                    ushort ts = (ushort)((entry.extentTrack << 8) | entry.extentSector);
+                    ushort ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
 
                     // Apple DOS has high byte set over ASCII.
                     for(int i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);

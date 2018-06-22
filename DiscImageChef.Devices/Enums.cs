@@ -640,7 +640,7 @@ namespace DiscImageChef.Devices
         ///     Requests SPC-4 style error data
         /// </summary>
         RequestSenseDataExt = 0x0B,
-        SanitizeCommands    = 0xB4,
+        SanitizeCommands = 0xB4,
         /// <summary>
         ///     Executes a Security Protocol command that does not require a transfer of data
         /// </summary>
@@ -2394,7 +2394,7 @@ namespace DiscImageChef.Devices
         ///     Sets the spindle speed to be used while reading/writing data to a CD
         /// </summary>
         SetCdSpeed = 0xDA,
-        WriteCdp   = 0xE3,
+        WriteCdp = 0xE3,
         #endregion
 
         #region ATA Command Pass-Through
@@ -2841,7 +2841,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         ///     Drive shall return only the Feature Header with the chosen Feature Descriptor
         /// </summary>
-        Single   = 0x02,
+        Single = 0x02,
         Reserved = 0x03
     }
 
@@ -3505,8 +3505,8 @@ namespace DiscImageChef.Devices
         ///     The host sends the bus testing data pattern to a device (ADTC, R1)
         /// </summary>
         BusTestWrite = 19,
-        SpiReadOcr   = 58,
-        SpicrcOnOff  = 59,
+        SpiReadOcr  = 58,
+        SpicrcOnOff = 59,
         #endregion Class 1 MMC Commands (Basic and read-stream)
 
         #region Class 2 MMC Commands (Block-oriented read)
@@ -3756,9 +3756,9 @@ namespace DiscImageChef.Devices
         ResponseSpiB4   = 1 << 9,
         ResponseSpiBusy = 1 << 10,
         ResponseNone    = 0,
-        ResponseR1      = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR1      = ResponsePresent | ResponseCrc                  | ResponseOpcode,
         ResponseR1B     = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
-        ResponseR2      = ResponsePresent | Response136 | ResponseCrc,
+        ResponseR2      = ResponsePresent | Response136                  | ResponseCrc,
         ResponseR3      = ResponsePresent,
         ResponseR4      = ResponsePresent,
         ResponseR5      = ResponsePresent | ResponseCrc | ResponseOpcode,
@@ -3916,7 +3916,7 @@ namespace DiscImageChef.Devices
         DisableReleaseInterrupt = 0xDD,
         /// <summary>Disable SERVICE interrupt</summary>
         DisableServiceInterrupt = 0xDE,
-        VendorSpecific          = 0xE0
+        VendorSpecific = 0xE0
     }
 
     public enum KreonLockStates : byte

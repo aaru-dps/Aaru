@@ -57,39 +57,39 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
-            Encoding = encoding ?? new MacRoman();
+            Encoding    = encoding ?? new MacRoman();
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
             MFS_MasterDirectoryBlock mdb = new MFS_MasterDirectoryBlock();
-            MFS_BootBlock bb = new MFS_BootBlock();
+            MFS_BootBlock            bb  = new MFS_BootBlock();
 
             byte[] pString = new byte[16];
 
             byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
-            byte[] bbSector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[] bbSector  = imagePlugin.ReadSector(0 + partition.Start);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             mdb.drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
             if(mdb.drSigWord != MFS_MAGIC) return;
 
-            mdb.drCrDate = BigEndianBitConverter.ToUInt32(mdbSector, 0x002);
-            mdb.drLsBkUp = BigEndianBitConverter.ToUInt32(mdbSector, 0x006);
-            mdb.drAtrb = BigEndianBitConverter.ToUInt16(mdbSector, 0x00A);
-            mdb.drNmFls = BigEndianBitConverter.ToUInt16(mdbSector, 0x00C);
-            mdb.drDirSt = BigEndianBitConverter.ToUInt16(mdbSector, 0x00E);
-            mdb.drBlLen = BigEndianBitConverter.ToUInt16(mdbSector, 0x010);
+            mdb.drCrDate   = BigEndianBitConverter.ToUInt32(mdbSector, 0x002);
+            mdb.drLsBkUp   = BigEndianBitConverter.ToUInt32(mdbSector, 0x006);
+            mdb.drAtrb     = BigEndianBitConverter.ToUInt16(mdbSector, 0x00A);
+            mdb.drNmFls    = BigEndianBitConverter.ToUInt16(mdbSector, 0x00C);
+            mdb.drDirSt    = BigEndianBitConverter.ToUInt16(mdbSector, 0x00E);
+            mdb.drBlLen    = BigEndianBitConverter.ToUInt16(mdbSector, 0x010);
             mdb.drNmAlBlks = BigEndianBitConverter.ToUInt16(mdbSector, 0x012);
             mdb.drAlBlkSiz = BigEndianBitConverter.ToUInt32(mdbSector, 0x014);
-            mdb.drClpSiz = BigEndianBitConverter.ToUInt32(mdbSector, 0x018);
-            mdb.drAlBlSt = BigEndianBitConverter.ToUInt16(mdbSector, 0x01C);
-            mdb.drNxtFNum = BigEndianBitConverter.ToUInt32(mdbSector, 0x01E);
-            mdb.drFreeBks = BigEndianBitConverter.ToUInt16(mdbSector, 0x022);
-            mdb.drVNSiz = mdbSector[0x024];
+            mdb.drClpSiz   = BigEndianBitConverter.ToUInt32(mdbSector, 0x018);
+            mdb.drAlBlSt   = BigEndianBitConverter.ToUInt16(mdbSector, 0x01C);
+            mdb.drNxtFNum  = BigEndianBitConverter.ToUInt32(mdbSector, 0x01E);
+            mdb.drFreeBks  = BigEndianBitConverter.ToUInt16(mdbSector, 0x022);
+            mdb.drVNSiz    = mdbSector[0x024];
             byte[] variableSize = new byte[mdb.drVNSiz + 1];
             Array.Copy(mdbSector, 0x024, variableSize, 0, mdb.drVNSiz + 1);
             mdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
@@ -98,8 +98,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(bb.signature == MFSBB_MAGIC)
             {
-                bb.branch = BigEndianBitConverter.ToUInt32(bbSector, 0x002);
-                bb.boot_flags = bbSector[0x006];
+                bb.branch       = BigEndianBitConverter.ToUInt32(bbSector, 0x002);
+                bb.boot_flags   = bbSector[0x006];
                 bb.boot_version = bbSector[0x007];
 
                 bb.sec_sv_pages = BigEndianBitConverter.ToInt16(bbSector, 0x008);
@@ -119,11 +119,11 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 Array.Copy(mdbSector, 0x06A, pString, 0, 16);
                 bb.clipbrd_name = StringHandlers.PascalToString(pString, Encoding);
 
-                bb.max_files = BigEndianBitConverter.ToUInt16(bbSector, 0x07A);
+                bb.max_files  = BigEndianBitConverter.ToUInt16(bbSector, 0x07A);
                 bb.queue_size = BigEndianBitConverter.ToUInt16(bbSector, 0x07C);
-                bb.heap_128k = BigEndianBitConverter.ToUInt32(bbSector, 0x07E);
-                bb.heap_256k = BigEndianBitConverter.ToUInt32(bbSector, 0x082);
-                bb.heap_512k = BigEndianBitConverter.ToUInt32(bbSector, 0x086);
+                bb.heap_128k  = BigEndianBitConverter.ToUInt32(bbSector, 0x07E);
+                bb.heap_256k  = BigEndianBitConverter.ToUInt32(bbSector, 0x082);
+                bb.heap_512k  = BigEndianBitConverter.ToUInt32(bbSector, 0x086);
             }
             else bb.signature = 0x0000;
 
@@ -132,7 +132,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             sb.AppendLine("Master Directory Block:");
             sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
             sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(mdb.drLsBkUp)).AppendLine();
-            if((mdb.drAtrb & 0x80) == 0x80) sb.AppendLine("Volume is locked by hardware.");
+            if((mdb.drAtrb & 0x80)   == 0x80) sb.AppendLine("Volume is locked by hardware.");
             if((mdb.drAtrb & 0x8000) == 0x8000) sb.AppendLine("Volume is locked by software.");
             sb.AppendFormat("{0} files on volume", mdb.drNmFls).AppendLine();
             sb.AppendFormat("First directory sector: {0}", mdb.drDirSt).AppendLine();
@@ -154,7 +154,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 if((bb.boot_flags & 0x80) == 0x80) sb.AppendLine("Boot block is in new unknown format.");
                 else
                 {
-                    if(bb.sec_sv_pages > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
+                    if(bb.sec_sv_pages      > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
                     else if(bb.sec_sv_pages < 0) sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
                     sb.AppendFormat("System filename: {0}", bb.system_name).AppendLine();
@@ -178,23 +178,25 @@ namespace DiscImageChef.Filesystems.AppleMFS
             XmlFsType = new FileSystemType();
             if(mdb.drLsBkUp > 0)
             {
-                XmlFsType.BackupDate = DateHandlers.MacToDateTime(mdb.drLsBkUp);
+                XmlFsType.BackupDate          = DateHandlers.MacToDateTime(mdb.drLsBkUp);
                 XmlFsType.BackupDateSpecified = true;
             }
-            XmlFsType.Bootable = bb.signature == MFSBB_MAGIC;
-            XmlFsType.Clusters = mdb.drNmAlBlks;
+
+            XmlFsType.Bootable    = bb.signature == MFSBB_MAGIC;
+            XmlFsType.Clusters    = mdb.drNmAlBlks;
             XmlFsType.ClusterSize = (int)mdb.drAlBlkSiz;
             if(mdb.drCrDate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
+                XmlFsType.CreationDate          = DateHandlers.MacToDateTime(mdb.drCrDate);
                 XmlFsType.CreationDateSpecified = true;
             }
-            XmlFsType.Files = mdb.drNmFls;
-            XmlFsType.FilesSpecified = true;
-            XmlFsType.FreeClusters = mdb.drFreeBks;
+
+            XmlFsType.Files                 = mdb.drNmFls;
+            XmlFsType.FilesSpecified        = true;
+            XmlFsType.FreeClusters          = mdb.drFreeBks;
             XmlFsType.FreeClustersSpecified = true;
-            XmlFsType.Type = "MFS";
-            XmlFsType.VolumeName = mdb.drVN;
+            XmlFsType.Type                  = "MFS";
+            XmlFsType.VolumeName            = mdb.drVN;
         }
     }
 }

@@ -75,11 +75,11 @@ namespace DiscImageChef.Decoders.Bluray
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(SAIResponse, 0);
-            decoded.Reserved1 = SAIResponse[2];
-            decoded.Reserved2 = SAIResponse[3];
-            decoded.Reserved3 = BigEndianBitConverter.ToUInt32(SAIResponse, 4);
-            decoded.FreeSpareBlocks = BigEndianBitConverter.ToUInt32(SAIResponse, 8);
+            decoded.DataLength           = BigEndianBitConverter.ToUInt16(SAIResponse, 0);
+            decoded.Reserved1            = SAIResponse[2];
+            decoded.Reserved2            = SAIResponse[3];
+            decoded.Reserved3            = BigEndianBitConverter.ToUInt32(SAIResponse, 4);
+            decoded.FreeSpareBlocks      = BigEndianBitConverter.ToUInt32(SAIResponse, 8);
             decoded.AllocatedSpareBlocks = BigEndianBitConverter.ToUInt32(SAIResponse, 12);
 
             return decoded;
@@ -93,11 +93,11 @@ namespace DiscImageChef.Decoders.Bluray
 
             StringBuilder sb = new StringBuilder();
 
-#if DEBUG
+            #if DEBUG
             if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
             if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
-#endif
+            #endif
             sb.AppendFormat("{0} free spare blocks", response.FreeSpareBlocks).AppendLine();
             sb.AppendFormat("{0} allocated spare blocks", response.AllocatedSpareBlocks).AppendLine();
 

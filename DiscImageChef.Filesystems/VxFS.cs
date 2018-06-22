@@ -48,9 +48,9 @@ namespace DiscImageChef.Filesystems
         const uint VXFS_BASE = 0x400;
 
         public FileSystemType XmlFsType { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public string Name => "Veritas filesystem";
-        public Guid Id => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+        public Encoding       Encoding  { get; private set; }
+        public string         Name      => "Veritas filesystem";
+        public Guid           Id        => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -66,14 +66,14 @@ namespace DiscImageChef.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                                   Encoding    encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
-            ulong vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
-            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
+            ulong  vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
+            byte[] sector       = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
-            VxSuperBlock vxSb = new VxSuperBlock();
-            IntPtr vxSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vxSb));
+            VxSuperBlock vxSb    = new VxSuperBlock();
+            IntPtr       vxSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vxSb));
             Marshal.Copy(sector, 0, vxSbPtr, Marshal.SizeOf(vxSb));
             vxSb = (VxSuperBlock)Marshal.PtrToStructure(vxSbPtr, typeof(VxSuperBlock));
             Marshal.FreeHGlobal(vxSbPtr);
@@ -100,16 +100,16 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Veritas file system",
-                CreationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
-                CreationDateSpecified = true,
-                ModificationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
+                Type                      = "Veritas file system",
+                CreationDate              = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
+                CreationDateSpecified     = true,
+                ModificationDate          = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
                 ModificationDateSpecified = true,
-                Clusters = vxSb.vs_size,
-                ClusterSize = vxSb.vs_bsize,
-                Dirty = vxSb.vs_clean != 0,
-                FreeClusters = vxSb.vs_free,
-                FreeClustersSpecified = true
+                Clusters                  = vxSb.vs_size,
+                ClusterSize               = vxSb.vs_bsize,
+                Dirty                     = vxSb.vs_clean != 0,
+                FreeClusters              = vxSb.vs_free,
+                FreeClustersSpecified     = true
             };
         }
 
@@ -217,7 +217,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>number of free inodes</summary>
             public int vs_ifree;
             /// <summary>number of free extents by size</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public int[] vs_efree;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public int[] vs_efree;
             /// <summary>flags ?!?</summary>
             public int vs_flags;
             /// <summary>filesystem has been changed</summary>
@@ -233,15 +234,18 @@ namespace DiscImageChef.Filesystems
             /// <summary>last time written - usec</summary>
             public uint vs_wutime;
             /// <summary>FS name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] vs_fname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] vs_fname;
             /// <summary>FS pack name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] vs_fpack;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] vs_fpack;
             /// <summary>log format version</summary>
             public int vs_logversion;
             /// <summary>unused</summary>
             public int __unused5;
             /// <summary>OLT extent and replica</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public int[] vs_oltext;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public int[] vs_oltext;
             /// <summary>OLT extent size</summary>
             public int vs_oltsize;
             /// <summary>size of inode map</summary>

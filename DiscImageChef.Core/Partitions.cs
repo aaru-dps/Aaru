@@ -51,10 +51,10 @@ namespace DiscImageChef.Core
         /// <returns>List of found partitions</returns>
         public static List<Partition> GetAll(IMediaImage image)
         {
-            PluginBase plugins = new PluginBase();
-            List<Partition> foundPartitions = new List<Partition>();
-            List<Partition> childPartitions = new List<Partition>();
-            List<ulong> checkedLocations = new List<ulong>();
+            PluginBase      plugins          = new PluginBase();
+            List<Partition> foundPartitions  = new List<Partition>();
+            List<Partition> childPartitions  = new List<Partition>();
+            List<ulong>     checkedLocations = new List<ulong>();
 
             // Getting all partitions from device (e.g. tracks)
             if(image.Info.HasPartitions)
@@ -98,8 +98,8 @@ namespace DiscImageChef.Core
                 {
                     DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name,
                                               foundPartitions[0].Start);
-                    if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start)
-                    ) continue;
+                    if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
+                        continue;
 
                     DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
                                               foundPartitions[0].Start);
@@ -115,8 +115,10 @@ namespace DiscImageChef.Core
                     foundPartitions.RemoveAt(0);
 
                     foreach(Partition child in childs)
-                        if(checkedLocations.Contains(child.Start)) childPartitions.Add(child);
-                        else foundPartitions.Add(child);
+                        if(checkedLocations.Contains(child.Start))
+                            childPartitions.Add(child);
+                        else
+                            foundPartitions.Add(child);
                 }
                 else
                 {
@@ -124,7 +126,7 @@ namespace DiscImageChef.Core
                     foundPartitions.RemoveAt(0);
                 }
 
-                DicConsole.DebugWriteLine("Partitions", "Got {0} parents", foundPartitions.Count);
+                DicConsole.DebugWriteLine("Partitions", "Got {0} parents",    foundPartitions.Count);
                 DicConsole.DebugWriteLine("Partitions", "Got {0} partitions", childPartitions.Count);
             }
 
@@ -139,7 +141,8 @@ namespace DiscImageChef.Core
             }
 
             Partition[] childArray = childPartitions
-                .OrderBy(part => part.Start).ThenBy(part => part.Length).ThenBy(part => part.Scheme).ToArray();
+                                    .OrderBy(part => part.Start).ThenBy(part => part.Length).ThenBy(part => part.Scheme)
+                                    .ToArray();
 
             for(long i = 0; i < childArray.LongLength; i++) childArray[i].Sequence = (ulong)i;
 

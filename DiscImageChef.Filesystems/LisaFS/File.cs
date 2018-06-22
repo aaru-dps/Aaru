@@ -113,8 +113,8 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 if(!debug) return Errno.NoSuchFile;
 
-                attributes = new FileAttributes();
-                attributes = FileAttributes.System;
+                attributes =  new FileAttributes();
+                attributes =  FileAttributes.System;
                 attributes |= FileAttributes.Hidden;
 
                 attributes |= FileAttributes.File;
@@ -145,8 +145,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                     break;
             }
 
-            if(extFile.protect > 0) attributes |= FileAttributes.Immutable;
-            if(extFile.locked > 0) attributes |= FileAttributes.ReadOnly;
+            if(extFile.protect        > 0) attributes |= FileAttributes.Immutable;
+            if(extFile.locked         > 0) attributes |= FileAttributes.ReadOnly;
             if(extFile.password_valid > 0) attributes |= FileAttributes.Password;
 
             return Errno.NoError;
@@ -163,7 +163,8 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!mounted || !debug) return Errno.AccessDenied;
 
             if(fileId > 4 || fileId <= 0)
-                if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED) return Errno.InvalidArgument;
+                if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED)
+                    return Errno.InvalidArgument;
 
             if(systemFileCache.TryGetValue(fileId, out buf) && !tags) return Errno.NoError;
 
@@ -223,11 +224,12 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(!mounted) return Errno.AccessDenied;
 
-            Errno error;
+            Errno      error;
             ExtentFile file;
 
             if(fileId <= 4)
-                if(!debug || fileId == 0) return Errno.NoSuchFile;
+                if(!debug || fileId == 0)
+                    return Errno.NoSuchFile;
                 else
                 {
                     stat = new FileEntryInfo {Attributes = new FileAttributes()};
@@ -240,20 +242,20 @@ namespace DiscImageChef.Filesystems.LisaFS
                         error = ReadExtentsFile((short)(fileId * -1), out file);
                         if(error != Errno.NoError) return error;
 
-                        stat.CreationTime = DateHandlers.LisaToDateTime(file.dtc);
-                        stat.AccessTime = DateHandlers.LisaToDateTime(file.dta);
-                        stat.BackupTime = DateHandlers.LisaToDateTime(file.dtb);
+                        stat.CreationTime  = DateHandlers.LisaToDateTime(file.dtc);
+                        stat.AccessTime    = DateHandlers.LisaToDateTime(file.dta);
+                        stat.BackupTime    = DateHandlers.LisaToDateTime(file.dtb);
                         stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
 
-                        stat.Inode = (ulong)fileId;
-                        stat.Mode = 0x124;
-                        stat.Links = 0;
-                        stat.UID = 0;
-                        stat.GID = 0;
-                        stat.DeviceNo = 0;
-                        stat.Length = mddf.datasize;
+                        stat.Inode     = (ulong)fileId;
+                        stat.Mode      = 0x124;
+                        stat.Links     = 0;
+                        stat.UID       = 0;
+                        stat.GID       = 0;
+                        stat.DeviceNo  = 0;
+                        stat.Length    = mddf.datasize;
                         stat.BlockSize = mddf.datasize;
-                        stat.Blocks = 1;
+                        stat.Blocks    = 1;
                     }
                     else
                     {
@@ -264,42 +266,42 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                         stat.BackupTime = mddf.dtvb;
 
-                        stat.Inode = (ulong)fileId;
-                        stat.Mode = 0x124;
-                        stat.Links = 0;
-                        stat.UID = 0;
-                        stat.GID = 0;
-                        stat.DeviceNo = 0;
-                        stat.Length = buf.Length;
+                        stat.Inode     = (ulong)fileId;
+                        stat.Mode      = 0x124;
+                        stat.Links     = 0;
+                        stat.UID       = 0;
+                        stat.GID       = 0;
+                        stat.DeviceNo  = 0;
+                        stat.Length    = buf.Length;
                         stat.BlockSize = mddf.datasize;
-                        stat.Blocks = buf.Length / mddf.datasize;
+                        stat.Blocks    = buf.Length / mddf.datasize;
                     }
 
                     return Errno.NoError;
                 }
 
-            stat = new FileEntryInfo {Attributes = new FileAttributes()};
+            stat  = new FileEntryInfo {Attributes = new FileAttributes()};
             error = GetAttributes(fileId, out stat.Attributes);
             if(error != Errno.NoError) return error;
 
             error = ReadExtentsFile(fileId, out file);
             if(error != Errno.NoError) return error;
 
-            stat.CreationTime = DateHandlers.LisaToDateTime(file.dtc);
-            stat.AccessTime = DateHandlers.LisaToDateTime(file.dta);
-            stat.BackupTime = DateHandlers.LisaToDateTime(file.dtb);
+            stat.CreationTime  = DateHandlers.LisaToDateTime(file.dtc);
+            stat.AccessTime    = DateHandlers.LisaToDateTime(file.dta);
+            stat.BackupTime    = DateHandlers.LisaToDateTime(file.dtb);
             stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
 
-            stat.Inode = (ulong)fileId;
-            stat.Mode = 0x1B6;
-            stat.Links = 1;
-            stat.UID = 0;
-            stat.GID = 0;
+            stat.Inode    = (ulong)fileId;
+            stat.Mode     = 0x1B6;
+            stat.Links    = 1;
+            stat.UID      = 0;
+            stat.GID      = 0;
             stat.DeviceNo = 0;
             if(!fileSizeCache.TryGetValue(fileId, out int len)) stat.Length = srecords[fileId].filesize;
-            else stat.Length = len;
+            else stat.Length                                                = len;
             stat.BlockSize = mddf.datasize;
-            stat.Blocks = file.length;
+            stat.Blocks    = file.length;
 
             return Errno.NoError;
         }
@@ -326,7 +328,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             int sectorSize;
             if(tags) sectorSize = devTagSize;
-            else sectorSize = (int)device.Info.SectorSize;
+            else sectorSize     = (int)device.Info.SectorSize;
 
             byte[] temp = new byte[file.length * sectorSize];
 
@@ -349,7 +351,8 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!tags)
             {
                 if(fileSizeCache.TryGetValue(fileId, out int realSize))
-                    if(realSize > temp.Length) DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
+                    if(realSize > temp.Length)
+                        DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
                 buf = temp;
 
                 fileCache.Add(fileId, buf);
@@ -362,7 +365,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         Errno LookupFileId(string path, out short fileId, out bool isDir)
         {
             fileId = 0;
-            isDir = false;
+            isDir  = false;
 
             if(!mounted) return Errno.AccessDenied;
 
@@ -371,7 +374,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(pathElements.Length == 0)
             {
                 fileId = DIRID_ROOT;
-                isDir = true;
+                isDir  = true;
                 return Errno.NoError;
             }
 
@@ -413,7 +416,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 if(string.Compare(pathElements[0], "$", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = DIRID_ROOT;
-                    isDir = true;
+                    isDir  = true;
                     return Errno.NoError;
                 }
             }
@@ -428,10 +431,11 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     // LisaOS is case insensitive
                     if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) != 0 ||
-                       entry.parentID != fileId) continue;
+                       entry.parentID !=
+                       fileId) continue;
 
                     fileId = entry.fileID;
-                    isDir = entry.fileType == 0x01;
+                    isDir  = entry.fileType == 0x01;
 
                     // Not last path element, and it's not a directory
                     if(lvl != pathElements.Length - 1 && !isDir) return Errno.NotDirectory;

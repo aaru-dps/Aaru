@@ -289,22 +289,22 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(decoded.DataLength + 2 != response.Length) return null;
 
-            decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
-            decoded.Erasable |= (response[2] & 0x10) == 0x10;
-            decoded.LastSessionStatus = (byte)((response[2] & 0x0C) >> 2);
-            decoded.DiscStatus = (byte)(response[2] & 0x03);
-            decoded.FirstTrackNumber = response[3];
-            decoded.Sessions = (ushort)((response[9] << 8) + response[4]);
-            decoded.FirstTrackLastSession = (ushort)((response[10] << 8) + response[5]);
-            decoded.LastTrackLastSession = (ushort)((response[11] << 8) + response[6]);
+            decoded.DataType              =  (byte)((response[2] & 0xE0) >> 5);
+            decoded.Erasable              |= (response[2] & 0x10) == 0x10;
+            decoded.LastSessionStatus     =  (byte)((response[2] & 0x0C) >> 2);
+            decoded.DiscStatus            =  (byte)(response[2] & 0x03);
+            decoded.FirstTrackNumber      =  response[3];
+            decoded.Sessions              =  (ushort)((response[9]  << 8) + response[4]);
+            decoded.FirstTrackLastSession =  (ushort)((response[10] << 8) + response[5]);
+            decoded.LastTrackLastSession  =  (ushort)((response[11] << 8) + response[6]);
 
-            decoded.DID_V |= (response[7] & 0x80) == 0x80;
-            decoded.DBC_V |= (response[7] & 0x40) == 0x40;
-            decoded.URU |= (response[7] & 0x20) == 0x20;
-            decoded.DAC_V |= (response[7] & 0x10) == 0x10;
-            decoded.Reserved |= (response[7] & 0x08) == 0x08;
-            decoded.Dbit |= (response[7] & 0x04) == 0x04;
-            decoded.BGFormatStatus = (byte)(response[7] & 0x03);
+            decoded.DID_V          |= (response[7]       & 0x80) == 0x80;
+            decoded.DBC_V          |= (response[7]       & 0x40) == 0x40;
+            decoded.URU            |= (response[7]       & 0x20) == 0x20;
+            decoded.DAC_V          |= (response[7]       & 0x10) == 0x10;
+            decoded.Reserved       |= (response[7]       & 0x08) == 0x08;
+            decoded.Dbit           |= (response[7]       & 0x04) == 0x04;
+            decoded.BGFormatStatus =  (byte)(response[7] & 0x03);
 
             decoded.DiscIdentification =
                 (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
@@ -319,14 +319,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.DiscBarcode = BitConverter.ToUInt64(temp, 0);
 
             decoded.DiscApplicationCode = response[32];
-            decoded.OPCTablesNumber = response[33];
+            decoded.OPCTablesNumber     = response[33];
 
             if(decoded.OPCTablesNumber <= 0 || response.Length != decoded.OPCTablesNumber * 8 + 34) return decoded;
 
             decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
             for(int i = 0; i < decoded.OPCTablesNumber; i++)
             {
-                decoded.OPCTables[i].Speed = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
+                decoded.OPCTables[i].Speed     = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
                 decoded.OPCTables[i].OPCValues = new byte[6];
                 Array.Copy(response, 34 + i * 8 + 2, decoded.OPCTables[i].OPCValues, 0, 6);
             }
@@ -415,11 +415,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             sb.AppendFormat("Last track in last session is track {0}", decoded.LastTrackLastSession).AppendLine();
             sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
                             decoded.LastSessionLeadInStartLBA, (decoded.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
-                            (decoded.LastSessionLeadInStartLBA & 0xFF00) >> 8, decoded.LastSessionLeadInStartLBA & 0xFF)
+                            (decoded.LastSessionLeadInStartLBA                                    & 0xFF00)   >> 8,
+                            decoded.LastSessionLeadInStartLBA & 0xFF)
               .AppendLine();
             sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
                             decoded.LastPossibleLeadOutStartLBA, (decoded.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
-                            (decoded.LastPossibleLeadOutStartLBA & 0xFF00) >> 8,
+                            (decoded.LastPossibleLeadOutStartLBA                                      & 0xFF00)   >> 8,
                             decoded.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
 
             sb.AppendLine(decoded.URU ? "Disc is defined for unrestricted use" : "Disc is defined for restricted use");
@@ -449,11 +450,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(decoded.DataLength + 2 != response.Length) return null;
 
-            decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
-            decoded.MaxTracks = (ushort)((response[4] << 8) + response[5]);
-            decoded.AssignedTracks = (ushort)((response[6] << 8) + response[7]);
-            decoded.MaxAppendableTracks = (ushort)((response[8] << 8) + response[9]);
-            decoded.AppendableTracks = (ushort)((response[10] << 8) + response[11]);
+            decoded.DataType            = (byte)((response[2] & 0xE0) >> 5);
+            decoded.MaxTracks           = (ushort)((response[4]  << 8) + response[5]);
+            decoded.AssignedTracks      = (ushort)((response[6]  << 8) + response[7]);
+            decoded.MaxAppendableTracks = (ushort)((response[8]  << 8) + response[9]);
+            decoded.AppendableTracks    = (ushort)((response[10] << 8) + response[11]);
 
             return decoded;
         }

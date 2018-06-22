@@ -43,11 +43,11 @@ namespace DiscImageChef.Metadata
     {
         [XmlElement(DataType = "dateTime")] public DateTime CreationDate;
         [XmlElement(DataType = "dateTime")] public DateTime LastWriteDate;
-        public bool Removable;
-        public ulong LastBlock;
-        public ulong NextBlock;
+        public                                     bool     Removable;
+        public                                     ulong    LastBlock;
+        public                                     ulong    NextBlock;
 
         [XmlArrayItem("DumpTry")] public List<DumpHardwareType> Tries;
-        [XmlArrayItem("Block")] public List<ulong> BadBlocks;
+        [XmlArrayItem("Block")]   public List<ulong>            BadBlocks;
     }
 }

@@ -41,26 +41,28 @@ namespace DiscImageChef.Devices.Windows
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct ScsiPassThroughDirect
     {
-        public ushort Length;
-        public byte ScsiStatus;
-        public byte PathId;
-        public byte TargetId;
-        public byte Lun;
-        public byte CdbLength;
-        public byte SenseInfoLength;
+        public                               ushort             Length;
+        public                               byte               ScsiStatus;
+        public                               byte               PathId;
+        public                               byte               TargetId;
+        public                               byte               Lun;
+        public                               byte               CdbLength;
+        public                               byte               SenseInfoLength;
         [MarshalAs(UnmanagedType.U1)] public ScsiIoctlDirection DataIn;
-        public uint DataTransferLength;
-        public uint TimeOutValue;
-        public IntPtr DataBuffer;
-        public uint SenseInfoOffset;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] Cdb;
+        public                               uint               DataTransferLength;
+        public                               uint               TimeOutValue;
+        public                               IntPtr             DataBuffer;
+        public                               uint               SenseInfoOffset;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] Cdb;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     struct ScsiPassThroughDirectAndSenseBuffer
     {
         public ScsiPassThroughDirect sptd;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] SenseBuf;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public byte[] SenseBuf;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -122,8 +124,9 @@ namespace DiscImageChef.Devices.Windows
     struct AtaPassThroughDirectWithBuffer
     {
         public AtaPassThroughDirect aptd;
-        public uint filler;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64 * 512)] public byte[] dataBuffer;
+        public uint                 filler;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64 * 512)]
+        public byte[] dataBuffer;
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -151,8 +154,9 @@ namespace DiscImageChef.Devices.Windows
     struct StoragePropertyQuery
     {
         [MarshalAs(UnmanagedType.U4)] public StoragePropertyId PropertyId;
-        [MarshalAs(UnmanagedType.U4)] public StorageQueryType QueryType;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] public byte[] AdditionalParameters;
+        [MarshalAs(UnmanagedType.U4)] public StorageQueryType  QueryType;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+        public byte[] AdditionalParameters;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -166,19 +170,19 @@ namespace DiscImageChef.Devices.Windows
     [StructLayout(LayoutKind.Sequential)]
     struct StorageDeviceDescriptor
     {
-        public uint Version;
-        public uint Size;
-        public byte DeviceType;
-        public byte DeviceTypeModifier;
-        [MarshalAs(UnmanagedType.U1)] public bool RemovableMedia;
-        [MarshalAs(UnmanagedType.U1)] public bool CommandQueueing;
-        public int VendorIdOffset;
-        public int ProductIdOffset;
-        public int ProductRevisionOffset;
-        public int SerialNumberOffset;
-        public StorageBusType BusType;
-        public uint RawPropertiesLength;
-        public byte[] RawDeviceProperties;
+        public                               uint           Version;
+        public                               uint           Size;
+        public                               byte           DeviceType;
+        public                               byte           DeviceTypeModifier;
+        [MarshalAs(UnmanagedType.U1)] public bool           RemovableMedia;
+        [MarshalAs(UnmanagedType.U1)] public bool           CommandQueueing;
+        public                               int            VendorIdOffset;
+        public                               int            ProductIdOffset;
+        public                               int            ProductRevisionOffset;
+        public                               int            SerialNumberOffset;
+        public                               StorageBusType BusType;
+        public                               uint           RawPropertiesLength;
+        public                               byte[]         RawDeviceProperties;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -195,7 +199,8 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         ///     Data buffer
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] DataBuffer;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+        public byte[] DataBuffer;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -211,9 +216,9 @@ namespace DiscImageChef.Devices.Windows
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct DeviceInfoData
     {
-        public int cbSize;
-        public Guid classGuid;
-        public uint devInst;
+        public int    cbSize;
+        public Guid   classGuid;
+        public uint   devInst;
         public IntPtr reserved;
     }
 
@@ -221,18 +226,18 @@ namespace DiscImageChef.Devices.Windows
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct DeviceInterfaceData
     {
-        public int cbSize;
+        public int  cbSize;
         public Guid interfaceClassGuid;
         public uint flags;
-        IntPtr reserved;
+        IntPtr      reserved;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct UsbSetupPacket
     {
-        public byte bmRequest;
-        public byte bRequest;
+        public byte  bmRequest;
+        public byte  bRequest;
         public short wValue;
         public short wIndex;
         public short wLength;
@@ -242,7 +247,7 @@ namespace DiscImageChef.Devices.Windows
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct UsbDescriptorRequest
     {
-        public int ConnectionIndex;
+        public int            ConnectionIndex;
         public UsbSetupPacket SetupPacket;
         //public byte[] Data;
     }
@@ -253,28 +258,28 @@ namespace DiscImageChef.Devices.Windows
     {
         public ushort size;
         public ushort reserved;
-        public Guid protocolGuid;
+        public Guid   protocolGuid;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct SffdiskDeviceCommandData
     {
-        public ushort size;
-        public ushort reserved;
+        public ushort      size;
+        public ushort      reserved;
         public SffdiskDcmd command;
-        public ushort protocolArgumentSize;
-        public uint deviceDataBufferSize;
-        public uint information;
+        public ushort      protocolArgumentSize;
+        public uint        deviceDataBufferSize;
+        public uint        information;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     struct SdCmdDescriptor
     {
-        public byte commandCode;
-        public SdCommandClass cmdClass;
+        public byte                commandCode;
+        public SdCommandClass      cmdClass;
         public SdTransferDirection transferDirection;
-        public SdTransferType transferType;
-        public SdResponseType responseType;
+        public SdTransferType      transferType;
+        public SdResponseType      responseType;
     }
 }

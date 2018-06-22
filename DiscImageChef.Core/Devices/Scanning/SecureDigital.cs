@@ -47,16 +47,16 @@ namespace DiscImageChef.Core.Devices.Scanning
         public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)
         {
             ScanResults results = new ScanResults();
-            bool aborted;
-            byte[] cmdBuf;
-            bool sense;
+            bool        aborted;
+            byte[]      cmdBuf;
+            bool        sense;
             results.Blocks = 0;
-            const uint TIMEOUT = 5;
-            double duration;
-            const ushort SD_PROFILE = 0x0001;
-            uint blocksToRead = 128;
-            uint blockSize = 512;
-            bool byteAddressed = true;
+            const uint   TIMEOUT = 5;
+            double       duration;
+            const ushort SD_PROFILE    = 0x0001;
+            uint         blocksToRead  = 128;
+            uint         blockSize     = 512;
+            bool         byteAddressed = true;
 
             switch(dev.Type)
             {
@@ -66,9 +66,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                     if(!sense)
                     {
                         ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
-                        blocksToRead = ecsd.OptimalReadSize;
+                        blocksToRead   = ecsd.OptimalReadSize;
                         results.Blocks = ecsd.SectorCount;
-                        blockSize = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
+                        blockSize      = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
                         // Supposing it's high-capacity MMC if it has Extended CSD...
                         byteAddressed = false;
                     }
@@ -80,9 +80,10 @@ namespace DiscImageChef.Core.Devices.Scanning
                         {
                             CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
                             results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
-                            blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
+                            blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
                         }
                     }
+
                     break;
                 }
                 case DeviceType.SecureDigital:
@@ -98,6 +99,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                         // Structure >=1 for SDHC/SDXC, so that's block addressed
                         byteAddressed = csd.Structure == 0;
                     }
+
                     break;
                 }
             }
@@ -123,34 +125,34 @@ namespace DiscImageChef.Core.Devices.Scanning
                 return results;
             }
 
-            results.A = 0; // <3ms
-            results.B = 0; // >=3ms, <10ms
-            results.C = 0; // >=10ms, <50ms
-            results.D = 0; // >=50ms, <150ms
-            results.E = 0; // >=150ms, <500ms
-            results.F = 0; // >=500ms
+            results.A       = 0; // <3ms
+            results.B       = 0; // >=3ms, <10ms
+            results.C       = 0; // >=10ms, <50ms
+            results.D       = 0; // >=50ms, <150ms
+            results.E       = 0; // >=150ms, <500ms
+            results.F       = 0; // >=500ms
             results.Errored = 0;
             DateTime start;
             DateTime end;
             results.ProcessingTime = 0;
             double currentSpeed = 0;
-            results.MaxSpeed = double.MinValue;
-            results.MinSpeed = double.MaxValue;
+            results.MaxSpeed          = double.MinValue;
+            results.MinSpeed          = double.MaxValue;
             results.UnreadableSectors = new List<ulong>();
-            results.SeekMax = double.MinValue;
-            results.SeekMin = double.MaxValue;
-            results.SeekTotal = 0;
+            results.SeekMax           = double.MinValue;
+            results.SeekMin           = double.MaxValue;
+            results.SeekTotal         = 0;
             const int SEEK_TIMES = 1000;
 
             Random rnd = new Random();
 
-            aborted = false;
+            aborted                       =  false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
             MhddLog mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
-            IbgLog ibgLog = new IbgLog(ibgLogPath, SD_PROFILE);
+            IbgLog  ibgLog  = new IbgLog(ibgLogPath, SD_PROFILE);
 
             start = DateTime.UtcNow;
             for(ulong i = 0; i < results.Blocks; i += blocksToRead)
@@ -159,10 +161,10 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 if(results.Blocks - i < blocksToRead) blocksToRead = (byte)(results.Blocks - i);
 
-#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > results.MaxSpeed && currentSpeed != 0) results.MaxSpeed = currentSpeed;
                 if(currentSpeed < results.MinSpeed && currentSpeed != 0) results.MinSpeed = currentSpeed;
-#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks, currentSpeed);
 
@@ -171,12 +173,12 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 if(!error)
                 {
-                    if(duration >= 500) results.F += blocksToRead;
+                    if(duration      >= 500) results.F += blocksToRead;
                     else if(duration >= 150) results.E += blocksToRead;
-                    else if(duration >= 50) results.D += blocksToRead;
-                    else if(duration >= 10) results.C += blocksToRead;
-                    else if(duration >= 3) results.B += blocksToRead;
-                    else results.A += blocksToRead;
+                    else if(duration >= 50) results.D  += blocksToRead;
+                    else if(duration >= 10) results.C  += blocksToRead;
+                    else if(duration >= 3) results.B   += blocksToRead;
+                    else results.A                     += blocksToRead;
 
                     mhddLog.Write(i, duration);
                     ibgLog.Write(i, currentSpeed * 1024);
@@ -191,7 +193,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     ibgLog.Write(i, 0);
                 }
 
-                double newSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
+                double newSpeed =
+                    (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
                 if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
             }
 
@@ -199,7 +202,8 @@ namespace DiscImageChef.Core.Devices.Scanning
             DicConsole.WriteLine();
             mhddLog.Close();
             ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000), devicePath);
+                         blockSize * (double)(results.Blocks + 1) / 1024 /
+                         (results.ProcessingTime / 1000), devicePath);
 
             for(int i = 0; i < SEEK_TIMES; i++)
             {
@@ -212,10 +216,10 @@ namespace DiscImageChef.Core.Devices.Scanning
                 dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, TIMEOUT,
                          out double seekCur);
 
-#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.SeekMax && seekCur != 0) results.SeekMax = seekCur;
                 if(seekCur < results.SeekMin && seekCur != 0) results.SeekMin = seekCur;
-#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 results.SeekTotal += seekCur;
                 GC.Collect();
@@ -224,9 +228,9 @@ namespace DiscImageChef.Core.Devices.Scanning
             DicConsole.WriteLine();
 
             results.ProcessingTime /= 1000;
-            results.TotalTime = (end - start).TotalSeconds;
-            results.AvgSpeed = blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
-            results.SeekTimes = SEEK_TIMES;
+            results.TotalTime      =  (end - start).TotalSeconds;
+            results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
+            results.SeekTimes      =  SEEK_TIMES;
 
             return results;
         }

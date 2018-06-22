@@ -72,7 +72,7 @@ namespace DiscImageChef.DiscImages
         ///     Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using
         /// </summary>
         const byte CHUNK_TYPE_STUFFIT = 0xF0;
-        const byte CHUNK_TYPE_END     = 0xFF;
+        const byte CHUNK_TYPE_END = 0xFF;
 
         const byte CHUNK_TYPE_COMPRESSED_MASK = 0x80;
 
@@ -218,7 +218,7 @@ namespace DiscImageChef.DiscImages
                     byte[]     sector = new byte[4];
                     Array.Copy(bcem, 128 + 0 + i * 12, sector, 1, 3);
                     bChnk.sector = BigEndianBitConverter.ToUInt32(sector, 0);
-                    bChnk.type   = bcem[128                                 + 3 + i * 12];
+                    bChnk.type   = bcem[128 + 3                                 + i * 12];
                     bChnk.offset = BigEndianBitConverter.ToUInt32(bcem, 128 + 4 + i * 12);
                     bChnk.length = BigEndianBitConverter.ToUInt32(bcem, 128 + 8 + i * 12);
 
@@ -293,9 +293,9 @@ namespace DiscImageChef.DiscImages
                     string dev     = null;
                     string pre     = null;
 
-                    string major = $"{version.MajorVersion}";
-                    string minor = $".{version.MinorVersion / 10}";
-                    if(version.MinorVersion                 % 10 > 0) release = $".{version.MinorVersion % 10}";
+                    string major                              = $"{version.MajorVersion}";
+                    string minor                              = $".{version.MinorVersion / 10}";
+                    if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                     switch(version.DevStage)
                     {
                         case Version.DevelopmentStage.Alpha:
@@ -318,8 +318,7 @@ namespace DiscImageChef.DiscImages
                     imageInfo.Comments           = version.VersionMessage;
 
                     if(version.MajorVersion      == 3) imageInfo.Application = "ShrinkWrap™";
-                    else if(version.MajorVersion == 6)
-                        imageInfo.Application = "DiskCopy";
+                    else if(version.MajorVersion == 6) imageInfo.Application = "DiskCopy";
                 }
             }
 
@@ -334,7 +333,7 @@ namespace DiscImageChef.DiscImages
 
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           =
+            imageInfo.MediaTitle =
                 StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh"));
             imageInfo.SectorSize         = SECTOR_SIZE;
             imageInfo.XmlMediaType       = XmlMediaType.BlockMedia;
@@ -420,16 +419,16 @@ namespace DiscImageChef.DiscImages
                         {
                             Stream decStream = new ADCStream(cmpMs);
                             byte[] tmpBuffer = new byte[buffersize];
-                            realSize         = decStream.Read(tmpBuffer, 0, (int)buffersize);
-                            buffer           = new byte[realSize];
+                            realSize = decStream.Read(tmpBuffer, 0, (int)buffersize);
+                            buffer   = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
                             break;
                         }
                         case CHUNK_TYPE_RLE:
                         {
                             byte[] tmpBuffer = new byte[buffersize];
-                            realSize         = 0;
-                            AppleRle rle     = new AppleRle(cmpMs);
+                            realSize = 0;
+                            AppleRle rle = new AppleRle(cmpMs);
                             for(int i = 0; i < buffersize; i++)
                             {
                                 int b = rle.ProduceByte();
@@ -586,8 +585,8 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out                                   List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
@@ -596,8 +595,8 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out                                               List<ulong> unknownLbas)
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

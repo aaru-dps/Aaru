@@ -72,19 +72,16 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
-                file = string.Compare(path,   "$",     StringComparison.InvariantCulture) == 0
-                           ? catalogBlocks
-                           : bootBlocks;
+                file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? catalogBlocks : bootBlocks;
             else
             {
                 Errno error = GetFileEntry(path, out PascalFileEntry entry);
 
                 if(error != Errno.NoError) return error;
 
-                byte[] tmp = device.ReadSectors((ulong)entry.FirstBlock                        * multiplier,
-                                                (uint)(entry.LastBlock - entry.FirstBlock)     * multiplier);
-                file = new byte[(entry.LastBlock                       - entry.FirstBlock - 1) *
-                                device.Info.SectorSize                                         * multiplier +
+                byte[] tmp = device.ReadSectors((ulong)entry.FirstBlock                    * multiplier,
+                                                (uint)(entry.LastBlock - entry.FirstBlock) * multiplier);
+                file = new byte[(entry.LastBlock - entry.FirstBlock - 1) * device.Info.SectorSize * multiplier +
                                 entry.LastBytes];
                 Array.Copy(tmp, 0, file, 0, file.Length);
             }
@@ -150,7 +147,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 GID              = 0,
                 Inode            = 0,
                 LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
-                Length           = (entry.LastBlock - entry.FirstBlock) * device.Info.SectorSize * multiplier +
+                Length = (entry.LastBlock - entry.FirstBlock) * device.Info.SectorSize * multiplier +
                                    entry.LastBytes,
                 Links = 1,
                 Mode  = 0x124,

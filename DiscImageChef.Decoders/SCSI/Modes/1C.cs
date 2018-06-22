@@ -110,9 +110,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
-            decoded.Perf |= (pageResponse[2] & 0x80) == 0x80;
+            decoded.Perf   |= (pageResponse[2] & 0x80) == 0x80;
             decoded.DExcpt |= (pageResponse[2] & 0x08) == 0x08;
-            decoded.Test |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.Test   |= (pageResponse[2] & 0x04) == 0x04;
             decoded.LogErr |= (pageResponse[2] & 0x01) == 0x01;
 
             decoded.MRIE = (byte)(pageResponse[3] & 0x0F);
@@ -120,14 +120,14 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.IntervalTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
                                            pageResponse[7]);
 
-            decoded.EBF |= (pageResponse[2] & 0x20) == 0x20;
+            decoded.EBF   |= (pageResponse[2] & 0x20) == 0x20;
             decoded.EWasc |= (pageResponse[2] & 0x10) == 0x10;
 
             decoded.EBACKERR |= (pageResponse[2] & 0x02) == 0x02;
 
             if(pageResponse.Length >= 12)
-                decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) +
-                                             (pageResponse[10] << 8) + pageResponse[11]);
+                decoded.ReportCount = (uint)((pageResponse[8]  << 24) + (pageResponse[9] << 16) +
+                                             (pageResponse[10] << 8)  + pageResponse[11]);
 
             return decoded;
         }
@@ -141,8 +141,8 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(!modePage.HasValue) return null;
 
-            ModePage_1C page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            ModePage_1C   page = modePage.Value;
+            StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Informational exceptions control page:");
 
@@ -186,8 +186,10 @@ namespace DiscImageChef.Decoders.SCSI
                 if(page.LogErr) sb.AppendLine("\tDrive shall log informational exception conditions");
 
                 if(page.IntervalTimer > 0)
-                    if(page.IntervalTimer == 0xFFFFFFFF) sb.AppendLine("\tTimer interval is vendor-specific");
-                    else sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
+                    if(page.IntervalTimer == 0xFFFFFFFF)
+                        sb.AppendLine("\tTimer interval is vendor-specific");
+                    else
+                        sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
 
                 if(page.ReportCount > 0)
                     sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times",
@@ -266,14 +268,14 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
             decoded.S_L_Full |= (pageResponse[4] & 0x04) == 0x04;
-            decoded.LOWIR |= (pageResponse[4] & 0x02) == 0x02;
-            decoded.En_Bms |= (pageResponse[4] & 0x01) == 0x01;
-            decoded.En_Ps |= (pageResponse[5] & 0x01) == 0x01;
+            decoded.LOWIR    |= (pageResponse[4] & 0x02) == 0x02;
+            decoded.En_Bms   |= (pageResponse[4] & 0x01) == 0x01;
+            decoded.En_Ps    |= (pageResponse[5] & 0x01) == 0x01;
 
-            decoded.BackgroundScanInterval = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.BackgroundPrescanTimeLimit = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
-            decoded.MinIdleBeforeBgScan = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
-            decoded.MaxTimeSuspendBgScan = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.BackgroundScanInterval     = (ushort)((pageResponse[6]  << 8) + pageResponse[7]);
+            decoded.BackgroundPrescanTimeLimit = (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
+            decoded.MinIdleBeforeBgScan        = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.MaxTimeSuspendBgScan       = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
 
             return decoded;
         }
@@ -288,7 +290,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!modePage.HasValue) return null;
 
             ModePage_1C_S01 page = modePage.Value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder   sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Background Control page:");
 
@@ -313,8 +315,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.MaxTimeSuspendBgScan > 0)
                 sb
-                    .AppendFormat("\tAt most {0} ms must be before suspending a background scan operation and processing received commands",
-                                  page.MaxTimeSuspendBgScan).AppendLine();
+                   .AppendFormat("\tAt most {0} ms must be before suspending a background scan operation and processing received commands",
+                                 page.MaxTimeSuspendBgScan).AppendLine();
 
             return sb.ToString();
         }

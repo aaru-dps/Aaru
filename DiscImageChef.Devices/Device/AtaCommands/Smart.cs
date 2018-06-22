@@ -45,11 +45,12 @@ namespace DiscImageChef.Devices
                 Command = (byte)AtaCommands.Smart,
                 Feature = (byte)AtaSmartSubCommands.Disable,
                 LbaHigh = 0xC2,
-                LbaMid = 0x4F
+                LbaMid  = 0x4F
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 
@@ -59,20 +60,21 @@ namespace DiscImageChef.Devices
         }
 
         public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
-                                                 out double duration)
+                                                 out double                 duration)
         {
             byte[] buffer = new byte[0];
             AtaRegistersLba28 registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
-                LbaHigh = 0xC2,
-                LbaMid = 0x4F,
+                Command     = (byte)AtaCommands.Smart,
+                Feature     = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
+                LbaHigh     = 0xC2,
+                LbaMid      = 0x4F,
                 SectorCount = 0xF1
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 
@@ -82,7 +84,7 @@ namespace DiscImageChef.Devices
         }
 
         public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
-                                                  out double duration)
+                                                  out double                 duration)
         {
             byte[] buffer = new byte[0];
             AtaRegistersLba28 registers = new AtaRegistersLba28
@@ -90,11 +92,12 @@ namespace DiscImageChef.Devices
                 Command = (byte)AtaCommands.Smart,
                 Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
                 LbaHigh = 0xC2,
-                LbaMid = 0x4F
+                LbaMid  = 0x4F
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 
@@ -111,11 +114,12 @@ namespace DiscImageChef.Devices
                 Command = (byte)AtaCommands.Smart,
                 Feature = (byte)AtaSmartSubCommands.Enable,
                 LbaHigh = 0xC2,
-                LbaMid = 0x4F
+                LbaMid  = 0x4F
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 
@@ -124,8 +128,8 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte subcommand,
-                                                 uint timeout, out double duration)
+        public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte       subcommand,
+                                                 uint                       timeout,         out double duration)
         {
             byte[] buffer = new byte[0];
             AtaRegistersLba28 registers = new AtaRegistersLba28
@@ -133,12 +137,13 @@ namespace DiscImageChef.Devices
                 Command = (byte)AtaCommands.Smart,
                 Feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate,
                 LbaHigh = 0xC2,
-                LbaMid = 0x4F,
-                LbaLow = subcommand
+                LbaMid  = 0x4F,
+                LbaLow  = subcommand
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 
@@ -156,11 +161,12 @@ namespace DiscImageChef.Devices
                 Command = (byte)AtaCommands.Smart,
                 Feature = (byte)AtaSmartSubCommands.ReadData,
                 LbaHigh = 0xC2,
-                LbaMid = 0x4F
+                LbaMid  = 0x4F
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 
@@ -169,8 +175,8 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
-                                 uint timeout, out double duration)
+        public bool SmartReadLog(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
+                                 uint       timeout, out double                 duration)
         {
             buffer = new byte[512];
             AtaRegistersLba28 registers = new AtaRegistersLba28
@@ -178,12 +184,13 @@ namespace DiscImageChef.Devices
                 Command = (byte)AtaCommands.Smart,
                 Feature = (byte)AtaSmartSubCommands.ReadLog,
                 LbaHigh = 0xC2,
-                LbaMid = 0x4F,
-                LbaLow = logAddress
+                LbaMid  = 0x4F,
+                LbaLow  = logAddress
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 
@@ -200,11 +207,12 @@ namespace DiscImageChef.Devices
                 Command = (byte)AtaCommands.Smart,
                 Feature = (byte)AtaSmartSubCommands.ReturnStatus,
                 LbaHigh = 0xC2,
-                LbaMid = 0x4F
+                LbaMid  = 0x4F
             };
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
+                                       out duration,
                                        out bool sense);
             Error = LastError != 0;
 

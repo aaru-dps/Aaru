@@ -42,11 +42,11 @@ namespace DiscImageChef.Partitions
 {
     public class GuidPartitionTable : IPartition
     {
-        const ulong GPT_MAGIC = 0x5452415020494645;
-        const uint GPT_REVISION1 = 0x00010000;
+        const ulong GPT_MAGIC     = 0x5452415020494645;
+        const uint  GPT_REVISION1 = 0x00010000;
 
         public string Name => "GUID Partition Table";
-        public Guid Id => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
+        public Guid   Id   => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -54,18 +54,18 @@ namespace DiscImageChef.Partitions
 
             if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
-            byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
+            byte[]    hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
             GptHeader hdr;
 
-            ulong signature = BitConverter.ToUInt64(hdrBytes, 0);
-            bool misaligned = false;
+            ulong signature  = BitConverter.ToUInt64(hdrBytes, 0);
+            bool  misaligned = false;
 
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
 
             if(signature != GPT_MAGIC)
                 if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
-                    hdrBytes = imagePlugin.ReadSector(sectorOffset);
+                    hdrBytes  = imagePlugin.ReadSector(sectorOffset);
                     signature = BitConverter.ToUInt64(hdrBytes, 512);
                     DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
                     if(signature == GPT_MAGIC)
@@ -73,12 +73,13 @@ namespace DiscImageChef.Partitions
                         DicConsole.DebugWriteLine("GPT Plugin", "Found unaligned signature", signature);
                         byte[] real = new byte[512];
                         Array.Copy(hdrBytes, 512, real, 0, 512);
-                        hdrBytes = real;
+                        hdrBytes   = real;
                         misaligned = true;
                     }
                     else return false;
                 }
-                else return false;
+                else
+                    return false;
 
             try
             {
@@ -88,18 +89,18 @@ namespace DiscImageChef.Partitions
             }
             catch { return false; }
 
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}", hdr.revision);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}", hdr.headerSize);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}", hdr.headerCrc);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.reserved = 0x{0:X8}", hdr.reserved);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.myLBA = {0}", hdr.myLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.alternateLBA = {0}", hdr.alternateLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.firstUsableLBA = {0}", hdr.firstUsableLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.lastUsableLBA = {0}", hdr.lastUsableLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.diskGuid = {0}", hdr.diskGuid);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entryLBA = {0}", hdr.entryLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entries = {0}", hdr.entries);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}", hdr.entriesSize);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}",   hdr.revision);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}",      hdr.headerSize);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}",  hdr.headerCrc);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.reserved = 0x{0:X8}",   hdr.reserved);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.myLBA = {0}",           hdr.myLBA);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.alternateLBA = {0}",    hdr.alternateLBA);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.firstUsableLBA = {0}",  hdr.firstUsableLBA);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.lastUsableLBA = {0}",   hdr.lastUsableLBA);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.diskGuid = {0}",        hdr.diskGuid);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entryLBA = {0}",        hdr.entryLBA);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entries = {0}",         hdr.entries);
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}",     hdr.entriesSize);
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
 
             if(hdr.signature != GPT_MAGIC) return false;
@@ -110,21 +111,21 @@ namespace DiscImageChef.Partitions
 
             if(misaligned)
             {
-                divisor = 4;
-                modulo = (uint)(hdr.entryLBA % divisor);
+                divisor    = 4;
+                modulo     = (uint)(hdr.entryLBA % divisor);
                 sectorSize = 512;
             }
             else
             {
-                divisor = 1;
-                modulo = 0;
+                divisor    = 1;
+                modulo     = 0;
                 sectorSize = imagePlugin.Info.SectorSize;
             }
 
             uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.Info.SectorSize;
             if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0) totalEntriesSectors++;
 
-            byte[] temp = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
+            byte[] temp         = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
             byte[] entriesBytes = new byte[temp.Length - modulo * 512];
             Array.Copy(temp, modulo * 512, entriesBytes, 0, entriesBytes.Length);
             List<GptEntry> entries = new List<GptEntry>();
@@ -136,46 +137,46 @@ namespace DiscImageChef.Partitions
                     byte[] entryBytes = new byte[hdr.entriesSize];
                     Array.Copy(entriesBytes, hdr.entriesSize * i, entryBytes, 0, hdr.entriesSize);
                     GCHandle handle = GCHandle.Alloc(entryBytes, GCHandleType.Pinned);
-                    GptEntry entry = (GptEntry)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(GptEntry));
+                    GptEntry entry  = (GptEntry)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(GptEntry));
                     handle.Free();
                     entries.Add(entry);
                 }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
                 {
                     // ignored
                 }
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
             }
 
             if(entries.Count == 0) return false;
 
             ulong pseq = 0;
 
-            foreach(GptEntry entry in
-                entries.Where(entry => entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty))
+            foreach(GptEntry entry in entries.Where(entry => entry.partitionType != Guid.Empty &&
+                                                             entry.partitionId   != Guid.Empty))
             {
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}", entry.startLBA);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}", entry.endLBA);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}",    entry.partitionType);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}",      entry.partitionId);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}",         entry.startLBA);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}",           entry.endLBA);
                 DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}",             entry.name);
 
                 if(entry.startLBA / divisor > imagePlugin.Info.Sectors ||
-                   entry.endLBA / divisor > imagePlugin.Info.Sectors) return false;
+                   entry.endLBA   / divisor > imagePlugin.Info.Sectors) return false;
 
                 Partition part = new Partition
                 {
                     Description = $"ID: {entry.partitionId}",
-                    Size = (entry.endLBA - entry.startLBA + 1) * sectorSize,
-                    Name = entry.name,
-                    Length = (entry.endLBA - entry.startLBA + 1) / divisor,
-                    Sequence = pseq++,
-                    Offset = entry.startLBA * sectorSize,
-                    Start = entry.startLBA / divisor,
-                    Type = GetGuidTypeName(entry.partitionType),
-                    Scheme = Name
+                    Size        = (entry.endLBA - entry.startLBA + 1) * sectorSize,
+                    Name        = entry.name,
+                    Length      = (entry.endLBA - entry.startLBA + 1) / divisor,
+                    Sequence    = pseq++,
+                    Offset      = entry.startLBA * sectorSize,
+                    Start       = entry.startLBA / divisor,
+                    Type        = GetGuidTypeName(entry.partitionType),
+                    Scheme      = Name
                 };
                 DicConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
                 partitions.Add(part);
@@ -288,7 +289,7 @@ namespace DiscImageChef.Partitions
                 case "BD215AB2-1D16-11DC-8696-01301BB8A9F5": return "DragonflyBSD Legacy";
                 case "61DC63AC-6E38-11DC-8513-01301BB8A9F5": return "DragonflyBSD Hammer";
                 case "5CBB9AD1-862D-11DC-A94D-01301BB8A9F5": return "DragonflyBSD Hammer2";
-                default: return "";
+                default:                                     return "";
             }
         }
 
@@ -296,30 +297,31 @@ namespace DiscImageChef.Partitions
         struct GptHeader
         {
             public ulong signature;
-            public uint revision;
-            public uint headerSize;
-            public uint headerCrc;
-            public uint reserved;
+            public uint  revision;
+            public uint  headerSize;
+            public uint  headerCrc;
+            public uint  reserved;
             public ulong myLBA;
             public ulong alternateLBA;
             public ulong firstUsableLBA;
             public ulong lastUsableLBA;
-            public Guid diskGuid;
+            public Guid  diskGuid;
             public ulong entryLBA;
-            public uint entries;
-            public uint entriesSize;
-            public uint entriesCrc;
+            public uint  entries;
+            public uint  entriesSize;
+            public uint  entriesCrc;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         struct GptEntry
         {
-            public Guid partitionType;
-            public Guid partitionId;
+            public Guid  partitionType;
+            public Guid  partitionId;
             public ulong startLBA;
             public ulong endLBA;
             public ulong attributes;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 36)] public string name;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 36)]
+            public string name;
         }
     }
 }
