@@ -1,4 +1,4 @@
-﻿DiscImageChef v4.0.99.0
+﻿DiscImageChef v4.5.0.0
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
 
@@ -25,8 +25,8 @@ System requirements
 ===================
 DiscImageChef should work under any operating system where there is [Mono](http://www.mono-project.com/)
 or [.NET Framework](https://www.microsoft.com/net/download).
-It has been tested using Mono 3.0 and .NET Framework 4.0. However recommended versions are
-Mono 5.0 and .NET Framework 4.6. .NET Core is untested.
+It has been tested using Mono 5.0 and .NET Framework 4.6.1. However recommended versions are
+Mono 5.8 and .NET Framework 4.7.1. .NET Core is unsupported.
 
 Usage
 =====
@@ -48,55 +48,62 @@ Features
 * Can read standard sector by sector copies for optical and magnetic discs with constant bytes per sector.
 * Can verify sectors or disk images if supported by the underlying format
 
-Supported disk image formats
-============================
-* Alcohol 120% Media Descriptor Structure (.MDS/.MDF)
-* Any 512 bytes/sector disk image format (sector by sector copy, aka raw)
-* Apple 2IMG (used with Apple // emulators)
+Supported disk image formats (read-only)
+========================================
 * Apple Disk Archival/Retrieval Tool (DART)
-* Apple DiskCopy 4.2
+* Apple Disk Archival/Retrieval Tool (DART)
 * Apple II nibble images (NIB)
-* Apple New Disk Image Format (NDIF, requires Resource Fork)
-* Apple Universal Disk Image Format (UDIF), including obsolete (previous than DiskCopy 6) versions
-* Apridisk disk image formats (for ACT Apricot disks)
-* Anex86 disk images (.FDI for floppies, .HDI for hard disks)
 * BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
 * BlindWrite 5/6 TOC files (.B5T/.B5I and .B6T/.B6I)
-* CDRDAO TOC sheets
-* CDRWin cue/bin cuesheets, including ones with ISOBuster extensions
-* CisCopy disk image (aka DC-File, .DCF)
-* CPCEMU Disk file and Extended Disk File
 * CopyQM
+* CPCEMU Disk file and Extended Disk File
 * Dave Dunfield IMD
-* Digital Research DiskCopy
 * DiscJuggler images
 * Dreamcast GDI
 * HD-Copy disk images
-* IBM SaveDskF
 * MAME Compressed Hunks of Data (CHD)
-* MAXI Disk disk images (HDK)
 * Microsoft VHDX
-* Most known sector by sector copies of floppies with 128, 256, 319 and 1024 bytes/sector.
-* Most known sector by sector copies with different bytes/sector on track 0.
 * Nero Burning ROM (both image formats)
-* Parallels Hard Disk Image (HDD) version 2
 * Partclone disk images
 * Partimage disk images
+* Quasi88 disk images (.D77/.D88)
+* Spectrum floppy disk image (.FDI)
+* TeleDisk
+* X68k DIM disk image files (.DIM)
+
+Supported disk image formats (read and write)
+=============================================
+* Alcohol 120% Media Descriptor Structure (.MDS/.MDF)
+* Anex86 disk images (.FDI for floppies, .HDI for hard disks)
+* Any 512 bytes/sector disk image format (sector by sector copy, aka raw)
+* Apple 2IMG (used with Apple // emulators)
+* Apple DiskCopy 4.2
+* Apple ][ Interleaved Disk Image
+* Apple Universal Disk Image Format (UDIF), including obsolete (previous than DiskCopy 6) versions
+* Apridisk disk image formats (for ACT Apricot disks)
+* Basic Lisa Utility
+* CDRDAO TOC sheets
+* CDRWin cue/bin cuesheets, including ones with ISOBuster extensions
+* CisCopy disk image (aka DC-File, .DCF)
+* CloneCD
+* Digital Research DiskCopy
+* DiscImageChef format
+* IBM SaveDskF
+* MAXI Disk disk images (HDK)
+* Most known sector by sector copies of floppies with 128, 256, 319 and 1024 bytes/sector.
+* Most known sector by sector copies with different bytes/sector on track 0.
+* Parallels Hard Disk Image (HDD) version 2
 * QEMU Copy-On-Write versions 1, 2 and 3 (QCOW and QCOW2)
 * QEMU Enhanced Disk (QED)
-* Quasi88 disk images (.D77/.D88)
 * Ray Arachelian's Disk IMage (.DIM)
 * RS-IDE hard disk images
 * Sector by sector copies of Microsoft's DMF floppies
-* Spectrum floppy disk image (.FDI)
 * T98 hard disk images (.THD)
 * T98-Next hard disk images (.NHD)
-* TeleDisk
-* VMware VMDK and COWD images
 * Virtual98 disk images
-* Virtual PC fixed size, dynamic size and differencing (undo) disk images
 * VirtualBox Disk Image (VDI)
-* X68k DIM disk image files (.DIM)
+* Virtual PC fixed size, dynamic size and differencing (undo) disk images
+* VMware VMDK and COWD images
 * XDF disk images (as created by IBM's XDFCOPY)
 
 Supported partitioning schemes
@@ -147,16 +154,16 @@ Supported file systems for identification and information only
 * Apple Hierarchical File System+ (HFS+)
 * Apple ProDOS / SOS file system
 * AtheOS file system
-* B-tree file system (btrfs)
+* BeOS filesystem
 * BSD Fast File System (FFS) / Unix File System (UFS)
 * BSD Unix File System 2 (UFS2)
-* BeOS filesystem
+* B-tree file system (btrfs)
 * CD-i file system
 * Coherent UNIX file system
 * Commodore 1540/1541/1571/1581 filesystems
 * Cram file system
-* DEC RT-11 file system
 * DEC Files-11 (only checked with On Disk Structure 2, ODS-2)
+* DEC RT-11 file system
 * dump(8) (Old historic BSD, AIX, UFS and UFS2 types)
 * ECMA-67: 130mm Flexible Disk Cartridge Labelling and File Structure for Information Interchange
 * Flash-Friendly File System (F2FS)
@@ -177,13 +184,15 @@ Supported file systems for identification and information only
 * Microsoft 16-bit File Allocation Table (FAT16)
 * Microsoft 32-bit File Allocation Table (FAT32), including FAT+ extension
 * Microsoft Extended File Allocation Table (exFAT)
-* Microsoft New Technology File System (NTFS)
 * Microsoft/IBM High Performance File System (HPFS)
+* Microsoft New Technology File System (NTFS)
+* Microsoft Resilient File System (ReFS)
 * Minix v2 file system
 * Minix v3 file system
 * NEC PC-Engine executable
 * NEC PC-FX executable
 * NILFS2
+* Nintendo optical filesystems (GameCube and Wii)
 * OS-9 Random Block File
 * Professional File System
 * QNX4 and QNX6 filesystems
@@ -194,12 +203,12 @@ Supported file systems for identification and information only
 * SolarOS file system
 * Squash file system
 * UNICOS file system
+* Universal Disk Format (UDF)
 * UNIX System V file system
 * UNIX Version 7 file system
-* Universal Disk Format (UDF)
 * UnixWare boot file system
-* VMware file system (VMFS)
 * Veritas file system
+* VMware file system (VMFS)
 * Xbox filesystems
 * Xenix file system
 * Xia filesystem

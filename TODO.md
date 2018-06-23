@@ -12,7 +12,6 @@
 * Add raw dump for Plextor recorders. (https://github.com/claunia/DiscImageChef/issues/100)
 * Add support for 82077 floppy controllers. (https://github.com/claunia/DiscImageChef/issues/101)
 * Add support for AIX partitioning scheme. (https://github.com/claunia/DiscImageChef/issues/7)
-* Add support for Apple 2 character encoding. (https://github.com/claunia/DiscImageChef/issues/102)
 * Add support for CD-Text in Nero images. (https://github.com/claunia/DiscImageChef/issues/104)
 * Add support for compressed Ciscopy images. (https://github.com/claunia/DiscImageChef/issues/127)
 * Add support for compressed DART images. (https://github.com/claunia/DiscImageChef/issues/68)
@@ -42,7 +41,6 @@
 * Add support for KryoFlux devices. (https://github.com/claunia/DiscImageChef/issues/141)
 * Add support for Linear Media PCMCIA devices. (https://github.com/claunia/DiscImageChef/issues/148)
 * Add support for MAME CHD images of PCMCIA devices. (https://github.com/claunia/DiscImageChef/issues/150)
-* Add support for Microsoft Resilient filesystem (ReFS). (https://github.com/claunia/DiscImageChef/issues/13)
 * Add support for NetApp WAFL filesystem. (https://github.com/claunia/DiscImageChef/issues/61)
 * Add support for NetWare 286 filesystem. (https://github.com/claunia/DiscImageChef/issues/117)
 * Add support for NetWare 386 filesystem. (https://github.com/claunia/DiscImageChef/issues/118)
@@ -54,14 +52,11 @@
 * Add support for Parallel ATA devices in FreeBSD. (https://github.com/claunia/DiscImageChef/issues/114)
 * Add support for PCMCIA devices in FreeBSD. (https://github.com/claunia/DiscImageChef/issues/115)
 * Add support for PCMCIA devices in Windows. (https://github.com/claunia/DiscImageChef/issues/126)
-* Add support for Radix-50 character encoding. (https://github.com/claunia/DiscImageChef/issues/103)
 * Add support for reading resource fork in macOS. (https://github.com/claunia/DiscImageChef/issues/156)
 * Add support for reading resource fork in Windows. (https://github.com/claunia/DiscImageChef/issues/157)
 * Add support for SecureDigital and MultiMediaCard devices in FreeBSD. (https://github.com/claunia/DiscImageChef/issues/116)
-* Add support for Sharp X68000 FAT filesystem variation. (https://github.com/claunia/DiscImageChef/issues/158)
 * Add support for SuperCardPro devices. (https://github.com/claunia/DiscImageChef/issues/139)
 * Add support for XPACK images. (https://github.com/claunia/DiscImageChef/issues/45)
-* Check CompactDisc read capabilities on dumping. (https://github.com/claunia/DiscImageChef/issues/138)
 * Checksum disk tags
 * Checksum long sectors
 * Checksum sector tags
@@ -72,16 +67,13 @@
 * Implement Apple KenCode compression algorithm. (https://github.com/claunia/DiscImageChef/issues/122)
 * Implement Apple LZFSE compression algorithm. (https://github.com/claunia/DiscImageChef/issues/124)
 * Implement Apple LZH compression algorithm. (https://github.com/claunia/DiscImageChef/issues/121)
-* Implement Apple RLE compression algorithm. (https://github.com/claunia/DiscImageChef/issues/120)
 * Implement COLUMBIA ordering in CP/M filesystem. (https://github.com/claunia/DiscImageChef/issues/133)
-* Implement conversion of dump formats. (https://github.com/claunia/DiscImageChef/issues/134)
 * Implement CYLINDERS ordering in CP/M filesystem. (https://github.com/claunia/DiscImageChef/issues/132)
 * Implement dumping GameCube discs. (https://github.com/claunia/DiscImageChef/issues/135)
 * Implement dumping Wii discs. (https://github.com/claunia/DiscImageChef/issues/136)
 * Implement EAGLE ordering in CP/M filesystem. (https://github.com/claunia/DiscImageChef/issues/131)
 * Implement ODS checksum. (https://github.com/claunia/DiscImageChef/issues/130)
 * Implement StuffIt compression algorithm. (https://github.com/claunia/DiscImageChef/issues/123)
-* Implement writing support for dump formats. (https://github.com/claunia/DiscImageChef/issues/129)
 * Offer the option to see differing values
 * Optimize and multithread image comparison
 * Optimize current checksum multithreading

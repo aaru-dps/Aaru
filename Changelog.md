@@ -1,3 +1,251 @@
+# [4.5.0.0] - 2018-06-24
+## Added
+### - Alcohol 120% disc image
+- 010editor template.
+- Support for creating images.
+
+### - Apple New Disk Image Format
+- Support RLE compressed images.
+
+### - Blindwrite 4 disc image
+- 010editor template.
+- Information about why this format cannot support writing.
+
+### - Blindwrite 5 disc image
+- 010editor template.
+- Information about why this format cannot support writing.
+
+### - DART disk image
+- Support RLE compressed images.
+
+### - Decoders
+- Added Blu-ray DI decoders.
+- Support decoding 2048 bytes PFI.
+
+### - Devices
+- On Linux try to open in read/write and exclusive mode, if not retry in readonly.
+- On Linux use direct SG_IO.
+- Workaround some Blu-ray drives not reporting correct size on READ DISC STRUCTURE.
+
+### - DiscJuggler disc image
+- Information about why this format cannot support writing.
+
+### - Dumping
+- Added support for CD drives that don't return a TOC.
+- Added support for CD drives that don't support READ CD command.
+- Added support for Compact Disc that don't report tracks.
+- Add support for dumping media in any of the now supported writable formats.
+- Dump ISRC.
+- Dump MCN.
+- Fix reading PW subchannels.
+- Separate trimming from error retry.
+- When dumping CDs in persistent mode, try disabling L-EC check if drive doesn't support TB bit, or doesn't return data with TB bit enabled.
+- When dumping, print bad sectors to dump log.
+
+### - FAT filesystem
+- Add list of known boot sector hashes.
+- Support Human68k FAT16 BPB.
+
+### - Filesystems
+- Detecting High Performance Optical File System (HPOFS).
+- Detecting Microsoft Resilient filesystem (ReFS).
+- Detecting PC-FX executable tracks.
+- Detecting Xia filesystem.
+
+### - Apple 2IMG disk image
+- Support for creating images.
+
+### - Anex86 disk image
+- Support for creating images.
+
+### - Apple II interleaved disk image
+- Support for creating images.
+
+### - Apple Universal Disk Image Format
+- Support for creating images.
+- Support RLE compressed images.
+
+### - Apridisk disk image
+- Support for creating images.
+
+### - Basic Lisa Utility disk image
+- Support for creating images.
+
+### - cdrdao disc image
+- Support for creating images.
+
+### - CDRWin cuesheet disc image
+- Support for creating images.
+
+### - CisCopy disk image
+- Support for creating images.
+
+### - CloneCD disc image
+- Support for creating images.
+
+### - Digital Research DISKCOPY disk image
+- Support for creating images.
+
+### - DiskCopy 4.2 disk image
+- Support for creating images.
+
+### - IBM SaveDskF disk image
+- Support for creating images.
+
+### - MaxiDisk disk image
+- Support for creating images.
+
+### - NHDr0 disk image
+- Support for creating images.
+
+### - Parallels disk image
+- Support for creating images.
+
+### - QEMU Copy-On-Write disk image
+- Support for creating images.
+
+### - QEMU Copy-On-Write v2 disk image
+- Support for creating images.
+
+### - QEMU Enhanced Disk image
+- Support for creating images.
+
+### - RAW (sector by sector) disk image
+- Added geometry and size for ZIP100 and ZIP250.
+- Support 2448 bytes/sector and 2352 bytes/sector CD images.
+- Support media tags.
+
+### - Ray Arachelian's disk image
+- Support for creating images.
+
+### - RS-IDE disk image
+- Support for creating images.
+
+### - T98 Hard Disk Image
+- Support for creating images.
+
+### - Virtual98 disk image
+- Support for creating images.
+
+### - VirtualBox disk image
+- Added image type and flags.
+- Support for creating images.
+
+### - VirtualPC disk image
+- Support for creating images.
+
+### - VMware disk image
+- Support for creating images.
+
+## Fixes
+### - Apple DOS filesystem
+- Use Apple II character set encoding.
+
+### - Apple ProDOS filesystem
+- Use Apple IIc character set encoding.
+
+### - BlindWrite 4 disc image
+- Fix incorrect pregap calculation preventing images from showing correct data.
+
+### - CICM metadata
+- Can now get dump hardware information from images.
+
+### - cdrdao disc image
+- Fix audio track endian.
+- Fix when disc catalog number uses whole ASCII and not only numeric digits.
+
+### - CDRWin disc image
+- Fix when disc catalog number uses whole ASCII and not only numeric digits.
+
+### - CloneCD disc image
+- Fix when disc catalog number uses whole ASCII and not only numeric digits.
+
+### - Checksums
+- Correct CD ECC.
+- Correct CD EDC.
+- Fix CRC16 returning a 32-bit value.
+- Fix CRC64 endian.
+- Fix Fletcher-16.
+- Fix Fletcher-32.
+
+### - Create sidecar
+- Add filesystems only to the appropriate partition and track.
+- Fix CD Lead-in, TOC and XGD tags.
+- Fix diameter setting.
+- Fix SCSI MODE SENSE.
+- Fix USB descriptors.
+
+### - DART disk image
+- Fixed endian.
+
+### - Devices
+- Fix sending READ LONG commands to ATA devices.
+- Fixed crashing with some rogue SCSI MMC firmwares.
+
+### - Dumping
+- Correctly detect CD-i, CD+ and CD-ROM XA.
+- Do not retry when retry passes are zero.
+- Do not try to read multisession lead-out/lead-in as they result in errors that are not really there.
+- Get correct track flags.
+- Retry only the number of times requested.
+- Return drive to previous error correction status.
+- Send error recovery MODE before retrying sectors.
+
+### - HDCopy disk image
+- Fix sector calculation.
+
+### - Image comparison
+- Fix when sessions are null.
+
+### - Image verification
+- Corrected status printing.
+
+### - ISO9660 filesystem
+- Do not try to read past partition if El Torito indicates image goes beyond limits.
+- Fix when root directory is outside of device.
+- Skip null terminated strings in ISO9660 fields.
+
+### - Lisa filesystem
+- Corrected character set encoding.
+
+### - Macintosh filesystem
+- Corrected character set encoding.
+
+### - PC-98 Partition Table
+- Prevent some FAT BPBs to false positive as PC-98 partition tables.
+
+### - RT-11 filesystem
+- Use Radix-50 character set encoding.
+
+### - System V filesystem
+- Fix partition bounds.
+
+### - VirtualPC disk image
+- Corrected reading non-allocated blocks.
+
+## Changes
+- Added command to convert disc images.
+- Added command to get information about an image and its contents.
+- Added D/CAS-25, D/CAS-85 and D/CAS-103 formats.
+- Added IRC notifications for Travis CI.
+- Added measured dimensions from an UMD.
+- Added media types for NEO GEO CD, PC-FX.
+- Added new image format designed to store as much information about media as a drive returns: dicformat.
+- Added numeric values to media types.
+- Added project to create test filesystems on 16-bit OS/2.
+- Added project to create test filesystems on 32-bit OS/2.
+- Added project to create test filesystems on DOS.
+- Added project to create test filesystems on Mac OS.
+- Added size of 640MiB magneto-optical disk.
+- Added support for writing disc images.
+- Compliant with GDPR.
+- Corrected floptical geometry to data according to IRIX.
+- Do not assume pointers are 32-bit in several Windows device calls.
+- Fixed when statistics settings are null.
+- Minimum .NET Framework version is now 4.6.1.
+- Sort verbs list.
+- Support newest XDG Base Directory Specification for Linux.
+
 # [4.0.1.0] - 2018-01-06
 ## Fixes
 ### Apple DOS and ProDOS interleaved disk images
@@ -588,3 +836,11 @@
 - Apple Partition Map (aka APM).
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
+
+[4.5.0.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.5.0.0
+[4.0.1.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.0.1.0
+[4.0.0.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.0.0.0
+[3.0.0.0]: https://github.com/claunia/DiscImageChef/releases/tag/v3.0.0.0
+[2.20]: https://github.com/claunia/DiscImageChef/releases/tag/v2.2
+[2.10]: https://github.com/claunia/DiscImageChef/releases/tag/v2.1
+[2.0]: https://github.com/claunia/DiscImageChef/releases/tag/v2.0
