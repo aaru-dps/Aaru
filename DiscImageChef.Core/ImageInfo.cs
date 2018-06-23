@@ -207,19 +207,22 @@ namespace DiscImageChef.Core
             {
                 byte[] toc = imageFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
 
-                ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
-                if(dataLen + 2 != toc.Length)
+                if(toc.Length > 0)
                 {
-                    byte[] tmp = new byte[toc.Length + 2];
-                    Array.Copy(toc, 0, tmp, 2, toc.Length);
-                    tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
-                    tmp[1] = (byte)(toc.Length & 0xFF);
-                    toc    = tmp;
-                }
+                    ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
+                    if(dataLen + 2 != toc.Length)
+                    {
+                        byte[] tmp = new byte[toc.Length + 2];
+                        Array.Copy(toc, 0, tmp, 2, toc.Length);
+                        tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(toc.Length & 0xFF);
+                        toc    = tmp;
+                    }
 
-                DicConsole.WriteLine("CompactDisc Table of Contents contained in image:");
-                DicConsole.Write("{0}", FullTOC.Prettify(toc));
-                DicConsole.WriteLine();
+                    DicConsole.WriteLine("CompactDisc Table of Contents contained in image:");
+                    DicConsole.Write("{0}", FullTOC.Prettify(toc));
+                    DicConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags != null &&
@@ -227,19 +230,22 @@ namespace DiscImageChef.Core
             {
                 byte[] pma = imageFormat.ReadDiskTag(MediaTagType.CD_PMA);
 
-                ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
-                if(dataLen + 2 != pma.Length)
+                if(pma.Length > 0)
                 {
-                    byte[] tmp = new byte[pma.Length + 2];
-                    Array.Copy(pma, 0, tmp, 2, pma.Length);
-                    tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
-                    tmp[1] = (byte)(pma.Length & 0xFF);
-                    pma    = tmp;
-                }
+                    ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
+                    if(dataLen + 2 != pma.Length)
+                    {
+                        byte[] tmp = new byte[pma.Length + 2];
+                        Array.Copy(pma, 0, tmp, 2, pma.Length);
+                        tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(pma.Length & 0xFF);
+                        pma    = tmp;
+                    }
 
-                DicConsole.WriteLine("CompactDisc Power Management Area contained in image:");
-                DicConsole.Write("{0}", PMA.Prettify(pma));
-                DicConsole.WriteLine();
+                    DicConsole.WriteLine("CompactDisc Power Management Area contained in image:");
+                    DicConsole.Write("{0}", PMA.Prettify(pma));
+                    DicConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags != null &&
