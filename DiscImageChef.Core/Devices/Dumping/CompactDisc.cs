@@ -183,7 +183,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
-                    if(dskType == MediaType.CD)
+                    if(dskType == MediaType.CD || dskType == MediaType.CDROMXA)
                     {
                         bool hasDataTrack                  = false;
                         bool hasAudioTrack                 = false;
@@ -200,7 +200,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                             {
                                 hasDataTrack                  =  true;
-                                allFirstSessionTracksAreAudio &= track.TNO >= firstTrackLastSession;
+                                allFirstSessionTracksAreAudio &= track.POINT >= firstTrackLastSession;
                             }
                             else hasAudioTrack = true;
 
@@ -454,7 +454,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 dskType = MediaType.CDI;
                                 break;
                             case 0x20:
-                                dskType = MediaType.CDROMXA;
+                                if(dskType == MediaType.CD) dskType = MediaType.CDROMXA;
                                 break;
                         }
 
