@@ -591,8 +591,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         if(tracks[i].TrackSession != leadOuts.Key) continue;
 
-                        if(tracks[i].TrackEndSector > (ulong)leadOuts.Value)
-                            tracks[i].TrackEndSector = (ulong)leadOuts.Value;
+                        if(tracks[i].TrackEndSector >= (ulong)leadOuts.Value)
+                            tracks[i].TrackEndSector = (ulong)leadOuts.Value - 1;
                     }
 
                 ExtentsULong dataExtents = new ExtentsULong();
