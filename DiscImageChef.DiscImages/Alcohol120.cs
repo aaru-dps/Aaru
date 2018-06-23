@@ -2002,12 +2002,12 @@ namespace DiscImageChef.DiscImages
                     if(i < sessions)
                     {
                         (byte hour, byte minute, byte second, byte frame) leadoutAmsf =
-                            LbaToMsf(Tracks.First(t => t.TrackSession == i + 1).TrackStartSector - 150);
+                            LbaToMsf(writingTracks.First(t => t.TrackSession == i + 1).TrackStartSector - 150);
                         (byte hour, byte minute, byte second, byte frame) leadoutPmsf =
-                            LbaToMsf(Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last()
-                                           .TrackStartSector);
+                            LbaToMsf(writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last()
+                                                  .TrackStartSector);
 
-                        thisSessionTracks.Add(i,
+                        thisSessionTracks.Add(0xB0,
                                               new AlcoholTrack
                                               {
                                                   point  = 0xB0,
@@ -2025,7 +2025,7 @@ namespace DiscImageChef.DiscImages
                                                   unknown2 = new byte[24]
                                               });
 
-                        thisSessionTracks.Add(i,
+                        thisSessionTracks.Add(0xC0,
                                               new AlcoholTrack
                                               {
                                                   point    = 0xC0,
