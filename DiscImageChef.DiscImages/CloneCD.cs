@@ -519,8 +519,7 @@ namespace DiscImageChef.DiscImages
                                     DicConsole.DebugWriteLine("CloneCD plugin", "Disc Type: {0}", discType);
                                     break;
                                 case 0xA2:
-                                    leadOutStart = GetLba(descriptor.PHOUR, descriptor.PMIN, descriptor.PSEC,
-                                                          descriptor.PFRAME);
+                                    leadOutStart = GetLba(descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME);
                                     break;
                                 default:
                                     if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x63)
@@ -528,8 +527,7 @@ namespace DiscImageChef.DiscImages
                                         if(!firstTrackInSession)
                                         {
                                             currentTrack.TrackEndSector =
-                                                GetLba(descriptor.PHOUR, descriptor.PMIN, descriptor.PSEC,
-                                                       descriptor.PFRAME) - 1;
+                                                GetLba(descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME) - 1;
                                             Tracks.Add(currentTrack);
                                         }
                                         else firstTrackInSession = false;
@@ -543,8 +541,7 @@ namespace DiscImageChef.DiscImages
                                             TrackRawBytesPerSector = 2352,
                                             TrackSequence          = descriptor.POINT,
                                             TrackStartSector =
-                                                GetLba(descriptor.PHOUR, descriptor.PMIN, descriptor.PSEC,
-                                                       descriptor.PFRAME),
+                                                GetLba(descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME),
                                             TrackSession = descriptor.SessionNumber
                                         };
                                         currentTrack.TrackFileOffset = currentTrack.TrackStartSector * 2352;
@@ -1387,10 +1384,9 @@ namespace DiscImageChef.DiscImages
             {
                 MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
                 MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
-                MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.DTSCD, MediaType.JaguarCD,
-                MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD,
-                MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD,
-                MediaType.PCFX
+                MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
+                MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD,
+                MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -1644,9 +1640,8 @@ namespace DiscImageChef.DiscImages
                     // Lead-Out
                     if(track.TrackSession > currentSession && currentSession != 0)
                     {
-                        (byte hour, byte minute, byte second, byte frame) leadoutAmsf =
-                            LbaToMsf(track.TrackStartSector - 150);
-                        (byte hour, byte minute, byte second, byte frame) leadoutPmsf =
+                        (byte minute, byte second, byte frame) leadoutAmsf = LbaToMsf(track.TrackStartSector - 150);
+                        (byte minute, byte second, byte frame) leadoutPmsf =
                             LbaToMsf(Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last()
                                            .TrackStartSector);
 
@@ -1657,11 +1652,11 @@ namespace DiscImageChef.DiscImages
                             POINT         = 0xB0,
                             ADR           = 5,
                             CONTROL       = 0,
-                            HOUR          = leadoutAmsf.hour,
+                            HOUR          = 0,
                             Min           = leadoutAmsf.minute,
                             Sec           = leadoutAmsf.second,
                             Frame         = leadoutAmsf.frame,
-                            PHOUR         = leadoutPmsf.hour,
+                            PHOUR         = 2,
                             PMIN          = leadoutPmsf.minute,
                             PSEC          = leadoutPmsf.second,
                             PFRAME        = leadoutPmsf.frame
@@ -1686,7 +1681,7 @@ namespace DiscImageChef.DiscImages
                     {
                         currentSession = (byte)track.TrackSession;
                         sessionEndingTrack.TryGetValue(currentSession, out byte endingTrackNumber);
-                        (byte hour, byte minute, byte second, byte frame) leadinPmsf =
+                        (byte minute, byte second, byte frame) leadinPmsf =
                             LbaToMsf(Tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber).TrackEndSector +
                                      1);
 
@@ -1717,14 +1712,14 @@ namespace DiscImageChef.DiscImages
                             POINT         = 0xA2,
                             ADR           = 1,
                             CONTROL       = trackControl,
-                            PHOUR         = leadinPmsf.hour,
+                            PHOUR         = 0,
                             PMIN          = leadinPmsf.minute,
                             PSEC          = leadinPmsf.second,
                             PFRAME        = leadinPmsf.frame
                         });
                     }
 
-                    (byte hour, byte minute, byte second, byte frame) pmsf = LbaToMsf(track.TrackStartSector);
+                    (byte minute, byte second, byte frame) pmsf = LbaToMsf(track.TrackStartSector);
 
                     // Track
                     trackDescriptors.Add(new FullTOC.TrackDataDescriptor
@@ -1733,7 +1728,7 @@ namespace DiscImageChef.DiscImages
                         POINT         = (byte)track.TrackSequence,
                         ADR           = 1,
                         CONTROL       = trackControl,
-                        PHOUR         = pmsf.hour,
+                        PHOUR         = 0,
                         PMIN          = pmsf.minute,
                         PSEC          = pmsf.second,
                         PFRAME        = pmsf.frame
@@ -1754,19 +1749,21 @@ namespace DiscImageChef.DiscImages
             if(!string.IsNullOrEmpty(catalog)) descriptorStream.WriteLine("CATALOG={0}", catalog);
             for(int i = 1; i <= toc.LastCompleteSession; i++)
             {
+                // TODO: Use first track of session info
                 descriptorStream.WriteLine("[Session {0}]", i);
                 descriptorStream.WriteLine("PreGapMode=0");
                 descriptorStream.WriteLine("PreGapSubC=0");
             }
 
-            if(nullableToc == null) System.Console.WriteLine("Using fake toc");
-
             for(int i = 0; i < toc.TrackDescriptors.Length; i++)
             {
-                long alba = MsfToLba((toc.TrackDescriptors[i].HOUR, toc.TrackDescriptors[i].Min,
-                                         toc.TrackDescriptors[i].Sec, toc.TrackDescriptors[i].Frame));
-                long plba = MsfToLba((toc.TrackDescriptors[i].PHOUR, toc.TrackDescriptors[i].PMIN,
-                                         toc.TrackDescriptors[i].PSEC, toc.TrackDescriptors[i].PFRAME));
+                long alba = MsfToLba((toc.TrackDescriptors[i].Min, toc.TrackDescriptors[i].Sec,
+                                         toc.TrackDescriptors[i].Frame));
+                long plba = MsfToLba((toc.TrackDescriptors[i].PMIN, toc.TrackDescriptors[i].PSEC,
+                                         toc.TrackDescriptors[i].PFRAME));
+
+                if(alba > 405000) alba = (alba - 405000 + 300) * -1;
+                if(plba > 405000) plba = (plba - 405000 + 300) * -1;
 
                 descriptorStream.WriteLine("[Entry {0}]",      i);
                 descriptorStream.WriteLine("Session={0}",      toc.TrackDescriptors[i].SessionNumber);
@@ -1777,14 +1774,14 @@ namespace DiscImageChef.DiscImages
                 descriptorStream.WriteLine("AMin={0}",         toc.TrackDescriptors[i].Min);
                 descriptorStream.WriteLine("ASec={0}",         toc.TrackDescriptors[i].Sec);
                 descriptorStream.WriteLine("AFrame={0}",       toc.TrackDescriptors[i].Frame);
-                descriptorStream.WriteLine("ALBA={0}",         toc.TrackDescriptors[i].POINT == 0xC0 ? 125850 : alba);
+                descriptorStream.WriteLine("ALBA={0}",         alba);
                 descriptorStream.WriteLine("Zero={0}",
                                            ((toc.TrackDescriptors[i].HOUR & 0x0F) << 4) +
                                            (toc.TrackDescriptors[i].PHOUR & 0x0F));
                 descriptorStream.WriteLine("PMin={0}",   toc.TrackDescriptors[i].PMIN);
                 descriptorStream.WriteLine("PSec={0}",   toc.TrackDescriptors[i].PSEC);
                 descriptorStream.WriteLine("PFrame={0}", toc.TrackDescriptors[i].PFRAME);
-                descriptorStream.WriteLine("PLBA={0}",   toc.TrackDescriptors[i].POINT == 0xC0 ? -11775 : plba);
+                descriptorStream.WriteLine("PLBA={0}",   plba);
             }
 
             descriptorStream.Flush();
@@ -1950,21 +1947,19 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        static ulong GetLba(int hour, int minute, int second, int frame)
+        static ulong GetLba(int minute, int second, int frame)
         {
-            return (ulong)(hour * 60 * 60 * 75 + minute * 60 * 75 + second * 75 + frame - 150);
+            return (ulong)(minute * 60 * 75 + second * 75 + frame - 150);
         }
 
-        static long MsfToLba((byte hour, byte minute, byte second, byte frame) msf)
+        static long MsfToLba((byte minute, byte second, byte frame) msf)
         {
-            return msf.hour * 60 * 60 * 75 + msf.minute * 60 * 75 + msf.second * 75 + msf.frame - 150;
+            return msf.minute * 60 * 75 + msf.second * 75 + msf.frame - 150;
         }
 
-        static (byte hour, byte minute, byte second, byte frame) LbaToMsf(ulong sector)
+        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector)
         {
-            return ((byte)((sector + 150) / 75 / 60 / 60), (byte)((sector + 150) / 75 / 60 % 60),
-                       (byte)((sector + 150)                                          / 75 % 60),
-                       (byte)((sector + 150)                                               % 75));
+            return ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
         }
     }
 }
