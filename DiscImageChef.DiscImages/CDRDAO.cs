@@ -76,7 +76,7 @@ namespace DiscImageChef.DiscImages
             @"^\s*DATAFILE\s*""(?<filename>.+)""\s*(#(?<base_offset>\d+))?\s*(?<length>[\d]+:[\d]+:[\d]+)?";
         const string REGEX_INDEX  = @"^\s*INDEX\s*(?<address>\d+:\d+:\d+)";
         const string REGEX_ISRC   = @"^\s*ISRC\s*""(?<isrc>[A-Z0-9]{5,5}[0-9]{7,7})""";
-        const string REGEX_MCN    = @"^\s*CATALOG\s*""(?<catalog>[\d]{13,13})""";
+        const string REGEX_MCN    = @"^\s*CATALOG\s*""(?<catalog>[\x21-\x7F]{13,13})""";
         const string REGEX_PREGAP = @"^\s*START\s*(?<address>\d+:\d+:\d+)?";
         const string REGEX_STEREO = @"^\s*(?<num>(TWO|FOUR))_CHANNEL_AUDIO";
         const string REGEX_TRACK =

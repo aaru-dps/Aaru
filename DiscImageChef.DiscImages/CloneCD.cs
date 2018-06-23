@@ -59,7 +59,7 @@ namespace DiscImageChef.DiscImages
         const string DISC_SESSIONS      = @"^\s*Sessions\s*=\s*(?<value>\d+)";
         const string DISC_SCRAMBLED     = @"^\s*DataTracksScrambled\s*=\s*(?<value>\d+)";
         const string CDTEXT_LENGTH      = @"^\s*CDTextLength\s*=\s*(?<value>\d+)";
-        const string DISC_CATALOG       = @"^\s*CATALOG\s*=\s*(?<value>\w+)";
+        const string DISC_CATALOG       = @"^\s*CATALOG\s*=\s*(?<value>[\x21-\x7F]{13})";
         const string SESSION_PREGAP     = @"^\s*PreGapMode\s*=\s*(?<value>\d+)";
         const string SESSION_SUBCHANNEL = @"^\s*PreGapSubC\s*=\s*(?<value>\d+)";
         const string ENTRY_SESSION      = @"^\s*Session\s*=\s*(?<value>\d+)";

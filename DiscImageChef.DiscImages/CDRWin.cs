@@ -156,7 +156,7 @@ namespace DiscImageChef.DiscImages
         const string REGEX_BARCODE    = @"\bUPC_EAN\s+(?<barcode>[\d]{12,13})$";
         const string REGEX_COMMENT    = @"\bREM\s+(?<comment>.+)$";
         const string REGEX_CDTEXT     = @"\bCDTEXTFILE\s+(?<filename>.+)$";
-        const string REGEX_MCN        = @"\bCATALOG\s+(?<catalog>\d{13})$";
+        const string REGEX_MCN        = @"^\s*CATALOG\s*(?<catalog>[\x21-\x7F]{13})$";
         const string REGEX_TITLE      = @"\bTITLE\s+(?<title>.+)$";
         const string REGEX_GENRE      = @"\bGENRE\s+(?<genre>.+)$";
         const string REGEX_ARRANGER   = @"\bARRANGER\s+(?<arranger>.+)$";
