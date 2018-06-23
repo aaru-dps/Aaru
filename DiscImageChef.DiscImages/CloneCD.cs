@@ -1445,7 +1445,10 @@ namespace DiscImageChef.DiscImages
                     catalog = Encoding.ASCII.GetString(data);
                     return true;
                 case MediaTagType.CD_FullTOC:
-                    fulltoc = data;
+                    fulltoc = new byte[data.Length + 2];
+                    Array.Copy(data, 0, fulltoc, 2, data.Length);
+                    fulltoc[0] = (byte)((data.Length & 0xFF00) >> 8);
+                    fulltoc[1] = (byte)(data.Length & 0xFF);
                     return true;
                 default:
                     ErrorMessage = $"Unsupported media tag {tag}";
@@ -1755,6 +1758,8 @@ namespace DiscImageChef.DiscImages
                 descriptorStream.WriteLine("PreGapMode=0");
                 descriptorStream.WriteLine("PreGapSubC=0");
             }
+
+            if(nullableToc == null) System.Console.WriteLine("Using fake toc");
 
             for(int i = 0; i < toc.TrackDescriptors.Length; i++)
             {
