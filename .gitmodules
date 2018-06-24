@@ -4,3 +4,6 @@
 [submodule "cuetoolsnet"]
 	path = cuetoolsnet
 	url = https://github.com/claunia/cuetoolsnet.git
+[submodule "wiki"]
+	path = wiki
+	url = git@github.com:claunia/DiscImageChef.wiki.git
