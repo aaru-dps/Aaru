@@ -32,7 +32,7 @@ Copyright (C) 2011-2018 Natalia Portillo
 #ifndef DIC_FSTESTER_GETTER_MAIN_H
 #define DIC_FSTESTER_GETTER_MAIN_H
 
-#define DIC_FSTESTER_VERSION "0.1"
+#define DIC_FSTESTER_VERSION "4.5.99.1663"
 #define DIC_COPYRIGHT "Copyright (C) 2011-2018 Natalia Portillo"
 
 #if defined(__alpha__) || defined (_M_ALPHA)

@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.0.1663</Version>
+    <Version>4.5.99.1663</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © {copyright:2011} Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
