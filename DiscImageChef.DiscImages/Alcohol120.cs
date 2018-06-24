@@ -1912,6 +1912,21 @@ namespace DiscImageChef.DiscImages
                     (byte hour, byte minute, byte second, byte frame) leadinPmsf =
                         LbaToMsf(lastTrack.TrackEndSector + 1);
 
+                    byte               discTypeToc = 0;
+                    FullTOC.CDFullTOC? decodedToc  = FullTOC.Decode(fullToc);
+                    if(decodedToc.HasValue &&
+                       decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT == 0xA0))
+                        discTypeToc = decodedToc.Value.TrackDescriptors
+                                                .First(t => t.SessionNumber == i && t.POINT == 0xA0).PSEC;
+                    else
+                        discTypeToc = (byte)(imageInfo.MediaType == MediaType.CDI
+                                                 ? 0x10
+                                                 : writingTracks.Any(t => t.TrackType == TrackType.CdMode2Form1 ||
+                                                                          t.TrackType == TrackType.CdMode2Form2 ||
+                                                                          t.TrackType == TrackType.CdMode2Formless)
+                                                     ? 0x20
+                                                     : 0);
+
                     thisSessionTracks.Add(0xA0,
                                           new AlcoholTrack
                                           {
@@ -1920,7 +1935,8 @@ namespace DiscImageChef.DiscImages
                                               mode     = AlcoholTrackMode.NoData,
                                               point    = 0xA0,
                                               unknown  = new byte[18],
-                                              unknown2 = new byte[24]
+                                              unknown2 = new byte[24],
+                                              psec     = discTypeToc
                                           });
 
                     thisSessionTracks.Add(0xA1,
@@ -1956,6 +1972,9 @@ namespace DiscImageChef.DiscImages
                         trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
                         if(trackControl == 0 && track.TrackType != TrackType.Audio)
                             trackControl = (byte)CdFlags.DataTrack;
+
+                        System.Console.WriteLine("ttyp {0} alctype {1}", track.TrackType,
+                                                 TrackTypeToAlcohol(track.TrackType));
 
                         thisSessionTracks.Add((int)track.TrackSequence, new AlcoholTrack
                         {
