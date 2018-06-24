@@ -1,4 +1,4 @@
-# [4.5.0.0] - 2018-06-24
+# [4.5.0.1663] - 2018-06-24
 ## Added
 ### - Alcohol 120% disc image
 - 010editor template.
@@ -838,7 +838,7 @@
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
-[4.5.0.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.5.0.0
+[4.5.0.1663]: https://github.com/claunia/DiscImageChef/releases/tag/v4.5.0.1663
 [4.0.1.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.0.1.0
 [4.0.0.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.0.0.0
 [3.0.0.0]: https://github.com/claunia/DiscImageChef/releases/tag/v3.0.0.0
