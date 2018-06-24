@@ -184,6 +184,7 @@
 
 ### - Dumping
 - Correctly detect CD-i, CD+ and CD-ROM XA.
+- Correctly detect Mode 2 Form 1 and Form 2.
 - Do not retry when retry passes are zero.
 - Do not try to read multisession lead-out/lead-in as they result in errors that are not really there.
 - Get correct track flags.

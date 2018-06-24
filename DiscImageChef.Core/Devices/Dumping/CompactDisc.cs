@@ -647,9 +647,25 @@ namespace DiscImageChef.Core.Devices.Dumping
                         tracks[t].TrackType = TrackType.CdMode1;
                         break;
                     case 2:
-                        DicConsole.WriteLine("Track {0} is MODE2", tracks[t].TrackSequence);
-                        dumpLog.WriteLine("Track {0} is MODE2", tracks[t].TrackSequence);
-                        tracks[t].TrackType = TrackType.CdMode2Formless;
+                        if(dskType == MediaType.CDI)
+                        {
+                            DicConsole.WriteLine("Track {0} is MODE2", tracks[t].TrackSequence);
+                            dumpLog.WriteLine("Track {0} is MODE2", tracks[t].TrackSequence);
+                            tracks[t].TrackType = TrackType.CdMode2Formless;
+                            break;
+                        }
+
+                        if((readBuffer[0x012] & 0x20) == 0x20) // mode 2 form 2
+                        {
+                            DicConsole.WriteLine("Track {0} is MODE2 FORM 2", tracks[t].TrackSequence);
+                            dumpLog.WriteLine("Track {0} is MODE2 FORM 2", tracks[t].TrackSequence);
+                            tracks[t].TrackType = TrackType.CdMode2Form2;
+                            break;
+                        }
+
+                        DicConsole.WriteLine("Track {0} is MODE2 FORM 1", tracks[t].TrackSequence);
+                        dumpLog.WriteLine("Track {0} is MODE2 FORM 1", tracks[t].TrackSequence);
+                        tracks[t].TrackType = TrackType.CdMode2Form1;
                         break;
                     default:
                         DicConsole.WriteLine("Track {0} is unknown mode {1}", tracks[t].TrackSequence, readBuffer[15]);
