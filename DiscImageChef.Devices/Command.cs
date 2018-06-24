@@ -230,8 +230,7 @@ namespace DiscImageChef.Devices
                        (Environment.OSVersion.ServicePack == "Service Pack 1" ||
                         Environment.OSVersion.ServicePack == "") ||
                        Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
-                        return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
-                                                              protocol, ref buffer, timeout, out duration, out sense);
+                        throw new InvalidOperationException("Windows XP or earlier is not supported.");
 
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
                     if(Environment.OSVersion.Version.Major <= 4)
@@ -316,8 +315,7 @@ namespace DiscImageChef.Devices
                        (Environment.OSVersion.ServicePack == "Service Pack 1" ||
                         Environment.OSVersion.ServicePack == "") ||
                        Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
-                        return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
-                                                              protocol, ref buffer, timeout, out duration, out sense);
+                        throw new InvalidOperationException("Windows XP or earlier is not supported.");
 
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
                     if(Environment.OSVersion.Version.Major <= 4)
