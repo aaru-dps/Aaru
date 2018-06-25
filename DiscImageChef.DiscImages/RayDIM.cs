@@ -39,8 +39,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Exceptions;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
-using DiscImageChef.Filters;
 using Schemas;
 
 namespace DiscImageChef.DiscImages

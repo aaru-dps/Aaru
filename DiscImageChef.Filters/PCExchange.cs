@@ -36,6 +36,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Filters
 {

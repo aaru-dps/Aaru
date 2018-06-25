@@ -28,6 +28,7 @@
 
 using System.IO;
 using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Filters;
 using NUnit.Framework;
 

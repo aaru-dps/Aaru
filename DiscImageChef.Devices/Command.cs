@@ -31,12 +31,12 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices.FreeBSD;
 using DiscImageChef.Devices.Windows;
-using DiscImageChef.Interop;
 using Microsoft.Win32.SafeHandles;
-using PlatformID = DiscImageChef.Interop.PlatformID;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
 {

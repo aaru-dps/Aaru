@@ -32,8 +32,10 @@
 
 using System;
 using System.IO;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
+using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {

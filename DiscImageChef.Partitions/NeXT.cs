@@ -36,8 +36,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
 
 // Information learnt from XNU source and testing against real disks
 namespace DiscImageChef.Partitions

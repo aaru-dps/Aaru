@@ -35,8 +35,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
 using Schemas;
 // UNICOS is ILP64 so let's think everything is 64-bit
 using blkno_t = System.Int64;

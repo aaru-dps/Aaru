@@ -33,7 +33,8 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {

@@ -33,7 +33,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using DiscImageChef.Console;
-using PlatformID = DiscImageChef.Interop.PlatformID;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
 {

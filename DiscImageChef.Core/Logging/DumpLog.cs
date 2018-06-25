@@ -33,10 +33,10 @@
 using System;
 using System.IO;
 using System.Reflection;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Devices;
-using DiscImageChef.Interop;
-using PlatformID = DiscImageChef.Interop.PlatformID;
-using Version = DiscImageChef.Interop.Version;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Logging
 {

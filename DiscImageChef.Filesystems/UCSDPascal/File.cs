@@ -32,6 +32,7 @@
 
 using System;
 using System.Linq;
+using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
 {

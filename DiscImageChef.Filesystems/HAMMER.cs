@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;

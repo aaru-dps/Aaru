@@ -29,6 +29,7 @@
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;

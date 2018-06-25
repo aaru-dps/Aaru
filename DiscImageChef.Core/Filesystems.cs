@@ -33,7 +33,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Core
 {

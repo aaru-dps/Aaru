@@ -33,6 +33,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.Bluray;
@@ -40,8 +43,6 @@ using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Metadata;
 using Schemas;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;

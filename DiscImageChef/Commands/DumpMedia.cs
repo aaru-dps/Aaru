@@ -36,13 +36,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Dumping;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Metadata;
 using Schemas;
 
 namespace DiscImageChef.Commands

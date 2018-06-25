@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.Filesystems.CPM
 {

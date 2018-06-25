@@ -33,6 +33,9 @@
 using System;
 using System.Linq;
 using System.Text;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.Bluray;
@@ -41,11 +44,10 @@ using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.Xbox;
-using DiscImageChef.DiscImages;
 using Schemas;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Session = DiscImageChef.DiscImages.Session;
+using Session = DiscImageChef.CommonTypes.Structs.Session;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core

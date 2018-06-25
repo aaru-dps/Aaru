@@ -35,6 +35,7 @@
 using System;
 using System.IO;
 using System.Text;
+using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Checksums
 {

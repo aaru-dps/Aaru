@@ -31,9 +31,10 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {

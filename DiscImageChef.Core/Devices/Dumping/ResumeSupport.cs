@@ -32,11 +32,11 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.Metadata;
-using Extents;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Metadata;
 using Schemas;
-using PlatformID = DiscImageChef.Interop.PlatformID;
-using Version = DiscImageChef.Interop.Version;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -116,7 +116,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 currentTry = new DumpHardwareType
                 {
-                    Software     = Metadata.Version.GetSoftwareType(),
+                    Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
                     Manufacturer = manufacturer,
                     Model        = model,
                     Serial       = serial
@@ -135,7 +135,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 };
                 currentTry = new DumpHardwareType
                 {
-                    Software     = Metadata.Version.GetSoftwareType(),
+                    Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
                     Manufacturer = manufacturer,
                     Model        = model,
                     Serial       = serial

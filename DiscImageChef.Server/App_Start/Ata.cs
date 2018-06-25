@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Metadata;
 using static DiscImageChef.Decoders.ATA.Identify;
 
 namespace DiscImageChef.Server.App_Start

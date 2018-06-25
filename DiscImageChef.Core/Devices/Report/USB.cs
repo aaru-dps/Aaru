@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
-using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {

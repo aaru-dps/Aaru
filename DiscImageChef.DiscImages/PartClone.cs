@@ -36,9 +36,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Exceptions;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
-using DiscImageChef.Filters;
-using Extents;
 using Schemas;
 
 namespace DiscImageChef.DiscImages

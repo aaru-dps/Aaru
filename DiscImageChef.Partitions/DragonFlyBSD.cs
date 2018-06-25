@@ -34,7 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Partitions
 {

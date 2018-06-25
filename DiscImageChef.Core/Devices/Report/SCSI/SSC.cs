@@ -33,11 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
-using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {

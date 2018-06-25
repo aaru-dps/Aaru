@@ -50,7 +50,6 @@
     <Compile Include="Atari.cs" />
     <Compile Include="MBR.cs" />
     <Compile Include="NeXT.cs" />
-    <Compile Include="IPartition.cs" />
     <Compile Include="RDB.cs" />
     <Compile Include="Sun.cs" />
     <Compile Include="GPT.cs" />

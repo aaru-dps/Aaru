@@ -36,15 +36,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filesystems;
-using DiscImageChef.Metadata;
 using Schemas;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Session = DiscImageChef.DiscImages.Session;
+using Session = DiscImageChef.CommonTypes.Structs.Session;
 using TrackType = Schemas.TrackType;
 
 namespace DiscImageChef.Core
@@ -360,22 +361,22 @@ namespace DiscImageChef.Core
                 TrackType xmlTrk = new TrackType();
                 switch(trk.TrackType)
                 {
-                    case DiscImages.TrackType.Audio:
+                    case CommonTypes.Enums.TrackType.Audio:
                         xmlTrk.TrackType1 = TrackTypeTrackType.audio;
                         break;
-                    case DiscImages.TrackType.CdMode2Form2:
+                    case CommonTypes.Enums.TrackType.CdMode2Form2:
                         xmlTrk.TrackType1 = TrackTypeTrackType.m2f2;
                         break;
-                    case DiscImages.TrackType.CdMode2Formless:
+                    case CommonTypes.Enums.TrackType.CdMode2Formless:
                         xmlTrk.TrackType1 = TrackTypeTrackType.mode2;
                         break;
-                    case DiscImages.TrackType.CdMode2Form1:
+                    case CommonTypes.Enums.TrackType.CdMode2Form1:
                         xmlTrk.TrackType1 = TrackTypeTrackType.m2f1;
                         break;
-                    case DiscImages.TrackType.CdMode1:
+                    case CommonTypes.Enums.TrackType.CdMode1:
                         xmlTrk.TrackType1 = TrackTypeTrackType.mode1;
                         break;
-                    case DiscImages.TrackType.Data:
+                    case CommonTypes.Enums.TrackType.Data:
                         switch(sidecar.OpticalDisc[0].DiscType)
                         {
                             case "BD":
@@ -681,7 +682,7 @@ namespace DiscImageChef.Core
                     dskType = MediaType.XGD3;
             }
 
-            Metadata.MediaType.MediaTypeToString(dskType, out string dscType, out string dscSubType);
+            CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string dscType, out string dscSubType);
             sidecar.OpticalDisc[0].DiscType    = dscType;
             sidecar.OpticalDisc[0].DiscSubType = dscSubType;
             Statistics.AddMedia(dskType, false);

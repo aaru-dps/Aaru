@@ -28,8 +28,8 @@
 
 using System.IO;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.DiscImages;
-using DiscImageChef.Filesystems;
 using DiscImageChef.Filesystems.ISO9660;
 using DiscImageChef.Filters;
 using NUnit.Framework;

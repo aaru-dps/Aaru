@@ -37,10 +37,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Filters;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Exceptions;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 using static DiscImageChef.Decoders.ATA.Identify;
-using Version = DiscImageChef.Interop.Version;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.DiscImages
 {

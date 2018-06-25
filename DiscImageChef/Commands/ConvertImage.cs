@@ -35,13 +35,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using DiscImageChef.Metadata;
 using Schemas;
-using Version = DiscImageChef.Interop.Version;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Commands
 {
@@ -261,7 +264,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            DiscImages.ImageInfo metadata = new DiscImages.ImageInfo
+            CommonTypes.Structs.ImageInfo metadata = new CommonTypes.Structs.ImageInfo
             {
                 Application           = "DiscImageChef",
                 ApplicationVersion    = Version.GetVersion(),

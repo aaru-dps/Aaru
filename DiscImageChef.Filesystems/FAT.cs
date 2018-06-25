@@ -37,8 +37,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Helpers;
 using Schemas;
 

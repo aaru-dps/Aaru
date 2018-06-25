@@ -36,15 +36,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using DiscImageChef.Metadata;
-using Extents;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
@@ -610,14 +612,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DicConsole.WriteLine();
                         string xmlDskTyp, xmlDskSubTyp;
                         if(dev.IsCompactFlash)
-                            Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp,
-                                                                 out xmlDskSubTyp);
+                            CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp,
+                                                                             out xmlDskSubTyp);
                         else if(dev.IsPcmcia)
-                            Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI, out xmlDskTyp,
-                                                                 out xmlDskSubTyp);
+                            CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI, out xmlDskTyp,
+                                                                             out xmlDskSubTyp);
                         else
-                            Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp,
-                                                                 out xmlDskSubTyp);
+                            CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp,
+                                                                             out xmlDskSubTyp);
                         sidecar.BlockMedia[0].DiskType          = xmlDskTyp;
                         sidecar.BlockMedia[0].DiskSubType       = xmlDskSubTyp;
                         sidecar.BlockMedia[0].Interface         = "ATA";

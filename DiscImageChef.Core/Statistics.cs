@@ -37,11 +37,11 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes.Interop;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Devices;
-using DiscImageChef.Interop;
-using DiscImageChef.Metadata;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Version = DiscImageChef.Interop.Version;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core
 {

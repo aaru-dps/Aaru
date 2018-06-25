@@ -32,9 +32,9 @@
 
 using System;
 using System.Linq;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filters;
 
 namespace DiscImageChef.Core
 {

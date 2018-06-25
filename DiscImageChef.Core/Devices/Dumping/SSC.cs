@@ -36,14 +36,14 @@ using System.IO;
 using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
-using DiscImageChef.Metadata;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Version = DiscImageChef.Metadata.Version;
+using Version = DiscImageChef.CommonTypes.Metadata.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -646,7 +646,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             sidecar.BlockMedia[0].Checksums  = dataChk.End().ToArray();
             sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-            Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
+            CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
             sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
             sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
             // TODO: Implement device firmware revision

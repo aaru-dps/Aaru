@@ -64,7 +64,6 @@
         <e p="CRC64Context.cs" t="Include" />
         <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
         <e p="FletcherContext.cs" t="Include" />
-        <e p="IChecksum.cs" t="Include" />
         <e p="MD5Context.cs" t="Include" />
         <e p="RIPEMD160Context.cs" t="Include" />
         <e p="ReedSolomon.cs" t="Include" />
@@ -84,10 +83,57 @@
       </e>
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
         <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
+        <e p="Enums" t="Include">
+          <e p="Images.cs" t="Include" />
+        </e>
+        <e p="Exceptions" t="Include">
+          <e p="Images.cs" t="Include" />
+        </e>
+        <e p="Extents" t="Include">
+          <e p="ExtentsByte.cs" t="Include" />
+          <e p="ExtentsConverter.cs" t="Include" />
+          <e p="ExtentsInt.cs" t="Include" />
+          <e p="ExtentsLong.cs" t="Include" />
+          <e p="ExtentsSByte.cs" t="Include" />
+          <e p="ExtentsShort.cs" t="Include" />
+          <e p="ExtentsUInt.cs" t="Include" />
+          <e p="ExtentsULong.cs" t="Include" />
+          <e p="ExtentsUShort.cs" t="Include" />
+        </e>
+        <e p="Filters.cs" t="Include" />
         <e p="Geometry.cs" t="Include" />
+        <e p="Interfaces" t="Include">
+          <e p="IChecksum.cs" t="Include" />
+          <e p="IFilesystem.cs" t="Include" />
+          <e p="IFilter.cs" t="Include" />
+          <e p="IFloppyImage.cs" t="Include" />
+          <e p="IMediaImage.cs" t="Include" />
+          <e p="IPartition.cs" t="Include" />
+          <e p="IReadOnlyFilesystem.cs" t="Include" />
+          <e p="IWritableFloppyImage.cs" t="Include" />
+          <e p="IWritableImage.cs" t="Include" />
+        </e>
+        <e p="Interop" t="Include">
+          <e p="DetectOS.cs" t="Include" />
+          <e p="PlatformID.cs" t="Include" />
+          <e p="Version.cs" t="Include" />
+        </e>
         <e p="MediaType.cs" t="Include" />
         <e p="MediaTypeFromSCSI.cs" t="Include" />
+        <e p="Metadata" t="Include">
+          <e p="DeviceReport.cs" t="Include" />
+          <e p="Dimensions.cs" t="Include" />
+          <e p="MediaType.cs" t="Include" />
+          <e p="Resume.cs" t="Include" />
+          <e p="Statistics.cs" t="Include" />
+          <e p="Version.cs" t="Include" />
+        </e>
         <e p="Partition.cs" t="Include" />
+        <e p="PluginBase.cs" t="Include" />
+        <e p="Structs" t="Include">
+          <e p="Filesystems.cs" t="Include" />
+          <e p="Images.cs" t="Include" />
+        </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -182,7 +228,6 @@
         </e>
         <e p="Options.cs" t="Include" />
         <e p="Partitions.cs" t="Include" />
-        <e p="PluginBase.cs" t="Include" />
         <e p="PrintScsiModePages.cs" t="Include" />
         <e p="Remote.cs" t="Include" />
         <e p="Sidecar" t="Include">
@@ -462,15 +507,9 @@
         <e p="DiscJuggler.cs" t="Include" />
         <e p="DiskCopy42.cs" t="Include" />
         <e p="DriDiskCopy.cs" t="Include" />
-        <e p="Enums.cs" t="Include" />
-        <e p="Exceptions.cs" t="Include" />
         <e p="GDI.cs" t="Include" />
         <e p="HDCopy.cs" t="Include" />
-        <e p="IFloppyImage.cs" t="Include" />
         <e p="IMD.cs" t="Include" />
-        <e p="IMediaImage.cs" t="Include" />
-        <e p="IWritableFloppyImage.cs" t="Include" />
-        <e p="IWritableImage.cs" t="Include" />
         <e p="KryoFlux.cs" t="Include" />
         <e p="MaxiDisk.cs" t="Include" />
         <e p="NDIF.cs" t="Include" />
@@ -485,7 +524,6 @@
         <e p="RayDIM.cs" t="Include" />
         <e p="RsIde.cs" t="Include" />
         <e p="SaveDskF.cs" t="Include" />
-        <e p="Structs.cs" t="Include" />
         <e p="SuperCardPro.cs" t="Include" />
         <e p="T98.cs" t="Include" />
         <e p="TeleDisk.cs" t="Include" />
@@ -560,8 +598,6 @@
         <e p="HAMMER.cs" t="Include" />
         <e p="HPFS.cs" t="Include" />
         <e p="HPOFS.cs" t="Include" />
-        <e p="IFilesystem.cs" t="Include" />
-        <e p="IReadOnlyFilesystem.cs" t="Include" />
         <e p="ISO9660" t="Include">
           <e p="Consts" t="Include">
             <e p="AAIP.cs" t="Include" />
@@ -628,7 +664,6 @@
         <e p="SFS.cs" t="Include" />
         <e p="SolarFS.cs" t="Include" />
         <e p="Squash.cs" t="Include" />
-        <e p="Structs.cs" t="Include" />
         <e p="Symbian.cs" t="Include" />
         <e p="SysV.cs" t="Include" />
         <e p="UCSDPascal" t="Include">
@@ -666,10 +701,8 @@
         <e p="AppleSingle.cs" t="Include" />
         <e p="BZip2.cs" t="Include" />
         <e p="DiscImageChef.Filters.csproj" t="IncludeRecursive" />
-        <e p="Filters.cs" t="Include" />
         <e p="ForcedSeekStream.cs" t="Include" />
         <e p="GZip.cs" t="Include" />
-        <e p="IFilter.cs" t="Include" />
         <e p="LZip.cs" t="Include" />
         <e p="MacBinary.cs" t="Include" />
         <e p="OffsetStream.cs" t="Include" />
@@ -695,16 +728,6 @@
         <e p="CountBits.cs" t="Include" />
         <e p="DateHandlers.cs" t="Include" />
         <e p="DiscImageChef.Helpers.csproj" t="IncludeRecursive" />
-        <e p="Extents" t="Include">
-          <e p="ExtentsByte.cs" t="Include" />
-          <e p="ExtentsInt.cs" t="Include" />
-          <e p="ExtentsLong.cs" t="Include" />
-          <e p="ExtentsSByte.cs" t="Include" />
-          <e p="ExtentsShort.cs" t="Include" />
-          <e p="ExtentsUInt.cs" t="Include" />
-          <e p="ExtentsULong.cs" t="Include" />
-          <e p="ExtentsUShort.cs" t="Include" />
-        </e>
         <e p="PrintHex.cs" t="Include" />
         <e p="StringHandlers.cs" t="Include" />
         <e p="Swapping.cs" t="Include" />
@@ -713,38 +736,6 @@
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
               <e p="DiscImageChef.Helpers.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-      </e>
-      <e p="DiscImageChef.Interop" t="IncludeRecursive">
-        <e p="DetectOS.cs" t="Include" />
-        <e p="DiscImageChef.Interop.csproj" t="IncludeRecursive" />
-        <e p="PlatformID.cs" t="Include" />
-        <e p="Version.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="DiscImageChef.Interop.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-      </e>
-      <e p="DiscImageChef.Metadata" t="IncludeRecursive">
-        <e p="DeviceReport.cs" t="Include" />
-        <e p="Dimensions.cs" t="Include" />
-        <e p="DiscImageChef.Metadata.csproj" t="IncludeRecursive" />
-        <e p="ExtentsConverter.cs" t="Include" />
-        <e p="MediaType.cs" t="Include" />
-        <e p="Resume.cs" t="Include" />
-        <e p="Statistics.cs" t="Include" />
-        <e p="Version.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="DiscImageChef.Metadata.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -760,7 +751,6 @@
         <e p="DragonFlyBSD.cs" t="Include" />
         <e p="GPT.cs" t="Include" />
         <e p="Human68k.cs" t="Include" />
-        <e p="IPartition.cs" t="Include" />
         <e p="MBR.cs" t="Include" />
         <e p="NeXT.cs" t="Include" />
         <e p="PC98.cs" t="Include" />

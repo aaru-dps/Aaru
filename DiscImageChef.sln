@@ -21,11 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Decoders", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Devices", "DiscImageChef.Devices\DiscImageChef.Devices.csproj", "{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Interop", "DiscImageChef.Interop\DiscImageChef.Interop.csproj", "{9183F2E0-A879-4F23-9EE3-C6908F1332B2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Console", "DiscImageChef.Console\DiscImageChef.Console.csproj", "{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Metadata", "DiscImageChef.Metadata\DiscImageChef.Metadata.csproj", "{9F213318-5CB8-4066-A757-074489C9F818}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Settings", "DiscImageChef.Settings\DiscImageChef.Settings.csproj", "{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}"
 EndProject
@@ -83,18 +79,10 @@ Global
 		{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}.Debug|x86.Build.0 = Debug|Any CPU
 		{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}.Release|x86.ActiveCfg = Release|Any CPU
 		{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}.Release|x86.Build.0 = Release|Any CPU
-		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Debug|x86.Build.0 = Debug|Any CPU
-		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.ActiveCfg = Release|Any CPU
-		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.Build.0 = Release|Any CPU
 		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Debug|x86.Build.0 = Debug|Any CPU
 		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Release|x86.ActiveCfg = Release|Any CPU
 		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Release|x86.Build.0 = Release|Any CPU
-		{9F213318-5CB8-4066-A757-074489C9F818}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9F213318-5CB8-4066-A757-074489C9F818}.Debug|x86.Build.0 = Debug|Any CPU
-		{9F213318-5CB8-4066-A757-074489C9F818}.Release|x86.ActiveCfg = Release|Any CPU
-		{9F213318-5CB8-4066-A757-074489C9F818}.Release|x86.Build.0 = Release|Any CPU
 		{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}.Debug|x86.Build.0 = Debug|Any CPU
 		{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}.Release|x86.ActiveCfg = Release|Any CPU

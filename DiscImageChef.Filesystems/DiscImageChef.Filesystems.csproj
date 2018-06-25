@@ -53,7 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HPOFS.cs" />
-    <Compile Include="IReadOnlyFilesystem.cs" />
     <Compile Include="PCFX.cs" />
     <Compile Include="AmigaDOS.cs" />
     <Compile Include="AppleHFS.cs" />
@@ -69,7 +68,6 @@
     <Compile Include="ODS.cs" />
     <Compile Include="Opera.cs" />
     <Compile Include="PCEngine.cs" />
-    <Compile Include="IFilesystem.cs" />
     <Compile Include="ProDOS.cs" />
     <Compile Include="ReFS.cs" />
     <Compile Include="SolarFS.cs" />
@@ -80,7 +78,6 @@
     <Compile Include="Nintendo.cs" />
     <Compile Include="BTRFS.cs" />
     <Compile Include="APFS.cs" />
-    <Compile Include="Structs.cs" />
     <Compile Include="LisaFS\LisaFS.cs" />
     <Compile Include="LisaFS\Consts.cs" />
     <Compile Include="LisaFS\Structs.cs" />
@@ -204,10 +201,6 @@
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Metadata\DiscImageChef.Metadata.csproj">
-      <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
-      <Name>DiscImageChef.Metadata</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>

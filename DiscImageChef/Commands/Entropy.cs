@@ -34,9 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands

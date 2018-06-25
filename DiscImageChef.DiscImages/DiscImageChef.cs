@@ -81,14 +81,18 @@ using CUETools.Codecs;
 using CUETools.Codecs.FLAKE;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Exceptions;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SecureDigital;
-using DiscImageChef.Filters;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
+using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
 namespace DiscImageChef.DiscImages
