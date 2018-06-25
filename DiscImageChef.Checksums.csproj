@@ -46,7 +46,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IChecksum.cs" />
     <Compile Include="SpamSumContext.cs" />
     <Compile Include="Adler32Context.cs" />
     <Compile Include="CDChecksums.cs" />
@@ -63,6 +62,7 @@
     <Compile Include="SHA512Context.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
