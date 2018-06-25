@@ -88,11 +88,6 @@
     <Compile Include="Structs\Images.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\LICENSE.LGPL">
-      <Link>LICENSE.LGPL</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
   </ItemGroup>
