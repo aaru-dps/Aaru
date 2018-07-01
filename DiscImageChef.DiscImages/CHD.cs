@@ -290,7 +290,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     DateTime end = DateTime.UtcNow;
-                    System.Console.WriteLine("Took {0} seconds", (end - start).TotalSeconds);
+                    DicConsole.DebugWriteLine("CHD plugin","Took {0} seconds", (end - start).TotalSeconds);
 
                     imageInfo.MediaType    = MediaType.GENERIC_HDD;
                     imageInfo.Sectors      = hdrV1.hunksize * hdrV1.totalhunks;
@@ -363,7 +363,7 @@ namespace DiscImageChef.DiscImages
                     }
 
                     DateTime end = DateTime.UtcNow;
-                    System.Console.WriteLine("Took {0} seconds", (end - start).TotalSeconds);
+                    DicConsole.DebugWriteLine("CHD plugin","Took {0} seconds", (end - start).TotalSeconds);
 
                     imageInfo.MediaType    = MediaType.GENERIC_HDD;
                     imageInfo.Sectors      = hdrV2.hunksize * hdrV2.totalhunks;
@@ -419,7 +419,7 @@ namespace DiscImageChef.DiscImages
                     stream.Read(hunkMap, 0, hunkMap.Length);
 
                     DateTime end = DateTime.UtcNow;
-                    System.Console.WriteLine("Took {0} seconds", (end - start).TotalSeconds);
+                    DicConsole.DebugWriteLine("CHD plugin","Took {0} seconds", (end - start).TotalSeconds);
 
                     nextMetaOff = hdrV3.metaoffset;
 
@@ -464,7 +464,7 @@ namespace DiscImageChef.DiscImages
                     stream.Read(hunkMap, 0, hunkMap.Length);
 
                     DateTime end = DateTime.UtcNow;
-                    System.Console.WriteLine("Took {0} seconds", (end - start).TotalSeconds);
+                    DicConsole.DebugWriteLine("CHD plugin","Took {0} seconds", (end - start).TotalSeconds);
 
                     nextMetaOff = hdrV4.metaoffset;
 
@@ -546,7 +546,7 @@ namespace DiscImageChef.DiscImages
                         }
 
                         DateTime end = DateTime.UtcNow;
-                        System.Console.WriteLine("Took {0} seconds", (end - start).TotalSeconds);
+                        DicConsole.DebugWriteLine("CHD plugin","Took {0} seconds", (end - start).TotalSeconds);
                     }
                     else throw new ImageNotSupportedException("Cannot read compressed CHD version 5");
 

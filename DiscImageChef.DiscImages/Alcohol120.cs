@@ -1979,9 +1979,6 @@ namespace DiscImageChef.DiscImages
                         if(trackControl == 0 && track.TrackType != TrackType.Audio)
                             trackControl = (byte)CdFlags.DataTrack;
 
-                        System.Console.WriteLine("ttyp {0} alctype {1}", track.TrackType,
-                                                 TrackTypeToAlcohol(track.TrackType));
-
                         thisSessionTracks.Add((int)track.TrackSequence, new AlcoholTrack
                         {
                             mode = TrackTypeToAlcohol(track.TrackType),

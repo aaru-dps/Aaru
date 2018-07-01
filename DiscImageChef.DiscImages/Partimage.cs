@@ -436,11 +436,7 @@ namespace DiscImageChef.DiscImages
             imageStream.Seek(imageOff, SeekOrigin.Begin);
             imageStream.Read(sector, 0, (int)imageInfo.SectorSize);
 
-            if(sectorCache.Count > MAX_CACHED_SECTORS)
-            {
-                System.Console.WriteLine("Cache cleared");
-                sectorCache.Clear();
-            }
+            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 

@@ -253,7 +253,7 @@ namespace DiscImageChef.Devices.Windows
                                 instanceId = Marshal.PtrToStringAuto(ptrInstanceBuf);
 
                                 Marshal.FreeHGlobal(ptrInstanceBuf);
-                                System.Console.WriteLine("InstanceId: {0}", instanceId);
+                                //System.Console.WriteLine("InstanceId: {0}", instanceId);
                                 //break;
                             }
                     }
