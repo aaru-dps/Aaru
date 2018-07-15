@@ -249,7 +249,8 @@ namespace DiscImageChef.DiscImages
                 alcSessions.Add(session.sessionSequence, session);
             }
 
-            long footerOff = 0;
+            long footerOff         = 0;
+            bool oldIncorrectImage = false;
 
             alcTracks = new Dictionary<int, AlcoholTrack>();
             alcToc    = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
@@ -265,6 +266,17 @@ namespace DiscImageChef.DiscImages
                     Marshal.Copy(trkHdr, 0, trkPtr, 80);
                     AlcoholTrack track = (AlcoholTrack)Marshal.PtrToStructure(trkPtr, typeof(AlcoholTrack));
                     Marshal.FreeHGlobal(trkPtr);
+
+                    if(track.mode == AlcoholTrackMode.Mode2F1Alt || track.mode == AlcoholTrackMode.Mode2F1Alt)
+                        oldIncorrectImage = true;
+
+                    // Solve our own mistake here, sorry, but anyway seems Alcohol doesn't support DDCD
+                    if(track.zero > 0)
+                    {
+                        track.pmin        += (byte)(track.zero * 60);
+                        track.zero        =  0;
+                        oldIncorrectImage =  true;
+                    }
 
                     DicConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].mode = {0}", track.mode,
                                               track.point, session.sessionSequence);
@@ -529,6 +541,8 @@ namespace DiscImageChef.DiscImages
                         case AlcoholTrackMode.Mode2:
                         case AlcoholTrackMode.Mode2F1:
                         case AlcoholTrackMode.Mode2F2:
+                        case AlcoholTrackMode.Mode2F1Alt:
+                        case AlcoholTrackMode.Mode2F2Alt:
                             mode2 = true;
                             break;
                     }
@@ -598,6 +612,7 @@ namespace DiscImageChef.DiscImages
                         if(imageInfo.SectorSize < 2336) imageInfo.SectorSize = 2336;
                         break;
                     case AlcoholTrackMode.Mode2F2:
+                    case AlcoholTrackMode.Mode2F2Alt:
                         if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                             imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                         if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
@@ -706,6 +721,9 @@ namespace DiscImageChef.DiscImages
                     imageInfo.MediaType = MediaType.XGD3;
 
             DicConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", imageInfo.MediaType);
+
+            if(oldIncorrectImage)
+                DicConsole.WriteLine("Incorrect Alcohol 120% image created by an old version of DiscImageChef. Convert image to correct it.");
 
             return true;
         }
@@ -834,6 +852,7 @@ namespace DiscImageChef.DiscImages
                     break;
                 }
                 case AlcoholTrackMode.Mode2F2:
+                case AlcoholTrackMode.Mode2F2Alt:
                 {
                     sectorOffset = 24;
                     sectorSize   = 2324;
@@ -1104,6 +1123,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 case AlcoholTrackMode.Mode2F2:
+                case AlcoholTrackMode.Mode2F2Alt:
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSync:
@@ -1258,6 +1278,7 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt:
                 case AlcoholTrackMode.Mode2F2:
+                case AlcoholTrackMode.Mode2F2Alt:
                 case AlcoholTrackMode.Audio:
                 case AlcoholTrackMode.DVD:
                 {
@@ -1446,16 +1467,15 @@ namespace DiscImageChef.DiscImages
                 MediaType.BDR, MediaType.BDRE, MediaType.BDREXL, MediaType.BDROM, MediaType.BDRXL, MediaType.CBHD,
                 MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
                 MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
-                MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.DVDDownload,
-                MediaType.DVDPR, MediaType.DVDPRDL, MediaType.DVDPRW, MediaType.DVDPRWDL, MediaType.DVDR,
-                MediaType.DVDRAM, MediaType.DVDRDL, MediaType.DVDROM, MediaType.DVDRW, MediaType.DVDRWDL, MediaType.EVD,
-                MediaType.FDDVD, MediaType.DTSCD, MediaType.FVD, MediaType.HDDVDR, MediaType.HDDVDRAM,
-                MediaType.HDDVDRDL, MediaType.HDDVDROM, MediaType.HDDVDRW, MediaType.HDDVDRWDL, MediaType.HDVMD,
-                MediaType.HVD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PD650, MediaType.PD650_WORM,
-                MediaType.PS1CD, MediaType.PS2CD, MediaType.PS2DVD, MediaType.PS3BD, MediaType.PS3DVD, MediaType.PS4BD,
-                MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SVOD, MediaType.SATURNCD, MediaType.ThreeDO,
-                MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM, MediaType.UMD, MediaType.VCD, MediaType.VCDHD,
-                MediaType.NeoGeoCD, MediaType.PCFX
+                MediaType.CDV, MediaType.DVDDownload, MediaType.DVDPR, MediaType.DVDPRDL, MediaType.DVDPRW,
+                MediaType.DVDPRWDL, MediaType.DVDR, MediaType.DVDRAM, MediaType.DVDRDL, MediaType.DVDROM,
+                MediaType.DVDRW, MediaType.DVDRWDL, MediaType.EVD, MediaType.FDDVD, MediaType.DTSCD, MediaType.FVD,
+                MediaType.HDDVDR, MediaType.HDDVDRAM, MediaType.HDDVDRDL, MediaType.HDDVDROM, MediaType.HDDVDRW,
+                MediaType.HDDVDRWDL, MediaType.HDVMD, MediaType.HVD, MediaType.JaguarCD, MediaType.MEGACD,
+                MediaType.PD650, MediaType.PD650_WORM, MediaType.PS1CD, MediaType.PS2CD, MediaType.PS2DVD,
+                MediaType.PS3BD, MediaType.PS3DVD, MediaType.PS4BD, MediaType.SuperCDROM2, MediaType.SVCD,
+                MediaType.SVOD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2,
+                MediaType.UDO2_WORM, MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
@@ -1505,9 +1525,6 @@ namespace DiscImageChef.DiscImages
                 case MediaType.CDROMXA:
                 case MediaType.CDRW:
                 case MediaType.CDV:
-                case MediaType.DDCD:
-                case MediaType.DDCDR:
-                case MediaType.DDCDRW:
                 case MediaType.DTSCD:
                 case MediaType.JaguarCD:
                 case MediaType.MEGACD:
@@ -1909,8 +1926,7 @@ namespace DiscImageChef.DiscImages
                         firstTrackControl = (byte)CdFlags.DataTrack;
                     if(lastTrackControl == 0 && lastTrack.TrackType != TrackType.Audio)
                         lastTrackControl = (byte)CdFlags.DataTrack;
-                    (byte hour, byte minute, byte second, byte frame) leadinPmsf =
-                        LbaToMsf(lastTrack.TrackEndSector + 1);
+                    (byte minute, byte second, byte frame) leadinPmsf = LbaToMsf(lastTrack.TrackEndSector + 1);
 
                     byte               discTypeToc = 0;
                     FullTOC.CDFullTOC? decodedToc  = FullTOC.Decode(fullToc);
@@ -1954,7 +1970,7 @@ namespace DiscImageChef.DiscImages
                                           new AlcoholTrack
                                           {
                                               adrCtl   = (byte)((1 << 4) + firstTrackControl),
-                                              zero     = leadinPmsf.hour,
+                                              zero     = 0,
                                               pmin     = leadinPmsf.minute,
                                               psec     = leadinPmsf.second,
                                               pframe   = leadinPmsf.frame,
@@ -1968,7 +1984,7 @@ namespace DiscImageChef.DiscImages
 
                     foreach(Track track in writingTracks.Where(t => t.TrackSession == i).OrderBy(t => t.TrackSequence))
                     {
-                        (byte hour, byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
+                        (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
                         trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
                         if(trackControl == 0 && track.TrackType != TrackType.Audio)
                             trackControl = (byte)CdFlags.DataTrack;
@@ -1985,7 +2001,7 @@ namespace DiscImageChef.DiscImages
                                     : AlcoholSubchannelMode.None,
                             adrCtl = (byte)((1 << 4) + trackControl),
                             point  = (byte)track.TrackSequence,
-                            zero   = msf.hour,
+                            zero   = 0,
                             pmin   = msf.minute,
                             psec   = msf.second,
                             pframe = msf.frame,
@@ -2020,20 +2036,18 @@ namespace DiscImageChef.DiscImages
 
                     if(i < sessions)
                     {
-                        (byte hour, byte minute, byte second, byte frame) leadoutAmsf =
+                        (byte minute, byte second, byte frame) leadoutAmsf =
                             LbaToMsf(writingTracks.First(t => t.TrackSession == i + 1).TrackStartSector - 150);
-                        (byte hour, byte minute, byte second, byte frame) leadoutPmsf =
+                        (byte minute, byte second, byte frame) leadoutPmsf =
                             LbaToMsf(writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last()
                                                   .TrackStartSector);
 
                         thisSessionTracks.Add(0xB0,
                                               new AlcoholTrack
                                               {
-                                                  point  = 0xB0,
-                                                  adrCtl = 0x50,
-                                                  zero =
-                                                      (byte)(((leadoutAmsf.hour & 0xF) << 4) +
-                                                             (leadoutPmsf.hour & 0xF)),
+                                                  point    = 0xB0,
+                                                  adrCtl   = 0x50,
+                                                  zero     = 0,
                                                   min      = leadoutAmsf.minute,
                                                   sec      = leadoutAmsf.second,
                                                   frame    = leadoutAmsf.frame,
@@ -2320,8 +2334,9 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Audio:
                 case AlcoholTrackMode.Mode1:
                 case AlcoholTrackMode.Mode2:
-                case AlcoholTrackMode.Mode2F2:
                 case AlcoholTrackMode.Mode2F1:
+                case AlcoholTrackMode.Mode2F2:
+                case AlcoholTrackMode.Mode2F2Alt:
                 case AlcoholTrackMode.Mode2F1Alt: return 2352;
                 case AlcoholTrackMode.DVD: return 2048;
                 default:                   return 0;
@@ -2335,11 +2350,12 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Mode1:
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt: return 2048;
-                case AlcoholTrackMode.Mode2F2: return 2324;
-                case AlcoholTrackMode.Mode2:   return 2336;
-                case AlcoholTrackMode.Audio:   return 2352;
-                case AlcoholTrackMode.DVD:     return 2048;
-                default:                       return 0;
+                case AlcoholTrackMode.Mode2F2:
+                case AlcoholTrackMode.Mode2F2Alt: return 2324;
+                case AlcoholTrackMode.Mode2: return 2336;
+                case AlcoholTrackMode.Audio: return 2352;
+                case AlcoholTrackMode.DVD:   return 2048;
+                default:                     return 0;
             }
         }
 
@@ -2350,10 +2366,11 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Mode1: return TrackType.CdMode1;
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt: return TrackType.CdMode2Form1;
-                case AlcoholTrackMode.Mode2F2: return TrackType.CdMode2Form2;
-                case AlcoholTrackMode.Mode2:   return TrackType.CdMode2Formless;
-                case AlcoholTrackMode.Audio:   return TrackType.Audio;
-                default:                       return TrackType.Data;
+                case AlcoholTrackMode.Mode2F2:
+                case AlcoholTrackMode.Mode2F2Alt: return TrackType.CdMode2Form2;
+                case AlcoholTrackMode.Mode2: return TrackType.CdMode2Formless;
+                case AlcoholTrackMode.Audio: return TrackType.Audio;
+                default:                     return TrackType.Data;
             }
         }
 
@@ -2384,7 +2401,6 @@ namespace DiscImageChef.DiscImages
                 case MediaType.CDROM:
                 case MediaType.CDROMXA:
                 case MediaType.CDV:
-                case MediaType.DDCD:
                 case MediaType.DTSCD:
                 case MediaType.JaguarCD:
                 case MediaType.MEGACD:
@@ -2396,10 +2412,8 @@ namespace DiscImageChef.DiscImages
                 case MediaType.ThreeDO:
                 case MediaType.VCD:
                 case MediaType.VCDHD: return AlcoholMediumType.CD;
-                case MediaType.DDCDR:
                 case MediaType.CDR: return AlcoholMediumType.CDR;
                 case MediaType.CDRW:
-                case MediaType.DDCDRW:
                 case MediaType.CDMRW: return AlcoholMediumType.CDRW;
                 case MediaType.DVDR:
                 case MediaType.DVDRW:
@@ -2425,11 +2439,9 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        static (byte hour, byte minute, byte second, byte frame) LbaToMsf(ulong sector)
+        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector)
         {
-            return ((byte)((sector + 150) / 75 / 60 / 60), (byte)((sector + 150) / 75 / 60 % 60),
-                       (byte)((sector + 150)                                          / 75 % 60),
-                       (byte)((sector + 150)                                               % 75));
+            return ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -2531,9 +2543,10 @@ namespace DiscImageChef.DiscImages
             Audio      = 0xA9,
             Mode1      = 0xAA,
             Mode2      = 0xAB,
-            Mode2F1    = 0xAC,
-            Mode2F2    = 0xAD,
-            Mode2F1Alt = 0xEC
+            Mode2F1    = 0xEC,
+            Mode2F2    = 0xED,
+            Mode2F1Alt = 0xAC,
+            Mode2F2Alt = 0xAD
         }
 
         enum AlcoholSubchannelMode : byte

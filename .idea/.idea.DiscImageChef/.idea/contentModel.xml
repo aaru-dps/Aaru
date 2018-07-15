@@ -437,6 +437,7 @@
         </e>
       </e>
       <e p="DiscImageChef.DiscImages" t="IncludeRecursive">
+        <e p=".syncthing.Alcohol120.cs.tmp" t="Include" />
         <e p="Alcohol120.cs" t="Include" />
         <e p="Anex86.cs" t="Include" />
         <e p="Apple2MG.cs" t="Include" />

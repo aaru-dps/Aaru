@@ -28,8 +28,10 @@ enum <byte> AlcoholTrackMode
     Audio = 0xA9,
     Mode1 = 0xAA,
     Mode2 = 0xAB,
-    Mode2F1 = 0xAC,
-    Mode2F2 = 0xAD,
+    Mode2F1 = 0xEC,
+    Mode2F2 = 0xED,
+    Mode2F1Alt = 0xAC,
+    Mode2F2Alt = 0xAD,
 };
 
 enum <byte> AlcoholSubchannelMode
