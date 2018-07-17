@@ -1567,7 +1567,11 @@ namespace DiscImageChef.DiscImages
                         return false;
                     }
 
-                    fullToc = data;
+                    byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)data.Length);
+                    fullToc = new byte[data.Length + 2];
+                    Array.Copy(data, 0, fullToc, 2, data.Length);
+                    fullToc[0] = fullTocSize[0];
+                    fullToc[1] = fullTocSize[1];
                     return true;
                 case MediaTagType.DVD_PFI:
                     if(!isDvd)
@@ -1849,14 +1853,20 @@ namespace DiscImageChef.DiscImages
             alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
             long currentTrackOffset = header.sessionOffset + Marshal.SizeOf(typeof(AlcoholSession)) * sessions;
 
+            FullTOC.CDFullTOC? decodedToc = FullTOC.Decode(fullToc);
+
             long currentExtraOffset = currentTrackOffset;
             for(int i = 1; i <= sessions; i++)
-            {
-                currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 3;
-                currentExtraOffset +=
-                    Marshal.SizeOf(typeof(AlcoholTrack)) * writingTracks.Count(t => t.TrackSession == i);
-                if(i < sessions) currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 2;
-            }
+                if(decodedToc.HasValue)
+                    currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) *
+                                          decodedToc.Value.TrackDescriptors.Count(t => t.SessionNumber == i);
+                else
+                {
+                    currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 3;
+                    currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) *
+                                          writingTracks.Count(t => t.TrackSession == i);
+                    if(i < sessions) currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 2;
+                }
 
             long footerOffset = currentExtraOffset + Marshal.SizeOf(typeof(AlcoholTrackExtra)) * writingTracks.Count;
             if(bca != null)
@@ -1909,14 +1919,20 @@ namespace DiscImageChef.DiscImages
                     alcSessions.Add(i,
                                     new AlcoholSession
                                     {
-                                        sessionStart    = i == 1 ? -150 : (int)firstTrack.TrackStartSector,
-                                        sessionEnd      = (int)lastTrack.TrackEndSector + 1,
+                                        sessionStart    = (int)firstTrack.TrackStartSector - 150,
+                                        sessionEnd      = (int)lastTrack.TrackEndSector    + 1,
                                         sessionSequence = (ushort)i,
-                                        allBlocks       = (byte)(writingTracks.Count(t => t.TrackSession == i) + 3),
-                                        nonTrackBlocks  = 3,
-                                        firstTrack      = (ushort)firstTrack.TrackSequence,
-                                        lastTrack       = (ushort)lastTrack.TrackSequence,
-                                        trackOffset     = (uint)currentTrackOffset
+                                        allBlocks =
+                                            (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i) ??
+                                                   writingTracks.Count(t => t.TrackSession == i) + 3),
+                                        nonTrackBlocks =
+                                            (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i    &&
+                                                                                           t.POINT         >= 0xA0 &&
+                                                                                           t.POINT         <= 0xAF) ??
+                                                   3),
+                                        firstTrack  = (ushort)firstTrack.TrackSequence,
+                                        lastTrack   = (ushort)lastTrack.TrackSequence,
+                                        trackOffset = (uint)currentTrackOffset
                                     });
 
                     Dictionary<int, AlcoholTrack> thisSessionTracks = new Dictionary<int, AlcoholTrack>();
@@ -1928,97 +1944,136 @@ namespace DiscImageChef.DiscImages
                         lastTrackControl = (byte)CdFlags.DataTrack;
                     (byte minute, byte second, byte frame) leadinPmsf = LbaToMsf(lastTrack.TrackEndSector + 1);
 
-                    byte               discTypeToc = 0;
-                    FullTOC.CDFullTOC? decodedToc  = FullTOC.Decode(fullToc);
                     if(decodedToc.HasValue &&
-                       decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT == 0xA0))
-                        discTypeToc = decodedToc.Value.TrackDescriptors
-                                                .First(t => t.SessionNumber == i && t.POINT == 0xA0).PSEC;
+                       decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
+                                                                  t.POINT         <= 0xAF))
+                        foreach(FullTOC.TrackDataDescriptor tocTrk in
+                            decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
+                                                                         t.POINT         <= 0xAF))
+                        {
+                            thisSessionTracks.Add(tocTrk.POINT,
+                                                  new AlcoholTrack
+                                                  {
+                                                      adrCtl   = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
+                                                      tno      = tocTrk.TNO,
+                                                      point    = tocTrk.POINT,
+                                                      min      = tocTrk.Min,
+                                                      sec      = tocTrk.Sec,
+                                                      frame    = tocTrk.Frame,
+                                                      zero     = tocTrk.Zero,
+                                                      pmin     = tocTrk.PMIN,
+                                                      psec     = tocTrk.PSEC,
+                                                      pframe   = tocTrk.PFRAME,
+                                                      mode     = AlcoholTrackMode.NoData,
+                                                      unknown  = new byte[18],
+                                                      unknown2 = new byte[24]
+                                                  });
+                            currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack));
+                        }
                     else
-                        discTypeToc = (byte)(imageInfo.MediaType == MediaType.CDI
-                                                 ? 0x10
-                                                 : writingTracks.Any(t => t.TrackType == TrackType.CdMode2Form1 ||
-                                                                          t.TrackType == TrackType.CdMode2Form2 ||
-                                                                          t.TrackType == TrackType.CdMode2Formless)
-                                                     ? 0x20
-                                                     : 0);
+                    {
+                        thisSessionTracks.Add(0xA0, new AlcoholTrack
+                        {
+                            adrCtl   = (byte)((1 << 4) + firstTrackControl),
+                            pmin     = (byte)firstTrack.TrackSequence,
+                            mode     = AlcoholTrackMode.NoData,
+                            point    = 0xA0,
+                            unknown  = new byte[18],
+                            unknown2 = new byte[24],
+                            psec = (byte)(imageInfo.MediaType == MediaType.CDI
+                                              ? 0x10
+                                              : writingTracks.Any(t => t.TrackType == TrackType.CdMode2Form1 ||
+                                                                       t.TrackType == TrackType.CdMode2Form2 ||
+                                                                       t.TrackType == TrackType.CdMode2Formless)
+                                                  ? 0x20
+                                                  : 0)
+                        });
 
-                    thisSessionTracks.Add(0xA0,
-                                          new AlcoholTrack
-                                          {
-                                              adrCtl   = (byte)((1 << 4) + firstTrackControl),
-                                              pmin     = (byte)firstTrack.TrackSequence,
-                                              mode     = AlcoholTrackMode.NoData,
-                                              point    = 0xA0,
-                                              unknown  = new byte[18],
-                                              unknown2 = new byte[24],
-                                              psec     = discTypeToc
-                                          });
+                        thisSessionTracks.Add(0xA1,
+                                              new AlcoholTrack
+                                              {
+                                                  adrCtl   = (byte)((1 << 4) + lastTrackControl),
+                                                  pmin     = (byte)lastTrack.TrackSequence,
+                                                  mode     = AlcoholTrackMode.NoData,
+                                                  point    = 0xA1,
+                                                  unknown  = new byte[18],
+                                                  unknown2 = new byte[24]
+                                              });
 
-                    thisSessionTracks.Add(0xA1,
-                                          new AlcoholTrack
-                                          {
-                                              adrCtl   = (byte)((1 << 4) + lastTrackControl),
-                                              pmin     = (byte)lastTrack.TrackSequence,
-                                              mode     = AlcoholTrackMode.NoData,
-                                              point    = 0xA1,
-                                              unknown  = new byte[18],
-                                              unknown2 = new byte[24]
-                                          });
-
-                    thisSessionTracks.Add(0xA2,
-                                          new AlcoholTrack
-                                          {
-                                              adrCtl   = (byte)((1 << 4) + firstTrackControl),
-                                              zero     = 0,
-                                              pmin     = leadinPmsf.minute,
-                                              psec     = leadinPmsf.second,
-                                              pframe   = leadinPmsf.frame,
-                                              mode     = AlcoholTrackMode.NoData,
-                                              point    = 0xA2,
-                                              unknown  = new byte[18],
-                                              unknown2 = new byte[24]
-                                          });
-
-                    currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 3;
+                        thisSessionTracks.Add(0xA2,
+                                              new AlcoholTrack
+                                              {
+                                                  adrCtl   = (byte)((1 << 4) + firstTrackControl),
+                                                  zero     = 0,
+                                                  pmin     = leadinPmsf.minute,
+                                                  psec     = leadinPmsf.second,
+                                                  pframe   = leadinPmsf.frame,
+                                                  mode     = AlcoholTrackMode.NoData,
+                                                  point    = 0xA2,
+                                                  unknown  = new byte[18],
+                                                  unknown2 = new byte[24]
+                                              });
+                        currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 3;
+                    }
 
                     foreach(Track track in writingTracks.Where(t => t.TrackSession == i).OrderBy(t => t.TrackSequence))
                     {
-                        (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
-                        trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
-                        if(trackControl == 0 && track.TrackType != TrackType.Audio)
-                            trackControl = (byte)CdFlags.DataTrack;
-
-                        thisSessionTracks.Add((int)track.TrackSequence, new AlcoholTrack
+                        AlcoholTrack alcTrk = new AlcoholTrack();
+                        if(decodedToc.HasValue &&
+                           decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i &&
+                                                                      t.POINT         == track.TrackSequence))
                         {
-                            mode = TrackTypeToAlcohol(track.TrackType),
-                            subMode =
-                                track.TrackSubchannelType != TrackSubchannelType.None
-                                    ? AlcoholSubchannelMode.Interleaved
-                                    : AlcoholSubchannelMode.None,
-                            adrCtl = (byte)((1 << 4) + trackControl),
-                            point  = (byte)track.TrackSequence,
-                            zero   = 0,
-                            pmin   = msf.minute,
-                            psec   = msf.second,
-                            pframe = msf.frame,
-                            sectorSize =
-                                (ushort)(track.TrackRawBytesPerSector +
-                                         (track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0)),
-                            startLba     = (uint)track.TrackStartSector,
-                            startOffset  = track.TrackFileOffset,
-                            files        = 1,
-                            extraOffset  = (uint)currentExtraOffset,
-                            footerOffset = (uint)footerOffset,
-                            // Alcohol seems to set that for all CD tracks
-                            // Daemon Tools expect it to be like this
-                            unknown = new byte[]
-                            {
-                                0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                0x00, 0x00, 0x00, 0x00
-                            },
-                            unknown2 = new byte[24]
-                        });
+                            FullTOC.TrackDataDescriptor tocTrk =
+                                decodedToc.Value.TrackDescriptors.First(t => t.SessionNumber == i &&
+                                                                             t.POINT         == track.TrackSequence);
+
+                            alcTrk.adrCtl = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL);
+                            alcTrk.tno    = tocTrk.TNO;
+                            alcTrk.point  = tocTrk.POINT;
+                            alcTrk.min    = tocTrk.Min;
+                            alcTrk.sec    = tocTrk.Sec;
+                            alcTrk.frame  = tocTrk.Frame;
+                            alcTrk.zero   = tocTrk.Zero;
+                            alcTrk.pmin   = tocTrk.PMIN;
+                            alcTrk.psec   = tocTrk.PSEC;
+                            alcTrk.pframe = tocTrk.PFRAME;
+                        }
+                        else
+                        {
+                            (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
+                            trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
+                            if(trackControl == 0 && track.TrackType != TrackType.Audio)
+                                trackControl = (byte)CdFlags.DataTrack;
+
+                            alcTrk.adrCtl = (byte)((1 << 4) + trackControl);
+                            alcTrk.point  = (byte)track.TrackSequence;
+                            alcTrk.zero   = 0;
+                            alcTrk.pmin   = msf.minute;
+                            alcTrk.psec   = msf.second;
+                            alcTrk.pframe = msf.frame;
+                        }
+
+                        alcTrk.mode = TrackTypeToAlcohol(track.TrackType);
+                        alcTrk.subMode = track.TrackSubchannelType != TrackSubchannelType.None
+                                             ? AlcoholSubchannelMode.Interleaved
+                                             : AlcoholSubchannelMode.None;
+                        alcTrk.sectorSize = (ushort)(track.TrackRawBytesPerSector +
+                                                     (track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0));
+                        alcTrk.startLba     = (uint)track.TrackStartSector;
+                        alcTrk.startOffset  = track.TrackFileOffset;
+                        alcTrk.files        = 1;
+                        alcTrk.extraOffset  = (uint)currentExtraOffset;
+                        alcTrk.footerOffset = (uint)footerOffset;
+                        // Alcohol seems to set that for all CD tracks
+                        // Daemon Tools expect it to be like this
+                        alcTrk.unknown = new byte[]
+                        {
+                            0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00
+                        };
+                        alcTrk.unknown2 = new byte[24];
+
+                        thisSessionTracks.Add((int)track.TrackSequence, alcTrk);
 
                         currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack));
                         currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrackExtra));
@@ -2026,12 +2081,37 @@ namespace DiscImageChef.DiscImages
                         alcTrackExtras.Add((int)track.TrackSequence,
                                            new AlcoholTrackExtra
                                            {
-                                               pregap  = (uint)(track.TrackSequence == 1 ? 150 : 0),
+                                               pregap =
+                                                   (uint)(track.TrackSequence == firstTrack.TrackSequence ? 150 : 0),
                                                sectors = (uint)(track.TrackEndSector - track.TrackStartSector + 1)
                                            });
                     }
 
-                    if(i < sessions)
+                    if(decodedToc.HasValue &&
+                       decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xB0))
+                        foreach(FullTOC.TrackDataDescriptor tocTrk in
+                            decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i && t.POINT >= 0xB0))
+                        {
+                            thisSessionTracks.Add(tocTrk.POINT,
+                                                  new AlcoholTrack
+                                                  {
+                                                      adrCtl   = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
+                                                      tno      = tocTrk.TNO,
+                                                      point    = tocTrk.POINT,
+                                                      min      = tocTrk.Min,
+                                                      sec      = tocTrk.Sec,
+                                                      frame    = tocTrk.Frame,
+                                                      zero     = tocTrk.Zero,
+                                                      pmin     = tocTrk.PMIN,
+                                                      psec     = tocTrk.PSEC,
+                                                      pframe   = tocTrk.PFRAME,
+                                                      mode     = AlcoholTrackMode.NoData,
+                                                      unknown  = new byte[18],
+                                                      unknown2 = new byte[24]
+                                                  });
+                            currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack));
+                        }
+                    else if(i < sessions)
                     {
                         (byte minute, byte second, byte frame) leadoutAmsf =
                             LbaToMsf(writingTracks.First(t => t.TrackSession == i + 1).TrackStartSector - 150);
