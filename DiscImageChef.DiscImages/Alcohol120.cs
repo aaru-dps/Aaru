@@ -2078,13 +2078,27 @@ namespace DiscImageChef.DiscImages
                         currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack));
                         currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrackExtra));
 
-                        alcTrackExtras.Add((int)track.TrackSequence,
-                                           new AlcoholTrackExtra
-                                           {
-                                               pregap =
-                                                   (uint)(track.TrackSequence == firstTrack.TrackSequence ? 150 : 0),
-                                               sectors = (uint)(track.TrackEndSector - track.TrackStartSector + 1)
-                                           });
+                        AlcoholTrackExtra trkExtra = new AlcoholTrackExtra
+                        {
+                            sectors = (uint)(track.TrackEndSector - track.TrackStartSector + 1)
+                        };
+
+                        // When track mode changes there's a mandatory gap, Alcohol needs it
+                        if(track.TrackSequence == firstTrack.TrackSequence) trkExtra.pregap = 150;
+                        else if(thisSessionTracks.TryGetValue((int)(track.TrackSequence - 1),
+                                                              out AlcoholTrack previousTrack) &&
+                                alcTrackExtras.TryGetValue((int)(track.TrackSequence - 1),
+                                                           out AlcoholTrackExtra previousExtra) &&
+                                previousTrack.mode != alcTrk.mode)
+                        {
+                            previousExtra.sectors -= 150;
+                            trkExtra.pregap       =  150;
+                            alcTrackExtras.Remove((int)(track.TrackSequence - 1));
+                            alcTrackExtras.Add((int)(track.TrackSequence    - 1), previousExtra);
+                        }
+                        else trkExtra.pregap = 0;
+
+                        alcTrackExtras.Add((int)track.TrackSequence, trkExtra);
                     }
 
                     if(decodedToc.HasValue &&
