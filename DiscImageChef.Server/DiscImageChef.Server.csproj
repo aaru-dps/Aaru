@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Server</RootNamespace>
     <AssemblyName>DiscImageChef.Server</AssemblyName>
-    <ReleaseVersion>4.5.0.1663</ReleaseVersion>
+    <ReleaseVersion>4.5.1.1692</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -27,7 +27,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.0.1663</Version>
+    <Version>4.5.1.1692</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
