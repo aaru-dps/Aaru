@@ -1,4 +1,4 @@
-﻿DiscImageChef v4.5.99.1663
+﻿DiscImageChef v4.5.99.1693
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
 
@@ -50,7 +50,6 @@ Features
 
 Supported disk image formats (read-only)
 ========================================
-* Apple Disk Archival/Retrieval Tool (DART)
 * Apple Disk Archival/Retrieval Tool (DART)
 * Apple II nibble images (NIB)
 * BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
