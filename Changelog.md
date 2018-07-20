@@ -847,6 +847,7 @@
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
+[4.5.1.1692]: https://github.com/claunia/DiscImageChef/releases/tag/v4.5.1.1692
 [4.5.0.1663]: https://github.com/claunia/DiscImageChef/releases/tag/v4.5.0.1663
 [4.0.1.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.0.1.0
 [4.0.0.0]: https://github.com/claunia/DiscImageChef/releases/tag/v4.0.0.0
