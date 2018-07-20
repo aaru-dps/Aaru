@@ -68,6 +68,7 @@
     <Compile Include="Interfaces\IFloppyImage.cs" />
     <Compile Include="Interfaces\IMediaImage.cs" />
     <Compile Include="Interfaces\IPartition.cs" />
+    <Compile Include="Interfaces\IPluginRegister.cs" />
     <Compile Include="Interfaces\IReadOnlyFilesystem.cs" />
     <Compile Include="Interfaces\IWritableFloppyImage.cs" />
     <Compile Include="Interfaces\IWritableImage.cs" />

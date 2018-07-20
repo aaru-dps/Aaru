@@ -39,9 +39,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
 using DiscImageChef.Partitions;
 
 namespace DiscImageChef.CommonTypes
@@ -51,6 +49,18 @@ namespace DiscImageChef.CommonTypes
     /// </summary>
     public class PluginBase
     {
+        /// <summary>
+        ///     List of checksum plugins
+        /// </summary>
+        public readonly List<IChecksum> Checksums;
+        /// <summary>
+        ///     List of filter plugins
+        /// </summary>
+        public readonly SortedDictionary<string, IFilter> Filters;
+        /// <summary>
+        ///     List of floppy image plugins
+        /// </summary>
+        public readonly SortedDictionary<string, IFloppyImage> FloppyImages;
         /// <summary>
         ///     List of all media image plugins
         /// </summary>
@@ -68,6 +78,10 @@ namespace DiscImageChef.CommonTypes
         /// </summary>
         public readonly SortedDictionary<string, IReadOnlyFilesystem> ReadOnlyFilesystems;
         /// <summary>
+        ///     List of writable floppy image plugins
+        /// </summary>
+        public readonly SortedDictionary<string, IWritableFloppyImage> WritableFloppyImages;
+        /// <summary>
         ///     List of writable media image plugins
         /// </summary>
         public readonly SortedDictionary<string, IWritableImage> WritableImages;
@@ -77,98 +91,62 @@ namespace DiscImageChef.CommonTypes
         /// </summary>
         public PluginBase()
         {
-            PluginsList         = new SortedDictionary<string, IFilesystem>();
-            ReadOnlyFilesystems = new SortedDictionary<string, IReadOnlyFilesystem>();
-            PartPluginsList     = new SortedDictionary<string, IPartition>();
-            ImagePluginsList    = new SortedDictionary<string, IMediaImage>();
-            WritableImages      = new SortedDictionary<string, IWritableImage>();
-
-            // We need to manually load assemblies :(
-            AppDomain.CurrentDomain.Load("DiscImageChef.DiscImages");
-            AppDomain.CurrentDomain.Load("DiscImageChef.Filesystems");
-            AppDomain.CurrentDomain.Load("DiscImageChef.Partitions");
-
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach(Assembly assembly in assemblies)
-            {
-                foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMediaImage)))
-                                             .Where(t => t.IsClass))
-                    try
-                    {
-                        IMediaImage plugin =
-                            (IMediaImage)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                        RegisterImagePlugin(plugin);
-                    }
-                    catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-
-                foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IPartition)))
-                                             .Where(t => t.IsClass))
-                    try
-                    {
-                        IPartition plugin = (IPartition)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                        RegisterPartPlugin(plugin);
-                    }
-                    catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-
-                foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilesystem)))
-                                             .Where(t => t.IsClass))
-                    try
-                    {
-                        IFilesystem plugin =
-                            (IFilesystem)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                        RegisterPlugin(plugin);
-                    }
-                    catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-
-                foreach(Type type in assembly
-                                    .GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IReadOnlyFilesystem)))
-                                    .Where(t => t.IsClass))
-                    try
-                    {
-                        IReadOnlyFilesystem plugin =
-                            (IReadOnlyFilesystem)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                        RegisterReadOnlyFilesystem(plugin);
-                    }
-                    catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-
-                foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IWritableImage)))
-                                             .Where(t => t.IsClass))
-                    try
-                    {
-                        IWritableImage plugin =
-                            (IWritableImage)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                        RegisterWritableMedia(plugin);
-                    }
-                    catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-            }
+            PluginsList          = new SortedDictionary<string, IFilesystem>();
+            ReadOnlyFilesystems  = new SortedDictionary<string, IReadOnlyFilesystem>();
+            PartPluginsList      = new SortedDictionary<string, IPartition>();
+            ImagePluginsList     = new SortedDictionary<string, IMediaImage>();
+            WritableImages       = new SortedDictionary<string, IWritableImage>();
+            Checksums            = new List<IChecksum>();
+            Filters              = new SortedDictionary<string, IFilter>();
+            FloppyImages         = new SortedDictionary<string, IFloppyImage>();
+            WritableFloppyImages = new SortedDictionary<string, IWritableFloppyImage>();
         }
 
-        void RegisterImagePlugin(IMediaImage plugin)
+        public void AddPlugins(IPluginRegister pluginRegister)
         {
-            if(!ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
-                ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
-        }
+            foreach(Type type in pluginRegister.GetAllChecksumPlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IChecksum plugin)
+                    Checksums.Add(plugin);
 
-        void RegisterPlugin(IFilesystem plugin)
-        {
-            if(!PluginsList.ContainsKey(plugin.Name.ToLower())) PluginsList.Add(plugin.Name.ToLower(), plugin);
-        }
+            foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IFilesystem plugin &&
+                   !PluginsList.ContainsKey(plugin.Name.ToLower()))
+                    PluginsList.Add(plugin.Name.ToLower(), plugin);
 
-        void RegisterReadOnlyFilesystem(IReadOnlyFilesystem plugin)
-        {
-            if(!ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower()))
-                ReadOnlyFilesystems.Add(plugin.Name.ToLower(), plugin);
-        }
+            foreach(Type type in pluginRegister.GetAllFilterPlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IFilter plugin &&
+                   !Filters.ContainsKey(plugin.Name.ToLower()))
+                    Filters.Add(plugin.Name.ToLower(), plugin);
 
-        void RegisterWritableMedia(IWritableImage plugin)
-        {
-            if(!WritableImages.ContainsKey(plugin.Name.ToLower())) WritableImages.Add(plugin.Name.ToLower(), plugin);
-        }
+            foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IFloppyImage plugin &&
+                   !FloppyImages.ContainsKey(plugin.Name.ToLower()))
+                    FloppyImages.Add(plugin.Name.ToLower(), plugin);
 
-        void RegisterPartPlugin(IPartition partplugin)
-        {
-            if(!PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
-                PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
+            foreach(Type type in pluginRegister.GetAllMediaImagePlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IMediaImage plugin &&
+                   !ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
+                    ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
+
+            foreach(Type type in pluginRegister.GetAllPartitionPlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IPartition plugin &&
+                   !PartPluginsList.ContainsKey(plugin.Name.ToLower()))
+                    PartPluginsList.Add(plugin.Name.ToLower(), plugin);
+
+            foreach(Type type in pluginRegister.GetAllReadOnlyFilesystemPlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IReadOnlyFilesystem plugin &&
+                   !ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower()))
+                    ReadOnlyFilesystems.Add(plugin.Name.ToLower(), plugin);
+
+            foreach(Type type in pluginRegister.GetAllWritableFloppyImagePlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IWritableFloppyImage plugin &&
+                   !WritableFloppyImages.ContainsKey(plugin.Name.ToLower()))
+                    WritableFloppyImages.Add(plugin.Name.ToLower(), plugin);
+
+            foreach(Type type in pluginRegister.GetAllWritableImagePlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { }) is IWritableImage plugin &&
+                   !WritableImages.ContainsKey(plugin.Name.ToLower()))
+                    WritableImages.Add(plugin.Name.ToLower(), plugin);
         }
     }
 }
