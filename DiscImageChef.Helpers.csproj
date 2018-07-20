@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.1.1692</Version>
+    <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
@@ -55,14 +55,6 @@
     <Compile Include="ArrayIsEmpty.cs" />
     <Compile Include="BigEndianMarshal.cs" />
     <Compile Include="CompareBytes.cs" />
-    <Compile Include="Extents\ExtentsLong.cs" />
-    <Compile Include="Extents\ExtentsULong.cs" />
-    <Compile Include="Extents\ExtentsInt.cs" />
-    <Compile Include="Extents\ExtentsUInt.cs" />
-    <Compile Include="Extents\ExtentsShort.cs" />
-    <Compile Include="Extents\ExtentsUShort.cs" />
-    <Compile Include="Extents\ExtentsByte.cs" />
-    <Compile Include="Extents\ExtentsSByte.cs" />
     <Compile Include="CountBits.cs" />
     <Compile Include="CHS.cs" />
   </ItemGroup>
@@ -76,9 +68,6 @@
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extents\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
