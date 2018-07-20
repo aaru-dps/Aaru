@@ -33,6 +33,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Filters
 {

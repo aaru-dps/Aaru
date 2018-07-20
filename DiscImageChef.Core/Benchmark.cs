@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Core
 {

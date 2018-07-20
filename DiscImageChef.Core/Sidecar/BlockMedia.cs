@@ -36,15 +36,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.DiscImages;
-using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.Metadata;
 using Schemas;
-using MediaType = DiscImageChef.Metadata.MediaType;
+using MediaType = DiscImageChef.CommonTypes.Metadata.MediaType;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core

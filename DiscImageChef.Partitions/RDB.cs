@@ -36,8 +36,8 @@ using System.Linq;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {

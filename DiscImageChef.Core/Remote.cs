@@ -35,8 +35,8 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
-using DiscImageChef.Metadata;
-using Version = DiscImageChef.Interop.Version;
+using DiscImageChef.CommonTypes.Metadata;
+using Version = DiscImageChef.CommonTypes.Metadata.Version;
 
 namespace DiscImageChef.Core
 {

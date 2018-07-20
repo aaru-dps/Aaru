@@ -36,19 +36,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using DiscImageChef.Metadata;
-using Extents;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using TrackType = DiscImageChef.DiscImages.TrackType;
+using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -918,7 +921,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.OpticalDisc[0].Layers.Sectors[0] = new SectorsType {Value = (long)layerBreak};
                 sidecar.OpticalDisc[0].Sessions          = 1;
                 sidecar.OpticalDisc[0].Dimensions        = Dimensions.DimensionsFromMediaType(dskType);
-                Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
+                CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
+                                                                 out string xmlDskSubTyp);
                 sidecar.OpticalDisc[0].DiscType    = xmlDskTyp;
                 sidecar.OpticalDisc[0].DiscSubType = xmlDskSubTyp;
 

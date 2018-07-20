@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Metadata;
 using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping

@@ -34,7 +34,8 @@ using System;
 using System.Collections.Generic;
 using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 using Encoding = System.Text.Encoding;
 

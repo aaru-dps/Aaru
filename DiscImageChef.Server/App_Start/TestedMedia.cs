@@ -31,7 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using DiscImageChef.Metadata;
+using DiscImageChef.CommonTypes.Metadata;
 
 namespace DiscImageChef.Server.App_Start
 {

@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using DiscImageChef.CommonTypes.Interfaces;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.LZMA;
 

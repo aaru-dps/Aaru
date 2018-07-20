@@ -34,9 +34,9 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using Claunia.PropertyList;
-using DiscImageChef.Interop;
+using DiscImageChef.CommonTypes.Interop;
 using Microsoft.Win32;
-using PlatformID = DiscImageChef.Interop.PlatformID;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef.Settings
 {

@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Decoders;
 
 namespace DiscImageChef.Filesystems.LisaFS

@@ -34,8 +34,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Interop;
 
 namespace DiscImageChef.Devices.Linux
 {

@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.1.1692</Version>
+    <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
@@ -50,7 +50,6 @@
     <Compile Include="Atari.cs" />
     <Compile Include="MBR.cs" />
     <Compile Include="NeXT.cs" />
-    <Compile Include="IPartition.cs" />
     <Compile Include="RDB.cs" />
     <Compile Include="Sun.cs" />
     <Compile Include="GPT.cs" />

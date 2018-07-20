@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Interop;
-using PlatformID = DiscImageChef.Interop.PlatformID;
+using DiscImageChef.CommonTypes.Interop;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
 {

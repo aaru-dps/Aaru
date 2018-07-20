@@ -32,6 +32,7 @@
 
 using System;
 using System.Text;
+using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.ISO9660

@@ -30,9 +30,10 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands

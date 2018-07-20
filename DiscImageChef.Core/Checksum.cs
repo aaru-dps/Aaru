@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
 
 namespace DiscImageChef.Core

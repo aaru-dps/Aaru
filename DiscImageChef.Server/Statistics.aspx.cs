@@ -40,9 +40,9 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.UI;
 using System.Xml.Serialization;
-using DiscImageChef.Interop;
-using DiscImageChef.Metadata;
-using PlatformID = DiscImageChef.Interop.PlatformID;
+using DiscImageChef.CommonTypes.Interop;
+using DiscImageChef.CommonTypes.Metadata;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef.Server
 {

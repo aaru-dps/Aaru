@@ -36,9 +36,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Exceptions;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
-using DiscImageChef.Filters;
-using Extents;
 using Schemas;
 
 #pragma warning disable 649
@@ -433,11 +436,7 @@ namespace DiscImageChef.DiscImages
             imageStream.Seek(imageOff, SeekOrigin.Begin);
             imageStream.Read(sector, 0, (int)imageInfo.SectorSize);
 
-            if(sectorCache.Count > MAX_CACHED_SECTORS)
-            {
-                System.Console.WriteLine("Cache cleared");
-                sectorCache.Clear();
-            }
+            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 

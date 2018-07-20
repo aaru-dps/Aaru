@@ -42,7 +42,7 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
-using DiscImageChef.Metadata;
+using DiscImageChef.CommonTypes.Metadata;
 
 namespace DiscImageChef.Server.Controllers
 {

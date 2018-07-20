@@ -36,6 +36,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Filters
 {
@@ -132,7 +133,6 @@ namespace DiscImageChef.Filters
 
         public bool Identify(Stream stream)
         {
-            System.Console.WriteLine("parentFolder");
             return false;
         }
 

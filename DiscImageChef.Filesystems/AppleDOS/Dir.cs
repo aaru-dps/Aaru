@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {

@@ -37,17 +37,19 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using DiscImageChef.Metadata;
-using Extents;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using TrackType = DiscImageChef.DiscImages.TrackType;
+using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -809,7 +811,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
                     // TODO: Implement layers
                     sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-                    Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
+                    CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
+                                                                     out string xmlDskSubTyp);
                     sidecar.OpticalDisc[0].DiscType          = xmlDskTyp;
                     sidecar.OpticalDisc[0].DiscSubType       = xmlDskSubTyp;
                     sidecar.OpticalDisc[0].DumpHardwareArray = resume.Tries.ToArray();
@@ -957,7 +960,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
                             dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
                     sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-                    Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
+                    CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
+                                                                     out string xmlDskSubTyp);
                     sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
                     sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
                     // TODO: Implement device firmware revision

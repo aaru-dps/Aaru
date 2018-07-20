@@ -36,21 +36,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using DiscImageChef.Metadata;
-using Extents;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using PlatformID = DiscImageChef.Interop.PlatformID;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Session = DiscImageChef.Decoders.CD.Session;
-using TrackType = DiscImageChef.DiscImages.TrackType;
+using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -1637,7 +1640,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
 
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-                Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
+                CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
+                                                                 out string xmlDskSubTyp);
                 sidecar.OpticalDisc[0].DiscType          = xmlDskTyp;
                 sidecar.OpticalDisc[0].DiscSubType       = xmlDskSubTyp;
                 sidecar.OpticalDisc[0].DumpHardwareArray = resume.Tries.ToArray();

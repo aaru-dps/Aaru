@@ -30,8 +30,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Interop;
 
 namespace DiscImageChef.Devices
 {

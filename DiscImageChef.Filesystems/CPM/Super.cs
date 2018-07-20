@@ -39,9 +39,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
 using Schemas;
+using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
+using FileSystemInfo = DiscImageChef.CommonTypes.Structs.FileSystemInfo;
 
 namespace DiscImageChef.Filesystems.CPM
 {

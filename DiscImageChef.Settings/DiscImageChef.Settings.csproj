@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.1.1692</Version>
+    <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
@@ -52,17 +52,12 @@
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
-      <Project>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</Project>
-      <Name>DiscImageChef.Interop</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="plist-cil" Version="1.16.0" />

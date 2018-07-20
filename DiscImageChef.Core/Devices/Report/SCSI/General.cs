@@ -35,10 +35,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
-using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {

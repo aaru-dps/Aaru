@@ -33,7 +33,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.UCSDPascal

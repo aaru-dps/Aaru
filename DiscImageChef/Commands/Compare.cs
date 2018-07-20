@@ -33,9 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
@@ -118,8 +121,8 @@ namespace DiscImageChef.Commands
 
             bool imagesDiffer = false;
 
-            DiscImages.ImageInfo             image1Info     = new DiscImages.ImageInfo();
-            DiscImages.ImageInfo             image2Info     = new DiscImages.ImageInfo();
+            CommonTypes.Structs.ImageInfo    image1Info     = new CommonTypes.Structs.ImageInfo();
+            CommonTypes.Structs.ImageInfo    image2Info     = new CommonTypes.Structs.ImageInfo();
             List<Session>                    image1Sessions = new List<Session>();
             List<Session>                    image2Sessions = new List<Session>();
             Dictionary<MediaTagType, byte[]> image1DiskTags = new Dictionary<MediaTagType, byte[]>();

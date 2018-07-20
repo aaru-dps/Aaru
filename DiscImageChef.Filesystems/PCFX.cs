@@ -34,7 +34,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
 
 namespace DiscImageChef.Filesystems

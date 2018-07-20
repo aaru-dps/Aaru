@@ -33,8 +33,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Partitions;
 
 namespace DiscImageChef.Core

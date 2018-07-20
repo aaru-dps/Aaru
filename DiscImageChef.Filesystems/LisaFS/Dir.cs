@@ -33,8 +33,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Decoders;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {

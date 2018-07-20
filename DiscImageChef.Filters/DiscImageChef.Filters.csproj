@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.1.1692</Version>
+    <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
@@ -46,8 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OffsetStream.cs" />
-    <Compile Include="IFilter.cs" />
-    <Compile Include="Filters.cs" />
     <Compile Include="ZZZNoFilter.cs" />
     <Compile Include="ForcedSeekStream.cs" />
     <Compile Include="GZip.cs" />
@@ -65,6 +63,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>

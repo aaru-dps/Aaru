@@ -35,10 +35,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands

@@ -30,14 +30,15 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using Session = DiscImageChef.Decoders.CD.Session;
 
 namespace DiscImageChef.Commands
 {

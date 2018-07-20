@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.1.1692</Version>
+    <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
@@ -46,19 +46,58 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
+      <Link>Metadata/cicm.cs</Link>
+    </Compile>
+    <Compile Include="Enums\Images.cs" />
+    <Compile Include="Exceptions\Images.cs" />
+    <Compile Include="Extents\ExtentsByte.cs" />
+    <Compile Include="Extents\ExtentsConverter.cs" />
+    <Compile Include="Extents\ExtentsInt.cs" />
+    <Compile Include="Extents\ExtentsLong.cs" />
+    <Compile Include="Extents\ExtentsSByte.cs" />
+    <Compile Include="Extents\ExtentsShort.cs" />
+    <Compile Include="Extents\ExtentsUInt.cs" />
+    <Compile Include="Extents\ExtentsULong.cs" />
+    <Compile Include="Extents\ExtentsUShort.cs" />
+    <Compile Include="Filters.cs" />
     <Compile Include="Geometry.cs" />
+    <Compile Include="Interfaces\IChecksum.cs" />
+    <Compile Include="Interfaces\IFilesystem.cs" />
+    <Compile Include="Interfaces\IFilter.cs" />
+    <Compile Include="Interfaces\IFloppyImage.cs" />
+    <Compile Include="Interfaces\IMediaImage.cs" />
+    <Compile Include="Interfaces\IPartition.cs" />
+    <Compile Include="Interfaces\IReadOnlyFilesystem.cs" />
+    <Compile Include="Interfaces\IWritableFloppyImage.cs" />
+    <Compile Include="Interfaces\IWritableImage.cs" />
+    <Compile Include="Interop\DetectOS.cs" />
+    <Compile Include="Interop\PlatformID.cs" />
+    <Compile Include="Interop\Version.cs" />
+    <Compile Include="Metadata\DeviceReport.cs" />
+    <Compile Include="Metadata\Dimensions.cs" />
+    <Compile Include="Metadata\MediaType.cs" />
+    <Compile Include="Metadata\Resume.cs" />
+    <Compile Include="Metadata\Statistics.cs" />
+    <Compile Include="Metadata\Version.cs" />
     <Compile Include="Partition.cs" />
     <Compile Include="MediaType.cs" />
     <Compile Include="MediaTypeFromSCSI.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\LICENSE.LGPL">
-      <Link>LICENSE.LGPL</Link>
-    </EmbeddedResource>
+    <Compile Include="PluginBase.cs" />
+    <Compile Include="Structs\Filesystems.cs" />
+    <Compile Include="Structs\Images.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\LICENSE.MIT">
+      <Link>LICENSE.MIT</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -32,10 +32,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.Partitions;
 

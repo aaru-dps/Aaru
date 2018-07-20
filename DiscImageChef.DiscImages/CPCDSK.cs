@@ -37,9 +37,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Exceptions;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
-using DiscImageChef.Filters;
 using Schemas;
 
 namespace DiscImageChef.DiscImages

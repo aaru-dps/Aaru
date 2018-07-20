@@ -63,9 +63,9 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            Metadata.DeviceReport report    = new Metadata.DeviceReport();
-            bool                  removable = false;
-            string                xmlFile;
+            CommonTypes.Metadata.DeviceReport report    = new CommonTypes.Metadata.DeviceReport();
+            bool                              removable = false;
+            string                            xmlFile;
             if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
                 xmlFile =
                     dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".xml";
@@ -100,7 +100,7 @@ namespace DiscImageChef.Commands
 
             FileStream xmlFs = new FileStream(xmlFile, FileMode.Create);
 
-            XmlSerializer xmlSer = new XmlSerializer(typeof(Metadata.DeviceReport));
+            XmlSerializer xmlSer = new XmlSerializer(typeof(CommonTypes.Metadata.DeviceReport));
             xmlSer.Serialize(xmlFs, report);
             xmlFs.Close();
             Core.Statistics.AddCommand("device-report");

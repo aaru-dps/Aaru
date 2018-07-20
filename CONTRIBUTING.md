@@ -66,7 +66,7 @@ This module contains the command line interface. In the future a GUI will be add
 * [DiscImageChef.Checksums](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Checksums) -
 This module contains the checksum, hashing and error correction algorithms.
 * [DiscImageChef.CommonTypes](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.CommonTypes) -
-This module contains structs and enumerations needed by more than one of the other modules.
+This module contains interfaces, structures and enumerations needed by more than one of the other modules.
 * [DiscImageChef.Console](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Console) -
 This module abstracts consoles used by other modules to output information, so they can be
 redirected to a CLI or to a GUI output.
@@ -96,11 +96,6 @@ decompressing or decoding it on-the-fly.
 * [DiscImageChef.Helpers](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Helpers) -
 This module contains a collection of helpers for array manipulation, big-endian marshalling,
 datetime conversion, hexadecimal printing, string manipulation and byte swapping.
-* [DiscImageChef.Interop](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Interop) -
-This module contains calls to the underlying operating system. Currently only OS detection is
-needed.
-* [DiscImageChef.Metadata](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Metadata) -
-This module contains handling of CICM XML metadata, media types and dimensions.
 * [DiscImageChef.Partitions](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Partitions) -
 This module contains code for reading partition schemes.
 * [DiscImageChef.Server](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Server) -

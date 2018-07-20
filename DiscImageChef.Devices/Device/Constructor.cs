@@ -35,13 +35,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SecureDigital;
 using DiscImageChef.Devices.FreeBSD;
 using DiscImageChef.Devices.Windows;
-using DiscImageChef.Interop;
 using Microsoft.Win32.SafeHandles;
 using Extern = DiscImageChef.Devices.Windows.Extern;
 using FileAccess = DiscImageChef.Devices.Windows.FileAccess;
@@ -49,7 +49,7 @@ using FileAttributes = DiscImageChef.Devices.Windows.FileAttributes;
 using FileFlags = DiscImageChef.Devices.Linux.FileFlags;
 using FileMode = DiscImageChef.Devices.Windows.FileMode;
 using FileShare = DiscImageChef.Devices.Windows.FileShare;
-using PlatformID = DiscImageChef.Interop.PlatformID;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
 namespace DiscImageChef.Devices

@@ -36,14 +36,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.MMC;
 using DiscImageChef.Devices;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using DiscImageChef.Metadata;
-using Extents;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 
@@ -614,11 +616,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 switch(dev.Type)
                 {
                     case DeviceType.MMC:
-                        Metadata.MediaType.MediaTypeToString(MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
+                        CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.MMC, out xmlDskTyp,
+                                                                         out xmlDskSubTyp);
                         sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
                         break;
                     case DeviceType.SecureDigital:
-                        Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
+                        CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital, out xmlDskTyp,
+                                                                         out xmlDskSubTyp);
                         sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
                         break;
                 }

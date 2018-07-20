@@ -38,10 +38,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Exceptions;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Filters;
 using Schemas;
+using Session = DiscImageChef.CommonTypes.Structs.Session;
+using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 namespace DiscImageChef.DiscImages
 {

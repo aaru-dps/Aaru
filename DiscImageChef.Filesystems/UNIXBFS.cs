@@ -33,8 +33,8 @@
 using System;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Filesystems

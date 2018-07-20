@@ -30,10 +30,10 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices;
-using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {

@@ -38,9 +38,9 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.UI;
 using System.Xml.Serialization;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Metadata;
 using DiscImageChef.Server.App_Start;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 

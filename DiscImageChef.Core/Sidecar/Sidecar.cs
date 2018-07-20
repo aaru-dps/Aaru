@@ -34,7 +34,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using DiscImageChef.DiscImages;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
 
 namespace DiscImageChef.Core
