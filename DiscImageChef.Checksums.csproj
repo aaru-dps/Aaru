@@ -46,6 +46,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Register.cs" />
     <Compile Include="SpamSumContext.cs" />
     <Compile Include="Adler32Context.cs" />
     <Compile Include="CDChecksums.cs" />
