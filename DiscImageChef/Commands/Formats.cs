@@ -36,7 +36,6 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 using DiscImageChef.Partitions;
 
 namespace DiscImageChef.Commands
@@ -45,7 +44,7 @@ namespace DiscImageChef.Commands
     {
         internal static void ListFormats(FormatsOptions formatsOptions)
         {
-            PluginBase  plugins     = new PluginBase();
+            PluginBase  plugins     = GetPluginBase.Instance;
             FiltersList filtersList = new FiltersList();
 
             DicConsole.WriteLine("Supported filters ({0}):", filtersList.Filters.Count);

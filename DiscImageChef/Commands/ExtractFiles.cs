@@ -39,7 +39,6 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -83,7 +82,7 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-            PluginBase plugins = new PluginBase();
+            PluginBase plugins = GetPluginBase.Instance;
 
             try
             {

@@ -67,6 +67,7 @@
         <e p="MD5Context.cs" t="Include" />
         <e p="RIPEMD160Context.cs" t="Include" />
         <e p="ReedSolomon.cs" t="Include" />
+        <e p="Register.cs" t="Include" />
         <e p="SHA1Context.cs" t="Include" />
         <e p="SHA256Context.cs" t="Include" />
         <e p="SHA384Context.cs" t="Include" />
@@ -109,6 +110,7 @@
           <e p="IFloppyImage.cs" t="Include" />
           <e p="IMediaImage.cs" t="Include" />
           <e p="IPartition.cs" t="Include" />
+          <e p="IPluginRegister.cs" t="Include" />
           <e p="IReadOnlyFilesystem.cs" t="Include" />
           <e p="IWritableFloppyImage.cs" t="Include" />
           <e p="IWritableImage.cs" t="Include" />
@@ -219,6 +221,7 @@
         </e>
         <e p="DiscImageChef.Core.csproj" t="IncludeRecursive" />
         <e p="Filesystems.cs" t="Include" />
+        <e p="GetPluginBase.cs" t="Include" />
         <e p="ImageFormat.cs" t="Include" />
         <e p="ImageInfo.cs" t="Include" />
         <e p="Logging" t="Include">
@@ -522,6 +525,7 @@
         <e p="QCOW2.cs" t="Include" />
         <e p="QED.cs" t="Include" />
         <e p="RayDIM.cs" t="Include" />
+        <e p="Register.cs" t="Include" />
         <e p="RsIde.cs" t="Include" />
         <e p="SaveDskF.cs" t="Include" />
         <e p="SuperCardPro.cs" t="Include" />
@@ -659,6 +663,7 @@
         <e p="RBF.cs" t="Include" />
         <e p="RT11.cs" t="Include" />
         <e p="ReFS.cs" t="Include" />
+        <e p="Register.cs" t="Include" />
         <e p="Reiser.cs" t="Include" />
         <e p="Reiser4.cs" t="Include" />
         <e p="SFS.cs" t="Include" />
@@ -707,6 +712,7 @@
         <e p="MacBinary.cs" t="Include" />
         <e p="OffsetStream.cs" t="Include" />
         <e p="PCExchange.cs" t="Include" />
+        <e p="Register.cs" t="Include" />
         <e p="XZ.cs" t="Include" />
         <e p="ZZZNoFilter.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
@@ -756,6 +762,7 @@
         <e p="PC98.cs" t="Include" />
         <e p="Plan9.cs" t="Include" />
         <e p="RDB.cs" t="Include" />
+        <e p="Register.cs" t="Include" />
         <e p="RioKarma.cs" t="Include" />
         <e p="SGI.cs" t="Include" />
         <e p="Sun.cs" t="Include" />

@@ -54,7 +54,7 @@ namespace DiscImageChef.Core
         public static CICMMetadataType Create(IMediaImage image, string imagePath, Guid filterId, Encoding encoding)
         {
             CICMMetadataType sidecar = image.CicmMetadata ?? new CICMMetadataType();
-            PluginBase       plugins = new PluginBase();
+            PluginBase       plugins = GetPluginBase.Instance;
 
             FileInfo   fi = new FileInfo(imagePath);
             FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);

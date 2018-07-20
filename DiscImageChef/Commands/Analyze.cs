@@ -37,7 +37,6 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -75,7 +74,7 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-            PluginBase plugins = new PluginBase();
+            PluginBase plugins = GetPluginBase.Instance;
 
             bool checkraw = false;
 

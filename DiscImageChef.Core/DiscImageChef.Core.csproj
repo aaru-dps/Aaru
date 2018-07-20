@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="ImageFormat.cs" />

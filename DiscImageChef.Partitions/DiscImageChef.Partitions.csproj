@@ -51,6 +51,7 @@
     <Compile Include="MBR.cs" />
     <Compile Include="NeXT.cs" />
     <Compile Include="RDB.cs" />
+    <Compile Include="Register.cs" />
     <Compile Include="Sun.cs" />
     <Compile Include="GPT.cs" />
     <Compile Include="RioKarma.cs" />

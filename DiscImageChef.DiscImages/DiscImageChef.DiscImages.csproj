@@ -65,6 +65,7 @@
     <Compile Include="CDRWin.cs" />
     <Compile Include="DiskCopy42.cs" />
     <Compile Include="Nero.cs" />
+    <Compile Include="Register.cs" />
     <Compile Include="SuperCardPro.cs" />
     <Compile Include="TeleDisk.cs" />
     <Compile Include="VHD.cs" />

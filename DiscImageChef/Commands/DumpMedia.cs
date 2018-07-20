@@ -159,7 +159,7 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-            PluginBase           plugins    = new PluginBase();
+            PluginBase           plugins    = GetPluginBase.Instance;
             List<IWritableImage> candidates = new List<IWritableImage>();
 
             // Try extension

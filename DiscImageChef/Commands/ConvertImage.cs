@@ -42,7 +42,6 @@ using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 using Schemas;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
@@ -146,7 +145,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            PluginBase  plugins     = new PluginBase();
+            PluginBase  plugins     = GetPluginBase.Instance;
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
 
             if(inputFormat == null)

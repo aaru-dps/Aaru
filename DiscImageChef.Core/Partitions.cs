@@ -51,7 +51,7 @@ namespace DiscImageChef.Core
         /// <returns>List of found partitions</returns>
         public static List<Partition> GetAll(IMediaImage image)
         {
-            PluginBase      plugins          = new PluginBase();
+            PluginBase      plugins          = GetPluginBase.Instance;
             List<Partition> foundPartitions  = new List<Partition>();
             List<Partition> childPartitions  = new List<Partition>();
             List<ulong>     checkedLocations = new List<ulong>();

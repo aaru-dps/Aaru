@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Filesystems.cs
+// Filename       : ImageFormat.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Core algorithms.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Logic to use filesystem plugins.
+//     Gets a new instance of all known plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,29 +30,34 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-using System.Linq;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Core
 {
-    public static class Filesystems
+    public static class GetPluginBase
     {
-        /// <summary>
-        ///     Traverses all known filesystems and outputs a list of all that recognized what is in the specified image and
-        ///     partition
-        /// </summary>
-        /// <param name="imagePlugin">Media image</param>
-        /// <param name="idPlugins">List of plugins recognizing the filesystem</param>
-        /// <param name="partition">Partition</param>
-        public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition)
+        public static PluginBase Instance
         {
-            PluginBase plugins = GetPluginBase.Instance;
+            get
+            {
+                PluginBase instance = new PluginBase();
 
-            idPlugins = (from plugin in plugins.PluginsList.Values
-                         where plugin.Identify(imagePlugin, partition)
-                         select plugin.Name.ToLower()).ToList();
+                IPluginRegister checksumRegister    = new Register();
+                IPluginRegister imagesRegister      = new DiscImages.Register();
+                IPluginRegister filesystemsRegister = new DiscImageChef.Filesystems.Register();
+                IPluginRegister filtersRegister     = new Filters.Register();
+                IPluginRegister partitionsRegister  = new DiscImageChef.Partitions.Register();
+
+                instance.AddPlugins(checksumRegister);
+                instance.AddPlugins(imagesRegister);
+                instance.AddPlugins(filesystemsRegister);
+                instance.AddPlugins(filtersRegister);
+                instance.AddPlugins(partitionsRegister);
+
+                return instance;
+            }
         }
     }
 }

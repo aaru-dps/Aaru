@@ -70,6 +70,7 @@
     <Compile Include="PCEngine.cs" />
     <Compile Include="ProDOS.cs" />
     <Compile Include="ReFS.cs" />
+    <Compile Include="Register.cs" />
     <Compile Include="SolarFS.cs" />
     <Compile Include="Symbian.cs" />
     <Compile Include="SysV.cs" />

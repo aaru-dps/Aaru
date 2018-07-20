@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OffsetStream.cs" />
+    <Compile Include="Register.cs" />
     <Compile Include="ZZZNoFilter.cs" />
     <Compile Include="ForcedSeekStream.cs" />
     <Compile Include="GZip.cs" />

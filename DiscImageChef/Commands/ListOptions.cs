@@ -44,7 +44,7 @@ namespace DiscImageChef.Commands
     {
         internal static void DoList()
         {
-            PluginBase plugins = new PluginBase();
+            PluginBase plugins = GetPluginBase.Instance;
 
             DicConsole.WriteLine("Read-only filesystems options:");
             foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
