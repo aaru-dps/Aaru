@@ -1,0 +1,77 @@
+﻿// /***************************************************************************
+// The Disc Image Chef
+// ----------------------------------------------------------------------------
+//
+// Filename       : Identify.cs
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : Disk image plugins.
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Identifies Ray Arachelian's disk images.
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This library is free software; you can redistribute it and/or modify
+//     it under the terms of the GNU Lesser General Public License as
+//     published by the Free Software Foundation; either version 2.1 of the
+//     License, or (at your option) any later version.
+//
+//     This library is distributed in the hope that it will be useful, but
+//     WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//     Lesser General Public License for more details.
+//
+//     You should have received a copy of the GNU Lesser General Public
+//     License along with this library; if not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Console;
+
+namespace DiscImageChef.DiscImages
+{
+    public partial class RayDim
+    {
+        public bool Identify(IFilter imageFilter)
+        {
+            Stream stream = imageFilter.GetDataForkStream();
+
+            if(stream.Length < Marshal.SizeOf(typeof(RayHdr))) return false;
+
+            byte[] buffer = new byte[Marshal.SizeOf(typeof(RayHdr))];
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(buffer, 0, buffer.Length);
+
+            IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
+            Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
+            RayHdr header = (RayHdr)Marshal.PtrToStructure(ftrPtr, typeof(RayHdr));
+            Marshal.FreeHGlobal(ftrPtr);
+
+            string signature = StringHandlers.CToString(header.signature);
+
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature = {0}", signature);
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.diskType = {0}",  header.diskType);
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.heads = {0}",     header.heads);
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.cylinders = {0}", header.cylinders);
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.sectorsPerTrack = {0}",
+                                      header.sectorsPerTrack);
+
+            Regex sx = new Regex(REGEX_SIGNATURE);
+            Match sm = sx.Match(signature);
+
+            DicConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature matches? = {0}",
+                                      sm.Success);
+
+            return sm.Success;
+        }
+    }
+}
