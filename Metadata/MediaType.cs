@@ -88,6 +88,10 @@ namespace DiscImageChef.CommonTypes.Metadata
                     discType    = "Compact Disc";
                     discSubType = "CD-i";
                     break;
+                case CommonTypes.MediaType.CDIREADY:
+                    discType    = "Compact Disc";
+                    discSubType = "CD-i Ready";
+                    break;
                 case CommonTypes.MediaType.CDMIDI:
                     discType    = "Compact Disc";
                     discSubType = "CD+MIDI";

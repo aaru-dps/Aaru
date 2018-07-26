@@ -120,6 +120,8 @@ namespace DiscImageChef.CommonTypes
         PD650 = 32,
         /// <summary>120mm, Write-Once, 1281856 sectors, 512 bytes/sector, PD650, ECMA-240, ISO 15485</summary>
         PD650_WORM = 33,
+        /// <summary>CD-i Ready, contains a track before the first TOC track, in mode 2, and all TOC tracks are Audio. Subchannel marks track as audio pause.</summary>
+        CDIREADY = 34,
         #endregion Somewhat standard Compact Disc formats, types 10 to 39
 
         #region Standard DVD formats, types 40 to 50
