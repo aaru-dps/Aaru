@@ -48,7 +48,6 @@ using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
-using DiscImageChef.Filters;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
@@ -617,6 +616,65 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(!force) return;
             }
 
+            // Check for hidden data before start of track 1
+            if(tracks.First(t => t.TrackSequence == 1).TrackStartSector > 0 && readcd)
+            {
+                dumpLog.WriteLine("First track starts after sector 0, checking for a hidden track...");
+                DicConsole.WriteLine("First track starts after sector 0, checking for a hidden track...");
+
+                sense = dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
+                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
+                                   dev.Timeout, out _);
+
+                if(dev.Error || sense)
+                {
+                    dumpLog.WriteLine("Could not read sector 0, continuing...", dev.LastError);
+                    DicConsole.WriteLine("Could not read sector 0, continuing...", dev.LastError);
+                }
+                else
+                {
+                    byte[] syncMark = {0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00};
+                    byte[] cdiMark  = {0x01, 0x43, 0x44, 0x2D};
+                    byte[] testMark = new byte[12];
+                    Array.Copy(readBuffer, 0, testMark, 0, 12);
+
+                    bool hiddenData = syncMark.SequenceEqual(testMark) &&
+                                      (readBuffer[0xF] == 0 || readBuffer[0xF] == 1 || readBuffer[0xF] == 2);
+
+                    if(hiddenData && readBuffer[0xF] == 2)
+                    {
+                        sense = dev.ReadCd(out readBuffer, out senseBuf, 16, blockSize, 1, MmcSectorTypes.AllTypes,
+                                           false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                           MmcErrorField.None, supportedSubchannel, dev.Timeout, out _);
+
+                        if(!dev.Error && !sense)
+                        {
+                            testMark = new byte[4];
+                            Array.Copy(readBuffer, 24, testMark, 0, 4);
+                            if(cdiMark.SequenceEqual(testMark)) dskType = MediaType.CDIREADY;
+                        }
+
+                        List<Track> trkList = new List<Track>
+                        {
+                            new Track
+                            {
+                                TrackSequence          = 0,
+                                TrackSession           = 1,
+                                TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
+                                TrackStartSector       = 0,
+                                TrackBytesPerSector    = (int)SECTOR_SIZE,
+                                TrackRawBytesPerSector = (int)SECTOR_SIZE,
+                                TrackSubchannelType    = subType,
+                                TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
+                            }
+                        };
+
+                        trkList.AddRange(tracks);
+                        tracks = trkList.ToArray();
+                    }
+                }
+            }
+
             // Check mode for tracks
             for(int t = 0; t < tracks.Length; t++)
             {
@@ -650,7 +708,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         tracks[t].TrackType = TrackType.CdMode1;
                         break;
                     case 2:
-                        if(dskType == MediaType.CDI)
+                        if(dskType == MediaType.CDI || dskType == MediaType.CDIREADY)
                         {
                             DicConsole.WriteLine("Track {0} is MODE2", tracks[t].TrackSequence);
                             dumpLog.WriteLine("Track {0} is MODE2", tracks[t].TrackSequence);
@@ -810,7 +868,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dev.Error || sense)
             {
-                DicConsole.WriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+                dumpLog.WriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 return;
             }
@@ -868,10 +926,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(!ret)
                 {
-                    DicConsole.WriteLine("Error writing subchannel to output image, {0}continuing...",
-                                         force ? "" : "not ");
+                    DicConsole.ErrorWriteLine("Error writing subchannel to output image, {0}continuing...",
+                                              force ? "" : "not ");
                     dumpLog.WriteLine("Error writing subchannel to output image, {0}continuing...",
                                       force ? "" : "not ");
+                    DicConsole.ErrorWriteLine(outputPlugin.ErrorMessage);
+                    dumpLog.WriteLine(outputPlugin.ErrorMessage);
 
                     if(!force) return;
 
@@ -938,11 +998,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                                      trk.TrackStartSector, trk.TrackEndSector);
             #endif
 
+            if(dskType == MediaType.CDIREADY)
+            {
+                dumpLog.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+                DicConsole.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+            }
+
             // Start reading
             start = DateTime.UtcNow;
             for(int t = 0; t < tracks.Length; t++)
             {
-                dumpLog.WriteLine("Reading track {0}", t + 1);
+                dumpLog.WriteLine("Reading track {0}", tracks[t].TrackSequence);
                 if(resume.NextBlock < tracks[t].TrackStartSector) resume.NextBlock = tracks[t].TrackStartSector;
 
                 for(ulong i = resume.NextBlock; i <= tracks[t].TrackEndSector; i += blocksToRead)
@@ -965,7 +1031,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     DicConsole.Write("\rReading sector {0} of {1} at track {3} ({2:F3} MiB/sec.)", i, blocks,
-                                     currentSpeed, t + 1);
+                                     currentSpeed, tracks[t].TrackSequence);
 
                     if(readcd)
                     {
