@@ -809,7 +809,7 @@ namespace DiscImageChef.DiscImages
             {
                 trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
                                                  sectorAddress <= t.TrackEndSector);
-                if(trk.TrackSequence == 0)
+                if(trk.TrackSequence == 0 && trk.TrackStartSector == 0 && trk.TrackEndSector == 0)
                     throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                           "Can't found track containing requested sector");
             }
@@ -987,7 +987,7 @@ namespace DiscImageChef.DiscImages
                         Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
-                    if(track.TrackSequence == 0)
+                    if(track.TrackSequence == 0 && track.TrackStartSector == 0 && track.TrackEndSector == 0)
                     {
                         ErrorMessage = $"Can't found track containing {sectorAddress}";
                         return false;
@@ -1152,7 +1152,7 @@ namespace DiscImageChef.DiscImages
                         Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
-                    if(track.TrackSequence == 0)
+                    if(track.TrackSequence == 0 && track.TrackStartSector == 0 && track.TrackEndSector == 0)
                     {
                         ErrorMessage = $"Can't found track containing {sectorAddress}";
                         return false;
@@ -2420,7 +2420,7 @@ namespace DiscImageChef.DiscImages
 
                     track = Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                          sectorAddress <= trk.TrackEndSector);
-                    if(track.TrackSequence == 0)
+                    if(track.TrackSequence == 0 && track.TrackStartSector == 0 && track.TrackEndSector == 0)
                     {
                         ErrorMessage = $"Can't found track containing {sectorAddress}";
                         return false;

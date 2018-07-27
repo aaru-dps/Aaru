@@ -47,6 +47,7 @@ enum <uint> MediaType
     CDV = 31,
     PD650 = 32,
     PD650_WORM = 33,
+    CDIREADY = 34,
 
     DVDROM = 40,
     DVDR = 41,

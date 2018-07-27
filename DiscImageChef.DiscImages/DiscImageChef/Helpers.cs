@@ -133,6 +133,7 @@ namespace DiscImageChef.DiscImages
                 case MediaType.CDG:
                 case MediaType.CDEG:
                 case MediaType.CDI:
+                case MediaType.CDIREADY:
                 case MediaType.CDROM:
                 case MediaType.CDROMXA:
                 case MediaType.CDPLUS:

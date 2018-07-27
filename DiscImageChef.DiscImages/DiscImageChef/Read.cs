@@ -1017,7 +1017,7 @@ namespace DiscImageChef.DiscImages
             {
                 Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
                                                        sectorAddress <= t.TrackEndSector);
-                if(trk.TrackSequence == 0)
+                if(trk.TrackSequence == 0 && trk.TrackStartSector == 0 && trk.TrackEndSector == 0)
                     throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                           "Can't found track containing requested sector");
 
@@ -1230,7 +1230,7 @@ namespace DiscImageChef.DiscImages
                 case XmlMediaType.OpticalDisc:
                     Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
                                                            sectorAddress <= t.TrackEndSector);
-                    if(trk.TrackSequence == 0)
+                    if(trk.TrackSequence == 0 && trk.TrackStartSector == 0 && trk.TrackEndSector == 0)
                         throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                               "Can't found track containing requested sector");
 
@@ -1296,7 +1296,7 @@ namespace DiscImageChef.DiscImages
                 case XmlMediaType.OpticalDisc:
                     Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
                                                            sectorAddress <= t.TrackEndSector);
-                    if(trk.TrackSequence == 0)
+                    if(trk.TrackSequence == 0 && trk.TrackStartSector == 0 && trk.TrackEndSector == 0)
                         throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                               "Can't found track containing requested sector");
 
