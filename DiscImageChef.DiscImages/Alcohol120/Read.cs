@@ -309,6 +309,7 @@ namespace DiscImageChef.DiscImages
                 session.EndTrack        = alcSes.lastTrack;
 
                 Sessions.Add(session);
+                if(session.EndSector > imageInfo.Sectors) imageInfo.Sectors = session.EndSector + 1;
             }
 
             if(isDvd)
@@ -454,8 +455,7 @@ namespace DiscImageChef.DiscImages
                     };
 
                     Partitions.Add(partition);
-                    imageInfo.Sectors += extra.sectors;
-                    byteOffset        += partition.Size;
+                    byteOffset += partition.Size;
                 }
 
                 if(!offsetmap.ContainsKey(trk.point)) offsetmap.Add(trk.point, trk.startLba);
