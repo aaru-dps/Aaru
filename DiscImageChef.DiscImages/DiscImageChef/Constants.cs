@@ -56,5 +56,9 @@ namespace DiscImageChef.DiscImages
         ///     smaller than 256.
         /// </summary>
         const int MIN_FLAKE_BLOCK = 256;
+        /// <summary>This mask is to check for flags in CompactDisc suffix/prefix DDT</summary>
+        const uint CD_XFIX_MASK = 0xFF000000;
+        /// <summary>This mask is to check for position in CompactDisc suffix/prefix deduplicated block</summary>
+        const uint CD_DFIX_MASK = 0x00FFFFFF;
     }
 }

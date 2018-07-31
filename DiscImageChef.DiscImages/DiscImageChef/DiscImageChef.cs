@@ -136,10 +136,14 @@ namespace DiscImageChef.DiscImages
         bool rewinded;
         /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
         byte[] sectorPrefix;
+        uint[]       sectorPrefixDdt;
+        MemoryStream sectorPrefixMs;
         /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
         byte[] sectorSubchannel;
         /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
         byte[] sectorSuffix;
+        uint[]        sectorSuffixDdt;
+        MemoryStream  sectorSuffixMs;
         Sha1Context   sha1Provider;
         Sha256Context sha256Provider;
         /// <summary>Shift for calculating number of sectors in a block.</summary>

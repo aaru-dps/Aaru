@@ -198,6 +198,7 @@
     <Compile Include="DiscFerret\Read.cs" />
     <Compile Include="DiscFerret\Structs.cs" />
     <Compile Include="DiscFerret\Unsupported.cs" />
+    <Compile Include="DiscImageChef\CdEcc.cs" />
     <Compile Include="DiscImageChef\ClauniaSubchannelTransform.cs" />
     <Compile Include="DiscImageChef\Constants.cs" />
     <Compile Include="DiscImageChef\DiscImageChef.cs" />

@@ -622,7 +622,9 @@ enum <ushort> DataType
     AppleProfileTag                  = 72,
     AppleSonyTag                     = 73,
     PriamDataTowerTag                = 74,
-    CompactDiscMediaCatalogueNumber  = 75
+    CompactDiscMediaCatalogueNumber  = 75,
+    CdSectorPrefixCorrected          = 76,
+    CdSectorSuffixCorrected          = 77
 };
 
 enum <uint> BlockType

@@ -201,7 +201,11 @@ namespace DiscImageChef.DiscImages
             /// <summary>Priam Data Tower (24 byte) tag</summary>
             PriamDataTowerTag = 74,
             /// <summary>CompactDisc Media Catalogue Number (as in Lead-in), 13 bytes, ASCII</summary>
-            CompactDiscMediaCatalogueNumber = 75
+            CompactDiscMediaCatalogueNumber = 75,
+            /// <summary>CompactDisc sector prefix (sync, header), only incorrect stored</summary>
+            CdSectorPrefixCorrected = 76,
+            /// <summary>CompactDisc sector suffix (edc, ecc p, ecc q), only incorrect stored</summary>
+            CdSectorSuffixCorrected = 77
         }
 
         /// <summary>List of known blocks types</summary>
@@ -242,6 +246,12 @@ namespace DiscImageChef.DiscImages
             Sha1    = 2,
             Sha256  = 3,
             SpamSum = 4
+        }
+
+        enum CdFixFlags : uint
+        {
+            NotDumped = 0x10000000,
+            Correct   = 0x20000000
         }
     }
 }

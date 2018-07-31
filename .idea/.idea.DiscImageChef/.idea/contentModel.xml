@@ -684,6 +684,7 @@
           <e p="Unsupported.cs" t="Include" />
         </e>
         <e p="DiscImageChef" t="Include">
+          <e p="CdEcc.cs" t="Include" />
           <e p="ClauniaSubchannelTransform.cs" t="Include" />
           <e p="Constants.cs" t="Include" />
           <e p="DiscImageChef.cs" t="Include" />

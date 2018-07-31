@@ -224,14 +224,28 @@ namespace DiscImageChef.DiscImages
                         switch(entry.dataType)
                         {
                             case DataType.CdSectorPrefix:
-                                sectorPrefix = data;
+                            case DataType.CdSectorPrefixCorrected:
+                                if(entry.dataType == DataType.CdSectorPrefixCorrected)
+                                {
+                                    sectorPrefixMs = new MemoryStream();
+                                    sectorPrefixMs.Write(data, 0, data.Length);
+                                }
+                                else sectorPrefix = data;
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                                 break;
                             case DataType.CdSectorSuffix:
-                                sectorSuffix = data;
+                            case DataType.CdSectorSuffixCorrected:
+                                if(entry.dataType == DataType.CdSectorSuffixCorrected)
+                                {
+                                    sectorSuffixMs = new MemoryStream();
+                                    sectorSuffixMs.Write(data, 0, data.Length);
+                                }
+                                else sectorSuffix = data;
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
@@ -274,57 +288,108 @@ namespace DiscImageChef.DiscImages
                         break;
                     case BlockType.DeDuplicationTable:
                         // Only user data deduplication tables are used right now
-                        if(entry.dataType != DataType.UserData) break;
-
-                        DdtHeader ddtHeader = new DdtHeader();
-                        structureBytes = new byte[Marshal.SizeOf(ddtHeader)];
-                        imageStream.Read(structureBytes, 0, structureBytes.Length);
-                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
-                        Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
-                        ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
-                        Marshal.FreeHGlobal(structurePointer);
-                        imageInfo.ImageSize += ddtHeader.cmpLength;
-
-                        if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
-
-                        imageInfo.Sectors = ddtHeader.entries;
-                        shift             = ddtHeader.shift;
-
-                        // Check for DDT compression
-                        switch(ddtHeader.compression)
+                        if(entry.dataType == DataType.UserData)
                         {
-                            case CompressionType.Lzma:
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
-                                DateTime ddtStart       = DateTime.UtcNow;
-                                byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                                byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
-                                imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                imageStream.Read(compressedDdt,  0, compressedDdt.Length);
-                                MemoryStream compressedDdtMs = new MemoryStream(compressedDdt);
-                                LzmaStream   lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
-                                byte[]       decompressedDdt = new byte[ddtHeader.length];
-                                lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
-                                lzmaDdt.Close();
-                                compressedDdtMs.Close();
-                                userDataDdt = new ulong[ddtHeader.entries];
-                                for(ulong i = 0; i < ddtHeader.entries; i++)
-                                    userDataDdt[i] = BitConverter.ToUInt64(decompressedDdt, (int)(i * sizeof(ulong)));
-                                DateTime ddtEnd = DateTime.UtcNow;
-                                inMemoryDdt = true;
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
-                                                          "Took {0} seconds to decompress DDT",
-                                                          (ddtEnd - ddtStart).TotalSeconds);
-                                break;
-                            case CompressionType.None:
-                                inMemoryDdt          = false;
-                                outMemoryDdtPosition = (long)entry.offset;
-                                break;
-                            default:
-                                throw new
-                                    ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                            DdtHeader ddtHeader = new DdtHeader();
+                            structureBytes = new byte[Marshal.SizeOf(ddtHeader)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
+                            ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
+                            Marshal.FreeHGlobal(structurePointer);
+                            imageInfo.ImageSize += ddtHeader.cmpLength;
+
+                            if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
+
+                            imageInfo.Sectors = ddtHeader.entries;
+                            shift             = ddtHeader.shift;
+
+                            // Check for DDT compression
+                            switch(ddtHeader.compression)
+                            {
+                                case CompressionType.Lzma:
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
+                                    DateTime ddtStart       = DateTime.UtcNow;
+                                    byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                    byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                    imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                    imageStream.Read(compressedDdt,  0, compressedDdt.Length);
+                                    MemoryStream compressedDdtMs = new MemoryStream(compressedDdt);
+                                    LzmaStream   lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
+                                    byte[]       decompressedDdt = new byte[ddtHeader.length];
+                                    lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
+                                    lzmaDdt.Close();
+                                    compressedDdtMs.Close();
+                                    userDataDdt = new ulong[ddtHeader.entries];
+                                    for(ulong i = 0; i < ddtHeader.entries; i++)
+                                        userDataDdt[i] =
+                                            BitConverter.ToUInt64(decompressedDdt, (int)(i * sizeof(ulong)));
+                                    DateTime ddtEnd = DateTime.UtcNow;
+                                    inMemoryDdt = true;
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Took {0} seconds to decompress DDT",
+                                                              (ddtEnd - ddtStart).TotalSeconds);
+                                    break;
+                                case CompressionType.None:
+                                    inMemoryDdt          = false;
+                                    outMemoryDdtPosition = (long)entry.offset;
+                                    break;
+                                default:
+                                    throw new
+                                        ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                            }
+
+                            foundUserDataDdt = true;
+                        }
+                        else if(entry.dataType == DataType.CdSectorPrefixCorrected ||
+                                entry.dataType == DataType.CdSectorSuffixCorrected)
+                        {
+                            DdtHeader ddtHeader = new DdtHeader();
+                            structureBytes = new byte[Marshal.SizeOf(ddtHeader)];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
+                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
+                            ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
+                            Marshal.FreeHGlobal(structurePointer);
+                            imageInfo.ImageSize += ddtHeader.cmpLength;
+
+                            if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
+
+                            uint[] cdDdt           = new uint[ddtHeader.entries];
+                            byte[] decompressedDdt = new byte[ddtHeader.length];
+
+                            // Check for DDT compression
+                            switch(ddtHeader.compression)
+                            {
+                                case CompressionType.Lzma:
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
+                                    DateTime ddtStart       = DateTime.UtcNow;
+                                    byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                    byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                    imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                    imageStream.Read(compressedDdt,  0, compressedDdt.Length);
+                                    MemoryStream compressedDdtMs = new MemoryStream(compressedDdt);
+                                    LzmaStream   lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
+                                    lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
+                                    lzmaDdt.Close();
+                                    compressedDdtMs.Close();
+                                    DateTime ddtEnd = DateTime.UtcNow;
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Took {0} seconds to decompress DDT",
+                                                              (ddtEnd - ddtStart).TotalSeconds);
+                                    break;
+                                case CompressionType.None:
+                                    imageStream.Read(decompressedDdt, 0, decompressedDdt.Length);
+                                    break;
+                                default:
+                                    throw new
+                                        ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                            }
+
+                            for(ulong i = 0; i < ddtHeader.entries; i++)
+                                cdDdt[i] = BitConverter.ToUInt32(decompressedDdt, (int)(i * sizeof(uint)));
                         }
 
-                        foundUserDataDdt = true;
                         break;
                     // Logical geometry block. It doesn't have a CRC coz, well, it's not so important
                     case BlockType.GeometryBlock:
@@ -1234,7 +1299,8 @@ namespace DiscImageChef.DiscImages
                         throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                               "Can't found track containing requested sector");
 
-                    if(sectorSuffix == null || sectorPrefix == null) return ReadSector(sectorAddress);
+                    if((sectorSuffix   == null || sectorPrefix   == null) &&
+                       (sectorSuffixMs == null || sectorPrefixMs == null)) return ReadSector(sectorAddress);
 
                     byte[] sector = new byte[2352];
                     byte[] data   = ReadSector(sectorAddress);
@@ -1244,9 +1310,17 @@ namespace DiscImageChef.DiscImages
                         case TrackType.Audio:
                         case TrackType.Data: return data;
                         case TrackType.CdMode1:
-                            Array.Copy(sectorPrefix, (int)sectorAddress * 16,  sector, 0,    16);
-                            Array.Copy(data,         0,                        sector, 16,   2048);
-                            Array.Copy(sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
+                            if(sectorPrefix != null)
+                                Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
+                            else if(sectorPrefixMs != null) throw new NotImplementedException();
+                            else throw new InvalidProgramException("Should not have arrived here");
+
+                            if(sectorSuffix != null)
+                                Array.Copy(sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
+                            else if(sectorSuffixMs != null) throw new NotImplementedException();
+                            else throw new InvalidProgramException("Should not have arrived here");
+
+                            Array.Copy(data, 0, sector, 16, 2048);
                             return sector;
                         case TrackType.CdMode2Formless:
                         case TrackType.CdMode2Form1:
