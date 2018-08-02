@@ -2137,12 +2137,16 @@ namespace DiscImageChef.DiscImages
                     else if(sectorSuffixMs  != null && sectorSuffixDdt != null && sectorPrefixMs != null &&
                             sectorPrefixDdt != null)
                     {
+                        #if DEBUG
                         uint notDumpedPrefixes = 0;
                         uint correctPrefixes   = 0;
                         uint writtenPrefixes   = 0;
                         uint notDumpedSuffixes = 0;
                         uint correctSuffixes   = 0;
                         uint writtenSuffixes   = 0;
+                        uint correctMode2Form1 = 0;
+                        uint correctMode2Form2 = 0;
+                        uint emptyMode2Form1   = 0;
 
                         for(long i = 0; i < sectorPrefixDdt.LongLength; i++)
                             if((sectorPrefixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
@@ -2154,6 +2158,12 @@ namespace DiscImageChef.DiscImages
                             if((sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
                                 notDumpedSuffixes++;
                             else if((sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct) correctSuffixes++;
+                            else if((sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form1Ok)
+                                correctMode2Form1++;
+                            else if((sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form2Ok)
+                                correctMode2Form2++;
+                            else if((sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form2NoCrc)
+                                emptyMode2Form1++;
                             else if((sectorSuffixDdt[i] & CD_DFIX_MASK) > 0) writtenSuffixes++;
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -2167,6 +2177,13 @@ namespace DiscImageChef.DiscImages
                                                   correctSuffixes, correctSuffixes     / imageInfo.Sectors,
                                                   notDumpedSuffixes, notDumpedSuffixes / imageInfo.Sectors,
                                                   writtenSuffixes, writtenSuffixes     / imageInfo.Sectors);
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "{0} ({1:P}% MODE 2 Form 1 are correct, {2} ({3:P}%) MODE 2 Form 2 are correct, {4} ({5:P}%) MODE 2 Form 2 have empty CRC",
+                                                  correctMode2Form1, correctMode2Form1 / imageInfo.Sectors,
+                                                  correctMode2Form2, correctMode2Form2 / imageInfo.Sectors,
+                                                  emptyMode2Form1, emptyMode2Form1     / imageInfo.Sectors);
+                        #endif
 
                         idxEntry = new IndexEntry
                         {
