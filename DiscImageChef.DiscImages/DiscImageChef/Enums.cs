@@ -252,8 +252,11 @@ namespace DiscImageChef.DiscImages
 
         enum CdFixFlags : uint
         {
-            NotDumped = 0x10000000,
-            Correct   = 0x20000000
+            NotDumped       = 0x10000000,
+            Correct         = 0x20000000,
+            Mode2Form1Ok    = 0x30000000,
+            Mode2Form2Ok    = 0x40000000,
+            Mode2Form2NoCrc = 0x50000000
         }
     }
 }

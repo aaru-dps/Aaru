@@ -1249,8 +1249,46 @@ namespace DiscImageChef.DiscImages
 
                             if(mode2Subheaders == null) mode2Subheaders = new byte[imageInfo.Sectors * 8];
 
+                            bool correctEcc = SuffixIsCorrectMode2(data);
+                            bool correctEdc = false;
+
+                            if(correctEcc)
+                            {
+                                uint computedEdc = ComputeEdc(0, data, 0x808, 0x10);
+                                uint edc         = BitConverter.ToUInt32(data, 0x818);
+                                correctEdc = computedEdc == edc;
+                            }
+                            else
+                            {
+                                uint computedEdc = ComputeEdc(0, data, 0x91C, 0x10);
+                                uint edc         = BitConverter.ToUInt32(data, 0x92C);
+                                correctEdc = computedEdc == edc;
+                            }
+
+                            if(correctEcc && correctEdc)
+                            {
+                                sector = new byte[2048];
+                                if(sectorSuffixDdt == null) sectorSuffixDdt = new uint[imageInfo.Sectors];
+                                sectorSuffixDdt[sectorAddress] = (uint)CdFixFlags.Mode2Form1Ok;
+                                Array.Copy(data, 24, sector, 0, 2048);
+                            }
+                            else if(correctEdc)
+                            {
+                                sector = new byte[2324];
+                                if(sectorSuffixDdt == null) sectorSuffixDdt = new uint[imageInfo.Sectors];
+                                sectorSuffixDdt[sectorAddress] = (uint)CdFixFlags.Mode2Form2Ok;
+                                Array.Copy(data, 24, sector, 0, 2324);
+                            }
+                            else if(BitConverter.ToUInt32(data, 0x92C) == 0)
+                            {
+                                sector = new byte[2324];
+                                if(sectorSuffixDdt == null) sectorSuffixDdt = new uint[imageInfo.Sectors];
+                                sectorSuffixDdt[sectorAddress] = (uint)CdFixFlags.Mode2Form2NoCrc;
+                                Array.Copy(data, 24, sector, 0, 2324);
+                            }
+                            else Array.Copy(data, 24, sector, 0, 2328);
+
                             Array.Copy(data, 16, mode2Subheaders, (int)sectorAddress * 8, 8);
-                            Array.Copy(data, 24, sector, 0, 2328);
                             return WriteSector(sector, sectorAddress);
                     }
 
@@ -2411,7 +2449,7 @@ namespace DiscImageChef.DiscImages
                             subheaderBlock.compression = CompressionType.None;
                             subheaderBlock.cmpCrc64    = subheaderBlock.crc64;
                             subheaderBlock.cmpLength   = subheaderBlock.length;
-                            blockStream             = new MemoryStream(mode2Subheaders);
+                            blockStream                = new MemoryStream(mode2Subheaders);
                         }
                         else
                         {
@@ -2425,7 +2463,7 @@ namespace DiscImageChef.DiscImages
                             Crc64Context cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
                             cmpCrc.Update(blockStream.ToArray());
-                            blockCrc                = cmpCrc.Final();
+                            blockCrc                   = cmpCrc.Final();
                             subheaderBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subheaderBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subheaderBlock.compression = CompressionType.Lzma;
@@ -2454,7 +2492,6 @@ namespace DiscImageChef.DiscImages
                         blockStream = null;
                     }
 
-                    
                     if(sectorSubchannel != null)
                     {
                         idxEntry = new IndexEntry

@@ -41,9 +41,12 @@ namespace DiscImageChef.DiscImages
         byte[] eccBTable;
         byte[] eccFTable;
         uint[] edcTable;
+        bool   initedEdc;
 
         void EccInit()
         {
+            if(initedEdc) return;
+
             eccFTable = new byte[256];
             eccBTable = new byte[256];
             edcTable  = new uint[256];
@@ -57,30 +60,22 @@ namespace DiscImageChef.DiscImages
                 for(j = 0; j < 8; j++) edc = (edc >> 1) ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
                 edcTable[i] = edc;
             }
+
+            initedEdc = true;
         }
 
         bool SuffixIsCorrect(byte[] sector)
         {
+            if(!initedEdc) EccInit();
+
             if(sector[0x814] != 0x00 || // reserved (8 bytes)
                sector[0x815] != 0x00 || sector[0x816] != 0x00 || sector[0x817] != 0x00 || sector[0x818] != 0x00 ||
                sector[0x819] != 0x00 || sector[0x81A] != 0x00 || sector[0x81B] != 0x00) return false;
 
-            byte[] address = new byte[4];
-            byte[] data    = new byte[2060];
-            byte[] data2   = new byte[2232];
-            byte[] eccP    = new byte[172];
-            byte[] eccQ    = new byte[104];
-
-            Array.Copy(sector, 0x0C,  address, 0, 4);
-            Array.Copy(sector, 0x10,  data,    0, 2060);
-            Array.Copy(sector, 0x10,  data2,   0, 2232);
-            Array.Copy(sector, 0x81C, eccP,    0, 172);
-            Array.Copy(sector, 0x8C8, eccQ,    0, 104);
-
-            bool correctEccP = CheckEcc(ref address, ref data, 86, 24, 2, 86, ref eccP);
+            bool correctEccP = CheckEcc(sector, sector, 86, 24, 2, 86, sector, 0xC, 0x10, 0x81C);
             if(!correctEccP) return false;
 
-            bool correctEccQ = CheckEcc(ref address, ref data2, 52, 43, 86, 88, ref eccQ);
+            bool correctEccQ = CheckEcc(sector, sector, 52, 43, 86, 88, sector, 0xC, 0x10, 0x81C + 0xAC);
             if(!correctEccQ) return false;
 
             uint storedEdc              = BitConverter.ToUInt32(sector, 0x810);
@@ -93,8 +88,31 @@ namespace DiscImageChef.DiscImages
             return calculatedEdc == storedEdc;
         }
 
-        bool CheckEcc(ref byte[] address,  ref byte[] data, uint majorCount, uint minorCount, uint majorMult,
-                      uint       minorInc, ref byte[] ecc)
+        bool SuffixIsCorrectMode2(byte[] sector)
+        {
+            if(!initedEdc) EccInit();
+
+            byte[] zeroaddress = new byte[4];
+
+            bool correctEccP = CheckEcc(zeroaddress, sector, 86, 24, 2, 86, sector, 0, 0x10, 0x81C);
+            if(!correctEccP) return false;
+
+            bool correctEccQ = CheckEcc(zeroaddress, sector, 52, 43, 86, 88, sector, 0, 0x10, 0x81C + 0xAC);
+            if(!correctEccQ) return false;
+
+            uint storedEdc              = BitConverter.ToUInt32(sector, 0x818);
+            uint edc                    = 0;
+            int  size                   = 0x808;
+            int  pos                    = 0x10;
+            for(; size > 0; size--) edc = (edc >> 8) ^ edcTable[(edc ^ sector[pos++]) & 0xFF];
+            uint calculatedEdc          = edc;
+
+            return calculatedEdc == storedEdc;
+        }
+
+        bool CheckEcc(byte[] address, byte[] data, uint majorCount, uint minorCount, uint majorMult,
+                      uint   minorInc,
+                      byte[] ecc, int addressOffset, int dataOffset, int eccOffset)
         {
             uint size = majorCount * minorCount;
             uint major;
@@ -106,7 +124,7 @@ namespace DiscImageChef.DiscImages
                 uint minor;
                 for(minor = 0; minor < minorCount; minor++)
                 {
-                    byte temp = idx < 4 ? address[idx] : data[idx - 4];
+                    byte temp = idx < 4 ? address[idx + addressOffset] : data[idx + dataOffset - 4];
                     idx += minorInc;
                     if(idx >= size) idx -= size;
                     eccA ^= temp;
@@ -115,7 +133,7 @@ namespace DiscImageChef.DiscImages
                 }
 
                 eccA = eccBTable[eccFTable[eccA] ^ eccB];
-                if(ecc[major] != eccA || ecc[major + majorCount] != (eccA ^ eccB)) return false;
+                if(ecc[major + eccOffset] != eccA || ecc[major + majorCount + eccOffset] != (eccA ^ eccB)) return false;
             }
 
             return true;
@@ -217,6 +235,7 @@ namespace DiscImageChef.DiscImages
                             TrackType  type)
         {
             byte[] computedEdc;
+            if(!initedEdc) EccInit();
 
             switch(type)
             {
@@ -281,6 +300,7 @@ namespace DiscImageChef.DiscImages
 
         uint ComputeEdc(uint edc, byte[] src, int size, int srcOffset = 0)
         {
+            if(!initedEdc) EccInit();
             int pos                     = srcOffset;
             for(; size > 0; size--) edc = (edc >> 8) ^ edcTable[(edc ^ src[pos++]) & 0xFF];
 
