@@ -1212,7 +1212,7 @@ namespace DiscImageChef.DiscImages
                             if(sectorPrefixDdt == null) sectorPrefixDdt = new uint[imageInfo.Sectors];
 
                             sector = new byte[2336];
-                            if(ArrayHelpers.ArrayIsNullOrEmpty(sector))
+                            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
                             {
                                 sectorPrefixDdt[sectorAddress] = (uint)CdFixFlags.NotDumped;
                                 return WriteSector(sector, sectorAddress);
@@ -1223,9 +1223,9 @@ namespace DiscImageChef.DiscImages
                             if(data[0x00] != 0x00 || data[0x01] != 0xFF || data[0x02] != 0xFF || data[0x03] != 0xFF ||
                                data[0x04] != 0xFF || data[0x05] != 0xFF || data[0x06] != 0xFF || data[0x07] != 0xFF ||
                                data[0x08] != 0xFF || data[0x09] != 0xFF || data[0x0A] != 0xFF || data[0x0B] != 0x00 ||
-                               data[0x0F] != 0x02 || data[0x10] != 0xFF || data[0x11] != 0xFF || data[0x12] != 0x00 ||
-                               data[0x13] != 0xFF || data[0x14] != 0xFF || data[0x15] != 0xFF || data[0x16] != 0x00 ||
-                               data[0x17] != 0x00) return false;
+                               data[0x0F] != 0x02 || data[0x10] != 0x00 || data[0x11] != 0x00 || data[0x12] != 0x00 ||
+                               data[0x13] != 0x00 || data[0x14] != 0x00 || data[0x15] != 0x00 || data[0x16] != 0x00 ||
+                               data[0x17] != 0x00) prefixCorrect = false;
 
                             if(prefixCorrect)
                             {
