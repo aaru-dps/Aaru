@@ -624,7 +624,8 @@ enum <ushort> DataType
     PriamDataTowerTag                = 74,
     CompactDiscMediaCatalogueNumber  = 75,
     CdSectorPrefixCorrected          = 76,
-    CdSectorSuffixCorrected          = 77
+    CdSectorSuffixCorrected          = 77,
+    CompactDiscMode2Subheader        = 78
 };
 
 enum <uint> BlockType

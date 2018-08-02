@@ -161,6 +161,7 @@ namespace DiscImageChef.DiscImages
         ulong[] userDataDdt;
         bool  writingLong;
         ulong writtenSectors;
+        byte[] mode2Subheaders;
 
         public DiscImageChef()
         {

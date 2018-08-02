@@ -205,7 +205,9 @@ namespace DiscImageChef.DiscImages
             /// <summary>CompactDisc sector prefix (sync, header), only incorrect stored</summary>
             CdSectorPrefixCorrected = 76,
             /// <summary>CompactDisc sector suffix (edc, ecc p, ecc q), only incorrect stored</summary>
-            CdSectorSuffixCorrected = 77
+            CdSectorSuffixCorrected = 77,
+            /// <summary>CompactDisc MODE 2 subheader</summary>
+            CompactDiscMode2Subheader = 78
         }
 
         /// <summary>List of known blocks types</summary>

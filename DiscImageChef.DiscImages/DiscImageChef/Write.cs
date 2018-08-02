@@ -1211,7 +1211,7 @@ namespace DiscImageChef.DiscImages
 
                             if(sectorPrefixDdt == null) sectorPrefixDdt = new uint[imageInfo.Sectors];
 
-                            sector = new byte[2336];
+                            sector = new byte[2328];
                             if(ArrayHelpers.ArrayIsNullOrEmpty(data))
                             {
                                 sectorPrefixDdt[sectorAddress] = (uint)CdFixFlags.NotDumped;
@@ -1223,9 +1223,7 @@ namespace DiscImageChef.DiscImages
                             if(data[0x00] != 0x00 || data[0x01] != 0xFF || data[0x02] != 0xFF || data[0x03] != 0xFF ||
                                data[0x04] != 0xFF || data[0x05] != 0xFF || data[0x06] != 0xFF || data[0x07] != 0xFF ||
                                data[0x08] != 0xFF || data[0x09] != 0xFF || data[0x0A] != 0xFF || data[0x0B] != 0x00 ||
-                               data[0x0F] != 0x02 || data[0x10] != 0x00 || data[0x11] != 0x00 || data[0x12] != 0x00 ||
-                               data[0x13] != 0x00 || data[0x14] != 0x00 || data[0x15] != 0x00 || data[0x16] != 0x00 ||
-                               data[0x17] != 0x00) prefixCorrect = false;
+                               data[0x0F] != 0x02) prefixCorrect = false;
 
                             if(prefixCorrect)
                             {
@@ -1249,7 +1247,10 @@ namespace DiscImageChef.DiscImages
                                 sectorPrefixMs.Write(data, 0, 16);
                             }
 
-                            Array.Copy(data, 16, sector, 0, 2336);
+                            if(mode2Subheaders == null) mode2Subheaders = new byte[imageInfo.Sectors * 8];
+
+                            Array.Copy(data, 16, mode2Subheaders, (int)sectorAddress * 8, 8);
+                            Array.Copy(data, 24, sector, 0, 2328);
                             return WriteSector(sector, sectorAddress);
                     }
 
@@ -2380,6 +2381,80 @@ namespace DiscImageChef.DiscImages
                         index.Add(idxEntry);
                     }
 
+                    if(mode2Subheaders != null)
+                    {
+                        idxEntry = new IndexEntry
+                        {
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CompactDiscMode2Subheader,
+                            offset    = (ulong)imageStream.Position
+                        };
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Writing CD MODE2 subheaders block to position {0}", idxEntry.offset);
+
+                        Crc64Context.Data(mode2Subheaders, out byte[] blockCrc);
+
+                        BlockHeader subheaderBlock = new BlockHeader
+                        {
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CompactDiscMode2Subheader,
+                            length     = (uint)mode2Subheaders.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
+                            sectorSize = 8
+                        };
+
+                        byte[] lzmaProperties = null;
+
+                        if(nocompress)
+                        {
+                            subheaderBlock.compression = CompressionType.None;
+                            subheaderBlock.cmpCrc64    = subheaderBlock.crc64;
+                            subheaderBlock.cmpLength   = subheaderBlock.length;
+                            blockStream             = new MemoryStream(mode2Subheaders);
+                        }
+                        else
+                        {
+                            startCompress   = DateTime.Now;
+                            blockStream     = new MemoryStream();
+                            lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                            lzmaBlockStream.Write(mode2Subheaders, 0, mode2Subheaders.Length);
+                            lzmaProperties = lzmaBlockStream.Properties;
+                            lzmaBlockStream.Close();
+
+                            Crc64Context cmpCrc = new Crc64Context();
+                            cmpCrc.Update(lzmaProperties);
+                            cmpCrc.Update(blockStream.ToArray());
+                            blockCrc                = cmpCrc.Final();
+                            subheaderBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            subheaderBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                            subheaderBlock.compression = CompressionType.Lzma;
+
+                            lzmaBlockStream = null;
+                            endCompress     = DateTime.Now;
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Took {0} seconds to compress MODE2 subheaders",
+                                                      (endCompress - startCompress).TotalSeconds);
+                        }
+
+                        structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(subheaderBlock));
+                        structureBytes   = new byte[Marshal.SizeOf(subheaderBlock)];
+                        Marshal.StructureToPtr(subheaderBlock, structurePointer, true);
+                        Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
+                        Marshal.FreeHGlobal(structurePointer);
+                        imageStream.Write(structureBytes, 0, structureBytes.Length);
+                        if(subheaderBlock.compression == CompressionType.Lzma)
+                            imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
+                        imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+
+                        index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                             t.dataType  == DataType.CompactDiscMode2Subheader);
+
+                        index.Add(idxEntry);
+                        blockStream = null;
+                    }
+
+                    
                     if(sectorSubchannel != null)
                     {
                         idxEntry = new IndexEntry

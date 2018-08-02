@@ -269,6 +269,9 @@ namespace DiscImageChef.DiscImages
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
                                 break;
+                            case DataType.CompactDiscMode2Subheader:
+                                mode2Subheaders = data;
+                                break;
                             default:
                                 MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
 
@@ -1362,7 +1365,14 @@ namespace DiscImageChef.DiscImages
                         case TrackType.CdMode2Formless:
                         case TrackType.CdMode2Form1:
                         case TrackType.CdMode2Form2:
-                            Array.Copy(data, 0, sector, 16, 2336);
+                            if(mode2Subheaders != null)
+                            {
+                                Array.Copy(mode2Subheaders, (int)sectorAddress * 8, sector, 16, 8);
+                                Array.Copy(data, 0, sector, 24, 2328);
+                            }
+                            else
+                                Array.Copy(data, 0, sector, 16, 2336);
+
                             if(sectorPrefix != null)
                                 Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
                             else if(sectorPrefixMs != null)
