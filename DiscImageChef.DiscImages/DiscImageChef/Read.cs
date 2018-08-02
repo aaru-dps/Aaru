@@ -388,6 +388,9 @@ namespace DiscImageChef.DiscImages
 
                             for(ulong i = 0; i < ddtHeader.entries; i++)
                                 cdDdt[i] = BitConverter.ToUInt32(decompressedDdt, (int)(i * sizeof(uint)));
+
+                            if(entry.dataType      == DataType.CdSectorPrefixCorrected) sectorPrefixDdt = cdDdt;
+                            else if(entry.dataType == DataType.CdSectorSuffixCorrected) sectorSuffixDdt = cdDdt;
                         }
 
                         break;
@@ -903,7 +906,10 @@ namespace DiscImageChef.DiscImages
                     byte[] sector = ReadSector(tracks[i].TrackStartSector);
                     tracks[i].TrackBytesPerSector = sector.Length;
                     tracks[i].TrackRawBytesPerSector =
-                        sectorPrefix != null && sectorSuffix != null ? 2352 : sector.Length;
+                        sectorPrefix    != null && sectorSuffix    != null ||
+                        sectorPrefixDdt != null && sectorSuffixDdt != null
+                            ? 2352
+                            : sector.Length;
 
                     if(sectorSubchannel == null) continue;
 
@@ -922,6 +928,8 @@ namespace DiscImageChef.DiscImages
             }
 
             SetMetadataFromTags();
+
+            if(sectorSuffixDdt != null) EccInit();
 
             return true;
         }
@@ -1310,23 +1318,70 @@ namespace DiscImageChef.DiscImages
                         case TrackType.Audio:
                         case TrackType.Data: return data;
                         case TrackType.CdMode1:
+                            Array.Copy(data, 0, sector, 16, 2048);
+
                             if(sectorPrefix != null)
                                 Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
-                            else if(sectorPrefixMs != null) throw new NotImplementedException();
+                            else if(sectorPrefixDdt != null)
+                            {
+                                if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.Correct)
+                                    ReconstructPrefix(ref sector, trk.TrackType, (long)sectorAddress);
+                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.NotDumped)
+                                {
+                                    // Do nothing
+                                }
+                                else
+                                {
+                                    sectorPrefixMs.Position =
+                                        ((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
+                                    sectorPrefixMs.Read(sector, 0, 16);
+                                }
+                            }
                             else throw new InvalidProgramException("Should not have arrived here");
 
                             if(sectorSuffix != null)
                                 Array.Copy(sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
-                            else if(sectorSuffixMs != null) throw new NotImplementedException();
+                            else if(sectorSuffixDdt != null)
+                            {
+                                if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.Correct)
+                                    ReconstructEcc(ref sector, trk.TrackType);
+                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.NotDumped)
+                                {
+                                    // Do nothing
+                                }
+                                else
+                                {
+                                    sectorSuffixMs.Position =
+                                        ((sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
+                                    sectorSuffixMs.Read(sector, 0, 288);
+                                }
+                            }
                             else throw new InvalidProgramException("Should not have arrived here");
 
-                            Array.Copy(data, 0, sector, 16, 2048);
                             return sector;
                         case TrackType.CdMode2Formless:
                         case TrackType.CdMode2Form1:
                         case TrackType.CdMode2Form2:
-                            Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0,  16);
-                            Array.Copy(data,         0,                       sector, 16, 2336);
+                            Array.Copy(data, 0, sector, 16, 2336);
+                            if(sectorPrefix != null)
+                                Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
+                            else if(sectorPrefixMs != null)
+                            {
+                                if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.Correct)
+                                    ReconstructPrefix(ref sector, trk.TrackType, (long)sectorAddress);
+                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.NotDumped)
+                                {
+                                    // Do nothing
+                                }
+                                else
+                                {
+                                    sectorPrefixMs.Position =
+                                        ((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
+                                    sectorPrefixMs.Read(sector, 0, 16);
+                                }
+                            }
+                            else throw new InvalidProgramException("Should not have arrived here");
+
                             return sector;
                     }
 
@@ -1385,38 +1440,64 @@ namespace DiscImageChef.DiscImages
                         case TrackType.Data: return ReadSectors(sectorAddress, length);
                         // Join prefix (sync, header) with user data with suffix (edc, ecc p, ecc q)
                         case TrackType.CdMode1:
-                            if(sectorPrefix == null || sectorSuffix == null) return ReadSectors(sectorAddress, length);
-
-                            sectors = new byte[2352 * length];
-                            data    = ReadSectors(sectorAddress, length);
-                            for(uint i = 0; i < length; i++)
+                            if(sectorPrefix != null && sectorSuffix != null)
                             {
-                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
-                                           16);
-                                Array.Copy(data, (int)(i * 2048), sectors,
-                                           (int)(i * 2352) + 16, 2048);
-                                Array.Copy(sectorSuffix, (int)((sectorAddress + i) * 288), sectors,
-                                           (int)(i * 2352) + 2064, 288);
-                            }
+                                sectors = new byte[2352 * length];
+                                data    = ReadSectors(sectorAddress, length);
+                                for(uint i = 0; i < length; i++)
+                                {
+                                    Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
+                                               16);
+                                    Array.Copy(data, (int)(i * 2048), sectors, (int)(i * 2352) + 16, 2048);
+                                    Array.Copy(sectorSuffix, (int)((sectorAddress + i) * 288), sectors,
+                                               (int)(i * 2352) + 2064, 288);
+                                }
 
-                            return sectors;
+                                return sectors;
+                            }
+                            else if(sectorPrefixDdt != null && sectorSuffixDdt != null)
+                            {
+                                sectors = new byte[2352 * length];
+                                for(uint i = 0; i < length; i++)
+                                {
+                                    byte[] temp = ReadSectorLong(sectorAddress + i);
+                                    Array.Copy(temp, 0, sectors, 2352 * i, 2352);
+                                }
+
+                                return sectors;
+                            }
+                            else return ReadSectors(sectorAddress, length);
+
                         // Join prefix (sync, header) with user data
                         case TrackType.CdMode2Formless:
                         case TrackType.CdMode2Form1:
                         case TrackType.CdMode2Form2:
-                            if(sectorPrefix == null || sectorSuffix == null) return ReadSectors(sectorAddress, length);
-
-                            sectors = new byte[2352 * length];
-                            data    = ReadSectors(sectorAddress, length);
-                            for(uint i = 0; i < length; i++)
+                            if(sectorPrefix != null && sectorSuffix != null)
                             {
-                                Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
-                                           16);
-                                Array.Copy(data, (int)(i * 2336), sectors,
-                                           (int)(i * 2352) + 16, 2336);
+                                sectors = new byte[2352 * length];
+                                data    = ReadSectors(sectorAddress, length);
+                                for(uint i = 0; i < length; i++)
+                                {
+                                    Array.Copy(sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
+                                               16);
+                                    Array.Copy(data, (int)(i * 2336), sectors, (int)(i * 2352) + 16, 2336);
+                                }
+
+                                return sectors;
+                            }
+                            else if(sectorPrefixDdt != null && sectorSuffixDdt != null)
+                            {
+                                sectors = new byte[2352 * length];
+                                for(uint i = 0; i < length; i++)
+                                {
+                                    byte[] temp = ReadSectorLong(sectorAddress + i);
+                                    Array.Copy(temp, 0, sectors, 2352 * i, 2352);
+                                }
+
+                                return sectors;
                             }
 
-                            return sectors;
+                            return ReadSectors(sectorAddress, length);
                     }
 
                     break;

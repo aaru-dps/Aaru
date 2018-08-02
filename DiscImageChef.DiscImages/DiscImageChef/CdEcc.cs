@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Enums;
 
 namespace DiscImageChef.DiscImages
 {
@@ -58,11 +59,11 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        bool SuffixIsCorrect(byte[] channel)
+        bool SuffixIsCorrect(byte[] sector)
         {
-            if(channel[0x814] != 0x00 || // reserved (8 bytes)
-               channel[0x815] != 0x00 || channel[0x816] != 0x00 || channel[0x817] != 0x00 || channel[0x818] != 0x00 ||
-               channel[0x819] != 0x00 || channel[0x81A] != 0x00 || channel[0x81B] != 0x00) return false;
+            if(sector[0x814] != 0x00 || // reserved (8 bytes)
+               sector[0x815] != 0x00 || sector[0x816] != 0x00 || sector[0x817] != 0x00 || sector[0x818] != 0x00 ||
+               sector[0x819] != 0x00 || sector[0x81A] != 0x00 || sector[0x81B] != 0x00) return false;
 
             byte[] address = new byte[4];
             byte[] data    = new byte[2060];
@@ -70,11 +71,11 @@ namespace DiscImageChef.DiscImages
             byte[] eccP    = new byte[172];
             byte[] eccQ    = new byte[104];
 
-            Array.Copy(channel, 0x0C,  address, 0, 4);
-            Array.Copy(channel, 0x10,  data,    0, 2060);
-            Array.Copy(channel, 0x10,  data2,   0, 2232);
-            Array.Copy(channel, 0x81C, eccP,    0, 172);
-            Array.Copy(channel, 0x8C8, eccQ,    0, 104);
+            Array.Copy(sector, 0x0C,  address, 0, 4);
+            Array.Copy(sector, 0x10,  data,    0, 2060);
+            Array.Copy(sector, 0x10,  data2,   0, 2232);
+            Array.Copy(sector, 0x81C, eccP,    0, 172);
+            Array.Copy(sector, 0x8C8, eccQ,    0, 104);
 
             bool correctEccP = CheckEcc(ref address, ref data, 86, 24, 2, 86, ref eccP);
             if(!correctEccP) return false;
@@ -82,11 +83,11 @@ namespace DiscImageChef.DiscImages
             bool correctEccQ = CheckEcc(ref address, ref data2, 52, 43, 86, 88, ref eccQ);
             if(!correctEccQ) return false;
 
-            uint storedEdc              = BitConverter.ToUInt32(channel, 0x810);
+            uint storedEdc              = BitConverter.ToUInt32(sector, 0x810);
             uint edc                    = 0;
             int  size                   = 0x810;
             int  pos                    = 0;
-            for(; size > 0; size--) edc = (edc >> 8) ^ edcTable[(edc ^ channel[pos++]) & 0xFF];
+            for(; size > 0; size--) edc = (edc >> 8) ^ edcTable[(edc ^ sector[pos++]) & 0xFF];
             uint calculatedEdc          = edc;
 
             return calculatedEdc == storedEdc;
@@ -118,6 +119,172 @@ namespace DiscImageChef.DiscImages
             }
 
             return true;
+        }
+
+        void WriteEcc(byte[]     address, byte[] data, uint majorCount, uint minorCount, uint majorMult,
+                      uint       minorInc,
+                      ref byte[] ecc, int addressOffset, int dataOffset, int eccOffset)
+        {
+            uint size = majorCount * minorCount;
+            uint major;
+            for(major = 0; major < majorCount; major++)
+            {
+                uint idx  = (major >> 1) * majorMult + (major & 1);
+                byte eccA = 0;
+                byte eccB = 0;
+                uint minor;
+                for(minor = 0; minor < minorCount; minor++)
+                {
+                    byte temp = idx < 4 ? address[idx + addressOffset] : data[idx + dataOffset - 4];
+                    idx += minorInc;
+                    if(idx >= size) idx -= size;
+                    eccA ^= temp;
+                    eccB ^= temp;
+                    eccA =  eccFTable[eccA];
+                }
+
+                eccA                                = eccBTable[eccFTable[eccA] ^ eccB];
+                ecc[major              + eccOffset] = eccA;
+                ecc[major + majorCount + eccOffset] = (byte)(eccA ^ eccB);
+            }
+        }
+
+        void EccWriteSector(byte[] address, byte[] data, ref byte[] ecc, int addressOffset, int dataOffset,
+                            int    eccOffset)
+        {
+            WriteEcc(address, data, 86, 24, 2,  86, ref ecc, addressOffset, dataOffset, eccOffset);        // P
+            WriteEcc(address, data, 52, 43, 86, 88, ref ecc, addressOffset, dataOffset, eccOffset + 0xAC); // Q
+        }
+
+        static (byte minute, byte second, byte frame) LbaToMsf(long pos)
+        {
+            return ((byte)((pos + 150) / 75 / 60), (byte)((pos + 150) / 75 % 60), (byte)((pos + 150) % 75));
+        }
+
+        void ReconstructPrefix(ref byte[] sector, // must point to a full 2352-byte sector
+                               TrackType  type,   long lba)
+        {
+            //
+            // Sync
+            //
+            sector[0x000] = 0x00;
+            sector[0x001] = 0xFF;
+            sector[0x002] = 0xFF;
+            sector[0x003] = 0xFF;
+            sector[0x004] = 0xFF;
+            sector[0x005] = 0xFF;
+            sector[0x006] = 0xFF;
+            sector[0x007] = 0xFF;
+            sector[0x008] = 0xFF;
+            sector[0x009] = 0xFF;
+            sector[0x00A] = 0xFF;
+            sector[0x00B] = 0x00;
+
+            (byte minute, byte second, byte frame) msf = LbaToMsf(lba);
+
+            sector[0x00C] = (byte)(((msf.minute / 10) << 4) + msf.minute % 10);
+            sector[0x00D] = (byte)(((msf.second / 10) << 4) + msf.second % 10);
+            sector[0x00E] = (byte)(((msf.frame  / 10) << 4) + msf.frame  % 10);
+
+            switch(type)
+            {
+                case TrackType.CdMode1:
+                    //
+                    // Mode
+                    //
+                    sector[0x00F] = 0x01;
+                    break;
+                case TrackType.CdMode2Form1:
+                case TrackType.CdMode2Form2:
+                case TrackType.CdMode2Formless:
+                    //
+                    // Mode
+                    //
+                    sector[0x00F] = 0x02;
+                    //
+                    // Flags
+                    //
+                    sector[0x010] = sector[0x014];
+                    sector[0x011] = sector[0x015];
+                    sector[0x012] = sector[0x016];
+                    sector[0x013] = sector[0x017];
+                    break;
+                default: return;
+            }
+        }
+
+        void ReconstructEcc(ref byte[] sector, // must point to a full 2352-byte sector
+                            TrackType  type)
+        {
+            byte[] computedEdc;
+
+            switch(type)
+            {
+                //
+                // Compute EDC
+                //
+                case TrackType.CdMode1:
+                    computedEdc   = BitConverter.GetBytes(ComputeEdc(0, sector, 0x810));
+                    sector[0x810] = computedEdc[0];
+                    sector[0x811] = computedEdc[1];
+                    sector[0x812] = computedEdc[2];
+                    sector[0x813] = computedEdc[3];
+                    break;
+                case TrackType.CdMode2Form1:
+                    computedEdc   = BitConverter.GetBytes(ComputeEdc(0, sector, 0x808, 0x10));
+                    sector[0x818] = computedEdc[0];
+                    sector[0x819] = computedEdc[1];
+                    sector[0x81A] = computedEdc[2];
+                    sector[0x81B] = computedEdc[3];
+                    break;
+                case TrackType.CdMode2Form2:
+                    computedEdc   = BitConverter.GetBytes(ComputeEdc(0, sector, 0x91C, 0x10));
+                    sector[0x92C] = computedEdc[0];
+                    sector[0x92D] = computedEdc[1];
+                    sector[0x92E] = computedEdc[2];
+                    sector[0x92F] = computedEdc[3];
+                    break;
+                default: return;
+            }
+
+            byte[] zeroaddress = new byte[4];
+
+            switch(type)
+            {
+                //
+                // Compute ECC
+                //
+                case TrackType.CdMode1:
+                    //
+                    // Reserved
+                    //
+                    sector[0x814] = 0x00;
+                    sector[0x815] = 0x00;
+                    sector[0x816] = 0x00;
+                    sector[0x817] = 0x00;
+                    sector[0x818] = 0x00;
+                    sector[0x819] = 0x00;
+                    sector[0x81A] = 0x00;
+                    sector[0x81B] = 0x00;
+                    EccWriteSector(sector, sector, ref sector, 0xC, 0x10, 0x81C);
+                    break;
+                case TrackType.CdMode2Form1:
+                    EccWriteSector(zeroaddress, sector, ref sector, 0, 0x10, 0x81C);
+                    break;
+                default: return;
+            }
+
+            //
+            // Done
+            //
+        }
+
+        uint ComputeEdc(uint edc, byte[] src, int size, int srcOffset = 0)
+        {
+            int pos                     = srcOffset;
+            for(; size > 0; size--) edc = (edc >> 8) ^ edcTable[(edc ^ src[pos++]) & 0xFF];
+
+            return edc;
         }
     }
 }
