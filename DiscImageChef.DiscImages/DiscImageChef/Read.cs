@@ -1327,9 +1327,9 @@ namespace DiscImageChef.DiscImages
                                 Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
                             else if(sectorPrefixDdt != null)
                             {
-                                if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.Correct)
+                                if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
                                     ReconstructPrefix(ref sector, trk.TrackType, (long)sectorAddress);
-                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.NotDumped)
+                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
                                 {
                                     // Do nothing
                                 }
@@ -1346,9 +1346,9 @@ namespace DiscImageChef.DiscImages
                                 Array.Copy(sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
                             else if(sectorSuffixDdt != null)
                             {
-                                if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.Correct)
+                                if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
                                     ReconstructEcc(ref sector, trk.TrackType);
-                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.NotDumped)
+                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
                                 {
                                     // Do nothing
                                 }
@@ -1365,21 +1365,13 @@ namespace DiscImageChef.DiscImages
                         case TrackType.CdMode2Formless:
                         case TrackType.CdMode2Form1:
                         case TrackType.CdMode2Form2:
-                            if(mode2Subheaders != null)
-                            {
-                                Array.Copy(mode2Subheaders, (int)sectorAddress * 8, sector, 16, 8);
-                                Array.Copy(data, 0, sector, 24, 2328);
-                            }
-                            else
-                                Array.Copy(data, 0, sector, 16, 2336);
-
                             if(sectorPrefix != null)
                                 Array.Copy(sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
                             else if(sectorPrefixMs != null)
                             {
-                                if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.Correct)
+                                if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
                                     ReconstructPrefix(ref sector, trk.TrackType, (long)sectorAddress);
-                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (ulong)CdFixFlags.NotDumped)
+                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
                                 {
                                     // Do nothing
                                 }
@@ -1391,6 +1383,32 @@ namespace DiscImageChef.DiscImages
                                 }
                             }
                             else throw new InvalidProgramException("Should not have arrived here");
+
+                            if(mode2Subheaders != null && sectorSuffixDdt != null)
+                            {
+                                Array.Copy(mode2Subheaders, (int)sectorAddress * 8, sector, 16, 8);
+
+                                if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form1Ok)
+                                {
+                                    Array.Copy(data, 0, sector, 24, 2048);
+                                    ReconstructEcc(ref sector, TrackType.CdMode2Form1);
+                                }
+                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
+                                        (uint)CdFixFlags.Mode2Form2Ok ||
+                                        (sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
+                                        (uint)CdFixFlags.Mode2Form2NoCrc)
+                                {
+                                    Array.Copy(data, 0, sector, 24, 2324);
+                                    if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form2Ok)
+                                        ReconstructEcc(ref sector, TrackType.CdMode2Form2);
+                                }
+                            }
+                            else if(mode2Subheaders != null)
+                            {
+                                Array.Copy(mode2Subheaders, (int)sectorAddress * 8, sector, 16, 8);
+                                Array.Copy(data,            0,                      sector, 24, 2328);
+                            }
+                            else Array.Copy(data, 0, sector, 16, 2336);
 
                             return sector;
                     }
