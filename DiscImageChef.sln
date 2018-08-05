@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Tests.Devices
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Compression", "DiscImageChef.Compression\DiscImageChef.Compression.csproj", "{858398D1-7321-4763-8BAB-56BBFEC74E29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Database", "DiscImageChef.Database\DiscImageChef.Database.csproj", "{FA0749B5-EFE0-4148-9545-CD420B45BC36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -111,6 +113,10 @@ Global
 		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Debug|x86.Build.0 = Debug|Any CPU
 		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Release|x86.ActiveCfg = Release|Any CPU
 		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Release|x86.Build.0 = Release|Any CPU
+		{FA0749B5-EFE0-4148-9545-CD420B45BC36}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FA0749B5-EFE0-4148-9545-CD420B45BC36}.Debug|x86.Build.0 = Debug|Any CPU
+		{FA0749B5-EFE0-4148-9545-CD420B45BC36}.Release|x86.ActiveCfg = Release|Any CPU
+		{FA0749B5-EFE0-4148-9545-CD420B45BC36}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

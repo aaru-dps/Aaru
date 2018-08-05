@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="$USER_HOME$/.Rider2018.1/system/resharper-host/local/Transient/ReSharperHost/v12/SolutionCaches/_DiscImageChef.73225794.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.11/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
@@ -249,6 +250,55 @@
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
               <e p="DiscImageChef.Core.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="DiscImageChef.Database" t="IncludeRecursive">
+        <e p="Context.cs" t="Include" />
+        <e p="DiscImageChef.Database.csproj" t="IncludeRecursive" />
+        <e p="Migrations" t="Include">
+          <e p="20180805182209_InitialCreate.Designer.cs" t="Include" />
+          <e p="20180805182209_InitialCreate.cs" t="Include" />
+          <e p="DicContextModelSnapshot.cs" t="Include" />
+        </e>
+        <e p="Models" t="Include">
+          <e p="ATA.cs" t="Include" />
+          <e p="BaseEntity.cs" t="Include" />
+          <e p="BaseTypes.cs" t="Include" />
+          <e p="CHS.cs" t="Include" />
+          <e p="Device.cs" t="Include" />
+          <e p="FireWire.cs" t="Include" />
+          <e p="PCMCIA.cs" t="Include" />
+          <e p="SCSI" t="Include">
+            <e p="BlockDescriptor.cs" t="Include" />
+            <e p="Inquiry.cs" t="Include" />
+            <e p="MMC" t="Include">
+              <e p="Features.cs" t="Include" />
+              <e p="MMC.cs" t="Include" />
+              <e p="Mode2A.cs" t="Include" />
+              <e p="WriteDescriptor.cs" t="Include" />
+            </e>
+            <e p="Mode.cs" t="Include" />
+            <e p="ModePage.cs" t="Include" />
+            <e p="Page.cs" t="Include" />
+            <e p="SCSI.cs" t="Include" />
+            <e p="SSC" t="Include">
+              <e p="SSC.cs" t="Include" />
+              <e p="SequentialMedia.cs" t="Include" />
+              <e p="SupportedDensity.cs" t="Include" />
+            </e>
+            <e p="SupportedMedia.cs" t="Include" />
+          </e>
+          <e p="SecureDigital.cs" t="Include" />
+          <e p="TestedMedia.cs" t="Include" />
+          <e p="Usb.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Database.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -1294,7 +1344,9 @@
         <e p="ViewReport.aspx.designer.cs" t="Include" />
         <e p="Web.config" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="docs" t="Include" />
+        <e p="docs" t="Include">
+          <e p="README.md" t="Include" />
+        </e>
         <e p="dos.css" t="Include" />
         <e p="int10h.org" t="Include">
           <e p=".htaccess" t="Include" />
