@@ -359,7 +359,7 @@ namespace DiscImageChef.Decoders.SecureDigital
             else
             {
                 sb.AppendFormat("\tDevice has {0} blocks", (csd.Size + 1) * 1024).AppendLine();
-                result = (csd.Size + 1) * 1024 * 512;
+                result = ((ulong)csd.Size + 1) * 1024 * 512;
                 if(result > 1099511627776)
                     sb.AppendFormat("\tDevice has {0} TiB", result / 1099511627776.0).AppendLine();
                 else if(result > 1073741824)
