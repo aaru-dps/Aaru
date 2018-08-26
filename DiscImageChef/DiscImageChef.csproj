@@ -193,6 +193,7 @@
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
       <Name>DiscImageChef.Checksums</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Gui\DiscImageChef.Gui.csproj" />
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
@@ -261,6 +262,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.4.1" />
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.4.1" />
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.4.1" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
   </ItemGroup>

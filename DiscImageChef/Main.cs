@@ -35,13 +35,16 @@ using System.Reflection;
 using CommandLine;
 using DiscImageChef.Commands;
 using DiscImageChef.Console;
+using DiscImageChef.Gui;
 using DiscImageChef.Settings;
+using Eto.Forms;
 using Statistics = DiscImageChef.Core.Statistics;
 
 namespace DiscImageChef
 {
     class MainClass
     {
+        [STAThread]
         public static void Main(string[] args)
         {
             DicConsole.WriteLineEvent      += System.Console.WriteLine;
@@ -62,7 +65,7 @@ namespace DiscImageChef
                                           typeof(FormatsOptions), typeof(ImageInfoOptions), typeof(ListDevicesOptions),
                                           typeof(ListEncodingsOptions), typeof(ListOptionsOptions), typeof(LsOptions),
                                           typeof(MediaInfoOptions), typeof(MediaScanOptions), typeof(PrintHexOptions),
-                                          typeof(StatsOptions), typeof(VerifyOptions))
+                                          typeof(StatsOptions), typeof(VerifyOptions), typeof(GuiOptions))
                   .WithParsed<AnalyzeOptions>(opts =>
                    {
                        if(opts.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
@@ -203,6 +206,11 @@ namespace DiscImageChef
                    {
                        PrintCopyright();
                        Commands.Statistics.ShowStats();
+                   }).WithParsed<GuiOptions>(opts =>
+                   {
+                       if (opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                       if (opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                       new Application(Eto.Platform.Detect).Run(new MainForm());
                    }).WithNotParsed(errs => Environment.Exit(1));
 
             Statistics.SaveStats();

@@ -455,4 +455,7 @@ namespace DiscImageChef
         [Option('i', "input", Required = true, HelpText = "Media image.")]
         public string InputFile { get; set; }
     }
+
+    [Verb("gui", HelpText = "Opens the in-progress GUI.")]
+    public class GuiOptions : CommonOptions { }
 }
