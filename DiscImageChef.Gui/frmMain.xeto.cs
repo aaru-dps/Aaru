@@ -87,7 +87,24 @@ namespace DiscImageChef.Gui
 
         protected void OnMenuAbout(object sender, EventArgs e)
         {
-            new AboutDialog().ShowDialog(this);
+            AboutDialog dlgAbout = new AboutDialog
+            {
+                Developers = new[] {"Natalia Portillo", "Michael Drüing"},
+                License = "This program is free software: you can redistribute it and/or modify\n" +
+                          "it under the terms of the GNU General public License as\n"              +
+                          "published by the Free Software Foundation, either version 3 of the\n"   +
+                          "License, or (at your option) any later version.\n\n"                    +
+                          "This program is distributed in the hope that it will be useful,\n"      +
+                          "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"       +
+                          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"        +
+                          "GNU General public License for more details.\n\n"                       +
+                          "You should have received a copy of the GNU General public License\n"    +
+                          "along with this program.  If not, see <http://www.gnu.org/licenses/>.",
+                ProgramName  = "The Disc Image Chef",
+                Website      = new Uri("https://github.com/claunia"),
+                WebsiteLabel = "Source code on..."
+            };
+            dlgAbout.ShowDialog(this);
         }
 
         protected void OnMenuQuit(object sender, EventArgs e)
