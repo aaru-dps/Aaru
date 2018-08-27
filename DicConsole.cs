@@ -48,16 +48,19 @@ namespace DiscImageChef.Console
 
     public delegate void DebugWriteHandler(string format, params object[] arg);
 
+    public delegate void DebugWithModuleWriteLineHandler(string module, string format, params object[] arg);
+
     /// <summary>
     ///     Implements a console abstraction that defines four level of messages that can be routed to different consoles:
     ///     standard, error, verbose and debug.
     /// </summary>
     public static class DicConsole
     {
-        public static event WriteLineHandler        WriteLineEvent;
-        public static event ErrorWriteLineHandler   ErrorWriteLineEvent;
-        public static event VerboseWriteLineHandler VerboseWriteLineEvent;
-        public static event DebugWriteLineHandler   DebugWriteLineEvent;
+        public static event WriteLineHandler                WriteLineEvent;
+        public static event ErrorWriteLineHandler           ErrorWriteLineEvent;
+        public static event VerboseWriteLineHandler         VerboseWriteLineEvent;
+        public static event DebugWriteLineHandler           DebugWriteLineEvent;
+        public static event DebugWithModuleWriteLineHandler DebugWithModuleWriteLineEvent;
 
         public static event WriteHandler        WriteEvent;
         public static event ErrorWriteHandler   ErrorWriteEvent;
@@ -82,6 +85,7 @@ namespace DiscImageChef.Console
         public static void DebugWriteLine(string module, string format, params object[] arg)
         {
             DebugWriteLineEvent?.Invoke("DEBUG (" + module + "): " + format, arg);
+            DebugWithModuleWriteLineEvent?.Invoke(module, format, arg);
         }
 
         public static void WriteLine()
