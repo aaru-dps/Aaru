@@ -210,7 +210,7 @@ namespace DiscImageChef
                    {
                        if (opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                        if (opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                       new Application(Eto.Platform.Detect).Run(new MainForm());
+                       new Application(Eto.Platform.Detect).Run(new frmMain());
                    }).WithNotParsed(errs => Environment.Exit(1));
 
             Statistics.SaveStats();

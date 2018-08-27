@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="DiscImageChef" ClientSize="600, 450" Padding="10">
+    <Splitter Orientation="Horizontal" Panel1MinimumSize="200" FixedPanel="Panel1" ID="splMain">
+        <Splitter.Panel1>
+            <TreeGridView ID="treeImages"/>
+        </Splitter.Panel1>
+        <Splitter.Panel2>
+            <GridView ID="grdFiles"/>
+        </Splitter.Panel2>
+    </Splitter>
+    <Form.Menu>
+        <MenuBar>
+            <ButtonMenuItem Text="&amp;File">
+                <ButtonMenuItem Text="Open" Click="OnMenuOpen"/>
+            </ButtonMenuItem>
+            <ButtonMenuItem Text="&amp;Devices">
+                <ButtonMenuItem Text="&amp;Refresh" Click="OnDeviceRefresh" Shortcut="F5"/>
+            </ButtonMenuItem>
+            <MenuBar.ApplicationItems>
+                <ButtonMenuItem Text="Preferences.." Shortcut="{On Control+O, Mac=Application+Comma}"/>
+            </MenuBar.ApplicationItems>
+            <MenuBar.QuitItem>
+                <ButtonMenuItem Text="Quit" Shortcut="CommonModifier+Q" Click="OnMenuQuit"/>
+            </MenuBar.QuitItem>
+            <MenuBar.AboutItem>
+                <ButtonMenuItem Text="About..." Click="OnMenuAbout"/>
+            </MenuBar.AboutItem>
+        </MenuBar>
+    </Form.Menu>
+</Form>

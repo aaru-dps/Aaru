@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <RootNamespace>DiscImageChef.Gui</RootNamespace>
     <PackageVersion>1.0</PackageVersion>
     <Title>DiscImageChef.Gui</Title>
     <Copyright>Copyright © 2018</Copyright>
     <Description>Description of DiscImageChef.Gui</Description>
   </PropertyGroup>
-  
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.4.1" />
     <PackageReference Include="Eto.Serialization.Xaml" Version="2.4.1" />
   </ItemGroup>
-  
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Devices\DiscImageChef.Devices.csproj" />
+  </ItemGroup>
 </Project>

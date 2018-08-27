@@ -41,6 +41,8 @@
           <e p="Verify.cs" t="Include" />
         </e>
         <e p="DiscImageChef.csproj" t="IncludeRecursive" />
+        <e p="Info.plist" t="Include" />
+        <e p="MacIcon.icns" t="Include" />
         <e p="Main.cs" t="Include" />
         <e p="Options.cs" t="Include" />
         <e p="Progress.cs" t="Include" />
@@ -48,11 +50,9 @@
         <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="x86" t="Include">
-            <e p="Debug" t="Include">
-              <e p="net461" t="Include">
-                <e p="DiscImageChef.AssemblyInfo.cs" t="Include" />
-              </e>
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -1246,6 +1246,20 @@
           </e>
         </e>
       </e>
+      <e p="DiscImageChef.Gui" t="IncludeRecursive">
+        <e p="DiscImageChef.Gui.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="frmMain.xeto" t="Include" />
+        <e p="frmMain.xeto.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Gui.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="DiscImageChef.Gui.XamMac/DiscImageChef.Gui.XamMac.csproj" t="IncludeRecursive" />
       <e p="DiscImageChef.Helpers" t="IncludeRecursive">
         <e p="ArrayFill.cs" t="Include" />
         <e p="ArrayIsEmpty.cs" t="Include" />
@@ -1545,11 +1559,9 @@
         <e p="SecureDigital.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="x86" t="Include">
-            <e p="Debug" t="Include">
-              <e p="net461" t="Include">
-                <e p="DiscImageChef.Tests.Devices.AssemblyInfo.cs" t="Include" />
-              </e>
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Tests.Devices.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
