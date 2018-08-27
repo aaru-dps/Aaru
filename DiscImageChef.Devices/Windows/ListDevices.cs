@@ -34,7 +34,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+#if !NETSTANDARD2_0
 using System.Management;
+#endif
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
@@ -66,8 +68,10 @@ namespace DiscImageChef.Devices.Windows
         [SuppressMessage("ReSharper", "RedundantCatchClause")]
         internal static DeviceInfo[] GetList()
         {
+            // TODO: Any way to fill this in .NET Standard ???
             List<string> deviceIDs = new List<string>();
 
+            #if !NETSTANDARD2_0
             try
             {
                 ManagementObjectSearcher mgmtObjSearcher =
@@ -94,6 +98,7 @@ namespace DiscImageChef.Devices.Windows
                 return null;
 #endif
             }
+    #endif
 
             List<DeviceInfo> devList = new List<DeviceInfo>();
 

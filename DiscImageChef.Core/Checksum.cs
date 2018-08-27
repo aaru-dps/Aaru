@@ -47,7 +47,9 @@ namespace DiscImageChef.Core
         Crc32      = 4,
         Crc64      = 8,
         Md5        = 16,
+#if !NETSTANDARD2_0
         Ripemd160  = 32,
+#endif
         Sha1       = 64,
         Sha256     = 128,
         Sha384     = 256,
@@ -55,7 +57,11 @@ namespace DiscImageChef.Core
         SpamSum    = 1024,
         Fletcher16 = 2048,
         Fletcher32 = 4096,
-        All = Adler32    | Crc16 | Crc32 | Crc64 | Md5 | Ripemd160 | Sha1 | Sha256 | Sha384 | Sha512 | SpamSum |
+        All = Adler32    | Crc16 | Crc32 | Crc64 | Md5 |
+#if !NETSTANDARD2_0
+              Ripemd160 |
+#endif
+              Sha1 | Sha256 | Sha384 | Sha512 | SpamSum |
               Fletcher16 | Fletcher32
     }
 
@@ -86,9 +92,11 @@ namespace DiscImageChef.Core
         IChecksum      md5Ctx;
         HashPacket     md5Pkt;
         Thread         md5Thread;
+#if !NETSTANDARD2_0
         IChecksum      ripemd160Ctx;
         HashPacket     ripemd160Pkt;
         Thread         ripemd160Thread;
+#endif
         IChecksum      sha1Ctx;
         HashPacket     sha1Pkt;
         Thread         sha1Thread;
@@ -139,11 +147,13 @@ namespace DiscImageChef.Core
                 md5Pkt = new HashPacket {Context = md5Ctx};
             }
 
+#if !NETSTANDARD2_0
             if(enabled.HasFlag(EnableChecksum.Ripemd160))
             {
                 ripemd160Ctx = new Ripemd160Context();
                 ripemd160Pkt = new HashPacket {Context = ripemd160Ctx};
             }
+#endif
 
             if(enabled.HasFlag(EnableChecksum.Sha1))
             {
@@ -192,7 +202,9 @@ namespace DiscImageChef.Core
             crc32Thread     = new Thread(UpdateHash);
             crc64Thread     = new Thread(UpdateHash);
             md5Thread       = new Thread(UpdateHash);
+#if !NETSTANDARD2_0
             ripemd160Thread = new Thread(UpdateHash);
+#endif
             sha1Thread      = new Thread(UpdateHash);
             sha256Thread    = new Thread(UpdateHash);
             sha384Thread    = new Thread(UpdateHash);
@@ -234,11 +246,13 @@ namespace DiscImageChef.Core
                 md5Thread.Start(md5Pkt);
             }
 
+#if !NETSTANDARD2_0
             if(enabled.HasFlag(EnableChecksum.Ripemd160))
             {
                 ripemd160Pkt.Data = data;
                 ripemd160Thread.Start(ripemd160Pkt);
             }
+#endif
 
             if(enabled.HasFlag(EnableChecksum.Sha1))
             {
@@ -283,7 +297,11 @@ namespace DiscImageChef.Core
             }
 
             while(adlerThread.IsAlive  || crc16Thread.IsAlive     || crc32Thread.IsAlive   || crc64Thread.IsAlive  ||
-                  md5Thread.IsAlive    || ripemd160Thread.IsAlive || sha1Thread.IsAlive    || sha256Thread.IsAlive ||
+                  md5Thread.IsAlive    ||
+#if !NETSTANDARD2_0
+                  ripemd160Thread.IsAlive ||
+#endif
+                  sha1Thread.IsAlive    || sha256Thread.IsAlive ||
                   sha384Thread.IsAlive || sha512Thread.IsAlive    || spamsumThread.IsAlive || f16Thread.IsAlive    ||
                   f32Thread.IsAlive) { }
 
@@ -292,7 +310,9 @@ namespace DiscImageChef.Core
             if(enabled.HasFlag(EnableChecksum.SpamSum)) crc32Thread     = new Thread(UpdateHash);
             if(enabled.HasFlag(EnableChecksum.SpamSum)) crc64Thread     = new Thread(UpdateHash);
             if(enabled.HasFlag(EnableChecksum.SpamSum)) md5Thread       = new Thread(UpdateHash);
+#if !NETSTANDARD2_0
             if(enabled.HasFlag(EnableChecksum.SpamSum)) ripemd160Thread = new Thread(UpdateHash);
+#endif
             if(enabled.HasFlag(EnableChecksum.SpamSum)) sha1Thread      = new Thread(UpdateHash);
             if(enabled.HasFlag(EnableChecksum.SpamSum)) sha256Thread    = new Thread(UpdateHash);
             if(enabled.HasFlag(EnableChecksum.SpamSum)) sha384Thread    = new Thread(UpdateHash);
@@ -338,11 +358,13 @@ namespace DiscImageChef.Core
                 chks.Add(chk);
             }
 
+#if !NETSTANDARD2_0
             if(enabled.HasFlag(EnableChecksum.Ripemd160))
             {
                 chk = new ChecksumType {type = ChecksumTypeType.ripemd160, Value = ripemd160Ctx.End()};
                 chks.Add(chk);
             }
+#endif
 
             if(enabled.HasFlag(EnableChecksum.Sha1))
             {
@@ -395,7 +417,9 @@ namespace DiscImageChef.Core
             IChecksum crc32CtxData     = null;
             IChecksum crc64CtxData     = null;
             IChecksum md5CtxData       = null;
+#if !NETSTANDARD2_0
             IChecksum ripemd160CtxData = null;
+#endif
             IChecksum sha1CtxData      = null;
             IChecksum sha256CtxData    = null;
             IChecksum sha384CtxData    = null;
@@ -409,7 +433,9 @@ namespace DiscImageChef.Core
             Thread crc32ThreadData     = new Thread(UpdateHash);
             Thread crc64ThreadData     = new Thread(UpdateHash);
             Thread md5ThreadData       = new Thread(UpdateHash);
+#if !NETSTANDARD2_0
             Thread ripemd160ThreadData = new Thread(UpdateHash);
+#endif
             Thread sha1ThreadData      = new Thread(UpdateHash);
             Thread sha256ThreadData    = new Thread(UpdateHash);
             Thread sha384ThreadData    = new Thread(UpdateHash);
@@ -418,70 +444,72 @@ namespace DiscImageChef.Core
             Thread f16ThreadData       = new Thread(UpdateHash);
             Thread f32ThreadData       = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Adler32))
             {
                 adler32CtxData = new Adler32Context();
                 HashPacket adlerPktData = new HashPacket {Context = adler32CtxData, Data = data};
                 adlerThreadData.Start(adlerPktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Crc16))
             {
                 crc16CtxData = new Crc16Context();
                 HashPacket crc16PktData = new HashPacket {Context = crc16CtxData, Data = data};
                 crc16ThreadData.Start(crc16PktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Crc32))
             {
                 crc32CtxData = new Crc32Context();
                 HashPacket crc32PktData = new HashPacket {Context = crc32CtxData, Data = data};
                 crc32ThreadData.Start(crc32PktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Crc64))
             {
                 crc64CtxData = new Crc64Context();
                 HashPacket crc64PktData = new HashPacket {Context = crc64CtxData, Data = data};
                 crc64ThreadData.Start(crc64PktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Md5))
             {
                 md5CtxData = new Md5Context();
                 HashPacket md5PktData = new HashPacket {Context = md5CtxData, Data = data};
                 md5ThreadData.Start(md5PktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+#if !NETSTANDARD2_0
+            if(enabled.HasFlag(EnableChecksum.Ripemd160))
             {
                 ripemd160CtxData = new Ripemd160Context();
                 HashPacket ripemd160PktData = new HashPacket {Context = ripemd160CtxData, Data = data};
                 ripemd160ThreadData.Start(ripemd160PktData);
             }
+#endif
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha1))
             {
                 sha1CtxData = new Sha1Context();
                 HashPacket sha1PktData = new HashPacket {Context = sha1CtxData, Data = data};
                 sha1ThreadData.Start(sha1PktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha256))
             {
                 sha256CtxData = new Sha256Context();
                 HashPacket sha256PktData = new HashPacket {Context = sha256CtxData, Data = data};
                 sha256ThreadData.Start(sha256PktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha384))
             {
                 sha384CtxData = new Sha384Context();
                 HashPacket sha384PktData = new HashPacket {Context = sha384CtxData, Data = data};
                 sha384ThreadData.Start(sha384PktData);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha512))
             {
                 sha512CtxData = new Sha512Context();
                 HashPacket sha512PktData = new HashPacket {Context = sha512CtxData, Data = data};
@@ -510,7 +538,10 @@ namespace DiscImageChef.Core
             }
 
             while(adlerThreadData.IsAlive  || crc16ThreadData.IsAlive   || crc32ThreadData.IsAlive     ||
-                  crc64ThreadData.IsAlive  || md5ThreadData.IsAlive     || ripemd160ThreadData.IsAlive ||
+                  crc64ThreadData.IsAlive  || md5ThreadData.IsAlive     ||
+#if !NETSTANDARD2_0
+                  ripemd160ThreadData.IsAlive ||
+#endif
                   sha1ThreadData.IsAlive   || sha256ThreadData.IsAlive  || sha384ThreadData.IsAlive    ||
                   sha512ThreadData.IsAlive || spamsumThreadData.IsAlive || f16ThreadData.IsAlive       ||
                   f32ThreadData.IsAlive) { }
@@ -548,11 +579,13 @@ namespace DiscImageChef.Core
                 dataChecksums.Add(chk);
             }
 
+#if !NETSTANDARD2_0
             if(enabled.HasFlag(EnableChecksum.Ripemd160))
             {
                 chk = new ChecksumType {type = ChecksumTypeType.ripemd160, Value = ripemd160CtxData.End()};
                 dataChecksums.Add(chk);
             }
+#endif
 
             if(enabled.HasFlag(EnableChecksum.Sha1))
             {

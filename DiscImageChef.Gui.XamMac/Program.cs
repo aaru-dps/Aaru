@@ -38,7 +38,7 @@ namespace DiscImageChef.Gui.XamMac
 	{
 		static void Main(string[] args)
 		{
-			new Application(Eto.Platforms.XamMac2).Run(new MainForm());
+			new Application(Eto.Platforms.XamMac2).Run(new frmMain(false, false));
 		}
 	}
 }

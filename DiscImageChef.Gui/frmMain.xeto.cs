@@ -126,22 +126,29 @@ namespace DiscImageChef.Gui
 
         void RefreshDevices()
         {
-            DicConsole.WriteLine("Refreshing devices");
-            devicesRoot.Children.Clear();
-
-            foreach(DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor)
-                                               .ThenBy(d => d.Model))
+            try
             {
-                DicConsole.DebugWriteLine("Main window",
-                                          "Found support device model {0} by manufacturer {1} on bus {2} and path {3}",
-                                          device.Model, device.Vendor, device.Bus, device.Path);
-                devicesRoot.Children.Add(new TreeGridItem
-                {
-                    Values = new object[] {$"{device.Vendor} {device.Model} ({device.Bus})", device.Path}
-                });
-            }
+                DicConsole.WriteLine("Refreshing devices");
+                devicesRoot.Children.Clear();
 
-            treeImages.ReloadData();
+                foreach (DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor)
+                    .ThenBy(d => d.Model))
+                {
+                    DicConsole.DebugWriteLine("Main window",
+                        "Found support device model {0} by manufacturer {1} on bus {2} and path {3}",
+                        device.Model, device.Vendor, device.Bus, device.Path);
+                    devicesRoot.Children.Add(new TreeGridItem
+                    {
+                        Values = new object[] {$"{device.Vendor} {device.Model} ({device.Bus})", device.Path}
+                    });
+                }
+
+                treeImages.ReloadData();
+            }
+            catch (InvalidOperationException ex)
+            {
+                DicConsole.ErrorWriteLine(ex.Message);
+            }
         }
 
         protected void OnMenuConsole(object sender, EventArgs e)

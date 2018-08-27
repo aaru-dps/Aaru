@@ -321,6 +321,7 @@ namespace DiscImageChef.Settings
                         }
                     }
                         break;
+#if !NETSTANDARD2_0
                     // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/DiscImageChef
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
@@ -367,6 +368,7 @@ namespace DiscImageChef.Settings
                     }
 
                         break;
+#endif
                     // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
                     default:
                     {
@@ -457,6 +459,7 @@ namespace DiscImageChef.Settings
                         fs.Close();
                     }
                         break;
+#if !NETSTANDARD2_0
                     // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/DiscImageChef
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
@@ -506,6 +509,7 @@ namespace DiscImageChef.Settings
                         }
                     }
                         break;
+#endif
                     // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
                     default:
                     {
@@ -531,7 +535,7 @@ namespace DiscImageChef.Settings
             {
                 // ignored
             }
-            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
+            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
         }
 
         /// <summary>

@@ -32,7 +32,9 @@
 
 using System;
 using System.IO;
+#if !NETSTANDARD2_0
 using System.Security.AccessControl;
+#endif
 using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Filters
@@ -118,6 +120,7 @@ namespace DiscImageChef.Filters
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
+#if !NETSTANDARD2_0
         public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
                             int         bufferSize,
                             FileOptions options, long start, long end)
@@ -149,6 +152,7 @@ namespace DiscImageChef.Filters
 
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
+#endif
 
         public OffsetStream(string path,     FileMode mode,  FileAccess access, FileShare share, int bufferSize,
                             bool   useAsync, long     start, long       end)
