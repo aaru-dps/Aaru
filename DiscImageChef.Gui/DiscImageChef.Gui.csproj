@@ -6,6 +6,7 @@
     <Title>DiscImageChef.Gui</Title>
     <Copyright>Copyright © 2018</Copyright>
     <Description>Description of DiscImageChef.Gui</Description>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.4.1" />

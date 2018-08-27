@@ -56,6 +56,7 @@
             </e>
           </e>
         </e>
+        <e p="test.log" t="Include" />
       </e>
       <e p="DiscImageChef.Checksums" t="IncludeRecursive">
         <e p="Adler32Context.cs" t="Include" />
@@ -1247,8 +1248,11 @@
         </e>
       </e>
       <e p="DiscImageChef.Gui" t="IncludeRecursive">
+        <e p="ConsoleHandler.cs" t="Include" />
         <e p="DiscImageChef.Gui.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="frmConsole.xeto" t="Include" />
+        <e p="frmConsole.xeto.cs" t="Include" />
         <e p="frmMain.xeto" t="Include" />
         <e p="frmMain.xeto.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">

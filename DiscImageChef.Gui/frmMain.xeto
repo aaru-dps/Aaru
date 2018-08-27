@@ -12,10 +12,13 @@
     <Form.Menu>
         <MenuBar>
             <ButtonMenuItem Text="&amp;File">
-                <ButtonMenuItem Text="Open" Click="OnMenuOpen"/>
+                <ButtonMenuItem Text="&amp;Open" Click="OnMenuOpen"/>
             </ButtonMenuItem>
             <ButtonMenuItem Text="&amp;Devices">
                 <ButtonMenuItem Text="&amp;Refresh" Click="OnDeviceRefresh" Shortcut="F5"/>
+            </ButtonMenuItem>
+            <ButtonMenuItem Text="&amp;Window">
+                <ButtonMenuItem Text="&amp;Console" Click="OnMenuConsole"/>
             </ButtonMenuItem>
             <MenuBar.ApplicationItems>
                 <ButtonMenuItem Text="Preferences.." Shortcut="{On Control+O, Mac=Application+Comma}"/>

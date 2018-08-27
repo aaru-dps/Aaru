@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Console"
+      ClientSize="600, 450" Padding="10">
+    <StackLayout Orientation="Vertical">
+        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+            <GridView ID="grdMessages"/>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <CheckBox ID="chkDebug" CheckedChanged="OnChkDebugChecked">Enable debug console</CheckBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <StackLayout Orientation="Horizontal">
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <Button ID="btnClear" Click="OnBtnClearClicked">Clear</Button>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <Button ID="btnSave" Click="OnBtnSaveClicked">Save</Button>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+    </StackLayout>
+</Form>

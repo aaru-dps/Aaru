@@ -37,6 +37,7 @@ using DiscImageChef.Commands;
 using DiscImageChef.Console;
 using DiscImageChef.Gui;
 using DiscImageChef.Settings;
+using Eto;
 using Eto.Forms;
 using Statistics = DiscImageChef.Core.Statistics;
 
@@ -208,9 +209,10 @@ namespace DiscImageChef
                        Commands.Statistics.ShowStats();
                    }).WithParsed<GuiOptions>(opts =>
                    {
-                       if (opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                       if (opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                       new Application(Eto.Platform.Detect).Run(new frmMain());
+                       if(opts.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+                       new Application(Platform.Detect).Run(new frmMain(opts.Debug, opts.Verbose));
                    }).WithNotParsed(errs => Environment.Exit(1));
 
             Statistics.SaveStats();
