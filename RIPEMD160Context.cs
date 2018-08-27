@@ -30,6 +30,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+#if !NETSTANDARD2_0
+
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -153,3 +155,5 @@ namespace DiscImageChef.Checksums
         }
     }
 }
+
+#endif
