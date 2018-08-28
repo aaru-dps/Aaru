@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -131,12 +132,12 @@ namespace DiscImageChef.Gui
                 DicConsole.WriteLine("Refreshing devices");
                 devicesRoot.Children.Clear();
 
-                foreach (DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor)
-                    .ThenBy(d => d.Model))
+                foreach(DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor)
+                                                   .ThenBy(d => d.Model))
                 {
                     DicConsole.DebugWriteLine("Main window",
-                        "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
-                        device.Model, device.Vendor, device.Bus, device.Path);
+                                              "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
+                                              device.Model, device.Vendor, device.Bus, device.Path);
                     devicesRoot.Children.Add(new TreeGridItem
                     {
                         Values = new object[] {$"{device.Vendor} {device.Model} ({device.Bus})", device.Path}
@@ -145,15 +146,17 @@ namespace DiscImageChef.Gui
 
                 treeImages.ReloadData();
             }
-            catch (InvalidOperationException ex)
-            {
-                DicConsole.ErrorWriteLine(ex.Message);
-            }
+            catch(InvalidOperationException ex) { DicConsole.ErrorWriteLine(ex.Message); }
         }
 
         protected void OnMenuConsole(object sender, EventArgs e)
         {
             new frmConsole().Show();
+        }
+
+        protected void OnMenuPlugins(object sender, EventArgs e)
+        {
+            new dlgPlugins().ShowModal(this);
         }
 
         #region XAML IDs

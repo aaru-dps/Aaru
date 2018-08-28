@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!--
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
 // /***************************************************************************
 // The Disc Image Chef
 // ============================================================================
@@ -52,6 +51,9 @@
             </ButtonMenuItem>
             <ButtonMenuItem Text="&amp;Window">
                 <ButtonMenuItem Text="&amp;Console" Click="OnMenuConsole"/>
+            </ButtonMenuItem>
+            <ButtonMenuItem Text="&amp;Help">
+                <ButtonMenuItem Text="&amp;Plugins" Click="OnMenuPlugins"/>
             </ButtonMenuItem>
             <MenuBar.ApplicationItems>
                 <ButtonMenuItem Text="Preferences.." Shortcut="{On Control+O, Mac=Application+Comma}"/>

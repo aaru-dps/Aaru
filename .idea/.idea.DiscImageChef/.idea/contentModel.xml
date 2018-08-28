@@ -1284,6 +1284,8 @@
         <e p="ConsoleHandler.cs" t="Include" />
         <e p="DiscImageChef.Gui.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="dlgPlugins.xeto" t="Include" />
+        <e p="dlgPlugins.xeto.cs" t="Include" />
         <e p="frmConsole.xeto" t="Include" />
         <e p="frmConsole.xeto.cs" t="Include" />
         <e p="frmMain.xeto" t="Include" />

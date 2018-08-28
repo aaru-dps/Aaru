@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+// /***************************************************************************
+// The Disc Image Chef
+// ============================================================================
+//
+// Filename       : dlgPlugins.xeto
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : Plugins dialog.
+//
+// ==[ Description ] ==========================================================
+//
+//     Defines the structure for the console window.
+//
+// ==[ License ] ==============================================================
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ============================================================================
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+-->
+<Dialog xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Plugins"
+        ClientSize="600, 450" Padding="10">
+    <StackLayout Orientation="Vertical">
+        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+            <TabControl>
+                <TabPage ID="tabFilters" Text="Filters">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GridView ID="grdFilters"/>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage ID="tabPartitions" Text="Partitions">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GridView ID="grdPartitions"/>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage ID="tabFilesystems" Text="Filesystems">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GroupBox ID="grpFilesystemIdentifyOnly" Text="Identify only">
+                                <GridView ID="grdFilesystem"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GroupBox ID="grpFilesystemReadable" Text="Readable">
+                                <GridView ID="grdReadOnlyFilesystem"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage ID="tabMediaImages" Text="Media images">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GroupBox ID="grpReadableMediaImages" Text="Readable">
+                                <GridView ID="grdReadableMediaImages"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GroupBox ID="grpWritableMediaImages" Text="Writable">
+                                <GridView ID="grdWritableMediaImages"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage ID="tabFloppyImages" Text="Floppy images">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GroupBox ID="grpReadableFloppyImages" Text="Readable">
+                                <GridView ID="grdReadableFloppyImages"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                            <GroupBox ID="grpWritableFloppyImages" Text="Writable">
+                                <GridView ID="grdWritableFloppyImages"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+            </TabControl>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <StackLayout Orientation="Horizontal">
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <Button ID="btnClose" Click="OnBtnClose">Close</Button>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+    </StackLayout>
+</Dialog>
