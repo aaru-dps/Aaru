@@ -135,7 +135,7 @@ namespace DiscImageChef.Gui
                     .ThenBy(d => d.Model))
                 {
                     DicConsole.DebugWriteLine("Main window",
-                        "Found support device model {0} by manufacturer {1} on bus {2} and path {3}",
+                        "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
                         device.Model, device.Vendor, device.Bus, device.Path);
                     devicesRoot.Children.Add(new TreeGridItem
                     {
