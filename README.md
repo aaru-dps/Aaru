@@ -85,6 +85,7 @@ Supported disk image formats (read and write)
 * CDRWin cue/bin cuesheets, including ones with ISOBuster extensions
 * CisCopy disk image (aka DC-File, .DCF)
 * CloneCD
+* DataPackRat's d2f/f2d disk image format ("WC DISK IMAGE")
 * Digital Research DiskCopy
 * DiscImageChef format
 * IBM SaveDskF
