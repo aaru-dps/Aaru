@@ -55,6 +55,8 @@ namespace DiscImageChef.CommonTypes.Interfaces
         string Name { get; }
         /// <summary>Plugin UUID.</summary>
         Guid Id { get; }
+        /// <summary>Plugin author</summary>
+        string Author { get; }
         /// <summary>
         ///     Gets the image format.
         /// </summary>

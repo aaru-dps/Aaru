@@ -53,6 +53,8 @@ namespace DiscImageChef.Partitions
         string Name { get; }
         /// <summary>Plugin UUID.</summary>
         Guid Id { get; }
+        /// <summary>Plugin author</summary>
+        string Author { get; }
 
         /// <summary>
         ///     Interprets a partitioning scheme.

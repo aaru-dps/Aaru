@@ -57,6 +57,8 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// </summary>
         /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
         FileSystemType XmlFsType { get; }
+        /// <summary>Plugin author</summary>
+        string Author { get; }
 
         /// <summary>
         ///     Identifies the filesystem in the specified LBA
