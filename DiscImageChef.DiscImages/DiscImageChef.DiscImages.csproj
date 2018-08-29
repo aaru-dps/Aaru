@@ -433,6 +433,12 @@
     <Compile Include="VMware\Structs.cs" />
     <Compile Include="VMware\Unsupported.cs" />
     <Compile Include="VMware\Write.cs" />
+    <Compile Include="WCDiskImage\Identify.cs" />
+    <Compile Include="WCDiskImage\Properties.cs" />
+    <Compile Include="WCDiskImage\Read.cs" />
+    <Compile Include="WCDiskImage\Structs.cs" />
+    <Compile Include="WCDiskImage\Unsupported.cs" />
+    <Compile Include="WCDiskImage\WCDiskImage.cs" />
     <Compile Include="ZZZRawImage\Constants.cs" />
     <Compile Include="ZZZRawImage\Helpers.cs" />
     <Compile Include="ZZZRawImage\Identify.cs" />
