@@ -49,6 +49,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "XFS Filesystem Plugin";
         public Guid           Id        => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

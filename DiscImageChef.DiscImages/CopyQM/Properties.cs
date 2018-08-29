@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public string    Name   => "Sydex CopyQM";
         public Guid      Id     => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
         public string    Format => "Sydex CopyQM";
+        public string    Author => "Natalia Portillo";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Track> Tracks =>

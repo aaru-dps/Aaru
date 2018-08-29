@@ -60,6 +60,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "UNICOS Filesystem Plugin";
         public Guid           Id        => new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

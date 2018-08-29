@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Veritas filesystem";
         public Guid           Id        => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

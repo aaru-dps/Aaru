@@ -53,6 +53,7 @@ namespace DiscImageChef.Filesystems
         public string         Name      => "Linux extended Filesystem";
         public Guid           Id        => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
         public Encoding       Encoding  { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -121,8 +122,7 @@ namespace DiscImageChef.Filesystems
                 FreeClusters          = extSb.freecountblk,
                 FreeClustersSpecified = true,
                 ClusterSize           = 1024,
-                Clusters =
-                    (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024)
+                Clusters              = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024)
             };
 
             information = sb.ToString();

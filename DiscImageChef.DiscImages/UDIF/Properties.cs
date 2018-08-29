@@ -44,9 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "Apple Universal Disk Image Format";
-        public Guid   Id   => new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
-
+        public string Name   => "Apple Universal Disk Image Format";
+        public Guid   Id     => new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
+        public string Author => "Natalia Portillo";
         public string Format => "Apple Universal Disk Image Format";
 
         public List<Partition> Partitions =>

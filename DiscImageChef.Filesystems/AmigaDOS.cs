@@ -54,6 +54,7 @@ namespace DiscImageChef.Filesystems
         public string         Name      => "Amiga DOS filesystem";
         public Guid           Id        => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
         public Encoding       Encoding  { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

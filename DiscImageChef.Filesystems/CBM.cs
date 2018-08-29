@@ -47,6 +47,7 @@ namespace DiscImageChef.Filesystems
         public string         Name      => "Commodore file system";
         public Guid           Id        => new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
         public Encoding       Encoding  { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -99,9 +100,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "Commodore file system",
-                Clusters    = (long)imagePlugin.Info.Sectors,
-                ClusterSize = 256
+                Type = "Commodore file system", Clusters = (long)imagePlugin.Info.Sectors, ClusterSize = 256
             };
 
             if(imagePlugin.Info.Sectors == 3200)

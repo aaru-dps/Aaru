@@ -43,6 +43,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "Nero Burning ROM image";
         public Guid                   Id           => new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
+        public string                 Author       => "Natalia Portillo";
         public string                 Format       => "Nero Burning ROM";
         public List<Partition>        Partitions   { get; }
         public List<Track>            Tracks       { get; private set; }

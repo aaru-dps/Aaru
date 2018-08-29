@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
     public class QNX4 : IFilesystem
     {
         readonly byte[] qnx4_rootDir_fname =
-            {0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        {
+            0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        };
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "QNX4 Plugin";
         public Guid           Id        => new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

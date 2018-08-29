@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Squash filesystem";
         public Guid           Id        => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

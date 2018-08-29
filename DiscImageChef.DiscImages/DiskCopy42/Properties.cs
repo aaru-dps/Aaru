@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "Apple DiskCopy 4.2";
         public Guid                   Id           => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public string                 Author       => "Natalia Portillo";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
         public string                 Format       => "Apple DiskCopy 4.2";

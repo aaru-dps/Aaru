@@ -48,6 +48,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "NILFS2 Plugin";
         public Guid           Id        => new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

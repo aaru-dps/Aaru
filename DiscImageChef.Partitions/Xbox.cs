@@ -60,8 +60,9 @@ namespace DiscImageChef.Partitions
 
         const uint XBOX360_DEVKIT_MAGIC = 0x00020000;
 
-        public string Name => "Xbox partitioning";
-        public Guid   Id   => new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
+        public string Name   => "Xbox partitioning";
+        public Guid   Id     => new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {

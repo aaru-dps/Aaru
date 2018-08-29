@@ -49,6 +49,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "QNX6 Plugin";
         public Guid           Id        => new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

@@ -44,9 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "Apple 2IMG";
-        public Guid   Id   => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
-
+        public string Name   => "Apple 2IMG";
+        public Guid   Id     => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
+        public string Author => "Natalia Portillo";
         public string Format => "Apple 2IMG";
 
         public List<Partition> Partitions =>

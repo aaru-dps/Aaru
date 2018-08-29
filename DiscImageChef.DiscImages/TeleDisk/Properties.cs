@@ -43,9 +43,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "Sydex TeleDisk";
-        public Guid   Id   => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-
+        public string Name   => "Sydex TeleDisk";
+        public Guid   Id     => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public string Author => "Natalia Portillo";
         public string Format => "Sydex TeleDisk";
 
         public List<Partition> Partitions =>

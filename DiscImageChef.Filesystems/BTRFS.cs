@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "B-tree file system";
         public Guid           Id        => new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

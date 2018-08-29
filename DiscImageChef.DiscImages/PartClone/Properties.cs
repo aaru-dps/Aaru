@@ -41,11 +41,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class PartClone
     {
-        public string    Name => "PartClone disk image";
-        public Guid      Id   => new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
-        public ImageInfo Info => imageInfo;
-
-        public string Format => "PartClone";
+        public string    Name   => "PartClone disk image";
+        public Guid      Id     => new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Format => "PartClone";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

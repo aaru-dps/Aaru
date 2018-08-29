@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public string                    Name               => "CloneCD";
         public Guid                      Id                 => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
         public string                    Format             => "CloneCD";
+        public string                    Author             => "Natalia Portillo";
         public List<Partition>           Partitions         { get; private set; }
         public List<Track>               Tracks             { get; private set; }
         public List<Session>             Sessions           { get; private set; }
@@ -62,10 +63,10 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
-                MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
-                MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
-                MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD,
-                MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX
+                MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA,
+                MediaType.CDRW, MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD,
+                MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD,
+                MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };

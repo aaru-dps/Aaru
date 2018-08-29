@@ -46,8 +46,9 @@ namespace DiscImageChef.Partitions
         const ulong GPT_MAGIC     = 0x5452415020494645;
         const uint  GPT_REVISION1 = 0x00010000;
 
-        public string Name => "GUID Partition Table";
-        public Guid   Id   => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
+        public string Name   => "GUID Partition Table";
+        public Guid   Id     => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -147,7 +148,7 @@ namespace DiscImageChef.Partitions
                 {
                     // ignored
                 }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
             if(entries.Count == 0) return false;

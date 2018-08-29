@@ -44,9 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "VirtualBox Disk Image";
-        public Guid   Id   => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
-
+        public string Name   => "VirtualBox Disk Image";
+        public Guid   Id     => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+        public string Author => "Natalia Portillo";
         public string Format => "VDI";
 
         public List<Partition> Partitions =>

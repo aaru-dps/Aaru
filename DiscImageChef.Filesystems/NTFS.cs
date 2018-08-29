@@ -47,6 +47,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "New Technology File System (NTFS)";
         public Guid           Id        => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

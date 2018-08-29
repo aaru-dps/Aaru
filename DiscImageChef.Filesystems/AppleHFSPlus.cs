@@ -59,6 +59,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Apple HFS+ filesystem";
         public Guid           Id        => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

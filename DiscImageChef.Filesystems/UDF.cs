@@ -46,14 +46,15 @@ namespace DiscImageChef.Filesystems
     {
         readonly byte[] UDF_Magic =
         {
-            0x2A, 0x4F, 0x53, 0x54, 0x41, 0x20, 0x55, 0x44, 0x46, 0x20, 0x43, 0x6F, 0x6D, 0x70, 0x6C, 0x69, 0x61, 0x6E,
-            0x74, 0x00, 0x00, 0x00, 0x00
+            0x2A, 0x4F, 0x53, 0x54, 0x41, 0x20, 0x55, 0x44, 0x46, 0x20, 0x43, 0x6F, 0x6D, 0x70, 0x6C, 0x69, 0x61,
+            0x6E, 0x74, 0x00, 0x00, 0x00, 0x00
         };
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Universal Disk Format";
         public Guid           Id        => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -294,13 +295,10 @@ namespace DiscImageChef.Filesystems
             information = sbInformation.ToString();
         }
 
-        static DateTime EcmaToDateTime(Timestamp timestamp)
-        {
-            return DateHandlers.EcmaToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day,
-                                               timestamp.hour, timestamp.minute, timestamp.second,
-                                               timestamp.centiseconds, timestamp.hundredsMicroseconds,
-                                               timestamp.microseconds);
-        }
+        static DateTime EcmaToDateTime(Timestamp timestamp) =>
+            DateHandlers.EcmaToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day,
+                                        timestamp.hour, timestamp.minute, timestamp.second, timestamp.centiseconds,
+                                        timestamp.hundredsMicroseconds, timestamp.microseconds);
 
         [Flags]
         enum EntityFlags : byte

@@ -42,11 +42,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class RsIde
     {
-        public string    Name => "RS-IDE Hard Disk Image";
-        public Guid      Id   => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
-        public ImageInfo Info => imageInfo;
-
-        public string Format => "RS-IDE disk image";
+        public string    Name   => "RS-IDE Hard Disk Image";
+        public Guid      Id     => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Format => "RS-IDE disk image";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

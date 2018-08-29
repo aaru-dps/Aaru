@@ -42,11 +42,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Parallels
     {
-        public string    Name => "Parallels disk image";
-        public Guid      Id   => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
-        public ImageInfo Info => imageInfo;
-
-        public string Format => "Parallels";
+        public string    Name   => "Parallels disk image";
+        public Guid      Id     => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Format => "Parallels";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

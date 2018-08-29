@@ -47,6 +47,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "OS/2 High Performance File System";
         public Guid           Id        => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

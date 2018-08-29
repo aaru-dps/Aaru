@@ -44,6 +44,7 @@ namespace DiscImageChef.DiscImages
         public string Name   => "Spectrum Floppy Disk Image";
         public Guid   Id     => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
         public string Format => "Spectrum floppy disk image";
+        public string Author => "Natalia Portillo";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

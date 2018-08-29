@@ -46,6 +46,7 @@ namespace DiscImageChef.DiscImages
         public string    Name   => "MAME Compressed Hunks of Data";
         public Guid      Id     => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
         public string    Format => "Compressed Hunks of Data";
+        public string    Author => "Natalia Portillo";
         public List<Partition> Partitions
         {
             get

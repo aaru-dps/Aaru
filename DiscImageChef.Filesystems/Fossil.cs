@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Fossil Filesystem Plugin";
         public Guid           Id        => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -97,9 +98,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "Fossil filesystem",
-                ClusterSize = hdr.blockSize,
-                Clusters    = hdr.end
+                Type = "Fossil filesystem", ClusterSize = hdr.blockSize, Clusters = hdr.end
             };
 
             if(sbLocation <= partition.End)

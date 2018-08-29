@@ -46,6 +46,7 @@ namespace DiscImageChef.DiscImages
         public string                 Name         => "DiscImageChef format";
         public Guid                   Id           => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
         public string                 Format       => "DiscImageChef";
+        public string                 Author       => "Natalia Portillo";
         public List<Partition>        Partitions   { get; private set; }
         public List<Track>            Tracks       { get; private set; }
         public List<Session>          Sessions     { get; private set; }
@@ -70,7 +71,8 @@ namespace DiscImageChef.DiscImages
                 ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data"),
                 ("deduplicate", typeof(bool),
                  "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default"),
-                ("nocompress", typeof(bool), "Don't compress user data blocks. Other blocks will still be compressed")
+                ("nocompress", typeof(bool),
+                 "Don't compress user data blocks. Other blocks will still be compressed")
             };
         public IEnumerable<string> KnownExtensions => new[] {".dicf"};
         public bool                IsWriting       { get; private set; }

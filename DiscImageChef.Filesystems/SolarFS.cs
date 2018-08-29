@@ -46,6 +46,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Solar_OS filesystem";
         public Guid           Id        => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -147,10 +148,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "SolarFS",
-                Clusters    = bpb.sectors,
-                ClusterSize = bpb.bps,
-                VolumeName  = bpb.vol_name
+                Type = "SolarFS", Clusters = bpb.sectors, ClusterSize = bpb.bps, VolumeName = bpb.vol_name
             };
 
             information = sb.ToString();

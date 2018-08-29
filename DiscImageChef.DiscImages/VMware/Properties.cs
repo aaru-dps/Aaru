@@ -44,9 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "VMware disk image";
-        public Guid   Id   => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
-
+        public string Name   => "VMware disk image";
+        public Guid   Id     => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+        public string Author => "Natalia Portillo";
         public string Format => "VMware";
 
         public List<Partition> Partitions =>
@@ -74,8 +74,8 @@ namespace DiscImageChef.DiscImages
             {
                 ("adapter_type", typeof(string),
                  "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX."),
-                ("hwversion", typeof(uint), "VDMK hardware version."), ("sparse", typeof(bool), "Use sparse extents."),
-                ("split", typeof(bool), "Split data file at 2GiB.")
+                ("hwversion", typeof(uint), "VDMK hardware version."),
+                ("sparse", typeof(bool), "Use sparse extents."), ("split", typeof(bool), "Split data file at 2GiB.")
             };
         public IEnumerable<string> KnownExtensions => new[] {".vmdk"};
         public bool                IsWriting       { get; private set; }

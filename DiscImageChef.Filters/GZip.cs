@@ -50,8 +50,9 @@ namespace DiscImageChef.Filters
         bool     opened;
         Stream   zStream;
 
-        public string Name => "GZip";
-        public Guid   Id   => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
+        public string Name   => "GZip";
+        public Guid   Id     => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
+        public string Author => "Natalia Portillo";
 
         public void Close()
         {
@@ -61,35 +62,17 @@ namespace DiscImageChef.Filters
             opened     = false;
         }
 
-        public string GetBasePath()
-        {
-            return basePath;
-        }
+        public string GetBasePath() => basePath;
 
-        public Stream GetDataForkStream()
-        {
-            return zStream;
-        }
+        public Stream GetDataForkStream() => zStream;
 
-        public string GetPath()
-        {
-            return basePath;
-        }
+        public string GetPath() => basePath;
 
-        public Stream GetResourceForkStream()
-        {
-            return null;
-        }
+        public Stream GetResourceForkStream() => null;
 
-        public bool HasResourceFork()
-        {
-            return false;
-        }
+        public bool HasResourceFork() => false;
 
-        public bool Identify(byte[] buffer)
-        {
-            return buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
-        }
+        public bool Identify(byte[] buffer) => buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
 
         public bool Identify(Stream stream)
         {
@@ -191,30 +174,15 @@ namespace DiscImageChef.Filters
             opened        = true;
         }
 
-        public DateTime GetCreationTime()
-        {
-            return creationTime;
-        }
+        public DateTime GetCreationTime() => creationTime;
 
-        public long GetDataForkLength()
-        {
-            return decompressedSize;
-        }
+        public long GetDataForkLength() => decompressedSize;
 
-        public DateTime GetLastWriteTime()
-        {
-            return lastWriteTime;
-        }
+        public DateTime GetLastWriteTime() => lastWriteTime;
 
-        public long GetLength()
-        {
-            return decompressedSize;
-        }
+        public long GetLength() => decompressedSize;
 
-        public long GetResourceForkLength()
-        {
-            return 0;
-        }
+        public long GetResourceForkLength() => 0;
 
         public string GetFilename()
         {
@@ -226,14 +194,8 @@ namespace DiscImageChef.Filters
                        : basePath;
         }
 
-        public string GetParentFolder()
-        {
-            return Path.GetDirectoryName(basePath);
-        }
+        public string GetParentFolder() => Path.GetDirectoryName(basePath);
 
-        public bool IsOpened()
-        {
-            return opened;
-        }
+        public bool IsOpened() => opened;
     }
 }

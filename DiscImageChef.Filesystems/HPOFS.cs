@@ -54,6 +54,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "High Performance Optical File System";
         public Guid           Id        => new Guid("1b72dcd5-d031-4757-8a9f-8d2fb18c59e2");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

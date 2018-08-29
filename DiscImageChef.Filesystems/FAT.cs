@@ -138,10 +138,10 @@ namespace DiscImageChef.Filesystems
             ("d3e93f8b82ef250db216037d827a4896dc97d2be", "TracerST"), // OEM ID: "TracerST"
             //("b741f85ef40288ccc8887de1f6e849009097e1c9", "Norton Utilities"), // OEM ID: "IBM PNCI", need to confirm
             ("c49b275537ac7237cac64d83f34d2024ae0ca96a",
-                "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
+             "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
             //("a48b0e4b696317eed829e960d1aa576562a4f185", "TracerST"), // Unknown OEM ID, apparently Tracer, unconfirmed
             ("fe477972602ba76658ff7143859045b3c4036ca5",
-                "iomega"),                                        // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
+             "iomega"),                                           // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
             ("ef79a1f33e5237827eb812dda548f0e4e916d815", "GEOS"), // OEM ID: "GEOWORKS"
             ("8524587ee91494cc51cc2c9d07453e84be0cdc33", "Hero Soft v1.10"),
             ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00")
@@ -152,6 +152,7 @@ namespace DiscImageChef.Filesystems
         public Encoding Encoding { get; private set; }
         public string   Name     => "Microsoft File Allocation Table";
         public Guid     Id       => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+        public string   Author   => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -1492,7 +1493,7 @@ namespace DiscImageChef.Filesystems
 
                 bootChk = Sha1Context.Data(fakeBpb.boot_code, out _);
 
-                // Workaround that PCExchange jumps into "FAT16   "... 
+                // Workaround that PCExchange jumps into "FAT16   "...
                 if(XmlFsType.SystemIdentifier == "PCX 2.0 ") fakeBpb.jump[1] += 8;
 
                 // Check that jumps to a correct boot code position and has boot signature set.
@@ -2136,15 +2137,18 @@ namespace DiscImageChef.Filesystems
             /// <summary>Operating system.</summary>
             public byte operatingSystem;
             /// <summary>Software write protection.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool writeProtected;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool writeProtected;
             /// <summary>Copy protected.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool copyProtected;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool copyProtected;
             /// <summary>Boot type.</summary>
             public byte bootType;
             /// <summary>Partitions.</summary>
             public byte partitionCount;
             /// <summary>Is hard disk?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool winchester;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool winchester;
             /// <summary>Sector size.</summary>
             public ushort sectorSize;
             /// <summary>Sectors per track.</summary>
@@ -2197,15 +2201,18 @@ namespace DiscImageChef.Filesystems
             /// <summary>Major BIOS version.</summary>
             public byte biosMajorVersion;
             /// <summary>Diagnostics enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool diagnosticsFlag;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool diagnosticsFlag;
             /// <summary>Printer device.</summary>
             public byte prnDevice;
             /// <summary>Bell volume.</summary>
             public byte bellVolume;
             /// <summary>Cache enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool enableCache;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableCache;
             /// <summary>Graphics enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool enableGraphics;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableGraphics;
             /// <summary>Length in sectors of DOS.</summary>
             public byte dosLength;
             /// <summary>Length in sectors of FONT file.</summary>
@@ -2221,7 +2228,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>Keyboard click volume.</summary>
             public byte keyboardVolume;
             /// <summary>Auto-repeat enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool autorepeat;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool autorepeat;
             /// <summary>Auto-repeat lead-in.</summary>
             public byte autorepeatLeadIn;
             /// <summary>Auto-repeat interval.</summary>
@@ -2236,7 +2244,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>Screen line width.</summary>
             public byte lineWidth;
             /// <summary>Screen disabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool imageOff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool imageOff;
             /// <summary>Spare area for screen values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
             public byte[] spareScreen;
@@ -2251,13 +2260,16 @@ namespace DiscImageChef.Filesystems
             /// <summary>Stop bits.</summary>
             public byte stopBits;
             /// <summary>Parity enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool parityCheck;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parityCheck;
             /// <summary>Parity type.</summary>
             public byte parityType;
             /// <summary>Xon/Xoff enabled on TX.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool txXonXoff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool txXonXoff;
             /// <summary>Xon/Xoff enabled on RX.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool rxXonXoff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool rxXonXoff;
             /// <summary>Xon character.</summary>
             public byte xonCharacter;
             /// <summary>Xoff character.</summary>
@@ -2265,30 +2277,39 @@ namespace DiscImageChef.Filesystems
             /// <summary>Xon/Xoff buffer on RX.</summary>
             public ushort rxXonXoffBuffer;
             /// <summary>DTR/DSR enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool dtrDsr;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool dtrDsr;
             /// <summary>CTS/RTS enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool ctsRts;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool ctsRts;
             /// <summary>NULLs after CR.</summary>
             public byte nullsAfterCr;
             /// <summary>NULLs after 0xFF.</summary>
             public byte nullsAfterFF;
             /// <summary>Send LF after CR in serial port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool lfAfterCRSerial;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCRSerial;
             /// <summary>BIOS error report in serial port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportSerial;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportSerial;
             /// <summary>Spare area for serial port values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
             public byte[] spareSerial;
             /// <summary>Send LF after CR in parallel port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool lfAfterCrParallel;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCrParallel;
             /// <summary>Select line supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool selectLine;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool selectLine;
             /// <summary>Paper empty supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool paperEmpty;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool paperEmpty;
             /// <summary>Fault line supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool faultLine;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool faultLine;
             /// <summary>BIOS error report in parallel port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportParallel;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportParallel;
             /// <summary>Spare area for parallel port values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
             public byte[] spareParallel;
@@ -2296,9 +2317,11 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
             public byte[] spareWinchester;
             /// <summary>Parking enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool parkingEnabled;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parkingEnabled;
             /// <summary>Format protection?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool formatProtection;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool formatProtection;
             /// <summary>Spare area for RAM disk values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] spareRamDisk;

@@ -66,14 +66,13 @@ namespace DiscImageChef.Filesystems.AppleMFS
         public string         Name      => "Apple Macintosh File System";
         public Guid           Id        => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         public Encoding       Encoding  { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         // TODO: Implement Finder namespace (requires decoding Desktop database)
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
-        static Dictionary<string, string> GetDefaultOptions()
-        {
-            return new Dictionary<string, string> {{"debug", false.ToString()}};
-        }
+        static Dictionary<string, string> GetDefaultOptions() =>
+            new Dictionary<string, string> {{"debug", false.ToString()}};
     }
 }

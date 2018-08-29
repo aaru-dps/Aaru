@@ -55,15 +55,14 @@ namespace DiscImageChef.Filesystems.LisaFS
         public Guid           Id        => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
         public Encoding       Encoding  { get; private set; }
         public FileSystemType XmlFsType { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
-        static Dictionary<string, string> GetDefaultOptions()
-        {
-            return new Dictionary<string, string> {{"debug", false.ToString()}};
-        }
+        static Dictionary<string, string> GetDefaultOptions() =>
+            new Dictionary<string, string> {{"debug", false.ToString()}};
 
         #region Caches
         /// <summary>Caches Extents Files</summary>

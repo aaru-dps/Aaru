@@ -43,9 +43,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "Apple NIB";
-        public Guid   Id   => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
-
+        public string Name   => "Apple NIB";
+        public Guid   Id     => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
+        public string Author => "Natalia Portillo";
         public string Format => "Apple nibbles";
 
         public List<Partition> Partitions =>

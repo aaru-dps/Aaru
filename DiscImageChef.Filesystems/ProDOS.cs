@@ -87,6 +87,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Apple ProDOS filesystem";
         public Guid           Id        => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

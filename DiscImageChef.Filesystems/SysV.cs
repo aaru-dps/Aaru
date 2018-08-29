@@ -66,6 +66,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "UNIX System V filesystem";
         public Guid           Id        => new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

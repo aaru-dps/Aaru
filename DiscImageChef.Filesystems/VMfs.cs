@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "VMware filesystem";
         public Guid           Id        => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

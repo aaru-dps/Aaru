@@ -56,6 +56,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "HAMMER Filesystem";
         public Guid           Id        => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

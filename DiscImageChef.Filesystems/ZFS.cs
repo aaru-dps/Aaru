@@ -44,16 +44,16 @@ namespace DiscImageChef.Filesystems
     /*
      * The ZFS on-disk structure is quite undocumented, so this has been checked using several test images and reading the comments and headers (but not the code)
      * of ZFS-On-Linux.
-     * 
+     *
      * The most basic structure, the vdev label, is as follows:
      * 8KiB of blank space
      * 8KiB reserved for boot code, stored as a ZIO block with magic and checksum
      * 112KiB of nvlist, usually encoded using XDR
      * 128KiB of copies of the 1KiB uberblock
-     * 
+     *
      * Two vdev labels, L0 and L1 are stored at the start of the vdev.
      * Another two, L2 and L3 are stored at the end.
-     * 
+     *
      * The nvlist is nothing more than a double linked list of name/value pairs where name is a string and value is an arbitrary type (and can be an array of it).
      * On-disk they are stored sequentially (no pointers) and can be encoded in XDR (an old Sun serialization method that stores everything as 4 bytes chunks) or
      * natively (that is as the host natively stores that values, for example on Intel an extended float would be 10 bytes (80 bit).
@@ -80,6 +80,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "ZFS Filesystem Plugin";
         public Guid           Id        => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

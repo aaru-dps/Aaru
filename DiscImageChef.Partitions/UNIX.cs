@@ -1369,8 +1369,9 @@ namespace DiscImageChef.Partitions
             }
         };
 
-        public string Name => "UNIX hardwired";
-        public Guid   Id   => new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
+        public string Name   => "UNIX hardwired";
+        public Guid   Id     => new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {

@@ -84,6 +84,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "BSD Fast File System (aka UNIX File System, UFS)";
         public Guid           Id        => new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

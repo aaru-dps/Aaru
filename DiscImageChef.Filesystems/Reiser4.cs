@@ -45,12 +45,15 @@ namespace DiscImageChef.Filesystems
         const uint REISER4_SUPER_OFFSET = 0x10000;
 
         readonly byte[] reiser4_magic =
-            {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        {
+            0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        };
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Reiser4 Filesystem Plugin";
         public Guid           Id        => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

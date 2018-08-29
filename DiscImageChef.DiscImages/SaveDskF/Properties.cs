@@ -42,11 +42,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class SaveDskF
     {
-        public string    Name => "IBM SaveDskF";
-        public Guid      Id   => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
-        public ImageInfo Info => imageInfo;
-
-        public string Format => "IBM SaveDskF";
+        public string    Name   => "IBM SaveDskF";
+        public Guid      Id     => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Format => "IBM SaveDskF";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -69,9 +69,10 @@ namespace DiscImageChef.DiscImages
                 MediaType.ATARI_35_DS_DD_11, MediaType.ATARI_35_SS_DD, MediaType.ATARI_35_SS_DD_11, MediaType.DMF,
                 MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED,
                 MediaType.DOS_35_HD, MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8,
-                MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
-                MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD,
-                MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
+                MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8,
+                MediaType.DOS_525_SS_DD_9, MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD,
+                MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35,
+                MediaType.XDF_525
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };

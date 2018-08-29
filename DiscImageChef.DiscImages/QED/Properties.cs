@@ -42,9 +42,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "QEMU Enhanced Disk image";
-        public Guid   Id   => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
-
+        public string Name   => "QEMU Enhanced Disk image";
+        public Guid   Id     => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
+        public string Author => "Natalia Portillo";
         public string Format => "QEMU Enhanced Disk";
 
         public List<Partition> Partitions =>
@@ -55,6 +55,5 @@ namespace DiscImageChef.DiscImages
 
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
     }
 }

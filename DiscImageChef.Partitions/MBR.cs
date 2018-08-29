@@ -185,8 +185,9 @@ namespace DiscImageChef.Partitions
             "VMWare VMKCORE", "Linux RAID, FreeDOS", "SpeedStor, LANStep, PS/2 IML", "Xenix bad block"
         };
 
-        public string Name => "Master Boot Record";
-        public Guid   Id   => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+        public string Name   => "Master Boot Record";
+        public Guid   Id     => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -569,10 +570,7 @@ namespace DiscImageChef.Partitions
             return anyMnx;
         }
 
-        static string DecodeMbrType(byte type)
-        {
-            return MbrTypes[type];
-        }
+        static string DecodeMbrType(byte type) => MbrTypes[type];
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct MasterBootRecord

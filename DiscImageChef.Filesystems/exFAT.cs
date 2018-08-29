@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Microsoft Extended File Allocation Table";
         public Guid           Id        => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

@@ -47,18 +47,30 @@ namespace DiscImageChef.Filters
         const uint AppleSingleVersion  = 0x00010000;
         const uint AppleSingleVersion2 = 0x00020000;
         readonly byte[] DOSHome =
-            {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        {
+            0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+        };
 
         readonly byte[] MacintoshHome =
-            {0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        {
+            0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+        };
         readonly byte[] OSXHome =
-            {0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        {
+            0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+        };
         readonly byte[] ProDOSHome =
-            {0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        {
+            0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+        };
         readonly byte[] UNIXHome =
-            {0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        {
+            0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+        };
         readonly byte[] VMSHome =
-            {0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        {
+            0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+        };
         string   basePath;
         byte[]   bytes;
         DateTime creationTime;
@@ -70,8 +82,9 @@ namespace DiscImageChef.Filters
         AppleSingleEntry  rsrcFork;
         Stream            stream;
 
-        public string Name => "AppleSingle";
-        public Guid   Id   => new Guid("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
+        public string Name   => "AppleSingle";
+        public Guid   Id     => new Guid("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
+        public string Author => "Natalia Portillo";
 
         public void Close()
         {
@@ -83,20 +96,11 @@ namespace DiscImageChef.Filters
             opened   = false;
         }
 
-        public string GetBasePath()
-        {
-            return basePath;
-        }
+        public string GetBasePath() => basePath;
 
-        public DateTime GetCreationTime()
-        {
-            return creationTime;
-        }
+        public DateTime GetCreationTime() => creationTime;
 
-        public long GetDataForkLength()
-        {
-            return dataFork.length;
-        }
+        public long GetDataForkLength() => dataFork.length;
 
         public Stream GetDataForkStream()
         {
@@ -111,35 +115,17 @@ namespace DiscImageChef.Filters
             return null;
         }
 
-        public string GetFilename()
-        {
-            return Path.GetFileName(basePath);
-        }
+        public string GetFilename() => Path.GetFileName(basePath);
 
-        public DateTime GetLastWriteTime()
-        {
-            return lastWriteTime;
-        }
+        public DateTime GetLastWriteTime() => lastWriteTime;
 
-        public long GetLength()
-        {
-            return dataFork.length + rsrcFork.length;
-        }
+        public long GetLength() => dataFork.length + rsrcFork.length;
 
-        public string GetParentFolder()
-        {
-            return Path.GetDirectoryName(basePath);
-        }
+        public string GetParentFolder() => Path.GetDirectoryName(basePath);
 
-        public string GetPath()
-        {
-            return basePath;
-        }
+        public string GetPath() => basePath;
 
-        public long GetResourceForkLength()
-        {
-            return rsrcFork.length;
-        }
+        public long GetResourceForkLength() => rsrcFork.length;
 
         public Stream GetResourceForkStream()
         {
@@ -154,10 +140,7 @@ namespace DiscImageChef.Filters
             return null;
         }
 
-        public bool HasResourceFork()
-        {
-            return rsrcFork.length > 0;
-        }
+        public bool HasResourceFork() => rsrcFork.length > 0;
 
         public bool Identify(byte[] buffer)
         {
@@ -198,10 +181,7 @@ namespace DiscImageChef.Filters
                    (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
         }
 
-        public bool IsOpened()
-        {
-            return opened;
-        }
+        public bool IsOpened() => opened;
 
         public void Open(byte[] buffer)
         {

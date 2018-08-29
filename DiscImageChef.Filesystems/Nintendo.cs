@@ -45,6 +45,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Nintendo optical filesystems";
         public Guid           Id        => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

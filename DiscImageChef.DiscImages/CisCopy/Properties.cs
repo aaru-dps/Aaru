@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public string Name   => "CisCopy Disk Image (DC-File)";
         public Guid   Id     => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
         public string Format => "CisCopy";
+        public string Author => "Natalia Portillo";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Track> Tracks =>

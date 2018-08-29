@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public string          Name       => "CDRDAO tocfile";
         public Guid            Id         => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
         public string          Format     => "CDRDAO tocfile";
+        public string          Author     => "Natalia Portillo";
         public List<Partition> Partitions { get; private set; }
         public List<Session>   Sessions   => throw new NotImplementedException();
 
@@ -109,11 +110,11 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
-                MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
-                MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.JaguarCD, MediaType.MEGACD,
-                MediaType.PD650, MediaType.PD650_WORM, MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2,
-                MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD,
-                MediaType.NeoGeoCD, MediaType.PCFX
+                MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA,
+                MediaType.CDRW, MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW,
+                MediaType.JaguarCD, MediaType.MEGACD, MediaType.PD650, MediaType.PD650_WORM, MediaType.PS1CD,
+                MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO,
+                MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new[] {("separate", typeof(bool), "Write each track to a separate file.")};

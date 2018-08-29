@@ -48,8 +48,9 @@ namespace DiscImageChef.Partitions
     {
         const int SGI_MAGIC = 0x0BE5A941;
 
-        public string Name => "SGI Disk Volume Header";
-        public Guid   Id   => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+        public string Name   => "SGI Disk Volume Header";
+        public Guid   Id     => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -116,14 +117,12 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Start = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes /
-                               imagePlugin.Info.SectorSize,
-                    Offset = dvh.partitions[i].first_block *
-                               dvh.device_params.dp_secbytes,
+                    Start =
+                        dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
+                    Offset = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
                     Length = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes /
-                               imagePlugin.Info.SectorSize,
-                    Size = dvh.partitions[i].num_blocks *
-                               dvh.device_params.dp_secbytes,
+                             imagePlugin.Info.SectorSize,
+                    Size     = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
                     Type     = TypeToString(dvh.partitions[i].type),
                     Sequence = counter,
                     Scheme   = Name

@@ -41,12 +41,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class SuperCardPro
     {
-        public ImageInfo Info => imageInfo;
-
-        public string Name => "SuperCardPro";
-        public Guid   Id   => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
-
-        public string Format => "SuperCardPro";
+        public ImageInfo Info   => imageInfo;
+        public string    Name   => "SuperCardPro";
+        public Guid      Id     => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
+        public string    Author => "Natalia Portillo";
+        public string    Format => "SuperCardPro";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

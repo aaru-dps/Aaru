@@ -43,9 +43,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "Partimage disk image";
-        public Guid   Id   => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
-
+        public string Name   => "Partimage disk image";
+        public Guid   Id     => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
+        public string Author => "Natalia Portillo";
         public string Format => "Partimage";
 
         public List<Partition> Partitions =>

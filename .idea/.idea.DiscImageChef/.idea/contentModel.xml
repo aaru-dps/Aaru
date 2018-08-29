@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.Rider2018.1/system/resharper-host/local/Transient/ReSharperHost/v12/SolutionCaches/_DiscImageChef.73225794.00" t="ExcludeRecursive" />
+    <e p="/7b7d2f51" t="IncludeRecursive" />
+    <e p="/app" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2018.2/system/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2018.2/system/resharper-host/local/Transient/ReSharperHost/v182/SolutionCaches/_DiscImageChef.73225794.00" t="ExcludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.11/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
@@ -1077,6 +1082,14 @@
           <e p="Virtual98.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
+        <e p="WCDiskImage" t="Include">
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="WCDiskImage.cs" t="Include" />
+        </e>
         <e p="ZZZRawImage" t="Include">
           <e p="Constants.cs" t="Include" />
           <e p="Helpers.cs" t="Include" />
@@ -1301,7 +1314,9 @@
           </e>
         </e>
       </e>
-      <e p="DiscImageChef.Gui.XamMac/DiscImageChef.Gui.XamMac.csproj" t="IncludeRecursive" />
+      <e p="DiscImageChef.Gui.XamMac" t="IncludeRecursive">
+        <e p="DiscImageChef.Gui.XamMac.csproj" t="IncludeRecursive" />
+      </e>
       <e p="DiscImageChef.Helpers" t="IncludeRecursive">
         <e p="ArrayFill.cs" t="Include" />
         <e p="ArrayIsEmpty.cs" t="Include" />

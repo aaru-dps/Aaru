@@ -165,6 +165,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Linux extended Filesystem 2, 3 and 4";
         public Guid           Id        => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

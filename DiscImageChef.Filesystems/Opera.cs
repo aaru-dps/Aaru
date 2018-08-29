@@ -45,6 +45,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Opera Filesystem Plugin";
         public Guid           Id        => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

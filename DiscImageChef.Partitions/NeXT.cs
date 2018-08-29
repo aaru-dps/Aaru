@@ -55,8 +55,9 @@ namespace DiscImageChef.Partitions
         /// <summary>44</summary>
         const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
-        public string Name => "NeXT Disklabel";
-        public Guid   Id   => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public string Name   => "NeXT Disklabel";
+        public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -177,8 +178,8 @@ namespace DiscImageChef.Partitions
                     Sequence = (ulong)i,
                     Name     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
                     Length   = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sectorSize),
-                    Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize /
-                                    sectorSize),
+                    Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
+                                    label.dl_dt.d_secsize / sectorSize),
                     Scheme = Name
                 };
 

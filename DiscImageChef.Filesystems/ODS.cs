@@ -56,6 +56,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Files-11 On-Disk Structure";
         public Guid           Id        => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

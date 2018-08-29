@@ -50,8 +50,9 @@ namespace DiscImageChef.Partitions
         const uint  TYPE_RISCIX_SCSI = 2;
         const uint  TYPE_MASK        = 15;
 
-        public string Name => "Acorn FileCore partitions";
-        public Guid   Id   => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+        public string Name   => "Acorn FileCore partitions";
+        public Guid   Id     => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -91,12 +92,14 @@ namespace DiscImageChef.Partitions
             {
                 Partition part = new Partition
                 {
-                    Size = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
+                    Size =
+                        (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
                     Length =
-                        ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) /
-                        imagePlugin.Info.SectorSize,
+                        ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 +
+                         bootBlock.discRecord.disc_size) / imagePlugin.Info.SectorSize,
                     Type = "ADFS",
-                    Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
+                    Name = StringHandlers.CToString(bootBlock.discRecord.disc_name,
+                                                    Encoding.GetEncoding("iso-8859-1"))
                 };
                 if(part.Size > 0)
                 {

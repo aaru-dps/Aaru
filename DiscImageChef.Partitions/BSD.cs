@@ -51,8 +51,9 @@ namespace DiscImageChef.Partitions
         /// <summary>Known byte offsets for BSD disklabel</summary>
         readonly uint[] labelOffsets = {0, 9, 64, 128, 516};
 
-        public string Name => "BSD disklabel";
-        public Guid   Id   => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public string Name   => "BSD disklabel";
+        public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {

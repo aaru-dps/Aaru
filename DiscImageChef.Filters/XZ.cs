@@ -50,8 +50,9 @@ namespace DiscImageChef.Filters
         DateTime lastWriteTime;
         bool     opened;
 
-        public string Name => "XZ";
-        public Guid   Id   => new Guid("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
+        public string Name   => "XZ";
+        public Guid   Id     => new Guid("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
+        public string Author => "Natalia Portillo";
 
         public void Close()
         {
@@ -61,37 +62,20 @@ namespace DiscImageChef.Filters
             opened     = false;
         }
 
-        public string GetBasePath()
-        {
-            return basePath;
-        }
+        public string GetBasePath() => basePath;
 
-        public Stream GetDataForkStream()
-        {
-            return innerStream;
-        }
+        public Stream GetDataForkStream() => innerStream;
 
-        public string GetPath()
-        {
-            return basePath;
-        }
+        public string GetPath() => basePath;
 
-        public Stream GetResourceForkStream()
-        {
-            return null;
-        }
+        public Stream GetResourceForkStream() => null;
 
-        public bool HasResourceFork()
-        {
-            return false;
-        }
+        public bool HasResourceFork() => false;
 
-        public bool Identify(byte[] buffer)
-        {
-            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2]                 == 0x7A && buffer[3] == 0x58 &&
-                   buffer[4] == 0x5A && buffer[5] == 0x00 && buffer[buffer.Length - 2] == 0x59 &&
-                   buffer[buffer.Length                                           - 1] == 0x5A;
-        }
+        public bool Identify(byte[] buffer) =>
+            buffer[0] == 0xFD && buffer[1]                 == 0x37 && buffer[2] == 0x7A &&
+            buffer[3] == 0x58 && buffer[4]                 == 0x5A &&
+            buffer[5] == 0x00 && buffer[buffer.Length - 2] == 0x59 && buffer[buffer.Length - 1] == 0x5A;
 
         public bool Identify(Stream stream)
         {
@@ -162,30 +146,15 @@ namespace DiscImageChef.Filters
             opened      = true;
         }
 
-        public DateTime GetCreationTime()
-        {
-            return creationTime;
-        }
+        public DateTime GetCreationTime() => creationTime;
 
-        public long GetDataForkLength()
-        {
-            return decompressedSize;
-        }
+        public long GetDataForkLength() => decompressedSize;
 
-        public DateTime GetLastWriteTime()
-        {
-            return lastWriteTime;
-        }
+        public DateTime GetLastWriteTime() => lastWriteTime;
 
-        public long GetLength()
-        {
-            return decompressedSize;
-        }
+        public long GetLength() => decompressedSize;
 
-        public long GetResourceForkLength()
-        {
-            return 0;
-        }
+        public long GetResourceForkLength() => 0;
 
         public string GetFilename()
         {
@@ -197,15 +166,9 @@ namespace DiscImageChef.Filters
                        : basePath;
         }
 
-        public string GetParentFolder()
-        {
-            return Path.GetDirectoryName(basePath);
-        }
+        public string GetParentFolder() => Path.GetDirectoryName(basePath);
 
-        public bool IsOpened()
-        {
-            return opened;
-        }
+        public bool IsOpened() => opened;
 
         void GuessSize()
         {

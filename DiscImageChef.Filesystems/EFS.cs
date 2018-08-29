@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Extent File System Plugin";
         public Guid           Id        => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

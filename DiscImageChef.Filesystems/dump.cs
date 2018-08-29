@@ -102,6 +102,7 @@ namespace DiscImageChef.Filesystems
         public string         Name      => "dump(8) Plugin";
         public Guid           Id        => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
         public FileSystemType XmlFsType { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

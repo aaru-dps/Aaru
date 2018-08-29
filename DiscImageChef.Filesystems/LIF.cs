@@ -49,6 +49,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "HP Logical Interchange Format Plugin";
         public Guid           Id        => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

@@ -58,6 +58,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public string         Name      => "U.C.S.D. Pascal filesystem";
         public Guid           Id        => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
         public Encoding       Encoding  { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
@@ -65,10 +66,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return Errno.NotSupported;
         }
 
-        public Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotSupported;
-        }
+        public Errno GetXattr(string path, string xattr, ref byte[] buf) => Errno.NotSupported;
 
         public Errno ReadLink(string path, out string dest)
         {
@@ -79,9 +77,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
-        static Dictionary<string, string> GetDefaultOptions()
-        {
-            return new Dictionary<string, string> {{"debug", false.ToString()}};
-        }
+        static Dictionary<string, string> GetDefaultOptions() =>
+            new Dictionary<string, string> {{"debug", false.ToString()}};
     }
 }

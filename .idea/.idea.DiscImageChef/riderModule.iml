@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RIDER_MODULE" version="4">
   <component name="NewModuleRootManager">
+    <content url="file:///7b7d2f51" />
+    <content url="file:///app" />
+    <content url="file://$APPLICATION_CONFIG_DIR$/consoles/db" />
+    <content url="file://$APPLICATION_CONFIG_DIR$/extensions" />
+    <content url="file://$USER_HOME$/.Rider2018.2/system/extResources" />
     <content url="file://$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.11/runtimes/linux-x64/native/libe_sqlite3.so" />
     <content url="file://$MODULE_DIR$/../.." />
     <orderEntry type="sourceFolder" forTests="false" />

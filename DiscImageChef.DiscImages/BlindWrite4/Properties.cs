@@ -42,9 +42,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "BlindWrite 4";
-        public Guid   Id   => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
-
+        public string Name   => "BlindWrite 4";
+        public Guid   Id     => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
+        public string Author => "Natalia Portillo";
         public string Format => "BlindWrite 4 TOC file";
 
         public List<Partition> Partitions { get; set; }

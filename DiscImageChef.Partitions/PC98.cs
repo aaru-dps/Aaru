@@ -43,8 +43,9 @@ namespace DiscImageChef.Partitions
 {
     public class PC98 : IPartition
     {
-        public string Name => "NEC PC-9800 partition table";
-        public Guid   Id   => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
+        public string Name   => "NEC PC-9800 partition table";
+        public Guid   Id     => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -92,9 +93,8 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Start =
-                        CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.Info.Heads,
-                                  imagePlugin.Info.SectorsPerTrack),
+                    Start = CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
+                                      imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack),
                     Type     = DecodePC98Sid(entry.dp_sid),
                     Name     = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                     Sequence = counter,

@@ -81,6 +81,7 @@ namespace DiscImageChef.Filesystems
         public string         Name      => "Acorn Advanced Disc Filing System";
         public Guid           Id        => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
         public Encoding       Encoding  { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         // TODO: BBC Master hard disks are untested...
         public bool Identify(IMediaImage imagePlugin, Partition partition)

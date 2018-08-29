@@ -49,6 +49,7 @@ namespace DiscImageChef.Filesystems
         public   Guid           Id        => new Guid("37766C4E-EBF5-4113-A712-B758B756ABD6");
         public   FileSystemType XmlFsType { get; private set; }
         public   Encoding       Encoding  { get; private set; }
+        public   string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

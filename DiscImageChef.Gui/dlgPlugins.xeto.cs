@@ -71,25 +71,37 @@ namespace DiscImageChef.Gui
             grdFilters.DataStore = filters;
             grdFilters.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdFilters.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdFilters.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdFilters.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -99,25 +111,42 @@ namespace DiscImageChef.Gui
             grdReadableMediaImages.DataStore = mediaImages;
             grdReadableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdReadableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding
+                           .Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdReadableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdReadableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -127,25 +156,37 @@ namespace DiscImageChef.Gui
             grdPartitions.DataStore = partitions;
             grdPartitions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdPartitions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdPartitions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdPartitions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -155,25 +196,37 @@ namespace DiscImageChef.Gui
             grdFilesystem.DataStore = filesystems;
             grdFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -183,25 +236,42 @@ namespace DiscImageChef.Gui
             grdReadOnlyFilesystem.DataStore = readOnlyFilesystems;
             grdReadOnlyFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdReadOnlyFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding
+                           .Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdReadOnlyFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdReadOnlyFilesystem.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -211,25 +281,43 @@ namespace DiscImageChef.Gui
             grdReadableFloppyImages.DataStore = floppyImages;
             grdReadableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdReadableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding
+                           .Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdReadableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding
+                           .Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdReadableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -239,25 +327,43 @@ namespace DiscImageChef.Gui
             grdWritableFloppyImages.DataStore = writableFloppyImages;
             grdWritableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdWritableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding
+                           .Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdWritableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding
+                           .Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdWritableFloppyImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -267,25 +373,42 @@ namespace DiscImageChef.Gui
             grdWritableMediaImages.DataStore = writableImages;
             grdWritableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Name)
+                },
                 HeaderText = "Name",
                 Sortable   = true
             });
             grdWritableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => $"{r.Uuid}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding
+                           .Property<PluginEntry, string>(r => $"{r.Uuid}")
+                },
                 HeaderText = "UUID",
                 Sortable   = true
             });
             grdWritableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Version)
+                },
                 HeaderText = "Version",
                 Sortable   = true
             });
             grdWritableMediaImages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PluginEntry, string>(r => r.Author)},
+                DataCell = new TextBoxCell
+                {
+                    Binding =
+                        Binding.Property<PluginEntry, string>(r => r.Author)
+                },
                 HeaderText = "Author",
                 Sortable   = true
             });
@@ -312,94 +435,79 @@ namespace DiscImageChef.Gui
                     Name    = filter.Name,
                     Uuid    = filter.Id,
                     Version = Assembly.GetAssembly(filter.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(Assembly.GetAssembly(filter.GetType()),
-                                                                                typeof(AssemblyCompanyAttribute),
-                                                                                false)).Company
+                    Author  = filter.Author
                 });
 
             foreach(IFloppyImage floppyImage in GetPluginBase.Instance.FloppyImages.Values)
                 floppyImages.Add(new PluginEntry
                 {
-                    Name    = floppyImage.Name,
-                    Uuid    = floppyImage.Id,
-                    Version = Assembly.GetAssembly(floppyImage.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)
-                            Attribute.GetCustomAttribute(Assembly.GetAssembly(floppyImage.GetType()),
-                                                         typeof(AssemblyCompanyAttribute), false)).Company
+                    Name = floppyImage.Name,
+                    Uuid = floppyImage.Id,
+                    Version = Assembly
+                             .GetAssembly(floppyImage.GetType())?.GetName().Version.ToString(),
+                    Author = floppyImage.Author
                 });
 
             foreach(IMediaImage mediaImage in GetPluginBase.Instance.ImagePluginsList.Values)
                 mediaImages.Add(new PluginEntry
                 {
-                    Name    = mediaImage.Name,
-                    Uuid    = mediaImage.Id,
-                    Version = Assembly.GetAssembly(mediaImage.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)
-                            Attribute.GetCustomAttribute(Assembly.GetAssembly(mediaImage.GetType()),
-                                                         typeof(AssemblyCompanyAttribute), false)).Company
+                    Name = mediaImage.Name,
+                    Uuid = mediaImage.Id,
+                    Version = Assembly
+                             .GetAssembly(mediaImage.GetType())?.GetName().Version.ToString(),
+                    Author = mediaImage.Author
                 });
 
             foreach(IPartition partition in GetPluginBase.Instance.PartPluginsList.Values)
                 partitions.Add(new PluginEntry
                 {
-                    Name    = partition.Name,
-                    Uuid    = partition.Id,
-                    Version = Assembly.GetAssembly(partition.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)
-                            Attribute.GetCustomAttribute(Assembly.GetAssembly(partition.GetType()),
-                                                         typeof(AssemblyCompanyAttribute), false)).Company
+                    Name = partition.Name,
+                    Uuid = partition.Id,
+                    Version =
+                        Assembly.GetAssembly(partition.GetType())?.GetName().Version.ToString(),
+                    Author = partition.Author
                 });
 
             foreach(IFilesystem filesystem in GetPluginBase.Instance.PluginsList.Values)
                 filesystems.Add(new PluginEntry
                 {
-                    Name    = filesystem.Name,
-                    Uuid    = filesystem.Id,
-                    Version = Assembly.GetAssembly(filesystem.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)
-                            Attribute.GetCustomAttribute(Assembly.GetAssembly(filesystem.GetType()),
-                                                         typeof(AssemblyCompanyAttribute), false)).Company
+                    Name = filesystem.Name,
+                    Uuid = filesystem.Id,
+                    Version = Assembly
+                             .GetAssembly(filesystem.GetType())?.GetName().Version.ToString(),
+                    Author = filesystem.Author
                 });
 
             foreach(IReadOnlyFilesystem readOnlyFilesystem in GetPluginBase.Instance.ReadOnlyFilesystems.Values)
                 readOnlyFilesystems.Add(new PluginEntry
                 {
-                    Name    = readOnlyFilesystem.Name,
-                    Uuid    = readOnlyFilesystem.Id,
-                    Version = Assembly.GetAssembly(readOnlyFilesystem.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)
-                            Attribute.GetCustomAttribute(Assembly.GetAssembly(readOnlyFilesystem.GetType()),
-                                                         typeof(AssemblyCompanyAttribute), false)).Company
+                    Name = readOnlyFilesystem.Name,
+                    Uuid = readOnlyFilesystem.Id,
+                    Version = Assembly
+                             .GetAssembly(readOnlyFilesystem.GetType())?.GetName().Version
+                             .ToString(),
+                    Author = readOnlyFilesystem.Author
                 });
 
             foreach(IWritableFloppyImage writableFloppyImage in GetPluginBase.Instance.WritableFloppyImages.Values)
                 writableFloppyImages.Add(new PluginEntry
                 {
-                    Name    = writableFloppyImage.Name,
-                    Uuid    = writableFloppyImage.Id,
-                    Version = Assembly.GetAssembly(writableFloppyImage.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)
-                            Attribute.GetCustomAttribute(Assembly.GetAssembly(writableFloppyImage.GetType()),
-                                                         typeof(AssemblyCompanyAttribute), false)).Company
+                    Name = writableFloppyImage.Name,
+                    Uuid = writableFloppyImage.Id,
+                    Version = Assembly
+                             .GetAssembly(writableFloppyImage.GetType())?.GetName().Version
+                             .ToString(),
+                    Author = writableFloppyImage.Author
                 });
 
             foreach(IWritableImage writableImage in GetPluginBase.Instance.WritableImages.Values)
                 writableImages.Add(new PluginEntry
                 {
-                    Name    = writableImage.Name,
-                    Uuid    = writableImage.Id,
-                    Version = Assembly.GetAssembly(writableImage.GetType())?.GetName().Version.ToString(),
-                    Author =
-                        ((AssemblyCompanyAttribute)
-                            Attribute.GetCustomAttribute(Assembly.GetAssembly(writableImage.GetType()),
-                                                         typeof(AssemblyCompanyAttribute), false)).Company
+                    Name = writableImage.Name,
+                    Uuid = writableImage.Id,
+                    Version = Assembly
+                             .GetAssembly(writableImage.GetType())?.GetName().Version.ToString(),
+                    Author = writableImage.Author
                 });
         }
 

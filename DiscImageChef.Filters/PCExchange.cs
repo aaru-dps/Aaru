@@ -58,83 +58,42 @@ namespace DiscImageChef.Filters
         long   rsrcLen;
         string rsrcPath;
 
-        public string Name => "PCExchange";
-        public Guid   Id   => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+        public string Name   => "PCExchange";
+        public Guid   Id     => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+        public string Author => "Natalia Portillo";
 
         public void Close()
         {
             opened = false;
         }
 
-        public string GetBasePath()
-        {
-            return basePath;
-        }
+        public string GetBasePath() => basePath;
 
-        public DateTime GetCreationTime()
-        {
-            return creationTime;
-        }
+        public DateTime GetCreationTime() => creationTime;
 
-        public long GetDataForkLength()
-        {
-            return dataLen;
-        }
+        public long GetDataForkLength() => dataLen;
 
-        public Stream GetDataForkStream()
-        {
-            return new FileStream(dataPath, FileMode.Open, FileAccess.Read);
-        }
+        public Stream GetDataForkStream() => new FileStream(dataPath, FileMode.Open, FileAccess.Read);
 
-        public string GetFilename()
-        {
-            return Path.GetFileName(basePath);
-        }
+        public string GetFilename() => Path.GetFileName(basePath);
 
-        public DateTime GetLastWriteTime()
-        {
-            return lastWriteTime;
-        }
+        public DateTime GetLastWriteTime() => lastWriteTime;
 
-        public long GetLength()
-        {
-            return dataLen + rsrcLen;
-        }
+        public long GetLength() => dataLen + rsrcLen;
 
-        public string GetParentFolder()
-        {
-            return Path.GetDirectoryName(basePath);
-        }
+        public string GetParentFolder() => Path.GetDirectoryName(basePath);
 
-        public string GetPath()
-        {
-            return basePath;
-        }
+        public string GetPath() => basePath;
 
-        public long GetResourceForkLength()
-        {
-            return rsrcLen;
-        }
+        public long GetResourceForkLength() => rsrcLen;
 
-        public Stream GetResourceForkStream()
-        {
-            return new FileStream(rsrcPath, FileMode.Open, FileAccess.Read);
-        }
+        public Stream GetResourceForkStream() => new FileStream(rsrcPath, FileMode.Open, FileAccess.Read);
 
-        public bool HasResourceFork()
-        {
-            return rsrcPath != null;
-        }
+        public bool HasResourceFork() => rsrcPath != null;
 
-        public bool Identify(byte[] buffer)
-        {
-            return false;
-        }
+        public bool Identify(byte[] buffer) => false;
 
-        public bool Identify(Stream stream)
-        {
-            return false;
-        }
+        public bool Identify(Stream stream) => false;
 
         public bool Identify(string path)
         {
@@ -188,10 +147,7 @@ namespace DiscImageChef.Filters
             return dataFound && rsrcFound;
         }
 
-        public bool IsOpened()
-        {
-            return opened;
-        }
+        public bool IsOpened() => opened;
 
         public void Open(byte[] buffer)
         {

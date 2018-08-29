@@ -70,8 +70,9 @@ namespace DiscImageChef.Partitions
         const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456   + // sizeof(dk_vtoc16)
                                                    4 * 4 + 12 * 2 + 2 * 2);
 
-        public string Name => "Sun Disklabel";
-        public Guid   Id   => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
+        public string Name   => "Sun Disklabel";
+        public Guid   Id     => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -163,7 +164,8 @@ namespace DiscImageChef.Partitions
                             Length   = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
                             Offset =
-                                ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
+                                ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
+                                DK_LABEL_SIZE,
                             Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
                                     DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
                             Type   = "SunOS partition",
@@ -230,7 +232,8 @@ namespace DiscImageChef.Partitions
                                 (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
                             Offset =
-                                ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
+                                ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
+                                DK_LABEL_SIZE,
                             Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
                                     DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
                             Type   = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
@@ -298,7 +301,8 @@ namespace DiscImageChef.Partitions
                                         imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
                             Offset =
-                                ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
+                                ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
+                                dkl16.dkl_vtoc.v_sectorsz,
                             Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
                                     dkl16.dkl_vtoc.v_sectorsz / imagePlugin.Info.SectorSize,
                             Type   = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),

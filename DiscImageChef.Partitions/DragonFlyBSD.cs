@@ -42,8 +42,9 @@ namespace DiscImageChef.Partitions
     {
         const uint DISK_MAGIC64 = 0xC4464C59;
 
-        public string Name => "DragonFly BSD 64-bit disklabel";
-        public Guid   Id   => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+        public string Name   => "DragonFly BSD 64-bit disklabel";
+        public Guid   Id     => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {

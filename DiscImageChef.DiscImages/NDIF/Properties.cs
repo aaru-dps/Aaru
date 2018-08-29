@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public string    Name   => "Apple New Disk Image Format";
         public Guid      Id     => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
         public string    Format => "Apple New Disk Image Format";
+        public string    Author => "Natalia Portillo";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

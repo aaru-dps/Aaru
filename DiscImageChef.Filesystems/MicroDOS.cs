@@ -50,6 +50,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "MicroDOS file system";
         public Guid           Id        => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

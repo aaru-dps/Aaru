@@ -44,9 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "HD-Copy disk image";
-        public Guid   Id   => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
-
+        public string Name   => "HD-Copy disk image";
+        public Guid   Id     => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
+        public string Author => "Michael Drüing";
         public string Format => "HD-Copy image";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

@@ -47,6 +47,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "FATX Filesystem Plugin";
         public Guid           Id        => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

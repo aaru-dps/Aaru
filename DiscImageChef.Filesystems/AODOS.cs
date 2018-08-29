@@ -49,6 +49,7 @@ namespace DiscImageChef.Filesystems
         public   string         Name      => "Alexander Osipov DOS file system";
         public   Guid           Id        => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
         public   Encoding       Encoding  { get; private set; }
+        public   string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

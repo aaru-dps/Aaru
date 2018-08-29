@@ -44,8 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "VirtualPC";
-        public Guid   Id   => new Guid("8014d88f-64cd-4484-9441-7635c632958a");
+        public string Name   => "VirtualPC";
+        public Guid   Id     => new Guid("8014d88f-64cd-4484-9441-7635c632958a");
+        public string Author => "Natalia Portillo";
 
         public string Format
         {

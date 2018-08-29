@@ -50,6 +50,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "SmartFileSystem";
         public Guid           Id        => new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

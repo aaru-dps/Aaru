@@ -44,6 +44,7 @@ namespace DiscImageChef.DiscImages
         public string    Name   => "DIM Disk Image";
         public Guid      Id     => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
         public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
         public string    Format => "DIM disk image";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

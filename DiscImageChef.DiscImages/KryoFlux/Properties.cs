@@ -42,11 +42,11 @@ namespace DiscImageChef.DiscImages
     public partial class KryoFlux
     {
         public ImageInfo imageInfo;
-        public ImageInfo Info => imageInfo;
-
-        public string Name   => "KryoFlux STREAM";
-        public Guid   Id     => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
-        public string Format => "KryoFlux STREAM";
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Name   => "KryoFlux STREAM";
+        public Guid      Id     => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
+        public string    Format => "KryoFlux STREAM";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Session> Sessions =>

@@ -60,6 +60,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Apple Hierarchical File System";
         public Guid           Id        => new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

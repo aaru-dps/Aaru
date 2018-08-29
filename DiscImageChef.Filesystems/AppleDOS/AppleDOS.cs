@@ -56,14 +56,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Apple DOS File System";
         public Guid           Id        => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+        public string         Author    => "Natalia Portillo";
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
-        static Dictionary<string, string> GetDefaultOptions()
-        {
-            return new Dictionary<string, string> {{"debug", false.ToString()}};
-        }
+        static Dictionary<string, string> GetDefaultOptions() =>
+            new Dictionary<string, string> {{"debug", false.ToString()}};
 
         #region Caches
         /// <summary>Caches track/sector lists</summary>

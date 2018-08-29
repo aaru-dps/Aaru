@@ -48,6 +48,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "JFS Plugin";
         public Guid           Id        => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

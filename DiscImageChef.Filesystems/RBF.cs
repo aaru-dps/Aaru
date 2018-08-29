@@ -50,6 +50,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "OS-9 Random Block File Plugin";
         public Guid           Id        => new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

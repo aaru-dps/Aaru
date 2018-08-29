@@ -49,6 +49,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "RT-11 file system";
         public Guid           Id        => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

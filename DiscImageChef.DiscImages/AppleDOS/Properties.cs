@@ -44,9 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "Apple ][ Interleaved Disk Image";
-        public Guid   Id   => new Guid("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
-
+        public string Name   => "Apple ][ Interleaved Disk Image";
+        public Guid   Id     => new Guid("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
+        public string Author => "Natalia Portillo";
         public string Format =>
             extension == ".po"
                 ? "Apple ][ Interleaved Disk Image (ProDOS order)"

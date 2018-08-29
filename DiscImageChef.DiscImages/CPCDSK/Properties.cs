@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public string    Name   => "CPCEMU Disk-File and Extended CPC Disk-File";
         public Guid      Id     => new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
         public string    Format => extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
+        public string    Author => "Natalia Portillo";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Track> Tracks =>

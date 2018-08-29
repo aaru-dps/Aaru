@@ -117,13 +117,12 @@ namespace DiscImageChef.Filesystems.CPM
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "CP/M File System";
         public Guid           Id        => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+        public string         Author    => "Natalia Portillo";
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
-        static Dictionary<string, string> GetDefaultOptions()
-        {
-            return new Dictionary<string, string> {{"debug", false.ToString()}};
-        }
+        static Dictionary<string, string> GetDefaultOptions() =>
+            new Dictionary<string, string> {{"debug", false.ToString()}};
     }
 }

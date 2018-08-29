@@ -48,6 +48,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "PC-FX Plugin";
         public Guid           Id        => new Guid("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

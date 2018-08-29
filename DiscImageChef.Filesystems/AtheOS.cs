@@ -53,6 +53,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "AtheOS Filesystem";
         public Guid           Id        => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

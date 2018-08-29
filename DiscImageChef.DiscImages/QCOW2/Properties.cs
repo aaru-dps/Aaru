@@ -44,9 +44,9 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name => "QEMU Copy-On-Write disk image v2";
-        public Guid   Id   => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
-
+        public string Name   => "QEMU Copy-On-Write disk image v2";
+        public Guid   Id     => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
+        public string Author => "Natalia Portillo";
         public string Format => "QEMU Copy-On-Write";
 
         public List<Partition> Partitions =>

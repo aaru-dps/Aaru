@@ -52,6 +52,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "F2FS Plugin";
         public Guid           Id        => new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

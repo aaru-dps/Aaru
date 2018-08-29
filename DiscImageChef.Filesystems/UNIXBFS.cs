@@ -48,6 +48,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "UNIX Boot filesystem";
         public Guid           Id        => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

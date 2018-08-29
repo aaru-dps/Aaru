@@ -44,6 +44,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "PC Engine CD Plugin";
         public Guid           Id        => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

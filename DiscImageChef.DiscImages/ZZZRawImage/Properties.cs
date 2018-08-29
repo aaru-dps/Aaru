@@ -46,10 +46,10 @@ namespace DiscImageChef.DiscImages
     {
         public string Name => "Raw Disk Image";
         // Non-random UUID to recognize this specific plugin
-        public Guid      Id   => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
-        public ImageInfo Info => imageInfo;
-
-        public string Format => "Raw disk image (sector by sector copy)";
+        public Guid      Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Format => "Raw disk image (sector by sector copy)";
 
         public List<Track> Tracks
         {

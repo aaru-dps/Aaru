@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public ImageInfo Info   => imageInfo;
         public string    Name   => "Basic Lisa Utility";
         public Guid      Id     => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
+        public string    Author => "Natalia Portillo";
         public string    Format => "Basic Lisa Utility";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

@@ -42,11 +42,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class T98
     {
-        public string    Name => "T98 Hard Disk Image";
-        public Guid      Id   => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
-        public ImageInfo Info => imageInfo;
-
-        public string Format => "T98 disk image";
+        public string    Name   => "T98 Hard Disk Image";
+        public Guid      Id     => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Format => "T98 disk image";
 
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

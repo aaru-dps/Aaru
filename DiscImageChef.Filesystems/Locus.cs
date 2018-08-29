@@ -71,6 +71,7 @@ namespace DiscImageChef.Filesystems
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Locus Filesystem Plugin";
         public Guid           Id        => new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

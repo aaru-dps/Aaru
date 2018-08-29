@@ -45,6 +45,7 @@ namespace DiscImageChef.DiscImages
         public Guid      Id     => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
         public ImageInfo Info   => imageInfo;
         public string    Format => "DiscFerret";
+        public string    Author => "Natalia Portillo";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Track> Tracks =>

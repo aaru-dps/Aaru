@@ -48,6 +48,7 @@ namespace DiscImageChef.Filesystems
         public string         Name      => "ECMA-67";
         public Guid           Id        => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
         public FileSystemType XmlFsType { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

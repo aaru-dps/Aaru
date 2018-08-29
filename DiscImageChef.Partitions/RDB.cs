@@ -275,8 +275,9 @@ namespace DiscImageChef.Partitions
         /// </summary>
         const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
-        public string Name => "Amiga Rigid Disk Block";
-        public Guid   Id   => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+        public string Name   => "Amiga Rigid Disk Block";
+        public Guid   Id     => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+        public string Author => "Natalia Portillo";
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
@@ -758,23 +759,34 @@ namespace DiscImageChef.Partitions
             ulong sequence = 0;
             foreach(Partition entry in partitionEntries.Select(rdbEntry => new Partition
             {
-                Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
-                Name        = rdbEntry.DriveName,
-                Sequence    = sequence,
+                Description =
+                    AmigaDosTypeToDescriptionString(rdbEntry
+                                                   .DosEnvVec
+                                                   .DosType),
+                Name     = rdbEntry.DriveName,
+                Sequence = sequence,
                 Length =
-                    (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                    rdbEntry.DosEnvVec.Surfaces                                            * rdbEntry.DosEnvVec.Bpt,
+                    (rdbEntry.DosEnvVec.HighCylinder + 1 -
+                     rdbEntry.DosEnvVec.LowCylinder) *
+                    rdbEntry.DosEnvVec.Surfaces      *
+                    rdbEntry.DosEnvVec.Bpt,
                 Start =
-                    rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
-                    sectorOffset,
-                Type   = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
+                    rdbEntry.DosEnvVec.LowCylinder *
+                    rdbEntry.DosEnvVec.Surfaces    *
+                    rdbEntry.DosEnvVec.Bpt + sectorOffset,
+                Type =
+                    AmigaDosTypeToString(rdbEntry.DosEnvVec
+                                                 .DosType),
                 Scheme = Name,
                 Offset =
-                    (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
-                     sectorOffset) * rdb.BlockSize,
-                Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                       rdbEntry.DosEnvVec.Surfaces                                            * rdbEntry.DosEnvVec.Bpt *
-                       rdb.BlockSize
+                    (rdbEntry.DosEnvVec.LowCylinder *
+                     rdbEntry.DosEnvVec.Surfaces    *
+                     rdbEntry.DosEnvVec.Bpt + sectorOffset) *
+                    rdb.BlockSize,
+                Size = (rdbEntry.DosEnvVec.HighCylinder + 1 -
+                        rdbEntry.DosEnvVec.LowCylinder) *
+                       rdbEntry.DosEnvVec.Surfaces      *
+                       rdbEntry.DosEnvVec.Bpt           * rdb.BlockSize
             }))
             {
                 partitions.Add(entry);

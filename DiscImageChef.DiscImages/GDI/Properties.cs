@@ -42,11 +42,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Gdi
     {
-        public string    Name => "Dreamcast GDI image";
-        public Guid      Id   => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
-        public ImageInfo Info => imageInfo;
-
-        public string Format => "Dreamcast GDI image";
+        public string    Name   => "Dreamcast GDI image";
+        public Guid      Id     => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
+        public ImageInfo Info   => imageInfo;
+        public string    Author => "Natalia Portillo";
+        public string    Format => "Dreamcast GDI image";
 
         public List<Partition> Partitions { get; private set; }
 
@@ -85,9 +85,8 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public List<Session> Sessions => discimage.Sessions;
+        public List<Session>          Sessions     => discimage.Sessions;
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
-
     }
 }

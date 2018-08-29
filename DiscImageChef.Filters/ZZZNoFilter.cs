@@ -47,8 +47,9 @@ namespace DiscImageChef.Filters
         DateTime lastWriteTime;
         bool     opened;
 
-        public string Name => "No filter";
-        public Guid   Id   => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public string Name   => "No filter";
+        public Guid   Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public string Author => "Natalia Portillo";
 
         public void Close()
         {
@@ -58,46 +59,21 @@ namespace DiscImageChef.Filters
             opened     = false;
         }
 
-        public string GetBasePath()
-        {
-            return basePath;
-        }
+        public string GetBasePath() => basePath;
 
-        public Stream GetDataForkStream()
-        {
-            return dataStream;
-        }
+        public Stream GetDataForkStream() => dataStream;
 
-        public string GetPath()
-        {
-            return basePath;
-        }
+        public string GetPath() => basePath;
 
-        public Stream GetResourceForkStream()
-        {
-            return null;
-        }
+        public Stream GetResourceForkStream() => null;
 
-        public bool HasResourceFork()
-        {
-            // TODO: Implement support for xattrs/ADS
-            return false;
-        }
+        public bool HasResourceFork() => false;
 
-        public bool Identify(byte[] buffer)
-        {
-            return buffer != null && buffer.Length > 0;
-        }
+        public bool Identify(byte[] buffer) => buffer != null && buffer.Length > 0;
 
-        public bool Identify(Stream stream)
-        {
-            return stream != null && stream.Length > 0;
-        }
+        public bool Identify(Stream stream) => stream != null && stream.Length > 0;
 
-        public bool Identify(string path)
-        {
-            return File.Exists(path);
-        }
+        public bool Identify(string path) => File.Exists(path);
 
         public void Open(byte[] buffer)
         {
@@ -127,44 +103,20 @@ namespace DiscImageChef.Filters
             opened        = true;
         }
 
-        public DateTime GetCreationTime()
-        {
-            return creationTime;
-        }
+        public DateTime GetCreationTime() => creationTime;
 
-        public long GetDataForkLength()
-        {
-            return dataStream.Length;
-        }
+        public long GetDataForkLength() => dataStream.Length;
 
-        public DateTime GetLastWriteTime()
-        {
-            return lastWriteTime;
-        }
+        public DateTime GetLastWriteTime() => lastWriteTime;
 
-        public long GetLength()
-        {
-            return dataStream.Length;
-        }
+        public long GetLength() => dataStream.Length;
 
-        public long GetResourceForkLength()
-        {
-            return 0;
-        }
+        public long GetResourceForkLength() => 0;
 
-        public string GetFilename()
-        {
-            return Path.GetFileName(basePath);
-        }
+        public string GetFilename() => Path.GetFileName(basePath);
 
-        public string GetParentFolder()
-        {
-            return Path.GetDirectoryName(basePath);
-        }
+        public string GetParentFolder() => Path.GetDirectoryName(basePath);
 
-        public bool IsOpened()
-        {
-            return opened;
-        }
+        public bool IsOpened() => opened;
     }
 }
