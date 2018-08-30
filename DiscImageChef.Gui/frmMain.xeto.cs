@@ -159,6 +159,11 @@ namespace DiscImageChef.Gui
             new dlgPlugins().ShowModal(this);
         }
 
+        protected void OnMenuEncodings(object sender, EventArgs e)
+        {
+            new dlgEncodings().ShowModal(this);
+        }
+
         #region XAML IDs
         TreeGridItem devicesRoot;
         GridView     grdFiles;
