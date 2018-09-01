@@ -636,11 +636,9 @@ namespace DiscImageChef.Devices
 
                     if(ataId.HasValue) Serial = ataId.Value.SerialNumber;
                 }
-                else
-                {
-                    LastError = 0;
-                    Error     = false;
-                }
+
+                LastError = 0;
+                Error     = false;
             }
 
             if(scsiSense && (IsUsb || IsFireWire) || Manufacturer == "ATA")
