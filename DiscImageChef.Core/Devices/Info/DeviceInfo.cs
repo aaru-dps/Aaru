@@ -43,6 +43,30 @@ namespace DiscImageChef.Core.Devices.Info
     {
         public DeviceInfo(Device dev)
         {
+            Type                  = dev.Type;
+            Manufacturer          = dev.Manufacturer;
+            Model                 = dev.Model;
+            Revision              = dev.Revision;
+            Serial                = dev.Serial;
+            ScsiType              = dev.ScsiType;
+            IsRemovable           = dev.IsRemovable;
+            IsUsb                 = dev.IsUsb;
+            UsbVendorId           = dev.UsbVendorId;
+            UsbProductId          = dev.UsbProductId;
+            UsbDescriptors        = dev.UsbDescriptors;
+            UsbManufacturerString = dev.UsbManufacturerString;
+            UsbProductString      = dev.UsbProductString;
+            UsbSerialString       = dev.UsbSerialString;
+            IsFireWire            = dev.IsFireWire;
+            FireWireGuid          = dev.FireWireGuid;
+            FireWireModel         = dev.FireWireModel;
+            FireWireModelName     = dev.FireWireModelName;
+            FireWireVendor        = dev.FireWireVendor;
+            FireWireVendorName    = dev.FireWireVendorName;
+            IsCompactFlash        = dev.IsCompactFlash;
+            IsPcmcia              = dev.IsPcmcia;
+            Cis                   = dev.Cis;
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:

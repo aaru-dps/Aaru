@@ -62,5 +62,28 @@ namespace DiscImageChef.Core.Devices.Info
         public byte[]                                 ExtendedCSD            { get; }
         public byte[]                                 SCR                    { get; }
         public byte[]                                 OCR                    { get; }
+        public DeviceType                             Type                   { get; }
+        public string                                 Manufacturer           { get; }
+        public string                                 Model                  { get; }
+        public string                                 Revision               { get; }
+        public string                                 Serial                 { get; }
+        public PeripheralDeviceTypes                  ScsiType               { get; }
+        public bool                                   IsRemovable            { get; }
+        public bool                                   IsUsb                  { get; }
+        public ushort                                 UsbVendorId            { get; }
+        public ushort                                 UsbProductId           { get; }
+        public byte[]                                 UsbDescriptors         { get; }
+        public string                                 UsbManufacturerString  { get; }
+        public string                                 UsbProductString       { get; }
+        public string                                 UsbSerialString        { get; }
+        public bool                                   IsFireWire             { get; }
+        public ulong                                  FireWireGuid           { get; }
+        public uint                                   FireWireModel          { get; }
+        public string                                 FireWireModelName      { get; }
+        public uint                                   FireWireVendor         { get; }
+        public string                                 FireWireVendorName     { get; }
+        public bool                                   IsCompactFlash         { get; }
+        public bool                                   IsPcmcia               { get; }
+        public byte[]                                 Cis                    { get; }
     }
 }
