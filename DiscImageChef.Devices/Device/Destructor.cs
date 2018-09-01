@@ -45,6 +45,11 @@ namespace DiscImageChef.Devices
         /// </summary>
         ~Device()
         {
+            Close();
+        }
+
+        public void Close()
+        {
             if(FileHandle == null) return;
 
             switch(PlatformId)
