@@ -213,6 +213,11 @@
             <e p="SecureDigital.cs" t="Include" />
             <e p="XGD.cs" t="Include" />
           </e>
+          <e p="Info" t="Include">
+            <e p="DeviceInfo.cs" t="Include" />
+            <e p="Plextor.cs" t="Include" />
+            <e p="Properties.cs" t="Include" />
+          </e>
           <e p="Reader.cs" t="Include" />
           <e p="ReaderATA.cs" t="Include" />
           <e p="ReaderSCSI.cs" t="Include" />
