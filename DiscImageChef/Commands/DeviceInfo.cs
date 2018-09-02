@@ -220,7 +220,7 @@ namespace DiscImageChef.Commands
                     foreach(KeyValuePair<byte, byte[]> page in devInfo.ScsiEvpdPages)
                         if(page.Key >= 0x01 && page.Key <= 0x7F)
                         {
-                            DicConsole.WriteLine("ASCII Page {0:X2}h: {1}", page, EVPD.DecodeASCIIPage(page.Value));
+                            DicConsole.WriteLine("ASCII Page {0:X2}h: {1}", page.Key, EVPD.DecodeASCIIPage(page.Value));
 
                             DataFile.WriteTo("Device-Info command", options.OutputPrefix, page.Value);
                         }
@@ -399,7 +399,7 @@ namespace DiscImageChef.Commands
                             if(page.Key == 0x00) continue;
 
                             DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
-                                                      page);
+                                                      page.Key);
 
                             DataFile.WriteTo("Device-Info command", options.OutputPrefix,
                                              $"_scsi_evpd_{page.Key:X2}h.bin", $"SCSI INQUIRY EVPD {page.Key:X2}h",
