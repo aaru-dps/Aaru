@@ -43,13 +43,17 @@ namespace DiscImageChef.Gui
     public class frmMain : Form
     {
         bool                   closing;
-        Splitter               splMain;
+        GridView               grdFiles;
+        Label                  lblError;
         TreeGridView           treeImages;
         TreeGridItemCollection treeImagesItems;
 
         public frmMain(bool debug, bool verbose)
         {
             XamlReader.Load(this);
+
+            lblError = new Label();
+            grdFiles = new GridView();
 
             ConsoleHandler.Init();
             ConsoleHandler.Debug   = debug;
@@ -140,7 +144,11 @@ namespace DiscImageChef.Gui
                                               device.Model, device.Vendor, device.Bus, device.Path);
                     devicesRoot.Children.Add(new TreeGridItem
                     {
-                        Values = new object[] {$"{device.Vendor} {device.Model} ({device.Bus})", device.Path}
+                        Values = new object[]
+                        {
+                            $"{device.Vendor} {device.Model} ({device.Bus})",
+                            device.Path, null
+                        }
                     });
                 }
 
@@ -164,10 +172,58 @@ namespace DiscImageChef.Gui
             new dlgEncodings().ShowModal(this);
         }
 
+        protected void OnTreeImagesSelectedItemChanged(object sender, EventArgs e)
+        {
+            if(!(sender is TreeGridView tree)) return;
+
+            if(!(tree.SelectedItem is TreeGridItem selectedItem)) return;
+
+            splMain.Panel2 = null;
+
+            if(selectedItem.Parent != devicesRoot) return;
+
+            switch(selectedItem.Values[2])
+            {
+                case null:
+                    try
+                    {
+                        Device dev = new Device((string)selectedItem.Values[1]);
+                        if(dev.Error)
+                        {
+                            selectedItem.Values[2] = $"Error {dev.LastError} opening device";
+                            return;
+                        }
+
+                        Core.Devices.Info.DeviceInfo devInfo = new Core.Devices.Info.DeviceInfo(dev);
+
+                        selectedItem.Values[2] = new pnlDeviceInfo(devInfo);
+                        splMain.Panel2         = (Panel)selectedItem.Values[2];
+
+                        dev.Close();
+                    }
+                    catch(SystemException ex)
+                    {
+                        selectedItem.Values[2] = ex.Message;
+                        lblError.Text          = ex.Message;
+                        splMain.Panel2         = lblError;
+                        DicConsole.ErrorWriteLine(ex.Message);
+                    }
+
+                    break;
+                case string devErrorMessage:
+                    lblError.Text  = devErrorMessage;
+                    splMain.Panel2 = lblError;
+                    break;
+                case Panel devInfoPanel:
+                    splMain.Panel2 = devInfoPanel;
+                    break;
+            }
+        }
+
         #region XAML IDs
         TreeGridItem devicesRoot;
-        GridView     grdFiles;
         TreeGridItem imagesRoot;
+        Splitter     splMain;
         #endregion
     }
 }

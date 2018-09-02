@@ -35,11 +35,8 @@
       Title="DiscImageChef" ClientSize="600, 450" Padding="10">
     <Splitter Orientation="Horizontal" Panel1MinimumSize="200" FixedPanel="Panel1" ID="splMain">
         <Splitter.Panel1>
-            <TreeGridView ID="treeImages"/>
+            <TreeGridView ID="treeImages" SelectedItemChanged="OnTreeImagesSelectedItemChanged"/>
         </Splitter.Panel1>
-        <Splitter.Panel2>
-            <GridView ID="grdFiles"/>
-        </Splitter.Panel2>
     </Splitter>
     <Form.Menu>
         <MenuBar>

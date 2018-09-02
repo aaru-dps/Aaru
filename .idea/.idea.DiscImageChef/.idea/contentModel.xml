@@ -1320,6 +1320,8 @@
             </e>
           </e>
         </e>
+        <e p="pnlDeviceInfo.xeto" t="Include" />
+        <e p="pnlDeviceInfo.xeto.cs" t="Include" />
       </e>
       <e p="DiscImageChef.Gui.XamMac" t="IncludeRecursive">
         <e p="DiscImageChef.Gui.XamMac.csproj" t="IncludeRecursive" />
