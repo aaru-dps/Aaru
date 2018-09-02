@@ -209,6 +209,161 @@
                         </TabPage>
                     </TabControl>
                 </TabPage>
+                <TabPage ID="tabPlextor" Text="Plextor" Visible="False">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Vertical" ID="stkPlextorEeprom" Visible="False">
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label ID="lblPlextorDiscs" Text="Total loaded discs:"/>
+                                        <TextBox ID="txtPlextorDiscs" ReadOnly="True"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label ID="lblPlextorCdReadTime" Text="Time spent reading CDs"/>
+                                        <TextBox ID="txtPlextorCdReadTime" ReadOnly="True"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label ID="lblPlextorCdWriteTime" Text="Time spent writing CDs"/>
+                                        <TextBox ID="txtPlextorCdWriteTime" ReadOnly="True"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <StackLayout Orientation="Vertical" ID="stkPlextorDvdTimes" Visible="false">
+                                        <StackLayoutItem HorizontalAlignment="Stretch">
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label ID="lblPlextorDvdReadTime" Text="Time spent reading DVDs"/>
+                                                <TextBox ID="txtPlextorDvdReadTime" ReadOnly="True"/>
+                                            </StackLayout>
+                                        </StackLayoutItem>
+                                        <StackLayoutItem HorizontalAlignment="Stretch">
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label ID="lblPlextorDvdWriteTime" Text="Time spent writing DVDs"/>
+                                                <TextBox ID="txtPlextorDvdWriteTime" ReadOnly="True"/>
+                                            </StackLayout>
+                                        </StackLayoutItem>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <CheckBox ID="chkPlextorPoweRec" Text="Supports PoweRec" Enabled="False"/>
+                        <CheckBox ID="chkPlextorPoweRecEnabled" Text="PoweRec is enabled" Enabled="False"
+                                  Visible="False"/>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Vertical" ID="stkPlextorPoweRecEnabled" Visible="False">
+                                <StackLayout Orientation="Vertical" ID="stkPlextorPoweRecRecommended" Visible="False">
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label ID="lblPlextorPoweRecRecommended" Text="Recommended speed"/>
+                                            <TextBox ID="txtPlextorPoweRecRecommended" ReadOnly="True"/>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                                <StackLayout Orientation="Vertical" ID="stkPlextorPoweRecSelected" Visible="False">
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label ID="lblPlextorPoweRecSelected"
+                                                   Text="Selected PoweRec speed for currently inserted media:"/>
+                                            <TextBox ID="txtPlextorPoweRecSelected" ReadOnly="True"/>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                                <StackLayout Orientation="Vertical" ID="stkPlextorPoweRecMax" Visible="False">
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label ID="lblPlextorPoweRecMax"
+                                                   Text="Maximum PoweRec speed for currently inserted media"/>
+                                            <TextBox ID="txtPlextorPoweRecMax" ReadOnly="True"/>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                                <StackLayout Orientation="Vertical" ID="stkPlextorPoweRecLast" Visible="False">
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label ID="lblPlextorPoweRecLast" Text="Last PoweRec used speed"/>
+                                            <TextBox ID="txtPlextorPoweRecLast" ReadOnly="True"/>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <CheckBox ID="chkPlextorSilentMode" Text="Supports SilentMode" Enabled="False"/>
+                        <CheckBox ID="chkPlextorSilentModeEnabled" Text="SilentMode is enabled" Enabled="False"
+                                  Visible="False"/>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Vertical" ID="stkPlextorSilentModeEnabled" Visible="False">
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <Label ID="lblPlextorSilentModeAccessTime" Text="Access time is fast/slow"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label ID="lblPlextorSilentModeCdReadSpeedLimit"
+                                               Text="CD read speed limited to"/>
+                                        <TextBox ID="txtPlextorSilentModeCdReadSpeedLimit" ReadOnly="True"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label ID="lblPlextorSilentModeCdWriteSpeedLimit"
+                                               Text="CD write speed limited to"/>
+                                        <TextBox ID="txtPlextorSilentModeCdWriteSpeedLimit" ReadOnly="True"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayout Orientation="Vertical" ID="stkPlextorSilentModeDvdReadSpeedLimit"
+                                             Visible="False">
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label ID="lblPlextorSilentModeDvdReadSpeedLimit"
+                                                   Text="DVD read speed limited to"/>
+                                            <TextBox ID="txtPlextorSilentModeDvdReadSpeedLimit" ReadOnly="True"/>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <CheckBox ID="chkPlextorGigaRec" Text="Supports GigaRec" Enabled="False"/>
+                        <CheckBox ID="chkPlextorSecuRec" Text="Supports SecuRec" Enabled="False"/>
+                        <CheckBox ID="chkPlextorSpeedRead" Text="Supports SpeedRead" Enabled="False"/>
+                        <CheckBox ID="chkPlextorSpeedEnabled" Text="SpeedRead is enabled" Enabled="False"
+                                  Visible="False"/>
+                        <CheckBox ID="chkPlextorHiding" Text="Supports hiding CD-Rs and sessions" Enabled="False"/>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Vertical" ID="stkPlextorHiding" Visible="False">
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <CheckBox ID="chkPlextorHidesRecordables" Text="Is hiding CD-Rs" Enabled="False"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <CheckBox ID="chkPlextorHidesSessions" Text="Is forcing only first session"
+                                              Enabled="False"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <CheckBox ID="chkPlextorVariRec" Text="Supports VariRec" Enabled="False"/>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Vertical" ID="stkPlextorDvd" Visible="False">
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <CheckBox ID="chkPlextorVariRecDvd" Text="Supports VariRec on DVDs"
+                                              Enabled="False"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <CheckBox ID="chkPlextorBitSetting" Text="Supports bitsetting DVD+R book type"
+                                              Enabled="False"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <CheckBox ID="chkPlextorBitSettingDl" Text="Supports bitsetting DVD+R DL book type"
+                                              Enabled="False"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch">
+                                    <CheckBox ID="chkPlextorDvdPlusWriteTest" Text="Supports test writing DVD+"
+                                              Enabled="False"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
                 <TabPage ID="tabKreon" Text="Kreon" Visible="False">
                     <StackLayout Orientation="Vertical">
                         <CheckBox ID="chkKreonChallengeResponse" Text="Can do challenge/response with Xbox discs"

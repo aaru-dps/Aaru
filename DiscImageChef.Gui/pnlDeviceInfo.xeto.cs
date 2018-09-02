@@ -842,6 +842,129 @@ namespace DiscImageChef.Gui
                                                   "GET CONFIGURATION returned no feature descriptors");
                 }
 
+                if(devInfo.PlextorFeatures != null)
+                {
+                    tabPlextor.Visible = true;
+                    if(devInfo.PlextorFeatures.Eeprom != null)
+                    {
+                        stkPlextorEeprom.Visible  = true;
+                        txtPlextorDiscs.Text      = $"{devInfo.PlextorFeatures.Discs}";
+                        txtPlextorCdReadTime.Text = TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdReadTime).ToString();
+                        txtPlextorCdWriteTime.Text =
+                            TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdWriteTime).ToString();
+                        if(devInfo.PlextorFeatures.IsDvd)
+                        {
+                            stkPlextorDvdTimes.Visible = true;
+                            txtPlextorDvdReadTime.Text =
+                                TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdReadTime).ToString();
+                            txtPlextorDvdWriteTime.Text =
+                                TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdWriteTime).ToString();
+                        }
+                    }
+
+                    chkPlextorPoweRec.Checked = devInfo.PlextorFeatures.PoweRec;
+
+                    if(devInfo.PlextorFeatures.PoweRec)
+                    {
+                        chkPlextorPoweRecEnabled.Visible = true;
+                        chkPlextorPoweRecEnabled.Checked = devInfo.PlextorFeatures.PoweRecEnabled;
+
+                        if(devInfo.PlextorFeatures.PoweRecEnabled)
+                        {
+                            stkPlextorPoweRecEnabled.Visible = true;
+
+                            if(devInfo.PlextorFeatures.PoweRecRecommendedSpeed > 0)
+                            {
+                                stkPlextorPoweRecRecommended.Visible = true;
+                                txtPlextorPoweRecRecommended.Text =
+                                    $"{devInfo.PlextorFeatures.PoweRecRecommendedSpeed} Kb/sec.";
+                            }
+
+                            if(devInfo.PlextorFeatures.PoweRecSelected > 0)
+                            {
+                                stkPlextorPoweRecSelected.Visible = true;
+                                txtPlextorPoweRecSelected.Text =
+                                    $"{devInfo.PlextorFeatures.PoweRecSelected} Kb/sec.";
+                            }
+
+                            if(devInfo.PlextorFeatures.PoweRecMax > 0)
+                            {
+                                stkPlextorPoweRecMax.Visible = true;
+                                txtPlextorPoweRecMax.Text    = $"{devInfo.PlextorFeatures.PoweRecMax} Kb/sec.";
+                            }
+
+                            if(devInfo.PlextorFeatures.PoweRecLast > 0)
+                            {
+                                stkPlextorPoweRecLast.Visible = true;
+                                txtPlextorPoweRecLast.Text    = $"{devInfo.PlextorFeatures.PoweRecLast} Kb/sec.";
+                            }
+                        }
+                    }
+
+                    chkPlextorSilentMode.Checked = devInfo.PlextorFeatures.SilentMode;
+
+                    if(devInfo.PlextorFeatures.SilentMode)
+                    {
+                        chkPlextorSilentModeEnabled.Visible = true;
+                        chkPlextorSilentModeEnabled.Checked = devInfo.PlextorFeatures.SilentModeEnabled;
+
+                        if(devInfo.PlextorFeatures.SilentModeEnabled)
+                        {
+                            lblPlextorSilentModeAccessTime.Text = devInfo.PlextorFeatures.AccessTimeLimit == 2
+                                                                      ? "\tAccess time is slow"
+                                                                      : "\tAccess time is fast";
+
+                            txtPlextorSilentModeCdReadSpeedLimit.Text =
+                                devInfo.PlextorFeatures.CdReadSpeedLimit > 0
+                                    ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
+                                    : "unlimited";
+
+                            txtPlextorSilentModeCdWriteSpeedLimit.Text =
+                                devInfo.PlextorFeatures.CdWriteSpeedLimit > 0
+                                    ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
+                                    : "unlimited";
+
+                            if(devInfo.PlextorFeatures.IsDvd)
+                            {
+                                stkPlextorSilentModeDvdReadSpeedLimit.Visible = true;
+                                txtPlextorSilentModeDvdReadSpeedLimit.Text =
+                                    devInfo.PlextorFeatures.DvdReadSpeedLimit > 0
+                                        ? $"{devInfo.PlextorFeatures.DvdReadSpeedLimit}x"
+                                        : "unlimited";
+                            }
+                        }
+                    }
+
+                    chkPlextorGigaRec.Checked   = devInfo.PlextorFeatures.GigaRec;
+                    chkPlextorSecuRec.Checked   = devInfo.PlextorFeatures.SecuRec;
+                    chkPlextorSpeedRead.Checked = devInfo.PlextorFeatures.SpeedRead;
+
+                    if(devInfo.PlextorFeatures.SpeedRead)
+                    {
+                        chkPlextorSpeedEnabled.Visible = true;
+                        chkPlextorSpeedEnabled.Checked = devInfo.PlextorFeatures.SpeedReadEnabled;
+                    }
+
+                    chkPlextorHiding.Checked = devInfo.PlextorFeatures.Hiding;
+                    if(devInfo.PlextorFeatures.Hiding)
+                    {
+                        stkPlextorHiding.Visible           = true;
+                        chkPlextorHidesRecordables.Checked = devInfo.PlextorFeatures.HidesRecordables;
+                        chkPlextorHidesSessions.Checked    = devInfo.PlextorFeatures.HidesSessions;
+                    }
+
+                    chkPlextorVariRec.Checked = devInfo.PlextorFeatures.VariRec;
+
+                    if(devInfo.PlextorFeatures.IsDvd)
+                    {
+                        stkPlextorDvd.Visible              = true;
+                        chkPlextorVariRecDvd.Checked       = devInfo.PlextorFeatures.VariRecDvd;
+                        chkPlextorBitSetting.Checked       = devInfo.PlextorFeatures.BitSetting;
+                        chkPlextorBitSettingDl.Checked     = devInfo.PlextorFeatures.BitSettingDl;
+                        chkPlextorDvdPlusWriteTest.Checked = devInfo.PlextorFeatures.DvdPlusWriteTest;
+                    }
+                }
+
                 if(devInfo.ScsiInquiry.Value.KreonPresent)
                 {
                     tabKreon.Visible                  = true;
@@ -1057,6 +1180,59 @@ namespace DiscImageChef.Gui
         CheckBox     chkKreonWxripperUnlock360;
         CheckBox     chkKreonLock;
         CheckBox     chkKreonErrorSkipping;
+        TabPage      tabPlextor;
+        StackLayout  stkPlextorEeprom;
+        Label        lblPlextorDiscs;
+        TextBox      txtPlextorDiscs;
+        Label        lblPlextorCdReadTime;
+        TextBox      txtPlextorCdReadTime;
+        Label        lblPlextorCdWriteTime;
+        TextBox      txtPlextorCdWriteTime;
+        StackLayout  stkPlextorDvdTimes;
+        Label        lblPlextorDvdReadTime;
+        TextBox      txtPlextorDvdReadTime;
+        Label        lblPlextorDvdWriteTime;
+        TextBox      txtPlextorDvdWriteTime;
+        CheckBox     chkPlextorPoweRec;
+        CheckBox     chkPlextorPoweRecEnabled;
+        StackLayout  stkPlextorPoweRecEnabled;
+        StackLayout  stkPlextorPoweRecRecommended;
+        Label        lblPlextorPoweRecRecommended;
+        TextBox      txtPlextorPoweRecRecommended;
+        StackLayout  stkPlextorPoweRecSelected;
+        Label        lblPlextorPoweRecSelected;
+        TextBox      txtPlextorPoweRecSelected;
+        StackLayout  stkPlextorPoweRecMax;
+        Label        lblPlextorPoweRecMax;
+        TextBox      txtPlextorPoweRecMax;
+        StackLayout  stkPlextorPoweRecLast;
+        Label        lblPlextorPoweRecLast;
+        TextBox      txtPlextorPoweRecLast;
+        CheckBox     chkPlextorSilentMode;
+        CheckBox     chkPlextorSilentModeEnabled;
+        StackLayout  stkPlextorSilentModeEnabled;
+        Label        lblPlextorSilentModeAccessTime;
+        Label        lblPlextorSilentModeCdReadSpeedLimit;
+        TextBox      txtPlextorSilentModeCdReadSpeedLimit;
+        StackLayout  stkPlextorSilentModeDvdReadSpeedLimit;
+        Label        lblPlextorSilentModeDvdReadSpeedLimit;
+        TextBox      txtPlextorSilentModeDvdReadSpeedLimit;
+        Label        lblPlextorSilentModeCdWriteSpeedLimit;
+        TextBox      txtPlextorSilentModeCdWriteSpeedLimit;
+        CheckBox     chkPlextorGigaRec;
+        CheckBox     chkPlextorSecuRec;
+        CheckBox     chkPlextorSpeedRead;
+        CheckBox     chkPlextorSpeedEnabled;
+        CheckBox     chkPlextorHiding;
+        StackLayout  stkPlextorHiding;
+        CheckBox     chkPlextorHidesRecordables;
+        CheckBox     chkPlextorHidesSessions;
+        CheckBox     chkPlextorVariRec;
+        StackLayout  stkPlextorDvd;
+        CheckBox     chkPlextorVariRecDvd;
+        CheckBox     chkPlextorBitSetting;
+        CheckBox     chkPlextorBitSettingDl;
+        CheckBox     chkPlextorDvdPlusWriteTest;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
