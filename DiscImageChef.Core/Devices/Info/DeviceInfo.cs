@@ -90,6 +90,12 @@ namespace DiscImageChef.Core.Devices.Info
                         break;
                     }
 
+                    if(dev.Error)
+                    {
+                        DicConsole.ErrorWriteLine("Error {0} querying ATA IDENTIFY", dev.LastError);
+                        break;
+                    }
+
                     AtaIdentify = ataBuf;
 
                     dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out _);
@@ -120,7 +126,8 @@ namespace DiscImageChef.Core.Devices.Info
                         break;
                     }
 
-                    AtapiIdentify = ataBuf;
+                    if(!dev.Error) AtapiIdentify = ataBuf;
+                    else DicConsole.ErrorWriteLine("Error {0} querying ATA PACKET IDENTIFY", dev.LastError);
 
                     // ATAPI devices are also SCSI devices
                     goto case DeviceType.SCSI;
