@@ -35,12 +35,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DiscImageChef.Console;
-using DiscImageChef.Core.Devices.Info;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
+using DiscImageChef.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
+using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 
 namespace DiscImageChef.Gui
 {
@@ -840,6 +841,22 @@ namespace DiscImageChef.Gui
                         DicConsole.DebugWriteLine("Device-Info command",
                                                   "GET CONFIGURATION returned no feature descriptors");
                 }
+
+                if(devInfo.ScsiInquiry.Value.KreonPresent)
+                {
+                    tabKreon.Visible                  = true;
+                    chkKreonChallengeResponse.Checked = devInfo.KreonFeatures.HasFlag(KreonFeatures.ChallengeResponse);
+                    chkKreonDecryptSs.Checked         = devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs);
+                    chkKreonXtremeUnlock.Checked      = devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock);
+                    chkKreonWxripperUnlock.Checked    = devInfo.KreonFeatures.HasFlag(KreonFeatures.WxripperUnlock);
+                    chkKreonChallengeResponse360.Checked =
+                        devInfo.KreonFeatures.HasFlag(KreonFeatures.ChallengeResponse360);
+                    chkKreonDecryptSs360.Checked      = devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs360);
+                    chkKreonXtremeUnlock360.Checked   = devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock360);
+                    chkKreonWxripperUnlock360.Checked = devInfo.KreonFeatures.HasFlag(KreonFeatures.WxripperUnlock360);
+                    chkKreonLock.Checked              = devInfo.KreonFeatures.HasFlag(KreonFeatures.Lock);
+                    chkKreonErrorSkipping.Checked     = devInfo.KreonFeatures.HasFlag(KreonFeatures.ErrorSkipping);
+                }
             }
         }
 
@@ -1029,6 +1046,17 @@ namespace DiscImageChef.Gui
         TreeGridView treeMmcFeatures;
         TextArea     txtMmcFeature;
         Button       btnSaveMmcFeatures;
+        TabPage      tabKreon;
+        CheckBox     chkKreonChallengeResponse;
+        CheckBox     chkKreonDecryptSs;
+        CheckBox     chkKreonXtremeUnlock;
+        CheckBox     chkKreonWxripperUnlock;
+        CheckBox     chkKreonChallengeResponse360;
+        CheckBox     chkKreonDecryptSs360;
+        CheckBox     chkKreonXtremeUnlock360;
+        CheckBox     chkKreonWxripperUnlock360;
+        CheckBox     chkKreonLock;
+        CheckBox     chkKreonErrorSkipping;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

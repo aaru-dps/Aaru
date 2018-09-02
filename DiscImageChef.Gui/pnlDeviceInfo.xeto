@@ -78,12 +78,12 @@
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <CheckBox ID="chkRemovable" Text="Removable media"/>
+                                <CheckBox ID="chkRemovable" Text="Removable media" Enabled="False"/>
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <CheckBox ID="chkUsb" Text="Connected by USB"/>
+                                <CheckBox ID="chkUsb" Text="Connected by USB" Enabled="False"/>
                             </StackLayout>
                         </StackLayoutItem>
                     </StackLayout>
@@ -98,9 +98,10 @@
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Left">
                             <StackLayout ID="stkAtaMcpt" Orientation="Vertical">
-                                <CheckBox ID="chkAtaMcpt" Text="Device is Media Card Pass Through"/>
+                                <CheckBox ID="chkAtaMcpt" Text="Device is Media Card Pass Through" Enabled="False"/>
                                 <Label ID="lblAtaMcpt"/>
-                                <CheckBox ID="chkAtaMcptWriteProtection" Text="Media card is write protected"/>
+                                <CheckBox ID="chkAtaMcptWriteProtection" Text="Media card is write protected"
+                                          Enabled="False"/>
                                 <Label ID="lblAtaMcptSpecificData" Visible="False"/>
                             </StackLayout>
                         </StackLayoutItem>
@@ -207,6 +208,28 @@
                             </StackLayout>
                         </TabPage>
                     </TabControl>
+                </TabPage>
+                <TabPage ID="tabKreon" Text="Kreon" Visible="False">
+                    <StackLayout Orientation="Vertical">
+                        <CheckBox ID="chkKreonChallengeResponse" Text="Can do challenge/response with Xbox discs"
+                                  Enabled="False"/>
+                        <CheckBox ID="chkKreonDecryptSs" Text="Can read and descrypt SS from Xbox discs"
+                                  Enabled="False"/>
+                        <CheckBox ID="chkKreonXtremeUnlock" Text="Can set xtreme unlock state with Xbox discs"
+                                  Enabled="False"/>
+                        <CheckBox ID="chkKreonWxripperUnlock" Text="Can set wxripper unlock state with Xbox discs"
+                                  Enabled="False"/>
+                        <CheckBox ID="chkKreonChallengeResponse360" Text="Can do challenge/response with Xbox 360 discs"
+                                  Enabled="False"/>
+                        <CheckBox ID="chkKreonDecryptSs360" Text="Can read and descrypt SS from Xbox 360 discs"
+                                  Enabled="False"/>
+                        <CheckBox ID="chkKreonXtremeUnlock360" Text="Can set xtreme unlock state with Xbox 360 discs"
+                                  Enabled="False"/>
+                        <CheckBox ID="chkKreonWxripperUnlock360"
+                                  Text="Can set wxripper unlock state with Xbox 360 discs" Enabled="False"/>
+                        <CheckBox ID="chkKreonLock" Text="Can set locked state" Enabled="False"/>
+                        <CheckBox ID="chkKreonErrorSkipping" Text="Can skip read errors" Enabled="False"/>
+                    </StackLayout>
                 </TabPage>
             </TabControl>
         </StackLayoutItem>
