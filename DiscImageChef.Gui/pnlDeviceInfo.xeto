@@ -93,6 +93,9 @@
                         <StackLayoutItem HorizontalAlignment="Center">
                             <Label ID="lblAtaIdentify" Text="ATA IDENTIFY DEVICE"/>
                         </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                            <TextArea ID="txtAtaIdentify" ReadOnly="True"/>
+                        </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Left">
                             <StackLayout ID="stkAtaMcpt" Orientation="Vertical">
                                 <CheckBox ID="chkAtaMcpt" Text="Device is Media Card Pass Through"/>
@@ -101,16 +104,61 @@
                                 <Label ID="lblAtaMcptSpecificData" Visible="False"/>
                             </StackLayout>
                         </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
-                            <TextArea ID="txtAtaIdentify" ReadOnly="True"/>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                        <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom">
                             <StackLayout Orientation="Horizontal">
                                 <Button ID="btnSaveAtaBinary" Text="Save binary to file" Click="OnBtnSaveAtaBinary"/>
                                 <Button ID="btnSaveAtaText" Text="Save text to file" Click="OnBtnSaveAtaText"/>
                             </StackLayout>
                         </StackLayoutItem>
                     </StackLayout>
+                </TabPage>
+                <TabPage ID="tabSCSI" Text="SCSI" Visible="False">
+                    <TabControl>
+                        <TabPage ID="tabScsiInquiry" Text="INQUIRY">
+                            <StackLayout Orientation="Vertical">
+                                <StackLayoutItem HorizontalAlignment="Center">
+                                    <Label ID="lblScsiInquiry" Text="SCSI INQUIRY"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextArea ID="txtScsiInquiry" ReadOnly="True"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Button ID="btnSaveInquiryBinary" Text="Save binary to file"
+                                                Click="OnBtnSaveInquiryBinary"/>
+                                        <Button ID="btnSaveInquiryText" Text="Save text to file"
+                                                Click="OnBtnSaveInquiryText"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </TabPage>
+                        <TabPage ID="tabScsiModeSense" Text="MODE SENSE" Visible="False">
+                            <StackLayout Orientation="Vertical">
+                                <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                 Expand="True">
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                                         Expand="True">
+                                            <TreeGridView ID="treeModeSensePages"
+                                                          SelectedItemChanged="OnTreeModePagesSelectedItemChanged"/>
+                                        </StackLayoutItem>
+                                        <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                                                         Expand="True">
+                                            <TextArea ID="txtModeSensePage" ReadOnly="True"/>
+                                        </StackLayoutItem>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Button ID="btnSaveMode6" Text="Save MODE SENSE (6) response to file"
+                                                Click="OnBtnSaveMode6" Visible="False"/>
+                                        <Button ID="btnSaveMode10" Text="Save MODE SENSE (10) response to file"
+                                                Click="OnBtnSaveMode10" Visible="False"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </TabPage>
+                    </TabControl>
                 </TabPage>
             </TabControl>
         </StackLayoutItem>
