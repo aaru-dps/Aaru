@@ -710,16 +710,16 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    if(!devInfo.PlextorFeatures.GigaRec) DicConsole.WriteLine("Drive supports Plextor GigaRec");
-                    if(!devInfo.PlextorFeatures.SecuRec) DicConsole.WriteLine("Drive supports Plextor SecuRec");
-                    if(!devInfo.PlextorFeatures.SpeedRead)
+                    if(devInfo.PlextorFeatures.GigaRec) DicConsole.WriteLine("Drive supports Plextor GigaRec");
+                    if(devInfo.PlextorFeatures.SecuRec) DicConsole.WriteLine("Drive supports Plextor SecuRec");
+                    if(devInfo.PlextorFeatures.SpeedRead)
                     {
                         DicConsole.Write("Drive supports Plextor SpeedRead");
                         if(devInfo.PlextorFeatures.SpeedReadEnabled) DicConsole.WriteLine("and has it enabled");
                         else DicConsole.WriteLine();
                     }
 
-                    if(!devInfo.PlextorFeatures.Hiding)
+                    if(devInfo.PlextorFeatures.Hiding)
                     {
                         DicConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
 
@@ -729,17 +729,17 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Drive currently forces single session");
                     }
 
-                    if(!devInfo.PlextorFeatures.VariRec) DicConsole.WriteLine("Drive supports Plextor VariRec");
+                    if(devInfo.PlextorFeatures.VariRec) DicConsole.WriteLine("Drive supports Plextor VariRec");
 
                     if(devInfo.PlextorFeatures.IsDvd)
                     {
-                        if(!devInfo.PlextorFeatures.VariRecDvd)
+                        if(devInfo.PlextorFeatures.VariRecDvd)
                             DicConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
-                        if(!devInfo.PlextorFeatures.BitSetting)
+                        if(devInfo.PlextorFeatures.BitSetting)
                             DicConsole.WriteLine("Drive supports bitsetting DVD+R book type");
-                        if(!devInfo.PlextorFeatures.BitSettingDl)
+                        if(devInfo.PlextorFeatures.BitSettingDl)
                             DicConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
-                        if(!devInfo.PlextorFeatures.DvdPlusWriteTest)
+                        if(devInfo.PlextorFeatures.DvdPlusWriteTest)
                             DicConsole.WriteLine("Drive supports test writing DVD+");
                     }
                 }
