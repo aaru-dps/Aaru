@@ -88,6 +88,30 @@
                         </StackLayoutItem>
                     </StackLayout>
                 </TabPage>
+                <TabPage ID="tabAta" Text="ATA/ATAPI" Visible="False">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Center">
+                            <Label ID="lblAtaIdentify" Text="ATA IDENTIFY DEVICE"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Left">
+                            <StackLayout ID="stkAtaMcpt" Orientation="Vertical">
+                                <CheckBox ID="chkAtaMcpt" Text="Device is Media Card Pass Through"/>
+                                <Label ID="lblAtaMcpt"/>
+                                <CheckBox ID="chkAtaMcptWriteProtection" Text="Media card is write protected"/>
+                                <Label ID="lblAtaMcptSpecificData" Visible="False"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                            <TextArea ID="txtAtaIdentify" ReadOnly="True"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                            <StackLayout Orientation="Horizontal">
+                                <Button ID="btnSaveAtaBinary" Text="Save binary to file" Click="OnBtnSaveAtaBinary"/>
+                                <Button ID="btnSaveAtaText" Text="Save text to file" Click="OnBtnSaveAtaText"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
             </TabControl>
         </StackLayoutItem>
     </StackLayout>
