@@ -31,8 +31,10 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DiscImageChef.Console;
 using DiscImageChef.Core.Devices.Info;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
@@ -420,6 +422,208 @@ namespace DiscImageChef.Gui
                         modePagesList.Add(new TreeGridItem {Values = new object[] {pageNumberText, decodedText}});
                     }
                 }
+
+                if(devInfo.ScsiEvpdPages != null)
+                {
+                    tabScsiEvpd.Visible      = true;
+                    treeEvpdPages.ShowHeader = false;
+
+                    TreeGridItemCollection evpdPagesList = new TreeGridItemCollection();
+
+                    treeEvpdPages.Columns.Add(new GridColumn {HeaderText = "Page", DataCell = new TextBoxCell(0)});
+
+                    treeEvpdPages.AllowMultipleSelection = false;
+                    treeEvpdPages.ShowHeader             = false;
+                    treeEvpdPages.DataStore              = evpdPagesList;
+
+                    foreach(KeyValuePair<byte, byte[]> page in devInfo.ScsiEvpdPages.OrderBy(t => t.Key))
+                    {
+                        string evpdPageTitle   = "";
+                        string evpdDecodedPage = "";
+                        if(page.Key >= 0x01 && page.Key <= 0x7F)
+                        {
+                            evpdPageTitle   = $"ASCII Page {page.Key:X2}h";
+                            evpdDecodedPage = EVPD.DecodeASCIIPage(page.Value);
+                        }
+                        else if(page.Key == 0x80)
+                        {
+                            evpdPageTitle   = "Unit Serial Number";
+                            evpdDecodedPage = EVPD.DecodePage80(page.Value);
+                        }
+                        else if(page.Key == 0x81)
+                        {
+                            evpdPageTitle   = "SCSI Implemented operating definitions";
+                            evpdDecodedPage = EVPD.PrettifyPage_81(page.Value);
+                        }
+                        else if(page.Key == 0x82)
+                        {
+                            evpdPageTitle   = "ASCII implemented operating definitions";
+                            evpdDecodedPage = EVPD.DecodePage82(page.Value);
+                        }
+                        else if(page.Key == 0x83)
+                        {
+                            evpdPageTitle   = "SCSI Device identification";
+                            evpdDecodedPage = EVPD.PrettifyPage_83(page.Value);
+                        }
+                        else if(page.Key == 0x84)
+                        {
+                            evpdPageTitle   = "SCSI Software Interface Identifiers";
+                            evpdDecodedPage = EVPD.PrettifyPage_84(page.Value);
+                        }
+                        else if(page.Key == 0x85)
+                        {
+                            evpdPageTitle   = "SCSI Management Network Addresses";
+                            evpdDecodedPage = EVPD.PrettifyPage_85(page.Value);
+                        }
+                        else if(page.Key == 0x86)
+                        {
+                            evpdPageTitle   = "SCSI Extended INQUIRY Data";
+                            evpdDecodedPage = EVPD.PrettifyPage_86(page.Value);
+                        }
+                        else if(page.Key == 0x89)
+                        {
+                            evpdPageTitle   = "SCSI to ATA Translation Layer Data";
+                            evpdDecodedPage = EVPD.PrettifyPage_89(page.Value);
+                        }
+                        else if(page.Key == 0xB0)
+                        {
+                            evpdPageTitle   = "SCSI Sequential-access Device Capabilities";
+                            evpdDecodedPage = EVPD.PrettifyPage_B0(page.Value);
+                        }
+                        else if(page.Key == 0xB1)
+                        {
+                            evpdPageTitle   = "Manufacturer-assigned Serial Number";
+                            evpdDecodedPage = EVPD.DecodePageB1(page.Value);
+                        }
+                        else if(page.Key == 0xB2)
+                        {
+                            evpdPageTitle   = "TapeAlert Supported Flags Bitmap";
+                            evpdDecodedPage = $"0x{EVPD.DecodePageB2(page.Value):X16}";
+                        }
+                        else if(page.Key == 0xB3)
+                        {
+                            evpdPageTitle   = "Automation Device Serial Number";
+                            evpdDecodedPage = EVPD.DecodePageB3(page.Value);
+                        }
+                        else if(page.Key == 0xB4)
+                        {
+                            evpdPageTitle   = "Data Transfer Device Element Address";
+                            evpdDecodedPage = EVPD.DecodePageB4(page.Value);
+                        }
+                        else if(page.Key == 0xC0 &&
+                                StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification)
+                                              .ToLowerInvariant().Trim() == "quantum")
+                        {
+                            evpdPageTitle   = "Quantum Firmware Build Information page";
+                            evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
+                        }
+                        else if(page.Key == 0xC0 &&
+                                StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification)
+                                              .ToLowerInvariant().Trim() == "seagate")
+                        {
+                            evpdPageTitle   = "Seagate Firmware Numbers page";
+                            evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
+                        }
+                        else if(page.Key == 0xC0 &&
+                                StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification)
+                                              .ToLowerInvariant().Trim() == "ibm")
+                        {
+                            evpdPageTitle   = "IBM Drive Component Revision Levels page";
+                            evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
+                        }
+                        else if(page.Key == 0xC1 &&
+                                StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification)
+                                              .ToLowerInvariant().Trim() == "ibm")
+                        {
+                            evpdPageTitle   = "IBM Drive Serial Numbers page";
+                            evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
+                        }
+                        else if((page.Key == 0xC0 || page.Key == 0xC1) &&
+                                StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification)
+                                              .ToLowerInvariant().Trim() == "certance")
+                        {
+                            evpdPageTitle   = "Certance Drive Component Revision Levels page";
+                            evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
+                        }
+                        else if((page.Key == 0xC2 || page.Key == 0xC3 || page.Key == 0xC4 || page.Key == 0xC5 ||
+                                 page.Key == 0xC6) &&
+                                StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification)
+                                              .ToLowerInvariant().Trim() == "certance")
+                        {
+                            switch(page.Key)
+                            {
+                                case 0xC2:
+                                    evpdPageTitle = "Head Assembly Serial Number";
+                                    break;
+                                case 0xC3:
+                                    evpdPageTitle = "Reel Motor 1 Serial Number";
+                                    break;
+                                case 0xC4:
+                                    evpdPageTitle = "Reel Motor 2 Serial Number";
+                                    break;
+                                case 0xC5:
+                                    evpdPageTitle = "Board Serial Number";
+                                    break;
+                                case 0xC6:
+                                    evpdPageTitle = "Base Mechanical Serial Number";
+                                    break;
+                            }
+
+                            evpdDecodedPage = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value);
+                        }
+                        else if((page.Key == 0xC0 || page.Key == 0xC1 || page.Key == 0xC2 || page.Key == 0xC3 ||
+                                 page.Key == 0xC4 || page.Key == 0xC5) && StringHandlers
+                                                                         .CToString(devInfo.ScsiInquiry.Value
+                                                                                           .VendorIdentification)
+                                                                         .ToLowerInvariant().Trim() == "hp")
+                        {
+                            switch(page.Key)
+                            {
+                                case 0xC0:
+                                    evpdPageTitle = "HP Drive Firmware Revision Levels page:";
+                                    break;
+                                case 0xC1:
+                                    evpdPageTitle = "HP Drive Hardware Revision Levels page:";
+                                    break;
+                                case 0xC2:
+                                    evpdPageTitle = "HP Drive PCA Revision Levels page:";
+                                    break;
+                                case 0xC3:
+                                    evpdPageTitle = "HP Drive Mechanism Revision Levels page:";
+                                    break;
+                                case 0xC4:
+                                    evpdPageTitle = "HP Drive Head Assembly Revision Levels page:";
+                                    break;
+                                case 0xC5:
+                                    evpdPageTitle = "HP Drive ACI Revision Levels page:";
+                                    break;
+                            }
+
+                            evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
+                        }
+                        else if(page.Key == 0xDF &&
+                                StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification)
+                                              .ToLowerInvariant().Trim() == "certance")
+                        {
+                            evpdPageTitle   = "Certance drive status page";
+                            evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
+                        }
+                        else
+                        {
+                            if(page.Key == 0x00) continue;
+
+                            evpdPageTitle   = $"Page {page.Key:X2}h";
+                            evpdDecodedPage = "Undecoded";
+                            DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
+                                                      page.Key);
+                        }
+
+                        evpdPagesList.Add(new TreeGridItem
+                        {
+                            Values = new object[] {evpdPageTitle, evpdDecodedPage, page.Value}
+                        });
+                    }
+                }
             }
         }
 
@@ -515,6 +719,30 @@ namespace DiscImageChef.Gui
             txtModeSensePage.Text = item.Values[1] as string;
         }
 
+        protected void OnTreeEvpdPagesSelectedItemChanged(object sender, EventArgs e)
+        {
+            if(!(treeEvpdPages.SelectedItem is TreeGridItem item)) return;
+
+            txtEvpdPage.Text = item.Values[1] as string;
+        }
+
+        protected void OnBtnSaveEvpd(object sender, EventArgs e)
+        {
+            if(!(treeModeSensePages.SelectedItem is TreeGridItem item)) return;
+            if(!(item.Values[2] is byte[] data)) return;
+
+            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
+            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            DialogResult result = dlgSaveBinary.ShowDialog(this);
+
+            if(result != DialogResult.Ok) return;
+
+            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            saveFs.Write(data, 0, data.Length);
+
+            saveFs.Close();
+        }
+
         #region XAML controls
         Label        lblDeviceInfo;
         TabControl   tabInfos;
@@ -554,6 +782,10 @@ namespace DiscImageChef.Gui
         TextArea     txtModeSensePage;
         Button       btnSaveMode6;
         Button       btnSaveMode10;
+        TabPage      tabScsiEvpd;
+        TreeGridView treeEvpdPages;
+        TextArea     txtEvpdPage;
+        Button       btnSaveEvpd;
         #endregion
     }
 }
