@@ -38,6 +38,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Core.Devices.Info;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SCSI.MMC;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
@@ -128,8 +129,7 @@ namespace DiscImageChef.Gui
 
                 if(devInfo.ScsiMode.HasValue)
                 {
-                    tabScsiModeSense.Visible      = true;
-                    treeModeSensePages.ShowHeader = false;
+                    tabScsiModeSense.Visible = true;
 
                     TreeGridItemCollection modePagesList = new TreeGridItemCollection();
 
@@ -624,6 +624,222 @@ namespace DiscImageChef.Gui
                         });
                     }
                 }
+
+                if(devInfo.MmcConfiguration != null)
+                {
+                    tabMmcFeatures.Visible = true;
+
+                    TreeGridItemCollection featuresList = new TreeGridItemCollection();
+
+                    treeMmcFeatures.Columns.Add(new GridColumn {HeaderText = "Feature", DataCell = new TextBoxCell(0)});
+
+                    treeMmcFeatures.AllowMultipleSelection = false;
+                    treeMmcFeatures.ShowHeader             = false;
+                    treeMmcFeatures.DataStore              = featuresList;
+
+                    Features.SeparatedFeatures ftr = Features.Separate(devInfo.MmcConfiguration);
+
+                    DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes",
+                                              ftr.DataLength);
+                    DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h",
+                                              ftr.CurrentProfile);
+                    if(ftr.Descriptors != null)
+                        foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
+                        {
+                            string featureNumber = $"Feature {desc.Code:X4}h";
+                            string featureDescription;
+                            DicConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
+
+                            switch(desc.Code)
+                            {
+                                case 0x0000:
+                                    featureDescription = Features.Prettify_0000(desc.Data);
+                                    break;
+                                case 0x0001:
+                                    featureDescription = Features.Prettify_0001(desc.Data);
+                                    break;
+                                case 0x0002:
+                                    featureDescription = Features.Prettify_0002(desc.Data);
+                                    break;
+                                case 0x0003:
+                                    featureDescription = Features.Prettify_0003(desc.Data);
+                                    break;
+                                case 0x0004:
+                                    featureDescription = Features.Prettify_0004(desc.Data);
+                                    break;
+                                case 0x0010:
+                                    featureDescription = Features.Prettify_0010(desc.Data);
+                                    break;
+                                case 0x001D:
+                                    featureDescription = Features.Prettify_001D(desc.Data);
+                                    break;
+                                case 0x001E:
+                                    featureDescription = Features.Prettify_001E(desc.Data);
+                                    break;
+                                case 0x001F:
+                                    featureDescription = Features.Prettify_001F(desc.Data);
+                                    break;
+                                case 0x0020:
+                                    featureDescription = Features.Prettify_0020(desc.Data);
+                                    break;
+                                case 0x0021:
+                                    featureDescription = Features.Prettify_0021(desc.Data);
+                                    break;
+                                case 0x0022:
+                                    featureDescription = Features.Prettify_0022(desc.Data);
+                                    break;
+                                case 0x0023:
+                                    featureDescription = Features.Prettify_0023(desc.Data);
+                                    break;
+                                case 0x0024:
+                                    featureDescription = Features.Prettify_0024(desc.Data);
+                                    break;
+                                case 0x0025:
+                                    featureDescription = Features.Prettify_0025(desc.Data);
+                                    break;
+                                case 0x0026:
+                                    featureDescription = Features.Prettify_0026(desc.Data);
+                                    break;
+                                case 0x0027:
+                                    featureDescription = Features.Prettify_0027(desc.Data);
+                                    break;
+                                case 0x0028:
+                                    featureDescription = Features.Prettify_0028(desc.Data);
+                                    break;
+                                case 0x0029:
+                                    featureDescription = Features.Prettify_0029(desc.Data);
+                                    break;
+                                case 0x002A:
+                                    featureDescription = Features.Prettify_002A(desc.Data);
+                                    break;
+                                case 0x002B:
+                                    featureDescription = Features.Prettify_002B(desc.Data);
+                                    break;
+                                case 0x002C:
+                                    featureDescription = Features.Prettify_002C(desc.Data);
+                                    break;
+                                case 0x002D:
+                                    featureDescription = Features.Prettify_002D(desc.Data);
+                                    break;
+                                case 0x002E:
+                                    featureDescription = Features.Prettify_002E(desc.Data);
+                                    break;
+                                case 0x002F:
+                                    featureDescription = Features.Prettify_002F(desc.Data);
+                                    break;
+                                case 0x0030:
+                                    featureDescription = Features.Prettify_0030(desc.Data);
+                                    break;
+                                case 0x0031:
+                                    featureDescription = Features.Prettify_0031(desc.Data);
+                                    break;
+                                case 0x0032:
+                                    featureDescription = Features.Prettify_0032(desc.Data);
+                                    break;
+                                case 0x0033:
+                                    featureDescription = Features.Prettify_0033(desc.Data);
+                                    break;
+                                case 0x0035:
+                                    featureDescription = Features.Prettify_0035(desc.Data);
+                                    break;
+                                case 0x0037:
+                                    featureDescription = Features.Prettify_0037(desc.Data);
+                                    break;
+                                case 0x0038:
+                                    featureDescription = Features.Prettify_0038(desc.Data);
+                                    break;
+                                case 0x003A:
+                                    featureDescription = Features.Prettify_003A(desc.Data);
+                                    break;
+                                case 0x003B:
+                                    featureDescription = Features.Prettify_003B(desc.Data);
+                                    break;
+                                case 0x0040:
+                                    featureDescription = Features.Prettify_0040(desc.Data);
+                                    break;
+                                case 0x0041:
+                                    featureDescription = Features.Prettify_0041(desc.Data);
+                                    break;
+                                case 0x0042:
+                                    featureDescription = Features.Prettify_0042(desc.Data);
+                                    break;
+                                case 0x0050:
+                                    featureDescription = Features.Prettify_0050(desc.Data);
+                                    break;
+                                case 0x0051:
+                                    featureDescription = Features.Prettify_0051(desc.Data);
+                                    break;
+                                case 0x0080:
+                                    featureDescription = Features.Prettify_0080(desc.Data);
+                                    break;
+                                case 0x0100:
+                                    featureDescription = Features.Prettify_0100(desc.Data);
+                                    break;
+                                case 0x0101:
+                                    featureDescription = Features.Prettify_0101(desc.Data);
+                                    break;
+                                case 0x0102:
+                                    featureDescription = Features.Prettify_0102(desc.Data);
+                                    break;
+                                case 0x0103:
+                                    featureDescription = Features.Prettify_0103(desc.Data);
+                                    break;
+                                case 0x0104:
+                                    featureDescription = Features.Prettify_0104(desc.Data);
+                                    break;
+                                case 0x0105:
+                                    featureDescription = Features.Prettify_0105(desc.Data);
+                                    break;
+                                case 0x0106:
+                                    featureDescription = Features.Prettify_0106(desc.Data);
+                                    break;
+                                case 0x0107:
+                                    featureDescription = Features.Prettify_0107(desc.Data);
+                                    break;
+                                case 0x0108:
+                                    featureDescription = Features.Prettify_0108(desc.Data);
+                                    break;
+                                case 0x0109:
+                                    featureDescription = Features.Prettify_0109(desc.Data);
+                                    break;
+                                case 0x010A:
+                                    featureDescription = Features.Prettify_010A(desc.Data);
+                                    break;
+                                case 0x010B:
+                                    featureDescription = Features.Prettify_010B(desc.Data);
+                                    break;
+                                case 0x010C:
+                                    featureDescription = Features.Prettify_010C(desc.Data);
+                                    break;
+                                case 0x010D:
+                                    featureDescription = Features.Prettify_010D(desc.Data);
+                                    break;
+                                case 0x010E:
+                                    featureDescription = Features.Prettify_010E(desc.Data);
+                                    break;
+                                case 0x0110:
+                                    featureDescription = Features.Prettify_0110(desc.Data);
+                                    break;
+                                case 0x0113:
+                                    featureDescription = Features.Prettify_0113(desc.Data);
+                                    break;
+                                case 0x0142:
+                                    featureDescription = Features.Prettify_0142(desc.Data);
+                                    break;
+                                default:
+                                    featureDescription = "Unknown feature";
+                                    break;
+                            }
+
+                            featuresList.Add(new TreeGridItem
+                            {
+                                Values = new object[] {featureNumber, featureDescription}
+                            });
+                        }
+                    else
+                        DicConsole.DebugWriteLine("Device-Info command",
+                                                  "GET CONFIGURATION returned no feature descriptors");
+                }
             }
         }
 
@@ -743,7 +959,30 @@ namespace DiscImageChef.Gui
             saveFs.Close();
         }
 
+        protected void OnTreeMmcFeaturesSelectedItemChanged(object sender, EventArgs e)
+        {
+            if(!(treeMmcFeatures.SelectedItem is TreeGridItem item)) return;
+
+            txtMmcFeature.Text = item.Values[1] as string;
+        }
+
+        protected void OnBtnSaveMmcFeatures(object sender, EventArgs e)
+        {
+            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
+            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            DialogResult result = dlgSaveBinary.ShowDialog(this);
+
+            if(result != DialogResult.Ok) return;
+
+            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            saveFs.Write(devInfo.MmcConfiguration, 0, devInfo.MmcConfiguration.Length);
+
+            saveFs.Close();
+        }
+
         #region XAML controls
+        #pragma warning disable 169
+        #pragma warning disable 649
         Label        lblDeviceInfo;
         TabControl   tabInfos;
         TabPage      tabGeneral;
@@ -786,6 +1025,12 @@ namespace DiscImageChef.Gui
         TreeGridView treeEvpdPages;
         TextArea     txtEvpdPage;
         Button       btnSaveEvpd;
+        TabPage      tabMmcFeatures;
+        TreeGridView treeMmcFeatures;
+        TextArea     txtMmcFeature;
+        Button       btnSaveMmcFeatures;
+        #pragma warning restore 169
+        #pragma warning restore 649
         #endregion
     }
 }

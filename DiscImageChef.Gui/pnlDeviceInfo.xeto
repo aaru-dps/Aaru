@@ -181,6 +181,31 @@
                                 </StackLayoutItem>
                             </StackLayout>
                         </TabPage>
+                        <TabPage ID="tabMmcFeatures" Text="Features" Visible="False">
+                            <StackLayout Orientation="Vertical">
+                                <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                 Expand="True">
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                                         Expand="True">
+                                            <TreeGridView ID="treeMmcFeatures"
+                                                          SelectedItemChanged="OnTreeMmcFeaturesSelectedItemChanged"/>
+                                        </StackLayoutItem>
+                                        <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                                                         Expand="True">
+                                            <TextArea ID="txtMmcFeature" ReadOnly="True"/>
+                                        </StackLayoutItem>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Button ID="btnSaveMmcFeatures"
+                                                Text="Save MMC GET CONFIGURATION response to file"
+                                                Click="OnBtnSaveMmcFeatures"/>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </TabPage>
                     </TabControl>
                 </TabPage>
             </TabControl>
