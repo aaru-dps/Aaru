@@ -1150,25 +1150,25 @@ namespace DiscImageChef.Gui
                     tabSecureDigital.Text = "MultiMediaCard";
                     if(devInfo.CID != null)
                     {
-                        txtCid.Visible = true;
+                        tabCid.Visible = true;
                         txtCid.Text    = Decoders.MMC.Decoders.PrettifyCID(devInfo.CID);
                     }
 
                     if(devInfo.CSD != null)
                     {
-                        txtCsd.Visible = true;
+                        tabCsd.Visible = true;
                         txtCid.Text    = Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD);
                     }
 
                     if(devInfo.OCR != null)
                     {
-                        txtOcr.Visible = true;
+                        tabOcr.Visible = true;
                         txtCid.Text    = Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR);
                     }
 
                     if(devInfo.ExtendedCSD != null)
                     {
-                        txtExtendedCsd.Visible = true;
+                        tabExtendedCsd.Visible = true;
                         txtCid.Text            = Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD);
                     }
                 }
@@ -1178,35 +1178,35 @@ namespace DiscImageChef.Gui
                     tabSecureDigital.Text = "SecureDigital";
                     if(devInfo.CID != null)
                     {
-                        txtCid.Visible = true;
+                        tabCid.Visible = true;
 
                         txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyCID(devInfo.CID);
                     }
 
                     if(devInfo.CSD != null)
                     {
-                        txtCsd.Visible = true;
+                        tabCsd.Visible = true;
 
                         txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyCSD(devInfo.CSD);
                     }
 
                     if(devInfo.OCR != null)
                     {
-                        txtOcr.Visible = true;
+                        tabOcr.Visible = true;
                         txtCid.Text    = Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR);
                     }
 
                     if(devInfo.SCR != null)
                     {
-                        txtScr.Visible = true;
+                        tabScr.Visible = true;
                         txtCid.Text    = Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR);
                     }
                 }
                     break;
             }
 
-            tabSecureDigital.Visible = txtCid.Visible || txtCsd.Visible || txtOcr.Visible || txtExtendedCsd.Visible ||
-                                       txtScr.Visible;
+            tabSecureDigital.Visible = tabCid.Visible || tabCsd.Visible || tabOcr.Visible || tabExtendedCsd.Visible ||
+                                       tabScr.Visible;
         }
 
         protected void OnBtnSaveAtaBinary(object sender, EventArgs e)
