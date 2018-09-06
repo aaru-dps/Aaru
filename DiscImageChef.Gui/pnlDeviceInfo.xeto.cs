@@ -38,6 +38,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
+using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
@@ -980,6 +981,59 @@ namespace DiscImageChef.Gui
                     chkKreonLock.Checked              = devInfo.KreonFeatures.HasFlag(KreonFeatures.Lock);
                     chkKreonErrorSkipping.Checked     = devInfo.KreonFeatures.HasFlag(KreonFeatures.ErrorSkipping);
                 }
+
+                if(devInfo.BlockLimits != null)
+                {
+                    BlockLimits.BlockLimitsData? blockLimits = BlockLimits.Decode(devInfo.BlockLimits);
+
+                    if(blockLimits.HasValue)
+                    {
+                        tabSsc.Visible = true;
+                        if(blockLimits.Value.minBlockLen == blockLimits.Value.maxBlockLen)
+                        {
+                            lblMinBlockSize.Visible = true;
+                            lblMinBlockSize.Text =
+                                $"Device's block size is fixed at {blockLimits.Value.minBlockLen} bytes";
+                        }
+                        else
+                        {
+                            lblMinBlockSize.Visible = true;
+                            lblMaxBlockSize.Visible = true;
+
+                            lblMaxBlockSize.Text = blockLimits.Value.maxBlockLen > 0
+                                                       ? $"Device's maximum block size is {blockLimits.Value.maxBlockLen} bytes"
+                                                       : "Device does not specify a maximum block size";
+                            lblMinBlockSize.Text =
+                                $"Device's minimum block size is {blockLimits.Value.minBlockLen} bytes";
+
+                            if(blockLimits.Value.granularity > 0)
+                            {
+                                lblBlockSizeGranularity.Visible = true;
+                                lblBlockSizeGranularity.Text =
+                                    $"Device's needs a block size granularity of 2^{blockLimits.Value.granularity} ({Math.Pow(2, blockLimits.Value.granularity)}) bytes";
+                            }
+                        }
+                    }
+                }
+
+                if(devInfo.DensitySupport != null)
+                    if(devInfo.DensitySupportHeader.HasValue)
+                    {
+                        stkDensities.Visible = true;
+                        txtDensities.Text    = DensitySupport.PrettifyDensity(devInfo.DensitySupportHeader);
+                    }
+
+                if(devInfo.MediumDensitySupport != null)
+                {
+                    if(devInfo.MediaTypeSupportHeader.HasValue)
+                    {
+                        stkMediaTypes.Visible = true;
+                        txtMediumTypes.Text   = DensitySupport.PrettifyMediumType(devInfo.MediaTypeSupportHeader);
+                    }
+
+                    txtMediumDensity.Visible = true;
+                    txtMediumDensity.Text    = DensitySupport.PrettifyMediumType(devInfo.MediumDensitySupport);
+                }
             }
         }
 
@@ -1233,6 +1287,18 @@ namespace DiscImageChef.Gui
         CheckBox     chkPlextorBitSetting;
         CheckBox     chkPlextorBitSettingDl;
         CheckBox     chkPlextorDvdPlusWriteTest;
+        TabPage      tabSsc;
+        StackLayout  Vertical;
+        Label        lblMinBlockSize;
+        Label        lblMaxBlockSize;
+        Label        lblBlockSizeGranularity;
+        StackLayout  stkDensities;
+        Label        lblDensities;
+        TextArea     txtDensities;
+        StackLayout  stkMediaTypes;
+        Label        lblMediumTypes;
+        TextArea     txtMediumTypes;
+        TextArea     txtMediumDensity;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

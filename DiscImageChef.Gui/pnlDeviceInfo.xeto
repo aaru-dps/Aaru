@@ -386,6 +386,24 @@
                         <CheckBox ID="chkKreonErrorSkipping" Text="Can skip read errors" Enabled="False"/>
                     </StackLayout>
                 </TabPage>
+                <TabPage ID="tabSsc" Text="SSC" Visible="False">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayout Orientation="Vertical" ID="stkBlockLimits" Visible="False">
+                            <Label ID="lblMinBlockSize" Visible="False"/>
+                            <Label ID="lblMaxBlockSize" Visible="False"/>
+                            <Label ID="lblBlockSizeGranularity" Visible="False"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Vertical" ID="stkDensities" Visible="False">
+                            <Label ID="lblDensities" Text="Densities supported by device:"/>
+                            <TextArea ID="txtDensities" ReadOnly="True"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Vertical" ID="stkMediaTypes" Visible="False">
+                            <Label ID="lblMediumTypes" Text="Medium types supported by device:"/>
+                            <TextArea ID="txtMediumTypes" ReadOnly="True"/>
+                        </StackLayout>
+                        <TextArea ID="txtMediumDensity" ReadOnly="True" Visible="False"/>
+                    </StackLayout>
+                </TabPage>
             </TabControl>
         </StackLayoutItem>
     </StackLayout>
