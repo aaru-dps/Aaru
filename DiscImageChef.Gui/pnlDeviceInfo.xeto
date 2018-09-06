@@ -404,6 +404,25 @@
                         <TextArea ID="txtMediumDensity" ReadOnly="True" Visible="False"/>
                     </StackLayout>
                 </TabPage>
+                <TabPage ID="tabSecureDigital" Text="SD/MMC" Visible="False">
+                    <TabControl>
+                        <TabPage ID="tabCid" Text="CID" Visible="False">
+                            <TextArea ID="txtCid" ReadOnly="True"/>
+                        </TabPage>
+                        <TabPage ID="tabCsd" Text="CSD" Visible="False">
+                            <TextArea ID="txtCsd" ReadOnly="True"/>
+                        </TabPage>
+                        <TabPage ID="tabOcr" Text="OCR" Visible="False">
+                            <TextArea ID="txtOcr" ReadOnly="True"/>
+                        </TabPage>
+                        <TabPage ID="tabExtendedCsd" Text="Extended CSD" Visible="False">
+                            <TextArea ID="txtExtendedCsd" ReadOnly="True"/>
+                        </TabPage>
+                        <TabPage ID="tabScr" Text="SCR" Visible="False">
+                            <TextArea ID="txtScr" ReadOnly="True"/>
+                        </TabPage>
+                    </TabControl>
+                </TabPage>
             </TabControl>
         </StackLayoutItem>
     </StackLayout>

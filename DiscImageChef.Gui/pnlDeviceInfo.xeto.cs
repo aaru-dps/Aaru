@@ -1035,6 +1035,73 @@ namespace DiscImageChef.Gui
                     txtMediumDensity.Text    = DensitySupport.PrettifyMediumType(devInfo.MediumDensitySupport);
                 }
             }
+
+            switch(devInfo.Type)
+            {
+                case DeviceType.MMC:
+                {
+                    tabSecureDigital.Text = "MultiMediaCard";
+                    if(devInfo.CID != null)
+                    {
+                        txtCid.Visible = true;
+                        txtCid.Text = Decoders.MMC.Decoders.PrettifyCID(devInfo.CID);
+                    }
+
+                    if(devInfo.CSD != null)
+                    {
+                        txtCsd.Visible = true;
+                        txtCid.Text = Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD);
+                    }
+
+                    if(devInfo.OCR != null)
+                    {
+                        txtOcr.Visible = true;
+                        txtCid.Text = Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR);
+                    }
+
+                    if(devInfo.ExtendedCSD != null)
+                    {
+                        txtExtendedCsd.Visible = true;
+                        txtCid.Text = Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD);
+                    }
+                }
+                    break;
+                case DeviceType.SecureDigital:
+                {
+                    tabSecureDigital.Text = "SecureDigital";
+                    if(devInfo.CID != null)
+                    {
+                        txtCid.Visible = true;
+
+                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyCID(devInfo.CID);
+                    }
+
+                    if(devInfo.CSD != null)
+                    {
+                        txtCsd.Visible = true;
+
+                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyCSD(devInfo.CSD);
+                    }
+
+                    if(devInfo.OCR != null)
+                    {
+                        txtOcr.Visible = true;
+                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR);
+                    }
+
+                    if(devInfo.SCR != null)
+                    {
+                        txtScr.Visible = true;
+                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR);
+                    }
+
+                }
+                    break;
+            }
+
+            tabSecureDigital.Visible = txtCid.Visible || txtCsd.Visible || txtOcr.Visible || txtExtendedCsd.Visible ||
+                                       txtScr.Visible;
+
         }
 
         protected void OnBtnSaveAtaBinary(object sender, EventArgs e)
@@ -1299,6 +1366,17 @@ namespace DiscImageChef.Gui
         Label        lblMediumTypes;
         TextArea     txtMediumTypes;
         TextArea     txtMediumDensity;
+        TabPage tabSecureDigital;
+        TabPage tabCid;
+        TextArea txtCid;
+        TabPage tabCsd;
+        TextArea txtCsd;
+        TabPage tabOcr;
+        TextArea txtOcr;
+        TabPage tabExtendedCsd;
+        TextArea txtExtendedCsd;
+        TabPage tabScr;
+        TextArea txtScr;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
