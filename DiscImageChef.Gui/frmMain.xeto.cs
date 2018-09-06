@@ -45,6 +45,7 @@ namespace DiscImageChef.Gui
         bool                   closing;
         GridView               grdFiles;
         Label                  lblError;
+        TreeGridItem           placeholderItem;
         TreeGridView           treeImages;
         TreeGridItemCollection treeImagesItems;
 
@@ -72,6 +73,8 @@ namespace DiscImageChef.Gui
 
             treeImagesItems.Add(imagesRoot);
             treeImagesItems.Add(devicesRoot);
+
+            placeholderItem = new TreeGridItem {Values = new object[] {"You should not be seeing this"}};
 
             Closing += OnClosing;
         }
@@ -142,14 +145,13 @@ namespace DiscImageChef.Gui
                     DicConsole.DebugWriteLine("Main window",
                                               "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
                                               device.Model, device.Vendor, device.Bus, device.Path);
-                    devicesRoot.Children.Add(new TreeGridItem
+
+                    TreeGridItem devItem = new TreeGridItem
                     {
-                        Values = new object[]
-                        {
-                            $"{device.Vendor} {device.Model} ({device.Bus})",
-                            device.Path, null
-                        }
-                    });
+                        Values = new object[] {$"{device.Vendor} {device.Model} ({device.Bus})", device.Path, null}
+                    };
+                    devItem.Children.Add(placeholderItem);
+                    devicesRoot.Children.Add(devItem);
                 }
 
                 treeImages.ReloadData();
@@ -217,6 +219,60 @@ namespace DiscImageChef.Gui
                 case Panel devInfoPanel:
                     splMain.Panel2 = devInfoPanel;
                     break;
+            }
+        }
+
+        protected void OnTreeImagesItemExpanding(object sender, TreeGridViewItemCancelEventArgs e)
+        {
+            // First expansion of a device
+            if((e.Item as TreeGridItem)?.Children?.Count == 1               &&
+               ((TreeGridItem)e.Item).Children[0]        == placeholderItem &&
+               ((TreeGridItem)e.Item).Parent             == devicesRoot)
+            {
+                TreeGridItem deviceItem = (TreeGridItem)e.Item;
+
+                deviceItem.Children.Clear();
+                Device dev;
+                try
+                {
+                    dev = new Device((string)deviceItem.Values[1]);
+                    if(dev.Error)
+                    {
+                        deviceItem.Values[2] = $"Error {dev.LastError} opening device";
+                        e.Cancel             = true;
+                        treeImages.ReloadData();
+                        treeImages.SelectedItem = deviceItem;
+                        return;
+                    }
+                }
+                catch(SystemException ex)
+                {
+                    deviceItem.Values[2] = ex.Message;
+                    e.Cancel             = true;
+                    treeImages.ReloadData();
+                    DicConsole.ErrorWriteLine(ex.Message);
+                    treeImages.SelectedItem = deviceItem;
+                    return;
+                }
+
+                if(!dev.IsRemovable)
+                    deviceItem.Children.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            "Non-removable device commands not yet implemented"
+                        }
+                    });
+                else
+                    deviceItem.Children.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            "Removable device commands not yet implemented"
+                        }
+                    });
+
+                dev.Close();
             }
         }
 
