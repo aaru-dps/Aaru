@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
@@ -43,6 +44,7 @@ using DiscImageChef.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
+using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Gui
 {
@@ -84,6 +86,90 @@ namespace DiscImageChef.Gui
                 txtFirewireManufacturer.Text = devInfo.FireWireVendorName;
                 txtFirewireModel.Text        = devInfo.FireWireModelName;
                 txtFirewireGuid.Text         = $"{devInfo.FireWireGuid:X16}";
+            }
+
+            if(devInfo.IsPcmcia)
+            {
+                tabPcmcia.Visible = true;
+
+                TreeGridItemCollection cisList = new TreeGridItemCollection();
+
+                treeMmcFeatures.Columns.Add(new GridColumn {HeaderText = "CIS", DataCell = new TextBoxCell(0)});
+
+                treeMmcFeatures.AllowMultipleSelection = false;
+                treeMmcFeatures.ShowHeader             = false;
+                treeMmcFeatures.DataStore              = cisList;
+
+                Tuple[] tuples = CIS.GetTuples(devInfo.Cis);
+                if(tuples != null)
+                    foreach(Tuple tuple in tuples)
+                    {
+                        string tupleCode;
+                        string tupleDescription;
+
+                        switch(tuple.Code)
+                        {
+                            case TupleCodes.CISTPL_NULL:
+                            case TupleCodes.CISTPL_END: continue;
+                            case TupleCodes.CISTPL_DEVICEGEO:
+                            case TupleCodes.CISTPL_DEVICEGEO_A:
+                                tupleCode        = "Device Geometry Tuples";
+                                tupleDescription = CIS.PrettifyDeviceGeometryTuple(tuple);
+                                break;
+                            case TupleCodes.CISTPL_MANFID:
+                                tupleCode        = "Manufacturer Identification Tuple";
+                                tupleDescription = CIS.PrettifyManufacturerIdentificationTuple(tuple);
+                                break;
+                            case TupleCodes.CISTPL_VERS_1:
+                                tupleCode        = "Level 1 Version / Product Information Tuple";
+                                tupleDescription = CIS.PrettifyLevel1VersionTuple(tuple);
+                                break;
+                            case TupleCodes.CISTPL_ALTSTR:
+                            case TupleCodes.CISTPL_BAR:
+                            case TupleCodes.CISTPL_BATTERY:
+                            case TupleCodes.CISTPL_BYTEORDER:
+                            case TupleCodes.CISTPL_CFTABLE_ENTRY:
+                            case TupleCodes.CISTPL_CFTABLE_ENTRY_CB:
+                            case TupleCodes.CISTPL_CHECKSUM:
+                            case TupleCodes.CISTPL_CONFIG:
+                            case TupleCodes.CISTPL_CONFIG_CB:
+                            case TupleCodes.CISTPL_DATE:
+                            case TupleCodes.CISTPL_DEVICE:
+                            case TupleCodes.CISTPL_DEVICE_A:
+                            case TupleCodes.CISTPL_DEVICE_OA:
+                            case TupleCodes.CISTPL_DEVICE_OC:
+                            case TupleCodes.CISTPL_EXTDEVIC:
+                            case TupleCodes.CISTPL_FORMAT:
+                            case TupleCodes.CISTPL_FORMAT_A:
+                            case TupleCodes.CISTPL_FUNCE:
+                            case TupleCodes.CISTPL_FUNCID:
+                            case TupleCodes.CISTPL_GEOMETRY:
+                            case TupleCodes.CISTPL_INDIRECT:
+                            case TupleCodes.CISTPL_JEDEC_A:
+                            case TupleCodes.CISTPL_JEDEC_C:
+                            case TupleCodes.CISTPL_LINKTARGET:
+                            case TupleCodes.CISTPL_LONGLINK_A:
+                            case TupleCodes.CISTPL_LONGLINK_C:
+                            case TupleCodes.CISTPL_LONGLINK_CB:
+                            case TupleCodes.CISTPL_LONGLINK_MFC:
+                            case TupleCodes.CISTPL_NO_LINK:
+                            case TupleCodes.CISTPL_ORG:
+                            case TupleCodes.CISTPL_PWR_MGMNT:
+                            case TupleCodes.CISTPL_SPCL:
+                            case TupleCodes.CISTPL_SWIL:
+                            case TupleCodes.CISTPL_VERS_2:
+                                tupleCode        = $"Undecoded tuple ID {tuple.Code}";
+                                tupleDescription = $"Undecoded tuple ID {tuple.Code}";
+                                break;
+                            default:
+                                tupleCode        = $"0x{(byte)tuple.Code:X2}";
+                                tupleDescription = $"Found unknown tuple ID 0x{(byte)tuple.Code:X2}";
+                                break;
+                        }
+
+                        cisList.Add(new TreeGridItem {Values = new object[] {tupleCode, tupleDescription}});
+                    }
+                else DicConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
             }
 
             if(devInfo.AtaIdentify != null || devInfo.AtapiIdentify != null)
@@ -1274,6 +1360,27 @@ namespace DiscImageChef.Gui
             saveFs.Close();
         }
 
+        protected void OnTreePcmciaSelectedItemChanged(object sender, EventArgs e)
+        {
+            if(!(treePcmcia.SelectedItem is TreeGridItem item)) return;
+
+            txtPcmciaCis.Text = item.Values[1] as string;
+        }
+
+        protected void OnBtnSavePcmciaCis(object sender, EventArgs e)
+        {
+            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
+            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            DialogResult result = dlgSaveBinary.ShowDialog(this);
+
+            if(result != DialogResult.Ok) return;
+
+            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            saveFs.Write(devInfo.Cis, 0, devInfo.Cis.Length);
+
+            saveFs.Close();
+        }
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -1433,6 +1540,10 @@ namespace DiscImageChef.Gui
         TextBox      txtFirewireModel;
         Label        lblFirewireGuid;
         TextBox      txtFirewireGuid;
+        TabPage      tabPcmcia;
+        TreeGridView treePcmcia;
+        TextArea     txtPcmciaCis;
+        Button       btnSavePcmciaCis;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
