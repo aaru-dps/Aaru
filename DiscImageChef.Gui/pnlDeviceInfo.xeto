@@ -88,37 +88,71 @@
                     <StackLayout Orientation="Vertical">
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <Label ID="lblUsbVendorId" Text="Device type"/>
+                                <Label ID="lblUsbVendorId" Text="Vendor ID"/>
                                 <TextBox ID="txtUsbVendorId" ReadOnly="True"/>
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <Label ID="lblUsbProductId" Text="Device type"/>
+                                <Label ID="lblUsbProductId" Text="Product ID"/>
                                 <TextBox ID="txtUsbProductId" ReadOnly="True"/>
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <Label ID="lblUsbManufacturer" Text="Device type"/>
+                                <Label ID="lblUsbManufacturer" Text="Manufacturer"/>
                                 <TextBox ID="txtUsbManufacturer" ReadOnly="True"/>
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <Label ID="lblUsbProduct" Text="Device type"/>
+                                <Label ID="lblUsbProduct" Text="Product"/>
                                 <TextBox ID="txtUsbProduct" ReadOnly="True"/>
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <Label ID="lblUsbSerial" Text="Device type"/>
+                                <Label ID="lblUsbSerial" Text="Serial number"/>
                                 <TextBox ID="txtUsbSerial" ReadOnly="True"/>
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Right">
                             <Button Text="Save descriptors to file" Click="OnBtnSaveUsbDescriptors"
                                     ID="btnSaveUsbDescriptors"/>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage ID="tabFirewire" Text="FireWire" Visible="False">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblFirewireVendorId" Text="Vendor ID"/>
+                                <TextBox ID="txtFirewireVendorId" ReadOnly="True"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblFirewireModelId" Text="Model ID"/>
+                                <TextBox ID="txtFirewireModelId" ReadOnly="True"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblFirewireManufacturer" Text="Manufacturer"/>
+                                <TextBox ID="txtFirewireManufacturer" ReadOnly="True"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblFirewireModel" Text="Model"/>
+                                <TextBox ID="txtFirewireModel" ReadOnly="True"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblFirewireGuid" Text="GUID"/>
+                                <TextBox ID="txtFirewireGuid" ReadOnly="True"/>
+                            </StackLayout>
                         </StackLayoutItem>
                     </StackLayout>
                 </TabPage>

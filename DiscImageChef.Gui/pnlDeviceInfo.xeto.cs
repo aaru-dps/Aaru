@@ -76,6 +76,16 @@ namespace DiscImageChef.Gui
                 txtUsbSerial.Text             = devInfo.UsbSerialString;
             }
 
+            if(devInfo.IsFireWire)
+            {
+                tabFirewire.Visible          = true;
+                txtFirewireVendorId.Text     = $"{devInfo.FireWireVendor:X4}";
+                txtFirewireModelId.Text      = $"{devInfo.FireWireModel:X4}";
+                txtFirewireManufacturer.Text = devInfo.FireWireVendorName;
+                txtFirewireModel.Text        = devInfo.FireWireModelName;
+                txtFirewireGuid.Text         = $"{devInfo.FireWireGuid:X16}";
+            }
+
             if(devInfo.AtaIdentify != null || devInfo.AtapiIdentify != null)
             {
                 tabAta.Visible = true;
@@ -1412,6 +1422,17 @@ namespace DiscImageChef.Gui
         Label        lblUsbSerial;
         TextBox      txtUsbSerial;
         Button       btnSaveUsbDescriptors;
+        TabPage      tabFirewire;
+        Label        lblFirewireVendorId;
+        TextBox      txtFirewireVendorId;
+        Label        lblFirewireModelId;
+        TextBox      txtFirewireModelId;
+        Label        lblFirewireManufacturer;
+        TextBox      txtFirewireManufacturer;
+        Label        lblFirewireModel;
+        TextBox      txtFirewireModel;
+        Label        lblFirewireGuid;
+        TextBox      txtFirewireGuid;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
