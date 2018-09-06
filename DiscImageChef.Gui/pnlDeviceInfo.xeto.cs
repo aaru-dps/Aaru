@@ -65,6 +65,17 @@ namespace DiscImageChef.Gui
             chkRemovable.Checked = devInfo.IsRemovable;
             chkUsb.Checked       = devInfo.IsUsb;
 
+            if(devInfo.IsUsb)
+            {
+                tabUsb.Visible                = true;
+                btnSaveUsbDescriptors.Enabled = devInfo.UsbDescriptors != null;
+                txtUsbVendorId.Text           = $"{devInfo.UsbVendorId:X4}";
+                txtUsbProductId.Text          = $"{devInfo.UsbProductId:X4}";
+                txtUsbManufacturer.Text       = devInfo.UsbManufacturerString;
+                txtUsbProduct.Text            = devInfo.UsbProductString;
+                txtUsbSerial.Text             = devInfo.UsbSerialString;
+            }
+
             if(devInfo.AtaIdentify != null || devInfo.AtapiIdentify != null)
             {
                 tabAta.Visible = true;
@@ -1044,25 +1055,25 @@ namespace DiscImageChef.Gui
                     if(devInfo.CID != null)
                     {
                         txtCid.Visible = true;
-                        txtCid.Text = Decoders.MMC.Decoders.PrettifyCID(devInfo.CID);
+                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCID(devInfo.CID);
                     }
 
                     if(devInfo.CSD != null)
                     {
                         txtCsd.Visible = true;
-                        txtCid.Text = Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD);
+                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD);
                     }
 
                     if(devInfo.OCR != null)
                     {
                         txtOcr.Visible = true;
-                        txtCid.Text = Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR);
+                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR);
                     }
 
                     if(devInfo.ExtendedCSD != null)
                     {
                         txtExtendedCsd.Visible = true;
-                        txtCid.Text = Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD);
+                        txtCid.Text            = Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD);
                     }
                 }
                     break;
@@ -1086,22 +1097,20 @@ namespace DiscImageChef.Gui
                     if(devInfo.OCR != null)
                     {
                         txtOcr.Visible = true;
-                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR);
+                        txtCid.Text    = Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR);
                     }
 
                     if(devInfo.SCR != null)
                     {
                         txtScr.Visible = true;
-                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR);
+                        txtCid.Text    = Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR);
                     }
-
                 }
                     break;
             }
 
             tabSecureDigital.Visible = txtCid.Visible || txtCsd.Visible || txtOcr.Visible || txtExtendedCsd.Visible ||
                                        txtScr.Visible;
-
         }
 
         protected void OnBtnSaveAtaBinary(object sender, EventArgs e)
@@ -1241,6 +1250,20 @@ namespace DiscImageChef.Gui
             saveFs.Close();
         }
 
+        protected void OnBtnSaveUsbDescriptors(object sender, EventArgs e)
+        {
+            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
+            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            DialogResult result = dlgSaveBinary.ShowDialog(this);
+
+            if(result != DialogResult.Ok) return;
+
+            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            saveFs.Write(devInfo.UsbDescriptors, 0, devInfo.UsbDescriptors.Length);
+
+            saveFs.Close();
+        }
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -1366,17 +1389,29 @@ namespace DiscImageChef.Gui
         Label        lblMediumTypes;
         TextArea     txtMediumTypes;
         TextArea     txtMediumDensity;
-        TabPage tabSecureDigital;
-        TabPage tabCid;
-        TextArea txtCid;
-        TabPage tabCsd;
-        TextArea txtCsd;
-        TabPage tabOcr;
-        TextArea txtOcr;
-        TabPage tabExtendedCsd;
-        TextArea txtExtendedCsd;
-        TabPage tabScr;
-        TextArea txtScr;
+        TabPage      tabSecureDigital;
+        TabPage      tabCid;
+        TextArea     txtCid;
+        TabPage      tabCsd;
+        TextArea     txtCsd;
+        TabPage      tabOcr;
+        TextArea     txtOcr;
+        TabPage      tabExtendedCsd;
+        TextArea     txtExtendedCsd;
+        TabPage      tabScr;
+        TextArea     txtScr;
+        TabPage      tabUsb;
+        Label        lblUsbVendorId;
+        TextBox      txtUsbVendorId;
+        Label        lblUsbProductId;
+        TextBox      txtUsbProductId;
+        Label        lblUsbManufacturer;
+        TextBox      txtUsbManufacturer;
+        Label        lblUsbProduct;
+        TextBox      txtUsbProduct;
+        Label        lblUsbSerial;
+        TextBox      txtUsbSerial;
+        Button       btnSaveUsbDescriptors;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

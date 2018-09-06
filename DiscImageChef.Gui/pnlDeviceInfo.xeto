@@ -77,14 +77,48 @@
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
+                            <CheckBox ID="chkRemovable" Text="Removable media" Enabled="False"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <CheckBox ID="chkUsb" Text="Connected by USB" Enabled="False"/>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage ID="tabUsb" Text="USB" Visible="False">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <CheckBox ID="chkRemovable" Text="Removable media" Enabled="False"/>
+                                <Label ID="lblUsbVendorId" Text="Device type"/>
+                                <TextBox ID="txtUsbVendorId" ReadOnly="True"/>
                             </StackLayout>
                         </StackLayoutItem>
                         <StackLayoutItem HorizontalAlignment="Stretch">
                             <StackLayout Orientation="Horizontal">
-                                <CheckBox ID="chkUsb" Text="Connected by USB" Enabled="False"/>
+                                <Label ID="lblUsbProductId" Text="Device type"/>
+                                <TextBox ID="txtUsbProductId" ReadOnly="True"/>
                             </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblUsbManufacturer" Text="Device type"/>
+                                <TextBox ID="txtUsbManufacturer" ReadOnly="True"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblUsbProduct" Text="Device type"/>
+                                <TextBox ID="txtUsbProduct" ReadOnly="True"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label ID="lblUsbSerial" Text="Device type"/>
+                                <TextBox ID="txtUsbSerial" ReadOnly="True"/>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Right">
+                            <Button Text="Save descriptors to file" Click="OnBtnSaveUsbDescriptors"
+                                    ID="btnSaveUsbDescriptors"/>
                         </StackLayoutItem>
                     </StackLayout>
                 </TabPage>
