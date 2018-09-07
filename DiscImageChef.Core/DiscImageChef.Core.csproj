@@ -51,6 +51,8 @@
     <Compile Include="Devices\Info\Properties.cs" />
     <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />
+    <Compile Include="Media\Info\ScsiInfo.cs" />
+    <Compile Include="Media\Info\XgdInfo.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="ImageFormat.cs" />
     <Compile Include="PrintScsiModePages.cs" />

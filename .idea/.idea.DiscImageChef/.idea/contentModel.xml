@@ -253,6 +253,12 @@
           <e p="IBGLog.cs" t="Include" />
           <e p="MHDDLog.cs" t="Include" />
         </e>
+        <e p="Media" t="Include">
+          <e p="Info" t="Include">
+            <e p="ScsiInfo.cs" t="Include" />
+            <e p="XgdInfo.cs" t="Include" />
+          </e>
+        </e>
         <e p="Options.cs" t="Include" />
         <e p="Partitions.cs" t="Include" />
         <e p="PrintScsiModePages.cs" t="Include" />
