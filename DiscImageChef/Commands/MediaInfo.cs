@@ -418,13 +418,12 @@ namespace DiscImageChef.Commands
                     foreach(KeyValuePair<byte, string> isrc in scsiInfo.Isrcs)
                         DicConsole.WriteLine("Track's {0} ISRC: {1}", isrc.Key, isrc.Value);
 
-                if(scsiInfo.XboxSecuritySectors != null)
+                if(scsiInfo.XboxSecuritySector != null)
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_xbox_ss.bin", "KREON EXTRACT SS",
-                                     scsiInfo.XboxSecuritySectors);
+                                     scsiInfo.XboxSecuritySector);
 
-                if(scsiInfo.DecodedXboxSecuritySectors.HasValue)
-                    DicConsole.WriteLine("Xbox Security Sector:\n{0}",
-                                         SS.Prettify(scsiInfo.DecodedXboxSecuritySectors));
+                if(scsiInfo.DecodedXboxSecuritySector.HasValue)
+                    DicConsole.WriteLine("Xbox Security Sector:\n{0}", SS.Prettify(scsiInfo.DecodedXboxSecuritySector));
 
                 if(scsiInfo.XgdInfo != null)
                 {

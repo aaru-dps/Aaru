@@ -50,8 +50,6 @@ namespace DiscImageChef.Core.Media.Info
 {
     public class ScsiInfo
     {
-        public byte[] MediaSerialNumber;
-
         public ScsiInfo(Device dev)
         {
             if(dev.Type != DeviceType.SCSI && dev.Type != DeviceType.ATAPI) return;
@@ -1074,9 +1072,9 @@ namespace DiscImageChef.Core.Media.Info
                             if(sense)
                                 DicConsole.DebugWriteLine("Media-Info command", "KREON EXTRACT SS:\n{0}",
                                                           Sense.PrettifySense(senseBuf));
-                            else XboxSecuritySectors = cmdBuf;
+                            else XboxSecuritySector = cmdBuf;
 
-                            DecodedXboxSecuritySectors = SS.Decode(cmdBuf);
+                            DecodedXboxSecuritySector = SS.Decode(cmdBuf);
 
                             // Get video partition size
                             DicConsole.DebugWriteLine("Dump-media command", "Getting video partition size");
@@ -1192,8 +1190,9 @@ namespace DiscImageChef.Core.Media.Info
             // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
         }
 
-        public byte[]                                   XboxSecuritySectors           { get; }
-        public SS.SecuritySector?                       DecodedXboxSecuritySectors    { get; }
+        public byte[]                                   MediaSerialNumber             { get; }
+        public byte[]                                   XboxSecuritySector            { get; }
+        public SS.SecuritySector?                       DecodedXboxSecuritySector     { get; }
         public XgdInfo                                  XgdInfo                       { get; }
         public byte[]                                   MmcConfiguration              { get; }
         public byte[]                                   RecognizedFormatLayers        { get; }
