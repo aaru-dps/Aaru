@@ -42,6 +42,8 @@ using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Decoders.Xbox;
+using DiscImageChef.Gui.Controls;
+using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using BCA = DiscImageChef.Decoders.Bluray.BCA;
@@ -61,6 +63,24 @@ namespace DiscImageChef.Gui.Panels
             XamlReader.Load(this);
 
             this.scsiInfo = scsiInfo;
+
+
+            Stream logo = ResourceHandler.GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.svg");
+/*            if(logo != null)
+            {
+                svgMediaLogo.SvgStream = logo;
+                svgMediaLogo.Visible   = true;
+            }
+            else
+            {*/
+                logo =
+                    ResourceHandler.GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
+                if(logo != null)
+                {
+                    imgMediaLogo.Image   = new Bitmap(logo);
+                    imgMediaLogo.Visible = true;
+                }
+            //}
 
             switch(this.scsiInfo.MediaType)
             {
@@ -794,6 +814,8 @@ namespace DiscImageChef.Gui.Panels
         Button       btnSaveBlurayRawDfl;
         Button       btnSaveBlurayPac;
         Button       btnDump;
+        ImageView    imgMediaLogo;
+        SvgImageView svgMediaLogo;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

@@ -31,10 +31,16 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 -->
-<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:DiscImageChef.Gui.Controls;assembly=DiscImageChef.Gui">
     <StackLayout Orientation="Vertical">
         <StackLayoutItem HorizontalAlignment="Center">
             <Label ID="lblMediaInfo" Text="Media information"/>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Center" VerticalAlignment="Top">
+            <ImageView ID="imgMediaLogo" Visible="False"/>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Center" VerticalAlignment="Top">
+            <local:SvgImageView ID="svgMediaLogo" Visible="False"/>
         </StackLayoutItem>
         <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
             <TabControl ID="tabInfos">

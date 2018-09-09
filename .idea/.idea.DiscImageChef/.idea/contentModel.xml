@@ -52,6 +52,7 @@
         <e p="Settings.StyleCop" t="Include" />
         <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="foo.png" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
@@ -1303,7 +1304,18 @@
         </e>
       </e>
       <e p="DiscImageChef.Gui" t="IncludeRecursive">
+        <e p="Assets" t="Include">
+          <e p="Logos" t="Include">
+            <e p="Media" t="Include">
+              <e p="CDROM.png" t="Include" />
+              <e p="CDROM.svg" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="ConsoleHandler.cs" t="Include" />
+        <e p="Controls" t="Include">
+          <e p="SvgImageView.cs" t="Include" />
+        </e>
         <e p="Dialogs" t="Include">
           <e p="dlgEncodings.xeto" t="Include" />
           <e p="dlgEncodings.xeto.cs" t="Include" />
@@ -1323,6 +1335,7 @@
           <e p="pnlScsiInfo.xeto" t="Include" />
           <e p="pnlScsiInfo.xeto.cs" t="Include" />
         </e>
+        <e p="ResourceHandler.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

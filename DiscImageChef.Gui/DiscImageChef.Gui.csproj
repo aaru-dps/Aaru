@@ -27,4 +27,13 @@
         <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj" />
         <ProjectReference Include="..\DiscImageChef.Devices\DiscImageChef.Devices.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Assets\Logos\Media\CDROM.png" />
+        <EmbeddedResource Include="Assets\Logos\Media\CDROM.svg" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="DiscImageChef.Gui.config" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <None Update="libSkiaSharp-amd64.so" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <None Update="libHarfBuzzSharp-amd64.so" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
 </Project>
