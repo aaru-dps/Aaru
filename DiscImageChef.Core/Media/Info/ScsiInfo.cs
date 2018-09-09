@@ -63,6 +63,9 @@ namespace DiscImageChef.Core.Media.Info
         {
             0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x33, 0x00, 0x00, 0x00, 0x00
         };
+        static readonly byte[] OperaId = {
+            0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01
+        };
 
         public ScsiInfo(Device dev)
         {
@@ -1452,6 +1455,14 @@ namespace DiscImageChef.Core.Media.Info
                                                   ps2BootSectorsHash);
                         if(ps2BootSectorsHash == PS2_PAL_HASH || ps2BootSectorsHash == PS2_NTSC_HASH ||
                            ps2BootSectorsHash == PS2_JAPANESE_HASH) MediaType = MediaType.PS2CD;
+                    }
+
+                    if(sector0 != null)
+                    {
+                        byte[] syncBytes = new byte[7];
+                        Array.Copy(sector0, 0, syncBytes, 0, 7);
+
+                        if(OperaId.SequenceEqual(syncBytes)) MediaType = MediaType.ThreeDO;
                     }
 
                     break;
