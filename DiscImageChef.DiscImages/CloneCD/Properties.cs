@@ -67,7 +67,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.CDRW, MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD,
                 MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD,
                 MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX,
-                MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin
+                MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
+                MediaType.FMTOWNS
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };

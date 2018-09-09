@@ -213,7 +213,8 @@ namespace DiscImageChef.DiscImages
                 case MediaType.CD32:
                 case MediaType.Nuon:
                 case MediaType.Playdia:
-                case MediaType.Pippin: return XmlMediaType.OpticalDisc;
+                case MediaType.Pippin:
+                case MediaType.FMTOWNS: return XmlMediaType.OpticalDisc;
                 default: return XmlMediaType.BlockMedia;
             }
         }

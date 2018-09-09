@@ -8,7 +8,7 @@
 //  Category: Misc
 // File Mask: *.dicf
 //  ID Bytes: 44 49 43 4D 46 52 4D 54 // DICMFRMT
-//   History: 
+//   History:
 //   1.0 2018-01-26 Natalia Portillo: Initial release
 //------------------------------------------------
 
@@ -48,6 +48,7 @@ enum <uint> MediaType
     PD650 = 32,
     PD650_WORM = 33,
     CDIREADY = 34,
+    FMTOWNS = 35,
 
     DVDROM = 40,
     DVDR = 41,
@@ -107,6 +108,7 @@ enum <uint> MediaType
     PS3BD = 116,
     PS4BD = 117,
     UMD = 118,
+    PlayStationVitaGameCard = 119,
 
     XGD = 130,
     XGD2 = 131,
@@ -125,6 +127,10 @@ enum <uint> MediaType
     ThreeDO = 173,
     PCFX = 174,
     NeoGeoCD = 175,
+    CDTV = 176,
+    CD32 = 177,
+    Nuon = 178,
+    Playdia = 179,
 
     Apple32SS = 180,
     Apple32DS = 181,
@@ -502,6 +508,7 @@ enum <uint> MediaType
     AppleWidget = 691,
     AppleHD20 = 692,
     PriamDataTower = 693,
+    Pippin = 694,
 
     RA60 = 700,
     RA80 = 701,
@@ -664,7 +671,7 @@ enum <byte> ChecksumAlgorithm
     SpamSum = 4
 };
 
-typedef struct 
+typedef struct
 {
     char identifier[8];
     wchar_t application[32];

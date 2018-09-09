@@ -121,7 +121,15 @@ namespace DiscImageChef.DiscImages
                 case MediaType.SATURNCD:
                 case MediaType.ThreeDO:
                 case MediaType.VCD:
-                case MediaType.VCDHD: return AlcoholMediumType.CD;
+                case MediaType.VCDHD:
+                case MediaType.NeoGeoCD:
+                case MediaType.PCFX:
+                case MediaType.CDTV:
+                case MediaType.CD32:
+                case MediaType.Nuon:
+                case MediaType.Playdia:
+                case MediaType.Pippin:
+                case MediaType.FMTOWNS: return AlcoholMediumType.CD;
                 case MediaType.CDR: return AlcoholMediumType.CDR;
                 case MediaType.CDRW:
                 case MediaType.CDMRW: return AlcoholMediumType.CDRW;
@@ -149,9 +157,7 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector)
-        {
-            return ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
-        }
+        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
+            ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
     }
 }

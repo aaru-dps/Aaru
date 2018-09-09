@@ -125,6 +125,7 @@ namespace DiscImageChef.CommonTypes
         ///     marks track as audio pause.
         /// </summary>
         CDIREADY = 34,
+        FMTOWNS = 35,
         #endregion Somewhat standard Compact Disc formats, types 10 to 39
 
         #region Standard DVD formats, types 40 to 50

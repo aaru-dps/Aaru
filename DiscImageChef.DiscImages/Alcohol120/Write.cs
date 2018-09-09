@@ -100,6 +100,14 @@ namespace DiscImageChef.DiscImages
                 case MediaType.ThreeDO:
                 case MediaType.VCD:
                 case MediaType.VCDHD:
+                case MediaType.NeoGeoCD:
+                case MediaType.PCFX:
+                case MediaType.CDTV:
+                case MediaType.CD32:
+                case MediaType.Nuon:
+                case MediaType.Playdia:
+                case MediaType.Pippin:
+                case MediaType.FMTOWNS:
                     isDvd = false;
                     break;
                 default:
@@ -445,7 +453,8 @@ namespace DiscImageChef.DiscImages
                                 new AlcoholSession
                                 {
                                     sessionEnd =
-                                        (int)(writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector + 1),
+                                        (int)(writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector +
+                                              1),
                                     sessionSequence = 1,
                                     allBlocks       = 1,
                                     nonTrackBlocks  = 3,
@@ -464,7 +473,8 @@ namespace DiscImageChef.DiscImages
                                   adrCtl = 20,
                                   point  = 1,
                                   extraOffset =
-                                      (uint)(writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector + 1),
+                                      (uint)(writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector +
+                                             1),
                                   sectorSize   = 2048,
                                   files        = 1,
                                   footerOffset = (uint)footerOffset,
@@ -632,8 +642,8 @@ namespace DiscImageChef.DiscImages
                         // Daemon Tools expect it to be like this
                         alcTrk.unknown = new byte[]
                         {
-                            0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                            0x00, 0x00, 0x00
+                            0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00
                         };
                         alcTrk.unknown2 = new byte[24];
 
@@ -713,17 +723,16 @@ namespace DiscImageChef.DiscImages
                                                   unknown2 = new byte[24]
                                               });
 
-                        thisSessionTracks.Add(0xC0,
-                                              new AlcoholTrack
-                                              {
-                                                  point    = 0xC0,
-                                                  adrCtl   = 0x50,
-                                                  min      = 128,
-                                                  pmin     = 97,
-                                                  psec     = 25,
-                                                  unknown  = new byte[18],
-                                                  unknown2 = new byte[24]
-                                              });
+                        thisSessionTracks.Add(0xC0, new AlcoholTrack
+                        {
+                            point    = 0xC0,
+                            adrCtl   = 0x50,
+                            min      = 128,
+                            pmin     = 97,
+                            psec     = 25,
+                            unknown  = new byte[18],
+                            unknown2 = new byte[24]
+                        });
 
                         currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 2;
                     }
@@ -733,8 +742,7 @@ namespace DiscImageChef.DiscImages
 
             alcFooter = new AlcoholFooter
             {
-                filenameOffset = (uint)(footerOffset + Marshal.SizeOf(typeof(AlcoholFooter))),
-                widechar       = 1
+                filenameOffset = (uint)(footerOffset + Marshal.SizeOf(typeof(AlcoholFooter))), widechar = 1
             };
 
             byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.
@@ -847,10 +855,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            return true;
-        }
+        public bool SetMetadata(ImageInfo metadata) => true;
 
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
         {
@@ -970,16 +975,8 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }
