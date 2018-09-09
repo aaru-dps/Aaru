@@ -114,36 +114,36 @@ namespace DiscImageChef.Decoders.Sega
             IPBin ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
             Marshal.FreeHGlobal(ptr);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.maker_id = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.maker_id = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.maker_id));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space1 = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space1 = \"{0}\"",
                                       (char)ipbin.spare_space1);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.dreamcast_media = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.dreamcast_media = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.dreamcast_media));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no_separator = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no_separator = \"{0}\"",
                                       (char)ipbin.disc_no_separator);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_total_nos = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_total_nos = \"{0}\"",
                                       (char)ipbin.disc_total_nos);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space2 = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space2 = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.spare_space2));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.region_codes = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.region_codes = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.region_codes));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.peripherals = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.peripherals = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.peripherals));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_no = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_no = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_no));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_version = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_version = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_version));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.release_date = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.release_date = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space3 = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space3 = \"{0}\"",
                                       (char)ipbin.spare_space3);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.boot_filename = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.boot_filename = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.boot_filename));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.producer = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.producer = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.producer));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_name = \"{0}\"",
+            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_name = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_name));
 
             return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGAKATANA " ? ipbin : (IPBin?)null;
