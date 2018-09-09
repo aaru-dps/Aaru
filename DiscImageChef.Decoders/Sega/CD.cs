@@ -139,39 +139,43 @@ namespace DiscImageChef.Decoders.Sega
             IPBin ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
             Marshal.FreeHGlobal(ptr);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_name = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_name = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.volume_name));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_name = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_name = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.system_name));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_version = \"{0:X}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_version = \"{0:X}\"",
                                       ipbin.volume_version);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_type = 0x{0:X8}",    ipbin.volume_type);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_version = 0x{0:X8}", ipbin.system_version);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_address = 0x{0:X8}",     ipbin.ip_address);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_loadsize = {0}",         ipbin.ip_loadsize);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}",
+                                      ipbin.volume_type);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_version = 0x{0:X8}",
+                                      ipbin.system_version);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_loadsize = {0}",     ipbin.ip_loadsize);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
                                       ipbin.ip_entry_address);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_work_ram_size = {0}", ipbin.ip_work_ram_size);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_address = 0x{0:X8}",  ipbin.sp_address);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_loadsize = {0}",      ipbin.sp_loadsize);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_work_ram_size = {0}",
+                                      ipbin.ip_work_ram_size);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_loadsize = {0}",     ipbin.sp_loadsize);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
                                       ipbin.sp_entry_address);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_work_ram_size = {0}", ipbin.sp_work_ram_size);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.release_date = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_work_ram_size = {0}",
+                                      ipbin.sp_work_ram_size);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.release_date2 = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date2 = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date2));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.developer_code = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.developer_code = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.developer_code));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.domestic_title = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.domestic_title = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.domestic_title));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.overseas_title = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.overseas_title = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.overseas_title));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.product_code = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.product_code = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_code));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.peripherals = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.peripherals = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.peripherals));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.region_codes = \"{0}\"",
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.region_codes = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.region_codes));
 
             string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
