@@ -59,6 +59,10 @@ namespace DiscImageChef.Core.Media.Info
         const string PS2_NTSC_HASH = "0bada1426e2c0351b872ef2a9ad2e5a0ac3918f4c53aa53329cb2911a8e16c23";
         /// <summary>SHA256 of PlayStation 2 boot sectors, seen in Japanese discs</summary>
         const string PS2_JAPANESE_HASH = "b82bffb809070d61fe050b7e1545df53d8f3cc648257cdff7502bc0ba6b38870";
+        static readonly byte[] Ps3Id =
+        {
+            0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x33, 0x00, 0x00, 0x00, 0x00
+        };
 
         public ScsiInfo(Device dev)
         {
@@ -1200,6 +1204,7 @@ namespace DiscImageChef.Core.Media.Info
             if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice) return;
 
             byte[] sector0        = null;
+            byte[] sector1        = null;
             byte[] ps2BootSectors = null;
 
             switch(MediaType)
@@ -1218,6 +1223,16 @@ namespace DiscImageChef.Core.Media.Info
                     {
                         sector0 = new byte[2048];
                         Array.Copy(cmdBuf, 16, sector0, 0, 2048);
+
+                        sense = dev.ReadCd(out cmdBuf, out senseBuf, 1, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                           true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense && !dev.Error)
+                        {
+                            sector1 = new byte[2048];
+                            Array.Copy(cmdBuf, 16, sector1, 0, 2048);
+                        }
 
                         MemoryStream ps2Ms = new MemoryStream();
                         for(uint p = 0; p < 12; p++)
@@ -1244,6 +1259,16 @@ namespace DiscImageChef.Core.Media.Info
                             sector0 = new byte[2048];
                             Array.Copy(cmdBuf, 0, sector0, 0, 2048);
 
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, 1, 2324, 1, MmcSectorTypes.Mode2, false, false,
+                                               true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense && !dev.Error)
+                            {
+                                sector1 = new byte[2048];
+                                Array.Copy(cmdBuf, 1, sector0, 0, 2048);
+                            }
+
                             MemoryStream ps2Ms = new MemoryStream();
                             for(uint p = 0; p < 12; p++)
                             {
@@ -1263,9 +1288,16 @@ namespace DiscImageChef.Core.Media.Info
                             sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 1, MmcSectorTypes.Mode1, false, false,
                                                true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
                                                MmcSubchannel.None, dev.Timeout, out _);
+
                             if(!sense && !dev.Error)
                             {
                                 sector0 = cmdBuf;
+
+                                sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 1, MmcSectorTypes.Mode1, false,
+                                                   false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense && !dev.Error) sector1 = cmdBuf;
 
                                 sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 12, MmcSectorTypes.Mode1, false,
                                                    false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
@@ -1292,6 +1324,11 @@ namespace DiscImageChef.Core.Media.Info
                     {
                         sector0 = cmdBuf;
 
+                        sense = dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, 1, BlockSize, 0, 1, false,
+                                           dev.Timeout, out _);
+
+                        if(!sense && !dev.Error) sector1 = cmdBuf;
+
                         sense = dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, 0, BlockSize, 0, 12, false,
                                            dev.Timeout, out _);
 
@@ -1305,6 +1342,11 @@ namespace DiscImageChef.Core.Media.Info
                         if(!sense && !dev.Error)
                         {
                             sector0 = cmdBuf;
+
+                            sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 1, BlockSize, 0,
+                                               1, false, dev.Timeout, out _);
+
+                            if(!sense && !dev.Error) sector1 = cmdBuf;
 
                             sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0,
                                                12, false, dev.Timeout, out _);
@@ -1320,6 +1362,11 @@ namespace DiscImageChef.Core.Media.Info
                             {
                                 sector0 = cmdBuf;
 
+                                sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 1, BlockSize,
+                                                   0, 1, dev.Timeout, out _);
+
+                                if(!sense && !dev.Error) sector1 = cmdBuf;
+
                                 sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize,
                                                    0, 12, dev.Timeout, out _);
 
@@ -1332,6 +1379,10 @@ namespace DiscImageChef.Core.Media.Info
                                 if(!sense && !dev.Error)
                                 {
                                     sector0 = cmdBuf;
+
+                                    sense = dev.Read6(out cmdBuf, out senseBuf, 1, BlockSize, 1, dev.Timeout, out _);
+
+                                    if(!sense && !dev.Error) sector1 = cmdBuf;
 
                                     sense = dev.Read6(out cmdBuf, out senseBuf, 0, BlockSize, 12, dev.Timeout, out _);
 
@@ -1422,6 +1473,22 @@ namespace DiscImageChef.Core.Media.Info
                                                   ps2BootSectorsHash);
                         if(ps2BootSectorsHash == PS2_PAL_HASH || ps2BootSectorsHash == PS2_NTSC_HASH ||
                            ps2BootSectorsHash == PS2_JAPANESE_HASH) MediaType = MediaType.PS2DVD;
+                    }
+
+                    if(sector1 != null)
+                    {
+                        byte[] tmp = new byte[Ps3Id.Length];
+                        Array.Copy(sector1, 0, tmp, 0, tmp.Length);
+                        if(tmp.SequenceEqual(Ps3Id))
+                            switch(MediaType)
+                            {
+                                case MediaType.BDROM:
+                                    MediaType = MediaType.PS3BD;
+                                    break;
+                                case MediaType.DVDROM:
+                                    MediaType = MediaType.PS3DVD;
+                                    break;
+                            }
                     }
 
                     // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
