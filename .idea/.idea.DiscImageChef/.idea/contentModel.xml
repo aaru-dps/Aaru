@@ -1304,16 +1304,26 @@
       </e>
       <e p="DiscImageChef.Gui" t="IncludeRecursive">
         <e p="ConsoleHandler.cs" t="Include" />
+        <e p="Dialogs" t="Include">
+          <e p="dlgEncodings.xeto" t="Include" />
+          <e p="dlgEncodings.xeto.cs" t="Include" />
+          <e p="dlgPlugins.xeto" t="Include" />
+          <e p="dlgPlugins.xeto.cs" t="Include" />
+        </e>
         <e p="DiscImageChef.Gui.csproj" t="IncludeRecursive" />
+        <e p="Forms" t="Include">
+          <e p="frmConsole.xeto" t="Include" />
+          <e p="frmConsole.xeto.cs" t="Include" />
+          <e p="frmMain.xeto" t="Include" />
+          <e p="frmMain.xeto.cs" t="Include" />
+        </e>
+        <e p="Panels" t="Include">
+          <e p="pnlDeviceInfo.xeto" t="Include" />
+          <e p="pnlDeviceInfo.xeto.cs" t="Include" />
+          <e p="pnlScsiInfo.xeto" t="Include" />
+          <e p="pnlScsiInfo.xeto.cs" t="Include" />
+        </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="dlgEncodings.xeto" t="Include" />
-        <e p="dlgEncodings.xeto.cs" t="Include" />
-        <e p="dlgPlugins.xeto" t="Include" />
-        <e p="dlgPlugins.xeto.cs" t="Include" />
-        <e p="frmConsole.xeto" t="Include" />
-        <e p="frmConsole.xeto.cs" t="Include" />
-        <e p="frmMain.xeto" t="Include" />
-        <e p="frmMain.xeto.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
@@ -1324,10 +1334,6 @@
             </e>
           </e>
         </e>
-        <e p="pnlDeviceInfo.xeto" t="Include" />
-        <e p="pnlDeviceInfo.xeto.cs" t="Include" />
-        <e p="pnlScsiInfo.xeto" t="Include" />
-        <e p="pnlScsiInfo.xeto.cs" t="Include" />
       </e>
       <e p="DiscImageChef.Gui.XamMac" t="IncludeRecursive">
         <e p="DiscImageChef.Gui.XamMac.csproj" t="IncludeRecursive" />

@@ -46,7 +46,7 @@ using Eto.Serialization.Xaml;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
-namespace DiscImageChef.Gui
+namespace DiscImageChef.Gui.Panels
 {
     public class pnlDeviceInfo : Panel
     {

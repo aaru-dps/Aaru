@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -41,7 +42,7 @@ using Eto.Serialization.Xaml;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Gui
+namespace DiscImageChef.Gui.Forms
 {
     public class frmConsole : Form
     {

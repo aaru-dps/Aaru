@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 using AppKit;
+using DiscImageChef.Gui.Forms;
 using Eto.Forms;
 
 namespace DiscImageChef.Gui.XamMac

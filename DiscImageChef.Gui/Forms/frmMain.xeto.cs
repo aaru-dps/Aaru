@@ -36,10 +36,12 @@ using System.Linq;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Devices;
+using DiscImageChef.Gui.Dialogs;
+using DiscImageChef.Gui.Panels;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui
+namespace DiscImageChef.Gui.Forms
 {
     public class frmMain : Form
     {

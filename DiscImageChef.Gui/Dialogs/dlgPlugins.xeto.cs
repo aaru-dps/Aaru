@@ -39,7 +39,7 @@ using DiscImageChef.Partitions;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui
+namespace DiscImageChef.Gui.Dialogs
 {
     public class dlgPlugins : Dialog
     {

@@ -50,7 +50,7 @@ using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using Spare = DiscImageChef.Decoders.DVD.Spare;
 
-namespace DiscImageChef.Gui
+namespace DiscImageChef.Gui.Panels
 {
     public class pnlScsiInfo : Panel
     {

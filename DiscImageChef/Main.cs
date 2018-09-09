@@ -36,6 +36,7 @@ using CommandLine;
 using DiscImageChef.Commands;
 using DiscImageChef.Console;
 using DiscImageChef.Gui;
+using DiscImageChef.Gui.Forms;
 using DiscImageChef.Settings;
 using Eto;
 using Eto.Forms;
