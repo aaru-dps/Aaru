@@ -120,7 +120,10 @@ namespace DiscImageChef.CommonTypes
         PD650 = 32,
         /// <summary>120mm, Write-Once, 1281856 sectors, 512 bytes/sector, PD650, ECMA-240, ISO 15485</summary>
         PD650_WORM = 33,
-        /// <summary>CD-i Ready, contains a track before the first TOC track, in mode 2, and all TOC tracks are Audio. Subchannel marks track as audio pause.</summary>
+        /// <summary>
+        ///     CD-i Ready, contains a track before the first TOC track, in mode 2, and all TOC tracks are Audio. Subchannel
+        ///     marks track as audio pause.
+        /// </summary>
         CDIREADY = 34,
         #endregion Somewhat standard Compact Disc formats, types 10 to 39
 
@@ -241,6 +244,7 @@ namespace DiscImageChef.CommonTypes
         PS4BD = 117,
         /// <summary>Sony PlayStation Portable Universal Media Disc (ECMA-365)</summary>
         UMD = 118,
+        PlayStationVitaGameCard = 119,
         #endregion Sony game media, types 110 to 129
 
         #region Microsoft game media, types 130 to 149
@@ -279,6 +283,14 @@ namespace DiscImageChef.CommonTypes
         PCFX = 174,
         /// <summary>NEO-GEO CD</summary>
         NeoGeoCD = 175,
+        /// <summary>Commodore CDTV</summary>
+        CDTV = 176,
+        /// <summary>Amiga CD32</summary>
+        CD32 = 177,
+        /// <summary>Nuon (DVD based videogame console)</summary>
+        Nuon = 178,
+        /// <summary>Bandai Playdia</summary>
+        Playdia = 179,
         #endregion Other game media, types 170 to 179
 
         #region Apple standard floppy format, types 180 to 189
@@ -881,12 +893,13 @@ namespace DiscImageChef.CommonTypes
         DataPlay    = 688,
         #endregion Miscellaneous, types 670 to 689
 
-        #region Apple Hard Disks, types 690 to 699
+        #region Apple specific media, types 690 to 699
         AppleProfile   = 690,
         AppleWidget    = 691,
         AppleHD20      = 692,
         PriamDataTower = 693,
-        #endregion Apple Hard Disks, types 690 to 699
+        Pippin         = 694,
+        #endregion Apple specific media, types 690 to 699
 
         #region DEC hard disks, types 700 to 729
         /// <summary>
