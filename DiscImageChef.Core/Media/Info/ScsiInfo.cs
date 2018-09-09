@@ -41,6 +41,7 @@ using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
+using DiscImageChef.Decoders.Sega;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
@@ -1187,7 +1188,134 @@ namespace DiscImageChef.Core.Media.Info
 
             if(MediaType == MediaType.Unknown && dev.IsUsb && containsFloppyPage) MediaType = MediaType.FlashDrive;
 
-            // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
+            if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice) return;
+
+            byte[] sector0 = null;
+
+            switch(MediaType)
+            {
+                case MediaType.CD:
+                case MediaType.CDDA:
+                case MediaType.CDPLUS:
+                case MediaType.CDROM:
+                case MediaType.CDROMXA:
+                {
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                       true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                       MmcSubchannel.None, dev.Timeout, out _);
+
+                    if(!sense && !dev.Error)
+                    {
+                        sector0 = new byte[2048];
+                        Array.Copy(cmdBuf, 16, sector0, 0, 2048);
+                    }
+                    else
+                    {
+                        sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2324, 1, MmcSectorTypes.Mode2, false, false,
+                                           true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense && !dev.Error)
+                        {
+                            sector0 = new byte[2048];
+                            Array.Copy(cmdBuf, 0, sector0, 0, 2048);
+                        }
+                        else
+                        {
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 1, MmcSectorTypes.Mode1, false,
+                                               false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+                            if(!sense && !dev.Error) sector0 = cmdBuf;
+                            else goto case MediaType.DVDROM;
+                        }
+                    }
+
+                    break;
+                }
+                // TODO: Check for CD-i Ready
+                case MediaType.CDI: break;
+                case MediaType.DVDROM:
+                case MediaType.HDDVDROM:
+                case MediaType.BDROM:
+                case MediaType.Unknown:
+                    sense = dev.Read16(out cmdBuf, out senseBuf, 0, 1, BlockSize, dev.Timeout, out _);
+
+                    if(!sense && dev.Error) sector0 = cmdBuf;
+                    else
+                    {
+                        sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0,
+                                           1, false, dev.Timeout, out _);
+
+                        if(!sense && dev.Error) sector0 = cmdBuf;
+                        else
+                        {
+                            sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize,
+                                               0, 1, dev.Timeout, out _);
+
+                            if(!sense && dev.Error) sector0 = cmdBuf;
+                            else
+                            {
+                                sense = dev.Read6(out cmdBuf, out senseBuf, 0, BlockSize, 1, dev.Timeout, out _);
+
+                                if(!sense && dev.Error) sector0 = cmdBuf;
+                            }
+                        }
+                    }
+
+                    break;
+                // Recordables will not be checked
+                case MediaType.CDR:
+                case MediaType.CDRW:
+                case MediaType.CDMRW:
+                case MediaType.DDCDR:
+                case MediaType.DDCDRW:
+                case MediaType.DVDR:
+                case MediaType.DVDRW:
+                case MediaType.DVDPR:
+                case MediaType.DVDPRW:
+                case MediaType.DVDPRWDL:
+                case MediaType.DVDRDL:
+                case MediaType.DVDPRDL:
+                case MediaType.DVDRAM:
+                case MediaType.DVDRWDL:
+                case MediaType.DVDDownload:
+                case MediaType.HDDVDRAM:
+                case MediaType.HDDVDR:
+                case MediaType.HDDVDRW:
+                case MediaType.HDDVDRDL:
+                case MediaType.HDDVDRWDL:
+                case MediaType.BDR:
+                case MediaType.BDRE:
+                case MediaType.BDRXL:
+                case MediaType.BDREXL: return;
+            }
+
+            if(sector0 == null) return;
+
+                        switch(MediaType)
+            {
+                case MediaType.CD:
+                case MediaType.CDDA:
+                case MediaType.CDPLUS:
+                case MediaType.CDROM:
+                case MediaType.CDROMXA:
+                {
+                    if(Decoders.Sega.CD.DecodeIPBin(sector0).HasValue)
+                    {
+                        MediaType = MediaType.MEGACD;
+                        return;
+                    }
+                    break;
+                }
+                // TODO: Check for CD-i Ready
+                case MediaType.CDI: break;
+                case MediaType.DVDROM:
+                case MediaType.HDDVDROM:
+                case MediaType.BDROM:
+                case MediaType.Unknown:
+                    // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
+                    break;
+            }
         }
 
         public byte[]                                   MediaSerialNumber             { get; }
