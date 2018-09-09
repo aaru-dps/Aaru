@@ -208,7 +208,12 @@ namespace DiscImageChef.DiscImages
                 case MediaType.NeoGeoCD:
                 case MediaType.GOD:
                 case MediaType.WOD:
-                case MediaType.WUOD: return XmlMediaType.OpticalDisc;
+                case MediaType.WUOD:
+                case MediaType.CDTV:
+                case MediaType.CD32:
+                case MediaType.Nuon:
+                case MediaType.Playdia:
+                case MediaType.Pippin: return XmlMediaType.OpticalDisc;
                 default: return XmlMediaType.BlockMedia;
             }
         }

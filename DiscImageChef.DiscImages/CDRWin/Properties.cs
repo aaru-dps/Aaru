@@ -119,7 +119,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.PD650_WORM, MediaType.PS1CD, MediaType.PS2CD, MediaType.PS2DVD, MediaType.PS3BD,
                 MediaType.PS3DVD, MediaType.PS4BD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SVOD,
                 MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM,
-                MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX
+                MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV,
+                MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new[] {("separate", typeof(bool), "Write each track to a separate file.")};

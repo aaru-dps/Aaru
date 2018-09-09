@@ -348,6 +348,10 @@ namespace DiscImageChef.CommonTypes.Metadata
                     discType    = "Compact Disc";
                     discSubType = "Video CD";
                     break;
+                case CommonTypes.MediaType.Nuon:
+                    discType    = "DVD";
+                    discSubType = "Nuon";
+                    break;
                 case CommonTypes.MediaType.XGD:
                     discType    = "DVD";
                     discSubType = "Xbox Game Disc (XGD)";
@@ -721,6 +725,22 @@ namespace DiscImageChef.CommonTypes.Metadata
                 case CommonTypes.MediaType.NeoGeoCD:
                     discType    = "Compact Disc";
                     discSubType = "NEO-GEO CD";
+                    break;
+                case CommonTypes.MediaType.CDTV:
+                    discType    = "Compact Disc";
+                    discSubType = "Commodore CDTV";
+                    break;
+                case CommonTypes.MediaType.CD32:
+                    discType    = "Compact Disc";
+                    discSubType = "Amiga CD32";
+                    break;
+                case CommonTypes.MediaType.Playdia:
+                    discType    = "Compact Disc";
+                    discSubType = "Bandai Playdia";
+                    break;
+                case CommonTypes.MediaType.Pippin:
+                    discType    = "Compact Disc";
+                    discSubType = "Apple Pippin";
                     break;
                 case CommonTypes.MediaType.ZIP100:
                     discType    = "Iomega ZIP";
@@ -1549,6 +1569,10 @@ namespace DiscImageChef.CommonTypes.Metadata
                 case CommonTypes.MediaType.SNESGamePakUS:
                     discType    = "Super Nintendo Game Pak (US)";
                     discSubType = "Super Nintendo Game Pak (US)";
+                    break;
+                case CommonTypes.MediaType.SwitchGameCard:
+                    discType    = "Nintendo Switch Game Card";
+                    discSubType = "Nintendo Switch Game Card";
                     break;
                 case CommonTypes.MediaType.IBM3470:
                     discType    = "IBM 3470";
