@@ -32,8 +32,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
@@ -51,6 +53,13 @@ namespace DiscImageChef.Core.Media.Info
 {
     public class ScsiInfo
     {
+        /// <summary>SHA256 of PlayStation 2 boot sectors, seen in PAL discs</summary>
+        const string PS2_PAL_HASH = "5d04ff236613e1d8adcf9c201874acd6f6deed1e04306558b86f91cfb626f39d";
+        /// <summary>SHA256 of PlayStation 2 boot sectors, seen in Japanese, American, Malaysian and Korean discs</summary>
+        const string PS2_NTSC_HASH = "0bada1426e2c0351b872ef2a9ad2e5a0ac3918f4c53aa53329cb2911a8e16c23";
+        /// <summary>SHA256 of PlayStation 2 boot sectors, seen in Japanese discs</summary>
+        const string PS2_JAPANESE_HASH = "b82bffb809070d61fe050b7e1545df53d8f3cc648257cdff7502bc0ba6b38870";
+
         public ScsiInfo(Device dev)
         {
             if(dev.Type != DeviceType.SCSI && dev.Type != DeviceType.ATAPI) return;
@@ -1190,7 +1199,8 @@ namespace DiscImageChef.Core.Media.Info
 
             if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice) return;
 
-            byte[] sector0 = null;
+            byte[] sector0        = null;
+            byte[] ps2BootSectors = null;
 
             switch(MediaType)
             {
@@ -1208,6 +1218,20 @@ namespace DiscImageChef.Core.Media.Info
                     {
                         sector0 = new byte[2048];
                         Array.Copy(cmdBuf, 16, sector0, 0, 2048);
+
+                        MemoryStream ps2Ms = new MemoryStream();
+                        for(uint p = 0; p < 12; p++)
+                        {
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, p, 2352, 1, MmcSectorTypes.AllTypes, false,
+                                               false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(sense || dev.Error) break;
+
+                            ps2Ms.Write(cmdBuf, cmdBuf[0x0F] == 0x02 ? 24 : 16, 2048);
+                        }
+
+                        if(ps2Ms.Length == 0x6000) ps2BootSectors = ps2Ms.ToArray();
                     }
                     else
                     {
@@ -1219,13 +1243,36 @@ namespace DiscImageChef.Core.Media.Info
                         {
                             sector0 = new byte[2048];
                             Array.Copy(cmdBuf, 0, sector0, 0, 2048);
+
+                            MemoryStream ps2Ms = new MemoryStream();
+                            for(uint p = 0; p < 12; p++)
+                            {
+                                sense = dev.ReadCd(out cmdBuf, out senseBuf, p, 2324, 1, MmcSectorTypes.Mode2, false,
+                                                   false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(sense || dev.Error) break;
+
+                                ps2Ms.Write(cmdBuf, 0, 2048);
+                            }
+
+                            if(ps2Ms.Length == 0x6000) ps2BootSectors = ps2Ms.ToArray();
                         }
                         else
                         {
                             sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 1, MmcSectorTypes.Mode1, false, false,
                                                true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
                                                MmcSubchannel.None, dev.Timeout, out _);
-                            if(!sense && !dev.Error) sector0 = cmdBuf;
+                            if(!sense && !dev.Error)
+                            {
+                                sector0 = cmdBuf;
+
+                                sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 12, MmcSectorTypes.Mode1, false,
+                                                   false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense && !dev.Error) ps2BootSectors = cmdBuf;
+                            }
                             else goto case MediaType.DVDROM;
                         }
                     }
@@ -1238,26 +1285,58 @@ namespace DiscImageChef.Core.Media.Info
                 case MediaType.HDDVDROM:
                 case MediaType.BDROM:
                 case MediaType.Unknown:
-                    sense = dev.Read16(out cmdBuf, out senseBuf, 0, 1, BlockSize, dev.Timeout, out _);
+                    sense = dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, 0, BlockSize, 0, 1, false,
+                                       dev.Timeout, out _);
 
-                    if(!sense && dev.Error) sector0 = cmdBuf;
+                    if(!sense && !dev.Error)
+                    {
+                        sector0 = cmdBuf;
+
+                        sense = dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, 0, BlockSize, 0, 12, false,
+                                           dev.Timeout, out _);
+
+                        if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
+                    }
                     else
                     {
                         sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0, 1,
                                            false, dev.Timeout, out _);
 
-                        if(!sense && dev.Error) sector0 = cmdBuf;
+                        if(!sense && !dev.Error)
+                        {
+                            sector0 = cmdBuf;
+
+                            sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0,
+                                               12, false, dev.Timeout, out _);
+
+                            if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
+                        }
                         else
                         {
                             sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0,
                                                1, dev.Timeout, out _);
 
-                            if(!sense && dev.Error) sector0 = cmdBuf;
+                            if(!sense && !dev.Error)
+                            {
+                                sector0 = cmdBuf;
+
+                                sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize,
+                                                   0, 12, dev.Timeout, out _);
+
+                                if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
+                            }
                             else
                             {
                                 sense = dev.Read6(out cmdBuf, out senseBuf, 0, BlockSize, 1, dev.Timeout, out _);
 
-                                if(!sense && dev.Error) sector0 = cmdBuf;
+                                if(!sense && !dev.Error)
+                                {
+                                    sector0 = cmdBuf;
+
+                                    sense = dev.Read6(out cmdBuf, out senseBuf, 0, BlockSize, 12, dev.Timeout, out _);
+
+                                    if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
+                                }
                             }
                         }
                     }
@@ -1311,6 +1390,19 @@ namespace DiscImageChef.Core.Media.Info
                     // Are GDR detectable ???
                     if(Dreamcast.DecodeIPBin(sector0).HasValue) MediaType = MediaType.GDROM;
 
+                    if(ps2BootSectors != null && ps2BootSectors.Length == 0x6000)
+                    {
+                        // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
+                        byte decryptByte                                  = ps2BootSectors[0];
+                        for(int i = 0; i < 0x6000; i++) ps2BootSectors[i] ^= decryptByte;
+
+                        string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
+                        DicConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
+                                                  ps2BootSectorsHash);
+                        if(ps2BootSectorsHash == PS2_PAL_HASH || ps2BootSectorsHash == PS2_NTSC_HASH ||
+                           ps2BootSectorsHash == PS2_JAPANESE_HASH) MediaType = MediaType.PS2CD;
+                    }
+
                     break;
                 }
                 // TODO: Check for CD-i Ready
@@ -1319,6 +1411,19 @@ namespace DiscImageChef.Core.Media.Info
                 case MediaType.HDDVDROM:
                 case MediaType.BDROM:
                 case MediaType.Unknown:
+                    if(ps2BootSectors != null && ps2BootSectors.Length == 0x6000)
+                    {
+                        // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
+                        byte decryptByte                                  = ps2BootSectors[0];
+                        for(int i = 0; i < 0x6000; i++) ps2BootSectors[i] ^= decryptByte;
+
+                        string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
+                        DicConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
+                                                  ps2BootSectorsHash);
+                        if(ps2BootSectorsHash == PS2_PAL_HASH || ps2BootSectorsHash == PS2_NTSC_HASH ||
+                           ps2BootSectorsHash == PS2_JAPANESE_HASH) MediaType = MediaType.PS2DVD;
+                    }
+
                     // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
                     break;
             }
