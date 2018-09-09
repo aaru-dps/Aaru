@@ -1308,6 +1308,9 @@ namespace DiscImageChef.Core.Media.Info
 
                     if(Saturn.DecodeIPBin(sector0).HasValue) MediaType = MediaType.SATURNCD;
 
+                    // Are GDR detectable ???
+                    if(Dreamcast.DecodeIPBin(sector0).HasValue) MediaType = MediaType.GDROM;
+
                     break;
                 }
                 // TODO: Check for CD-i Ready
