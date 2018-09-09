@@ -886,6 +886,12 @@ namespace DiscImageChef.CommonTypes.Metadata
                 case CommonTypes.MediaType.WUOD:
                 case CommonTypes.MediaType.PCFX:
                 case CommonTypes.MediaType.CDIREADY:
+                case CommonTypes.MediaType.FMTOWNS:
+                case CommonTypes.MediaType.CDTV:
+                case CommonTypes.MediaType.CD32:
+                case CommonTypes.MediaType.Nuon:
+                case CommonTypes.MediaType.Playdia:
+                case CommonTypes.MediaType.Pippin:
                     dmns.Diameter          = 120;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 1.2;

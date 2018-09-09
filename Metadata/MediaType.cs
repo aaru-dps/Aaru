@@ -368,6 +368,10 @@ namespace DiscImageChef.CommonTypes.Metadata
                     discType    = "Blu-ray";
                     discSubType = "Xbox One Game Disc (XGD4)";
                     break;
+                case CommonTypes.MediaType.FMTOWNS:
+                    discType    = "Compact Disc";
+                    discSubType = "FM-Towns";
+                    break;
                 case CommonTypes.MediaType.Apple32SS:
                     discType    = "5.25\" floppy";
                     discSubType = "Apple DOS 3.2";
