@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="/7b7d2f51" t="IncludeRecursive" />
-    <e p="/app" t="IncludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2018.2/system/extResources" t="IncludeRecursive" />
@@ -1328,6 +1326,8 @@
         </e>
         <e p="pnlDeviceInfo.xeto" t="Include" />
         <e p="pnlDeviceInfo.xeto.cs" t="Include" />
+        <e p="pnlScsiInfo.xeto" t="Include" />
+        <e p="pnlScsiInfo.xeto.cs" t="Include" />
       </e>
       <e p="DiscImageChef.Gui.XamMac" t="IncludeRecursive">
         <e p="DiscImageChef.Gui.XamMac.csproj" t="IncludeRecursive" />

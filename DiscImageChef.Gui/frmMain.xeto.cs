@@ -34,6 +34,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using DiscImageChef.Console;
+using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
@@ -182,6 +183,12 @@ namespace DiscImageChef.Gui
 
             splMain.Panel2 = null;
 
+            if(selectedItem.Values.Length >= 3 && selectedItem.Values[2] is Panel infoPanel)
+            {
+                splMain.Panel2 = infoPanel;
+                return;
+            }
+
             if(selectedItem.Parent != devicesRoot) return;
 
             switch(selectedItem.Values[2])
@@ -215,9 +222,6 @@ namespace DiscImageChef.Gui
                 case string devErrorMessage:
                     lblError.Text  = devErrorMessage;
                     splMain.Panel2 = lblError;
-                    break;
-                case Panel devInfoPanel:
-                    splMain.Panel2 = devInfoPanel;
                     break;
             }
         }
@@ -264,13 +268,22 @@ namespace DiscImageChef.Gui
                         }
                     });
                 else
-                    deviceItem.Children.Add(new TreeGridItem
-                    {
-                        Values = new object[]
+                {
+                    // TODO: Removable non-SCSI?
+                    ScsiInfo scsiInfo = new ScsiInfo(dev);
+
+                    if(!scsiInfo.MediaInserted)
+                        deviceItem.Children.Add(new TreeGridItem {Values = new object[] {"No media inserted"}});
+                    else
+                        deviceItem.Children.Add(new TreeGridItem
                         {
-                            "Removable device commands not yet implemented"
-                        }
-                    });
+                            Values = new[]
+                            {
+                                scsiInfo.MediaType, deviceItem.Values[1],
+                                new pnlScsiInfo(scsiInfo)
+                            }
+                        });
+                }
 
                 dev.Close();
             }
