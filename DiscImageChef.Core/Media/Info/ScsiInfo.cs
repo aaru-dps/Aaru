@@ -1222,8 +1222,8 @@ namespace DiscImageChef.Core.Media.Info
                         }
                         else
                         {
-                            sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 1, MmcSectorTypes.Mode1, false,
-                                               false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2048, 1, MmcSectorTypes.Mode1, false, false,
+                                               true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
                                                MmcSubchannel.None, dev.Timeout, out _);
                             if(!sense && !dev.Error) sector0 = cmdBuf;
                             else goto case MediaType.DVDROM;
@@ -1243,14 +1243,14 @@ namespace DiscImageChef.Core.Media.Info
                     if(!sense && dev.Error) sector0 = cmdBuf;
                     else
                     {
-                        sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0,
-                                           1, false, dev.Timeout, out _);
+                        sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0, 1,
+                                           false, dev.Timeout, out _);
 
                         if(!sense && dev.Error) sector0 = cmdBuf;
                         else
                         {
-                            sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize,
-                                               0, 1, dev.Timeout, out _);
+                            sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, BlockSize, 0,
+                                               1, dev.Timeout, out _);
 
                             if(!sense && dev.Error) sector0 = cmdBuf;
                             else
@@ -1292,7 +1292,7 @@ namespace DiscImageChef.Core.Media.Info
 
             if(sector0 == null) return;
 
-                        switch(MediaType)
+            switch(MediaType)
             {
                 case MediaType.CD:
                 case MediaType.CDDA:
@@ -1300,11 +1300,14 @@ namespace DiscImageChef.Core.Media.Info
                 case MediaType.CDROM:
                 case MediaType.CDROMXA:
                 {
-                    if(Decoders.Sega.CD.DecodeIPBin(sector0).HasValue)
+                    if(CD.DecodeIPBin(sector0).HasValue)
                     {
                         MediaType = MediaType.MEGACD;
                         return;
                     }
+
+                    if(Saturn.DecodeIPBin(sector0).HasValue) MediaType = MediaType.SATURNCD;
+
                     break;
                 }
                 // TODO: Check for CD-i Ready
