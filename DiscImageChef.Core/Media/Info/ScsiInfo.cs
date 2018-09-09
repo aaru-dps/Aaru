@@ -66,6 +66,11 @@ namespace DiscImageChef.Core.Media.Info
         static readonly byte[] OperaId = {
             0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01
         };
+        // Only present on bootable CDs, but those make more than 99% of all available
+        static readonly byte[] FmTownsBootId = {
+            0x49, 0x50, 0x4C, 0x34, 0xEB, 0x55, 0x06
+        };
+
 
         public ScsiInfo(Device dev)
         {
@@ -1463,6 +1468,7 @@ namespace DiscImageChef.Core.Media.Info
                         Array.Copy(sector0, 0, syncBytes, 0, 7);
 
                         if(OperaId.SequenceEqual(syncBytes)) MediaType = MediaType.ThreeDO;
+                        if(FmTownsBootId.SequenceEqual(syncBytes)) MediaType = MediaType.FMTOWNS;
                     }
 
                     break;
