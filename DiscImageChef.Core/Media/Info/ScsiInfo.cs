@@ -63,14 +63,14 @@ namespace DiscImageChef.Core.Media.Info
         {
             0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x33, 0x00, 0x00, 0x00, 0x00
         };
-        static readonly byte[] OperaId = {
-            0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01
-        };
+        static readonly byte[] OperaId = {0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01};
         // Only present on bootable CDs, but those make more than 99% of all available
-        static readonly byte[] FmTownsBootId = {
-            0x49, 0x50, 0x4C, 0x34, 0xEB, 0x55, 0x06
+        static readonly byte[] FmTownsBootId = {0x49, 0x50, 0x4C, 0x34, 0xEB, 0x55, 0x06};
+        /// <summary>Present on first two seconds of second track, says "COPYRIGHT BANDAI"</summary>
+        static readonly byte[] PlaydiaCopyright =
+        {
+            0x43, 0x4F, 0x50, 0x59, 0x52, 0x49, 0x47, 0x48, 0x54, 0x20, 0x42, 0x41, 0x4E, 0x44, 0x41, 0x49
         };
-
 
         public ScsiInfo(Device dev)
         {
@@ -1214,6 +1214,8 @@ namespace DiscImageChef.Core.Media.Info
             byte[] sector0        = null;
             byte[] sector1        = null;
             byte[] ps2BootSectors = null;
+            byte[] playdia1       = null;
+            byte[] playdia2       = null;
 
             switch(MediaType)
             {
@@ -1240,6 +1242,26 @@ namespace DiscImageChef.Core.Media.Info
                         {
                             sector1 = new byte[2048];
                             Array.Copy(cmdBuf, 16, sector1, 0, 2048);
+                        }
+
+                        sense = dev.ReadCd(out cmdBuf, out senseBuf, 4200, 2352, 1, MmcSectorTypes.AllTypes, false,
+                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense && !dev.Error)
+                        {
+                            playdia1 = new byte[2048];
+                            Array.Copy(cmdBuf, 24, playdia1, 0, 2048);
+                        }
+
+                        sense = dev.ReadCd(out cmdBuf, out senseBuf, 4201, 2352, 1, MmcSectorTypes.AllTypes, false,
+                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense && !dev.Error)
+                        {
+                            playdia2 = new byte[2048];
+                            Array.Copy(cmdBuf, 24, playdia2, 0, 2048);
                         }
 
                         MemoryStream ps2Ms = new MemoryStream();
@@ -1275,6 +1297,26 @@ namespace DiscImageChef.Core.Media.Info
                             {
                                 sector1 = new byte[2048];
                                 Array.Copy(cmdBuf, 1, sector0, 0, 2048);
+                            }
+
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, 4200, 2324, 1, MmcSectorTypes.Mode2, false,
+                                               false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense && !dev.Error)
+                            {
+                                playdia1 = new byte[2048];
+                                Array.Copy(cmdBuf, 0, playdia1, 0, 2048);
+                            }
+
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, 4201, 2324, 1, MmcSectorTypes.Mode2, false,
+                                               false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense && !dev.Error)
+                            {
+                                playdia2 = new byte[2048];
+                                Array.Copy(cmdBuf, 0, playdia2, 0, 2048);
                             }
 
                             MemoryStream ps2Ms = new MemoryStream();
@@ -1437,6 +1479,7 @@ namespace DiscImageChef.Core.Media.Info
                 case MediaType.CDPLUS:
                 case MediaType.CDROM:
                 case MediaType.CDROMXA:
+                    // TODO: CDTV requires reading the filesystem, searching for a file called "/CDTV.TM"
                 {
                     if(CD.DecodeIPBin(sector0).HasValue)
                     {
@@ -1467,8 +1510,20 @@ namespace DiscImageChef.Core.Media.Info
                         byte[] syncBytes = new byte[7];
                         Array.Copy(sector0, 0, syncBytes, 0, 7);
 
-                        if(OperaId.SequenceEqual(syncBytes)) MediaType = MediaType.ThreeDO;
+                        if(OperaId.SequenceEqual(syncBytes)) MediaType       = MediaType.ThreeDO;
                         if(FmTownsBootId.SequenceEqual(syncBytes)) MediaType = MediaType.FMTOWNS;
+                    }
+
+                    if(playdia1 != null && playdia2 != null)
+                    {
+                        byte[] pd1 = new byte[PlaydiaCopyright.Length];
+                        byte[] pd2 = new byte[PlaydiaCopyright.Length];
+
+                        Array.Copy(playdia1, 38, pd1, 0, pd1.Length);
+                        Array.Copy(playdia2, 0,  pd2, 0, pd1.Length);
+
+                        if(PlaydiaCopyright.SequenceEqual(pd1) && PlaydiaCopyright.SequenceEqual(pd2))
+                            MediaType = MediaType.Playdia;
                     }
 
                     break;
@@ -1479,6 +1534,7 @@ namespace DiscImageChef.Core.Media.Info
                 case MediaType.HDDVDROM:
                 case MediaType.BDROM:
                 case MediaType.Unknown:
+                    // TODO: Nuon requires reading the filesystem, searching for a file called "/NUON/NUON.RUN"
                     if(ps2BootSectors != null && ps2BootSectors.Length == 0x6000)
                     {
                         // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
