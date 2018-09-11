@@ -71,6 +71,11 @@ namespace DiscImageChef.Core.Media.Info
         {
             0x43, 0x4F, 0x50, 0x59, 0x52, 0x49, 0x47, 0x48, 0x54, 0x20, 0x42, 0x41, 0x4E, 0x44, 0x41, 0x49
         };
+        static readonly byte[] PcEngineSignature =
+        {
+            0x50, 0x43, 0x20, 0x45, 0x6E, 0x67, 0x69, 0x6E, 0x65, 0x20, 0x43, 0x44, 0x2D, 0x52, 0x4F, 0x4D, 0x20,
+            0x53, 0x59, 0x53, 0x54, 0x45, 0x4D
+        };
 
         public ScsiInfo(Device dev)
         {
@@ -78,10 +83,11 @@ namespace DiscImageChef.Core.Media.Info
 
             MediaType     = MediaType.Unknown;
             MediaInserted = false;
+            int    resets                = 0;
+            uint   startOfFirstDataTrack = uint.MaxValue;
             bool   sense;
             byte[] cmdBuf;
             byte[] senseBuf;
-            int    resets = 0;
             bool   containsFloppyPage;
 
             if(dev.IsRemovable)
@@ -953,6 +959,8 @@ namespace DiscImageChef.Core.Media.Info
                                         if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
                                            (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                                         {
+                                            if(track.TrackStartAddress < startOfFirstDataTrack)
+                                                startOfFirstDataTrack = track.TrackStartAddress;
                                             hasDataTrack                  =  true;
                                             allFirstSessionTracksAreAudio &= track.TrackNumber >= firstTrackLastSession;
                                         }
@@ -1211,11 +1219,12 @@ namespace DiscImageChef.Core.Media.Info
 
             if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice) return;
 
-            byte[] sector0        = null;
-            byte[] sector1        = null;
-            byte[] ps2BootSectors = null;
-            byte[] playdia1       = null;
-            byte[] playdia2       = null;
+            byte[] sector0                 = null;
+            byte[] sector1                 = null;
+            byte[] ps2BootSectors          = null;
+            byte[] playdia1                = null;
+            byte[] playdia2                = null;
+            byte[] secondDataSectorNotZero = null;
 
             switch(MediaType)
             {
@@ -1262,6 +1271,19 @@ namespace DiscImageChef.Core.Media.Info
                         {
                             playdia2 = new byte[2048];
                             Array.Copy(cmdBuf, 24, playdia2, 0, 2048);
+                        }
+
+                        if(startOfFirstDataTrack != uint.MaxValue)
+                        {
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack + 1, 2352, 1,
+                                               MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                               true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense && !dev.Error)
+                            {
+                                secondDataSectorNotZero = new byte[2048];
+                                Array.Copy(cmdBuf, 16, secondDataSectorNotZero, 0, 2048);
+                            }
                         }
 
                         MemoryStream ps2Ms = new MemoryStream();
@@ -1319,6 +1341,19 @@ namespace DiscImageChef.Core.Media.Info
                                 Array.Copy(cmdBuf, 0, playdia2, 0, 2048);
                             }
 
+                            if(startOfFirstDataTrack != uint.MaxValue)
+                            {
+                                sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack + 1, 2324, 1,
+                                                   MmcSectorTypes.Mode2, false, false, true, MmcHeaderCodes.None, true,
+                                                   true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense && !dev.Error)
+                                {
+                                    secondDataSectorNotZero = new byte[2048];
+                                    Array.Copy(cmdBuf, 0, secondDataSectorNotZero, 0, 2048);
+                                }
+                            }
+
                             MemoryStream ps2Ms = new MemoryStream();
                             for(uint p = 0; p < 12; p++)
                             {
@@ -1354,6 +1389,16 @@ namespace DiscImageChef.Core.Media.Info
                                                    MmcSubchannel.None, dev.Timeout, out _);
 
                                 if(!sense && !dev.Error) ps2BootSectors = cmdBuf;
+
+                                if(startOfFirstDataTrack != uint.MaxValue)
+                                {
+                                    sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack + 1, 2048, 1,
+                                                       MmcSectorTypes.Mode1, false, false, true, MmcHeaderCodes.None,
+                                                       true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                                                       out _);
+
+                                    if(!sense && !dev.Error) secondDataSectorNotZero = cmdBuf;
+                                }
                             }
                             else goto case MediaType.DVDROM;
                         }
@@ -1480,6 +1525,7 @@ namespace DiscImageChef.Core.Media.Info
                 case MediaType.CDROM:
                 case MediaType.CDROMXA:
                     // TODO: CDTV requires reading the filesystem, searching for a file called "/CDTV.TM"
+                    // TODO: Neo-Geo CD requires reading the filesystem and checking that the file "/IPL.TXT" is correct
                 {
                     if(CD.DecodeIPBin(sector0).HasValue)
                     {
@@ -1524,6 +1570,14 @@ namespace DiscImageChef.Core.Media.Info
 
                         if(PlaydiaCopyright.SequenceEqual(pd1) && PlaydiaCopyright.SequenceEqual(pd2))
                             MediaType = MediaType.Playdia;
+                    }
+
+                    if(secondDataSectorNotZero != null)
+                    {
+                        byte[] pce = new byte[PcEngineSignature.Length];
+                        Array.Copy(secondDataSectorNotZero, 32, pce, 0, pce.Length);
+
+                        if(PcEngineSignature.SequenceEqual(pce)) MediaType = MediaType.SuperCDROM2;
                     }
 
                     break;

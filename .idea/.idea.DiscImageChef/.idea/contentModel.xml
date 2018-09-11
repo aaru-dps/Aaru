@@ -1309,6 +1309,7 @@
           <e p="Logos" t="Include">
             <e p="Media" t="Include">
               <e p=".directory" t="Include" />
+              <e p="360DVDfirmwareRelatedInfo.pdf" t="Include" />
               <e p="AIT1.png" t="Include" />
               <e p="AIT1.svg" t="Include" />
               <e p="AIT1Turbo.png" t="Include" />
