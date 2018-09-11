@@ -76,6 +76,9 @@ namespace DiscImageChef.Core.Media.Info
             0x50, 0x43, 0x20, 0x45, 0x6E, 0x67, 0x69, 0x6E, 0x65, 0x20, 0x43, 0x44, 0x2D, 0x52, 0x4F, 0x4D, 0x20,
             0x53, 0x59, 0x53, 0x54, 0x45, 0x4D
         };
+        static readonly byte[] PcFxSignature = {
+            0x50, 0x43, 0x2D, 0x46, 0x58, 0x3A, 0x48, 0x75, 0x5F, 0x43, 0x44, 0x2D, 0x52, 0x4F, 0x4D
+        };
 
         public ScsiInfo(Device dev)
         {
@@ -1224,6 +1227,7 @@ namespace DiscImageChef.Core.Media.Info
             byte[] ps2BootSectors          = null;
             byte[] playdia1                = null;
             byte[] playdia2                = null;
+            byte[] firstDataSectorNotZero  = null;
             byte[] secondDataSectorNotZero = null;
 
             switch(MediaType)
@@ -1275,6 +1279,16 @@ namespace DiscImageChef.Core.Media.Info
 
                         if(startOfFirstDataTrack != uint.MaxValue)
                         {
+                            sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack, 2352, 1,
+                                               MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                               true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense && !dev.Error)
+                            {
+                                firstDataSectorNotZero = new byte[2048];
+                                Array.Copy(cmdBuf, 16, firstDataSectorNotZero, 0, 2048);
+                            }
+
                             sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack + 1, 2352, 1,
                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
                                                true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
@@ -1343,6 +1357,16 @@ namespace DiscImageChef.Core.Media.Info
 
                             if(startOfFirstDataTrack != uint.MaxValue)
                             {
+                                sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack, 2324, 1,
+                                                   MmcSectorTypes.Mode2, false, false, true, MmcHeaderCodes.None, true,
+                                                   true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense && !dev.Error)
+                                {
+                                    firstDataSectorNotZero = new byte[2048];
+                                    Array.Copy(cmdBuf, 0, firstDataSectorNotZero, 0, 2048);
+                                }
+
                                 sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack + 1, 2324, 1,
                                                    MmcSectorTypes.Mode2, false, false, true, MmcHeaderCodes.None, true,
                                                    true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
@@ -1392,6 +1416,13 @@ namespace DiscImageChef.Core.Media.Info
 
                                 if(startOfFirstDataTrack != uint.MaxValue)
                                 {
+                                    sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack, 2048, 1,
+                                                       MmcSectorTypes.Mode1, false, false, true, MmcHeaderCodes.None,
+                                                       true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                                                       out _);
+
+                                    if(!sense && !dev.Error) firstDataSectorNotZero = cmdBuf;
+
                                     sense = dev.ReadCd(out cmdBuf, out senseBuf, startOfFirstDataTrack + 1, 2048, 1,
                                                        MmcSectorTypes.Mode1, false, false, true, MmcHeaderCodes.None,
                                                        true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
@@ -1578,6 +1609,14 @@ namespace DiscImageChef.Core.Media.Info
                         Array.Copy(secondDataSectorNotZero, 32, pce, 0, pce.Length);
 
                         if(PcEngineSignature.SequenceEqual(pce)) MediaType = MediaType.SuperCDROM2;
+                    }
+
+                    if(firstDataSectorNotZero != null)
+                    {
+                        byte[] pcfx = new byte[PcFxSignature.Length];
+                        Array.Copy(firstDataSectorNotZero, 0, pcfx, 0, pcfx.Length);
+
+                        if(PcFxSignature.SequenceEqual(pcfx)) MediaType = MediaType.PCFX;
                     }
 
                     break;
