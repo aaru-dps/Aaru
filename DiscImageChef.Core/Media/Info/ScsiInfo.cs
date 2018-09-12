@@ -76,8 +76,18 @@ namespace DiscImageChef.Core.Media.Info
             0x50, 0x43, 0x20, 0x45, 0x6E, 0x67, 0x69, 0x6E, 0x65, 0x20, 0x43, 0x44, 0x2D, 0x52, 0x4F, 0x4D, 0x20,
             0x53, 0x59, 0x53, 0x54, 0x45, 0x4D
         };
-        static readonly byte[] PcFxSignature = {
+        static readonly byte[] PcFxSignature =
+        {
             0x50, 0x43, 0x2D, 0x46, 0x58, 0x3A, 0x48, 0x75, 0x5F, 0x43, 0x44, 0x2D, 0x52, 0x4F, 0x4D
+        };
+        static readonly byte[] AtariSignature =
+        {
+            0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54,
+            0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41,
+            0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49,
+            0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x52, 0x41,
+            0x20, 0x49, 0x50, 0x41, 0x52, 0x50, 0x56, 0x4F, 0x44, 0x45, 0x44, 0x20, 0x54, 0x41, 0x20, 0x41, 0x45,
+            0x48, 0x44, 0x41, 0x52, 0x45, 0x41, 0x20, 0x52, 0x54
         };
 
         public ScsiInfo(Device dev)
@@ -92,6 +102,7 @@ namespace DiscImageChef.Core.Media.Info
             byte[] cmdBuf;
             byte[] senseBuf;
             bool   containsFloppyPage;
+            byte   secondSessionFirstTrack = 0;
 
             if(dev.IsRemovable)
             {
@@ -1003,6 +1014,11 @@ namespace DiscImageChef.Core.Media.Info
                                                 MediaType = MediaType.CDROMXA;
                                                 break;
                                         }
+
+                                    if(FullToc.Value.TrackDescriptors.Any(t => t.SessionNumber == 2))
+                                        secondSessionFirstTrack = FullToc
+                                                                 .Value.TrackDescriptors
+                                                                 .Where(t => t.SessionNumber == 2).Min(t => t.POINT);
                                 }
                             }
 
@@ -1229,6 +1245,30 @@ namespace DiscImageChef.Core.Media.Info
             byte[] playdia2                = null;
             byte[] firstDataSectorNotZero  = null;
             byte[] secondDataSectorNotZero = null;
+            byte[] firstTrackSecondSession = null;
+
+            if(secondSessionFirstTrack != 0 && DecodedToc.HasValue &&
+               DecodedToc.Value.TrackDescriptors.Any(t => t.TrackNumber == secondSessionFirstTrack))
+            {
+                uint firstSectorSecondSessionFirstTrack = DecodedToc
+                                                         .Value.TrackDescriptors
+                                                         .First(t => t.TrackNumber == secondSessionFirstTrack)
+                                                         .TrackStartAddress;
+
+                sense = dev.ReadCd(out cmdBuf, out senseBuf, firstSectorSecondSessionFirstTrack, 2352, 1,
+                                   MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                if(!sense && !dev.Error) firstTrackSecondSession = cmdBuf;
+                else
+                {
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, firstSectorSecondSessionFirstTrack, 2352, 1,
+                                       MmcSectorTypes.Cdda, false, false, true, MmcHeaderCodes.None, true, true,
+                                       MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                    if(!sense && !dev.Error) firstTrackSecondSession = cmdBuf;
+                }
+            }
 
             switch(MediaType)
             {
@@ -1556,7 +1596,9 @@ namespace DiscImageChef.Core.Media.Info
                 case MediaType.CDROM:
                 case MediaType.CDROMXA:
                     // TODO: CDTV requires reading the filesystem, searching for a file called "/CDTV.TM"
+                    // TODO: CD32 requires reading the filesystem, searching for a file called "/CD32.TM"
                     // TODO: Neo-Geo CD requires reading the filesystem and checking that the file "/IPL.TXT" is correct
+                    // TODO: Pippin requires interpreting Apple Partition Map, reading HFS and checking for Pippin signatures
                 {
                     if(CD.DecodeIPBin(sector0).HasValue)
                     {
@@ -1617,6 +1659,20 @@ namespace DiscImageChef.Core.Media.Info
                         Array.Copy(firstDataSectorNotZero, 0, pcfx, 0, pcfx.Length);
 
                         if(PcFxSignature.SequenceEqual(pcfx)) MediaType = MediaType.PCFX;
+                    }
+
+                    if(firstTrackSecondSession != null)
+                    {
+                        byte[] jaguar = new byte[AtariSignature.Length];
+                        for(int i = 0; i + jaguar.Length <= firstTrackSecondSession.Length; i += 2)
+                        {
+                            Array.Copy(firstTrackSecondSession, i, jaguar, 0, jaguar.Length);
+
+                            if(!AtariSignature.SequenceEqual(jaguar)) continue;
+
+                            MediaType = MediaType.JaguarCD;
+                            break;
+                        }
                     }
 
                     break;
