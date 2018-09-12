@@ -184,7 +184,7 @@ namespace DiscImageChef.Commands
 
                                 DicConsole.WriteLine($"Identified by {plugin.Name}.");
                                 plugin.GetInformation(imageFormat, partitions[i], out information, encoding);
-                                DicConsole.Write(information);
+                                DicConsole.Write("{0}", information);
                                 Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
                             }
                         }
