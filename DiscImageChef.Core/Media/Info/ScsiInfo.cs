@@ -38,6 +38,7 @@ using System.Threading;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Core.Media.Detection;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
@@ -1269,6 +1270,30 @@ namespace DiscImageChef.Core.Media.Info
                     if(!sense && !dev.Error) firstTrackSecondSession = cmdBuf;
                 }
             }
+
+            // Check for hidden data before start of track 1
+            if(DecodedToc.HasValue &&
+               DecodedToc.Value.TrackDescriptors.FirstOrDefault(t => t.TrackNumber == 1).TrackStartAddress > 0)
+            {
+                sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                   dev.Timeout, out _);
+
+                if(!dev.Error && !sense)
+                {
+                    sector0 = cmdBuf;
+
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, 16, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                       true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                       MmcSubchannel.None, dev.Timeout, out _);
+
+                    if(!dev.Error && !sense)
+                        if(MMC.IsCdi(sector0, cmdBuf))
+                            MediaType = MediaType.CDIREADY;
+                }
+            }
+
+            sector0 = null;
 
             switch(MediaType)
             {
