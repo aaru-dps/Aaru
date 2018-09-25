@@ -886,6 +886,8 @@ namespace DiscImageChef.Commands
             }
 
             Core.Statistics.AddCommand("device-info");
+
+            dev.Close();
         }
     }
 }

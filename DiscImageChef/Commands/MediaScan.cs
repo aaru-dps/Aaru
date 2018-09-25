@@ -112,6 +112,8 @@ namespace DiscImageChef.Commands
                                          (long)results.E, (long)results.F, (long)results.Blocks, (long)results.Errored,
                                          (long)(results.Blocks - results.Errored));
             Core.Statistics.AddCommand("media-scan");
+
+            dev.Close();
         }
     }
 }

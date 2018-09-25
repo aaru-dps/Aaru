@@ -257,6 +257,8 @@ namespace DiscImageChef.Commands
             dumpLog.Close();
 
             Core.Statistics.AddCommand("dump-media");
+
+            dev.Close();
         }
     }
 }

@@ -451,6 +451,8 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Media identified as {0}", scsiInfo.MediaType);
             Core.Statistics.AddMedia(scsiInfo.MediaType, true);
+
+            dev.Close();
         }
     }
 }
