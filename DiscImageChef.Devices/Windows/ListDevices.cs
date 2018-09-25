@@ -34,12 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-#if !NETSTANDARD2_0
-using System.Management;
-#endif
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
+#if !NETSTANDARD2_0
+using System.Management;
+#endif
 
 namespace DiscImageChef.Devices.Windows
 {
@@ -96,9 +96,9 @@ namespace DiscImageChef.Devices.Windows
                 throw;
                 #else
                 return null;
-#endif
+                #endif
             }
-    #endif
+            #endif
 
             List<DeviceInfo> devList = new List<DeviceInfo>();
 
@@ -172,7 +172,7 @@ namespace DiscImageChef.Devices.Windows
                        info.Serial.Length == 40) info.Serial = HexStringToString(info.Serial).Trim();
                 }
 
-                if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")
+                if((string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA") && info.Model != null)
                 {
                     string[] pieces = info.Model.Split(' ');
                     if(pieces.Length > 1)

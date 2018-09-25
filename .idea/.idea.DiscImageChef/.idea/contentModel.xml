@@ -7,6 +7,9 @@
     <e p="$USER_HOME$/.Rider2018.2/system/resharper-host/local/Transient/ReSharperHost/v182/SolutionCaches/_DiscImageChef.73225794.00" t="ExcludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.11/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p=".git/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
@@ -1312,7 +1315,6 @@
           <e p="Logos" t="Include">
             <e p="Media" t="Include">
               <e p=".directory" t="Include" />
-              <e p="360DVDfirmwareRelatedInfo.pdf" t="Include" />
               <e p="AIT1.png" t="Include" />
               <e p="AIT1.svg" t="Include" />
               <e p="AIT1Turbo.png" t="Include" />
