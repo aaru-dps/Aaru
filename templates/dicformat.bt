@@ -120,6 +120,7 @@ enum <uint> MediaType
     GDROM = 152,
     GDR = 153,
     SegaCard = 154,
+    MilCD = 155,
 
     HuCard = 170,
     SuperCDROM2 = 171,

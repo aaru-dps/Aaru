@@ -108,6 +108,7 @@ namespace DiscImageChef.DiscImages
                 case MediaType.Playdia:
                 case MediaType.Pippin:
                 case MediaType.FMTOWNS:
+                case MediaType.MilCD:
                     isDvd = false;
                     break;
                 default:
