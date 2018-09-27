@@ -111,11 +111,11 @@ namespace DiscImageChef.DiscImages
             {
                 MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
                 MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA,
-                MediaType.CDRW, MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW,
-                MediaType.JaguarCD, MediaType.MEGACD, MediaType.PD650, MediaType.PD650_WORM, MediaType.PS1CD,
-                MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO,
-                MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32,
-                MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS
+                MediaType.CDRW, MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.MEGACD,
+                MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD,
+                MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX,
+                MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
+                MediaType.FMTOWNS
             };
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new[] {("separate", typeof(bool), "Write each track to a separate file.")};
