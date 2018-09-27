@@ -1698,6 +1698,13 @@ namespace DiscImageChef.Core.Media.Info
                             MediaType = MediaType.JaguarCD;
                             break;
                         }
+
+                        if(firstTrackSecondSession.Length >= 2336)
+                        {
+                            byte[] milcd = new byte[2048];
+                            Array.Copy(firstTrackSecondSession, 24, milcd, 0, 2048);
+                            if(Dreamcast.DecodeIPBin(milcd).HasValue) MediaType = MediaType.MilCD;
+                        }
                     }
 
                     break;
