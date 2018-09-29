@@ -718,7 +718,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     discType    = "Compact Disc";
                     discSubType = "Atari Jaguar CD";
                     break;
-                case CommonTypes.MediaType.JaguarCD:
+                case CommonTypes.MediaType.MilCD:
                     discType    = "Compact Disc";
                     discSubType = "Sega MilCD";
                     break;

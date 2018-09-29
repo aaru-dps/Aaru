@@ -55,7 +55,6 @@
         <e p="Settings.StyleCop" t="Include" />
         <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="foo.png" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
