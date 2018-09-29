@@ -64,22 +64,21 @@ namespace DiscImageChef.Gui.Panels
 
             this.scsiInfo = scsiInfo;
 
-
-            Stream logo = ResourceHandler.GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.svg");
-/*            if(logo != null)
+            Stream logo =
+                ResourceHandler.GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.svg");
+            /*            if(logo != null)
+                        {
+                            svgMediaLogo.SvgStream = logo;
+                            svgMediaLogo.Visible   = true;
+                        }
+                        else
+                        {*/
+            logo = ResourceHandler.GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
+            if(logo != null)
             {
-                svgMediaLogo.SvgStream = logo;
-                svgMediaLogo.Visible   = true;
+                imgMediaLogo.Image   = new Bitmap(logo);
+                imgMediaLogo.Visible = true;
             }
-            else
-            {*/
-                logo =
-                    ResourceHandler.GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
-                if(logo != null)
-                {
-                    imgMediaLogo.Image   = new Bitmap(logo);
-                    imgMediaLogo.Visible = true;
-                }
             //}
 
             switch(this.scsiInfo.MediaType)
@@ -679,7 +678,16 @@ namespace DiscImageChef.Gui.Panels
 
         protected void OnBtnDumpClick(object sender, EventArgs e)
         {
-            // Not implemented
+            if(scsiInfo.MediaType == MediaType.GDR || scsiInfo.MediaType == MediaType.GDROM)
+            {
+                MessageBox.Show("GD-ROM dump support is not yet implemented.", MessageBoxType.Error);
+                return;
+            }
+
+            if((scsiInfo.MediaType == MediaType.XGD || scsiInfo.MediaType == MediaType.XGD2 ||
+                scsiInfo.MediaType == MediaType.XGD3) &&
+               scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
+                MessageBox.Show("Dumping Xbox discs require a Kreon drive.", MessageBoxType.Error);
         }
 
         #region XAML controls

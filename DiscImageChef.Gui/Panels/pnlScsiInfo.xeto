@@ -370,7 +370,7 @@
             </TabControl>
         </StackLayoutItem>
         <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Bottom">
-            <Button Click="OnBtnDumpClick" ID="btnDump" Text="Dump media to image" Enabled="False"/>
+            <Button Click="OnBtnDumpClick" ID="btnDump" Text="Dump media to image"/>
         </StackLayoutItem>
     </StackLayout>
 </Panel>
