@@ -30,6 +30,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using DiscImageChef.Console;
@@ -78,6 +79,8 @@ namespace DiscImageChef.Gui
 
         static void OnWriteHandler(string format, params object[] arg)
         {
+            if(format == null || arg == null) return;
+
             Entries.Add(new LogEntry
             {
                 Message   = string.Format(format, arg),
@@ -89,6 +92,8 @@ namespace DiscImageChef.Gui
 
         static void OnErrorWriteHandler(string format, params object[] arg)
         {
+            if(format == null || arg == null) return;
+
             Entries.Add(new LogEntry
             {
                 Message   = string.Format(format, arg),
@@ -100,6 +105,8 @@ namespace DiscImageChef.Gui
 
         static void OnVerboseWriteHandler(string format, params object[] arg)
         {
+            if(format == null || arg == null) return;
+
             Entries.Add(new LogEntry
             {
                 Message   = string.Format(format, arg),
@@ -111,6 +118,8 @@ namespace DiscImageChef.Gui
 
         static void OnDebugWriteHandler(string module, string format, params object[] arg)
         {
+            if(format == null || arg == null) return;
+
             Entries.Add(new LogEntry
             {
                 Message   = string.Format(format, arg),
