@@ -40,30 +40,29 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
     public partial class Qed : IWritableImage
     {
-        int                       clusterBits;
-        Dictionary<ulong, byte[]> clusterCache;
-        uint                      clusterSectors;
-        ImageInfo                 imageInfo;
-        Stream imageStream;
-       ulong                      l1Mask;
+        int                        clusterBits;
+        Dictionary<ulong, byte[]>  clusterCache;
+        uint                       clusterSectors;
+        ImageInfo                  imageInfo;
+        Stream                     imageStream;
+        ulong                      l1Mask;
         int                        l1Shift;
         ulong[]                    l1Table;
         ulong                      l2Mask;
         Dictionary<ulong, ulong[]> l2TableCache;
         uint                       maxClusterCache;
         uint                       maxL2TableCache;
-        QedHeader qHdr;
-        Dictionary<ulong, byte[]> sectorCache;
-        ulong                     sectorMask;
-        uint                      tableSize;
-        FileStream                writingStream;
+        QedHeader                  qHdr;
+        Dictionary<ulong, byte[]>  sectorCache;
+        ulong                      sectorMask;
+        uint                       tableSize;
+        FileStream                 writingStream;
 
         public Qed()
         {
@@ -92,83 +91,49 @@ namespace DiscImageChef.DiscImages
             };
         }
 
-
-
-
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadDiskTag(MediaTagType tag)
-        {
+        public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSector(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSector(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
+        public byte[] ReadSectorLong(ulong sectorAddress) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
-        {
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public List<Track> GetSessionTracks(Session session)
-        {
+        public List<Track> GetSessionTracks(Session session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public List<Track> GetSessionTracks(ushort session)
-        {
+        public List<Track> GetSessionTracks(ushort session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public bool? VerifySector(ulong sectorAddress)
-        {
-            return null;
-        }
+        public bool? VerifySector(ulong sectorAddress) => null;
 
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
+        public bool? VerifySector(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
@@ -181,34 +146,10 @@ namespace DiscImageChef.DiscImages
         }
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
+                                   out List<ulong> unknownLbas) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public bool? VerifyMediaImage()
-        {
-            return null;
-        }
-
-        public List<DumpHardwareType> DumpHardware => null;
-        public CICMMetadataType       CicmMetadata => null;
-
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
-                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-                MediaType.PCCardTypeIV
-            };
-        // TODO: Add cluster size option
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".qed"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+        public bool? VerifyMediaImage() => null;
 
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint   sectorSize)
@@ -437,16 +378,9 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            return true;
-        }
+        public bool SetMetadata(ImageInfo metadata) => true;
 
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
-        {
-            // Not stored in image
-            return true;
-        }
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
@@ -460,17 +394,9 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
 
         static bool IsPowerOfTwo(uint x)
         {

@@ -75,8 +75,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35,
                 MediaType.XDF_525
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new[] {("compress", typeof(bool), "Enable Apridisk compression.")};
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new[] {("compress", typeof(bool), "Enable Apridisk compression.", (object)false)};
         public IEnumerable<string> KnownExtensions => new[] {".dsk"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

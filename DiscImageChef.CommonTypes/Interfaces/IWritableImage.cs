@@ -65,7 +65,7 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <summary>
         ///     Retrieves a list of options supported by the filesystem, with name, type and description
         /// </summary>
-        IEnumerable<(string name, Type type, string description)> SupportedOptions { get; }
+        IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions { get; }
         /// <summary>
         ///     Gets a list of known extensions for format auto-chosing
         /// </summary>

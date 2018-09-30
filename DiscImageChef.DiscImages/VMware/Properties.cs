@@ -69,13 +69,14 @@ namespace DiscImageChef.DiscImages
                 MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
                 MediaType.PCCardTypeIV
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new[]
             {
                 ("adapter_type", typeof(string),
-                 "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX."),
-                ("hwversion", typeof(uint), "VDMK hardware version."),
-                ("sparse", typeof(bool), "Use sparse extents."), ("split", typeof(bool), "Split data file at 2GiB.")
+                 "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.", "ide"),
+                ("hwversion", typeof(uint), "VDMK hardware version.", 4),
+                ("sparse", typeof(bool), "Use sparse extents.", (object)false),
+                ("split", typeof(bool), "Split data file at 2GiB.", (object)false)
             };
         public IEnumerable<string> KnownExtensions => new[] {".vmdk"};
         public bool                IsWriting       { get; private set; }

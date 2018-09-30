@@ -117,8 +117,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
                 MediaType.FMTOWNS
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new[] {("separate", typeof(bool), "Write each track to a separate file.")};
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new[] {("separate", typeof(bool), "Write each track to a separate file.", (object)false)};
         public IEnumerable<string> KnownExtensions => new[] {".toc"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

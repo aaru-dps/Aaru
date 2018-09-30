@@ -64,8 +64,8 @@ namespace DiscImageChef.DiscImages
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.Apple33SS};
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".do", ".po"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

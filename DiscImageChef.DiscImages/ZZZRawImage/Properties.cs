@@ -60,7 +60,11 @@ namespace DiscImageChef.DiscImages
 
                 Track trk = new Track
                 {
-                    TrackBytesPerSector    = rawCompactDisc ? (mode2 ? 2336 : 2048) : (int)imageInfo.SectorSize,
+                    TrackBytesPerSector = rawCompactDisc
+                                              ? mode2
+                                                    ? 2336
+                                                    : 2048
+                                              : (int)imageInfo.SectorSize,
                     TrackEndSector         = imageInfo.Sectors - 1,
                     TrackFile              = rawImageFilter.GetFilename(),
                     TrackFileOffset        = 0,
@@ -71,7 +75,9 @@ namespace DiscImageChef.DiscImages
                     TrackSubchannelType =
                         hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
                     TrackType = rawCompactDisc
-                                    ? (mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1)
+                                    ? mode2
+                                          ? TrackType.CdMode2Formless
+                                          : TrackType.CdMode1
                                     : TrackType.Data,
                     TrackSession = 1
                 };
@@ -114,8 +120,12 @@ namespace DiscImageChef.DiscImages
                     Length   = imageInfo.Sectors,
                     Offset   = 0,
                     Sequence = 0,
-                    Type     = rawCompactDisc ? (mode2 ? "MODE2/2352" : "MODE1/2352") : "MODE1/2048",
-                    Size     = imageInfo.Sectors * imageInfo.SectorSize
+                    Type = rawCompactDisc
+                               ? mode2
+                                     ? "MODE2/2352"
+                                     : "MODE1/2352"
+                               : "MODE1/2048",
+                    Size = imageInfo.Sectors * imageInfo.SectorSize
                 };
                 parts.Add(part);
                 return parts;
@@ -161,8 +171,8 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions =>
             new[] {".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st"};
         public bool   IsWriting    { get; private set; }

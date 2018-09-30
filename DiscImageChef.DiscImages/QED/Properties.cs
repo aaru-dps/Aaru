@@ -33,8 +33,10 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
+using Schemas;
 
 namespace DiscImageChef.DiscImages
 {
@@ -55,5 +57,24 @@ namespace DiscImageChef.DiscImages
 
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+
+        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
+        public IEnumerable<MediaType> SupportedMediaTypes =>
+            new[]
+            {
+                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+                MediaType.PCCardTypeIV
+            };
+        // TODO: Add cluster size option
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
+        public IEnumerable<string> KnownExtensions => new[] {".qed"};
+        public bool                IsWriting       { get; private set; }
+        public string              ErrorMessage    { get; private set; }
     }
 }

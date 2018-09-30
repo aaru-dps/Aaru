@@ -64,8 +64,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
                 MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dcf"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

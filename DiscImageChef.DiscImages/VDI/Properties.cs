@@ -70,8 +70,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.PCCardTypeIV
             };
         // TODO: Add cluster size option
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".vdi"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

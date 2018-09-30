@@ -74,8 +74,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35,
                 MediaType.XDF_525
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".dsk"};
 
         public bool   IsWriting    { get; private set; }

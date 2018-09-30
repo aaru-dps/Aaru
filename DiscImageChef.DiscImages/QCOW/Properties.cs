@@ -68,8 +68,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
                 MediaType.PCCardTypeIV
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".qcow", ".qc"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

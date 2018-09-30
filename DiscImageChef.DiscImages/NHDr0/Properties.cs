@@ -63,8 +63,8 @@ namespace DiscImageChef.DiscImages
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
         // TODO: Support dynamic images
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".nhd"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

@@ -68,8 +68,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.AppleSonySS, MediaType.AppleWidget, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,
                 MediaType.DMF
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new[] {("macosx", typeof(bool), "Use Mac OS X format byte")};
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new[] {("macosx", typeof(bool), "Use Mac OS X format byte", (object)false)};
         public IEnumerable<string> KnownExtensions => new[] {".dc42", ".diskcopy42", ".image"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

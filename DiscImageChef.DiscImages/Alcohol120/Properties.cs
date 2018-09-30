@@ -135,8 +135,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon,
                 MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD
             };
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+            new (string name, Type type, string description, object @default)[] { };
         public IEnumerable<string> KnownExtensions => new[] {".mds"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }

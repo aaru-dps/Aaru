@@ -65,14 +65,16 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Read/Write media images options:");
             foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
             {
-                List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
+                List<(string name, Type type, string description, object @default)> options =
+                    kvp.Value.SupportedOptions.ToList();
                 if(options.Count == 0) continue;
 
-                DicConsole.WriteLine("\tOptions for {0}:",         kvp.Value.Name);
-                DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", "Name", "Type", "Description");
-                foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
-                    DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, TypeToString(option.type),
-                                         option.description);
+                DicConsole.WriteLine("\tOptions for {0}:",                kvp.Value.Name);
+                DicConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", "Name", "Type", "Default", "Description");
+                foreach((string name, Type type, string description, object @default) option in
+                    options.OrderBy(t => t.name))
+                    DicConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", option.name, TypeToString(option.type),
+                                         option.@default, option.description);
                 DicConsole.WriteLine();
             }
         }
@@ -89,7 +91,7 @@ namespace DiscImageChef.Commands
 
             if(type == typeof(float) || type == typeof(double)) return "float number";
 
-            if(type == typeof(Guid)) return "float number";
+            if(type == typeof(Guid)) return "uuid";
 
             return type == typeof(string) ? "string" : type.ToString();
         }
