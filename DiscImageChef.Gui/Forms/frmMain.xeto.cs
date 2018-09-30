@@ -282,7 +282,7 @@ namespace DiscImageChef.Gui.Forms
                             Values = new[]
                             {
                                 scsiInfo.MediaType, deviceItem.Values[1],
-                                new pnlScsiInfo(scsiInfo)
+                                new pnlScsiInfo(scsiInfo, (string)deviceItem.Values[1])
                             }
                         });
                 }

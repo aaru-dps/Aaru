@@ -43,6 +43,7 @@ using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Gui.Controls;
+using DiscImageChef.Gui.Forms;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
@@ -56,9 +57,10 @@ namespace DiscImageChef.Gui.Panels
 {
     public class pnlScsiInfo : Panel
     {
+        string   devicePath;
         ScsiInfo scsiInfo;
 
-        public pnlScsiInfo(ScsiInfo scsiInfo)
+        public pnlScsiInfo(ScsiInfo scsiInfo, string devicePath)
         {
             XamlReader.Load(this);
 
@@ -425,6 +427,8 @@ namespace DiscImageChef.Gui.Panels
                                 grpBluraySpareAreaInformation.Visible || grpBlurayPowResources.Visible     ||
                                 grpBlurayTrackResources.Visible       || btnSaveBlurayRawDfl.Visible       ||
                                 btnSaveBlurayPac.Visible;
+
+            this.devicePath = devicePath;
         }
 
         void SaveElement(byte[] data)
@@ -688,6 +692,9 @@ namespace DiscImageChef.Gui.Panels
                 scsiInfo.MediaType == MediaType.XGD3) &&
                scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
                 MessageBox.Show("Dumping Xbox discs require a Kreon drive.", MessageBoxType.Error);
+
+            frmDump dumpForm = new frmDump(devicePath, scsiInfo.DeviceInfo, scsiInfo);
+            dumpForm.Show();
         }
 
         #region XAML controls
