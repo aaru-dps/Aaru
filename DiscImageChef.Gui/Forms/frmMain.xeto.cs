@@ -32,8 +32,12 @@
 
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Core;
 using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Devices;
 using DiscImageChef.Gui.Dialogs;
@@ -93,7 +97,79 @@ namespace DiscImageChef.Gui.Forms
 
         protected void OnMenuOpen(object sender, EventArgs e)
         {
-            MessageBox.Show("Not yet implemented");
+            // TODO: Extensions
+            OpenFileDialog dlgOpenImage = new OpenFileDialog {Title = "Choose image to open"};
+
+            DialogResult result = dlgOpenImage.ShowDialog(this);
+            if(result != DialogResult.Ok) return;
+
+            FiltersList filtersList = new FiltersList();
+            IFilter     inputFilter = filtersList.GetFilter(dlgOpenImage.FileName);
+
+            if(inputFilter == null)
+            {
+                MessageBox.Show("Cannot open specified file.", MessageBoxType.Error);
+                return;
+            }
+
+            try
+            {
+                IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
+
+                if(imageFormat == null)
+                {
+                    MessageBox.Show("Image format not identified.", MessageBoxType.Error);
+                    return;
+                }
+
+                DicConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+
+                try
+                {
+                    if(!imageFormat.Open(inputFilter))
+                    {
+                        MessageBox.Show("Unable to open image format", MessageBoxType.Error);
+                        DicConsole.ErrorWriteLine("Unable to open image format");
+                        DicConsole.ErrorWriteLine("No error given");
+                        return;
+                    }
+
+                    imagesRoot.Children.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            $"{Path.GetFileName(dlgOpenImage.FileName)} ({imageFormat.Info.MediaType})",
+                            dlgOpenImage.FileName,
+                            new pnlImageInfo(dlgOpenImage.FileName, inputFilter,
+                                             imageFormat),
+                            inputFilter, imageFormat
+                        }
+                    });
+
+                    treeImages.ReloadData();
+
+                    ImageInfo.PrintImageInfo(imageFormat);
+
+                    Statistics.AddMediaFormat(imageFormat.Format);
+                    Statistics.AddMedia(imageFormat.Info.MediaType, false);
+                    Statistics.AddFilter(inputFilter.Name);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show("Unable to open image format", MessageBoxType.Error);
+                    DicConsole.ErrorWriteLine("Unable to open image format");
+                    DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    DicConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Exception reading file", MessageBoxType.Error);
+                DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+                DicConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+            }
+
+            Statistics.AddCommand("image-info");
         }
 
         protected void OnMenuAbout(object sender, EventArgs e)
