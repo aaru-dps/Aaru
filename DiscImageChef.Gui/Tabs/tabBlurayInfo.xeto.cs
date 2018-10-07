@@ -36,7 +36,7 @@ using DiscImageChef.Decoders.Bluray;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Panels
+namespace DiscImageChef.Gui.Tabs
 {
     public class tabBlurayInfo : TabPage
     {

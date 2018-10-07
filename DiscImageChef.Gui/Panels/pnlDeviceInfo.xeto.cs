@@ -32,15 +32,12 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
 using DiscImageChef.Gui.Tabs;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
-using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Gui.Panels
 {
@@ -231,7 +228,7 @@ namespace DiscImageChef.Gui.Panels
                     }
                 }
 
-                if(devInfo.ScsiInquiry.Value.KreonPresent)
+                if(devInfo.ScsiInquiry?.KreonPresent == true)
                 {
                     tabKreon.Visible                  = true;
                     chkKreonChallengeResponse.Checked = devInfo.KreonFeatures.HasFlag(KreonFeatures.ChallengeResponse);
@@ -301,70 +298,11 @@ namespace DiscImageChef.Gui.Panels
                 }
             }
 
-            switch(devInfo.Type)
-            {
-                case DeviceType.MMC:
-                {
-                    tabSecureDigital.Text = "MultiMediaCard";
-                    if(devInfo.CID != null)
-                    {
-                        tabCid.Visible = true;
-                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCID(devInfo.CID);
-                    }
+            tabSdMmcInfo tabSdMmcInfo = new tabSdMmcInfo();
+            tabSdMmcInfo.LoadData(devInfo.Type, devInfo.CID, devInfo.CSD, devInfo.OCR, devInfo.ExtendedCSD,
+                                  devInfo.SCR);
 
-                    if(devInfo.CSD != null)
-                    {
-                        tabCsd.Visible = true;
-                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD);
-                    }
-
-                    if(devInfo.OCR != null)
-                    {
-                        tabOcr.Visible = true;
-                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR);
-                    }
-
-                    if(devInfo.ExtendedCSD != null)
-                    {
-                        tabExtendedCsd.Visible = true;
-                        txtCid.Text            = Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD);
-                    }
-                }
-                    break;
-                case DeviceType.SecureDigital:
-                {
-                    tabSecureDigital.Text = "SecureDigital";
-                    if(devInfo.CID != null)
-                    {
-                        tabCid.Visible = true;
-
-                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyCID(devInfo.CID);
-                    }
-
-                    if(devInfo.CSD != null)
-                    {
-                        tabCsd.Visible = true;
-
-                        txtCid.Text = Decoders.SecureDigital.Decoders.PrettifyCSD(devInfo.CSD);
-                    }
-
-                    if(devInfo.OCR != null)
-                    {
-                        tabOcr.Visible = true;
-                        txtCid.Text    = Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR);
-                    }
-
-                    if(devInfo.SCR != null)
-                    {
-                        tabScr.Visible = true;
-                        txtCid.Text    = Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR);
-                    }
-                }
-                    break;
-            }
-
-            tabSecureDigital.Visible = tabCid.Visible || tabCsd.Visible || tabOcr.Visible || tabExtendedCsd.Visible ||
-                                       tabScr.Visible;
+            tabInfos.Pages.Add(tabSdMmcInfo);
         }
 
         protected void OnBtnSaveUsbDescriptors(object sender, EventArgs e)
@@ -381,160 +319,124 @@ namespace DiscImageChef.Gui.Panels
             saveFs.Close();
         }
 
-        protected void OnTreePcmciaSelectedItemChanged(object sender, EventArgs e)
-        {
-            if(!(treePcmcia.SelectedItem is TreeGridItem item)) return;
-
-            txtPcmciaCis.Text = item.Values[1] as string;
-        }
-
-        protected void OnBtnSavePcmciaCis(object sender, EventArgs e)
-        {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
-
-            if(result != DialogResult.Ok) return;
-
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
-            saveFs.Write(devInfo.Cis, 0, devInfo.Cis.Length);
-
-            saveFs.Close();
-        }
-
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
-        Label        lblDeviceInfo;
-        TabControl   tabInfos;
-        TabPage      tabGeneral;
-        Label        lblType;
-        TextBox      txtType;
-        Label        lblManufacturer;
-        TextBox      txtManufacturer;
-        Label        lblModel;
-        TextBox      txtModel;
-        Label        lblRevision;
-        TextBox      txtRevision;
-        Label        lblSerial;
-        TextBox      txtSerial;
-        Label        lblScsiType;
-        TextBox      txtScsiType;
-        CheckBox     chkRemovable;
-        CheckBox     chkUsb;
-        TabPage      tabKreon;
-        CheckBox     chkKreonChallengeResponse;
-        CheckBox     chkKreonDecryptSs;
-        CheckBox     chkKreonXtremeUnlock;
-        CheckBox     chkKreonWxripperUnlock;
-        CheckBox     chkKreonChallengeResponse360;
-        CheckBox     chkKreonDecryptSs360;
-        CheckBox     chkKreonXtremeUnlock360;
-        CheckBox     chkKreonWxripperUnlock360;
-        CheckBox     chkKreonLock;
-        CheckBox     chkKreonErrorSkipping;
-        TabPage      tabPlextor;
-        StackLayout  stkPlextorEeprom;
-        Label        lblPlextorDiscs;
-        TextBox      txtPlextorDiscs;
-        Label        lblPlextorCdReadTime;
-        TextBox      txtPlextorCdReadTime;
-        Label        lblPlextorCdWriteTime;
-        TextBox      txtPlextorCdWriteTime;
-        StackLayout  stkPlextorDvdTimes;
-        Label        lblPlextorDvdReadTime;
-        TextBox      txtPlextorDvdReadTime;
-        Label        lblPlextorDvdWriteTime;
-        TextBox      txtPlextorDvdWriteTime;
-        CheckBox     chkPlextorPoweRec;
-        CheckBox     chkPlextorPoweRecEnabled;
-        StackLayout  stkPlextorPoweRecEnabled;
-        StackLayout  stkPlextorPoweRecRecommended;
-        Label        lblPlextorPoweRecRecommended;
-        TextBox      txtPlextorPoweRecRecommended;
-        StackLayout  stkPlextorPoweRecSelected;
-        Label        lblPlextorPoweRecSelected;
-        TextBox      txtPlextorPoweRecSelected;
-        StackLayout  stkPlextorPoweRecMax;
-        Label        lblPlextorPoweRecMax;
-        TextBox      txtPlextorPoweRecMax;
-        StackLayout  stkPlextorPoweRecLast;
-        Label        lblPlextorPoweRecLast;
-        TextBox      txtPlextorPoweRecLast;
-        CheckBox     chkPlextorSilentMode;
-        CheckBox     chkPlextorSilentModeEnabled;
-        StackLayout  stkPlextorSilentModeEnabled;
-        Label        lblPlextorSilentModeAccessTime;
-        Label        lblPlextorSilentModeCdReadSpeedLimit;
-        TextBox      txtPlextorSilentModeCdReadSpeedLimit;
-        StackLayout  stkPlextorSilentModeDvdReadSpeedLimit;
-        Label        lblPlextorSilentModeDvdReadSpeedLimit;
-        TextBox      txtPlextorSilentModeDvdReadSpeedLimit;
-        Label        lblPlextorSilentModeCdWriteSpeedLimit;
-        TextBox      txtPlextorSilentModeCdWriteSpeedLimit;
-        CheckBox     chkPlextorGigaRec;
-        CheckBox     chkPlextorSecuRec;
-        CheckBox     chkPlextorSpeedRead;
-        CheckBox     chkPlextorSpeedEnabled;
-        CheckBox     chkPlextorHiding;
-        StackLayout  stkPlextorHiding;
-        CheckBox     chkPlextorHidesRecordables;
-        CheckBox     chkPlextorHidesSessions;
-        CheckBox     chkPlextorVariRec;
-        StackLayout  stkPlextorDvd;
-        CheckBox     chkPlextorVariRecDvd;
-        CheckBox     chkPlextorBitSetting;
-        CheckBox     chkPlextorBitSettingDl;
-        CheckBox     chkPlextorDvdPlusWriteTest;
-        TabPage      tabSsc;
-        Label        lblMinBlockSize;
-        Label        lblMaxBlockSize;
-        Label        lblBlockSizeGranularity;
-        StackLayout  stkDensities;
-        Label        lblDensities;
-        TextArea     txtDensities;
-        StackLayout  stkMediaTypes;
-        Label        lblMediumTypes;
-        TextArea     txtMediumTypes;
-        TextArea     txtMediumDensity;
-        TabPage      tabSecureDigital;
-        TabPage      tabCid;
-        TextArea     txtCid;
-        TabPage      tabCsd;
-        TextArea     txtCsd;
-        TabPage      tabOcr;
-        TextArea     txtOcr;
-        TabPage      tabExtendedCsd;
-        TextArea     txtExtendedCsd;
-        TabPage      tabScr;
-        TextArea     txtScr;
-        TabPage      tabUsb;
-        Label        lblUsbVendorId;
-        TextBox      txtUsbVendorId;
-        Label        lblUsbProductId;
-        TextBox      txtUsbProductId;
-        Label        lblUsbManufacturer;
-        TextBox      txtUsbManufacturer;
-        Label        lblUsbProduct;
-        TextBox      txtUsbProduct;
-        Label        lblUsbSerial;
-        TextBox      txtUsbSerial;
-        Button       btnSaveUsbDescriptors;
-        TabPage      tabFirewire;
-        Label        lblFirewireVendorId;
-        TextBox      txtFirewireVendorId;
-        Label        lblFirewireModelId;
-        TextBox      txtFirewireModelId;
-        Label        lblFirewireManufacturer;
-        TextBox      txtFirewireManufacturer;
-        Label        lblFirewireModel;
-        TextBox      txtFirewireModel;
-        Label        lblFirewireGuid;
-        TextBox      txtFirewireGuid;
-        TabPage      tabPcmcia;
-        TreeGridView treePcmcia;
-        TextArea     txtPcmciaCis;
-        Button       btnSavePcmciaCis;
+        Label       lblDeviceInfo;
+        TabControl  tabInfos;
+        TabPage     tabGeneral;
+        Label       lblType;
+        TextBox     txtType;
+        Label       lblManufacturer;
+        TextBox     txtManufacturer;
+        Label       lblModel;
+        TextBox     txtModel;
+        Label       lblRevision;
+        TextBox     txtRevision;
+        Label       lblSerial;
+        TextBox     txtSerial;
+        Label       lblScsiType;
+        TextBox     txtScsiType;
+        CheckBox    chkRemovable;
+        CheckBox    chkUsb;
+        TabPage     tabKreon;
+        CheckBox    chkKreonChallengeResponse;
+        CheckBox    chkKreonDecryptSs;
+        CheckBox    chkKreonXtremeUnlock;
+        CheckBox    chkKreonWxripperUnlock;
+        CheckBox    chkKreonChallengeResponse360;
+        CheckBox    chkKreonDecryptSs360;
+        CheckBox    chkKreonXtremeUnlock360;
+        CheckBox    chkKreonWxripperUnlock360;
+        CheckBox    chkKreonLock;
+        CheckBox    chkKreonErrorSkipping;
+        TabPage     tabPlextor;
+        StackLayout stkPlextorEeprom;
+        Label       lblPlextorDiscs;
+        TextBox     txtPlextorDiscs;
+        Label       lblPlextorCdReadTime;
+        TextBox     txtPlextorCdReadTime;
+        Label       lblPlextorCdWriteTime;
+        TextBox     txtPlextorCdWriteTime;
+        StackLayout stkPlextorDvdTimes;
+        Label       lblPlextorDvdReadTime;
+        TextBox     txtPlextorDvdReadTime;
+        Label       lblPlextorDvdWriteTime;
+        TextBox     txtPlextorDvdWriteTime;
+        CheckBox    chkPlextorPoweRec;
+        CheckBox    chkPlextorPoweRecEnabled;
+        StackLayout stkPlextorPoweRecEnabled;
+        StackLayout stkPlextorPoweRecRecommended;
+        Label       lblPlextorPoweRecRecommended;
+        TextBox     txtPlextorPoweRecRecommended;
+        StackLayout stkPlextorPoweRecSelected;
+        Label       lblPlextorPoweRecSelected;
+        TextBox     txtPlextorPoweRecSelected;
+        StackLayout stkPlextorPoweRecMax;
+        Label       lblPlextorPoweRecMax;
+        TextBox     txtPlextorPoweRecMax;
+        StackLayout stkPlextorPoweRecLast;
+        Label       lblPlextorPoweRecLast;
+        TextBox     txtPlextorPoweRecLast;
+        CheckBox    chkPlextorSilentMode;
+        CheckBox    chkPlextorSilentModeEnabled;
+        StackLayout stkPlextorSilentModeEnabled;
+        Label       lblPlextorSilentModeAccessTime;
+        Label       lblPlextorSilentModeCdReadSpeedLimit;
+        TextBox     txtPlextorSilentModeCdReadSpeedLimit;
+        StackLayout stkPlextorSilentModeDvdReadSpeedLimit;
+        Label       lblPlextorSilentModeDvdReadSpeedLimit;
+        TextBox     txtPlextorSilentModeDvdReadSpeedLimit;
+        Label       lblPlextorSilentModeCdWriteSpeedLimit;
+        TextBox     txtPlextorSilentModeCdWriteSpeedLimit;
+        CheckBox    chkPlextorGigaRec;
+        CheckBox    chkPlextorSecuRec;
+        CheckBox    chkPlextorSpeedRead;
+        CheckBox    chkPlextorSpeedEnabled;
+        CheckBox    chkPlextorHiding;
+        StackLayout stkPlextorHiding;
+        CheckBox    chkPlextorHidesRecordables;
+        CheckBox    chkPlextorHidesSessions;
+        CheckBox    chkPlextorVariRec;
+        StackLayout stkPlextorDvd;
+        CheckBox    chkPlextorVariRecDvd;
+        CheckBox    chkPlextorBitSetting;
+        CheckBox    chkPlextorBitSettingDl;
+        CheckBox    chkPlextorDvdPlusWriteTest;
+        TabPage     tabSsc;
+        Label       lblMinBlockSize;
+        Label       lblMaxBlockSize;
+        Label       lblBlockSizeGranularity;
+        StackLayout stkDensities;
+        Label       lblDensities;
+        TextArea    txtDensities;
+        StackLayout stkMediaTypes;
+        Label       lblMediumTypes;
+        TextArea    txtMediumTypes;
+        TextArea    txtMediumDensity;
+        TabPage     tabUsb;
+        Label       lblUsbVendorId;
+        TextBox     txtUsbVendorId;
+        Label       lblUsbProductId;
+        TextBox     txtUsbProductId;
+        Label       lblUsbManufacturer;
+        TextBox     txtUsbManufacturer;
+        Label       lblUsbProduct;
+        TextBox     txtUsbProduct;
+        Label       lblUsbSerial;
+        TextBox     txtUsbSerial;
+        Button      btnSaveUsbDescriptors;
+        TabPage     tabFirewire;
+        Label       lblFirewireVendorId;
+        TextBox     txtFirewireVendorId;
+        Label       lblFirewireModelId;
+        TextBox     txtFirewireModelId;
+        Label       lblFirewireManufacturer;
+        TextBox     txtFirewireManufacturer;
+        Label       lblFirewireModel;
+        TextBox     txtFirewireModel;
+        Label       lblFirewireGuid;
+        TextBox     txtFirewireGuid;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

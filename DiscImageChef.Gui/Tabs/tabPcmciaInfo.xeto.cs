@@ -38,7 +38,7 @@ using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
-namespace DiscImageChef.Gui.Panels
+namespace DiscImageChef.Gui.Tabs
 {
     public class tabPcmciaInfo : TabPage
     {

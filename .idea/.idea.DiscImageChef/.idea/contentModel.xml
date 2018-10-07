@@ -1626,6 +1626,8 @@
           <e p="tabPcmciaInfo.xeto.cs" t="Include" />
           <e p="tabScsiInfo.xeto" t="Include" />
           <e p="tabScsiInfo.xeto.cs" t="Include" />
+          <e p="tabSdMmcInfo.xeto" t="Include" />
+          <e p="tabSdMmcInfo.xeto.cs" t="Include" />
           <e p="tabXboxInfo.xeto" t="Include" />
           <e p="tabXboxInfo.xeto.cs" t="Include" />
         </e>
