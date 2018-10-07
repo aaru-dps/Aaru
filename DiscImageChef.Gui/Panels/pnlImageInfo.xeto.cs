@@ -34,6 +34,8 @@ using System;
 using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Gui.Tabs;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
@@ -207,11 +209,49 @@ namespace DiscImageChef.Gui.Panels
 
                 grpSectorTags.Visible = true;
             }
+
+            PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
+            byte[]                scsiInquiryData = null;
+            Inquiry.SCSIInquiry?  scsiInquiry;
+            Modes.DecodedMode?    scsiMode;
+            byte[]                scsiModeSense6  = null;
+            byte[]                scsiModeSense10 = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
+            {
+                scsiInquiryData = imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
+
+                scsiDeviceType = (PeripheralDeviceTypes)(scsiInquiryData[0] & 0x1F);
+
+                scsiInquiry = Inquiry.Decode(scsiInquiryData);
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
+            {
+                scsiModeSense6 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6);
+                scsiMode       = Modes.DecodeMode6(scsiModeSense6, scsiDeviceType);
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
+            {
+                scsiModeSense10 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10);
+                scsiMode        = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
+            }
+
+            tabScsiInfo tabScsiInfo = new tabScsiInfo();
+            tabScsiInfo.LoadData(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType, scsiModeSense6,
+                                 scsiModeSense10, null);
+
+            tabInfos.Pages.Add(tabScsiInfo);
         }
 
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
+        TabControl   tabInfos;
         Label        lblImagePath;
         Label        lblFilter;
         Label        lblImageFormat;

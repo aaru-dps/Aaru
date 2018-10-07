@@ -39,7 +39,7 @@
         <Label ID="lblImagePath" Visible="False"/>
         <Label ID="lblFilter" Visible="False"/>
         <Label ID="lblImageFormat" Visible="False"/>
-        <TabControl>
+        <TabControl ID="tabInfos">
             <TabPage Text="General">
                 <StackLayout Orientation="Vertical">
                     <Label ID="lblApplication" Visible="False"/>
