@@ -36,32 +36,40 @@
         <StackLayoutItem HorizontalAlignment="Center">
             <Label ID="lblImageInfo" Text="Image information"/>
         </StackLayoutItem>
-        <Label ID="lblImagePath"/>
-        <Label ID="lblFilter"/>
-        <Label ID="lblImageFormat"/>
-        <Label ID="lblApplication"/>
-        <Label ID="lblImageSize"/>
-        <Label ID="lblSectors"/>
-        <Label ID="lblCreator"/>
-        <Label ID="lblCreationTime"/>
-        <Label ID="lblLastModificationTime"/>
-        <Label ID="lblMediaType"/>
-        <Label ID="lblHasPartitions"/>
-        <Label ID="lblHasSessions"/>
-        <GroupBox Text="Comments:">
-        <TextArea ID="txtComments" ReadOnly="True"/>
+        <Label ID="lblImagePath" Visible="False"/>
+        <Label ID="lblFilter" Visible="False"/>
+        <Label ID="lblImageFormat" Visible="False"/>
+        <Label ID="lblApplication" Visible="False"/>
+        <Label ID="lblImageSize" Visible="False"/>
+        <Label ID="lblSectors" Visible="False"/>
+        <Label ID="lblCreator" Visible="False"/>
+        <Label ID="lblCreationTime" Visible="False"/>
+        <Label ID="lblLastModificationTime" Visible="False"/>
+        <Label ID="lblMediaType" Visible="False"/>
+        <Label ID="lblHasPartitions" Visible="False"/>
+        <Label ID="lblHasSessions" Visible="False"/>
+        <GroupBox Text="Comments:" Visible="False" ID="grpComments">
+            <TextArea ID="txtComments" ReadOnly="True"/>
         </GroupBox>
-        <Label ID="lblMediaSequence"/>
-        <Label ID="lblMediaTitle"/>
-        <Label ID="lblMediaManufacturer"/>
-        <Label ID="lblMediaModel"/>
-        <Label ID="lblMediaSerialNumber"/>
-        <Label ID="lblMediaBarcode"/>
-        <Label ID="lblMediaPartNumber"/>
-        <Label ID="lblDriveManufacturer"/>
-        <Label ID="lblDriveModel"/>
-        <Label ID="lblDriveSerialNumber"/>
-        <Label ID="lblDriveFirmwareRevision"/>
-        <Label ID="lblMediaGeometry"/>
+        <GroupBox Text="Media information" Visible="False" ID="grpMediaInfo">
+            <StackLayout Orientation="Vertical">
+                <Label ID="lblMediaSequence" Visible="False"/>
+                <Label ID="lblMediaTitle" Visible="False"/>
+                <Label ID="lblMediaManufacturer" Visible="False"/>
+                <Label ID="lblMediaModel" Visible="False"/>
+                <Label ID="lblMediaSerialNumber" Visible="False"/>
+                <Label ID="lblMediaBarcode" Visible="False"/>
+                <Label ID="lblMediaPartNumber" Visible="False"/>
+            </StackLayout>
+        </GroupBox>
+        <GroupBox Text="Drive information" Visible="False" ID="grpDriveInfo">
+            <StackLayout Orientation="Vertical">
+                <Label ID="lblDriveManufacturer" Visible="False"/>
+                <Label ID="lblDriveModel" Visible="False"/>
+                <Label ID="lblDriveSerialNumber" Visible="False"/>
+                <Label ID="lblDriveFirmwareRevision" Visible="False"/>
+                <Label ID="lblMediaGeometry" Visible="False"/>
+            </StackLayout>
+        </GroupBox>
     </StackLayout>
 </Panel>
