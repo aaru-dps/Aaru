@@ -155,62 +155,6 @@
                                 Visible="False"/>
                     </StackLayout>
                 </TabPage>
-                <TabPage ID="tabBluray" Text="Blu-ray" Visible="False">
-                    <StackLayout Orientation="Vertical">
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpBlurayDiscInformation" Text="Disc information" Visible="False">
-                                <TextArea ID="txtBlurayDiscInformation" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpBlurayBurstCuttingArea" Text="Burst Cutting Area" Visible="False">
-                                <TextArea ID="txtBlurayBurstCuttingArea" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpBlurayDds" Text="Disc Definition Structure" Visible="False">
-                                <TextArea ID="txtBlurayDds" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpBlurayCartridgeStatus" Text="Cartridge Status" Visible="False">
-                                <TextArea ID="txtBlurayCartridgeStatus" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpBluraySpareAreaInformation" Text="Spare Area Information" Visible="False">
-                                <TextArea ID="txtBluraySpareAreaInformation" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpBlurayPowResources" Text="Pseudo-OverWrite Resources" Visible="False">
-                                <TextArea ID="txtBlurayPowResources" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpBlurayTrackResources" Text="Track Resources" Visible="False">
-                                <TextArea ID="txtBlurayTrackResources" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <Button Click="OnBtnSaveBlurayDiscInformationClick" ID="btnSaveBlurayDiscInformation"
-                                Text="Save Disc Information" Visible="False"/>
-                        <Button Click="OnBtnSaveBlurayBurstCuttingAreaClick" ID="btnSaveBlurayBurstCuttingArea"
-                                Text="Save Burst Cutting Area" Visible="False"/>
-                        <Button Click="OnBtnSaveBlurayDdsClick" ID="btnSaveBlurayDds"
-                                Text="Save Disc Definition Structure" Visible="False"/>
-                        <Button Click="OnBtnSaveBlurayCartridgeStatusClick" ID="btnSaveBlurayCartridgeStatus"
-                                Text="Save Cartridge Status" Visible="False"/>
-                        <Button Click="OnBtnSaveBluraySpareAreaInformationClick" ID="btnSaveBluraySpareAreaInformation"
-                                Text="Save Spare Area Information" Visible="False"/>
-                        <Button Click="OnBtnSaveBlurayPowResourcesClick" ID="btnSaveBlurayPowResources"
-                                Text="Save Pseudo-OverWrite Resources" Visible="False"/>
-                        <Button Click="OnBtnSaveBlurayTrackResourcesClick" ID="btnSaveBlurayTrackResources"
-                                Text="Save Track Resources" Visible="False"/>
-                        <Button Click="OnBtnSaveBlurayRawDflClick" ID="btnSaveBlurayRawDfl" Text="Save raw DFL"
-                                Visible="False"/>
-                        <Button Click="OnBtnSaveBlurayPacClick" ID="btnSaveBlurayPac" Text="Save PAC" Visible="False"/>
-                    </StackLayout>
-                </TabPage>
             </TabControl>
         </StackLayoutItem>
         <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Bottom">

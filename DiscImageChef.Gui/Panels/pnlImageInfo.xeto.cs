@@ -502,6 +502,47 @@ namespace DiscImageChef.Gui.Panels
                                         dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize, dvdrDlManualLayerJumpStartLba,
                                         null, dvdPlusAdip, dvdPlusDcb);
             tabInfos.Pages.Add(tabDvdWritableInfo);
+
+            byte[] blurayBurstCuttingArea     = null;
+            byte[] blurayCartridgeStatus      = null;
+            byte[] blurayDds                  = null;
+            byte[] blurayDiscInformation      = null;
+            byte[] blurayPowResources         = null;
+            byte[] bluraySpareAreaInformation = null;
+            byte[] blurayTrackResources       = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.BD_BCA))
+                blurayBurstCuttingArea = imageFormat.ReadDiskTag(MediaTagType.BD_BCA);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.BD_CartridgeStatus))
+                blurayCartridgeStatus = imageFormat.ReadDiskTag(MediaTagType.BD_CartridgeStatus);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.BD_DDS))
+                blurayDds = imageFormat.ReadDiskTag(MediaTagType.BD_DDS);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.BD_DI))
+                blurayDiscInformation = imageFormat.ReadDiskTag(MediaTagType.BD_DI);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_POWResourcesInformation))
+                blurayPowResources = imageFormat.ReadDiskTag(MediaTagType.MMC_POWResourcesInformation);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.BD_SpareArea))
+                bluraySpareAreaInformation = imageFormat.ReadDiskTag(MediaTagType.BD_SpareArea);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_TrackResourcesInformation))
+                bluraySpareAreaInformation = imageFormat.ReadDiskTag(MediaTagType.MMC_TrackResourcesInformation);
+
+            tabBlurayInfo tabBlurayInfo = new tabBlurayInfo();
+            tabBlurayInfo.LoadData(blurayDiscInformation, blurayBurstCuttingArea, blurayDds, blurayCartridgeStatus,
+                                   bluraySpareAreaInformation, blurayPowResources, blurayTrackResources, null, null);
+            tabInfos.Pages.Add(tabBlurayInfo);
         }
 
         #region XAML controls

@@ -35,8 +35,6 @@ using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Decoders.Bluray;
-using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Gui.Controls;
@@ -179,63 +177,12 @@ namespace DiscImageChef.Gui.Panels
                                         scsiInfo.DvdPlusAdip, scsiInfo.DvdPlusDcb);
             tabInfos.Pages.Add(tabDvdWritableInfo);
 
-            if(this.scsiInfo.BlurayDiscInformation != null)
-            {
-                grpBlurayDiscInformation.Visible     = true;
-                btnSaveBlurayDiscInformation.Visible = true;
-                txtBlurayDiscInformation.Text        = DI.Prettify(this.scsiInfo.BlurayDiscInformation);
-            }
-
-            if(this.scsiInfo.BlurayBurstCuttingArea != null)
-            {
-                grpBlurayBurstCuttingArea.Visible     = true;
-                btnSaveBlurayBurstCuttingArea.Visible = true;
-                txtBlurayBurstCuttingArea.Text        = BCA.Prettify(this.scsiInfo.BlurayBurstCuttingArea);
-            }
-
-            if(this.scsiInfo.BlurayDds != null)
-            {
-                grpBlurayDds.Visible     = true;
-                btnSaveBlurayDds.Visible = true;
-                txtBlurayDds.Text        = DDS.Prettify(this.scsiInfo.BlurayDds);
-            }
-
-            if(this.scsiInfo.BlurayCartridgeStatus != null)
-            {
-                grpBlurayCartridgeStatus.Visible     = true;
-                btnSaveBlurayCartridgeStatus.Visible = true;
-                txtBlurayCartridgeStatus.Text        = Cartridge.Prettify(this.scsiInfo.BlurayCartridgeStatus);
-            }
-
-            if(this.scsiInfo.BluraySpareAreaInformation != null)
-            {
-                grpBluraySpareAreaInformation.Visible     = true;
-                btnSaveBluraySpareAreaInformation.Visible = true;
-                txtBluraySpareAreaInformation.Text        = Spare.Prettify(this.scsiInfo.BluraySpareAreaInformation);
-            }
-
-            if(this.scsiInfo.BlurayPowResources != null)
-            {
-                grpBlurayPowResources.Visible     = true;
-                btnSaveBlurayPowResources.Visible = true;
-                txtBlurayPowResources.Text        = DiscInformation.Prettify(this.scsiInfo.BlurayPowResources);
-            }
-
-            if(this.scsiInfo.BlurayTrackResources != null)
-            {
-                grpBlurayTrackResources.Visible     = true;
-                btnSaveBlurayTrackResources.Visible = true;
-                txtBlurayTrackResources.Text        = DiscInformation.Prettify(this.scsiInfo.BlurayTrackResources);
-            }
-
-            btnSaveBlurayRawDfl.Visible = this.scsiInfo.BlurayRawDfl != null;
-            btnSaveBlurayPac.Visible    = this.scsiInfo.BlurayPac    != null;
-
-            tabBluray.Visible = grpBlurayDiscInformation.Visible      || grpBlurayBurstCuttingArea.Visible ||
-                                grpBlurayDds.Visible                  || grpBlurayCartridgeStatus.Visible  ||
-                                grpBluraySpareAreaInformation.Visible || grpBlurayPowResources.Visible     ||
-                                grpBlurayTrackResources.Visible       || btnSaveBlurayRawDfl.Visible       ||
-                                btnSaveBlurayPac.Visible;
+            tabBlurayInfo tabBlurayInfo = new tabBlurayInfo();
+            tabBlurayInfo.LoadData(scsiInfo.BlurayDiscInformation, scsiInfo.BlurayBurstCuttingArea, scsiInfo.BlurayDds,
+                                   scsiInfo.BlurayCartridgeStatus, scsiInfo.BluraySpareAreaInformation,
+                                   scsiInfo.BlurayPowResources, scsiInfo.BlurayTrackResources, scsiInfo.BlurayRawDfl,
+                                   scsiInfo.BlurayPac);
+            tabInfos.Pages.Add(tabBlurayInfo);
 
             this.devicePath = devicePath;
         }
@@ -299,51 +246,6 @@ namespace DiscImageChef.Gui.Panels
             SaveElement(scsiInfo.XboxSecuritySector);
         }
 
-        protected void OnBtnSaveBlurayDiscInformationClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayDiscInformation);
-        }
-
-        protected void OnBtnSaveBlurayBurstCuttingAreaClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayBurstCuttingArea);
-        }
-
-        protected void OnBtnSaveBlurayDdsClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayDds);
-        }
-
-        protected void OnBtnSaveBlurayCartridgeStatusClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayCartridgeStatus);
-        }
-
-        protected void OnBtnSaveBluraySpareAreaInformationClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BluraySpareAreaInformation);
-        }
-
-        protected void OnBtnSaveBlurayPowResourcesClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayPowResources);
-        }
-
-        protected void OnBtnSaveBlurayTrackResourcesClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayTrackResources);
-        }
-
-        protected void OnBtnSaveBlurayRawDflClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayRawDfl);
-        }
-
-        protected void OnBtnSaveBlurayPacClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.BlurayPac);
-        }
-
         protected void OnBtnDumpClick(object sender, EventArgs e)
         {
             if(scsiInfo.MediaType == MediaType.GDR || scsiInfo.MediaType == MediaType.GDROM)
@@ -387,45 +289,6 @@ namespace DiscImageChef.Gui.Panels
         TextArea     txtMediumSupport;
         Button       btnSaveDensitySupport;
         Button       btnSaveMediumSupport;
-        TabPage      tabCd;
-        TabPage      tabCdInformation;
-        TextArea     txtCdInformation;
-        Button       btnCdInformation;
-        TabPage      tabCdToc;
-        TextArea     txtCdToc;
-        Button       btnCdToc;
-        TabPage      tabCdFullToc;
-        TextArea     txtCdFullToc;
-        Button       btnCdFullToc;
-        TabPage      tabCdSession;
-        TextArea     txtCdSession;
-        Button       btnCdSession;
-        TabPage      tabCdText;
-        TextArea     txtCdText;
-        Button       btnCdText;
-        TabPage      tabCdAtip;
-        TextArea     txtCdAtip;
-        Button       btnCdAtip;
-        TabPage      tabCdMisc;
-        StackLayout  stkMcn;
-        Label        lblMcn;
-        TextBox      txtMcn;
-        GroupBox     grpIsrcs;
-        TreeGridView grdIsrcs;
-        Button       btnCdPma;
-        TabPage      tabDvd;
-        GroupBox     grpDvdPfi;
-        TextArea     txtDvdPfi;
-        GroupBox     grpDvdCmi;
-        TextArea     txtDvdCmi;
-        GroupBox     grpHdDvdCmi;
-        TextArea     txtHdDvdCmi;
-        Button       btnSaveDvdPfi;
-        Button       btnSaveDvdDmi;
-        Button       btnSaveDvdCmi;
-        Button       btnSaveHdDvdCmi;
-        Button       btnSaveDvdBca;
-        Button       btnSaveDvdAacs;
         TabPage      tabXbox;
         StackLayout  stkXboxInformation;
         Label        lblXboxL0Video;
@@ -445,53 +308,6 @@ namespace DiscImageChef.Gui.Panels
         GroupBox     grpXboxSs;
         TextArea     txtXboxSs;
         Button       btnSaveXboxSs;
-        GroupBox     grpDvdRamDds;
-        TextArea     txtDvdRamDds;
-        GroupBox     grpDvdRamCartridgeStatus;
-        TextArea     txtDvdRamCartridgeStatus;
-        GroupBox     grpDvdRamSpareAreaInformation;
-        TextArea     txtDvdRamSpareAreaInformation;
-        Button       btnSaveDvdRamDds;
-        Button       btnSaveDvdRamCartridgeStatus;
-        Button       btnSaveDvdRamSpareAreaInformation;
-        TabPage      tabDvdr;
-        Button       btnSaveLastBorderOutRmd;
-        Button       btnSaveDvdPreRecordedInfo;
-        Button       btnSaveDvdrMediaIdentifier;
-        Button       btnSaveDvdrPhysicalInformation;
-        Button       btnSaveHddvdrMediumStatus;
-        Button       btnSaveHddvdrLastRmd;
-        Button       btnSaveDvdrLayerCapacity;
-        Button       btnSaveDvdrDlMiddleZoneStart;
-        Button       btnSaveDvdrDlJumpIntervalSize;
-        Button       btnSaveDvdrDlManualLayerJumpStartLba;
-        Button       btnSaveDvdrDlRemapAnchorPoint;
-        Button       btnSaveDvdPlusAdip;
-        Button       btnSaveDvdPlusDcb;
-        TabPage      tabBluray;
-        GroupBox     grpBlurayDiscInformation;
-        TextArea     txtBlurayDiscInformation;
-        GroupBox     grpBlurayBurstCuttingArea;
-        TextArea     txtBlurayBurstCuttingArea;
-        GroupBox     grpBlurayDds;
-        TextArea     txtBlurayDds;
-        GroupBox     grpBlurayCartridgeStatus;
-        TextArea     txtBlurayCartridgeStatus;
-        GroupBox     grpBluraySpareAreaInformation;
-        TextArea     txtBluraySpareAreaInformation;
-        GroupBox     grpBlurayPowResources;
-        TextArea     txtBlurayPowResources;
-        GroupBox     grpBlurayTrackResources;
-        TextArea     txtBlurayTrackResources;
-        Button       btnSaveBlurayDiscInformation;
-        Button       btnSaveBlurayBurstCuttingArea;
-        Button       btnSaveBlurayDds;
-        Button       btnSaveBlurayCartridgeStatus;
-        Button       btnSaveBluraySpareAreaInformation;
-        Button       btnSaveBlurayPowResources;
-        Button       btnSaveBlurayTrackResources;
-        Button       btnSaveBlurayRawDfl;
-        Button       btnSaveBlurayPac;
         Button       btnDump;
         ImageView    imgMediaLogo;
         SvgImageView svgMediaLogo;

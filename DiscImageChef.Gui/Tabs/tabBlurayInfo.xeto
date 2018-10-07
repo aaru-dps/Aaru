@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+// /***************************************************************************
+// The Disc Image Chef
+// ============================================================================
+//
+// Filename       : pnlScsiInfo.xeto
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : SCSI media information panel.
+//
+// ==[ Description ] ==========================================================
+//
+//     Defines the structure for the SCSI media information panel.
+//
+// ==[ License ] ==============================================================
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ============================================================================
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+-->
+
+<TabPage Text="Blu-ray" Visible="False" xmlns="http://schema.picoe.ca/eto.forms"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackLayout Orientation="Vertical">
+        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+            <GroupBox ID="grpBlurayDiscInformation" Text="Disc information" Visible="False">
+                <TextArea ID="txtBlurayDiscInformation" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+            <GroupBox ID="grpBlurayBurstCuttingArea" Text="Burst Cutting Area" Visible="False">
+                <TextArea ID="txtBlurayBurstCuttingArea" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+            <GroupBox ID="grpBlurayDds" Text="Disc Definition Structure" Visible="False">
+                <TextArea ID="txtBlurayDds" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+            <GroupBox ID="grpBlurayCartridgeStatus" Text="Cartridge Status" Visible="False">
+                <TextArea ID="txtBlurayCartridgeStatus" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+            <GroupBox ID="grpBluraySpareAreaInformation" Text="Spare Area Information" Visible="False">
+                <TextArea ID="txtBluraySpareAreaInformation" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+            <GroupBox ID="grpBlurayPowResources" Text="Pseudo-OverWrite Resources" Visible="False">
+                <TextArea ID="txtBlurayPowResources" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+            <GroupBox ID="grpBlurayTrackResources" Text="Track Resources" Visible="False">
+                <TextArea ID="txtBlurayTrackResources" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <Button Click="OnBtnSaveBlurayDiscInformationClick" ID="btnSaveBlurayDiscInformation"
+                Text="Save Disc Information" Visible="False"/>
+        <Button Click="OnBtnSaveBlurayBurstCuttingAreaClick" ID="btnSaveBlurayBurstCuttingArea"
+                Text="Save Burst Cutting Area" Visible="False"/>
+        <Button Click="OnBtnSaveBlurayDdsClick" ID="btnSaveBlurayDds" Text="Save Disc Definition Structure"
+                Visible="False"/>
+        <Button Click="OnBtnSaveBlurayCartridgeStatusClick" ID="btnSaveBlurayCartridgeStatus"
+                Text="Save Cartridge Status" Visible="False"/>
+        <Button Click="OnBtnSaveBluraySpareAreaInformationClick" ID="btnSaveBluraySpareAreaInformation"
+                Text="Save Spare Area Information" Visible="False"/>
+        <Button Click="OnBtnSaveBlurayPowResourcesClick" ID="btnSaveBlurayPowResources"
+                Text="Save Pseudo-OverWrite Resources" Visible="False"/>
+        <Button Click="OnBtnSaveBlurayTrackResourcesClick" ID="btnSaveBlurayTrackResources" Text="Save Track Resources"
+                Visible="False"/>
+        <Button Click="OnBtnSaveBlurayRawDflClick" ID="btnSaveBlurayRawDfl" Text="Save raw DFL" Visible="False"/>
+        <Button Click="OnBtnSaveBlurayPacClick" ID="btnSaveBlurayPac" Text="Save PAC" Visible="False"/>
+    </StackLayout>
+</TabPage>
