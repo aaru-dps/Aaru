@@ -44,6 +44,7 @@ using DiscImageChef.Devices;
 using DiscImageChef.Gui.Tabs;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
+using Schemas;
 using Session = DiscImageChef.CommonTypes.Structs.Session;
 
 namespace DiscImageChef.Gui.Panels
@@ -718,6 +719,42 @@ namespace DiscImageChef.Gui.Panels
             {
                 // ignored
             }
+
+            if(imageFormat.DumpHardware == null) return;
+
+            TreeGridItemCollection dumpHardwareList = new TreeGridItemCollection();
+
+            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Manufacturer", DataCell = new TextBoxCell(0)});
+            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Model", DataCell        = new TextBoxCell(1)});
+            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Serial", DataCell       = new TextBoxCell(2)});
+            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Software", DataCell     = new TextBoxCell(3)});
+            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Version", DataCell      = new TextBoxCell(4)});
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "Operating system", DataCell = new TextBoxCell(5)
+            });
+            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Start", DataCell = new TextBoxCell(6)});
+            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "End", DataCell   = new TextBoxCell(7)});
+
+            treeDumpHardware.AllowMultipleSelection = false;
+            treeDumpHardware.ShowHeader             = true;
+            treeDumpHardware.DataStore              = dumpHardwareList;
+
+            foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+            {
+                foreach(ExtentType extent in dump.Extents)
+                    dumpHardwareList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            dump.Manufacturer, dump.Model, dump.Serial, dump.Software.Name,
+                            dump.Software.Version, dump.Software.OperatingSystem,
+                            extent.Start, extent.End
+                        }
+                    });
+            }
+
+            tabDumpHardware.Visible = true;
         }
 
         #region XAML controls
@@ -761,6 +798,8 @@ namespace DiscImageChef.Gui.Panels
         TreeGridView treeSessions;
         TabPage      tabTracks;
         TreeGridView treeTracks;
+        TabPage      tabDumpHardware;
+        TreeGridView treeDumpHardware;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

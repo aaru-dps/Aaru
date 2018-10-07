@@ -96,6 +96,13 @@
                     </StackLayoutItem>
                 </StackLayout>
             </TabPage>
+            <TabPage ID="tabDumpHardware" Text="Dump hardware" Visible="False">
+                <StackLayout Orientation="Vertical">
+                    <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                        <TreeGridView ID="treeDumpHardware"/>
+                    </StackLayoutItem>
+                </StackLayout>
+            </TabPage>
         </TabControl>
     </StackLayout>
 </Panel>
