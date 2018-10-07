@@ -156,27 +156,6 @@
                         </StackLayoutItem>
                     </StackLayout>
                 </TabPage>
-                <TabPage ID="tabPcmcia" Text="PCMCIA" Visible="False">
-                    <StackLayout Orientation="Vertical">
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <StackLayout Orientation="Horizontal">
-                                <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Stretch" Expand="True">
-                                    <TreeGridView ID="treePcmcia"
-                                                  SelectedItemChanged="OnTreePcmciaSelectedItemChanged"/>
-                                </StackLayoutItem>
-                                <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Stretch" Expand="True">
-                                    <TextArea ID="txtPcmciaCis" ReadOnly="True"/>
-                                </StackLayoutItem>
-                            </StackLayout>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                            <StackLayout Orientation="Horizontal">
-                                <Button ID="btnSavePcmciaCis" Text="Save PCMCIA CIS to file"
-                                        Click="OnBtnSavePcmciaCis"/>
-                            </StackLayout>
-                        </StackLayoutItem>
-                    </StackLayout>
-                </TabPage>
                 <TabPage ID="tabPlextor" Text="Plextor" Visible="False">
                     <StackLayout Orientation="Vertical">
                         <StackLayoutItem HorizontalAlignment="Stretch">

@@ -563,6 +563,16 @@ namespace DiscImageChef.Gui.Panels
             tabXboxInfo tabXboxInfo = new tabXboxInfo();
             tabXboxInfo.LoadData(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector);
             tabInfos.Pages.Add(tabXboxInfo);
+
+            byte[] pcmciaCis = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+                pcmciaCis = imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
+
+            tabPcmciaInfo tabPcmciaInfo = new tabPcmciaInfo();
+            tabPcmciaInfo.LoadData(pcmciaCis);
+            tabInfos.Pages.Add(tabPcmciaInfo);
         }
 
         #region XAML controls

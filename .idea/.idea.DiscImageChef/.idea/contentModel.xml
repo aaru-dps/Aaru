@@ -1622,6 +1622,8 @@
           <e p="tabDvdInfo.xeto.cs" t="Include" />
           <e p="tabDvdWritableInfo.xeto" t="Include" />
           <e p="tabDvdWritableInfo.xeto.cs" t="Include" />
+          <e p="tabPcmciaInfo.xeto" t="Include" />
+          <e p="tabPcmciaInfo.xeto.cs" t="Include" />
           <e p="tabScsiInfo.xeto" t="Include" />
           <e p="tabScsiInfo.xeto.cs" t="Include" />
           <e p="tabXboxInfo.xeto" t="Include" />

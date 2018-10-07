@@ -41,7 +41,7 @@ namespace DiscImageChef.Gui.Panels
 {
     public class tabXboxInfo : TabPage
     {
-        byte[] XboxSecuritySector;
+        byte[] xboxSecuritySector;
 
         public tabXboxInfo()
         {
@@ -51,7 +51,7 @@ namespace DiscImageChef.Gui.Panels
         internal void LoadData(XgdInfo            xgdInfo, byte[] dmi, byte[] securitySector,
                                SS.SecuritySector? decodedSecuritySector)
         {
-            XboxSecuritySector = securitySector;
+            xboxSecuritySector = securitySector;
 
             if(xgdInfo != null)
             {
@@ -105,7 +105,7 @@ namespace DiscImageChef.Gui.Panels
 
         protected void OnBtnSaveXboxSsClick(object sender, EventArgs e)
         {
-            SaveElement(XboxSecuritySector);
+            SaveElement(xboxSecuritySector);
         }
 
         #region XAML controls
