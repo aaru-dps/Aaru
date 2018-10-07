@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -185,19 +186,64 @@ namespace DiscImageChef.Gui.Forms
                         ResourceHandler
                            .GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
 
-                    imagesRoot.Children.Add(new TreeGridItem
+                    TreeGridItem imageGridItem = new TreeGridItem
                     {
                         Values = new object[]
                         {
                             logo == null ? null : new Bitmap(logo),
                             $"{Path.GetFileName(dlgOpenImage.FileName)} ({imageFormat.Info.MediaType})",
                             dlgOpenImage.FileName,
-                            new pnlImageInfo(dlgOpenImage.FileName, inputFilter,
-                                             imageFormat),
-                            inputFilter, imageFormat
+                            new pnlImageInfo(dlgOpenImage.FileName, inputFilter, imageFormat), inputFilter,
+                            imageFormat
                         }
-                    });
+                    };
 
+                    List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                    Core.Partitions.AddSchemesToStats(partitions);
+
+                    bool checkraw = false;
+
+                    if(partitions.Count == 0)
+                    {
+                        DicConsole.DebugWriteLine("Analyze command", "No partitions found");
+
+                        checkraw = true;
+                    }
+                    else
+                    {
+                        DicConsole.WriteLine("{0} partitions found.", partitions.Count);
+
+                        foreach(string scheme in partitions.Select(p => p.Scheme).Distinct().OrderBy(s => s))
+                        {
+                            TreeGridItem schemeGridItem = new TreeGridItem
+                            {
+                                Values = new object[]
+                                {
+                                    nullImage, // TODO: Add icons to partition schemes
+                                    scheme
+                                }
+                            };
+
+                            foreach(Partition partition in partitions
+                                                          .Where(p => p.Scheme == scheme).OrderBy(p => p.Start))
+                            {
+                                TreeGridItem partitionGridItem = new TreeGridItem
+                                {
+                                    Values = new object[]
+                                    {
+                                        nullImage, // TODO: Add icons to partition schemes
+                                        $"{partition.Name} ({partition.Type})", null, new pnlPartition(partition)
+                                    }
+                                };
+
+                                schemeGridItem.Children.Add(partitionGridItem);
+                            }
+
+                            imageGridItem.Children.Add(schemeGridItem);
+                        }
+                    }
+
+                    imagesRoot.Children.Add(imageGridItem);
                     treeImages.ReloadData();
 
                     Statistics.AddMediaFormat(imageFormat.Format);

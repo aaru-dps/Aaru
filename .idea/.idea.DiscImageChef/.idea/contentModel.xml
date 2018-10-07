@@ -1624,6 +1624,8 @@
           <e p="pnlDeviceInfo.xeto.cs" t="Include" />
           <e p="pnlImageInfo.xeto" t="Include" />
           <e p="pnlImageInfo.xeto.cs" t="Include" />
+          <e p="pnlPartition.xeto" t="Include" />
+          <e p="pnlPartition.xeto.cs" t="Include" />
           <e p="pnlScsiInfo.xeto" t="Include" />
           <e p="pnlScsiInfo.xeto.cs" t="Include" />
         </e>
