@@ -35,6 +35,7 @@ using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
@@ -679,6 +680,44 @@ namespace DiscImageChef.Gui.Panels
             {
                 // ignored
             }
+
+            try
+            {
+                if(imageFormat.Tracks != null && imageFormat.Tracks.Count > 0)
+                {
+                    TreeGridItemCollection tracksList = new TreeGridItemCollection();
+
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "Track", DataCell      = new TextBoxCell(0)});
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "Type", DataCell       = new TextBoxCell(1)});
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "Bps", DataCell        = new TextBoxCell(2)});
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "Raw bps", DataCell    = new TextBoxCell(3)});
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "Subchannel", DataCell = new TextBoxCell(4)});
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "Pregap", DataCell     = new TextBoxCell(5)});
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "Start", DataCell      = new TextBoxCell(6)});
+                    treeTracks.Columns.Add(new GridColumn {HeaderText = "End", DataCell        = new TextBoxCell(7)});
+
+                    treeTracks.AllowMultipleSelection = false;
+                    treeTracks.ShowHeader             = true;
+                    treeTracks.DataStore              = tracksList;
+
+                    foreach(Track track in imageFormat.Tracks)
+                        tracksList.Add(new TreeGridItem
+                        {
+                            Values = new object[]
+                            {
+                                track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
+                                track.TrackRawBytesPerSector, track.TrackSubchannelType,
+                                track.TrackPregap, track.TrackStartSector, track.TrackEndSector
+                            }
+                        });
+
+                    tabTracks.Visible = true;
+                }
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         #region XAML controls
@@ -720,6 +759,8 @@ namespace DiscImageChef.Gui.Panels
         TreeGridView treeSectorTags;
         TabPage      tabSessions;
         TreeGridView treeSessions;
+        TabPage      tabTracks;
+        TreeGridView treeTracks;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

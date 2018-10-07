@@ -89,6 +89,13 @@
                     </StackLayoutItem>
                 </StackLayout>
             </TabPage>
+            <TabPage ID="tabTracks" Text="Tracks" Visible="False">
+                <StackLayout Orientation="Vertical">
+                    <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                        <TreeGridView ID="treeTracks"/>
+                    </StackLayoutItem>
+                </StackLayout>
+            </TabPage>
         </TabControl>
     </StackLayout>
 </Panel>
