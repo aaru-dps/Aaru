@@ -148,8 +148,6 @@ namespace DiscImageChef.Gui.Forms
 
                     treeImages.ReloadData();
 
-                    ImageInfo.PrintImageInfo(imageFormat);
-
                     Statistics.AddMediaFormat(imageFormat.Format);
                     Statistics.AddMedia(imageFormat.Info.MediaType, false);
                     Statistics.AddFilter(inputFilter.Name);
