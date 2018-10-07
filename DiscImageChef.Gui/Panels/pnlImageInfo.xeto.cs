@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using Eto.Forms;
@@ -174,40 +175,76 @@ namespace DiscImageChef.Gui.Panels
             grpDriveInfo.Visible = lblDriveManufacturer.Visible || lblDriveModel.Visible            ||
                                    lblDriveSerialNumber.Visible || lblDriveFirmwareRevision.Visible ||
                                    lblMediaGeometry.Visible;
+
+            if(imageFormat.Info.ReadableMediaTags != null && imageFormat.Info.ReadableMediaTags.Count > 0)
+            {
+                TreeGridItemCollection mediaTagList = new TreeGridItemCollection();
+
+                treeMediaTags.Columns.Add(new GridColumn {HeaderText = "Tag", DataCell = new TextBoxCell(0)});
+
+                treeMediaTags.AllowMultipleSelection = false;
+                treeMediaTags.ShowHeader             = false;
+                treeMediaTags.DataStore              = mediaTagList;
+
+                foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
+                    mediaTagList.Add(new TreeGridItem {Values = new object[] {tag.ToString()}});
+
+                grpMediaTags.Visible = true;
+            }
+
+            if(imageFormat.Info.ReadableSectorTags != null && imageFormat.Info.ReadableSectorTags.Count > 0)
+            {
+                TreeGridItemCollection sectorTagList = new TreeGridItemCollection();
+
+                treeSectorTags.Columns.Add(new GridColumn {HeaderText = "Tag", DataCell = new TextBoxCell(0)});
+
+                treeSectorTags.AllowMultipleSelection = false;
+                treeSectorTags.ShowHeader             = false;
+                treeSectorTags.DataStore              = sectorTagList;
+
+                foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
+                    sectorTagList.Add(new TreeGridItem {Values = new object[] {tag.ToString()}});
+
+                grpSectorTags.Visible = true;
+            }
         }
 
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
-        Label    lblImagePath;
-        Label    lblFilter;
-        Label    lblImageFormat;
-        Label    lblApplication;
-        Label    lblImageSize;
-        Label    lblSectors;
-        Label    lblCreator;
-        Label    lblCreationTime;
-        Label    lblLastModificationTime;
-        Label    lblMediaType;
-        Label    lblHasPartitions;
-        Label    lblHasSessions;
-        Label    lblComments;
-        TextArea txtComments;
-        Label    lblMediaSequence;
-        Label    lblMediaTitle;
-        Label    lblMediaManufacturer;
-        Label    lblMediaModel;
-        Label    lblMediaSerialNumber;
-        Label    lblMediaBarcode;
-        Label    lblMediaPartNumber;
-        Label    lblDriveManufacturer;
-        Label    lblDriveModel;
-        Label    lblDriveSerialNumber;
-        Label    lblDriveFirmwareRevision;
-        Label    lblMediaGeometry;
-        GroupBox grpComments;
-        GroupBox grpMediaInfo;
-        GroupBox grpDriveInfo;
+        Label        lblImagePath;
+        Label        lblFilter;
+        Label        lblImageFormat;
+        Label        lblApplication;
+        Label        lblImageSize;
+        Label        lblSectors;
+        Label        lblCreator;
+        Label        lblCreationTime;
+        Label        lblLastModificationTime;
+        Label        lblMediaType;
+        Label        lblHasPartitions;
+        Label        lblHasSessions;
+        Label        lblComments;
+        TextArea     txtComments;
+        Label        lblMediaSequence;
+        Label        lblMediaTitle;
+        Label        lblMediaManufacturer;
+        Label        lblMediaModel;
+        Label        lblMediaSerialNumber;
+        Label        lblMediaBarcode;
+        Label        lblMediaPartNumber;
+        Label        lblDriveManufacturer;
+        Label        lblDriveModel;
+        Label        lblDriveSerialNumber;
+        Label        lblDriveFirmwareRevision;
+        Label        lblMediaGeometry;
+        GroupBox     grpComments;
+        GroupBox     grpMediaInfo;
+        GroupBox     grpDriveInfo;
+        GroupBox     grpMediaTags;
+        TreeGridView treeMediaTags;
+        GroupBox     grpSectorTags;
+        TreeGridView treeSectorTags;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
