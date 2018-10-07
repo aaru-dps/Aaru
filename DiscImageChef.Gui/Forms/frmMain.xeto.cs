@@ -42,16 +42,22 @@ using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Devices;
 using DiscImageChef.Gui.Dialogs;
 using DiscImageChef.Gui.Panels;
+using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
+using ImageFormat = DiscImageChef.Core.ImageFormat;
 
 namespace DiscImageChef.Gui.Forms
 {
     public class frmMain : Form
     {
-        bool                   closing;
-        GridView               grdFiles;
-        Label                  lblError;
+        bool     closing;
+        GridView grdFiles;
+        Label    lblError;
+        /// <summary>
+        ///     This is to remember that column is an image to be set in future
+        /// </summary>
+        Image nullImage;
         TreeGridItem           placeholderItem;
         TreeGridView           treeImages;
         TreeGridItemCollection treeImagesItems;
@@ -60,8 +66,9 @@ namespace DiscImageChef.Gui.Forms
         {
             XamlReader.Load(this);
 
-            lblError = new Label();
-            grdFiles = new GridView();
+            lblError  = new Label();
+            grdFiles  = new GridView();
+            nullImage = null;
 
             ConsoleHandler.Init();
             ConsoleHandler.Debug   = debug;
@@ -69,19 +76,19 @@ namespace DiscImageChef.Gui.Forms
 
             treeImagesItems = new TreeGridItemCollection();
 
-            treeImages.Columns.Add(new GridColumn {HeaderText = "Name", DataCell = new TextBoxCell(0)});
+            treeImages.Columns.Add(new GridColumn {HeaderText = "Name", DataCell = new ImageTextCell(0, 1)});
 
             treeImages.AllowMultipleSelection = false;
             treeImages.ShowHeader             = false;
             treeImages.DataStore              = treeImagesItems;
 
-            imagesRoot  = new TreeGridItem {Values = new object[] {"Images"}};
-            devicesRoot = new TreeGridItem {Values = new object[] {"Devices"}};
+            imagesRoot  = new TreeGridItem {Values = new object[] {nullImage, "Images"}};
+            devicesRoot = new TreeGridItem {Values = new object[] {nullImage, "Devices"}};
 
             treeImagesItems.Add(imagesRoot);
             treeImagesItems.Add(devicesRoot);
 
-            placeholderItem = new TreeGridItem {Values = new object[] {"You should not be seeing this"}};
+            placeholderItem = new TreeGridItem {Values = new object[] {nullImage, "You should not be seeing this"}};
 
             Closing += OnClosing;
         }
@@ -134,10 +141,16 @@ namespace DiscImageChef.Gui.Forms
                         return;
                     }
 
+                    // TODO: SVG
+                    Stream logo =
+                        ResourceHandler
+                           .GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
+
                     imagesRoot.Children.Add(new TreeGridItem
                     {
                         Values = new object[]
                         {
+                            logo == null ? null : new Bitmap(logo),
                             $"{Path.GetFileName(dlgOpenImage.FileName)} ({imageFormat.Info.MediaType})",
                             dlgOpenImage.FileName,
                             new pnlImageInfo(dlgOpenImage.FileName, inputFilter,
@@ -225,7 +238,10 @@ namespace DiscImageChef.Gui.Forms
 
                     TreeGridItem devItem = new TreeGridItem
                     {
-                        Values = new object[] {$"{device.Vendor} {device.Model} ({device.Bus})", device.Path, null}
+                        Values = new object[]
+                        {
+                            nullImage, $"{device.Vendor} {device.Model} ({device.Bus})", device.Path, null
+                        }
                     };
                     devItem.Children.Add(placeholderItem);
                     devicesRoot.Children.Add(devItem);
@@ -259,7 +275,7 @@ namespace DiscImageChef.Gui.Forms
 
             splMain.Panel2 = null;
 
-            if(selectedItem.Values.Length >= 3 && selectedItem.Values[2] is Panel infoPanel)
+            if(selectedItem.Values.Length >= 4 && selectedItem.Values[3] is Panel infoPanel)
             {
                 splMain.Panel2 = infoPanel;
                 return;
@@ -267,28 +283,28 @@ namespace DiscImageChef.Gui.Forms
 
             if(selectedItem.Parent != devicesRoot) return;
 
-            switch(selectedItem.Values[2])
+            switch(selectedItem.Values[3])
             {
                 case null:
                     try
                     {
-                        Device dev = new Device((string)selectedItem.Values[1]);
+                        Device dev = new Device((string)selectedItem.Values[2]);
                         if(dev.Error)
                         {
-                            selectedItem.Values[2] = $"Error {dev.LastError} opening device";
+                            selectedItem.Values[3] = $"Error {dev.LastError} opening device";
                             return;
                         }
 
                         Core.Devices.Info.DeviceInfo devInfo = new Core.Devices.Info.DeviceInfo(dev);
 
-                        selectedItem.Values[2] = new pnlDeviceInfo(devInfo);
-                        splMain.Panel2         = (Panel)selectedItem.Values[2];
+                        selectedItem.Values[3] = new pnlDeviceInfo(devInfo);
+                        splMain.Panel2         = (Panel)selectedItem.Values[3];
 
                         dev.Close();
                     }
                     catch(SystemException ex)
                     {
-                        selectedItem.Values[2] = ex.Message;
+                        selectedItem.Values[3] = ex.Message;
                         lblError.Text          = ex.Message;
                         splMain.Panel2         = lblError;
                         DicConsole.ErrorWriteLine(ex.Message);
@@ -315,10 +331,10 @@ namespace DiscImageChef.Gui.Forms
                 Device dev;
                 try
                 {
-                    dev = new Device((string)deviceItem.Values[1]);
+                    dev = new Device((string)deviceItem.Values[2]);
                     if(dev.Error)
                     {
-                        deviceItem.Values[2] = $"Error {dev.LastError} opening device";
+                        deviceItem.Values[3] = $"Error {dev.LastError} opening device";
                         e.Cancel             = true;
                         treeImages.ReloadData();
                         treeImages.SelectedItem = deviceItem;
@@ -327,7 +343,7 @@ namespace DiscImageChef.Gui.Forms
                 }
                 catch(SystemException ex)
                 {
-                    deviceItem.Values[2] = ex.Message;
+                    deviceItem.Values[3] = ex.Message;
                     e.Cancel             = true;
                     treeImages.ReloadData();
                     DicConsole.ErrorWriteLine(ex.Message);
@@ -340,6 +356,7 @@ namespace DiscImageChef.Gui.Forms
                     {
                         Values = new object[]
                         {
+                            nullImage,
                             "Non-removable device commands not yet implemented"
                         }
                     });
@@ -349,16 +366,27 @@ namespace DiscImageChef.Gui.Forms
                     ScsiInfo scsiInfo = new ScsiInfo(dev);
 
                     if(!scsiInfo.MediaInserted)
-                        deviceItem.Children.Add(new TreeGridItem {Values = new object[] {"No media inserted"}});
+                        deviceItem.Children.Add(new TreeGridItem
+                        {
+                            Values = new object[] {nullImage, "No media inserted"}
+                        });
                     else
+                    {
+                        // TODO: SVG
+                        Stream logo =
+                            ResourceHandler
+                               .GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
+
                         deviceItem.Children.Add(new TreeGridItem
                         {
                             Values = new[]
                             {
-                                scsiInfo.MediaType, deviceItem.Values[1],
-                                new pnlScsiInfo(scsiInfo, (string)deviceItem.Values[1])
+                                logo == null ? null : new Bitmap(logo),
+                                scsiInfo.MediaType, deviceItem.Values[2],
+                                new pnlScsiInfo(scsiInfo, (string)deviceItem.Values[2])
                             }
                         });
+                    }
                 }
 
                 dev.Close();
