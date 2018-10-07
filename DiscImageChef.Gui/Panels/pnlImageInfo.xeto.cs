@@ -423,6 +423,85 @@ namespace DiscImageChef.Gui.Panels
             tabDvdInfo.LoadData(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi, hddvdCopyrightInformation, dvdBca,
                                 null, decodedPfi);
             tabInfos.Pages.Add(tabDvdInfo);
+
+            byte[] dvdRamDds                     = null;
+            byte[] dvdRamCartridgeStatus         = null;
+            byte[] dvdRamSpareArea               = null;
+            byte[] lastBorderOutRmd              = null;
+            byte[] dvdPreRecordedInfo            = null;
+            byte[] dvdrMediaIdentifier           = null;
+            byte[] dvdrPhysicalInformation       = null;
+            byte[] hddvdrMediumStatus            = null;
+            byte[] dvdrLayerCapacity             = null;
+            byte[] dvdrDlMiddleZoneStart         = null;
+            byte[] dvdrDlJumpIntervalSize        = null;
+            byte[] dvdrDlManualLayerJumpStartLba = null;
+            byte[] dvdPlusAdip                   = null;
+            byte[] dvdPlusDcb                    = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDRAM_DDS))
+                dvdRamDds = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_DDS);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDRAM_MediumStatus))
+                dvdRamCartridgeStatus = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_MediumStatus);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDRAM_SpareArea))
+                dvdRamSpareArea = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_SpareArea);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDR_RMD))
+                lastBorderOutRmd = imageFormat.ReadDiskTag(MediaTagType.DVDR_RMD);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDR_PreRecordedInfo))
+                dvdPreRecordedInfo = imageFormat.ReadDiskTag(MediaTagType.DVDR_PreRecordedInfo);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDR_MediaIdentifier))
+                dvdrMediaIdentifier = imageFormat.ReadDiskTag(MediaTagType.DVDR_MediaIdentifier);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDR_PFI))
+                dvdrPhysicalInformation = imageFormat.ReadDiskTag(MediaTagType.DVDR_PFI);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.HDDVD_MediumStatus))
+                hddvdrMediumStatus = imageFormat.ReadDiskTag(MediaTagType.HDDVD_MediumStatus);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDDL_LayerCapacity))
+                dvdrLayerCapacity = imageFormat.ReadDiskTag(MediaTagType.DVDDL_LayerCapacity);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDDL_MiddleZoneAddress))
+                dvdrDlMiddleZoneStart = imageFormat.ReadDiskTag(MediaTagType.DVDDL_MiddleZoneAddress);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDDL_JumpIntervalSize))
+                dvdrDlJumpIntervalSize = imageFormat.ReadDiskTag(MediaTagType.DVDDL_JumpIntervalSize);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDDL_ManualLayerJumpLBA))
+                dvdrDlManualLayerJumpStartLba = imageFormat.ReadDiskTag(MediaTagType.DVDDL_ManualLayerJumpLBA);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_ADIP))
+                dvdPlusAdip = imageFormat.ReadDiskTag(MediaTagType.DVD_ADIP);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DCB))
+                dvdPlusDcb = imageFormat.ReadDiskTag(MediaTagType.DCB);
+
+            tabDvdWritableInfo tabDvdWritableInfo = new tabDvdWritableInfo();
+            tabDvdWritableInfo.LoadData(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus, dvdRamSpareArea,
+                                        lastBorderOutRmd, dvdPreRecordedInfo, dvdrMediaIdentifier,
+                                        dvdrPhysicalInformation, hddvdrMediumStatus, null, dvdrLayerCapacity,
+                                        dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize, dvdrDlManualLayerJumpStartLba,
+                                        null, dvdPlusAdip, dvdPlusDcb);
+            tabInfos.Pages.Add(tabDvdWritableInfo);
         }
 
         #region XAML controls

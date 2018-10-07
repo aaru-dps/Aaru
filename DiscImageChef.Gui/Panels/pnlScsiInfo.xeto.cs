@@ -45,10 +45,6 @@ using DiscImageChef.Gui.Tabs;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
-using DDS = DiscImageChef.Decoders.DVD.DDS;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Spare = DiscImageChef.Decoders.DVD.Spare;
 
 namespace DiscImageChef.Gui.Panels
 {
@@ -79,52 +75,6 @@ namespace DiscImageChef.Gui.Panels
                 imgMediaLogo.Visible = true;
             }
             //}
-
-            switch(this.scsiInfo.MediaType)
-            {
-                case MediaType.DVDR:
-                    tabDvdr.Text = "DVD-R";
-                    break;
-                case MediaType.DVDRW:
-                    tabDvdr.Text = "DVD-RW";
-                    break;
-                case MediaType.DVDPR:
-                    tabDvdr.Text = "DVD+R";
-                    break;
-                case MediaType.DVDPRW:
-                    tabDvdr.Text = "DVD+RW";
-                    break;
-                case MediaType.DVDPRWDL:
-                    tabDvdr.Text = "DVD+RW DL";
-                    break;
-                case MediaType.DVDRDL:
-                    tabDvdr.Text = "DVD-R DL";
-                    break;
-                case MediaType.DVDPRDL:
-                    tabDvdr.Text = "DVD+R DL";
-                    break;
-                case MediaType.DVDRAM:
-                    tabDvdr.Text = "DVD-RAM";
-                    break;
-                case MediaType.DVDRWDL:
-                    tabDvdr.Text = "DVD-RW DL";
-                    break;
-                case MediaType.HDDVDRAM:
-                    tabDvdr.Text = "HD DVD-RAM";
-                    break;
-                case MediaType.HDDVDR:
-                    tabDvdr.Text = "HD DVD-R";
-                    break;
-                case MediaType.HDDVDRW:
-                    tabDvdr.Text = "HD DVD-RW";
-                    break;
-                case MediaType.HDDVDRDL:
-                    tabDvdr.Text = "HD DVD-R DL";
-                    break;
-                case MediaType.HDDVDRWDL:
-                    tabDvdr.Text = "HD DVD-RW DL";
-                    break;
-            }
 
             txtType.Text = scsiInfo.MediaType.ToString();
             lblMediaSize.Text =
@@ -218,54 +168,16 @@ namespace DiscImageChef.Gui.Panels
             tabXbox.Visible = stkXboxInformation.Visible || grpXboxDmi.Visible || grpXboxSs.Visible ||
                               btnSaveXboxSs.Visible;
 
-            if(this.scsiInfo.DvdRamDds != null)
-            {
-                grpDvdRamDds.Visible     = true;
-                btnSaveDvdRamDds.Visible = true;
-                txtDvdRamDds.Text        = DDS.Prettify(this.scsiInfo.DvdRamDds);
-            }
-
-            if(this.scsiInfo.DvdRamCartridgeStatus != null)
-            {
-                grpDvdRamCartridgeStatus.Visible     = true;
-                btnSaveDvdRamCartridgeStatus.Visible = true;
-                txtDvdRamCartridgeStatus.Text        = Cartridge.Prettify(this.scsiInfo.DvdRamCartridgeStatus);
-            }
-
-            if(this.scsiInfo.DvdRamSpareArea != null)
-            {
-                grpDvdRamSpareAreaInformation.Visible     = true;
-                btnSaveDvdRamSpareAreaInformation.Visible = true;
-                txtDvdRamSpareAreaInformation.Text        = Spare.Prettify(this.scsiInfo.DvdRamSpareArea);
-            }
-
-            btnSaveDvdRamDds.Visible                     = this.scsiInfo.DvdRamDds                     != null;
-            btnSaveDvdRamCartridgeStatus.Visible         = this.scsiInfo.DvdRamCartridgeStatus         != null;
-            btnSaveDvdRamSpareAreaInformation.Visible    = this.scsiInfo.DvdRamSpareArea               != null;
-            btnSaveLastBorderOutRmd.Visible              = this.scsiInfo.LastBorderOutRmd              != null;
-            btnSaveDvdPreRecordedInfo.Visible            = this.scsiInfo.DvdPreRecordedInfo            != null;
-            btnSaveDvdrMediaIdentifier.Visible           = this.scsiInfo.DvdrMediaIdentifier           != null;
-            btnSaveDvdrPhysicalInformation.Visible       = this.scsiInfo.DvdrPhysicalInformation       != null;
-            btnSaveHddvdrMediumStatus.Visible            = this.scsiInfo.HddvdrMediumStatus            != null;
-            btnSaveHddvdrLastRmd.Visible                 = this.scsiInfo.HddvdrLastRmd                 != null;
-            btnSaveDvdrLayerCapacity.Visible             = this.scsiInfo.DvdrLayerCapacity             != null;
-            btnSaveDvdrDlMiddleZoneStart.Visible         = this.scsiInfo.DvdrDlMiddleZoneStart         != null;
-            btnSaveDvdrDlJumpIntervalSize.Visible        = this.scsiInfo.DvdrDlJumpIntervalSize        != null;
-            btnSaveDvdrDlManualLayerJumpStartLba.Visible = this.scsiInfo.DvdrDlManualLayerJumpStartLba != null;
-            btnSaveDvdrDlRemapAnchorPoint.Visible        = this.scsiInfo.DvdrDlRemapAnchorPoint        != null;
-            btnSaveDvdPlusAdip.Visible                   = this.scsiInfo.DvdPlusAdip                   != null;
-            btnSaveDvdPlusDcb.Visible                    = this.scsiInfo.DvdPlusDcb                    != null;
-
-            tabDvdr.Visible = grpDvdRamDds.Visible                  || grpDvdRamCartridgeStatus.Visible             ||
-                              grpDvdRamSpareAreaInformation.Visible || btnSaveDvdRamDds.Visible                     ||
-                              btnSaveDvdRamCartridgeStatus.Visible  || btnSaveDvdRamSpareAreaInformation.Visible    ||
-                              btnSaveLastBorderOutRmd.Visible       || btnSaveDvdPreRecordedInfo.Visible            ||
-                              btnSaveDvdrMediaIdentifier.Visible    || btnSaveDvdrPhysicalInformation.Visible       ||
-                              btnSaveHddvdrMediumStatus.Visible     || btnSaveHddvdrLastRmd.Visible                 ||
-                              btnSaveDvdrLayerCapacity.Visible      || btnSaveDvdrDlMiddleZoneStart.Visible         ||
-                              btnSaveDvdrDlJumpIntervalSize.Visible || btnSaveDvdrDlManualLayerJumpStartLba.Visible ||
-                              btnSaveDvdrDlRemapAnchorPoint.Visible || btnSaveDvdPlusAdip.Visible                   ||
-                              btnSaveDvdPlusDcb.Visible;
+            tabDvdWritableInfo tabDvdWritableInfo = new tabDvdWritableInfo();
+            tabDvdWritableInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdRamDds, scsiInfo.DvdRamCartridgeStatus,
+                                        scsiInfo.DvdRamSpareArea, scsiInfo.LastBorderOutRmd,
+                                        scsiInfo.DvdPreRecordedInfo, scsiInfo.DvdrMediaIdentifier,
+                                        scsiInfo.DvdrPhysicalInformation, scsiInfo.HddvdrMediumStatus,
+                                        scsiInfo.HddvdrLastRmd, scsiInfo.DvdrLayerCapacity,
+                                        scsiInfo.DvdrDlMiddleZoneStart, scsiInfo.DvdrDlJumpIntervalSize,
+                                        scsiInfo.DvdrDlManualLayerJumpStartLba, scsiInfo.DvdrDlRemapAnchorPoint,
+                                        scsiInfo.DvdPlusAdip, scsiInfo.DvdPlusDcb);
+            tabInfos.Pages.Add(tabDvdWritableInfo);
 
             if(this.scsiInfo.BlurayDiscInformation != null)
             {
@@ -285,23 +197,21 @@ namespace DiscImageChef.Gui.Panels
             {
                 grpBlurayDds.Visible     = true;
                 btnSaveBlurayDds.Visible = true;
-                txtBlurayDds.Text        = Decoders.Bluray.DDS.Prettify(this.scsiInfo.BlurayDds);
+                txtBlurayDds.Text        = DDS.Prettify(this.scsiInfo.BlurayDds);
             }
 
             if(this.scsiInfo.BlurayCartridgeStatus != null)
             {
                 grpBlurayCartridgeStatus.Visible     = true;
                 btnSaveBlurayCartridgeStatus.Visible = true;
-                txtBlurayCartridgeStatus.Text =
-                    Decoders.Bluray.Cartridge.Prettify(this.scsiInfo.BlurayCartridgeStatus);
+                txtBlurayCartridgeStatus.Text        = Cartridge.Prettify(this.scsiInfo.BlurayCartridgeStatus);
             }
 
             if(this.scsiInfo.BluraySpareAreaInformation != null)
             {
                 grpBluraySpareAreaInformation.Visible     = true;
                 btnSaveBluraySpareAreaInformation.Visible = true;
-                txtBluraySpareAreaInformation.Text =
-                    Decoders.Bluray.Spare.Prettify(this.scsiInfo.BluraySpareAreaInformation);
+                txtBluraySpareAreaInformation.Text        = Spare.Prettify(this.scsiInfo.BluraySpareAreaInformation);
             }
 
             if(this.scsiInfo.BlurayPowResources != null)
@@ -384,154 +294,9 @@ namespace DiscImageChef.Gui.Panels
             SaveElement(scsiInfo.MediaTypeSupport);
         }
 
-        protected void OnBtnCdInformationClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.CompactDiscInformation);
-        }
-
-        protected void OnBtnCdTocClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.Toc);
-        }
-
-        protected void OnBtnCdFullTocClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.RawToc);
-        }
-
-        protected void OnBtnCdSessionClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.Session);
-        }
-
-        protected void OnBtnCdTextClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.CdTextLeadIn);
-        }
-
-        protected void OnBtnCdAtipClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.Atip);
-        }
-
-        protected void OnBtnCdPmaClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.Pma);
-        }
-
-        protected void OnBtnSaveDvdPfiClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdPfi);
-        }
-
-        protected void OnBtnSaveDvdDmiClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdDmi);
-        }
-
-        protected void OnBtnSaveDvdCmiClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdCmi);
-        }
-
-        protected void OnBtnSaveHdDvdCmiClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.HddvdCopyrightInformation);
-        }
-
-        protected void OnBtnSaveDvdBcaClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdBca);
-        }
-
-        protected void OnBtnSaveDvdAacsClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdAacs);
-        }
-
         protected void OnBtnSaveXboxSsClick(object sender, EventArgs e)
         {
             SaveElement(scsiInfo.XboxSecuritySector);
-        }
-
-        protected void OnBtnSaveDvdRamDdsClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdRamDds);
-        }
-
-        protected void OnBtnSaveDvdRamCartridgeStatusClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdRamCartridgeStatus);
-        }
-
-        protected void OnBtnSaveDvdRamSpareAreaInformationClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdRamSpareArea);
-        }
-
-        protected void OnBtnSaveLastBorderOutRmdClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.LastBorderOutRmd);
-        }
-
-        protected void OnBtnSaveDvdPreRecordedInfoClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdPreRecordedInfo);
-        }
-
-        protected void OnBtnSaveDvdrMediaIdentifierClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdrMediaIdentifier);
-        }
-
-        protected void OnBtnSaveDvdrPhysicalInformationClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdrPhysicalInformation);
-        }
-
-        protected void OnBtnSaveHddvdrMediumStatusClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.HddvdrMediumStatus);
-        }
-
-        protected void OnBtnSaveHddvdrLastRmdClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.HddvdrLastRmd);
-        }
-
-        protected void OnBtnSaveDvdrLayerCapacityClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdrLayerCapacity);
-        }
-
-        protected void OnBtnSaveDvdrDlMiddleZoneStartClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdrDlMiddleZoneStart);
-        }
-
-        protected void OnBtnSaveDvdrDlJumpIntervalSizeClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdrDlJumpIntervalSize);
-        }
-
-        protected void OnBtnSaveDvdrDlManualLayerJumpStartLbaClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdrDlManualLayerJumpStartLba);
-        }
-
-        protected void OnBtnSaveDvdrDlRemapAnchorPointClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdrDlRemapAnchorPoint);
-        }
-
-        protected void OnBtnSaveDvdPlusAdipClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdPlusAdip);
-        }
-
-        protected void OnBtnSaveDvdPlusDcbClick(object sender, EventArgs e)
-        {
-            SaveElement(scsiInfo.DvdPlusDcb);
         }
 
         protected void OnBtnSaveBlurayDiscInformationClick(object sender, EventArgs e)
