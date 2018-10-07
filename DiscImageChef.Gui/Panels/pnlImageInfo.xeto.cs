@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes.Enums;
@@ -41,7 +42,9 @@ using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
+using DiscImageChef.Gui.Controls;
 using DiscImageChef.Gui.Tabs;
+using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
@@ -54,6 +57,26 @@ namespace DiscImageChef.Gui.Panels
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
         {
             XamlReader.Load(this);
+
+            Stream logo =
+                ResourceHandler
+                   .GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.svg");
+            /*            if(logo != null)
+                        {
+                            svgMediaLogo.SvgStream = logo;
+                            svgMediaLogo.Visible   = true;
+                        }
+                        else
+                        {*/
+            logo =
+                ResourceHandler
+                   .GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
+            if(logo != null)
+            {
+                imgMediaLogo.Image   = new Bitmap(logo);
+                imgMediaLogo.Visible = true;
+            }
+            //}
 
             lblImagePath.Text   = $"Path: {imagePath}";
             lblFilter.Text      = $"Filter: {filter.Name}";
@@ -800,6 +823,8 @@ namespace DiscImageChef.Gui.Panels
         TreeGridView treeTracks;
         TabPage      tabDumpHardware;
         TreeGridView treeDumpHardware;
+        ImageView    imgMediaLogo;
+        SvgImageView svgMediaLogo;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
