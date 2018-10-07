@@ -94,11 +94,11 @@ namespace DiscImageChef.Gui.Panels
 
                 TreeGridItemCollection cisList = new TreeGridItemCollection();
 
-                treeMmcFeatures.Columns.Add(new GridColumn {HeaderText = "CIS", DataCell = new TextBoxCell(0)});
+                treePcmcia.Columns.Add(new GridColumn {HeaderText = "CIS", DataCell = new TextBoxCell(0)});
 
-                treeMmcFeatures.AllowMultipleSelection = false;
-                treeMmcFeatures.ShowHeader             = false;
-                treeMmcFeatures.DataStore              = cisList;
+                treePcmcia.AllowMultipleSelection = false;
+                treePcmcia.ShowHeader             = false;
+                treePcmcia.DataStore              = cisList;
 
                 Tuple[] tuples = CIS.GetTuples(devInfo.Cis);
                 if(tuples != null)
