@@ -31,7 +31,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 -->
-<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:DiscImageChef.Gui.Controls;assembly=DiscImageChef.Gui">
+<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:local="clr-namespace:DiscImageChef.Gui.Controls;assembly=DiscImageChef.Gui">
     <StackLayout Orientation="Vertical">
         <StackLayoutItem HorizontalAlignment="Center">
             <Label ID="lblMediaInfo" Text="Media information"/>
@@ -98,111 +99,6 @@
                                 Text="Save REPORT DENSITY SUPPORT (MEDIA) response" Visible="False"/>
                         <Button Click="OnBtnSaveMediumSupportClick" ID="btnSaveMediumSupport"
                                 Text="Save REPORT DENSITY SUPPORT (MEDIUM &amp; MEDIA) response" Visible="False"/>
-                    </StackLayout>
-                </TabPage>
-                <TabPage ID="tabCd" Text="CompactDisc" Visible="False">
-                    <TabControl>
-                        <TabPage ID="tabCdInformation" Text="Information" Visible="False">
-                            <StackLayout Orientation="Vertical">
-                                <StackLayoutItem Expand="True" VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch">
-                                    <TextArea ID="txtCdInformation" ReadOnly="True"/>
-                                </StackLayoutItem>
-                                <Button Click="OnBtnCdInformationClick" ID="btnCdInformation"
-                                        Text="Save READ DISC INFORMATION response"/>
-                            </StackLayout>
-                        </TabPage>
-                        <TabPage ID="tabCdToc" Text="TOC" Visible="False">
-                            <StackLayout Orientation="Vertical">
-                                <StackLayoutItem Expand="True" VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch">
-                                    <TextArea ID="txtCdToc" ReadOnly="True"/>
-                                </StackLayoutItem>
-                                <Button Click="OnBtnCdTocClick" ID="btnCdToc" Text="Save READ TOC response"/>
-                            </StackLayout>
-                        </TabPage>
-                        <TabPage ID="tabCdFullToc" Text="TOC (full)" Visible="False">
-                            <StackLayout Orientation="Vertical">
-                                <StackLayoutItem Expand="True" VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch">
-                                    <TextArea ID="txtCdFullToc" ReadOnly="True"/>
-                                </StackLayoutItem>
-                                <Button Click="OnBtnCdFullTocClick" ID="btnCdFullToc"
-                                        Text="Save READ RAW TOC response"/>
-                            </StackLayout>
-                        </TabPage>
-                        <TabPage ID="tabCdSession" Text="Session" Visible="False">
-                            <StackLayout Orientation="Vertical">
-                                <StackLayoutItem Expand="True" VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch">
-                                    <TextArea ID="txtCdSession" ReadOnly="True"/>
-                                </StackLayoutItem>
-                                <Button Click="OnBtnCdSessionClick" ID="btnCdSession"
-                                        Text="Save READ SESSION response"/>
-                            </StackLayout>
-                        </TabPage>
-                        <TabPage ID="tabCdText" Text="CD-TEXT" Visible="False">
-                            <StackLayout Orientation="Vertical">
-                                <StackLayoutItem Expand="True" VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch">
-                                    <TextArea ID="txtCdText" ReadOnly="True"/>
-                                </StackLayoutItem>
-                                <Button Click="OnBtnCdTextClick" ID="btnCdText" Text="Save Lead-In CD-TEXT"/>
-                            </StackLayout>
-                        </TabPage>
-                        <TabPage ID="tabCdAtip" Text="ATIP" Visible="False">
-                            <StackLayout Orientation="Vertical">
-                                <StackLayoutItem Expand="True" VerticalAlignment="Stretch"
-                                                 HorizontalAlignment="Stretch">
-                                    <TextArea ID="txtCdAtip" ReadOnly="True"/>
-                                </StackLayoutItem>
-                                <Button Click="OnBtnCdAtipClick" ID="btnCdAtip" Text="Save READ ATIP response"/>
-                            </StackLayout>
-                        </TabPage>
-                        <TabPage ID="tabCdMisc" Text="Miscellaneous" Visible="False">
-                            <StackLayout Orientation="Vertical">
-                                <StackLayoutItem HorizontalAlignment="Stretch">
-                                    <StackLayout Orientation="Horizontal" ID="stkMcn" Visible="False">
-                                        <Label ID="lblMcn" Text="Media catalog number"/>
-                                        <TextBox ID="txtMcn" ReadOnly="True"/>
-                                    </StackLayout>
-                                </StackLayoutItem>
-                                <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                 Expand="True">
-                                    <GroupBox ID="grpIsrcs" Text="ISRCs" Visible="False">
-                                        <TreeGridView ID="grdIsrcs"/>
-                                    </GroupBox>
-                                </StackLayoutItem>
-                                <Button Click="OnBtnCdPmaClick" ID="btnCdPma" Text="Save READ PMA response"
-                                        Visible="False"/>
-                            </StackLayout>
-                        </TabPage>
-                    </TabControl>
-                </TabPage>
-                <TabPage ID="tabDvd" Text="DVD" Visible="False">
-                    <StackLayout Orientation="Vertical">
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpDvdPfi" Text="Physical Format Information" Visible="False">
-                                <TextArea ID="txtDvdPfi" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-                            <GroupBox ID="grpDvdCmi" Text="Copyright Management Information" Visible="False">
-                                <TextArea ID="txtDvdCmi" ReadOnly="True"/>
-                            </GroupBox>
-                        </StackLayoutItem>
-                        <Button Click="OnBtnSaveDvdPfiClick" ID="btnSaveDvdPfi" Text="Save Physical Format Information"
-                                Visible="False"/>
-                        <Button Click="OnBtnSaveDvdDmiClick" ID="btnSaveDvdDmi"
-                                Text="Save Disc Manufacturer Information" Visible="False"/>
-                        <Button Click="OnBtnSaveDvdCmiClick" ID="btnSaveDvdCmi"
-                                Text="Save Copyright Management Information" Visible="False"/>
-                        <Button Click="OnBtnSaveHdDvdCmiClick" ID="btnSaveHdDvdCmi"
-                                Text="Save Copyright Management Information" Visible="False"/>
-                        <Button Click="OnBtnSaveDvdBcaClick" ID="btnSaveDvdBca" Text="Save Burst Cutting Area"
-                                Visible="False"/>
-                        <Button Click="OnBtnSaveDvdAacsClick" ID="btnSaveDvdAacs" Text="Save AACS Information"
-                                Visible="False"/>
                     </StackLayout>
                 </TabPage>
                 <TabPage ID="tabXbox" Text="Xbox" Visible="False">

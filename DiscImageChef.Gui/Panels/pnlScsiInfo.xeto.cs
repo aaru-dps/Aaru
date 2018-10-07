@@ -36,7 +36,6 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Decoders.Bluray;
-using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Decoders.Xbox;
@@ -46,7 +45,6 @@ using DiscImageChef.Gui.Tabs;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using BCA = DiscImageChef.Decoders.Bluray.BCA;
 using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
@@ -81,21 +79,6 @@ namespace DiscImageChef.Gui.Panels
                 imgMediaLogo.Visible = true;
             }
             //}
-
-            switch(this.scsiInfo.MediaType)
-            {
-                case MediaType.HDDVDROM:
-                case MediaType.HDDVDRAM:
-                case MediaType.HDDVDR:
-                case MediaType.HDDVDRW:
-                case MediaType.HDDVDRDL:
-                case MediaType.HDDVDRWDL:
-                    tabDvd.Text = "HD DVD";
-                    break;
-                default:
-                    tabDvd.Text = "DVD";
-                    break;
-            }
 
             switch(this.scsiInfo.MediaType)
             {
@@ -194,30 +177,11 @@ namespace DiscImageChef.Gui.Panels
                                         this.scsiInfo.Mcn, this.scsiInfo.Isrcs);
             tabInfos.Pages.Add(tabCompactDiscInfo);
 
-            if(this.scsiInfo.DecodedPfi.HasValue)
-            {
-                grpDvdPfi.Visible = true;
-                txtDvdPfi.Text    = PFI.Prettify(this.scsiInfo.DecodedPfi);
-            }
-
-            if(this.scsiInfo.DvdCmi != null)
-            {
-                grpDvdCmi.Visible     = true;
-                txtDvdCmi.Text        = CSS_CPRM.PrettifyLeadInCopyright(this.scsiInfo.DvdCmi);
-                btnSaveDvdCmi.Visible = true;
-            }
-
-            btnSaveDvdPfi.Visible   = this.scsiInfo.DvdPfi                    != null;
-            btnSaveDvdDmi.Visible   = this.scsiInfo.DvdDmi                    != null;
-            btnSaveDvdCmi.Visible   = this.scsiInfo.DvdCmi                    != null;
-            btnSaveHdDvdCmi.Visible = this.scsiInfo.HddvdCopyrightInformation != null;
-            btnSaveDvdBca.Visible   = this.scsiInfo.DvdBca                    != null;
-            btnSaveDvdAacs.Visible  = this.scsiInfo.DvdAacs                   != null;
-
-            tabDvd.Visible = grpDvdPfi.Visible     || grpDvdCmi.Visible || btnSaveDvdPfi.Visible ||
-                             btnSaveDvdDmi.Visible ||
-                             btnSaveDvdCmi.Visible || btnSaveHdDvdCmi.Visible || btnSaveDvdBca.Visible ||
-                             btnSaveDvdAacs.Visible;
+            tabDvdInfo tabDvdInfo = new tabDvdInfo();
+            tabDvdInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,
+                                scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca, scsiInfo.DvdAacs,
+                                this.scsiInfo.DecodedPfi);
+            tabInfos.Pages.Add(tabDvdInfo);
 
             if(this.scsiInfo.XgdInfo != null)
             {

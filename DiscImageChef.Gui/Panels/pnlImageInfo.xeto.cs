@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Gui.Tabs;
 using Eto.Forms;
@@ -387,6 +388,41 @@ namespace DiscImageChef.Gui.Panels
             tabCompactDiscInfo.LoadData(toc, atip, null, null, fullToc, pma, cdtext, decodedToc, decodedAtip, null,
                                         decodedFullToc, decodedCdText, null, mediaCatalogueNumber, null);
             tabInfos.Pages.Add(tabCompactDiscInfo);
+
+            byte[]                         dvdPfi                    = null;
+            byte[]                         dvdDmi                    = null;
+            byte[]                         dvdCmi                    = null;
+            byte[]                         hddvdCopyrightInformation = null;
+            byte[]                         dvdBca                    = null;
+            PFI.PhysicalFormatInformation? decodedPfi                = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_PFI))
+            {
+                dvdPfi     = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
+                decodedPfi = PFI.Decode(dvdPfi);
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_DMI))
+                dvdDmi = imageFormat.ReadDiskTag(MediaTagType.DVD_DMI);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_CMI))
+                dvdCmi = imageFormat.ReadDiskTag(MediaTagType.DVD_CMI);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.HDDVD_CPI))
+                hddvdCopyrightInformation = imageFormat.ReadDiskTag(MediaTagType.HDDVD_CPI);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_BCA))
+                dvdBca = imageFormat.ReadDiskTag(MediaTagType.DVD_BCA);
+
+            tabDvdInfo tabDvdInfo = new tabDvdInfo();
+            tabDvdInfo.LoadData(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi, hddvdCopyrightInformation, dvdBca,
+                                null, decodedPfi);
+            tabInfos.Pages.Add(tabDvdInfo);
         }
 
         #region XAML controls
