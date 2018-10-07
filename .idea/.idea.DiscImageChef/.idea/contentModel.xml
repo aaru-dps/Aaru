@@ -1612,6 +1612,8 @@
         </e>
         <e p="ResourceHandler.cs" t="Include" />
         <e p="Tabs" t="Include">
+          <e p="tabAtaInfo.xeto" t="Include" />
+          <e p="tabAtaInfo.xeto.cs" t="Include" />
           <e p="tabScsiInfo.xeto" t="Include" />
           <e p="tabScsiInfo.xeto.cs" t="Include" />
         </e>

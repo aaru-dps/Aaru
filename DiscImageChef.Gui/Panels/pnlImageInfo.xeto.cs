@@ -212,8 +212,8 @@ namespace DiscImageChef.Gui.Panels
 
             PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
             byte[]                scsiInquiryData = null;
-            Inquiry.SCSIInquiry?  scsiInquiry;
-            Modes.DecodedMode?    scsiMode;
+            Inquiry.SCSIInquiry?  scsiInquiry     = null;
+            Modes.DecodedMode?    scsiMode        = null;
             byte[]                scsiModeSense6  = null;
             byte[]                scsiModeSense10 = null;
 
@@ -244,8 +244,22 @@ namespace DiscImageChef.Gui.Panels
             tabScsiInfo tabScsiInfo = new tabScsiInfo();
             tabScsiInfo.LoadData(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType, scsiModeSense6,
                                  scsiModeSense10, null);
-
             tabInfos.Pages.Add(tabScsiInfo);
+
+            byte[] ataIdentify   = null;
+            byte[] atapiIdentify = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+                ataIdentify = imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
+                atapiIdentify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
+
+            tabAtaInfo tabAtaInfo = new tabAtaInfo();
+            tabAtaInfo.LoadData(ataIdentify, atapiIdentify, null);
+            tabInfos.Pages.Add(tabAtaInfo);
         }
 
         #region XAML controls

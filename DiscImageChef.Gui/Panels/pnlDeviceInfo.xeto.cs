@@ -33,7 +33,6 @@
 using System;
 using System.IO;
 using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
@@ -171,61 +170,10 @@ namespace DiscImageChef.Gui.Panels
 
             if(devInfo.AtaIdentify != null || devInfo.AtapiIdentify != null)
             {
-                tabAta.Visible = true;
+                tabAtaInfo tabAtaInfo = new tabAtaInfo();
+                tabAtaInfo.LoadData(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError);
 
-                if(devInfo.AtaIdentify != null)
-                {
-                    stkAtaMcpt.Visible  = false;
-                    chkAtaMcpt.Checked  = devInfo.AtaMcptError.HasValue;
-                    lblAtaMcpt.Visible  = devInfo.AtaMcptError.HasValue;
-                    lblAtaIdentify.Text = "ATA IDENTIFY DEVICE";
-
-                    if(devInfo.AtaMcptError.HasValue)
-                    {
-                        switch(devInfo.AtaMcptError.Value.DeviceHead & 0x7)
-                        {
-                            case 0:
-                                lblAtaMcpt.Text = "Device reports incorrect media card type";
-                                break;
-                            case 1:
-                                lblAtaMcpt.Text = "Device contains a Secure Digital card";
-                                break;
-                            case 2:
-                                lblAtaMcpt.Text = "Device contains a MultiMediaCard ";
-                                break;
-                            case 3:
-                                lblAtaMcpt.Text = "Device contains a Secure Digital I/O card";
-                                break;
-                            case 4:
-                                lblAtaMcpt.Text = "Device contains a Smart Media card";
-                                break;
-                            default:
-                                lblAtaMcpt.Text =
-                                    $"Device contains unknown media card type {devInfo.AtaMcptError.Value.DeviceHead & 0x07}";
-                                break;
-                        }
-
-                        chkAtaMcptWriteProtection.Checked = (devInfo.AtaMcptError.Value.DeviceHead & 0x08) == 0x08;
-
-                        ushort specificData = (ushort)(devInfo.AtaMcptError.Value.CylinderHigh * 0x100 +
-                                                       devInfo.AtaMcptError.Value.CylinderLow);
-                        if(specificData != 0)
-                        {
-                            lblAtaMcptSpecificData.Visible = true;
-                            lblAtaMcptSpecificData.Text    = $"Card specific data: 0x{specificData:X4}";
-                        }
-                    }
-
-                    tabAta.Text         = "ATA";
-                    txtAtaIdentify.Text = Identify.Prettify(this.devInfo.AtaIdentify);
-                }
-                else if(devInfo.AtapiIdentify != null)
-                {
-                    lblAtaIdentify.Text = "ATA PACKET IDENTIFY DEVICE";
-                    stkAtaMcpt.Visible  = false;
-                    tabAta.Text         = "ATAPI";
-                    txtAtaIdentify.Text = Identify.Prettify(this.devInfo.AtapiIdentify);
-                }
+                tabInfos.Pages.Add(tabAtaInfo);
             }
 
             if(devInfo.ScsiInquiryData != null)
@@ -496,35 +444,6 @@ namespace DiscImageChef.Gui.Panels
                                        tabScr.Visible;
         }
 
-        protected void OnBtnSaveAtaBinary(object sender, EventArgs e)
-        {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
-
-            if(result != DialogResult.Ok) return;
-
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
-            if(devInfo.AtaIdentify        != null) saveFs.Write(devInfo.AtaIdentify,   0, devInfo.AtaIdentify.Length);
-            else if(devInfo.AtapiIdentify != null) saveFs.Write(devInfo.AtapiIdentify, 0, devInfo.AtapiIdentify.Length);
-
-            saveFs.Close();
-        }
-
-        protected void OnBtnSaveAtaText(object sender, EventArgs e)
-        {
-            SaveFileDialog dlgSaveText = new SaveFileDialog();
-            dlgSaveText.Filters.Add(new FileFilter {Extensions = new[] {"*.txt"}, Name = "Text"});
-            DialogResult result = dlgSaveText.ShowDialog(this);
-
-            if(result != DialogResult.Ok) return;
-
-            FileStream   saveFs = new FileStream(dlgSaveText.FileName, FileMode.Create);
-            StreamWriter saveSw = new StreamWriter(saveFs);
-            saveSw.Write(txtAtaIdentify.Text);
-            saveFs.Close();
-        }
-
         protected void OnBtnSaveUsbDescriptors(object sender, EventArgs e)
         {
             SaveFileDialog dlgSaveBinary = new SaveFileDialog();
@@ -580,16 +499,6 @@ namespace DiscImageChef.Gui.Panels
         TextBox      txtScsiType;
         CheckBox     chkRemovable;
         CheckBox     chkUsb;
-        TabPage      tabAta;
-        Label        lblAtaIdentify;
-        TextArea     txtAtaIdentify;
-        Button       btnSaveAtaBinary;
-        Button       btnSaveAtaText;
-        StackLayout  stkAtaMcpt;
-        CheckBox     chkAtaMcpt;
-        Label        lblAtaMcpt;
-        CheckBox     chkAtaMcptWriteProtection;
-        Label        lblAtaMcptSpecificData;
         TabPage      tabKreon;
         CheckBox     chkKreonChallengeResponse;
         CheckBox     chkKreonDecryptSs;
@@ -655,7 +564,6 @@ namespace DiscImageChef.Gui.Panels
         CheckBox     chkPlextorBitSettingDl;
         CheckBox     chkPlextorDvdPlusWriteTest;
         TabPage      tabSsc;
-        StackLayout  Vertical;
         Label        lblMinBlockSize;
         Label        lblMaxBlockSize;
         Label        lblBlockSizeGranularity;
