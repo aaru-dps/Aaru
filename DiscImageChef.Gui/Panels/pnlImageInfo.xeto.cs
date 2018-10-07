@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Gui.Tabs;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
@@ -543,6 +544,25 @@ namespace DiscImageChef.Gui.Panels
             tabBlurayInfo.LoadData(blurayDiscInformation, blurayBurstCuttingArea, blurayDds, blurayCartridgeStatus,
                                    bluraySpareAreaInformation, blurayPowResources, blurayTrackResources, null, null);
             tabInfos.Pages.Add(tabBlurayInfo);
+
+            byte[]             xboxDmi                   = null;
+            byte[]             xboxSecuritySector        = null;
+            SS.SecuritySector? decodedXboxSecuritySector = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.Xbox_DMI))
+                xboxDmi = imageFormat.ReadDiskTag(MediaTagType.Xbox_DMI);
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.Xbox_SecuritySector))
+            {
+                xboxSecuritySector        = imageFormat.ReadDiskTag(MediaTagType.Xbox_SecuritySector);
+                decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
+            }
+
+            tabXboxInfo tabXboxInfo = new tabXboxInfo();
+            tabXboxInfo.LoadData(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector);
+            tabInfos.Pages.Add(tabXboxInfo);
         }
 
         #region XAML controls

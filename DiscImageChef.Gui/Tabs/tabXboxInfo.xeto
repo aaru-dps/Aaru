@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+// /***************************************************************************
+// The Disc Image Chef
+// ============================================================================
+//
+// Filename       : pnlScsiInfo.xeto
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : SCSI media information panel.
+//
+// ==[ Description ] ==========================================================
+//
+//     Defines the structure for the SCSI media information panel.
+//
+// ==[ License ] ==============================================================
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ============================================================================
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+-->
+<TabPage Text="Xbox" Visible="False" xmlns="http://schema.picoe.ca/eto.forms"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackLayout Orientation="Vertical">
+        <StackLayout Orientation="Vertical" ID="stkXboxInformation" Visible="False">
+            <StackLayoutItem HorizontalAlignment="Stretch">
+                <StackLayout Orientation="Horizontal">
+                    <Label ID="lblXboxL0Video" Text="Video layer 0 size"/>
+                    <TextBox ID="txtXboxL0Video" ReadOnly="True"/>
+                </StackLayout>
+            </StackLayoutItem>
+            <StackLayoutItem HorizontalAlignment="Stretch">
+                <StackLayout Orientation="Horizontal">
+                    <Label ID="lblXboxL1Video" Text="Video layer 1 size"/>
+                    <TextBox ID="txtXboxL1Video" ReadOnly="True"/>
+                </StackLayout>
+            </StackLayoutItem>
+            <StackLayoutItem HorizontalAlignment="Stretch">
+                <StackLayout Orientation="Horizontal">
+                    <Label ID="lblXboxMiddleZone" Text="Middle zone size"/>
+                    <TextBox ID="txtXboxMiddleZone" ReadOnly="True"/>
+                </StackLayout>
+            </StackLayoutItem>
+            <StackLayoutItem HorizontalAlignment="Stretch">
+                <StackLayout Orientation="Horizontal">
+                    <Label ID="lblXboxGameSize" Text="Game data size"/>
+                    <TextBox ID="txtXboxGameSize" ReadOnly="True"/>
+                </StackLayout>
+            </StackLayoutItem>
+            <StackLayoutItem HorizontalAlignment="Stretch">
+                <StackLayout Orientation="Horizontal">
+                    <Label ID="lblXboxTotalSize" Text="Total size"/>
+                    <TextBox ID="txtXboxTotalSize" ReadOnly="True"/>
+                </StackLayout>
+            </StackLayoutItem>
+            <StackLayoutItem HorizontalAlignment="Stretch">
+                <StackLayout Orientation="Horizontal">
+                    <Label ID="lblXboxRealBreak" Text="Real layer break"/>
+                    <TextBox ID="txtXboxRealBreak" ReadOnly="True"/>
+                </StackLayout>
+            </StackLayoutItem>
+        </StackLayout>
+        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+            <GroupBox ID="grpXboxDmi" Text="Disc Manufacturing Information" Visible="False">
+                <TextArea ID="txtXboxDmi" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+            <GroupBox ID="grpXboxSs" Text="Security Sector" Visible="False">
+                <TextArea ID="txtXboxSs" ReadOnly="True"/>
+            </GroupBox>
+        </StackLayoutItem>
+        <Button ID="btnSaveXboxSs" Click="OnBtnSaveXboxSsClick" Text="Save Xbox Security Sector" Visible="False"/>
+    </StackLayout>
+</TabPage>

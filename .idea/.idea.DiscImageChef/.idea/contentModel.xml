@@ -1624,6 +1624,8 @@
           <e p="tabDvdWritableInfo.xeto.cs" t="Include" />
           <e p="tabScsiInfo.xeto" t="Include" />
           <e p="tabScsiInfo.xeto.cs" t="Include" />
+          <e p="tabXboxInfo.xeto" t="Include" />
+          <e p="tabXboxInfo.xeto.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">

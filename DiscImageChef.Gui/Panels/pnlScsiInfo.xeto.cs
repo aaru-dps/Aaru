@@ -36,7 +36,6 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Gui.Controls;
 using DiscImageChef.Gui.Forms;
 using DiscImageChef.Gui.Tabs;
@@ -131,40 +130,10 @@ namespace DiscImageChef.Gui.Panels
                                 this.scsiInfo.DecodedPfi);
             tabInfos.Pages.Add(tabDvdInfo);
 
-            if(this.scsiInfo.XgdInfo != null)
-            {
-                stkXboxInformation.Visible = true;
-                txtXboxL0Video.Text        = $"{this.scsiInfo.XgdInfo.L0Video} sectors";
-                txtXboxL1Video.Text        = $"{this.scsiInfo.XgdInfo.L1Video} sectors";
-                txtXboxMiddleZone.Text     = $"{this.scsiInfo.XgdInfo.MiddleZone} sectors";
-                txtXboxGameSize.Text       = $"{this.scsiInfo.XgdInfo.GameSize} sectors";
-                txtXboxTotalSize.Text      = $"{this.scsiInfo.XgdInfo.TotalSize} sectors";
-                txtXboxRealBreak.Text      = this.scsiInfo.XgdInfo.LayerBreak.ToString();
-            }
-
-            if(this.scsiInfo.DvdDmi != null)
-            {
-                if(DMI.IsXbox(scsiInfo.DvdDmi))
-                {
-                    grpXboxDmi.Visible = true;
-                    txtXboxDmi.Text    = DMI.PrettifyXbox(scsiInfo.DvdDmi);
-                }
-                else if(DMI.IsXbox360(scsiInfo.DvdDmi))
-                {
-                    grpXboxDmi.Visible = true;
-                    txtXboxDmi.Text    = DMI.PrettifyXbox360(scsiInfo.DvdDmi);
-                }
-            }
-
-            if(this.scsiInfo.DecodedXboxSecuritySector.HasValue)
-            {
-                grpXboxSs.Visible = true;
-                txtXboxSs.Text    = SS.Prettify(this.scsiInfo.DecodedXboxSecuritySector);
-            }
-
-            btnSaveXboxSs.Visible = this.scsiInfo.XboxSecuritySector != null;
-            tabXbox.Visible = stkXboxInformation.Visible || grpXboxDmi.Visible || grpXboxSs.Visible ||
-                              btnSaveXboxSs.Visible;
+            tabXboxInfo tabXboxInfo = new tabXboxInfo();
+            tabXboxInfo.LoadData(scsiInfo.XgdInfo, scsiInfo.DvdDmi, scsiInfo.XboxSecuritySector,
+                                 scsiInfo.DecodedXboxSecuritySector);
+            tabInfos.Pages.Add(tabXboxInfo);
 
             tabDvdWritableInfo tabDvdWritableInfo = new tabDvdWritableInfo();
             tabDvdWritableInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdRamDds, scsiInfo.DvdRamCartridgeStatus,
