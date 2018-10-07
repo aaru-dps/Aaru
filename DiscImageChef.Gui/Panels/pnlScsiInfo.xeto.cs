@@ -31,19 +31,18 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Decoders.Bluray;
-using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Gui.Controls;
 using DiscImageChef.Gui.Forms;
+using DiscImageChef.Gui.Tabs;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
@@ -186,78 +185,14 @@ namespace DiscImageChef.Gui.Panels
             tabSsc.Visible = grpDensitySupport.Visible || grpMediumSupport.Visible || btnSaveDensitySupport.Visible ||
                              btnSaveMediumSupport.Visible;
 
-            if(this.scsiInfo.DecodedCompactDiscInformation.HasValue)
-            {
-                tabCdInformation.Visible = true;
-                txtCdInformation.Text    = DiscInformation.Prettify000b(scsiInfo.DecodedCompactDiscInformation);
-                btnCdInformation.Visible = scsiInfo.CompactDiscInformation != null;
-            }
-
-            if(this.scsiInfo.DecodedToc.HasValue)
-            {
-                tabCdToc.Visible = true;
-                txtCdToc.Text    = TOC.Prettify(scsiInfo.DecodedToc);
-                btnCdToc.Visible = scsiInfo.Toc != null;
-            }
-
-            if(this.scsiInfo.FullToc.HasValue)
-            {
-                tabCdFullToc.Visible = true;
-                txtCdFullToc.Text    = FullTOC.Prettify(scsiInfo.FullToc);
-                btnCdFullToc.Visible = scsiInfo.RawToc != null;
-            }
-
-            if(this.scsiInfo.DecodedSession.HasValue)
-            {
-                tabCdSession.Visible = true;
-                txtCdSession.Text    = Session.Prettify(scsiInfo.DecodedSession);
-                btnCdSession.Visible = scsiInfo.Session != null;
-            }
-
-            if(this.scsiInfo.DecodedCdTextLeadIn.HasValue)
-            {
-                tabCdText.Visible = true;
-                txtCdText.Text    = CDTextOnLeadIn.Prettify(this.scsiInfo.DecodedCdTextLeadIn);
-                btnCdText.Visible = scsiInfo.CdTextLeadIn != null;
-            }
-
-            if(this.scsiInfo.DecodedAtip.HasValue)
-            {
-                tabCdAtip.Visible = true;
-                txtCdAtip.Text    = ATIP.Prettify(this.scsiInfo.Atip);
-                btnCdAtip.Visible = scsiInfo.Atip != null;
-            }
-
-            if(!string.IsNullOrEmpty(scsiInfo.Mcn))
-            {
-                stkMcn.Visible = true;
-                txtMcn.Text    = scsiInfo.Mcn;
-            }
-
-            if(this.scsiInfo.Isrcs != null && this.scsiInfo.Isrcs.Count > 0)
-            {
-                grpIsrcs.Visible = true;
-
-                TreeGridItemCollection isrcsItems = new TreeGridItemCollection();
-
-                grdIsrcs.Columns.Add(new GridColumn {HeaderText = "ISRC", DataCell  = new TextBoxCell(0)});
-                grdIsrcs.Columns.Add(new GridColumn {HeaderText = "Track", DataCell = new TextBoxCell(0)});
-
-                grdIsrcs.AllowMultipleSelection = false;
-                grdIsrcs.ShowHeader             = true;
-                grdIsrcs.DataStore              = isrcsItems;
-
-                foreach(KeyValuePair<byte, string> isrc in this.scsiInfo.Isrcs)
-                    isrcsItems.Add(new TreeGridItem {Values = new object[] {isrc.Key.ToString(), isrc.Value}});
-            }
-
-            btnCdPma.Visible = this.scsiInfo.Pma != null;
-
-            tabCdMisc.Visible = stkMcn.Visible || grpIsrcs.Visible || btnCdPma.Visible;
-
-            tabCd.Visible = tabCdInformation.Visible || tabCdToc.Visible  || tabCdFullToc.Visible ||
-                            tabCdSession.Visible     || tabCdText.Visible || tabCdAtip.Visible    || stkMcn.Visible ||
-                            grpIsrcs.Visible         || btnCdPma.Visible;
+            tabCompactDiscInfo tabCompactDiscInfo = new tabCompactDiscInfo();
+            tabCompactDiscInfo.LoadData(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.CompactDiscInformation, scsiInfo.Session,
+                                        scsiInfo.RawToc, this.scsiInfo.Pma, this.scsiInfo.CdTextLeadIn,
+                                        this.scsiInfo.DecodedToc, this.scsiInfo.DecodedAtip,
+                                        this.scsiInfo.DecodedSession, this.scsiInfo.FullToc,
+                                        this.scsiInfo.DecodedCdTextLeadIn, this.scsiInfo.DecodedCompactDiscInformation,
+                                        this.scsiInfo.Mcn, this.scsiInfo.Isrcs);
+            tabInfos.Pages.Add(tabCompactDiscInfo);
 
             if(this.scsiInfo.DecodedPfi.HasValue)
             {

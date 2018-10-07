@@ -32,8 +32,10 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Gui.Tabs;
 using Eto.Forms;
@@ -260,6 +262,131 @@ namespace DiscImageChef.Gui.Panels
             tabAtaInfo tabAtaInfo = new tabAtaInfo();
             tabAtaInfo.LoadData(ataIdentify, atapiIdentify, null);
             tabInfos.Pages.Add(tabAtaInfo);
+
+            byte[]                 toc                  = null;
+            TOC.CDTOC?             decodedToc           = null;
+            byte[]                 fullToc              = null;
+            FullTOC.CDFullTOC?     decodedFullToc       = null;
+            byte[]                 pma                  = null;
+            byte[]                 atip                 = null;
+            ATIP.CDATIP?           decodedAtip          = null;
+            byte[]                 cdtext               = null;
+            CDTextOnLeadIn.CDText? decodedCdText        = null;
+            string                 mediaCatalogueNumber = null;
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_TOC))
+            {
+                toc = imageFormat.ReadDiskTag(MediaTagType.CD_TOC);
+
+                if(toc.Length > 0)
+                {
+                    ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
+                    if(dataLen + 2 != toc.Length)
+                    {
+                        byte[] tmp = new byte[toc.Length + 2];
+                        Array.Copy(toc, 0, tmp, 2, toc.Length);
+                        tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(toc.Length & 0xFF);
+                        toc    = tmp;
+                    }
+
+                    decodedToc = TOC.Decode(toc);
+                }
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_FullTOC))
+            {
+                fullToc = imageFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
+
+                if(fullToc.Length > 0)
+                {
+                    ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(fullToc, 0));
+                    if(dataLen + 2 != fullToc.Length)
+                    {
+                        byte[] tmp = new byte[fullToc.Length + 2];
+                        Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
+                        tmp[0]  = (byte)((fullToc.Length & 0xFF00) >> 8);
+                        tmp[1]  = (byte)(fullToc.Length & 0xFF);
+                        fullToc = tmp;
+                    }
+
+                    decodedFullToc = FullTOC.Decode(fullToc);
+                }
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_PMA))
+            {
+                pma = imageFormat.ReadDiskTag(MediaTagType.CD_PMA);
+
+                if(pma.Length > 0)
+                {
+                    ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
+                    if(dataLen + 2 != pma.Length)
+                    {
+                        byte[] tmp = new byte[pma.Length + 2];
+                        Array.Copy(pma, 0, tmp, 2, pma.Length);
+                        tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(pma.Length & 0xFF);
+                        pma    = tmp;
+                    }
+                }
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_ATIP))
+            {
+                atip = imageFormat.ReadDiskTag(MediaTagType.CD_ATIP);
+
+                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
+                if(dataLen + 4 != atip.Length)
+                {
+                    byte[] tmp = new byte[atip.Length + 4];
+                    Array.Copy(atip, 0, tmp, 4, atip.Length);
+                    tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
+                    tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
+                    tmp[2] = (byte)((atip.Length & 0xFF00)     >> 8);
+                    tmp[3] = (byte)(atip.Length & 0xFF);
+                    atip   = tmp;
+                }
+
+                decodedAtip = ATIP.Decode(atip);
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_TEXT))
+            {
+                cdtext = imageFormat.ReadDiskTag(MediaTagType.CD_TEXT);
+
+                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
+                if(dataLen + 4 != cdtext.Length)
+                {
+                    byte[] tmp = new byte[cdtext.Length + 4];
+                    Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
+                    tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
+                    tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
+                    tmp[2] = (byte)((cdtext.Length & 0xFF00)     >> 8);
+                    tmp[3] = (byte)(cdtext.Length & 0xFF);
+                    cdtext = tmp;
+                }
+
+                decodedCdText = CDTextOnLeadIn.Decode(cdtext);
+            }
+
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
+            {
+                byte[] mcn = imageFormat.ReadDiskTag(MediaTagType.CD_MCN);
+
+                mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
+            }
+
+            tabCompactDiscInfo tabCompactDiscInfo = new tabCompactDiscInfo();
+            tabCompactDiscInfo.LoadData(toc, atip, null, null, fullToc, pma, cdtext, decodedToc, decodedAtip, null,
+                                        decodedFullToc, decodedCdText, null, mediaCatalogueNumber, null);
+            tabInfos.Pages.Add(tabCompactDiscInfo);
         }
 
         #region XAML controls

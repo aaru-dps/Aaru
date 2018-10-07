@@ -1614,6 +1614,8 @@
         <e p="Tabs" t="Include">
           <e p="tabAtaInfo.xeto" t="Include" />
           <e p="tabAtaInfo.xeto.cs" t="Include" />
+          <e p="tabCompactDiscInfo.xeto" t="Include" />
+          <e p="tabCompactDiscInfo.xeto.cs" t="Include" />
           <e p="tabScsiInfo.xeto" t="Include" />
           <e p="tabScsiInfo.xeto.cs" t="Include" />
         </e>
