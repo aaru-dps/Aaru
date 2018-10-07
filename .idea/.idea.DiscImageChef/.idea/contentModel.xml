@@ -1311,6 +1311,23 @@
       </e>
       <e p="DiscImageChef.Gui" t="IncludeRecursive">
         <e p="Assets" t="Include">
+          <e p="Icons" t="Include">
+            <e p="oxygen" t="Include">
+              <e p="32x32" t="Include">
+                <e p="computer.png" t="Include" />
+                <e p="drive-harddisk.png" t="Include" />
+                <e p="drive-optical.png" t="Include" />
+                <e p="drive-removable-media-usb.png" t="Include" />
+                <e p="drive-removable-media.png" t="Include" />
+                <e p="inode-directory.png" t="Include" />
+                <e p="media-eject.png" t="Include" />
+                <e p="media-flash-sd-mmc.png" t="Include" />
+                <e p="media-tape.png" t="Include" />
+              </e>
+              <e p="COPYING" t="Include" />
+              <e p="COPYING.LIB" t="Include" />
+            </e>
+          </e>
           <e p="Logos" t="Include">
             <e p="Media" t="Include">
               <e p=".directory" t="Include" />

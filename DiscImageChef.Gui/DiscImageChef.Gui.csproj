@@ -293,5 +293,14 @@
         <EmbeddedResource Include="Assets\Logos\Media\ZIP100.svg" />
         <EmbeddedResource Include="Assets\Logos\Media\ZIP250.png" />
         <EmbeddedResource Include="Assets\Logos\Media\ZIP250.svg" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\computer.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\drive-harddisk.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\drive-optical.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\drive-removable-media-usb.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\drive-removable-media.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\inode-directory.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\media-eject.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\media-flash-sd-mmc.png" />
+        <EmbeddedResource Include="Assets\Icons\oxygen\32x32\media-tape.png" />
     </ItemGroup>
 </Project>

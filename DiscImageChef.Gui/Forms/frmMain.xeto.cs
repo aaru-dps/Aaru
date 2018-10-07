@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Media.Info;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using DiscImageChef.Gui.Dialogs;
 using DiscImageChef.Gui.Panels;
@@ -52,15 +53,24 @@ namespace DiscImageChef.Gui.Forms
     public class frmMain : Form
     {
         bool     closing;
+        Bitmap   devicesIcon;
+        Bitmap   ejectIcon;
         GridView grdFiles;
+        Bitmap   hardDiskIcon;
+        Bitmap   imagesIcon;
         Label    lblError;
         /// <summary>
         ///     This is to remember that column is an image to be set in future
         /// </summary>
         Image nullImage;
+        Bitmap                 opticalIcon;
         TreeGridItem           placeholderItem;
+        Bitmap                 removableIcon;
+        Bitmap                 sdIcon;
+        Bitmap                 tapeIcon;
         TreeGridView           treeImages;
         TreeGridItemCollection treeImagesItems;
+        Bitmap                 usbIcon;
 
         public frmMain(bool debug, bool verbose)
         {
@@ -82,8 +92,37 @@ namespace DiscImageChef.Gui.Forms
             treeImages.ShowHeader             = false;
             treeImages.DataStore              = treeImagesItems;
 
-            imagesRoot  = new TreeGridItem {Values = new object[] {nullImage, "Images"}};
-            devicesRoot = new TreeGridItem {Values = new object[] {nullImage, "Devices"}};
+            // TODO: SVG
+            imagesIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.inode-directory.png"));
+            devicesIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.computer.png"));
+            hardDiskIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-harddisk.png"));
+            opticalIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-optical.png"));
+            usbIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-removable-media-usb.png"));
+            removableIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-removable-media.png"));
+            sdIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.media-flash-sd-mmc.png"));
+            tapeIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.media-tape.png"));
+            ejectIcon =
+                new Bitmap(ResourceHandler
+                              .GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.media-eject.png"));
+
+            imagesRoot  = new TreeGridItem {Values = new object[] {imagesIcon, "Images"}};
+            devicesRoot = new TreeGridItem {Values = new object[] {devicesIcon, "Devices"}};
 
             treeImagesItems.Add(imagesRoot);
             treeImagesItems.Add(devicesRoot);
@@ -240,9 +279,59 @@ namespace DiscImageChef.Gui.Forms
                     {
                         Values = new object[]
                         {
-                            nullImage, $"{device.Vendor} {device.Model} ({device.Bus})", device.Path, null
+                            hardDiskIcon, $"{device.Vendor} {device.Model} ({device.Bus})", device.Path, null
                         }
                     };
+
+                    try
+                    {
+                        Device dev = new Device(device.Path);
+
+                        switch(dev.Type)
+                        {
+                            case DeviceType.ATAPI:
+                            case DeviceType.SCSI:
+                                switch(dev.ScsiType)
+                                {
+                                    case PeripheralDeviceTypes.DirectAccess:
+                                    case PeripheralDeviceTypes.SCSIZonedBlockDevice:
+                                    case PeripheralDeviceTypes.SimplifiedDevice:
+                                        devItem.Values[0] = dev.IsRemovable
+                                                                ? dev.IsUsb
+                                                                      ? usbIcon
+                                                                      : removableIcon
+                                                                : hardDiskIcon;
+                                        break;
+                                    case PeripheralDeviceTypes.SequentialAccess:
+                                        devItem.Values[0] = tapeIcon;
+                                        break;
+                                    case PeripheralDeviceTypes.OpticalDevice:
+                                    case PeripheralDeviceTypes.WriteOnceDevice:
+                                    case PeripheralDeviceTypes.OCRWDevice:
+                                        devItem.Values[0] = removableIcon;
+                                        break;
+                                    case PeripheralDeviceTypes.MultiMediaDevice:
+                                        devItem.Values[0] = opticalIcon;
+                                        break;
+                                }
+
+                                break;
+                            case DeviceType.SecureDigital:
+                            case DeviceType.MMC:
+                                devItem.Values[0] = sdIcon;
+                                break;
+                            case DeviceType.NVMe:
+                                devItem.Values[0] = nullImage;
+                                break;
+                        }
+
+                        dev.Close();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     devItem.Children.Add(placeholderItem);
                     devicesRoot.Children.Add(devItem);
                 }
@@ -368,7 +457,7 @@ namespace DiscImageChef.Gui.Forms
                     if(!scsiInfo.MediaInserted)
                         deviceItem.Children.Add(new TreeGridItem
                         {
-                            Values = new object[] {nullImage, "No media inserted"}
+                            Values = new object[] {ejectIcon, "No media inserted"}
                         });
                     else
                     {
