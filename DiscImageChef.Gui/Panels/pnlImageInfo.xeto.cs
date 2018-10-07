@@ -43,6 +43,7 @@ using DiscImageChef.Devices;
 using DiscImageChef.Gui.Tabs;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
+using Session = DiscImageChef.CommonTypes.Structs.Session;
 
 namespace DiscImageChef.Gui.Panels
 {
@@ -641,6 +642,43 @@ namespace DiscImageChef.Gui.Panels
             tabSdMmcInfo tabSdMmcInfo = new tabSdMmcInfo();
             tabSdMmcInfo.LoadData(deviceType, cid, csd, ocr, extendedCsd, scr);
             tabInfos.Pages.Add(tabSdMmcInfo);
+
+            try
+            {
+                if(imageFormat.Sessions != null && imageFormat.Sessions.Count > 0)
+                {
+                    TreeGridItemCollection sessionList = new TreeGridItemCollection();
+
+                    treeSessions.Columns.Add(new GridColumn {HeaderText = "Session", DataCell = new TextBoxCell(0)});
+                    treeSessions.Columns.Add(new GridColumn
+                    {
+                        HeaderText = "First track", DataCell = new TextBoxCell(1)
+                    });
+                    treeSessions.Columns.Add(new GridColumn {HeaderText = "Last track", DataCell = new TextBoxCell(2)});
+                    treeSessions.Columns.Add(new GridColumn {HeaderText = "Start", DataCell      = new TextBoxCell(3)});
+                    treeSessions.Columns.Add(new GridColumn {HeaderText = "End", DataCell        = new TextBoxCell(4)});
+
+                    treeSessions.AllowMultipleSelection = false;
+                    treeSessions.ShowHeader             = true;
+                    treeSessions.DataStore              = sessionList;
+
+                    foreach(Session session in imageFormat.Sessions)
+                        sessionList.Add(new TreeGridItem
+                        {
+                            Values = new object[]
+                            {
+                                session.SessionSequence, session.StartTrack, session.EndTrack,
+                                session.StartSector, session.EndSector
+                            }
+                        });
+
+                    tabSessions.Visible = true;
+                }
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         #region XAML controls
@@ -680,6 +718,8 @@ namespace DiscImageChef.Gui.Panels
         TreeGridView treeMediaTags;
         GroupBox     grpSectorTags;
         TreeGridView treeSectorTags;
+        TabPage      tabSessions;
+        TreeGridView treeSessions;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

@@ -82,6 +82,13 @@
                     </GroupBox>
                 </StackLayout>
             </TabPage>
+            <TabPage ID="tabSessions" Text="Sessions" Visible="False">
+                <StackLayout Orientation="Vertical">
+                    <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                        <TreeGridView ID="treeSessions"/>
+                    </StackLayoutItem>
+                </StackLayout>
+            </TabPage>
         </TabControl>
     </StackLayout>
 </Panel>
