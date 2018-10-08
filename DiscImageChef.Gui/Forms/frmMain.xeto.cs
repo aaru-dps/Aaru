@@ -201,7 +201,10 @@ namespace DiscImageChef.Gui.Forms
                     List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
                     Core.Partitions.AddSchemesToStats(partitions);
 
-                    bool checkraw = false;
+                    bool         checkraw = false;
+                    List<string> idPlugins;
+                    IFilesystem  plugin;
+                    PluginBase   plugins = GetPluginBase.Instance;
 
                     if(partitions.Count == 0)
                     {
@@ -236,10 +239,78 @@ namespace DiscImageChef.Gui.Forms
                                     }
                                 };
 
+                                DicConsole.WriteLine("Identifying filesystem on partition");
+
+                                Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
+                                if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                                else
+                                {
+                                    DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+
+                                    foreach(string pluginName in idPlugins)
+                                        if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                        {
+                                            plugin.GetInformation(imageFormat, partition, out string _, null);
+
+                                            TreeGridItem filesystemGridItem = new TreeGridItem
+                                            {
+                                                Values = new object[]
+                                                {
+                                                    nullImage, // TODO: Add icons to filesystems
+                                                    plugin.XmlFsType.VolumeName is null
+                                                        ? $"{plugin.XmlFsType.Type}"
+                                                        : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
+                                                    null, null // TODO: Filesystem panel
+                                                }
+                                            };
+
+                                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                            partitionGridItem.Children.Add(filesystemGridItem);
+                                        }
+                                }
+
                                 schemeGridItem.Children.Add(partitionGridItem);
                             }
 
                             imageGridItem.Children.Add(schemeGridItem);
+                        }
+                    }
+
+                    if(checkraw)
+                    {
+                        Partition wholePart = new Partition
+                        {
+                            Name   = "Whole device",
+                            Length = imageFormat.Info.Sectors,
+                            Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
+                        };
+
+                        Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                        if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                        else
+                        {
+                            DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+
+                            foreach(string pluginName in idPlugins)
+                                if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                {
+                                    plugin.GetInformation(imageFormat, wholePart, out string _, null);
+
+                                    TreeGridItem filesystemGridItem = new TreeGridItem
+                                    {
+                                        Values = new object[]
+                                        {
+                                            nullImage, // TODO: Add icons to filesystems
+                                            plugin.XmlFsType.VolumeName is null
+                                                ? $"{plugin.XmlFsType.Type}"
+                                                : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
+                                            null, null // TODO: Filesystem panel
+                                        }
+                                    };
+
+                                    Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                    imageGridItem.Children.Add(filesystemGridItem);
+                                }
                         }
                     }
 
