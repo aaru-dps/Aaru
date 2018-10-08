@@ -1622,6 +1622,8 @@
         <e p="Panels" t="Include">
           <e p="pnlDeviceInfo.xeto" t="Include" />
           <e p="pnlDeviceInfo.xeto.cs" t="Include" />
+          <e p="pnlFilesystem.xeto" t="Include" />
+          <e p="pnlFilesystem.xeto.cs" t="Include" />
           <e p="pnlImageInfo.xeto" t="Include" />
           <e p="pnlImageInfo.xeto.cs" t="Include" />
           <e p="pnlPartition.xeto" t="Include" />

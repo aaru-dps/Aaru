@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+// /***************************************************************************
+// The Disc Image Chef
+// ============================================================================
+//
+// Filename       : pnlScsiInfo.xeto
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : SCSI media information panel.
+//
+// ==[ Description ] ==========================================================
+//
+//     Defines the structure for the SCSI media information panel.
+//
+// ==[ License ] ==============================================================
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ============================================================================
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+-->
+<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackLayout Orientation="Vertical">
+        <Label ID="lblType"/>
+        <Label ID="lblVolumeName"/>
+        <Label ID="lblSerialNumber"/>
+        <Label ID="lblApplicationIdentifier"/>
+        <Label ID="lblSystemIdentifier"/>
+        <Label ID="lblVolumeSetIdentifier"/>
+        <Label ID="lblDataPreparerIdentifier"/>
+        <Label ID="lblPublisherIdentifier"/>
+        <Label ID="lblCreationDate"/>
+        <Label ID="lblEffectiveDate"/>
+        <Label ID="lblModificationDate"/>
+        <Label ID="lblExpirationDate"/>
+        <Label ID="lblBackupDate"/>
+        <Label ID="lblClusters"/>
+        <Label ID="lblFreeClusters"/>
+        <Label ID="lblFiles"/>
+        <CheckBox ID="chkBootable" Enabled="False" Text="Filesystem contains boot code"/>
+        <CheckBox ID="chkDirty" Enabled="False" Text="Filesystem has not been unmounted correctly or contains errors"/>
+        <GroupBox ID="grpInformation" Text="Details">
+            <TextArea ID="txtInformation" ReadOnly="True"/>
+        </GroupBox>
+    </StackLayout>
+</Panel>

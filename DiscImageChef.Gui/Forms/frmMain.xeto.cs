@@ -250,7 +250,7 @@ namespace DiscImageChef.Gui.Forms
                                     foreach(string pluginName in idPlugins)
                                         if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                         {
-                                            plugin.GetInformation(imageFormat, partition, out string _, null);
+                                            plugin.GetInformation(imageFormat, partition, out string information, null);
 
                                             TreeGridItem filesystemGridItem = new TreeGridItem
                                             {
@@ -260,7 +260,7 @@ namespace DiscImageChef.Gui.Forms
                                                     plugin.XmlFsType.VolumeName is null
                                                         ? $"{plugin.XmlFsType.Type}"
                                                         : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                                    null, null // TODO: Filesystem panel
+                                                    null, new pnlFilesystem(plugin.XmlFsType, information)
                                                 }
                                             };
 
@@ -294,7 +294,7 @@ namespace DiscImageChef.Gui.Forms
                             foreach(string pluginName in idPlugins)
                                 if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                 {
-                                    plugin.GetInformation(imageFormat, wholePart, out string _, null);
+                                    plugin.GetInformation(imageFormat, wholePart, out string information, null);
 
                                     TreeGridItem filesystemGridItem = new TreeGridItem
                                     {
@@ -304,7 +304,7 @@ namespace DiscImageChef.Gui.Forms
                                             plugin.XmlFsType.VolumeName is null
                                                 ? $"{plugin.XmlFsType.Type}"
                                                 : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                            null, null // TODO: Filesystem panel
+                                            null, new pnlFilesystem(plugin.XmlFsType, information)
                                         }
                                     };
 
