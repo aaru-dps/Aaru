@@ -473,6 +473,11 @@ namespace DiscImageChef.Gui.Forms
             new dlgEncodings().ShowModal(this);
         }
 
+        protected void OnMenuBenchmark(object sender, EventArgs e)
+        {
+            new dlgBenchmark().ShowModal(this);
+        }
+
         protected void OnTreeImagesSelectedItemChanged(object sender, EventArgs e)
         {
             if(!(sender is TreeGridView tree)) return;

@@ -1605,6 +1605,8 @@
           <e p="SvgImageView.cs" t="Include" />
         </e>
         <e p="Dialogs" t="Include">
+          <e p="dlgBenchmark.xeto" t="Include" />
+          <e p="dlgBenchmark.xeto.cs" t="Include" />
           <e p="dlgEncodings.xeto" t="Include" />
           <e p="dlgEncodings.xeto.cs" t="Include" />
           <e p="dlgPlugins.xeto" t="Include" />

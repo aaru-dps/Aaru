@@ -61,9 +61,9 @@ namespace DiscImageChef.Commands
                                      entry.Value.Speed);
             }
 
-            DicConsole.WriteLine("Took {0} seconds to do all algorithms at the same time, {1} MiB/sec.",
+            DicConsole.WriteLine("Took {0} seconds to do all algorithms at the same time, {1:F3} MiB/sec.",
                                  results.TotalTime, results.TotalSpeed);
-            DicConsole.WriteLine("Took {0} seconds to do all algorithms sequentially, {1} MiB/sec.",
+            DicConsole.WriteLine("Took {0} seconds to do all algorithms sequentially, {1:F3} MiB/sec.",
                                  results.SeparateTime, results.SeparateSpeed);
 
             DicConsole.WriteLine();
