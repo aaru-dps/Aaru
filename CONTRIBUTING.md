@@ -194,7 +194,7 @@ model is it, and how is it connected to the computer.
 
 ### Suggesting Enhancements
 
-This section guides you through submitting an enhancement suggestion for Atom, including
+This section guides you through submitting an enhancement suggestion for DiscImageChef, including
 completely new features and minor improvements to existing functionality. Following these
 guidelines helps maintainers and the community understand your suggestion :pencil: and find
 related suggestions :mag_right:.
@@ -255,7 +255,7 @@ if possible.
 talk with a USB devices your pull request must implement calls both to `WinUsb` and `libusb`.
 
 ### Patronizing
-If you want to donate money you can become a patron at https://www.patreon.com/DiscImageChe
+If you want to donate money you can become a patron at https://www.patreon.com/DiscImageChef
 
 This money will be used to get more hardware on which to test DiscImageChef.
 
