@@ -54,6 +54,7 @@
                 <ButtonMenuItem Text="&amp;Benchmark" Click="OnMenuBenchmark"/>
                 <ButtonMenuItem Text="&amp;Encodings" Click="OnMenuEncodings"/>
                 <ButtonMenuItem Text="&amp;Plugins" Click="OnMenuPlugins"/>
+                <ButtonMenuItem Text="&amp;Statistics" Click="OnMenuStatistics"/>
             </ButtonMenuItem>
             <MenuBar.ApplicationItems>
                 <ButtonMenuItem Text="Preferences.." Shortcut="{On Control+O, Mac=Application+Comma}"/>

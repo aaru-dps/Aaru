@@ -1611,6 +1611,8 @@
           <e p="dlgEncodings.xeto.cs" t="Include" />
           <e p="dlgPlugins.xeto" t="Include" />
           <e p="dlgPlugins.xeto.cs" t="Include" />
+          <e p="dlgStatistics.xeto" t="Include" />
+          <e p="dlgStatistics.xeto.cs" t="Include" />
         </e>
         <e p="DiscImageChef.Gui.csproj" t="IncludeRecursive" />
         <e p="Forms" t="Include">

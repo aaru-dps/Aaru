@@ -478,6 +478,17 @@ namespace DiscImageChef.Gui.Forms
             new dlgBenchmark().ShowModal(this);
         }
 
+        protected void OnMenuStatistics(object sender, EventArgs e)
+        {
+            if(Statistics.AllStats == null)
+            {
+                MessageBox.Show("There are no statistics.");
+                return;
+            }
+
+            new dlgStatistics().ShowModal(this);
+        }
+
         protected void OnTreeImagesSelectedItemChanged(object sender, EventArgs e)
         {
             if(!(sender is TreeGridView tree)) return;

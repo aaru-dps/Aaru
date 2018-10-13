@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+// /***************************************************************************
+// The Disc Image Chef
+// ============================================================================
+//
+// Filename       : dlgStatistics.xeto
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : Statistics dialog.
+//
+// ==[ Description ] ==========================================================
+//
+//     Defines the structure for the statistics dialog.
+//
+// ==[ License ] ==============================================================
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ============================================================================
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+-->
+<Dialog xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Statistics" ClientSize="460, 160" Padding="10">
+    <StackLayout Orientation="Vertical">
+        <TabControl>
+            <TabPage ID="tabCommands" Text="Commands" Visible="False">
+                <StackLayout Orientation="Vertical">
+                    <Label ID="lblAnalyze" Visible="False"/>
+                    <Label ID="lblBenchmark" Visible="False"/>
+                    <Label ID="lblChecksum" Visible="False"/>
+                    <Label ID="lblCompare" Visible="False"/>
+                    <Label ID="lblConvertImage" Visible="False"/>
+                    <Label ID="lblCreateSidecar" Visible="False"/>
+                    <Label ID="lblDecode" Visible="False"/>
+                    <Label ID="lblDeviceInfo" Visible="False"/>
+                    <Label ID="lblDeviceReport" Visible="False"/>
+                    <Label ID="lblDumpMedia" Visible="False"/>
+                    <Label ID="lblEntropy" Visible="False"/>
+                    <Label ID="lblFormats" Visible="False"/>
+                    <Label ID="lblImageInfo" Visible="False"/>
+                    <Label ID="lblMediaInfo" Visible="False"/>
+                    <Label ID="lblMediaScan" Visible="False"/>
+                    <Label ID="lblPrintHex" Visible="False"/>
+                    <Label ID="lblVerify" Visible="False"/>
+                </StackLayout>
+            </TabPage>
+            <TabPage ID="tabBenchmark" Text="Benchmark" Visible="False"/>
+            <TabPage ID="tabFilters" Text="Filters" Visible="False">
+                <TreeGridView ID="treeFilters"/>
+            </TabPage>
+            <TabPage ID="tabFormats" Text="Formats" Visible="False">
+                <TreeGridView ID="treeFormats"/>
+            </TabPage>
+            <TabPage ID="tabPartitions" Text="Partitions" Visible="False">
+                <TreeGridView ID="treePartitions"/>
+            </TabPage>
+            <TabPage ID="tabFilesystems" Text="Filesystems" Visible="False">
+                <TreeGridView ID="treeFilesystems"/>
+            </TabPage>
+            <TabPage ID="tabDevices" Text="Devices" Visible="False">
+                <TreeGridView ID="treeDevices"/>
+            </TabPage>
+            <TabPage ID="tabMedias" Text="Medias" Visible="False">
+                <TreeGridView ID="treeMedias"/>
+            </TabPage>
+            <TabPage ID="tabMediaScan" Text="Media scan" Visible="False">
+                <StackLayout Orientation="Vertical">
+                    <Label ID="lblSectorsTotal"/>
+                    <Label ID="lblSectorsCorrect"/>
+                    <Label ID="lblSectorsError"/>
+                    <Label ID="lblLessThan3ms"/>
+                    <Label ID="lblLessThan10ms"/>
+                    <Label ID="lblLessThan50ms"/>
+                    <Label ID="lblLessThan150ms"/>
+                    <Label ID="lblLessThan500ms"/>
+                    <Label ID="lblMoreThan500ms"/>
+                </StackLayout>
+            </TabPage>
+            <TabPage ID="tabVerify" Text="Verification" Visible="False">
+                <StackLayout Orientation="Vertical">
+                    <Label ID="lblCorrectImages"/>
+                    <Label ID="lblFailedImages"/>
+                    <Label ID="lblVerifiedSectors"/>
+                    <Label ID="lblCorrectSectors"/>
+                    <Label ID="lblFailedSectors"/>
+                    <Label ID="lblUnknownSectors"/>
+                </StackLayout>
+            </TabPage>
+        </TabControl>
+        <StackLayoutItem HorizontalAlignment="Right">
+            <Button ID="btnClose" Click="OnBtnClose" Text="Close"/>
+        </StackLayoutItem>
+    </StackLayout>
+</Dialog>
