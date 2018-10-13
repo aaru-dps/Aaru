@@ -246,6 +246,7 @@
         </e>
         <e p="DiscImageChef.Core.csproj" t="IncludeRecursive" />
         <e p="DiscImageChef.Core.csproj.DotSettings" t="Include" />
+        <e p="Entropy.cs" t="Include" />
         <e p="Filesystems.cs" t="Include" />
         <e p="GetPluginBase.cs" t="Include" />
         <e p="ImageFormat.cs" t="Include" />

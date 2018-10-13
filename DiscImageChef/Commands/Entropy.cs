@@ -30,16 +30,10 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -75,94 +69,40 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddMediaFormat(inputFormat.Format);
             Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
-            double  entropy = 0;
-            ulong[] entTable;
-            ulong   sectors;
+
+            Core.Entropy entropyCalculator = new Core.Entropy(options.Debug, options.Verbose, inputFormat);
+            entropyCalculator.InitProgressEvent    += Progress.InitProgress;
+            entropyCalculator.InitProgress2Event   += Progress.InitProgress2;
+            entropyCalculator.UpdateProgressEvent  += Progress.UpdateProgress;
+            entropyCalculator.UpdateProgress2Event += Progress.UpdateProgress2;
+            entropyCalculator.EndProgressEvent     += Progress.EndProgress;
+            entropyCalculator.EndProgress2Event    += Progress.EndProgress2;
 
             if(options.SeparatedTracks)
-                try
-                {
-                    List<Track> inputTracks = inputFormat.Tracks;
-
-                    foreach(Track currentTrack in inputTracks)
-                    {
-                        entTable = new ulong[256];
-                        ulong        trackSize             = 0;
-                        List<string> uniqueSectorsPerTrack = new List<string>();
-
-                        sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                        DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
-
-                        for(ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
-                        {
-                            DicConsole.Write("\rEntropying sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
-                            byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
-
-                            if(options.DuplicatedSectors)
-                            {
-                                string sectorHash = Sha1Context.Data(sector, out _);
-                                if(!uniqueSectorsPerTrack.Contains(sectorHash)) uniqueSectorsPerTrack.Add(sectorHash);
-                            }
-
-                            foreach(byte b in sector) entTable[b]++;
-
-                            trackSize += (ulong)sector.LongLength;
-                        }
-
-                        entropy += entTable.Select(l => (double)l / (double)trackSize)
-                                           .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
-
-                        DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", currentTrack.TrackSequence, entropy);
-
-                        if(options.DuplicatedSectors)
-                            DicConsole.WriteLine("Track {0} has {1} unique sectors ({1:P3})",
-                                                 currentTrack.TrackSequence, uniqueSectorsPerTrack.Count,
-                                                 (double)uniqueSectorsPerTrack.Count / (double)sectors);
-
-                        DicConsole.WriteLine();
-                    }
-                }
-                catch(Exception ex)
-                {
-                    if(options.Debug) DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
-                    else DicConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
-                }
-
-            if(!options.WholeDisc) return;
-
-            entTable = new ulong[256];
-            ulong        diskSize      = 0;
-            List<string> uniqueSectors = new List<string>();
-
-            sectors = inputFormat.Info.Sectors;
-            DicConsole.WriteLine("Sectors {0}", sectors);
-
-            for(ulong i = 0; i < sectors; i++)
             {
-                DicConsole.Write("\rEntropying sector {0}", i + 1);
-                byte[] sector = inputFormat.ReadSector(i);
-
-                if(options.DuplicatedSectors)
+                EntropyResults[] tracksEntropy = entropyCalculator.CalculateTracksEntropy(options.DuplicatedSectors);
+                foreach(EntropyResults trackEntropy in tracksEntropy)
                 {
-                    string sectorHash = Sha1Context.Data(sector, out _);
-                    if(!uniqueSectors.Contains(sectorHash)) uniqueSectors.Add(sectorHash);
+                    DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
+                    if(trackEntropy.UniqueSectors != null)
+                        DicConsole.WriteLine("Track {0} has {1} unique sectors ({1:P3})", trackEntropy.Track,
+                                             trackEntropy.UniqueSectors,
+                                             (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
                 }
-
-                foreach(byte b in sector) entTable[b]++;
-
-                diskSize += (ulong)sector.LongLength;
             }
 
-            entropy += entTable.Select(l => (double)l / (double)diskSize)
-                               .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
+            if(!options.WholeDisc)
+            {
+                Core.Statistics.AddCommand("entropy");
+                return;
+            }
 
-            DicConsole.WriteLine();
+            EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(options.DuplicatedSectors);
 
-            DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy);
-
-            if(options.DuplicatedSectors)
-                DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count,
-                                     (double)uniqueSectors.Count / (double)sectors);
+            DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
+            if(entropy.UniqueSectors != null)
+                DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
+                                     (double)entropy.UniqueSectors / (double)entropy.Sectors);
 
             Core.Statistics.AddCommand("entropy");
         }

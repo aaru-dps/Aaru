@@ -49,6 +49,7 @@
     <Compile Include="Devices\Info\DeviceInfo.cs" />
     <Compile Include="Devices\Info\Plextor.cs" />
     <Compile Include="Devices\Info\Properties.cs" />
+    <Compile Include="Entropy.cs" />
     <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />
     <Compile Include="Media\Detection\MMC.cs" />
