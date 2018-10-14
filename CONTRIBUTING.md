@@ -32,7 +32,7 @@ changes to this document in a pull request.
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the
-[DiscImageChef Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected
+[DiscImageChef Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating, you are expected
 to uphold this code. Please report unacceptable behavior to [claunia@claunia.com](mailto:claunia@claunia.com).
 
 ## I don't want to read this whole thing I just have a question!!!
@@ -40,7 +40,7 @@ to uphold this code. Please report unacceptable behavior to [claunia@claunia.com
 > **Note:** Please don't file an issue to ask a question. You'll get faster results by
 using the resources below.
 
-You can join our IRC channel on char.freenode.net at channel #DiscImageChef
+You can join our IRC channel on chat.freenode.net at channel #DiscImageChef
 
 ## What should I know before I get started?
 
@@ -138,7 +138,7 @@ behavior :computer: :computer:, and find related reports :mag_right:.
 Before creating bug reports, please check [this list](#before-submitting-a-bug-report) as you
 might find out that you don't need to create one. When you are creating a bug report, please
 [include as many details as possible](#how-do-i-submit-a-good-bug-report). Fill out
-[the required template](ISSUE_TEMPLATE.md), the information it asks for helps us resolve
+[the required template](.github/ISSUE_TEMPLATE.md), the information it asks for helps us resolve
 issues faster.
 
 > **Note:** If you find a **Closed** issue that seems like it is the same thing that you're
@@ -159,7 +159,7 @@ add a comment to the existing issue instead of opening a new one.
 Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). After
 you've determined [which module](#discimagechef-and-modules) your bug is related to,
 create an issue on that repository and provide the following information by filling in
-[the template](ISSUE_TEMPLATE.md).
+[the template](.github/ISSUE_TEMPLATE.md).
 
 Explain the problem and include additional details to help maintainers reproduce the problem:
 
@@ -190,7 +190,7 @@ Include details about your configuration and environment:
 * **Are you running DiscImageChef in a virtual machine?** If so, which VM software are you
 using and which operating systems and versions are used for the host and the guest?
 * **Are you trying to execute a device command?** If so, who manufactured the device, which
-model is it, and how is it connected to the computer.
+model is it, and how is it connected to the computer?
 
 ### Suggesting Enhancements
 
@@ -200,7 +200,7 @@ guidelines helps maintainers and the community understand your suggestion :penci
 related suggestions :mag_right:.
 
 Before creating enhancement suggestions, please [include as many details as possible](#how-do-i-submit-a-good-enhancement-suggestion).
-Fill in [the template](ISSUE_TEMPLATE.md), including the steps that you imagine you would
+Fill in [the template](.github/ISSUE_TEMPLATE.md), including the steps that you imagine you would
 take if the feature you're requesting existed.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
@@ -241,7 +241,7 @@ be compiled with [VisualStudio](http://www.visualstudio.com) 2017 or higher, [Xa
 
 ### Pull Requests
 
-* Fill in [the required template](PULL_REQUEST_TEMPLATE.md)
+* Fill in [the required template](.github/PULL_REQUEST_TEMPLATE.md)
 * Do not include issue numbers in the PR title
 * Follow the [code styleguide](#code-styleguide).
 * Include test files as applicable, that do not have software under copyright inside them,
