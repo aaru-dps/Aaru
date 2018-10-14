@@ -111,5 +111,6 @@
                 </StackLayout>
             </TabPage>
         </TabControl>
+        <Button ID="btnEntropy" Text="Calculate entropy" Click="OnBtnEntropy"/>
     </StackLayout>
 </Panel>

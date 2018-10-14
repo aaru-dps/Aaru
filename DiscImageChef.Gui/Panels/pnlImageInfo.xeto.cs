@@ -43,6 +43,7 @@ using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
 using DiscImageChef.Gui.Controls;
+using DiscImageChef.Gui.Forms;
 using DiscImageChef.Gui.Tabs;
 using Eto.Drawing;
 using Eto.Forms;
@@ -54,8 +55,12 @@ namespace DiscImageChef.Gui.Panels
 {
     public class pnlImageInfo : Panel
     {
+        frmImageEntropy frmImageEntropy;
+        IMediaImage     imageFormat;
+
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
         {
+            this.imageFormat = imageFormat;
             XamlReader.Load(this);
 
             Stream logo =
@@ -780,6 +785,19 @@ namespace DiscImageChef.Gui.Panels
             tabDumpHardware.Visible = true;
         }
 
+        protected void OnBtnEntropy(object sender, EventArgs e)
+        {
+            if(frmImageEntropy != null)
+            {
+                frmImageEntropy.Show();
+                return;
+            }
+
+            frmImageEntropy        =  new frmImageEntropy(imageFormat);
+            frmImageEntropy.Closed += (s, ea) => { frmImageEntropy = null; };
+            frmImageEntropy.Show();
+        }
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -825,6 +843,7 @@ namespace DiscImageChef.Gui.Panels
         TreeGridView treeDumpHardware;
         ImageView    imgMediaLogo;
         SvgImageView svgMediaLogo;
+        Button       btnEntropy;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

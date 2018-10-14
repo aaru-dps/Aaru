@@ -85,7 +85,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
                     if(trackEntropy.UniqueSectors != null)
-                        DicConsole.WriteLine("Track {0} has {1} unique sectors ({1:P3})", trackEntropy.Track,
+                        DicConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
                                              trackEntropy.UniqueSectors,
                                              (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
                 }
