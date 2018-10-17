@@ -56,6 +56,7 @@ namespace DiscImageChef.Gui.Panels
     public class pnlImageInfo : Panel
     {
         frmImageEntropy frmImageEntropy;
+        frmImageVerify  frmImageVerify;
         IMediaImage     imageFormat;
 
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
@@ -796,6 +797,19 @@ namespace DiscImageChef.Gui.Panels
             frmImageEntropy        =  new frmImageEntropy(imageFormat);
             frmImageEntropy.Closed += (s, ea) => { frmImageEntropy = null; };
             frmImageEntropy.Show();
+        }
+
+        protected void OnBtnVerify(object sender, EventArgs e)
+        {
+            if(frmImageVerify != null)
+            {
+                frmImageVerify.Show();
+                return;
+            }
+
+            frmImageVerify        =  new frmImageVerify(imageFormat);
+            frmImageVerify.Closed += (s, ea) => { frmImageVerify = null; };
+            frmImageVerify.Show();
         }
 
         #region XAML controls

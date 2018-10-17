@@ -111,6 +111,11 @@
                 </StackLayout>
             </TabPage>
         </TabControl>
-        <Button ID="btnEntropy" Text="Calculate entropy" Click="OnBtnEntropy"/>
+        <StackLayoutItem HorizontalAlignment="Right" Expand="True">
+            <StackLayout Orientation="Horizontal">
+                <Button ID="btnEntropy" Text="Calculate entropy" Click="OnBtnEntropy"/>
+                <Button ID="btnVerify" Text="Verify" Click="OnBtnVerify"/>
+            </StackLayout>
+        </StackLayoutItem>
     </StackLayout>
 </Panel>
