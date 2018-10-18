@@ -1621,6 +1621,8 @@
           <e p="frmConsole.xeto.cs" t="Include" />
           <e p="frmDump.xeto" t="Include" />
           <e p="frmDump.xeto.cs" t="Include" />
+          <e p="frmImageChecksum.xeto" t="Include" />
+          <e p="frmImageChecksum.xeto.cs" t="Include" />
           <e p="frmImageEntropy.xeto" t="Include" />
           <e p="frmImageEntropy.xeto.cs" t="Include" />
           <e p="frmImageVerify.xeto" t="Include" />

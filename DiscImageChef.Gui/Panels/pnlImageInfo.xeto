@@ -115,6 +115,7 @@
             <StackLayout Orientation="Horizontal">
                 <Button ID="btnEntropy" Text="Calculate entropy" Click="OnBtnEntropy"/>
                 <Button ID="btnVerify" Text="Verify" Click="OnBtnVerify"/>
+                <Button ID="btnChecksum" Text="Checksum" Click="OnBtnChecksum"/>
             </StackLayout>
         </StackLayoutItem>
     </StackLayout>

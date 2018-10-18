@@ -55,9 +55,10 @@ namespace DiscImageChef.Gui.Panels
 {
     public class pnlImageInfo : Panel
     {
-        frmImageEntropy frmImageEntropy;
-        frmImageVerify  frmImageVerify;
-        IMediaImage     imageFormat;
+        frmImageChecksum frmImageChecksum;
+        frmImageEntropy  frmImageEntropy;
+        frmImageVerify   frmImageVerify;
+        IMediaImage      imageFormat;
 
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
         {
@@ -812,6 +813,19 @@ namespace DiscImageChef.Gui.Panels
             frmImageVerify.Show();
         }
 
+        protected void OnBtnChecksum(object sender, EventArgs e)
+        {
+            if(frmImageChecksum != null)
+            {
+                frmImageChecksum.Show();
+                return;
+            }
+
+            frmImageChecksum        =  new frmImageChecksum(imageFormat);
+            frmImageChecksum.Closed += (s, ea) => { frmImageChecksum = null; };
+            frmImageChecksum.Show();
+        }
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -858,6 +872,8 @@ namespace DiscImageChef.Gui.Panels
         ImageView    imgMediaLogo;
         SvgImageView svgMediaLogo;
         Button       btnEntropy;
+        Button       btnVerify;
+        Button       btnChecksum;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
