@@ -116,6 +116,7 @@
                 <Button ID="btnEntropy" Text="Calculate entropy" Click="OnBtnEntropy"/>
                 <Button ID="btnVerify" Text="Verify" Click="OnBtnVerify"/>
                 <Button ID="btnChecksum" Text="Checksum" Click="OnBtnChecksum"/>
+                <Button ID="btnConvert" Text="Convert to..." Click="OnBtnConvert"/>
             </StackLayout>
         </StackLayoutItem>
     </StackLayout>
