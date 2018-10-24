@@ -55,9 +55,11 @@ namespace DiscImageChef.Gui.Panels
 {
     public class pnlImageInfo : Panel
     {
+        IFilter          filter;
         frmImageChecksum frmImageChecksum;
         frmImageConvert  frmImageConvert;
         frmImageEntropy  frmImageEntropy;
+        frmImageSidecar  frmImageSidecar;
         frmImageVerify   frmImageVerify;
         IMediaImage      imageFormat;
         string           imagePath;
@@ -65,6 +67,7 @@ namespace DiscImageChef.Gui.Panels
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
         {
             this.imagePath   = imagePath;
+            this.filter      = filter;
             this.imageFormat = imageFormat;
             XamlReader.Load(this);
 
@@ -840,6 +843,20 @@ namespace DiscImageChef.Gui.Panels
             frmImageConvert        =  new frmImageConvert(imageFormat, imagePath);
             frmImageConvert.Closed += (s, ea) => { frmImageConvert = null; };
             frmImageConvert.Show();
+        }
+
+        protected void OnBtnCreateSidecar(object sender, EventArgs e)
+        {
+            if(frmImageSidecar != null)
+            {
+                frmImageSidecar.Show();
+                return;
+            }
+
+            // TODO: Pass thru chosen default encoding
+            frmImageSidecar        =  new frmImageSidecar(imageFormat, imagePath, filter.Id, null);
+            frmImageSidecar.Closed += (s, ea) => { frmImageSidecar = null; };
+            frmImageSidecar.Show();
         }
 
         #region XAML controls

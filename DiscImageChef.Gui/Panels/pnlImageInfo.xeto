@@ -31,8 +31,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 -->
-<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-       xmlns:local="clr-namespace:DiscImageChef.Gui.Controls;assembly=DiscImageChef.Gui">
+<Panel xmlns:local="clr-namespace:DiscImageChef.Gui.Controls;assembly=DiscImageChef.Gui"
+       xmlns="http://schema.picoe.ca/eto.forms">
     <StackLayout Orientation="Vertical">
         <StackLayoutItem HorizontalAlignment="Center" VerticalAlignment="Top">
             <ImageView ID="imgMediaLogo" Visible="False"/>
@@ -117,6 +117,7 @@
                 <Button ID="btnVerify" Text="Verify" Click="OnBtnVerify"/>
                 <Button ID="btnChecksum" Text="Checksum" Click="OnBtnChecksum"/>
                 <Button ID="btnConvert" Text="Convert to..." Click="OnBtnConvert"/>
+                <Button ID="btnCreateSidecar" Text="Create CICM XML sidecar..." Click="OnBtnCreateSidecar"/>
             </StackLayout>
         </StackLayoutItem>
     </StackLayout>

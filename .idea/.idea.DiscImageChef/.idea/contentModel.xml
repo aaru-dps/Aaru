@@ -1627,6 +1627,8 @@
           <e p="frmImageConvert.xeto.cs" t="Include" />
           <e p="frmImageEntropy.xeto" t="Include" />
           <e p="frmImageEntropy.xeto.cs" t="Include" />
+          <e p="frmImageSidecar.xeto" t="Include" />
+          <e p="frmImageSidecar.xeto.cs" t="Include" />
           <e p="frmImageVerify.xeto" t="Include" />
           <e p="frmImageVerify.xeto.cs" t="Include" />
           <e p="frmMain.xeto" t="Include" />
