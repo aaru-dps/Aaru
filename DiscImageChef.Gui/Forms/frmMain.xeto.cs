@@ -37,6 +37,7 @@ using System.IO;
 using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Media.Info;
@@ -47,6 +48,7 @@ using DiscImageChef.Gui.Panels;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
+using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 using ImageFormat = DiscImageChef.Core.ImageFormat;
 
 namespace DiscImageChef.Gui.Forms
@@ -252,6 +254,17 @@ namespace DiscImageChef.Gui.Forms
                                         {
                                             plugin.GetInformation(imageFormat, partition, out string information, null);
 
+                                            IReadOnlyFilesystem fsPlugin = plugin as IReadOnlyFilesystem;
+
+                                            if(fsPlugin != null)
+                                            {
+                                                Errno error =
+                                                    fsPlugin.Mount(imageFormat, partition, null,
+                                                                   new Dictionary<string, string>());
+
+                                                if(error != Errno.NoError) fsPlugin = null;
+                                            }
+
                                             TreeGridItem filesystemGridItem = new TreeGridItem
                                             {
                                                 Values = new object[]
@@ -260,9 +273,15 @@ namespace DiscImageChef.Gui.Forms
                                                     plugin.XmlFsType.VolumeName is null
                                                         ? $"{plugin.XmlFsType.Type}"
                                                         : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                                    null, new pnlFilesystem(plugin.XmlFsType, information)
+                                                    fsPlugin, new pnlFilesystem(plugin.XmlFsType, information)
                                                 }
                                             };
+
+                                            if(fsPlugin != null)
+                                            {
+                                                Core.Statistics.AddCommand("ls");
+                                                filesystemGridItem.Children.Add(placeholderItem);
+                                            }
 
                                             Statistics.AddFilesystem(plugin.XmlFsType.Type);
                                             partitionGridItem.Children.Add(filesystemGridItem);
@@ -296,6 +315,17 @@ namespace DiscImageChef.Gui.Forms
                                 {
                                     plugin.GetInformation(imageFormat, wholePart, out string information, null);
 
+                                    IReadOnlyFilesystem fsPlugin = plugin as IReadOnlyFilesystem;
+
+                                    if(fsPlugin != null)
+                                    {
+                                        Errno error =
+                                            fsPlugin.Mount(imageFormat, wholePart, null,
+                                                           new Dictionary<string, string>());
+
+                                        if(error != Errno.NoError) fsPlugin = null;
+                                    }
+
                                     TreeGridItem filesystemGridItem = new TreeGridItem
                                     {
                                         Values = new object[]
@@ -304,9 +334,15 @@ namespace DiscImageChef.Gui.Forms
                                             plugin.XmlFsType.VolumeName is null
                                                 ? $"{plugin.XmlFsType.Type}"
                                                 : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                            null, new pnlFilesystem(plugin.XmlFsType, information)
+                                            fsPlugin, new pnlFilesystem(plugin.XmlFsType, information)
                                         }
                                     };
+
+                                    if(fsPlugin != null)
+                                    {
+                                        Core.Statistics.AddCommand("ls");
+                                        filesystemGridItem.Children.Add(placeholderItem);
+                                    }
 
                                     Statistics.AddFilesystem(plugin.XmlFsType.Type);
                                     imageGridItem.Children.Add(filesystemGridItem);
@@ -503,11 +539,11 @@ namespace DiscImageChef.Gui.Forms
                 return;
             }
 
-            if(selectedItem.Parent != devicesRoot) return;
+            if(selectedItem.Values.Length < 4) return;
 
             switch(selectedItem.Values[3])
             {
-                case null:
+                case null when selectedItem.Parent == devicesRoot:
                     try
                     {
                         Device dev = new Device((string)selectedItem.Values[2]);
@@ -533,9 +569,15 @@ namespace DiscImageChef.Gui.Forms
                     }
 
                     break;
-                case string devErrorMessage:
+                case string devErrorMessage when selectedItem.Parent == devicesRoot:
                     lblError.Text  = devErrorMessage;
                     splMain.Panel2 = lblError;
+                    break;
+                case Dictionary<string, FileEntryInfo> files:
+                    splMain.Panel2 = new pnlListFiles(selectedItem.Values[2] as IReadOnlyFilesystem, files,
+                                                      selectedItem.Values[1] as string == "/"
+                                                          ? "/"
+                                                          : selectedItem.Values[4] as string);
                     break;
             }
         }
@@ -543,9 +585,10 @@ namespace DiscImageChef.Gui.Forms
         protected void OnTreeImagesItemExpanding(object sender, TreeGridViewItemCancelEventArgs e)
         {
             // First expansion of a device
-            if((e.Item as TreeGridItem)?.Children?.Count == 1               &&
-               ((TreeGridItem)e.Item).Children[0]        == placeholderItem &&
-               ((TreeGridItem)e.Item).Parent             == devicesRoot)
+            if((e.Item as TreeGridItem)?.Children?.Count != 1 ||
+               ((TreeGridItem)e.Item).Children[0]        != placeholderItem) return;
+
+            if(((TreeGridItem)e.Item).Parent == devicesRoot)
             {
                 TreeGridItem deviceItem = (TreeGridItem)e.Item;
 
@@ -612,6 +655,104 @@ namespace DiscImageChef.Gui.Forms
                 }
 
                 dev.Close();
+            }
+            else if(((TreeGridItem)e.Item).Values[2] is IReadOnlyFilesystem fsPlugin)
+            {
+                TreeGridItem fsItem = (TreeGridItem)e.Item;
+
+                fsItem.Children.Clear();
+
+                if(fsItem.Values.Length == 5 && fsItem.Values[4] is string dirPath)
+                {
+                    Errno errno = fsPlugin.ReadDir(dirPath, out List<string> dirents);
+
+                    if(errno != Errno.NoError)
+                    {
+                        MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
+                                        MessageBoxType.Error);
+                        return;
+                    }
+
+                    Dictionary<string, FileEntryInfo> files       = new Dictionary<string, FileEntryInfo>();
+                    List<string>                      directories = new List<string>();
+
+                    foreach(string dirent in dirents)
+                    {
+                        errno = fsPlugin.Stat(dirPath + "/" + dirent, out FileEntryInfo stat);
+
+                        if(errno != Errno.NoError)
+                        {
+                            DicConsole
+                               .ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
+                            continue;
+                        }
+
+                        if(stat.Attributes.HasFlag(FileAttributes.Directory)) directories.Add(dirent);
+                        else files.Add(dirent, stat);
+                    }
+
+                    foreach(string directory in directories)
+                    {
+                        TreeGridItem dirItem = new TreeGridItem
+                        {
+                            Values = new object[] {imagesIcon, directory, fsPlugin, null, dirPath + "/" + directory}
+                        };
+
+                        dirItem.Children.Add(placeholderItem);
+                        fsItem.Children.Add(dirItem);
+                    }
+                }
+                else
+                {
+                    Errno errno = fsPlugin.ReadDir("/", out List<string> dirents);
+
+                    if(errno != Errno.NoError)
+                    {
+                        MessageBox.Show($"Error {errno} trying to read root directory of chosen filesystem",
+                                        MessageBoxType.Error);
+                        return;
+                    }
+
+                    Dictionary<string, FileEntryInfo> files       = new Dictionary<string, FileEntryInfo>();
+                    List<string>                      directories = new List<string>();
+
+                    foreach(string dirent in dirents)
+                    {
+                        errno = fsPlugin.Stat("/" + dirent, out FileEntryInfo stat);
+
+                        if(errno != Errno.NoError)
+                        {
+                            DicConsole
+                               .ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
+                            continue;
+                        }
+
+                        if(stat.Attributes.HasFlag(FileAttributes.Directory)) directories.Add(dirent);
+                        else files.Add(dirent, stat);
+                    }
+
+                    TreeGridItem rootDirectoryItem = new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            nullImage, // TODO: Get icon from volume
+                            "/", fsPlugin, files
+                        }
+                    };
+
+                    foreach(string directory in directories)
+                    {
+                        TreeGridItem dirItem = new TreeGridItem
+                        {
+                            Values = new object[] {imagesIcon, directory, fsPlugin, null, "/" + directory}
+                        };
+
+                        dirItem.Children.Add(placeholderItem);
+                        rootDirectoryItem.Children.Add(dirItem);
+                    }
+
+                    fsItem.Children.Add(rootDirectoryItem);
+                }
             }
         }
 
