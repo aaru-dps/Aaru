@@ -51,6 +51,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
+            path = pathElements[0];
+
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
             if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
@@ -84,6 +86,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
+
+            path = pathElements[0];
 
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
@@ -154,6 +158,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
+
+            path = pathElements[0];
 
             if(debug)
                 if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
@@ -238,6 +244,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
+
+            path = pathElements[0];
 
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 

@@ -49,6 +49,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
+            path = pathElements[0];
+
             xattrs = new List<string>();
 
             if(debug)
@@ -90,6 +92,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
+
+            path = pathElements[0];
 
             if(debug)
                 if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
