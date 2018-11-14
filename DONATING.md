@@ -5,24 +5,24 @@ This is a list of hardware that I'm searching but is too rare or too expensive f
 The reason I want this hardware is because having it is the only way to add enhanced support for them (e.g. media detection, ECC support, raw dumping, etc.).
 After adding enhanced support all drives will be given to the Canary Islands Computer Museum.
 
-- 3.5" magneto-optical media: 128MiB, 540MiB, 1.3GiB
+- 3.5" magneto-optical media: 540MiB, 1.3GiB
 - 5.25" magneto-optical drive and media
 - 8" shugart drive
 - ADR drive and tapes
 - AIT drive and tapes
 - Apple twiggy and media
-- Caleb UHD144
+- Caleb UHD144 drive
 - Castlewood Orb 2.2 and 5.7
 - DLT drive and tapes
 - DiscFerret
-- HD-DVD recorder and media
+- HD-DVD media
 - Host-aware and host-controller SAS and SATA zoned hard disks
-- Insite floptical
+- Insite floptical drive
 - Iomega Bernoulli
 - Iomega Ditto drive and tapes
 - Iomega JAZ and JAZ 2
 - Iomega REV
-- Iomega ZIP750 and media
+- Iomega ZIP750 drive
 - LD-ROM drive and media
 - LTO drive and tapes
 - LV-ROM drive and media
@@ -30,7 +30,6 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - PD-650 drives (e.g. Panasonic LF-D111) and media
 - Panasonic Blu-ray recorder
 - Plasmon UDO and UDO2 drives and media
-- Plextor DVD recorder
 - SCSI floppy drive (e.g. Teac FD235JS806-U)
 - SLR drive and tapes
 - Sony Hi-MD and media
