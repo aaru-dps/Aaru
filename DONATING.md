@@ -27,7 +27,6 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - LTO drive and tapes
 - LV-ROM drive and media
 - Mammoth drive and tapes
-- PD-650 drives (e.g. Panasonic LF-D111) and media
 - Panasonic Blu-ray recorder
 - Plasmon UDO and UDO2 drives and media
 - SCSI floppy drive (e.g. Teac FD235JS806-U)
