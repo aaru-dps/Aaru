@@ -62,7 +62,6 @@
             </e>
           </e>
         </e>
-        <e p="test.log" t="Include" />
       </e>
       <e p="DiscImageChef.Checksums" t="IncludeRecursive">
         <e p="Adler32Context.cs" t="Include" />
