@@ -623,7 +623,11 @@ namespace DiscImageChef.Decoders.CD
 
                     break;
                 case 34:
-                    if(frm == 20) return "Mitsubishi Chemical Corporation";
+                    switch(frm)
+                    {
+                        case 20:
+                        case 22: return "Mitsubishi Chemical Corporation";
+                    }
 
                     break;
                 case 42:
