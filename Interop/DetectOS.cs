@@ -302,5 +302,10 @@ namespace DiscImageChef.CommonTypes.Interop
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string machine;
         }
+
+        public static bool IsWindows =>
+            GetRealPlatformID() == PlatformID.Win32NT      || GetRealPlatformID() == PlatformID.Win32S ||
+            GetRealPlatformID() == PlatformID.Win32Windows || GetRealPlatformID() == PlatformID.WinCE  ||
+            GetRealPlatformID() == PlatformID.WindowsPhone || GetRealPlatformID() == PlatformID.Xbox;
     }
 }
