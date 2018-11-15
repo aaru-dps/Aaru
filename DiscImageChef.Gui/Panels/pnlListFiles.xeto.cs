@@ -33,9 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Core;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
@@ -64,14 +67,15 @@ namespace DiscImageChef.Gui.Panels
         #pragma warning restore 649
         #endregion
 
-        GridColumn inodeColumn;
-        GridColumn linksColumn;
-        GridColumn modeColumn;
-        GridColumn nameColumn;
-        GridColumn sizeColumn;
-        GridColumn sortedColumn;
-        GridColumn uidColumn;
-        GridColumn writeColumn;
+        GridColumn     inodeColumn;
+        GridColumn     linksColumn;
+        GridColumn     modeColumn;
+        GridColumn     nameColumn;
+        ButtonMenuItem saveFilesMenuItem;
+        GridColumn     sizeColumn;
+        GridColumn     sortedColumn;
+        GridColumn     uidColumn;
+        GridColumn     writeColumn;
 
         public pnlListFiles(IReadOnlyFilesystem filesystem, Dictionary<string, FileEntryInfo> files, string parentPath)
         {
@@ -226,6 +230,209 @@ namespace DiscImageChef.Gui.Panels
             sortedColumn               =  null;
             grdFiles.ColumnHeaderClick += OnGrdFilesOnColumnHeaderClick;
             ascendingSort              =  true;
+
+            grdFiles.ContextMenu    =  new ContextMenu();
+            saveFilesMenuItem       =  new ButtonMenuItem {Text = "Extract to...", Enabled = false};
+            saveFilesMenuItem.Click += OnSaveFilesMenuItemClick;
+
+            grdFiles.ContextMenu.Items.Add(saveFilesMenuItem);
+
+            grdFiles.SelectionChanged += OnGrdFilesSelectionChanged;
+        }
+
+        void OnGrdFilesSelectionChanged(object sender, EventArgs e)
+        {
+            saveFilesMenuItem.Enabled = grdFiles.SelectedItems.Any();
+        }
+
+        void OnSaveFilesMenuItemClick(object sender, EventArgs e)
+        {
+            if(!grdFiles.SelectedItems.Any()) return;
+
+            SelectFolderDialog saveFilesFolderDialog = new SelectFolderDialog {Title = "Choose destination folder..."};
+
+            DialogResult result = saveFilesFolderDialog.ShowDialog(this);
+
+            if(result != DialogResult.Ok) return;
+
+            Statistics.AddCommand("extract-files");
+
+            string folder = saveFilesFolderDialog.Directory;
+
+            foreach(EntryForGrid file in grdFiles.SelectedItems)
+            {
+                string filename = file.Name;
+
+                if(DetectOS.IsWindows)
+                    if(filename.Contains('<')                || filename.Contains('>') ||
+                       filename.Contains(':')                ||
+                       filename.Contains('\\')               || filename.Contains('/') ||
+                       filename.Contains('|')                ||
+                       filename.Contains('?')                || filename.Contains('*') ||
+                       filename.Any(c => c < 32)             ||
+                       filename.ToUpperInvariant() == "CON"  || filename.ToUpperInvariant() == "PRN"  ||
+                       filename.ToUpperInvariant() == "AUX"  || filename.ToUpperInvariant() == "COM1" ||
+                       filename.ToUpperInvariant() == "COM2" || filename.ToUpperInvariant() == "COM3" ||
+                       filename.ToUpperInvariant() == "COM4" || filename.ToUpperInvariant() == "COM5" ||
+                       filename.ToUpperInvariant() == "COM6" || filename.ToUpperInvariant() == "COM7" ||
+                       filename.ToUpperInvariant() == "COM8" || filename.ToUpperInvariant() == "COM9" ||
+                       filename.ToUpperInvariant() == "LPT1" || filename.ToUpperInvariant() == "LPT2" ||
+                       filename.ToUpperInvariant() == "LPT3" || filename.ToUpperInvariant() == "LPT4" ||
+                       filename.ToUpperInvariant() == "LPT5" || filename.ToUpperInvariant() == "LPT6" ||
+                       filename.ToUpperInvariant() == "LPT7" || filename.ToUpperInvariant() == "LPT8" ||
+                       filename.ToUpperInvariant() == "LPT9" || filename.Last()             == '.'    ||
+                       filename.Last()             == ' ')
+                    {
+                        char[] chars;
+                        if(filename.Last() == '.' || filename.Last() == ' ') chars = new char[filename.Length - 1];
+                        else chars                                                 = new char[filename.Length];
+
+                        for(int ci = 0; ci < chars.Length; ci++)
+                            switch(filename[ci])
+                            {
+                                case '<':
+                                case '>':
+                                case ':':
+                                case '\\':
+                                case '/':
+                                case '|':
+                                case '?':
+                                case '*':
+                                case '\u0000':
+                                case '\u0001':
+                                case '\u0002':
+                                case '\u0003':
+                                case '\u0004':
+                                case '\u0005':
+                                case '\u0006':
+                                case '\u0007':
+                                case '\u0008':
+                                case '\u0009':
+                                case '\u000A':
+                                case '\u000B':
+                                case '\u000C':
+                                case '\u000D':
+                                case '\u000E':
+                                case '\u000F':
+                                case '\u0010':
+                                case '\u0011':
+                                case '\u0012':
+                                case '\u0013':
+                                case '\u0014':
+                                case '\u0015':
+                                case '\u0016':
+                                case '\u0017':
+                                case '\u0018':
+                                case '\u0019':
+                                case '\u001A':
+                                case '\u001B':
+                                case '\u001C':
+                                case '\u001D':
+                                case '\u001E':
+                                case '\u001F':
+                                    chars[ci] = '_';
+                                    break;
+                                default:
+                                    chars[ci] = filename[ci];
+                                    break;
+                            }
+
+                        if(filename.StartsWith("CON", StringComparison.InvariantCultureIgnoreCase) ||
+                           filename.StartsWith("PRN", StringComparison.InvariantCultureIgnoreCase) ||
+                           filename.StartsWith("AUX", StringComparison.InvariantCultureIgnoreCase) ||
+                           filename.StartsWith("COM", StringComparison.InvariantCultureIgnoreCase) ||
+                           filename.StartsWith("LPT", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            chars[0] = '_';
+                            chars[1] = '_';
+                            chars[2] = '_';
+                        }
+
+                        string corrected = new string(chars);
+
+                        result = MessageBox.Show(this, "Unsupported filename",
+                                                 $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
+                                                 MessageBoxButtons.YesNoCancel, MessageBoxType.Warning);
+
+                        if(result == DialogResult.Cancel) return;
+
+                        if(result == DialogResult.No) continue;
+
+                        filename = corrected;
+                    }
+
+                string outputPath = Path.Combine(folder, filename);
+
+                if(File.Exists(outputPath))
+                {
+                    result = MessageBox.Show(this, "Existing file",
+                                             $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
+                                             MessageBoxButtons.YesNoCancel, MessageBoxType.Question);
+
+                    if(result == DialogResult.Cancel) return;
+
+                    if(result == DialogResult.No) continue;
+
+                    try { File.Delete(outputPath); }
+                    catch(IOException)
+                    {
+                        result = MessageBox.Show(this, "Cannot delete",
+                                                 "Could not delete existing file.\nDo you want to continue?",
+                                                 MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                        if(result == DialogResult.No) return;
+                    }
+                }
+
+                try
+                {
+                    byte[] outBuf = new byte[0];
+
+                    Errno error = filesystem.Read(file.ParentPath + file.Name, 0, file.Stat.Length, ref outBuf);
+
+                    if(error != Errno.NoError)
+                    {
+                        result = MessageBox.Show(this, "Error reading file",
+                                                 $"Error {error} reading file.\nDo you want to continue?",
+                                                 MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                        if(result == DialogResult.No) return;
+
+                        continue;
+                    }
+
+                    FileStream fs =
+                        new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+
+                    fs.Write(outBuf, 0, outBuf.Length);
+                    fs.Close();
+                    FileInfo fi = new FileInfo(outputPath);
+                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    try { fi.CreationTimeUtc = file.Stat.CreationTimeUtc; }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    try { fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc; }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    try { fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc; }
+                    catch
+                    {
+                        // ignored
+                    }
+                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                }
+                catch(IOException)
+                {
+                    result = MessageBox.Show(this, "Cannot create file",
+                                             "Could not create destination file.\nDo you want to continue?",
+                                             MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                    if(result == DialogResult.No) return;
+                }
+            }
         }
 
         void OnGrdFilesOnColumnHeaderClick(object sender, GridColumnEventArgs gridColumnEventArgs)
