@@ -32,10 +32,10 @@
 
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using CommandLine;
 using DiscImageChef.Commands;
 using DiscImageChef.Console;
-using DiscImageChef.Gui;
 using DiscImageChef.Gui.Forms;
 using DiscImageChef.Settings;
 using Eto;
@@ -57,7 +57,7 @@ namespace DiscImageChef
             if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel) Configure.DoConfigure(true);
             Statistics.LoadStats();
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
-                Statistics.SubmitStats();
+                Task.Run(() => { Statistics.SubmitStats(); });
 
             Parser.Default.ParseArguments(args, typeof(AnalyzeOptions), typeof(BenchmarkOptions),
                                           typeof(ChecksumOptions), typeof(CompareOptions), typeof(ConfigureOptions),
