@@ -54,7 +54,8 @@ namespace DiscImageChef
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             Settings.Settings.LoadSettings();
-            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel) Configure.DoConfigure(true);
+            if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
+               Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel) Configure.DoConfigure(true);
             Statistics.LoadStats();
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
                 Task.Run(() => { Statistics.SubmitStats(); });

@@ -31,8 +31,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 -->
-<Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="DiscImageChef" ClientSize="600, 450" Padding="10">
+<Form xmlns="http://schema.picoe.ca/eto.forms" Title="DiscImageChef" ClientSize="600, 450" Padding="10">
     <Splitter Orientation="Horizontal" Panel1MinimumSize="200" FixedPanel="Panel1" ID="splMain">
         <Splitter.Panel1>
             <TreeGridView ID="treeImages" SelectedItemChanged="OnTreeImagesSelectedItemChanged"
@@ -57,7 +56,8 @@
                 <ButtonMenuItem Text="&amp;Statistics" Click="OnMenuStatistics"/>
             </ButtonMenuItem>
             <MenuBar.ApplicationItems>
-                <ButtonMenuItem Text="Preferences.." Shortcut="{On Control+O, Mac=Application+Comma}"/>
+                <ButtonMenuItem Text="Settings.." Shortcut="{On Control+O, Mac=Application+Comma}"
+                                Click="OnMenuSettings"/>
             </MenuBar.ApplicationItems>
             <MenuBar.QuitItem>
                 <ButtonMenuItem Text="Quit" Shortcut="CommonModifier+Q" Click="OnMenuQuit"/>

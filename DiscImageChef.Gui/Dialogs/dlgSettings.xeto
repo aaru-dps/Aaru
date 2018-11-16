@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+// /***************************************************************************
+// The Disc Image Chef
+// ============================================================================
+//
+// Filename       : dlgSettings.xeto
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : Settings dialog.
+//
+// ==[ Description ] ==========================================================
+//
+//     Defines the structure for the settings dialog.
+//
+// ==[ License ] ==============================================================
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ============================================================================
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+-->
+<Dialog xmlns="http://schema.picoe.ca/eto.forms" Title="Settings" ClientSize="460, 160" Padding="10">
+    <StackLayout Orientation="Vertical">
+        <TabControl>
+            <TabPage ID="tabGdpr" Text="GDPR">
+                <StackLayout Orientation="Vertical">
+                    <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Expand="True">
+                        <StackLayout Orientation="Vertical" ID="stkGdpr">
+                            <Label ID="lblGdpr1"/>
+                            <Label/>
+                            <Label ID="lblGdpr2"/>
+                            <Label/>
+                            <Label ID="lblGdpr3"/>
+                        </StackLayout>
+                    </StackLayoutItem>
+                </StackLayout>
+            </TabPage>
+            <TabPage ID="tabReports" Text="Reports">
+                <StackLayout Orientation="Vertical">
+                    <Label ID="lblSaveReportsGlobally"/>
+                    <CheckBox ID="chkSaveReportsGlobally"/>
+                    <Label/>
+                    <Label ID="lblShareReports"/>
+                    <CheckBox ID="chkShareReports"/>
+                </StackLayout>
+            </TabPage>
+            <TabPage ID="tabStatistics" Text="Statistics">
+                <StackLayout Orientation="Vertical">
+                    <Label ID="lblStatistics"/>
+                    <Label/>
+                    <CheckBox ID="chkSaveStats"/>
+                    <Label/>
+                    <StackLayout Orientation="Vertical" ID="stkStatistics">
+                        <CheckBox ID="chkShareStats"/>
+                        <CheckBox ID="chkBenchmarkStats"/>
+                        <CheckBox ID="chkCommandStats"/>
+                        <CheckBox ID="chkDeviceStats"/>
+                        <CheckBox ID="chkFilesystemStats"/>
+                        <CheckBox ID="chkFilterStats"/>
+                        <CheckBox ID="chkMediaImageStats"/>
+                        <CheckBox ID="chkMediaScanStats"/>
+                        <CheckBox ID="chkPartitionStats"/>
+                        <CheckBox ID="chkMediaStats"/>
+                        <CheckBox ID="chkVerifyStats"/>
+                    </StackLayout>
+                </StackLayout>
+            </TabPage>
+        </TabControl>
+        <StackLayoutItem HorizontalAlignment="Right" VerticalAlignment="Bottom" Expand="True">
+            <StackLayout Orientation="Horizontal" ID="stkButtons">
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <Button ID="btnCancel" Click="OnBtnCancel">Cancel</Button>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <Button ID="btnSave" Click="OnBtnSave">Save</Button>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+    </StackLayout>
+</Dialog>

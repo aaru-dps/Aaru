@@ -45,6 +45,7 @@ using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using DiscImageChef.Gui.Dialogs;
 using DiscImageChef.Gui.Panels;
+using DiscImageChef.Settings;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
@@ -133,6 +134,13 @@ namespace DiscImageChef.Gui.Forms
             placeholderItem = new TreeGridItem {Values = new object[] {nullImage, "You should not be seeing this"}};
 
             Closing += OnClosing;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel) new dlgSettings(true).ShowModal(this);
         }
 
         void OnClosing(object sender, CancelEventArgs e)
@@ -279,7 +287,7 @@ namespace DiscImageChef.Gui.Forms
 
                                             if(fsPlugin != null)
                                             {
-                                                Core.Statistics.AddCommand("ls");
+                                                Statistics.AddCommand("ls");
                                                 filesystemGridItem.Children.Add(placeholderItem);
                                             }
 
@@ -340,7 +348,7 @@ namespace DiscImageChef.Gui.Forms
 
                                     if(fsPlugin != null)
                                     {
-                                        Core.Statistics.AddCommand("ls");
+                                        Statistics.AddCommand("ls");
                                         filesystemGridItem.Children.Add(placeholderItem);
                                     }
 
@@ -405,6 +413,11 @@ namespace DiscImageChef.Gui.Forms
         protected void OnDeviceRefresh(object sender, EventArgs e)
         {
             RefreshDevices();
+        }
+
+        protected void OnMenuSettings(object sender, EventArgs e)
+        {
+            new dlgSettings(false).ShowModal(this);
         }
 
         protected override void OnLoadComplete(EventArgs e)
