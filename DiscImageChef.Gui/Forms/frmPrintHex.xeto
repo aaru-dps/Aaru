@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+// /***************************************************************************
+// The Disc Image Chef
+// ============================================================================
+//
+// Filename       : frmPrintHex.xeto
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : Form to show hexadecimal dumps of sectors.
+//
+// ==[ Description ] ==========================================================
+//
+//     Defines the structure for the print hex GUI window.
+//
+// ==[ License ] ==============================================================
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ============================================================================
+// Copyright © 2011-2018 Natalia Portillo
+// ****************************************************************************/
+-->
+<Form xmlns="http://schema.picoe.ca/eto.forms" Title="Sector viewer" ClientSize="600, 450" Padding="10">
+    <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <Label Text="Sector" ID="lblSector"/>
+            <NumericStepper ID="nmuSector" ValueChanged="OnNmuSectorValueChanged"/>
+            <Label Text="of XXXXX" ID="lblSectors"/>
+        </StackLayout>
+        <CheckBox ID="chkLongSector" Text="Show long sector"/>
+        <StackLayoutItem Expand="True">
+            <TextArea ID="txtPrintHex"/>
+        </StackLayoutItem>
+    </StackLayout>
+</Form>

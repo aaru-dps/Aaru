@@ -61,6 +61,7 @@ namespace DiscImageChef.Gui.Panels
         frmImageEntropy  frmImageEntropy;
         frmImageSidecar  frmImageSidecar;
         frmImageVerify   frmImageVerify;
+        frmPrintHex      frmPrintHex;
         IMediaImage      imageFormat;
         string           imagePath;
 
@@ -859,6 +860,19 @@ namespace DiscImageChef.Gui.Panels
             frmImageSidecar.Show();
         }
 
+        protected void OnBtnViewSectors(object sender, EventArgs e)
+        {
+            if(frmPrintHex != null)
+            {
+                frmPrintHex.Show();
+                return;
+            }
+
+            frmPrintHex        =  new frmPrintHex(imageFormat);
+            frmPrintHex.Closed += (s, ea) => { frmPrintHex = null; };
+            frmPrintHex.Show();
+        }
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -908,6 +922,7 @@ namespace DiscImageChef.Gui.Panels
         Button       btnVerify;
         Button       btnChecksum;
         Button       btnConvert;
+        Button       btnViewSectors;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

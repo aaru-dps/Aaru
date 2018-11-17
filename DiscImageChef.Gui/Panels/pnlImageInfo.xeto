@@ -118,6 +118,7 @@
                 <Button ID="btnChecksum" Text="Checksum" Click="OnBtnChecksum"/>
                 <Button ID="btnConvert" Text="Convert to..." Click="OnBtnConvert"/>
                 <Button ID="btnCreateSidecar" Text="Create CICM XML sidecar..." Click="OnBtnCreateSidecar"/>
+                <Button ID="btnViewSectors" Text="View sectors" Click="OnBtnViewSectors"/>
             </StackLayout>
         </StackLayoutItem>
     </StackLayout>

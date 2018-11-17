@@ -1634,6 +1634,8 @@
           <e p="frmImageVerify.xeto.cs" t="Include" />
           <e p="frmMain.xeto" t="Include" />
           <e p="frmMain.xeto.cs" t="Include" />
+          <e p="frmPrintHex.xeto" t="Include" />
+          <e p="frmPrintHex.xeto.cs" t="Include" />
         </e>
         <e p="Panels" t="Include">
           <e p="pnlDeviceInfo.xeto" t="Include" />

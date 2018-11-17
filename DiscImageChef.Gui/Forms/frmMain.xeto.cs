@@ -184,11 +184,15 @@ namespace DiscImageChef.Gui.Forms
                                         null).Show();
                 };
                 treeImagesMenu.Items.Add(menuItem);
+                menuItem       =  new ButtonMenuItem {Text = "View sectors"};
+                menuItem.Click += (a, b) => { new frmPrintHex(image).Show(); };
+                treeImagesMenu.Items.Add(menuItem);
             }
         }
 
         void CloseAllImages(object sender, EventArgs eventArgs)
         {
+            // TODO
             MessageBox.Show("Not yet implemented");
         }
 
