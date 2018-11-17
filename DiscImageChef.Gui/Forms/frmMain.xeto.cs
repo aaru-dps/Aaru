@@ -74,6 +74,7 @@ namespace DiscImageChef.Gui.Forms
         Bitmap                 tapeIcon;
         TreeGridView           treeImages;
         TreeGridItemCollection treeImagesItems;
+        ContextMenu            treeImagesMenu;
         Bitmap                 usbIcon;
 
         public frmMain(bool debug, bool verbose)
@@ -134,6 +135,61 @@ namespace DiscImageChef.Gui.Forms
             placeholderItem = new TreeGridItem {Values = new object[] {nullImage, "You should not be seeing this"}};
 
             Closing += OnClosing;
+
+            treeImagesMenu         =  new ContextMenu();
+            treeImagesMenu.Opening += OnTreeImagesMenuOpening;
+            treeImages.ContextMenu =  treeImagesMenu;
+        }
+
+        void OnTreeImagesMenuOpening(object sender, EventArgs e)
+        {
+            OnTreeImagesSelectedItemChanged(treeImages, e);
+
+            treeImagesMenu.Items.Clear();
+            ButtonMenuItem menuItem = new ButtonMenuItem {Text = "Close all images"};
+            menuItem.Click += CloseAllImages;
+            treeImagesMenu.Items.Add(menuItem);
+            menuItem       =  new ButtonMenuItem {Text = "Refresh devices"};
+            menuItem.Click += OnDeviceRefresh;
+            treeImagesMenu.Items.Add(menuItem);
+
+            if(!(treeImages.SelectedItem is TreeGridItem selectedItem)) return;
+
+            if(selectedItem.Values.Length < 4) return;
+
+            if(selectedItem.Values[3] is pnlImageInfo imageInfo)
+            {
+                IMediaImage image = selectedItem.Values[5] as IMediaImage;
+
+                // TODO: Global pool of forms
+                treeImagesMenu.Items.Add(new SeparatorMenuItem());
+
+                menuItem       =  new ButtonMenuItem {Text = "Calculate entropy"};
+                menuItem.Click += (a, b) => { new frmImageEntropy(image).Show(); };
+                treeImagesMenu.Items.Add(menuItem);
+                menuItem       =  new ButtonMenuItem {Text = "Verify"};
+                menuItem.Click += (a, b) => { new frmImageVerify(image).Show(); };
+                treeImagesMenu.Items.Add(menuItem);
+                menuItem       =  new ButtonMenuItem {Text = "Checksum"};
+                menuItem.Click += (a, b) => { new frmImageChecksum(image).Show(); };
+                treeImagesMenu.Items.Add(menuItem);
+                menuItem       =  new ButtonMenuItem {Text = "Convert to..."};
+                menuItem.Click += (a, b) => { new frmImageConvert(image, selectedItem.Values[2] as string).Show(); };
+                treeImagesMenu.Items.Add(menuItem);
+                menuItem = new ButtonMenuItem {Text = "Create CICM XML sidecar..."};
+                menuItem.Click += (a, b) =>
+                {
+                    // TODO: Pass thru chosen default encoding
+                    new frmImageSidecar(image, selectedItem.Values[2] as string, ((IFilter)selectedItem.Values[4]).Id,
+                                        null).Show();
+                };
+                treeImagesMenu.Items.Add(menuItem);
+            }
+        }
+
+        void CloseAllImages(object sender, EventArgs eventArgs)
+        {
+            MessageBox.Show("Not yet implemented");
         }
 
         protected override void OnLoad(EventArgs e)
