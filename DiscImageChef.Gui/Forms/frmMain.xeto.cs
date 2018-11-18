@@ -187,6 +187,12 @@ namespace DiscImageChef.Gui.Forms
                 menuItem       =  new ButtonMenuItem {Text = "View sectors"};
                 menuItem.Click += (a, b) => { new frmPrintHex(image).Show(); };
                 treeImagesMenu.Items.Add(menuItem);
+
+                if(!image.Info.ReadableMediaTags.Any()) return;
+
+                menuItem       =  new ButtonMenuItem {Text = "Decode media tags"};
+                menuItem.Click += (a, b) => { new frmDecodeMediaTags(image).Show(); };
+                treeImagesMenu.Items.Add(menuItem);
             }
         }
 

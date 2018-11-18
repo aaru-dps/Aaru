@@ -1620,6 +1620,8 @@
         <e p="Forms" t="Include">
           <e p="frmConsole.xeto" t="Include" />
           <e p="frmConsole.xeto.cs" t="Include" />
+          <e p="frmDecodeMediaTags.xeto" t="Include" />
+          <e p="frmDecodeMediaTags.xeto.cs" t="Include" />
           <e p="frmDump.xeto" t="Include" />
           <e p="frmDump.xeto.cs" t="Include" />
           <e p="frmImageChecksum.xeto" t="Include" />

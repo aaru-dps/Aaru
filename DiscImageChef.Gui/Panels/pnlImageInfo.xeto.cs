@@ -55,15 +55,16 @@ namespace DiscImageChef.Gui.Panels
 {
     public class pnlImageInfo : Panel
     {
-        IFilter          filter;
-        frmImageChecksum frmImageChecksum;
-        frmImageConvert  frmImageConvert;
-        frmImageEntropy  frmImageEntropy;
-        frmImageSidecar  frmImageSidecar;
-        frmImageVerify   frmImageVerify;
-        frmPrintHex      frmPrintHex;
-        IMediaImage      imageFormat;
-        string           imagePath;
+        IFilter            filter;
+        frmDecodeMediaTags frmDecodeMediaTags;
+        frmImageChecksum   frmImageChecksum;
+        frmImageConvert    frmImageConvert;
+        frmImageEntropy    frmImageEntropy;
+        frmImageSidecar    frmImageSidecar;
+        frmImageVerify     frmImageVerify;
+        frmPrintHex        frmPrintHex;
+        IMediaImage        imageFormat;
+        string             imagePath;
 
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
         {
@@ -873,6 +874,19 @@ namespace DiscImageChef.Gui.Panels
             frmPrintHex.Show();
         }
 
+        protected void OnBtnDecodeMediaTags(object sender, EventArgs e)
+        {
+            if(frmDecodeMediaTags != null)
+            {
+                frmDecodeMediaTags.Show();
+                return;
+            }
+
+            frmDecodeMediaTags        =  new frmDecodeMediaTags(imageFormat);
+            frmDecodeMediaTags.Closed += (s, ea) => { frmDecodeMediaTags = null; };
+            frmDecodeMediaTags.Show();
+        }
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -923,6 +937,7 @@ namespace DiscImageChef.Gui.Panels
         Button       btnChecksum;
         Button       btnConvert;
         Button       btnViewSectors;
+        Button       btnDecodeMediaTags;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

@@ -119,6 +119,7 @@
                 <Button ID="btnConvert" Text="Convert to..." Click="OnBtnConvert"/>
                 <Button ID="btnCreateSidecar" Text="Create CICM XML sidecar..." Click="OnBtnCreateSidecar"/>
                 <Button ID="btnViewSectors" Text="View sectors" Click="OnBtnViewSectors"/>
+                <Button ID="btnDecodeMediaTags" Text="Decode media tags" Click="OnBtnDecodeMediaTags"/>
             </StackLayout>
         </StackLayoutItem>
     </StackLayout>
