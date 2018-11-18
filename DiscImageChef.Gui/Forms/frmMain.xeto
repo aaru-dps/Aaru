@@ -37,6 +37,9 @@
             <TreeGridView ID="treeImages" SelectedItemChanged="OnTreeImagesSelectedItemChanged"
                           Expanding="OnTreeImagesItemExpanding"/>
         </Splitter.Panel1>
+        <Splitter.Panel2>
+            <Panel/>
+        </Splitter.Panel2>
     </Splitter>
     <Form.Menu>
         <MenuBar>
