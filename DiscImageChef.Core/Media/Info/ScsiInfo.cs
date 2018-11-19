@@ -64,6 +64,10 @@ namespace DiscImageChef.Core.Media.Info
         {
             0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x33, 0x00, 0x00, 0x00, 0x00
         };
+        static readonly byte[] Ps4Id =
+        {
+            0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x34, 0x00, 0x00, 0x00, 0x00
+        };
         static readonly byte[] OperaId = {0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01};
         // Only present on bootable CDs, but those make more than 99% of all available
         static readonly byte[] FmTownsBootId = {0x49, 0x50, 0x4C, 0x34, 0xEB, 0x55, 0x06};
@@ -1743,6 +1747,10 @@ namespace DiscImageChef.Core.Media.Info
                                     MediaType = MediaType.PS3DVD;
                                     break;
                             }
+
+                        tmp = new byte[Ps4Id.Length];
+                        Array.Copy(sector1, 512, tmp, 0, tmp.Length);
+                        if(tmp.SequenceEqual(Ps4Id) && MediaType == MediaType.BDROM) MediaType = MediaType.PS4BD;
                     }
 
                     // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
