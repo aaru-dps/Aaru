@@ -106,5 +106,8 @@
         <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <Button Click="OnBtnDumpClick" ID="btnDump" Text="Dump media to image"/>
         </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Button Click="OnBtnScanClick" ID="btnScan" Text="Scan media surface"/>
+        </StackLayoutItem>
     </StackLayout>
 </Panel>

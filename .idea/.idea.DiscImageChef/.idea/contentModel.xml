@@ -1636,6 +1636,8 @@
           <e p="frmImageVerify.xeto.cs" t="Include" />
           <e p="frmMain.xeto" t="Include" />
           <e p="frmMain.xeto.cs" t="Include" />
+          <e p="frmMediaScan.xeto" t="Include" />
+          <e p="frmMediaScan.xeto.cs" t="Include" />
           <e p="frmPrintHex.xeto" t="Include" />
           <e p="frmPrintHex.xeto.cs" t="Include" />
         </e>

@@ -232,6 +232,22 @@ namespace DiscImageChef.Gui.Panels
             dumpForm.Show();
         }
 
+        protected void OnBtnScanClick(object sender, EventArgs e)
+        {
+            if(scsiInfo.MediaType == MediaType.GDR || scsiInfo.MediaType == MediaType.GDROM)
+            {
+                MessageBox.Show("GD-ROM scan support is not yet implemented.", MessageBoxType.Error);
+                return;
+            }
+
+            if((scsiInfo.MediaType == MediaType.XGD || scsiInfo.MediaType == MediaType.XGD2 ||
+                scsiInfo.MediaType == MediaType.XGD3))
+                MessageBox.Show("Scanning Xbox discs is not yet supported.", MessageBoxType.Error);
+
+            frmMediaScan scanForm = new frmMediaScan(devicePath, scsiInfo.DeviceInfo, scsiInfo);
+            scanForm.Show();
+        }
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -280,6 +296,7 @@ namespace DiscImageChef.Gui.Panels
         Button       btnDump;
         ImageView    imgMediaLogo;
         SvgImageView svgMediaLogo;
+        Button btnScan;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
