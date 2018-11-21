@@ -84,7 +84,7 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
                                  results.ProcessingTime);
-            DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",       results.AvgSpeed);
+            DicConsole.WriteLine("Average speed: {0:F3} MiB/sec.",       results.AvgSpeed);
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
             DicConsole.WriteLine("Summary:");
