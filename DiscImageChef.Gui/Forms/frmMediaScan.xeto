@@ -34,17 +34,17 @@
 <Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="Media scan" ClientSize="600, 450" Padding="10">
     <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-        <Label ID="lblTotalTime" Text="Took a total of {0} seconds ({1} processing commands)."/>
-        <Label ID="lblAvgSpeed" Text="Average speed: {0:F3} MiB/sec."/>
-        <Label ID="lblMaxSpeed" Text="Fastest speed burst: {0:F3} MiB/sec."/>
-        <Label ID="lblMinSpeed" Text="Slowest speed burst: {0:F3} MiB/sec."/>
-        <Label ID="lblA" Text="{0} sectors took less than 3 ms."/>
-        <Label ID="lblB" Text="{0} sectors took less than 10 ms but more than 3 ms."/>
-        <Label ID="lblC" Text="{0} sectors took less than 50 ms but more than 10 ms."/>
-        <Label ID="lblD" Text="{0} sectors took less than 150 ms but more than 50 ms."/>
-        <Label ID="lblE" Text="{0} sectors took less than 500 ms but more than 150 ms."/>
-        <Label ID="lblF" Text="{0} sectors took more than 500 ms."/>
-        <Label ID="lblUnreadableSectors" Text="{0} sectors could not be read."/>
+        <Label ID="lblTotalTime" Text="Took a total of 0 seconds (0 processing commands)."/>
+        <Label ID="lblAvgSpeed" Text="Average speed: 0 MiB/sec."/>
+        <Label ID="lblMaxSpeed" Text="Fastest speed burst: 0 MiB/sec."/>
+        <Label ID="lblMinSpeed" Text="Slowest speed burst: 0 MiB/sec."/>
+        <Label ID="lblA" Text="0 sectors took less than 3 ms."/>
+        <Label ID="lblB" Text="0 sectors took less than 10 ms but more than 3 ms."/>
+        <Label ID="lblC" Text="0 sectors took less than 50 ms but more than 10 ms."/>
+        <Label ID="lblD" Text="0 sectors took less than 150 ms but more than 50 ms."/>
+        <Label ID="lblE" Text="0 sectors took less than 500 ms but more than 150 ms."/>
+        <Label ID="lblF" Text="0 sectors took more than 500 ms."/>
+        <Label ID="lblUnreadableSectors" Text="0 sectors could not be read."/>
         <StackLayout Orientation="Horizontal">
             <StackLayoutItem HorizontalAlignment="Right">
                 <Button ID="btnCancel" Click="OnBtnCancelClick" Text="Cancel"/>
