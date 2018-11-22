@@ -83,7 +83,10 @@ namespace DiscImageChef.Core
                                 version = DetectOS.GetVersion()
                             }
                         },
-                    Versions = new List<NameValueStats> {new NameValueStats {name = Version.GetVersion(), Value = 1}}
+                    Versions = new List<NameValueStats>
+                    {
+                        new NameValueStats {name = Version.GetVersion(), Value = 1}
+                    }
                 };
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 StreamReader  sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
@@ -105,7 +108,10 @@ namespace DiscImageChef.Core
                                 version = DetectOS.GetVersion()
                             }
                         },
-                    Versions = new List<NameValueStats> {new NameValueStats {name = Version.GetVersion(), Value = 1}}
+                    Versions = new List<NameValueStats>
+                    {
+                        new NameValueStats {name = Version.GetVersion(), Value = 1}
+                    }
                 };
             }
             else
@@ -669,8 +675,7 @@ namespace DiscImageChef.Core
 
             foreach(ChecksumStats st in checksums.Select(kvp => new ChecksumStats
             {
-                algorithm = kvp.Key,
-                Value     = kvp.Value
+                algorithm = kvp.Key, Value = kvp.Value
             }))
             {
                 CurrentStats.Benchmark.Checksum.Add(st);
@@ -748,7 +753,15 @@ namespace DiscImageChef.Core
                                         long lessThan500Ms, long moreThan500Ms, long total,        long error,
                                         long correct)
         {
-            if(lessThan500Ms <= 0) throw new ArgumentOutOfRangeException(nameof(lessThan500Ms));
+            if(lessThan3Ms   < 0) throw new ArgumentOutOfRangeException(nameof(lessThan3Ms));
+            if(lessThan10Ms  < 0) throw new ArgumentOutOfRangeException(nameof(lessThan10Ms));
+            if(lessThan50Ms  < 0) throw new ArgumentOutOfRangeException(nameof(lessThan50Ms));
+            if(lessThan150Ms < 0) throw new ArgumentOutOfRangeException(nameof(lessThan150Ms));
+            if(lessThan500Ms < 0) throw new ArgumentOutOfRangeException(nameof(lessThan500Ms));
+            if(moreThan500Ms < 0) throw new ArgumentOutOfRangeException(nameof(moreThan500Ms));
+            if(total         < 0) throw new ArgumentOutOfRangeException(nameof(total));
+            if(error         < 0) throw new ArgumentOutOfRangeException(nameof(error));
+            if(correct       < 0) throw new ArgumentOutOfRangeException(nameof(correct));
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaScanStats) return;
 
