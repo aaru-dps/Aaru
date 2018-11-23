@@ -1688,9 +1688,6 @@
           </e>
         </e>
       </e>
-      <e p="DiscImageChef.Gui.XamMac" t="IncludeRecursive">
-        <e p="DiscImageChef.Gui.XamMac.csproj" t="IncludeRecursive" />
-      </e>
       <e p="DiscImageChef.Helpers" t="IncludeRecursive">
         <e p="ArrayFill.cs" t="Include" />
         <e p="ArrayIsEmpty.cs" t="Include" />

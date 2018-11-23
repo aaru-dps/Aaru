@@ -41,6 +41,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Database", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Gui", "DiscImageChef.Gui\DiscImageChef.Gui.csproj", "{CF61AD81-3F98-4E7B-8F00-9957A6CDE5FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Gui.XamMac", "DiscImageChef.Gui.XamMac\DiscImageChef.Gui.XamMac.csproj", "{9E4ACE1A-BA5A-4901-9DC0-71336EFA40DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
