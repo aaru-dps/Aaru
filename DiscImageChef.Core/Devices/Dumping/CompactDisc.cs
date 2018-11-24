@@ -736,6 +736,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            bool supportsLongSectors = true;
+
             if(outputPlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
             {
                 if(tracks.Length > 1)
@@ -758,6 +760,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Output format only supports MODE 1 tracks, not continuing...");
                     return;
                 }
+
+                supportsLongSectors = false;
             }
 
             // Check if something prevents from dumping the Lead-in
@@ -914,7 +918,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-            bool    ret     = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, blockSize);
+            bool ret = outputPlugin.Create(outputPath, dskType, formatOptions, blocks,
+                                           supportsLongSectors ? blockSize : 2048);
 
             // Cannot create image
             if(!ret)
@@ -1100,7 +1105,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                             outputPlugin.WriteSectorsLong(data, i, blocksToRead);
                             outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
                         }
-                        else outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
+                        else
+                        {
+                            if(supportsLongSectors) outputPlugin.WriteSectorsLong(readBuffer, i, blocksToRead);
+                            else
+                            {
+                                if(readBuffer.Length % 2352 == 0)
+                                {
+                                    byte[] data = new byte[2048 * blocksToRead];
+
+                                    for(int b = 0; b < blocksToRead; b++)
+                                        Array.Copy(readBuffer, (int)(16 + b * blockSize), data, 2048 * b, 2048);
+
+                                    outputPlugin.WriteSectors(data, i, blocksToRead);
+                                }
+                                else outputPlugin.WriteSectorsLong(readBuffer, i, blocksToRead);
+                            }
+                        }
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     }
@@ -1119,7 +1140,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                             outputPlugin.WriteSectorsTag(new byte[subSize * skip], i, skip,
                                                          SectorTagType.CdSectorSubchannel);
                         }
-                        else outputPlugin.WriteSectors(new byte[blockSize * skip], i, skip);
+                        else
+                        {
+                            if(supportsLongSectors) outputPlugin.WriteSectorsLong(new byte[blockSize * skip], i, skip);
+                            else
+                            {
+                                if(readBuffer.Length % 2352 == 0)
+                                    outputPlugin.WriteSectors(new byte[2048           * skip], i, skip);
+                                else outputPlugin.WriteSectorsLong(new byte[blockSize * skip], i, skip);
+                            }
+                        }
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
@@ -1312,7 +1342,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                         outputPlugin.WriteSectorLong(data, badSector);
                         outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
                     }
-                    else outputPlugin.WriteSector(readBuffer, badSector);
+                    else
+                    {
+                        if(supportsLongSectors) outputPlugin.WriteSectorLong(readBuffer, badSector);
+                        else
+                        {
+                            if(readBuffer.Length % 2352 == 0)
+                            {
+                                byte[] data = new byte[2048];
+
+                                for(int b = 0; b < blocksToRead; b++) Array.Copy(readBuffer, 16, data, 0, 2048);
+
+                                outputPlugin.WriteSector(data, badSector);
+                            }
+                            else outputPlugin.WriteSectorLong(readBuffer, badSector);
+                        }
+                    }
                 }
 
                 DicConsole.WriteLine();
