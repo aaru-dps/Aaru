@@ -401,7 +401,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     ? TrackType.Data
                                     : TrackType.Audio,
                             TrackStartSector =
-                                (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
+                                (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 +
+                                        trk.PFRAME - 150),
                             TrackBytesPerSector    = (int)SECTOR_SIZE,
                             TrackRawBytesPerSector = (int)SECTOR_SIZE,
                             TrackSubchannelType    = subType
@@ -732,6 +733,30 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DicConsole.WriteLine("Track {0} is unknown mode {1}", tracks[t].TrackSequence, readBuffer[15]);
                         dumpLog.WriteLine("Track {0} is unknown mode {1}", tracks[t].TrackSequence, readBuffer[15]);
                         break;
+                }
+            }
+
+            if(outputPlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+            {
+                if(tracks.Length > 1)
+                {
+                    DicConsole.WriteLine("Output format does not support more than 1 track, not continuing...");
+                    dumpLog.WriteLine("Output format does not support more than 1 track, not continuing...");
+                    return;
+                }
+
+                if(tracks.Any(t => t.TrackType == TrackType.Audio))
+                {
+                    DicConsole.WriteLine("Output format does not support audio tracks, not continuing...");
+                    dumpLog.WriteLine("Output format does not support audio tracks, not continuing...");
+                    return;
+                }
+
+                if(tracks.Any(t => t.TrackType != TrackType.CdMode1))
+                {
+                    DicConsole.WriteLine("Output format only supports MODE 1 tracks, not continuing...");
+                    dumpLog.WriteLine("Output format only supports MODE 1 tracks, not continuing...");
+                    return;
                 }
             }
 
@@ -1345,9 +1370,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 32, Parameter = 0x00};
                         currentModePage = new Modes.ModePage
                         {
-                            Page         = 0x01,
-                            Subpage      = 0x00,
-                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         };
                     }
 
@@ -1621,8 +1644,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(),
-                        Pages  = new[] {currentModePage.Value}
+                        Header = new Modes.ModeHeader(), Pages = new[] {currentModePage.Value}
                     };
                     md6  = Modes.EncodeMode6(md, dev.ScsiType);
                     md10 = Modes.EncodeMode10(md, dev.ScsiType);
