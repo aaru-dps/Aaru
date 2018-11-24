@@ -4,7 +4,9 @@ Disc Image Chef (because "swiss-army-knife" is used too much)
 
 Copyright © 2011-2018 Natalia Portillo <claunia@claunia.com>
 
-[![Build Status](https://travis-ci.org/claunia/DiscImageChef.svg?branch=master)](https://travis-ci.org/claunia/DiscImageChef)[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
+[![Build status](https://dev.azure.com/DiscImageChef/DiscImageChef/_apis/build/status/DiscImageChef-.NET%20Desktop-CI)](https://dev.azure.com/DiscImageChef/DiscImageChef/_build/latest?definitionId=4)
+[![Build Status](https://travis-ci.org/claunia/DiscImageChef.svg?branch=master)](https://travis-ci.org/claunia/DiscImageChef)
+[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
 
 You can see statistics and device reports [here](http://discimagechef.claunia.com/Statistics.aspx)
