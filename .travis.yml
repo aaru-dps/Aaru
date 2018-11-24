@@ -2,7 +2,6 @@ language: csharp
 solution: DiscImageChef.sln
 mono:
  - latest
- - 5.2.0
 notifications:
   irc:
     channels:
