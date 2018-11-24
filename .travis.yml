@@ -15,4 +15,4 @@ notifications:
 before_install:
   - mkdir -p .nuget
   - wget -O .nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-  - mono .nuget/nuget.exe restore
+  - mono .nuget/nuget.exe restore DiscImageChef.sln
