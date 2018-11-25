@@ -58,8 +58,6 @@ namespace DiscImageChef.Core.Devices.Report
 
             const uint TIMEOUT = 5;
 
-            if(dev.IsPcmcia) Pcmcia.Report(dev, ref report);
-
             DicConsole.WriteLine("Querying ATA IDENTIFY...");
 
             dev.AtaIdentify(out byte[] buffer, out _, TIMEOUT, out _);

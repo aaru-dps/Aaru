@@ -32,25 +32,22 @@
 
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.PCMCIA;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Report
 {
     /// <summary>
     ///     Implements creating a report for a PCMCIA device
     /// </summary>
-    static class Pcmcia
+    public partial class DeviceReport
     {
         /// <summary>
         ///     Fills a device report with parameters specific to a PCMCIA device
         /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="report">Device report</param>
-        internal static void Report(Device dev, ref DeviceReportV2 report)
+        public Pcmcia PcmciaReport()
         {
-            report.PCMCIA = new CommonTypes.Metadata.Pcmcia {CIS = dev.Cis};
-            Tuple[] tuples = CIS.GetTuples(dev.Cis);
-            if(tuples == null) return;
+            Pcmcia  pcmciaReport = new Pcmcia {CIS = dev.Cis};
+            Tuple[] tuples       = CIS.GetTuples(dev.Cis);
+            if(tuples == null) return pcmciaReport;
 
             foreach(Tuple tuple in tuples)
                 switch(tuple.Code)
@@ -60,8 +57,8 @@ namespace DiscImageChef.Core.Devices.Report
 
                         if(manfid != null)
                         {
-                            report.PCMCIA.ManufacturerCode = manfid.ManufacturerID;
-                            report.PCMCIA.CardCode         = manfid.CardID;
+                            pcmciaReport.ManufacturerCode = manfid.ManufacturerID;
+                            pcmciaReport.CardCode         = manfid.CardID;
                         }
 
                         break;
@@ -70,14 +67,16 @@ namespace DiscImageChef.Core.Devices.Report
 
                         if(vers != null)
                         {
-                            report.PCMCIA.Manufacturer          = vers.Manufacturer;
-                            report.PCMCIA.ProductName           = vers.Product;
-                            report.PCMCIA.Compliance            = $"{vers.MajorVersion}.{vers.MinorVersion}";
-                            report.PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                            pcmciaReport.Manufacturer          = vers.Manufacturer;
+                            pcmciaReport.ProductName           = vers.Product;
+                            pcmciaReport.Compliance            = $"{vers.MajorVersion}.{vers.MinorVersion}";
+                            pcmciaReport.AdditionalInformation = vers.AdditionalInformation;
                         }
 
                         break;
                 }
+
+            return pcmciaReport;
         }
     }
 }

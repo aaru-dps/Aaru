@@ -133,6 +133,8 @@ namespace DiscImageChef.Commands
                 }
             }
 
+            if(dev.IsPcmcia) report.PCMCIA = reporter.PcmciaReport();
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:
