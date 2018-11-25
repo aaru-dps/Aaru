@@ -37,7 +37,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Xml.Serialization;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
@@ -130,11 +129,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte   Density     { get; set; }
         public ulong? Blocks      { get; set; }
         public uint?  BlockLength { get; set; }
-
-        [XmlIgnore]
-        public bool BlocksSpecified { get; set; }
-        [XmlIgnore]
-        public bool BlockLengthSpecified { get; set; }
     }
 
     public class ScsiPage
