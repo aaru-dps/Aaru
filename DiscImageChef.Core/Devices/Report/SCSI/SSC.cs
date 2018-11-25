@@ -44,7 +44,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
     /// <summary>
     ///     Implements creating a report for a SCSI Streaming device
     /// </summary>
-    static class Ssc
+    public static class Ssc
     {
         /// <summary>
         ///     Fills a SCSI device report with parameters and media tests specific to a Streaming device
@@ -52,7 +52,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
         /// <param name="debug">If debug is enabled</param>
-        internal static void Report(Device dev, ref DeviceReportV2 report, bool debug)
+        public static void Report(Device dev, ref DeviceReportV2 report, bool debug)
         {
             if(report == null) return;
 

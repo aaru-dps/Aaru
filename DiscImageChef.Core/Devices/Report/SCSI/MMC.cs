@@ -46,7 +46,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
     /// <summary>
     ///     Implements creating a report for a SCSI MultiMedia device
     /// </summary>
-    static class Mmc
+    public static class Mmc
     {
         /// <summary>
         ///     Fills a SCSI device report with parameters and media tests specific to a MultiMedia device
@@ -55,8 +55,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
         /// <param name="report">Device report</param>
         /// <param name="debug">If debug is enabled</param>
         /// <param name="cdromMode">Decoded MODE PAGE 2Ah</param>
-        internal static void Report(Device dev, ref DeviceReportV2 report, bool debug, ref Modes.ModePage_2A? cdromMode,
-                                    string productIdentification)
+        public static void Report(Device dev, ref DeviceReportV2 report, bool debug, Modes.ModePage_2A? cdromMode,
+                                  string productIdentification)
         {
             if(report == null) return;
 
