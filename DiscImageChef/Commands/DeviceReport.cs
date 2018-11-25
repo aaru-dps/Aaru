@@ -31,13 +31,14 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Devices.Report.SCSI;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices;
 using Newtonsoft.Json;
-using Ata = DiscImageChef.Core.Devices.Report.Ata;
 
 namespace DiscImageChef.Commands
 {
@@ -78,9 +79,11 @@ namespace DiscImageChef.Commands
 
             Core.Devices.Report.DeviceReport reporter = new Core.Devices.Report.DeviceReport(dev, options.Debug);
 
+            ConsoleKeyInfo pressedKey;
+
             if(dev.IsUsb)
             {
-                ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
+                pressedKey = new ConsoleKeyInfo();
                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
                     DicConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
@@ -107,7 +110,7 @@ namespace DiscImageChef.Commands
 
             if(dev.IsFireWire)
             {
-                ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
+                pressedKey = new ConsoleKeyInfo();
                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
                     DicConsole.Write("Is the device natively FireWire (in case of doubt, press Y)? (Y/N): ");
@@ -137,8 +140,82 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    Ata.Report(dev, ref report, options.Debug, ref removable);
+                {
+                    DicConsole.WriteLine("Querying ATA IDENTIFY...");
+
+                    dev.AtaIdentify(out byte[] buffer, out _, dev.Timeout, out _);
+
+                    if(!Identify.Decode(buffer).HasValue) break;
+
+                    report.ATA = new Ata {IdentifyDevice = Identify.Decode(buffer)};
+
+                    if(report.ATA.IdentifyDevice == null) break;
+
+                    if((ushort)report.ATA.IdentifyDevice?.GeneralConfiguration == 0x848A)
+                    {
+                        report.CompactFlash = true;
+                        removable           = false;
+                    }
+                    else if(!removable &&
+                            report.ATA.IdentifyDevice?.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit
+                                                                                            .Removable) == true)
+                    {
+                        pressedKey = new ConsoleKeyInfo();
+                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                        {
+                            DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                            pressedKey = System.Console.ReadKey();
+                            DicConsole.WriteLine();
+                        }
+
+                        removable = pressedKey.Key == ConsoleKey.Y;
+                    }
+
+                    if(removable)
+                    {
+                        DicConsole
+                           .WriteLine("Please remove any media from the device and press any key when it is out.");
+                        System.Console.ReadKey(true);
+                        DicConsole.WriteLine("Querying ATA IDENTIFY...");
+                        dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
+                        report.ATA.IdentifyDevice = Identify.Decode(buffer);
+                        if(options.Debug) report.ATA.Identify = buffer;
+                        List<TestedMedia> mediaTests          = new List<TestedMedia>();
+
+                        pressedKey = new ConsoleKeyInfo();
+                        while(pressedKey.Key != ConsoleKey.N)
+                        {
+                            pressedKey = new ConsoleKeyInfo();
+                            while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                            {
+                                DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
+                                pressedKey = System.Console.ReadKey();
+                                DicConsole.WriteLine();
+                            }
+
+                            if(pressedKey.Key != ConsoleKey.Y) continue;
+
+                            DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
+                            System.Console.ReadKey(true);
+
+                            DicConsole.Write("Please write a description of the media type and press enter: ");
+                            string mediumTypeName = System.Console.ReadLine();
+                            DicConsole.Write("Please write the media model and press enter: ");
+                            string mediumModel = System.Console.ReadLine();
+
+                            TestedMedia mediaTest = reporter.ReportAtaMedia();
+                            mediaTest.MediumTypeName = mediumTypeName;
+                            mediaTest.Model          = mediumModel;
+
+                            mediaTests.Add(mediaTest);
+                        }
+
+                        report.ATA.RemovableMedias = mediaTests.ToArray();
+                    }
+                    else report.ATA.ReadCapabilities = reporter.ReportAta(report.ATA.IdentifyDevice.Value);
+
                     break;
+                }
                 case DeviceType.MMC:
                     report.MultiMediaCard = reporter.MmcSdReport();
                     break;
@@ -147,8 +224,6 @@ namespace DiscImageChef.Commands
                     break;
                 case DeviceType.NVMe:
                     throw new NotImplementedException("NVMe devices not yet supported.");
-
-                    break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
                     General.Report(dev, ref report, options.Debug, ref removable);
