@@ -42,7 +42,6 @@ using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using Newtonsoft.Json;
 using Mmc = DiscImageChef.Core.Devices.Report.SCSI.Mmc;
-using Ssc = DiscImageChef.Core.Devices.Report.SCSI.Ssc;
 
 namespace DiscImageChef.Commands
 {
@@ -71,6 +70,8 @@ namespace DiscImageChef.Commands
             DeviceReportV2 report    = new DeviceReportV2();
             bool           removable = false;
             string         jsonFile;
+            byte[]         senseBuffer;
+            bool           sense;
 
             if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
                 jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".json";
@@ -142,6 +143,9 @@ namespace DiscImageChef.Commands
             if(dev.IsPcmcia) report.PCMCIA = reporter.PcmciaReport();
 
             byte[] buffer;
+            string mediumTypeName;
+            string mediumModel;
+            string mediumManufacturer;
 
             switch(dev.Type)
             {
@@ -205,9 +209,9 @@ namespace DiscImageChef.Commands
                             System.Console.ReadKey(true);
 
                             DicConsole.Write("Please write a description of the media type and press enter: ");
-                            string mediumTypeName = System.Console.ReadLine();
+                            mediumTypeName = System.Console.ReadLine();
                             DicConsole.Write("Please write the media model and press enter: ");
-                            string mediumModel = System.Console.ReadLine();
+                            mediumModel = System.Console.ReadLine();
 
                             TestedMedia mediaTest = reporter.ReportAtaMedia();
                             mediaTest.MediumTypeName = mediumTypeName;
@@ -297,7 +301,88 @@ namespace DiscImageChef.Commands
                             Mmc.Report(dev, ref report, options.Debug, cdromMode, productIdentification);
                             break;
                         case PeripheralDeviceTypes.SequentialAccess:
-                            Ssc.Report(dev, ref report, options.Debug);
+                            report.SCSI.SequentialDevice = reporter.ReportScsiSsc();
+
+                            List<TestedSequentialMedia> seqTests = new List<TestedSequentialMedia>();
+
+                            pressedKey = new ConsoleKeyInfo();
+                            while(pressedKey.Key != ConsoleKey.N)
+                            {
+                                pressedKey = new ConsoleKeyInfo();
+                                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                {
+                                    DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
+                                    pressedKey = System.Console.ReadKey();
+                                    DicConsole.WriteLine();
+                                }
+
+                                if(pressedKey.Key != ConsoleKey.Y) continue;
+
+                                DicConsole
+                                   .WriteLine("Please insert it in the drive and press any key when it is ready.");
+                                System.Console.ReadKey(true);
+
+                                DicConsole.Write("Please write a description of the media type and press enter: ");
+                                mediumTypeName = System.Console.ReadLine();
+                                DicConsole.Write("Please write the media manufacturer and press enter: ");
+                                mediumManufacturer = System.Console.ReadLine();
+                                DicConsole.Write("Please write the media model and press enter: ");
+                                mediumModel = System.Console.ReadLine();
+
+                                bool mediaIsRecognized = true;
+
+                                dev.Load(out senseBuffer, dev.Timeout, out _);
+                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                if(sense)
+                                {
+                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                    if(decSense.HasValue)
+                                        if(decSense.Value.ASC == 0x3A)
+                                        {
+                                            int leftRetries = 20;
+                                            while(leftRetries > 0)
+                                            {
+                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                if(!sense) break;
+
+                                                leftRetries--;
+                                            }
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+                                        else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                                        {
+                                            int leftRetries = 20;
+                                            while(leftRetries > 0)
+                                            {
+                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                if(!sense) break;
+
+                                                leftRetries--;
+                                            }
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+                                        else mediaIsRecognized = false;
+                                    else mediaIsRecognized = false;
+                                }
+
+                                TestedSequentialMedia seqTest = new TestedSequentialMedia();
+
+                                if(mediaIsRecognized) seqTest = reporter.ReportSscMedia();
+
+                                seqTest.MediumTypeName = mediumTypeName;
+                                seqTest.Manufacturer   = mediumManufacturer;
+                                seqTest.Model          = mediumModel;
+
+                                seqTests.Add(seqTest);
+                            }
+
+                            report.SCSI.SequentialDevice.TestedMedia = seqTests.ToArray();
                             break;
                         default:
                         {
@@ -323,15 +408,15 @@ namespace DiscImageChef.Commands
                                     System.Console.ReadKey(true);
 
                                     DicConsole.Write("Please write a description of the media type and press enter: ");
-                                    string mediumTypeName = System.Console.ReadLine();
+                                    mediumTypeName = System.Console.ReadLine();
                                     DicConsole.Write("Please write the media manufacturer and press enter: ");
-                                    string manufacturer = System.Console.ReadLine();
+                                    mediumManufacturer = System.Console.ReadLine();
                                     DicConsole.Write("Please write the media model and press enter: ");
-                                    string model = System.Console.ReadLine();
+                                    mediumModel = System.Console.ReadLine();
 
                                     bool mediaIsRecognized = true;
 
-                                    bool sense = dev.ScsiTestUnitReady(out byte[] senseBuffer, dev.Timeout, out _);
+                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
                                     if(sense)
                                     {
                                         FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
@@ -422,8 +507,8 @@ namespace DiscImageChef.Commands
                                     }
 
                                     mediaTest.MediumTypeName = mediumTypeName;
-                                    mediaTest.Manufacturer   = manufacturer;
-                                    mediaTest.Model          = model;
+                                    mediaTest.Manufacturer   = mediumManufacturer;
+                                    mediaTest.Model          = mediumModel;
 
                                     mediaTests.Add(mediaTest);
                                 }
@@ -452,8 +537,8 @@ namespace DiscImageChef.Commands
                                         for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize;; i++)
                                         {
                                             DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
-                                            bool sense = dev.ReadLong10(out buffer, out byte[] senseBuffer, false,
-                                                                        false, 0, i, dev.Timeout, out _);
+                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
+                                                                   dev.Timeout, out _);
                                             if(!sense)
                                             {
                                                 if(options.Debug)
@@ -479,9 +564,9 @@ namespace DiscImageChef.Commands
                                    report.SCSI.ReadCapabilities.LongBlockSize !=
                                    report.SCSI.ReadCapabilities.BlockSize)
                                 {
-                                    bool sense = dev.ReadLong10(out buffer, out byte[] senseBuffer, false, false, 0,
-                                                                (ushort)report.SCSI.ReadCapabilities.LongBlockSize,
-                                                                dev.Timeout, out _);
+                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                           (ushort)report.SCSI.ReadCapabilities.LongBlockSize,
+                                                           dev.Timeout, out _);
                                     if(!sense)
                                         DataFile.WriteTo("SCSI Report", "readlong10", "_debug_" + dev.Model + ".bin",
                                                          "read results", buffer);

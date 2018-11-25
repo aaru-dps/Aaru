@@ -30,279 +30,172 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
 
-namespace DiscImageChef.Core.Devices.Report.SCSI
+namespace DiscImageChef.Core.Devices.Report
 {
-    /// <summary>
-    ///     Implements creating a report for a SCSI Streaming device
-    /// </summary>
-    public static class Ssc
+    public partial class DeviceReport
     {
-        /// <summary>
-        ///     Fills a SCSI device report with parameters and media tests specific to a Streaming device
-        /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="report">Device report</param>
-        /// <param name="debug">If debug is enabled</param>
-        public static void Report(Device dev, ref DeviceReportV2 report, bool debug)
+        public Ssc ReportScsiSsc()
         {
-            if(report == null) return;
-
-            bool           sense;
-            const uint     TIMEOUT = 5;
-            ConsoleKeyInfo pressedKey;
-
-            report.SCSI.SequentialDevice = new CommonTypes.Metadata.Ssc();
+            Ssc report = new Ssc();
             DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
-            sense = dev.ReadBlockLimits(out byte[] buffer, out byte[] senseBuffer, TIMEOUT, out _);
+            bool sense = dev.ReadBlockLimits(out byte[] buffer, out byte[] _, dev.Timeout, out _);
             if(!sense)
             {
                 BlockLimits.BlockLimitsData? decBl = BlockLimits.Decode(buffer);
                 if(decBl.HasValue)
                 {
-                    if(decBl.Value.granularity > 0)
-                        report.SCSI.SequentialDevice.BlockSizeGranularity = decBl.Value.granularity;
+                    if(decBl.Value.granularity > 0) report.BlockSizeGranularity = decBl.Value.granularity;
 
-                    if(decBl.Value.maxBlockLen > 0)
-                        report.SCSI.SequentialDevice.MaxBlockLength = decBl.Value.maxBlockLen;
+                    if(decBl.Value.maxBlockLen > 0) report.MaxBlockLength = decBl.Value.maxBlockLen;
 
-                    if(decBl.Value.minBlockLen > 0)
-                        report.SCSI.SequentialDevice.MinBlockLength = decBl.Value.minBlockLen;
+                    if(decBl.Value.minBlockLen > 0) report.MinBlockLength = decBl.Value.minBlockLen;
                 }
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
-            sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, false, TIMEOUT, out _);
+            sense = dev.ReportDensitySupport(out buffer, out byte[] _, false, false, dev.Timeout, out _);
             if(!sense)
             {
                 DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
                 if(dsh.HasValue)
                 {
-                    report.SCSI.SequentialDevice.SupportedDensities =
-                        new SupportedDensity[dsh.Value.descriptors.Length];
+                    report.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
                     for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                     {
-                        report.SCSI.SequentialDevice.SupportedDensities[i].BitsPerMm = dsh.Value.descriptors[i].bpmm;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Capacity =
-                            dsh.Value.descriptors[i].capacity;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].DefaultDensity =
-                            dsh.Value.descriptors[i].defaultDensity;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Description =
-                            dsh.Value.descriptors[i].description;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Duplicate =
-                            dsh.Value.descriptors[i].duplicate;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Name = dsh.Value.descriptors[i].name;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Organization =
-                            dsh.Value.descriptors[i].organization;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].PrimaryCode =
-                            dsh.Value.descriptors[i].primaryCode;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].SecondaryCode =
-                            dsh.Value.descriptors[i].secondaryCode;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Tracks   = dsh.Value.descriptors[i].tracks;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Width    = dsh.Value.descriptors[i].width;
-                        report.SCSI.SequentialDevice.SupportedDensities[i].Writable = dsh.Value.descriptors[i].writable;
+                        report.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
+                        report.SupportedDensities[i].Capacity       = dsh.Value.descriptors[i].capacity;
+                        report.SupportedDensities[i].DefaultDensity = dsh.Value.descriptors[i].defaultDensity;
+                        report.SupportedDensities[i].Description    = dsh.Value.descriptors[i].description;
+                        report.SupportedDensities[i].Duplicate      = dsh.Value.descriptors[i].duplicate;
+                        report.SupportedDensities[i].Name           = dsh.Value.descriptors[i].name;
+                        report.SupportedDensities[i].Organization   = dsh.Value.descriptors[i].organization;
+                        report.SupportedDensities[i].PrimaryCode    = dsh.Value.descriptors[i].primaryCode;
+                        report.SupportedDensities[i].SecondaryCode  = dsh.Value.descriptors[i].secondaryCode;
+                        report.SupportedDensities[i].Tracks         = dsh.Value.descriptors[i].tracks;
+                        report.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
+                        report.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
                     }
                 }
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types...");
-            sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, false, TIMEOUT, out _);
+            sense = dev.ReportDensitySupport(out buffer, out byte[] _, true, false, dev.Timeout, out _);
+            if(sense) return report;
+
+            DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
+            if(!mtsh.HasValue) return report;
+
+            report.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
+            for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
+            {
+                report.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
+                report.SupportedMediaTypes[i].Length       = mtsh.Value.descriptors[i].length;
+                report.SupportedMediaTypes[i].MediumType   = mtsh.Value.descriptors[i].mediumType;
+                report.SupportedMediaTypes[i].Name         = mtsh.Value.descriptors[i].name;
+                report.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
+                report.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
+                if(mtsh.Value.descriptors[i].densityCodes == null) continue;
+
+                report.SupportedMediaTypes[i].DensityCodes = new int[mtsh.Value.descriptors[i].densityCodes.Length];
+                for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
+                    report.SupportedMediaTypes[i].DensityCodes[j] = mtsh.Value.descriptors[i].densityCodes[j];
+            }
+
+            return report;
+        }
+
+        public TestedSequentialMedia ReportSscMedia()
+        {
+            TestedSequentialMedia seqTest = new TestedSequentialMedia();
+
+            Modes.DecodedMode? decMode = null;
+
+            DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
+            bool sense = dev.ModeSense10(out byte[] buffer, out byte[] _, false, true, ScsiModeSensePageControl.Current,
+                                         0x3F, 0x00, dev.Timeout, out _);
+            if(!sense && !dev.Error)
+            {
+                decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
+                if(debug) seqTest.ModeSense10Data = buffer;
+            }
+
+            DicConsole.WriteLine("Querying SCSI MODE SENSE...");
+            sense = dev.ModeSense(out buffer, out byte[] _, dev.Timeout, out _);
+            if(!sense && !dev.Error)
+            {
+                if(!decMode.HasValue) decMode    = Modes.DecodeMode6(buffer, dev.ScsiType);
+                if(debug) seqTest.ModeSense6Data = buffer;
+            }
+
+            if(decMode.HasValue)
+            {
+                seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
+                if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
+                    seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+            }
+
+            DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
+            sense = dev.ReportDensitySupport(out buffer, out byte[] _, false, true, dev.Timeout, out _);
+            if(!sense)
+            {
+                DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
+                if(dsh.HasValue)
+                {
+                    seqTest.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
+                    for(int i = 0; i < dsh.Value.descriptors.Length; i++)
+                    {
+                        seqTest.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
+                        seqTest.SupportedDensities[i].Capacity       = dsh.Value.descriptors[i].capacity;
+                        seqTest.SupportedDensities[i].DefaultDensity = dsh.Value.descriptors[i].defaultDensity;
+                        seqTest.SupportedDensities[i].Description    = dsh.Value.descriptors[i].description;
+                        seqTest.SupportedDensities[i].Duplicate      = dsh.Value.descriptors[i].duplicate;
+                        seqTest.SupportedDensities[i].Name           = dsh.Value.descriptors[i].name;
+                        seqTest.SupportedDensities[i].Organization   = dsh.Value.descriptors[i].organization;
+                        seqTest.SupportedDensities[i].PrimaryCode    = dsh.Value.descriptors[i].primaryCode;
+                        seqTest.SupportedDensities[i].SecondaryCode  = dsh.Value.descriptors[i].secondaryCode;
+                        seqTest.SupportedDensities[i].Tracks         = dsh.Value.descriptors[i].tracks;
+                        seqTest.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
+                        seqTest.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
+                    }
+                }
+            }
+
+            DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
+            sense = dev.ReportDensitySupport(out buffer, out byte[] _, true, true, dev.Timeout, out _);
             if(!sense)
             {
                 DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
                 if(mtsh.HasValue)
                 {
-                    report.SCSI.SequentialDevice.SupportedMediaTypes =
-                        new SupportedMedia[mtsh.Value.descriptors.Length];
+                    seqTest.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
                     for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                     {
-                        report.SCSI.SequentialDevice.SupportedMediaTypes[i].Description =
-                            mtsh.Value.descriptors[i].description;
-                        report.SCSI.SequentialDevice.SupportedMediaTypes[i].Length = mtsh.Value.descriptors[i].length;
-                        report.SCSI.SequentialDevice.SupportedMediaTypes[i].MediumType =
-                            mtsh.Value.descriptors[i].mediumType;
-                        report.SCSI.SequentialDevice.SupportedMediaTypes[i].Name = mtsh.Value.descriptors[i].name;
-                        report.SCSI.SequentialDevice.SupportedMediaTypes[i].Organization =
-                            mtsh.Value.descriptors[i].organization;
-                        report.SCSI.SequentialDevice.SupportedMediaTypes[i].Width = mtsh.Value.descriptors[i].width;
+                        seqTest.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
+                        seqTest.SupportedMediaTypes[i].Length       = mtsh.Value.descriptors[i].length;
+                        seqTest.SupportedMediaTypes[i].MediumType   = mtsh.Value.descriptors[i].mediumType;
+                        seqTest.SupportedMediaTypes[i].Name         = mtsh.Value.descriptors[i].name;
+                        seqTest.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
+                        seqTest.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
                         if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
-                        report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes =
+                        seqTest.SupportedMediaTypes[i].DensityCodes =
                             new int[mtsh.Value.descriptors[i].densityCodes.Length];
                         for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                            report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes[j] =
-                                mtsh.Value.descriptors[i].densityCodes[j];
+                            seqTest.SupportedMediaTypes[i].DensityCodes[j] = mtsh.Value.descriptors[i].densityCodes[j];
                     }
                 }
             }
 
-            List<TestedSequentialMedia> seqTests = new List<TestedSequentialMedia>();
+            DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
+            seqTest.CanReadMediaSerial = !dev.ReadMediaSerialNumber(out buffer, out byte[] _, dev.Timeout, out _);
 
-            pressedKey = new ConsoleKeyInfo();
-            while(pressedKey.Key != ConsoleKey.N)
-            {
-                pressedKey = new ConsoleKeyInfo();
-                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-                {
-                    DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
-                    pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
-                }
-
-                if(pressedKey.Key != ConsoleKey.Y) continue;
-
-                DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
-                System.Console.ReadKey(true);
-
-                TestedSequentialMedia seqTest = new TestedSequentialMedia();
-                DicConsole.Write("Please write a description of the media type and press enter: ");
-                seqTest.MediumTypeName = System.Console.ReadLine();
-                DicConsole.Write("Please write the media manufacturer and press enter: ");
-                seqTest.Manufacturer = System.Console.ReadLine();
-                DicConsole.Write("Please write the media model and press enter: ");
-                seqTest.Model = System.Console.ReadLine();
-
-                seqTest.MediaIsRecognized = true;
-
-                dev.Load(out senseBuffer, TIMEOUT, out _);
-                sense = dev.ScsiTestUnitReady(out senseBuffer, TIMEOUT, out _);
-                if(sense)
-                {
-                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
-                    if(decSense.HasValue)
-                        if(decSense.Value.ASC == 0x3A)
-                        {
-                            int leftRetries = 20;
-                            while(leftRetries > 0)
-                            {
-                                DicConsole.Write("\rWaiting for drive to become ready");
-                                Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, TIMEOUT, out _);
-                                if(!sense) break;
-
-                                leftRetries--;
-                            }
-
-                            seqTest.MediaIsRecognized &= !sense;
-                        }
-                        else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
-                        {
-                            int leftRetries = 20;
-                            while(leftRetries > 0)
-                            {
-                                DicConsole.Write("\rWaiting for drive to become ready");
-                                Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, TIMEOUT, out _);
-                                if(!sense) break;
-
-                                leftRetries--;
-                            }
-
-                            seqTest.MediaIsRecognized &= !sense;
-                        }
-                        else seqTest.MediaIsRecognized = false;
-                    else seqTest.MediaIsRecognized = false;
-                }
-
-                if(seqTest.MediaIsRecognized)
-                {
-                    Modes.DecodedMode? decMode = null;
-
-                    DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
-                    sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current,
-                                            0x3F, 0x00, TIMEOUT, out _);
-                    if(!sense && !dev.Error)
-                    {
-                        report.SCSI.SupportsModeSense10 = true;
-                        decMode                         = Modes.DecodeMode10(buffer, dev.ScsiType);
-                        if(debug) seqTest.ModeSense10Data = buffer;
-                    }
-
-                    DicConsole.WriteLine("Querying SCSI MODE SENSE...");
-                    sense = dev.ModeSense(out buffer, out senseBuffer, TIMEOUT, out _);
-                    if(!sense && !dev.Error)
-                    {
-                        report.SCSI.SupportsModeSense6 = true;
-                        if(!decMode.HasValue) decMode    = Modes.DecodeMode6(buffer, dev.ScsiType);
-                        if(debug) seqTest.ModeSense6Data = buffer;
-                    }
-
-                    if(decMode.HasValue)
-                    {
-                        seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
-                        if(decMode.Value.Header.BlockDescriptors        != null &&
-                           decMode.Value.Header.BlockDescriptors.Length > 0)
-                            seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                    }
-                }
-
-                DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
-                sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, true, TIMEOUT, out _);
-                if(!sense)
-                {
-                    DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
-                    if(dsh.HasValue)
-                    {
-                        seqTest.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
-                        for(int i = 0; i < dsh.Value.descriptors.Length; i++)
-                        {
-                            seqTest.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
-                            seqTest.SupportedDensities[i].Capacity       = dsh.Value.descriptors[i].capacity;
-                            seqTest.SupportedDensities[i].DefaultDensity = dsh.Value.descriptors[i].defaultDensity;
-                            seqTest.SupportedDensities[i].Description    = dsh.Value.descriptors[i].description;
-                            seqTest.SupportedDensities[i].Duplicate      = dsh.Value.descriptors[i].duplicate;
-                            seqTest.SupportedDensities[i].Name           = dsh.Value.descriptors[i].name;
-                            seqTest.SupportedDensities[i].Organization   = dsh.Value.descriptors[i].organization;
-                            seqTest.SupportedDensities[i].PrimaryCode    = dsh.Value.descriptors[i].primaryCode;
-                            seqTest.SupportedDensities[i].SecondaryCode  = dsh.Value.descriptors[i].secondaryCode;
-                            seqTest.SupportedDensities[i].Tracks         = dsh.Value.descriptors[i].tracks;
-                            seqTest.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
-                            seqTest.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
-                        }
-                    }
-                }
-
-                DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
-                sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, true, TIMEOUT, out _);
-                if(!sense)
-                {
-                    DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
-                    if(mtsh.HasValue)
-                    {
-                        seqTest.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
-                        for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
-                        {
-                            seqTest.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
-                            seqTest.SupportedMediaTypes[i].Length       = mtsh.Value.descriptors[i].length;
-                            seqTest.SupportedMediaTypes[i].MediumType   = mtsh.Value.descriptors[i].mediumType;
-                            seqTest.SupportedMediaTypes[i].Name         = mtsh.Value.descriptors[i].name;
-                            seqTest.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
-                            seqTest.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
-                            if(mtsh.Value.descriptors[i].densityCodes == null) continue;
-
-                            seqTest.SupportedMediaTypes[i].DensityCodes =
-                                new int[mtsh.Value.descriptors[i].densityCodes.Length];
-                            for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                                seqTest.SupportedMediaTypes[i].DensityCodes[j] =
-                                    mtsh.Value.descriptors[i].densityCodes[j];
-                        }
-                    }
-                }
-
-                DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
-                seqTest.CanReadMediaSerial = !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, TIMEOUT, out _);
-                seqTests.Add(seqTest);
-            }
-
-            report.SCSI.SequentialDevice.TestedMedia = seqTests.ToArray();
+            return seqTest;
         }
     }
 }
