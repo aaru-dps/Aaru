@@ -224,7 +224,6 @@
           <e p="ReaderSCSI.cs" t="Include" />
           <e p="Report" t="Include">
             <e p="ATA.cs" t="Include" />
-            <e p="ATAPI.cs" t="Include" />
             <e p="DeviceReport.cs" t="Include" />
             <e p="FireWire.cs" t="Include" />
             <e p="PCMCIA.cs" t="Include" />

@@ -137,13 +137,15 @@ namespace DiscImageChef.Commands
 
             if(dev.IsPcmcia) report.PCMCIA = reporter.PcmciaReport();
 
+            byte[] buffer;
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:
                 {
                     DicConsole.WriteLine("Querying ATA IDENTIFY...");
 
-                    dev.AtaIdentify(out byte[] buffer, out _, dev.Timeout, out _);
+                    dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
 
                     if(!Identify.Decode(buffer).HasValue) break;
 
@@ -225,6 +227,18 @@ namespace DiscImageChef.Commands
                 case DeviceType.NVMe:
                     throw new NotImplementedException("NVMe devices not yet supported.");
                 case DeviceType.ATAPI:
+                    DicConsole.WriteLine("Querying ATAPI IDENTIFY...");
+
+                    dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
+
+                    if(!Identify.Decode(buffer).HasValue) return;
+
+                    Identify.IdentifyDevice? atapiIdNullable = Identify.Decode(buffer);
+                    if(atapiIdNullable != null) report.ATAPI = new CommonTypes.Metadata.Ata {IdentifyDevice = atapiIdNullable};
+
+                    if(options.Debug) report.ATAPI.Identify = buffer;
+
+                    goto case DeviceType.SCSI;
                 case DeviceType.SCSI:
                     General.Report(dev, ref report, options.Debug, ref removable);
                     break;

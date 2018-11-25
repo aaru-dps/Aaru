@@ -76,8 +76,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 removable = pressedKey.Key == ConsoleKey.Y;
             }
 
-            if(dev.Type == DeviceType.ATAPI) Atapi.Report(dev, ref report, debug);
-
             DicConsole.WriteLine("Querying SCSI INQUIRY...");
             sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer);
 

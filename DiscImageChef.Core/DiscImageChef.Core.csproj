@@ -77,7 +77,6 @@
     <Compile Include="Delegates.cs" />
     <Compile Include="Devices\Scanning\ScanResults.cs" />
     <Compile Include="Devices\Report\ATA.cs" />
-    <Compile Include="Devices\Report\ATAPI.cs" />
     <Compile Include="Devices\Report\FireWire.cs" />
     <Compile Include="Devices\Report\USB.cs" />
     <Compile Include="Devices\Report\SecureDigital.cs" />
