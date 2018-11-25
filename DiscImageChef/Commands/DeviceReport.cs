@@ -34,7 +34,6 @@ using System;
 using System.IO;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
-using DiscImageChef.Core.Devices.Report;
 using DiscImageChef.Core.Devices.Report.SCSI;
 using DiscImageChef.Devices;
 using Newtonsoft.Json;
@@ -141,11 +140,14 @@ namespace DiscImageChef.Commands
                     Ata.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.MMC:
+                    report.MultiMediaCard = reporter.MmcSdReport();
+                    break;
                 case DeviceType.SecureDigital:
-                    SecureDigital.Report(dev, ref report);
+                    report.SecureDigital = reporter.MmcSdReport();
                     break;
                 case DeviceType.NVMe:
                     throw new NotImplementedException("NVMe devices not yet supported.");
+
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
