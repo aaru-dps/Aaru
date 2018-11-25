@@ -80,7 +80,6 @@
     <Compile Include="Devices\Report\ATAPI.cs" />
     <Compile Include="Devices\Report\FireWire.cs" />
     <Compile Include="Devices\Report\USB.cs" />
-    <Compile Include="Devices\Report\NVMe.cs" />
     <Compile Include="Devices\Report\SecureDigital.cs" />
     <Compile Include="Devices\Report\SCSI\MMC.cs" />
     <Compile Include="Devices\Report\SCSI\SSC.cs" />

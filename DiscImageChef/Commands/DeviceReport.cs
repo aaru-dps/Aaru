@@ -145,7 +145,7 @@ namespace DiscImageChef.Commands
                     SecureDigital.Report(dev, ref report);
                     break;
                 case DeviceType.NVMe:
-                    Nvme.Report(dev, ref report, options.Debug, ref removable);
+                    throw new NotImplementedException("NVMe devices not yet supported.");
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
