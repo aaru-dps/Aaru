@@ -134,7 +134,7 @@ namespace DiscImageChef.CommonTypes.Metadata
     public class ScsiPage
     {
         public byte   page    { get; set; }
-        public byte   subpage { get; set; }
+        public byte?  subpage { get; set; }
         public byte[] value   { get; set; }
     }
 
