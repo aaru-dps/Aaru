@@ -1154,7 +1154,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                          "read results", buffer);
                                     if(sense) continue;
 
-                                    mediaTest.CanReadLeadIn = true;
+                                    mediaTest.CanReadFirstTrackPreGap = true;
                                     break;
                                 }
 

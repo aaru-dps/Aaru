@@ -300,6 +300,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool?                    CanReadFullTOC                   { get; set; }
         public bool?                    CanReadHDCMI                     { get; set; }
         public bool?                    CanReadLayerCapacity             { get; set; }
+        public bool?                    CanReadFirstTrackPreGap          { get; set; }
         public bool?                    CanReadLeadIn                    { get; set; }
         public bool?                    CanReadLeadOut                   { get; set; }
         public bool?                    CanReadMediaID                   { get; set; }
