@@ -77,6 +77,35 @@ namespace DiscImageChef.Commands
 
             jsonFile = jsonFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 
+            Core.Devices.Report.DeviceReport reporter = new Core.Devices.Report.DeviceReport(dev, options.Debug);
+
+            if(dev.IsUsb)
+            {
+                ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
+                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                {
+                    DicConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
+                    pressedKey = System.Console.ReadKey();
+                    DicConsole.WriteLine();
+                }
+
+                if(pressedKey.Key == ConsoleKey.Y)
+                {
+                    report.USB = reporter.UsbReport();
+
+                    pressedKey = new ConsoleKeyInfo();
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    {
+                        DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                        pressedKey = System.Console.ReadKey();
+                        DicConsole.WriteLine();
+                    }
+
+                    report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
+                    removable                 = report.USB.RemovableMedia;
+                }
+            }
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:

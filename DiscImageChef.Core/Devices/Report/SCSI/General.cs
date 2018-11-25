@@ -63,8 +63,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             const uint     TIMEOUT = 5;
             ConsoleKeyInfo pressedKey;
 
-            if(dev.IsUsb) Usb.Report(dev, ref report, debug, ref removable);
-
             if(dev.IsFireWire) FireWire.Report(dev, ref report, ref removable);
 
             if(dev.IsPcmcia) Pcmcia.Report(dev, ref report);

@@ -30,17 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Report
 {
     /// <summary>
     ///     Implements creating a report for a USB device
     /// </summary>
-    static class Usb
+    public partial class DeviceReport
     {
         /// <summary>
         ///     Fills a device report with parameters specific to a USB device
@@ -49,21 +46,9 @@ namespace DiscImageChef.Core.Devices.Report
         /// <param name="report">Device report</param>
         /// <param name="removable">If device is removable</param>
         /// <param name="debug">If debug is enabled</param>
-        internal static void Report(Device dev, ref DeviceReportV2 report, bool debug, ref bool removable)
+        public Usb UsbReport()
         {
-            if(report == null) return;
-
-            ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
-            while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-            {
-                DicConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
-                pressedKey = System.Console.ReadKey();
-                DicConsole.WriteLine();
-            }
-
-            if(pressedKey.Key != ConsoleKey.Y) return;
-
-            report.USB = new CommonTypes.Metadata.Usb
+            Usb usbReport = new Usb
             {
                 Manufacturer = dev.UsbManufacturerString,
                 Product      = dev.UsbProductString,
@@ -71,17 +56,9 @@ namespace DiscImageChef.Core.Devices.Report
                 VendorID     = dev.UsbVendorId
             };
 
-            pressedKey = new ConsoleKeyInfo();
-            while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-            {
-                DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
-                pressedKey = System.Console.ReadKey();
-                DicConsole.WriteLine();
-            }
+            if(debug) usbReport.Descriptors = dev.UsbDescriptors;
 
-            report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-            removable                 = report.USB.RemovableMedia;
-            if(debug) report.USB.Descriptors = dev.UsbDescriptors;
+            return usbReport;
         }
     }
 }
