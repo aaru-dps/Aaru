@@ -326,7 +326,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool?                    SupportsRead10                   { get; set; }
         public bool?                    SupportsRead12                   { get; set; }
         public bool?                    SupportsRead16                   { get; set; }
-        public bool?                    SupportsRead                     { get; set; }
+        public bool?                    SupportsRead6                    { get; set; }
         public bool?                    SupportsReadCapacity16           { get; set; }
         public bool?                    SupportsReadCapacity             { get; set; }
         public bool?                    SupportsReadCd                   { get; set; }
@@ -364,6 +364,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool? SupportsReadDma       { get; set; }
         public bool? SupportsReadDmaRetry  { get; set; }
         public bool? SupportsReadRetry     { get; set; }
+        public bool? SupportsReadSectors   { get; set; }
         public bool? SupportsReadLongRetry { get; set; }
         public bool? SupportsSeek          { get; set; }
     }
