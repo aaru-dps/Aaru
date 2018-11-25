@@ -50,6 +50,9 @@
     <Compile Include="Devices\Info\Plextor.cs" />
     <Compile Include="Devices\Info\Properties.cs" />
     <Compile Include="Devices\Report\DeviceReport.cs" />
+    <Compile Include="Devices\Report\Scsi.cs" />
+    <Compile Include="Devices\Report\MMC.cs" />
+    <Compile Include="Devices\Report\SSC.cs" />
     <Compile Include="Entropy.cs" />
     <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />
@@ -80,9 +83,6 @@
     <Compile Include="Devices\Report\FireWire.cs" />
     <Compile Include="Devices\Report\USB.cs" />
     <Compile Include="Devices\Report\SecureDigital.cs" />
-    <Compile Include="Devices\Report\SCSI\MMC.cs" />
-    <Compile Include="Devices\Report\SCSI\SSC.cs" />
-    <Compile Include="Devices\Report\SCSI\General.cs" />
     <Compile Include="Remote.cs" />
     <Compile Include="Devices\Report\PCMCIA.cs" />
     <Compile Include="Devices\Reader.cs" />
@@ -157,7 +157,6 @@
     <Folder Include="Devices\Scanning\" />
     <Folder Include="Devices\Dumping\" />
     <Folder Include="Devices\Report\" />
-    <Folder Include="Devices\Report\SCSI\" />
     <Folder Include="Sidecar\" />
   </ItemGroup>
   <ItemGroup>

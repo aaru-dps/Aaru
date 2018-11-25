@@ -226,12 +226,10 @@
             <e p="ATA.cs" t="Include" />
             <e p="DeviceReport.cs" t="Include" />
             <e p="FireWire.cs" t="Include" />
+            <e p="MMC.cs" t="Include" />
             <e p="PCMCIA.cs" t="Include" />
-            <e p="SCSI" t="Include">
-              <e p="General.cs" t="Include" />
-              <e p="MMC.cs" t="Include" />
-              <e p="SSC.cs" t="Include" />
-            </e>
+            <e p="SSC.cs" t="Include" />
+            <e p="Scsi.cs" t="Include" />
             <e p="SecureDigital.cs" t="Include" />
             <e p="USB.cs" t="Include" />
           </e>
