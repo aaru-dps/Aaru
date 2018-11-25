@@ -30,56 +30,25 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Report
 {
     /// <summary>
     ///     Implements creating a report for a FireWire device
     /// </summary>
-    static class FireWire
+    public partial class DeviceReport
     {
         /// <summary>
         ///     Fills a device report with parameters specific to a FireWire device
         /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="report">Device report</param>
-        /// <param name="removable">If device is removable</param>
-        internal static void Report(Device dev, ref DeviceReportV2 report, ref bool removable)
-        {
-            if(report == null) return;
-
-            ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
-            while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-            {
-                DicConsole.Write("Is the device natively FireWire (in case of doubt, press Y)? (Y/N): ");
-                pressedKey = System.Console.ReadKey();
-                DicConsole.WriteLine();
-            }
-
-            if(pressedKey.Key != ConsoleKey.Y) return;
-
-            report.FireWire = new CommonTypes.Metadata.FireWire
+        public FireWire FireWireReport() =>
+            new FireWire
             {
                 Manufacturer = dev.FireWireVendorName,
                 Product      = dev.FireWireModelName,
                 ProductID    = dev.FireWireModel,
                 VendorID     = dev.FireWireVendor
             };
-
-            pressedKey = new ConsoleKeyInfo();
-            while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-            {
-                DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
-                pressedKey = System.Console.ReadKey();
-                DicConsole.WriteLine();
-            }
-
-            report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-            removable                      = report.FireWire.RemovableMedia;
-        }
     }
 }

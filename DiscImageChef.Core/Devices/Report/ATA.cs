@@ -58,8 +58,6 @@ namespace DiscImageChef.Core.Devices.Report
 
             const uint TIMEOUT = 5;
 
-            if(dev.IsFireWire) FireWire.Report(dev, ref report, ref removable);
-
             if(dev.IsPcmcia) Pcmcia.Report(dev, ref report);
 
             DicConsole.WriteLine("Querying ATA IDENTIFY...");
