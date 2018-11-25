@@ -41,7 +41,6 @@ using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using Newtonsoft.Json;
-using Mmc = DiscImageChef.Core.Devices.Report.SCSI.Mmc;
 
 namespace DiscImageChef.Commands
 {
@@ -70,8 +69,6 @@ namespace DiscImageChef.Commands
             DeviceReportV2 report    = new DeviceReportV2();
             bool           removable = false;
             string         jsonFile;
-            byte[]         senseBuffer;
-            bool           sense;
 
             if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
                 jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".json";
@@ -145,7 +142,6 @@ namespace DiscImageChef.Commands
             byte[] buffer;
             string mediumTypeName;
             string mediumModel;
-            string mediumManufacturer;
 
             switch(dev.Type)
             {
@@ -290,17 +286,328 @@ namespace DiscImageChef.Commands
 
                     reporter.ReportScsiModes(ref report, ref cdromMode);
 
-                    string productIdentification = null;
-                    if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(report.SCSI.Inquiry?.ProductIdentification)))
-                        productIdentification =
-                            StringHandlers.CToString(report.SCSI.Inquiry?.ProductIdentification).Trim();
+                    string mediumManufacturer;
+                    byte[] senseBuffer;
+                    bool   sense;
 
                     switch(dev.ScsiType)
                     {
                         case PeripheralDeviceTypes.MultiMediaDevice:
-                            Mmc.Report(dev, ref report, options.Debug, cdromMode, productIdentification);
+                        {
+                            List<string> mediaTypes = new List<string>();
+
+                            report.SCSI.MultiMediaDevice = new Mmc
+                            {
+                                ModeSense2A = cdromMode, Features = reporter.ReportMmcFeatures()
+                            };
+
+                            if(cdromMode.HasValue)
+                            {
+                                mediaTypes.Add("CD-ROM");
+                                mediaTypes.Add("Audio CD");
+                                if(cdromMode.Value.ReadCDR) mediaTypes.Add("CD-R");
+                                if(cdromMode.Value.ReadCDRW) mediaTypes.Add("CD-RW");
+                                if(cdromMode.Value.ReadDVDROM) mediaTypes.Add("DVD-ROM");
+                                if(cdromMode.Value.ReadDVDRAM) mediaTypes.Add("DVD-RAM");
+                                if(cdromMode.Value.ReadDVDR) mediaTypes.Add("DVD-R");
+                            }
+
+                            if(report.SCSI.MultiMediaDevice.Features != null)
+                            {
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadBD      ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadBDR     ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE1   ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE2   ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadBDROM   ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDR  ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
+                                {
+                                    if(!mediaTypes.Contains("BD-ROM")) mediaTypes.Add("BD-ROM");
+                                    if(!mediaTypes.Contains("BD-R")) mediaTypes.Add("BD-R");
+                                    if(!mediaTypes.Contains("BD-RE")) mediaTypes.Add("BD-RE");
+                                    if(!mediaTypes.Contains("BD-R LTH")) mediaTypes.Add("BD-R LTH");
+                                    if(!mediaTypes.Contains("BD-R XL")) mediaTypes.Add("BD-R XL");
+                                }
+
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
+                                   report.SCSI.MultiMediaDevice.Features.MultiRead)
+                                {
+                                    if(!mediaTypes.Contains("CD-ROM")) mediaTypes.Add("CD-ROM");
+                                    if(!mediaTypes.Contains("Audio CD")) mediaTypes.Add("Audio CD");
+                                    if(!mediaTypes.Contains("CD-R")) mediaTypes.Add("CD-R");
+                                    if(!mediaTypes.Contains("CD-RW")) mediaTypes.Add("CD-RW");
+                                }
+
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
+                                    if(!mediaTypes.Contains("CD-MRW"))
+                                        mediaTypes.Add("CD-MRW");
+
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
+                                {
+                                    if(!mediaTypes.Contains("DDCD-ROM")) mediaTypes.Add("DDCD-ROM");
+                                    if(!mediaTypes.Contains("DDCD-R")) mediaTypes.Add("DDCD-R");
+                                    if(!mediaTypes.Contains("DDCD-RW")) mediaTypes.Add("DDCD-RW");
+                                }
+
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadDVD        ||
+                                   report.SCSI.MultiMediaDevice.Features.DVDMultiRead      ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR   ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW  ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
+                                {
+                                    if(!mediaTypes.Contains("DVD-ROM")) mediaTypes.Add("DVD-ROM");
+                                    if(!mediaTypes.Contains("DVD-R")) mediaTypes.Add("DVD-R");
+                                    if(!mediaTypes.Contains("DVD-RW")) mediaTypes.Add("DVD-RW");
+                                    if(!mediaTypes.Contains("DVD+R")) mediaTypes.Add("DVD+R");
+                                    if(!mediaTypes.Contains("DVD+RW")) mediaTypes.Add("DVD+RW");
+                                    if(!mediaTypes.Contains("DVD-R DL")) mediaTypes.Add("DVD-R DL");
+                                    if(!mediaTypes.Contains("DVD+R DL")) mediaTypes.Add("DVD+R DL");
+                                }
+
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
+                                    if(!mediaTypes.Contains("DVD+MRW"))
+                                        mediaTypes.Add("DVD+MRW");
+
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
+                                   report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
+                                {
+                                    if(!mediaTypes.Contains("HD DVD-ROM")) mediaTypes.Add("HD DVD-ROM");
+                                    if(!mediaTypes.Contains("HD DVD-R")) mediaTypes.Add("HD DVD-R");
+                                    if(!mediaTypes.Contains("HD DVD-RW")) mediaTypes.Add("HD DVD-RW");
+                                }
+
+                                if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM)
+                                    if(!mediaTypes.Contains("HD DVD-RAM"))
+                                        mediaTypes.Add("HD DVD-RAM");
+                            }
+
+                            // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
+                            // Also don't get confident, some drives didn't know CD-RW but are able to read them
+                            if(mediaTypes.Count == 0 || mediaTypes.Contains("CD-ROM"))
+                            {
+                                if(!mediaTypes.Contains("CD-ROM")) mediaTypes.Add("CD-ROM");
+                                if(!mediaTypes.Contains("Audio CD")) mediaTypes.Add("Audio CD");
+                                if(!mediaTypes.Contains("CD-R")) mediaTypes.Add("CD-R");
+                                if(!mediaTypes.Contains("CD-RW")) mediaTypes.Add("CD-RW");
+                            }
+
+                            mediaTypes.Sort();
+
+                            bool tryPlextor = false, tryHldtst = false, tryPioneer = false, tryNec = false;
+
+                            tryPlextor |= dev.Manufacturer.ToLowerInvariant() == "plextor";
+                            tryHldtst  |= dev.Manufacturer.ToLowerInvariant() == "hl-dt-st";
+                            tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
+                            tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
+
+                            if(options.Debug)
+                            {
+                                if(!tryPlextor)
+                                {
+                                    pressedKey = new ConsoleKeyInfo();
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                    {
+                                        DicConsole
+                                           .Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                        pressedKey = System.Console.ReadKey();
+                                        DicConsole.WriteLine();
+                                    }
+
+                                    tryPlextor |= pressedKey.Key == ConsoleKey.Y;
+                                }
+
+                                if(!tryNec)
+                                {
+                                    pressedKey = new ConsoleKeyInfo();
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                    {
+                                        DicConsole
+                                           .Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                        pressedKey = System.Console.ReadKey();
+                                        DicConsole.WriteLine();
+                                    }
+
+                                    tryNec |= pressedKey.Key == ConsoleKey.Y;
+                                }
+
+                                if(!tryPioneer)
+                                {
+                                    pressedKey = new ConsoleKeyInfo();
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                    {
+                                        DicConsole
+                                           .Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                        pressedKey = System.Console.ReadKey();
+                                        DicConsole.WriteLine();
+                                    }
+
+                                    tryPioneer |= pressedKey.Key == ConsoleKey.Y;
+                                }
+
+                                if(!tryHldtst)
+                                {
+                                    pressedKey = new ConsoleKeyInfo();
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                    {
+                                        DicConsole
+                                           .Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+                                        pressedKey = System.Console.ReadKey();
+                                        DicConsole.WriteLine();
+                                    }
+
+                                    tryHldtst |= pressedKey.Key == ConsoleKey.Y;
+                                }
+                            }
+
+                            List<TestedMedia> mediaTests = new List<TestedMedia>();
+                            foreach(string mediaType in mediaTypes)
+                            {
+                                pressedKey = new ConsoleKeyInfo();
+                                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                {
+                                    DicConsole.Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
+                                                     mediaType);
+                                    pressedKey = System.Console.ReadKey();
+                                    DicConsole.WriteLine();
+                                }
+
+                                if(pressedKey.Key != ConsoleKey.Y) continue;
+
+                                dev.AllowMediumRemoval(out senseBuffer, dev.Timeout, out _);
+                                dev.EjectTray(out senseBuffer, dev.Timeout, out _);
+                                DicConsole
+                                   .WriteLine("Please insert it in the drive and press any key when it is ready.");
+                                System.Console.ReadKey(true);
+
+                                bool mediaIsRecognized = true;
+
+                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                if(sense)
+                                {
+                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                    if(decSense.HasValue)
+                                        if(decSense.Value.ASC == 0x3A)
+                                        {
+                                            int leftRetries = 20;
+                                            while(leftRetries > 0)
+                                            {
+                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                if(!sense) break;
+
+                                                leftRetries--;
+                                            }
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+                                        else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                                        {
+                                            int leftRetries = 20;
+                                            while(leftRetries > 0)
+                                            {
+                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                if(!sense) break;
+
+                                                leftRetries--;
+                                            }
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+                                        // These should be trapped by the OS but seems in some cases they're not
+                                        else if(decSense.Value.ASC == 0x28)
+                                        {
+                                            int leftRetries = 20;
+                                            while(leftRetries > 0)
+                                            {
+                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                if(!sense) break;
+
+                                                leftRetries--;
+                                            }
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+                                        else mediaIsRecognized = false;
+                                    else mediaIsRecognized = false;
+                                }
+
+                                TestedMedia mediaTest = new TestedMedia();
+                                if(mediaIsRecognized)
+                                {
+                                    mediaTest = reporter.ReportMmcMedia(mediaType, tryPlextor, tryPioneer, tryNec,
+                                                                        tryHldtst);
+
+                                    if(mediaTest.SupportsReadLong == true &&
+                                       mediaTest.LongBlockSize    == mediaTest.BlockSize)
+                                    {
+                                        pressedKey = new ConsoleKeyInfo();
+                                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                        {
+                                            DicConsole
+                                               .Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                            pressedKey = System.Console.ReadKey();
+                                            DicConsole.WriteLine();
+                                        }
+
+                                        if(pressedKey.Key == ConsoleKey.Y)
+                                        {
+                                            for(ushort i = (ushort)mediaTest.BlockSize;; i++)
+                                            {
+                                                DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
+                                                                 i);
+                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
+                                                                       dev.Timeout, out _);
+                                                if(!sense)
+                                                {
+                                                    if(options.Debug)
+                                                    {
+                                                        FileStream bingo =
+                                                            new FileStream($"{mediaType}_readlong.bin",
+                                                                           FileMode.Create);
+                                                        bingo.Write(buffer, 0, buffer.Length);
+                                                        bingo.Close();
+                                                    }
+
+                                                    mediaTest.LongBlockSize = i;
+                                                    break;
+                                                }
+
+                                                if(i == ushort.MaxValue) break;
+                                            }
+
+                                            DicConsole.WriteLine();
+                                        }
+                                    }
+
+                                    if(options.Debug && mediaTest.SupportsReadLong == true &&
+                                       mediaTest.LongBlockSize                     != mediaTest.BlockSize)
+                                    {
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                        if(!sense)
+                                            DataFile.WriteTo("SCSI Report", "readlong10",
+                                                             "_debug_" + dev.Model + "_" + mediaType + ".bin",
+                                                             "read results", buffer);
+                                    }
+                                }
+
+                                mediaTest.MediumTypeName    = mediaType;
+                                mediaTest.MediaIsRecognized = mediaIsRecognized;
+                                mediaTests.Add(mediaTest);
+                            }
+
+                            report.SCSI.MultiMediaDevice.TestedMedia = mediaTests.ToArray();
+                        }
                             break;
                         case PeripheralDeviceTypes.SequentialAccess:
+                        {
                             report.SCSI.SequentialDevice = reporter.ReportScsiSsc();
 
                             List<TestedSequentialMedia> seqTests = new List<TestedSequentialMedia>();
@@ -375,14 +682,17 @@ namespace DiscImageChef.Commands
 
                                 if(mediaIsRecognized) seqTest = reporter.ReportSscMedia();
 
-                                seqTest.MediumTypeName = mediumTypeName;
-                                seqTest.Manufacturer   = mediumManufacturer;
-                                seqTest.Model          = mediumModel;
+                                seqTest.MediumTypeName    = mediumTypeName;
+                                seqTest.Manufacturer      = mediumManufacturer;
+                                seqTest.Model             = mediumModel;
+                                seqTest.MediaIsRecognized = mediaIsRecognized;
 
                                 seqTests.Add(seqTest);
                             }
 
                             report.SCSI.SequentialDevice.TestedMedia = seqTests.ToArray();
+                        }
+
                             break;
                         default:
                         {
@@ -506,9 +816,10 @@ namespace DiscImageChef.Commands
                                         }
                                     }
 
-                                    mediaTest.MediumTypeName = mediumTypeName;
-                                    mediaTest.Manufacturer   = mediumManufacturer;
-                                    mediaTest.Model          = mediumModel;
+                                    mediaTest.MediumTypeName    = mediumTypeName;
+                                    mediaTest.Manufacturer      = mediumManufacturer;
+                                    mediaTest.Model             = mediumModel;
+                                    mediaTest.MediaIsRecognized = mediaIsRecognized;
 
                                     mediaTests.Add(mediaTest);
                                 }
